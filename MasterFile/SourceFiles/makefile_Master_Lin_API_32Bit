@@ -1,0 +1,54 @@
+# source files
+SRC = driver.cpp ivf.c psnr.c ssim2.cpp Tests.cpp  Tests-NotUsed.cpp Tools.cpp Arguments.cpp FourCC.cpp md5_utils.c utilities.cpp
+
+# source object files
+SRCOBJ = driver.o ivf.o psnr.o ssim2.o Tests.o Tests-NotUsed.o Tools.o Arguments.o FourCC.o md5_utils.o utilities.o
+
+# compiler
+CCC = g++ -m32
+GCC = gcc -m32
+
+# Libraries
+LFLAGS= -L ../lib -lvpx_Lin32 -lpthread -DINLINE=
+
+#Includes
+INCLUDE = -I ../include -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
+
+VP8_Tester_API_32Bit: $(SRCOBJ)
+	$(CCC)  $(INCLUDE) -o "VP8_Tester_API_32Bit.exe" $(SRCOBJ) $(LFLAGS)
+
+ivf.o: ivf.c
+	$(CCC) -c ivf.c $(INCLUDE)  $(LFLAGS)
+
+psnr.o: psnr.c
+	$(CCC) -c psnr.c $(INCLUDE)  $(LFLAGS)
+
+ssim2.o: ssim2.cpp
+	$(CCC) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)
+
+Tests-NotUsed.o: Tests-NotUsed.cpp
+	$(CCC) -c Tests-NotUsed.cpp $(INCLUDE)  $(LFLAGS)
+
+Tests.o: Tests.cpp
+	$(CCC) -c Tests.cpp $(INCLUDE)  $(LFLAGS)
+
+Tools.o: Tools.cpp
+	$(CCC) -c Tools.cpp $(INCLUDE)  $(LFLAGS)
+
+utilities.o: utilities.cpp
+	$(CCC) -c  utilities.cpp $(INCLUDE)  $(LFLAGS)
+
+Arguments.o: Arguments.cpp
+	$(CCC) -c Arguments.cpp $(INCLUDE)  $(LFLAGS)
+
+FourCC.o: FourCC.cpp
+	$(CCC) -c FourCC.cpp $(INCLUDE)  $(LFLAGS)
+
+driver.o: driver.cpp
+	$(CCC) -c driver.cpp $(INCLUDE)  $(LFLAGS)
+
+md5_utils.o: md5_utils.c
+	$(GCC) -c md5_utils.c $(INCLUDE) $(LFLAGS)
+
+clean:
+	rm -f $(SRCOBJ) VP8_Tester_API_32Bit.exe

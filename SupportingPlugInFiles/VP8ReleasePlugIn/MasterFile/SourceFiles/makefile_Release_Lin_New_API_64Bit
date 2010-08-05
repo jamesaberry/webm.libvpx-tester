@@ -3,7 +3,7 @@ SRC = supportingrelease.cpp psnr.c ssim2.cpp Utilities.cpp ivf.c
 
 # source object files
 SRCOBJ = supportingrelease.o ivf.o psnr.o ssim2.o Utilities.o
-
+ 
 # compiler
 CPP = g++ -m64
 CCC = gcc -m64
@@ -12,9 +12,9 @@ CCC = gcc -m64
 LFLAGS= -L../newlib -lpthread -lvpx_NewLin64 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -D API -D HAVE_STDINT_H
-
-VP8vNewest_PlugIn_RLib_RMode_64Bit.exe: $(SRCOBJ)
+INCLUDE = -I ../include -D API -D HAVE_STDINT_H 
+ 
+VP8vNewest_PlugIn_RLib_RMode_64Bit.exe: $(SRCOBJ) 
 	$(CPP) $(INCLUDE) -o "VP8vNewest_PlugIn_RLib_RMode_64Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
@@ -32,5 +32,5 @@ Utilities.o: Utilities.cpp
 supportingrelease.o: supportingrelease.cpp
 	$(CPP) -c supportingrelease.cpp $(INCLUDE)  $(LFLAGS)
 
-clean:
+clean: 
 	rm -f $(SRCOBJ) VP8vNewest_PlugIn_RLib_RMode_64Bit.exe

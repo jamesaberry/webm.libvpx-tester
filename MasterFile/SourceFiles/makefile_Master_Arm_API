@@ -13,8 +13,8 @@ LFLAGS= -L../lib -lvpx_Arm -lpthread -DINLINE=
 
 #Includes
 INCLUDE = -I ../include -D API -D ARM -DHAVE_STDINT_H -D CONFIG_MD5=1
-
-VP8_Tester_API: $(SRCOBJ)
+ 
+VP8_Tester_API: $(SRCOBJ) 
 	$(CCC)  $(INCLUDE) -o "VP8_Tester_API.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
@@ -50,5 +50,5 @@ driver.o: driver.cpp
 md5_utils.o: md5_utils.c
 	$(GCC) -c md5_utils.c $(INCLUDE) $(LFLAGS)
 
-clean:
+clean: 
 	rm -f $(SRCOBJ) VP8_Tester_API.exe

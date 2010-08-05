@@ -1,8 +1,8 @@
 # source files
-SRC = supportingdebug.cpp psnr.c ssim2.cpp Utilities.cpp ivf.c
+SRC = supportingdebug.cpp psnr.c ssim2.cpp Utilities.cpp ivf.c 
 
 # source object files
-SRCOBJ = supportingdebug.o ivf.o psnr.o ssim2.o Utilities.o
+SRCOBJ = supportingdebug.o ivf.o psnr.o ssim2.o Utilities.o 
 
 # compiler
 CPP = g++ -m32
@@ -13,8 +13,8 @@ LFLAGS= -L../lib -lpthread -lvpx_MemLin32  -D CONFIG_MEM_TRACKER=1 -DINLINE=
 
 #Includes
 INCLUDE = -I ../include -I "../Header Files" -D API -DHAVE_STDINT_H
-
-VP8vNewest_PlugIn_DLib_DMode_32Bit.exe: $(SRCOBJ)
+ 
+VP8vNewest_PlugIn_DLib_DMode_32Bit.exe: $(SRCOBJ) 
 	$(CPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
@@ -32,5 +32,5 @@ Utilities.o: Utilities.cpp
 supportingdebug.o: supportingdebug.cpp
 	$(CPP) -c supportingdebug.cpp $(INCLUDE)  $(LFLAGS)
 
-clean:
+clean: 
 	rm -f $(SRCOBJ) VP8vNewest_PlugIn_DLib_DMode_32Bit.exe

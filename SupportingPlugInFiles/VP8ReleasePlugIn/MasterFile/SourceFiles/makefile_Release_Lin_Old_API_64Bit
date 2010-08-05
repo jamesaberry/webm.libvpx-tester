@@ -12,9 +12,9 @@ CCC = gcc -m64
 LFLAGS= -L../oldlib -lpthread -lvpx_OldLin64 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -D API -D HAVE_STDINT_H
-
-VP8vOldest_PlugIn_RLib_RMode_64Bit.exe: $(SRCOBJ)
+INCLUDE = -I ../include -D API -D HAVE_STDINT_H 
+ 
+VP8vOldest_PlugIn_RLib_RMode_64Bit.exe: $(SRCOBJ) 
 	$(CPP) $(INCLUDE) -o "VP8vOldest_PlugIn_RLib_RMode_64Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
@@ -32,5 +32,5 @@ Utilities.o: Utilities.cpp
 supportingrelease.o: supportingrelease.cpp
 	$(CPP) -c supportingrelease.cpp $(INCLUDE)  $(LFLAGS)
 
-clean:
+clean: 
 	rm -f $(SRCOBJ) VP8vOldest_PlugIn_RLib_RMode_64Bit.exe

@@ -45,7 +45,7 @@ extern "C" {
 #  include "vpx_codecs_config.h"
 #endif
 #if defined(HAVE_VPX_PORTS) && HAVE_VPX_PORTS
-#  include "vpx_ports/vpx_integer.h"
+#  include "vpx_integer.h"
 #else
 #  include "vpx_integer.h"
 #endif

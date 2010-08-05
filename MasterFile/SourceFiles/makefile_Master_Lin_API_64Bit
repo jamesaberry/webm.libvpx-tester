@@ -1,8 +1,8 @@
 # source files
-SRC = driver.cpp ivf.c psnr.c ssim2.cpp Tests.cpp  Tests-NotUsed.cpp Tools.cpp Arguments.cpp FourCC.cpp md5_utils.c utilities.cpp
+SRC = driver.cpp ivf.c psnr.c ssim2.cpp Tests.cpp  Tests-NotUsed.cpp Tools.cpp Arguments.cpp FourCC.cpp md5_utils.cpp utilities.cpp args.cpp ivfdec.cpp ivfenc.cpp y4minput.cpp
 
 # source object files
-SRCOBJ = driver.o ivf.o psnr.o ssim2.o Tests.o Tests-NotUsed.o Tools.o Arguments.o FourCC.o md5_utils.o utilities.o
+SRCOBJ = driver.o ivf.o psnr.o ssim2.o Tests.o Tests-NotUsed.o Tools.o Arguments.o FourCC.o md5_utils.o utilities.o args.o ivfdec.o ivfenc.o y4minput.o
 
 # compiler
 CCC = g++ -m64
@@ -13,8 +13,8 @@ LFLAGS= -L ../lib -lvpx_Lin64 -lpthread -DINLINE=
 
 #Includes
 INCLUDE = -I ../include -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
-
-VP8_Tester_API_64Bit: $(SRCOBJ)
+ 
+VP8_Tester_API_64Bit: $(SRCOBJ) 
 	$(CCC)  $(INCLUDE) -o "VP8_Tester_API_64Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
@@ -47,8 +47,20 @@ FourCC.o: FourCC.cpp
 driver.o: driver.cpp
 	$(CCC) -c driver.cpp $(INCLUDE)  $(LFLAGS)
 
-md5_utils.o: md5_utils.c
-	$(GCC) -c md5_utils.c $(INCLUDE) $(LFLAGS)
+md5_utils.o: md5_utils.cpp
+	$(CCC) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
 
-clean:
+args.o: args.cpp
+	$(CCC) -c args.cpp $(INCLUDE) $(LFLAGS)
+
+y4minput.o: y4minput.cpp
+	$(CCC) -c y4minput.cpp $(INCLUDE) $(LFLAGS)
+
+ivfdec.o: ivfdec.cpp
+	$(CCC) -c ivfdec.cpp $(INCLUDE) $(LFLAGS)
+
+ivfenc.o: ivfenc.cpp
+	$(CCC) -c ivfenc.cpp $(INCLUDE) $(LFLAGS)
+
+clean: 
 	rm -f $(SRCOBJ) VP8_Tester_API_64Bit.exe

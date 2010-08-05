@@ -248,7 +248,35 @@
 				Name="MD5"
 				>
 				<File
-					RelativePath=".\SourceFiles\md5_utils.c"
+					RelativePath=".\SourceFiles\md5_utils.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="IVFEnc"
+				>
+				<File
+					RelativePath=".\SourceFiles\args.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SourceFiles\args.h"
+					>
+				</File>
+				<File
+					RelativePath=".\SourceFiles\ivfdec.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SourceFiles\ivfenc.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SourceFiles\y4minput.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SourceFiles\y4minput.h"
 					>
 				</File>
 			</Filter>

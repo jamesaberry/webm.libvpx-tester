@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 //////////////////////////
 #include "on2-vpx-shim.h"
+#include "test-definitions.h"
 #include "yv12config.h"
 #include <math.h>
 #include <iostream>
@@ -64,10 +65,15 @@ extern int Test0InputTextCheck(char *input, int MoreInfo);
 extern int CompareIVFHeaderInfo(int argc, char *argv[]);
 extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
 extern int CompIVF(char *inputFile1, char *inputFile2);
-extern double IVFDisplayKeyFrames(char *inputFile, int Selector, char *outputFile);
+extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
 extern int API20Encoder(long width, long height, char *infilechar, char *outfilechar);
 extern int API20Decoder(char *inputchar, char *outputchar);
 extern int MakeDirVPX(string CreateDir2);
+extern double IVFDisplayAltRefFrames(char *inputFile, int Selector);
+extern double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch);
+extern double IVFDisplayVisibleFrames(char *inputchar, int PrintSwitch);
+extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
+extern double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch);
 
 //Tools
 extern int ComprAVI2IVF(int argc, char *argv[], string WorkingDir);
@@ -107,6 +113,9 @@ extern int PasteIVF(int argc, char *argv[]);
 extern int PrintVersion();
 extern int CombineIndvFrames(int argc, char *argv[]);
 extern int CreateRandParFile(int argc, char *argv[]);
+extern int RunIVFDec(int argc, char *argv[]);
+extern int RunIVFEnc(int argc, char *argv[]);
+extern int SolveQuad();
 
 /////Tests
 extern int ExternalTestRunner(int argc, char *argv[], string WorkingDir, int NumberofTests);
@@ -136,6 +145,7 @@ extern int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[],
 extern int SpeedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int TwoPassVsTwoPassBest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int UnderShoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ReconBuffer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 
 /////NewVP8Tests
 extern int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
@@ -269,46 +279,44 @@ void OnErrorOutPut()
            "\n"
            "  <Test Number>                          Tools\n"
            "                                           \n"
-           "   (0)RunTestsFromFile                     IVF2IVFCompr\n"
-           "   (1)AllowDropFrames                      IVF2IVFDec\n"
-           "   (2)AllowLagTest                         IVF2RawDec\n"
-           "   (3)AllowSpatialResampling               IVFDataRate\n"
-           "   (4)AllowSpatialResampling2              IVFPSNR\n"
-           "   (5)AltFreqTest                          IVFCheckPBM\n"
-           "   (6)AutoKeyFramingWorks                  \n"
-           "   (7)BufferLevelWorks                     Raw2IVF\n"
-           "   (8)CPUDecOnlyWorks                      IVF2Raw\n"
-           "   (9)ChangeCPUDec                         IVF2RawFrames\n"
-           "  (10)ChangeCPUWorks                       CombineIndvFrames\n"
-           "  (11)DropFramesWaterMarkWorks             \n"
-           "  (12)DataRateTest                         CompIVFHeader\n"
-           "  (13)DebugMatchesRelease                  DispIVFHeader\n"
-           "  (14)EncoderBreakOutTest                  DispKeyFrames\n"
-           "  (15)ErrorResilientModeWorks              CompareIVF\n"
-           "  (16)ExtraFileCheck                       \n"
-           "  (17)FixedQ                               CutIVF\n"
-           "  (18)ForceKeyFrameWorks                   PasteIVF\n"
-           "  (19)GoodQualityVsBestQuality        	   \n"
-           "  (20)LagInFramesTest                      PlayDecIVF\n"
-           "  (21)MaxQuantizerTest                     PlayCompIVF\n"
-           "  (22)MemLeakCheck                         \n"
-           "  (23)MemLeakCheck2                        CreateSampleTextFiles\n"
-           "  (24)MinQuantizerTest                     PrintVersion\n"
-           "  (25)MultiThreadedTest                    \n"
-           "  (26)NewVsOldPSNR                         RandParFile\n"
-           "  (27)NewVsOldRealTimeSpeed                RandIVFComp\n"
-           "  (28)NoiseSensitivityWorks                GraphPSNR\n"
-           "  (29)OnePassVsTwoPassm                    Help\n"
-           "  (30)PlayAlternate                        \n"
-           "  (31)PostProcessorWorks                   \n"
-           "  (32)PreProcessorWorks                    \n"
-           "  (33)ResampleDownWaterMark                \n"
-           "  (34)SpeedTest                            \n"
-           "  (35)TestVectorCheck                      \n"
-           "  (36)TwoPassVsTwoPassBest                 \n"
-           "  (37)UnderShoot							\n"
-           "  (38)Version                              \n"
-           "  (39)WindowsMatchesLinux                  \n"
+           "   (0)RunTestsFromFile                     IVFEnc\n"
+           "   (1)AllowDropFrames                      IVFDec\n"
+           "   (2)AllowLagTest                         \n"
+           "   (3)AllowSpatialResampling               IVF2IVFCompr\n"
+           "   (4)AltFreqTest                          IVF2IVFDec\n"
+           "   (5)AutoKeyFramingWorks                  IVF2RawDec\n"
+           "   (6)BufferLevelWorks                     \n"
+           "   (7)CPUDecOnlyWorks                      IVFDataRate\n"
+           "   (8)ChangeCPUWorks                       IVFPSNR\n"
+           "   (9)DropFramesWaterMarkWorks             IVFCheckPBM\n"
+           "  (10)DataRateTest                         \n"
+           "  (11)DebugMatchesRelease                  Raw2IVF\n"
+           "  (12)EncoderBreakOutTest                  IVF2Raw\n"
+           "  (13)ErrorResilientModeWorks              IVF2RawFrames\n"
+           "  (14)ExtraFileCheck                       CombineIndvFrames\n"
+           "  (15)FixedQ                               \n"
+           "  (16)ForceKeyFrameWorks                   CompareIVF\n"
+           "  (17)GoodQualityVsBestQuality             CompIVFHeader\n"
+           "  (18)LagInFramesTest                      DispIVFHeader\n"
+           "  (19)MaxQuantizerTest       	           \n"
+           "  (20)MemLeakCheck                         DispKeyFrames\n"
+           "  (21)MemLeakCheck2                        DispResizedFrames\n"
+           "  (22)MinQuantizerTest                     DispVisibleFrames\n"
+           "  (23)MultiThreadedTest                    DispAltRefFrames\n"
+           "  (24)NewVsOldPSNR                         \n"
+           "  (25)NewVsOldRealTimeSpeed                CutIVF\n"
+           "  (26)NoiseSensitivityWorks                PasteIVF\n"
+           "  (27)OnePassVsTwoPass                     \n"
+           "  (28)PlayAlternate                        PlayDecIVF\n"
+           "  (29)PostProcessorWorks                   PlayCompIVF\n"
+           "  (30)ReconBuffer                          \n"
+           "  (31)ResampleDownWaterMark                CreateSampleTextFiles\n"
+           "  (32)SpeedTest                            PrintVersion\n"
+           "  (33)TestVectorCheck                      \n"
+           "  (34)TwoPassVsTwoPassBest                 RandParFile\n"
+           "  (35)UnderShoot                           RandIVFComp\n"
+           "  (36)Version                              GraphPSNR\n"
+           "  (37)WindowsMatchesLinux                  Help\n"
            "\n"
           );
 }
@@ -1434,1043 +1442,375 @@ void Print5(string WorkingDir)
 {
     string TextfileString5 = WorkingDir;
     TextfileString5.erase(TextfileString5.end() - 25, TextfileString5.end());
-    //TextfileString5.append(slashCharStr);
     TextfileString5.append("QuickTest_32Bit.txt");
 
     FILE *fp5;
 
-    if ((fp5 = freopen(TextfileString5.c_str(), "w", stderr)) == NULL)
+    if ((fp5 = fopen(TextfileString5.c_str(), "w")) == NULL)
     {
         printf("Cannot open out put file: %s\n", TextfileString5.c_str());
         exit(1);
     }
 
+    string OSStr = "";
+
 #if defined(_WIN32)
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%Instructions: Replace the following: /home/jberry/CodecSDKTestVP8/MasterFile/SampleTestMaterial/src16.ivf , 128, Name_of_Oldest_Release_\n"
-            "%%              PlugIn, 6, VP8vNewest_PlugIn_DLib_DMode_API.exe, VP8vNewest_PlugIn_RLib_RMode_32Bit.exe, \n"
-            "%%              10, 100, 100, 20, and 100 with \n"
-            "%%              the settings you wish to test.\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n"
-            "16@..\\TestClips\\src16.ivf\n"
-            "%%49@..\\TestClips\\src16.ivf@1@128@0@NA@NA@NA\n"
-            "19@..\\TestClips\\src16.ivf@128\n"
-            "27@..\\TestClips\\src16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "29@..\\TestClips\\src16.ivf@128\n"
-            "36@..\\TestClips\\src16.ivf@128\n"
-            "%%51@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "35@..\\TestClips\\TestVectors\n"
-            "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n"
-            "25@..\\TestClips\\BBB_720x480_2000F.ivf@0@128\n"
-            "25@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "34@..\\TestClips\\src16.ivf@0@128@10\n"
-            "34@..\\TestClips\\src16.ivf@1@128@10\n"
-            "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n"
-            "\n"
-            "%%%%Mode0%%%%\n"
-            "\n"
-            "7@..\\TestClips\\src16.ivf@0@128\n"
-            "12@..\\TestClips\\src16.ivf@0@128\n"
-            "15@..\\TestClips\\src16.ivf@0@128\n"
-            "18@..\\TestClips\\src16.ivf@0@128@6\n"
-            "21@..\\TestClips\\src16.ivf@0@128\n"
-            "22@..\\TestClips\\src16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@0@128\n"
-            "26@..\\TestClips\\src16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@0@128\n"
-            "31@..\\TestClips\\src16.ivf@0@128\n"
-            "%%34@..\\TestClips\\src16.ivf@0@128\n"
-            "38@..\\TestClips\\src16.ivf@0@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@0@128\n"
-            "\n"
-            "%%%%Mode1%%%%\n"
-            "1@..\\TestClips\\BBB_1280x720_1500F.ivf@1@128\n"
-            "4@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "%%3@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "6@..\\TestClips\\src16.ivf@1@128\n"
-            "7@..\\TestClips\\src16.ivf@1@128\n"
-            "8@..\\TestClips\\src16.ivf@1@128@0\n"
-            "8@..\\TestClips\\src16.ivf@1@128@1\n"
-            "9@..\\TestClips\\src16.ivf@1@128@0\n"
-            "9@..\\TestClips\\src16.ivf@1@128@1\n"
-            "10@..\\TestClips\\src16.ivf@1@128@0\n"
-            "10@..\\TestClips\\src16.ivf@1@128@1\n"
-            "10@..\\TestClips\\src16.ivf@1@128@1@..\\TestClips\\SpecialCaseParameterFiles\\1ChangeCPUWorksCPUUsage4.txt\n"
-            "11@..\\TestClips\\src16.ivf@1@128\n"
-            "12@..\\TestClips\\src16.ivf@1@128\n"
-            "12@..\\TestClips\\BBB_1280x720_1500F.ivf@1@2048\n"
-            "13@..\\TestClips\\src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@1@128\n"
-            "18@..\\TestClips\\src16.ivf@1@128@6\n"
-            "21@..\\TestClips\\src16.ivf@1@128\n"
-            "22@..\\TestClips\\src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@1@128\n"
-            "26@..\\TestClips\\src16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@1@128\n"
-            "31@..\\TestClips\\src16.ivf@1@128\n"
-            "32@..\\TestClips\\src16.ivf@1@128\n"
-            "%%34@..\\TestClips\\src16.ivf@1@128\n"
-            "37@..\\TestClips\\src16.ivf@1@128\n"
-            "%%42@..\\TestClips\\src16.ivf@1@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@1@128@-1@100\n"
-            "38@..\\TestClips\\src16.ivf@1@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "\n"
-            "%%%%Mode2%%%%\n"
-            "%%3@..\\TestClips\\src16.ivf@2@128\n"
-            "6@..\\TestClips\\src16.ivf@2@128\n"
-            "7@..\\TestClips\\src16.ivf@2@128\n"
-            "8@..\\TestClips\\src16.ivf@2@128@0\n"
-            "8@..\\TestClips\\src16.ivf@2@128@1\n"
-            "9@..\\TestClips\\src16.ivf@2@128@0\n"
-            "9@..\\TestClips\\src16.ivf@2@128@1\n"
-            "10@..\\TestClips\\src16.ivf@2@128@0\n"
-            "10@..\\TestClips\\src16.ivf@2@128@1\n"
-            "11@..\\TestClips\\src16.ivf@2@128\n"
-            "12@..\\TestClips\\src16.ivf@2@128\n"
-            "13@..\\TestClips\\src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@2@128\n"
-            "18@..\\TestClips\\src16.ivf@2@128@6\n"
-            "21@..\\TestClips\\src16.ivf@2@128\n"
-            "22@..\\TestClips\\src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@2@128\n"
-            "26@..\\TestClips\\src16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@2@128\n"
-            "31@..\\TestClips\\src16.ivf@2@128\n"
-            "32@..\\TestClips\\src16.ivf@2@128\n"
-            "%%34@..\\TestClips\\src16.ivf@2@128\n"
-            "37@..\\TestClips\\src16.ivf@2@128\n"
-            "%%42@..\\TestClips\\src16.ivf@2@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@2@128@-1@100\n"
-            "38@..\\TestClips\\src16.ivf@2@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@2@128\n"
-
-            "%%%%Mode4%%%%\n"
-            "%%3@..\\TestClips\\src16.ivf@4@128\n"
-            "6@..\\TestClips\\src16.ivf@4@128\n"
-            "7@..\\TestClips\\src16.ivf@4@128\n"
-            "8@..\\TestClips\\src16.ivf@4@128@0\n"
-            "8@..\\TestClips\\src16.ivf@4@128@1\n"
-            "9@..\\TestClips\\src16.ivf@4@128@0\n"
-            "9@..\\TestClips\\src16.ivf@4@128@1\n"
-            "10@..\\TestClips\\src16.ivf@4@128@0\n"
-            "10@..\\TestClips\\src16.ivf@4@128@1\n"
-            "11@..\\TestClips\\src16.ivf@4@128\n"
-            "12@..\\TestClips\\src16.ivf@4@128\n"
-            "13@..\\TestClips\\src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@4@128\n"
-            "18@..\\TestClips\\src16.ivf@4@128@6\n"
-            "21@..\\TestClips\\src16.ivf@4@128\n"
-            "22@..\\TestClips\\src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@4@128\n"
-            "26@..\\TestClips\\src16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@4@128\n"
-            "31@..\\TestClips\\src16.ivf@4@128\n"
-            "32@..\\TestClips\\src16.ivf@4@128\n"
-            "%%34@..\\TestClips\\src16.ivf@4@128\n"
-            "37@..\\TestClips\\src16.ivf@4@128\n"
-            "2@..\\TestClips\\src16.ivf@4@128\n"
-            "%%42@..\\TestClips\\src16.ivf@4@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@4@128@-1@100\n"
-            "20@..\\TestClips\\src16.ivf@4@128@10@24\n"
-            "30@..\\TestClips\\src16.ivf@4@128\n"
-            "38@..\\TestClips\\src16.ivf@4@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@4@128\n"
-            "\n"
-            "%%%%Mode5%%%%\n"
-            "%%3@..\\TestClips\\src16.ivf@5@128\n"
-            "6@..\\TestClips\\src16.ivf@5@128\n"
-            "7@..\\TestClips\\src16.ivf@5@128\n"
-            "8@..\\TestClips\\src16.ivf@5@128@0\n"
-            "8@..\\TestClips\\src16.ivf@5@128@1\n"
-            "9@..\\TestClips\\src16.ivf@5@128@0\n"
-            "9@..\\TestClips\\src16.ivf@5@128@1\n"
-            "10@..\\TestClips\\src16.ivf@5@128@0\n"
-            "10@..\\TestClips\\src16.ivf@5@128@1\n"
-            "11@..\\TestClips\\src16.ivf@5@128\n"
-            "12@..\\TestClips\\src16.ivf@5@128\n"
-            "13@..\\TestClips\\src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@5@128\n"
-            "18@..\\TestClips\\src16.ivf@5@128@6\n"
-            "21@..\\TestClips\\src16.ivf@5@128\n"
-            "22@..\\TestClips\\src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@5@128\n"
-            "26@..\\TestClips\\src16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@5@128\n"
-            "31@..\\TestClips\\src16.ivf@5@128\n"
-            "32@..\\TestClips\\src16.ivf@5@128\n"
-            "%%34@..\\TestClips\\src16.ivf@5@128\n"
-            "37@..\\TestClips\\src16.ivf@5@128\n"
-            "2@..\\TestClips\\src16.ivf@5@128\n"
-            "%%42@..\\TestClips\\src16.ivf@5@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@5@128@-1@100\n"
-            "20@..\\TestClips\\src16.ivf@5@128@10@24\n"
-            "30@..\\TestClips\\src16.ivf@5@128\n"
-            "38@..\\TestClips\\src16.ivf@5@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@5@128\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-           );
+    OSStr = "Win";
 #elif defined(__APPLE__)
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%Instructions: Replace the following: /home/jberry/CodecSDKTestVP8/MasterFile/SampleTestMaterial/src16.ivf , 128, Name_of_Oldest_Release_\n"
-            "%%             PlugIn, 6, VP8vNewest_PlugIn_DLib_DMode_API.exe, VP8vNewest_PlugIn_RLib_RMode_32Bit.exe, \n"
-            "%%              10, 100, 100, 20, and 100 with \n"
-            "%%              the settings you wish to test.\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "16@../TestClips/src16.ivf\n"
-            "%%49@../TestClips/src16.ivf@1@128@0@NA@NA@NA\n"
-            "19@../TestClips/src16.ivf@128\n"
-            "27@../TestClips/src16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "29@../TestClips/src16.ivf@128\n"
-            "36@../TestClips/src16.ivf@128\n"
-            "%%51@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "35@../TestClips/TestVectors\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "34@../TestClips/src16.ivf@0@128@10\n"
-            "34@../TestClips/src16.ivf@1@128@10\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "\n"
-            "%%%%%%%%Mode0%%%%%%%%\n"
-            "\n"
-            "7@../TestClips/src16.ivf@0@128\n"
-            "12@../TestClips/src16.ivf@0@128\n"
-            "15@../TestClips/src16.ivf@0@128\n"
-            "18@../TestClips/src16.ivf@0@128@6\n"
-            "21@../TestClips/src16.ivf@0@128\n"
-            "22@../TestClips/src16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@0@128\n"
-            "26@../TestClips/src16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@0@128\n"
-            "31@../TestClips/src16.ivf@0@128\n"
-            "%%34@../TestClips/src16.ivf@0@128\n"
-            "38@../TestClips/src16.ivf@0@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "\n"
-            "%%%%%%%%Mode1%%%%%%%%\n"
-            "1@../TestClips/BBB_1280x720_1500F.ivf@1@128\n"
-            "4@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "%%3@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "6@../TestClips/src16.ivf@1@128\n"
-            "7@../TestClips/src16.ivf@1@128\n"
-            "8@../TestClips/src16.ivf@1@128@0\n"
-            "8@../TestClips/src16.ivf@1@128@1\n"
-            "9@../TestClips/src16.ivf@1@128@0\n"
-            "9@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@0\n"
-            "10@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@1@../TestClips/SpecialCaseParameterFiles/1ChangeCPUWorksCPUUsage4.txt\n"
-            "11@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/BBB_1280x720_1500F.ivf@1@2048\n"
-            "13@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@1@128\n"
-            "18@../TestClips/src16.ivf@1@128@6\n"
-            "21@../TestClips/src16.ivf@1@128\n"
-            "22@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@1@128\n"
-            "26@../TestClips/src16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@1@128\n"
-            "31@../TestClips/src16.ivf@1@128\n"
-            "32@../TestClips/src16.ivf@1@128\n"
-            "%%34@../TestClips/src16.ivf@1@128\n"
-            "37@../TestClips/src16.ivf@1@128\n"
-            "%%%%42@../TestClips/src16.ivf@1@128@20@100\n"
-            "17@../TestClips/src16.ivf@1@128@-1@100\n"
-            "38@../TestClips/src16.ivf@1@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "\n"
-            "%%%%%%%%Mode2%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@2@128\n"
-            "6@../TestClips/src16.ivf@2@128\n"
-            "7@../TestClips/src16.ivf@2@128\n"
-            "8@../TestClips/src16.ivf@2@128@0\n"
-            "8@../TestClips/src16.ivf@2@128@1\n"
-            "9@../TestClips/src16.ivf@2@128@0\n"
-            "9@../TestClips/src16.ivf@2@128@1\n"
-            "10@../TestClips/src16.ivf@2@128@0\n"
-            "10@../TestClips/src16.ivf@2@128@1\n"
-            "11@../TestClips/src16.ivf@2@128\n"
-            "12@../TestClips/src16.ivf@2@128\n"
-            "13@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@2@128\n"
-            "18@../TestClips/src16.ivf@2@128@6\n"
-            "21@../TestClips/src16.ivf@2@128\n"
-            "22@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@2@128\n"
-            "26@../TestClips/src16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@2@128\n"
-            "31@../TestClips/src16.ivf@2@128\n"
-            "32@../TestClips/src16.ivf@2@128\n"
-            "%%34@../TestClips/src16.ivf@2@128\n"
-            "37@../TestClips/src16.ivf@2@128\n"
-            "%%%%42@../TestClips/src16.ivf@2@128@20@100\n"
-            "17@../TestClips/src16.ivf@2@128@-1@100\n"
-            "38@../TestClips/src16.ivf@2@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@2@128\n"
-
-            "%%%%%%%%Mode4%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@4@128\n"
-            "6@../TestClips/src16.ivf@4@128\n"
-            "7@../TestClips/src16.ivf@4@128\n"
-            "8@../TestClips/src16.ivf@4@128@0\n"
-            "8@../TestClips/src16.ivf@4@128@1\n"
-            "9@../TestClips/src16.ivf@4@128@0\n"
-            "9@../TestClips/src16.ivf@4@128@1\n"
-            "10@../TestClips/src16.ivf@4@128@0\n"
-            "10@../TestClips/src16.ivf@4@128@1\n"
-            "11@../TestClips/src16.ivf@4@128\n"
-            "12@../TestClips/src16.ivf@4@128\n"
-            "13@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@4@128\n"
-            "18@../TestClips/src16.ivf@4@128@6\n"
-            "21@../TestClips/src16.ivf@4@128\n"
-            "22@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@4@128\n"
-            "26@../TestClips/src16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@4@128\n"
-            "31@../TestClips/src16.ivf@4@128\n"
-            "32@../TestClips/src16.ivf@4@128\n"
-            "%%34@../TestClips/src16.ivf@4@128\n"
-            "37@../TestClips/src16.ivf@4@128\n"
-            "2@../TestClips/src16.ivf@4@128\n"
-            "%%%%42@../TestClips/src16.ivf@4@128@20@100\n"
-            "17@../TestClips/src16.ivf@4@128@-1@100\n"
-            "20@../TestClips/src16.ivf@4@128@10@24\n"
-            "30@../TestClips/src16.ivf@4@128\n"
-            "38@../TestClips/src16.ivf@4@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@4@128\n"
-            "\n"
-            "%%%%%%%%Mode5%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@5@128\n"
-            "6@../TestClips/src16.ivf@5@128\n"
-            "7@../TestClips/src16.ivf@5@128\n"
-            "8@../TestClips/src16.ivf@5@128@0\n"
-            "8@../TestClips/src16.ivf@5@128@1\n"
-            "9@../TestClips/src16.ivf@5@128@0\n"
-            "9@../TestClips/src16.ivf@5@128@1\n"
-            "10@../TestClips/src16.ivf@5@128@0\n"
-            "10@../TestClips/src16.ivf@5@128@1\n"
-            "11@../TestClips/src16.ivf@5@128\n"
-            "12@../TestClips/src16.ivf@5@128\n"
-            "13@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@5@128\n"
-            "18@../TestClips/src16.ivf@5@128@6\n"
-            "21@../TestClips/src16.ivf@5@128\n"
-            "22@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@5@128\n"
-            "26@../TestClips/src16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@5@128\n"
-            "31@../TestClips/src16.ivf@5@128\n"
-            "32@../TestClips/src16.ivf@5@128\n"
-            "%%34@../TestClips/src16.ivf@5@128\n"
-            "37@../TestClips/src16.ivf@5@128\n"
-            "2@../TestClips/src16.ivf@5@128\n"
-            "%%%%42@../TestClips/src16.ivf@5@128@20@100\n"
-            "17@../TestClips/src16.ivf@5@128@-1@100\n"
-            "20@../TestClips/src16.ivf@5@128@10@24\n"
-            "30@../TestClips/src16.ivf@5@128\n"
-            "38@../TestClips/src16.ivf@5@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@5@128\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-           );
+    OSStr = "Mac";
 #elif defined(linux)
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%Instructions: Replace the following: /home/jberry/CodecSDKTestVP8/MasterFile/SampleTestMaterial/src16.ivf , 128, Name_of_Oldest_Release_\n"
-            "%%             PlugIn, 6, VP8vNewest_PlugIn_DLib_DMode_API.exe, VP8vNewest_PlugIn_RLib_RMode_32Bit.exe, \n"
-            "%%              10, 100, 100, 20, and 100 with \n"
-            "%%              the settings you wish to test.\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "16@../TestClips/src16.ivf\n"
-            "%%49@../TestClips/src16.ivf@1@128@0@NA@NA@NA\n"
-            "19@../TestClips/src16.ivf@128\n"
-            "27@../TestClips/src16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "29@../TestClips/src16.ivf@128\n"
-            "36@../TestClips/src16.ivf@128\n"
-            "%%51@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "35@../TestClips/TestVectors\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "34@../TestClips/src16.ivf@0@128@10\n"
-            "34@../TestClips/src16.ivf@1@128@10\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "\n"
-            "%%%%%%%%Mode0%%%%%%%%\n"
-            "\n"
-            "7@../TestClips/src16.ivf@0@128\n"
-            "12@../TestClips/src16.ivf@0@128\n"
-            "15@../TestClips/src16.ivf@0@128\n"
-            "18@../TestClips/src16.ivf@0@128@6\n"
-            "21@../TestClips/src16.ivf@0@128\n"
-            "22@../TestClips/src16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@0@128\n"
-            "26@../TestClips/src16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@0@128\n"
-            "31@../TestClips/src16.ivf@0@128\n"
-            "%%34@../TestClips/src16.ivf@0@128\n"
-            "38@../TestClips/src16.ivf@0@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "\n"
-            "%%%%%%%%Mode1%%%%%%%%\n"
-            "1@../TestClips/BBB_1280x720_1500F.ivf@1@128\n"
-            "4@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "%%3@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "6@../TestClips/src16.ivf@1@128\n"
-            "7@../TestClips/src16.ivf@1@128\n"
-            "8@../TestClips/src16.ivf@1@128@0\n"
-            "8@../TestClips/src16.ivf@1@128@1\n"
-            "9@../TestClips/src16.ivf@1@128@0\n"
-            "9@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@0\n"
-            "10@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@1@../TestClips/SpecialCaseParameterFiles/1ChangeCPUWorksCPUUsage4.txt\n"
-            "11@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/BBB_1280x720_1500F.ivf@1@2048\n"
-            "13@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@1@128\n"
-            "18@../TestClips/src16.ivf@1@128@6\n"
-            "21@../TestClips/src16.ivf@1@128\n"
-            "22@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@1@128\n"
-            "26@../TestClips/src16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@1@128\n"
-            "31@../TestClips/src16.ivf@1@128\n"
-            "32@../TestClips/src16.ivf@1@128\n"
-            "%%34@../TestClips/src16.ivf@1@128\n"
-            "37@../TestClips/src16.ivf@1@128\n"
-            "%%%%42@../TestClips/src16.ivf@1@128@20@100\n"
-            "17@../TestClips/src16.ivf@1@128@-1@100\n"
-            "38@../TestClips/src16.ivf@1@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "\n"
-            "%%%%%%%%Mode2%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@2@128\n"
-            "6@../TestClips/src16.ivf@2@128\n"
-            "7@../TestClips/src16.ivf@2@128\n"
-            "8@../TestClips/src16.ivf@2@128@0\n"
-            "8@../TestClips/src16.ivf@2@128@1\n"
-            "9@../TestClips/src16.ivf@2@128@0\n"
-            "9@../TestClips/src16.ivf@2@128@1\n"
-            "10@../TestClips/src16.ivf@2@128@0\n"
-            "10@../TestClips/src16.ivf@2@128@1\n"
-            "11@../TestClips/src16.ivf@2@128\n"
-            "12@../TestClips/src16.ivf@2@128\n"
-            "13@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@2@128\n"
-            "18@../TestClips/src16.ivf@2@128@6\n"
-            "21@../TestClips/src16.ivf@2@128\n"
-            "22@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@2@128\n"
-            "26@../TestClips/src16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@2@128\n"
-            "31@../TestClips/src16.ivf@2@128\n"
-            "32@../TestClips/src16.ivf@2@128\n"
-            "%%34@../TestClips/src16.ivf@2@128\n"
-            "37@../TestClips/src16.ivf@2@128\n"
-            "%%%%42@../TestClips/src16.ivf@2@128@20@100\n"
-            "17@../TestClips/src16.ivf@2@128@-1@100\n"
-            "38@../TestClips/src16.ivf@2@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@2@128\n"
-
-            "%%%%%%%%Mode4%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@4@128\n"
-            "6@../TestClips/src16.ivf@4@128\n"
-            "7@../TestClips/src16.ivf@4@128\n"
-            "8@../TestClips/src16.ivf@4@128@0\n"
-            "8@../TestClips/src16.ivf@4@128@1\n"
-            "9@../TestClips/src16.ivf@4@128@0\n"
-            "9@../TestClips/src16.ivf@4@128@1\n"
-            "10@../TestClips/src16.ivf@4@128@0\n"
-            "10@../TestClips/src16.ivf@4@128@1\n"
-            "11@../TestClips/src16.ivf@4@128\n"
-            "12@../TestClips/src16.ivf@4@128\n"
-            "13@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@4@128\n"
-            "18@../TestClips/src16.ivf@4@128@6\n"
-            "21@../TestClips/src16.ivf@4@128\n"
-            "22@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@4@128\n"
-            "26@../TestClips/src16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@4@128\n"
-            "31@../TestClips/src16.ivf@4@128\n"
-            "32@../TestClips/src16.ivf@4@128\n"
-            "%%34@../TestClips/src16.ivf@4@128\n"
-            "37@../TestClips/src16.ivf@4@128\n"
-            "2@../TestClips/src16.ivf@4@128\n"
-            "%%%%42@../TestClips/src16.ivf@4@128@20@100\n"
-            "17@../TestClips/src16.ivf@4@128@-1@100\n"
-            "20@../TestClips/src16.ivf@4@128@10@24\n"
-            "30@../TestClips/src16.ivf@4@128\n"
-            "38@../TestClips/src16.ivf@4@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@4@128\n"
-            "\n"
-            "%%%%%%%%Mode5%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@5@128\n"
-            "6@../TestClips/src16.ivf@5@128\n"
-            "7@../TestClips/src16.ivf@5@128\n"
-            "8@../TestClips/src16.ivf@5@128@0\n"
-            "8@../TestClips/src16.ivf@5@128@1\n"
-            "9@../TestClips/src16.ivf@5@128@0\n"
-            "9@../TestClips/src16.ivf@5@128@1\n"
-            "10@../TestClips/src16.ivf@5@128@0\n"
-            "10@../TestClips/src16.ivf@5@128@1\n"
-            "11@../TestClips/src16.ivf@5@128\n"
-            "12@../TestClips/src16.ivf@5@128\n"
-            "13@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n"
-            "15@../TestClips/src16.ivf@5@128\n"
-            "18@../TestClips/src16.ivf@5@128@6\n"
-            "21@../TestClips/src16.ivf@5@128\n"
-            "22@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n"
-            "24@../TestClips/src16.ivf@5@128\n"
-            "26@../TestClips/src16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@5@128\n"
-            "31@../TestClips/src16.ivf@5@128\n"
-            "32@../TestClips/src16.ivf@5@128\n"
-            "%%34@../TestClips/src16.ivf@5@128\n"
-            "37@../TestClips/src16.ivf@5@128\n"
-            "2@../TestClips/src16.ivf@5@128\n"
-            "%%%%42@../TestClips/src16.ivf@5@128@20@100\n"
-            "17@../TestClips/src16.ivf@5@128@-1@100\n"
-            "20@../TestClips/src16.ivf@5@128@10@24\n"
-            "30@../TestClips/src16.ivf@5@128\n"
-            "38@../TestClips/src16.ivf@5@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@5@128\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-           );
+    OSStr = "Lin";
 #endif
+
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%%              \n");
+    fprintf(fp5, "%%              QuickTest %s32Bit\n", OSStr.c_str());
+    fprintf(fp5, "%%              \n");
+    fprintf(fp5, "%%              \n");
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf\n", EXTFINUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", GQVBQNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML2NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVORTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", OV2PSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cTestVectors\n", TVECTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", TV2BTNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", WMLMMNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@10\n", SPEEDNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@10\n", SPEEDNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode0%%%%\n");
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode1%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128\n", AlWDFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", CHGWRNUM, slashChar, slashChar, slashChar, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode2%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@2@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode4%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ALWLGNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@4@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@10@24\n", LGIFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", PLYALNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode5%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ALWLGNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@5@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@10@24\n", LGIFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", PLYALNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+
 
     printf("\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
 void Print6(string WorkingDir)
 {
-    string TextfileString6 = WorkingDir;
-    TextfileString6.erase(TextfileString6.end() - 25, TextfileString6.end());
-    //TextfileString6.append(slashCharStr);
-    TextfileString6.append("QuickTest_64Bit.txt");
+    string TextfileString5 = WorkingDir;
+    TextfileString5.erase(TextfileString5.end() - 25, TextfileString5.end());
+    TextfileString5.append("QuickTest_64Bit.txt");
 
-    FILE *fp6;
+    FILE *fp5;
 
-    if ((fp6 = freopen(TextfileString6.c_str(), "w", stderr)) == NULL)
+    if ((fp5 = fopen(TextfileString5.c_str(), "w")) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString6.c_str());
+        printf("Cannot open out put file: %s\n", TextfileString5.c_str());
         exit(1);
     }
 
+    string OSStr = "";
+
 #if defined(_WIN32)
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%Instructions: Replace the following: /home/jberry/CodecSDKTestVP8/MasterFile/SampleTestMaterial/src16.ivf , 128, Name_of_Oldest_Release_\n"
-            "%%              PlugIn, 6, VP8vNewest_PlugIn_DLib_DMode_API.exe, VP8vNewest_PlugIn_RLib_RMode_64Bit.exe, \n"
-            "%%              10, 100, 100, 20, and 100 with \n"
-            "%%              the settings you wish to test.\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n"
-            "16@..\\TestClips\\src16.ivf\n"
-            "%%49@..\\TestClips\\src16.ivf@1@128@0@NA@NA@NA\n"
-            "19@..\\TestClips\\src16.ivf@128\n"
-            "27@..\\TestClips\\src16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "29@..\\TestClips\\src16.ivf@128\n"
-            "36@..\\TestClips\\src16.ivf@128\n"
-            "%%51@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "35@..\\TestClips\\TestVectors\n"
-            "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n"
-            "25@..\\TestClips\\BBB_720x480_2000F.ivf@0@128\n"
-            "25@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "34@..\\TestClips\\src16.ivf@0@128@10\n"
-            "34@..\\TestClips\\src16.ivf@1@128@10\n"
-            "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n"
-            "\n"
-            "%%%%Mode0%%%%\n"
-            "\n"
-            "7@..\\TestClips\\src16.ivf@0@128\n"
-            "12@..\\TestClips\\src16.ivf@0@128\n"
-            "15@..\\TestClips\\src16.ivf@0@128\n"
-            "18@..\\TestClips\\src16.ivf@0@128@6\n"
-            "21@..\\TestClips\\src16.ivf@0@128\n"
-            "22@..\\TestClips\\src16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@0@128\n"
-            "26@..\\TestClips\\src16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@0@128\n"
-            "31@..\\TestClips\\src16.ivf@0@128\n"
-            "%%34@..\\TestClips\\src16.ivf@0@128\n"
-            "38@..\\TestClips\\src16.ivf@0@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@0@128\n"
-            "\n"
-            "%%%%Mode1%%%%\n"
-            "1@..\\TestClips\\BBB_1280x720_1500F.ivf@1@128\n"
-            "4@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "%%3@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "6@..\\TestClips\\src16.ivf@1@128\n"
-            "7@..\\TestClips\\src16.ivf@1@128\n"
-            "8@..\\TestClips\\src16.ivf@1@128@0\n"
-            "8@..\\TestClips\\src16.ivf@1@128@1\n"
-            "9@..\\TestClips\\src16.ivf@1@128@0\n"
-            "9@..\\TestClips\\src16.ivf@1@128@1\n"
-            "10@..\\TestClips\\src16.ivf@1@128@0\n"
-            "10@..\\TestClips\\src16.ivf@1@128@1\n"
-            "10@..\\TestClips\\src16.ivf@1@128@1@..\\TestClips\\SpecialCaseParameterFiles\\1ChangeCPUWorksCPUUsage4.txt\n"
-            "11@..\\TestClips\\src16.ivf@1@128\n"
-            "12@..\\TestClips\\src16.ivf@1@128\n"
-            "12@..\\TestClips\\BBB_1280x720_1500F.ivf@1@2048\n"
-            "13@..\\TestClips\\src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@1@128\n"
-            "18@..\\TestClips\\src16.ivf@1@128@6\n"
-            "21@..\\TestClips\\src16.ivf@1@128\n"
-            "22@..\\TestClips\\src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@1@128\n"
-            "26@..\\TestClips\\src16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@1@128\n"
-            "31@..\\TestClips\\src16.ivf@1@128\n"
-            "32@..\\TestClips\\src16.ivf@1@128\n"
-            "%%34@..\\TestClips\\src16.ivf@1@128\n"
-            "37@..\\TestClips\\src16.ivf@1@128\n"
-            "%%42@..\\TestClips\\src16.ivf@1@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@1@128@-1@100\n"
-            "38@..\\TestClips\\src16.ivf@1@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@1@128\n"
-            "\n"
-            "%%%%Mode2%%%%\n"
-            "%%3@..\\TestClips\\src16.ivf@2@128\n"
-            "6@..\\TestClips\\src16.ivf@2@128\n"
-            "7@..\\TestClips\\src16.ivf@2@128\n"
-            "8@..\\TestClips\\src16.ivf@2@128@0\n"
-            "8@..\\TestClips\\src16.ivf@2@128@1\n"
-            "9@..\\TestClips\\src16.ivf@2@128@0\n"
-            "9@..\\TestClips\\src16.ivf@2@128@1\n"
-            "10@..\\TestClips\\src16.ivf@2@128@0\n"
-            "10@..\\TestClips\\src16.ivf@2@128@1\n"
-            "11@..\\TestClips\\src16.ivf@2@128\n"
-            "12@..\\TestClips\\src16.ivf@2@128\n"
-            "13@..\\TestClips\\src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@2@128\n"
-            "18@..\\TestClips\\src16.ivf@2@128@6\n"
-            "21@..\\TestClips\\src16.ivf@2@128\n"
-            "22@..\\TestClips\\src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@2@128\n"
-            "26@..\\TestClips\\src16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@2@128\n"
-            "31@..\\TestClips\\src16.ivf@2@128\n"
-            "32@..\\TestClips\\src16.ivf@2@128\n"
-            "%%34@..\\TestClips\\src16.ivf@2@128\n"
-            "37@..\\TestClips\\src16.ivf@2@128\n"
-            "%%42@..\\TestClips\\src16.ivf@2@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@2@128@-1@100\n"
-            "38@..\\TestClips\\src16.ivf@2@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@2@128\n"
-
-            "%%%%Mode4%%%%\n"
-            "%%3@..\\TestClips\\src16.ivf@4@128\n"
-            "6@..\\TestClips\\src16.ivf@4@128\n"
-            "7@..\\TestClips\\src16.ivf@4@128\n"
-            "8@..\\TestClips\\src16.ivf@4@128@0\n"
-            "8@..\\TestClips\\src16.ivf@4@128@1\n"
-            "9@..\\TestClips\\src16.ivf@4@128@0\n"
-            "9@..\\TestClips\\src16.ivf@4@128@1\n"
-            "10@..\\TestClips\\src16.ivf@4@128@0\n"
-            "10@..\\TestClips\\src16.ivf@4@128@1\n"
-            "11@..\\TestClips\\src16.ivf@4@128\n"
-            "12@..\\TestClips\\src16.ivf@4@128\n"
-            "13@..\\TestClips\\src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@4@128\n"
-            "18@..\\TestClips\\src16.ivf@4@128@6\n"
-            "21@..\\TestClips\\src16.ivf@4@128\n"
-            "22@..\\TestClips\\src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@4@128\n"
-            "26@..\\TestClips\\src16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@4@128\n"
-            "31@..\\TestClips\\src16.ivf@4@128\n"
-            "32@..\\TestClips\\src16.ivf@4@128\n"
-            "%%34@..\\TestClips\\src16.ivf@4@128\n"
-            "37@..\\TestClips\\src16.ivf@4@128\n"
-            "2@..\\TestClips\\src16.ivf@4@128\n"
-            "%%42@..\\TestClips\\src16.ivf@4@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@4@128@-1@100\n"
-            "20@..\\TestClips\\src16.ivf@4@128@10@24\n"
-            "30@..\\TestClips\\src16.ivf@4@128\n"
-            "38@..\\TestClips\\src16.ivf@4@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@4@128\n"
-            "\n"
-            "%%%%Mode5%%%%\n"
-            "%%3@..\\TestClips\\src16.ivf@5@128\n"
-            "6@..\\TestClips\\src16.ivf@5@128\n"
-            "7@..\\TestClips\\src16.ivf@5@128\n"
-            "8@..\\TestClips\\src16.ivf@5@128@0\n"
-            "8@..\\TestClips\\src16.ivf@5@128@1\n"
-            "9@..\\TestClips\\src16.ivf@5@128@0\n"
-            "9@..\\TestClips\\src16.ivf@5@128@1\n"
-            "10@..\\TestClips\\src16.ivf@5@128@0\n"
-            "10@..\\TestClips\\src16.ivf@5@128@1\n"
-            "11@..\\TestClips\\src16.ivf@5@128\n"
-            "12@..\\TestClips\\src16.ivf@5@128\n"
-            "13@..\\TestClips\\src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@..\\TestClips\\src16.ivf@5@128\n"
-            "18@..\\TestClips\\src16.ivf@5@128@6\n"
-            "21@..\\TestClips\\src16.ivf@5@128\n"
-            "22@..\\TestClips\\src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@..\\TestClips\\src16.ivf@5@128\n"
-            "26@..\\TestClips\\src16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@..\\TestClips\\src16.ivf@5@128\n"
-            "31@..\\TestClips\\src16.ivf@5@128\n"
-            "32@..\\TestClips\\src16.ivf@5@128\n"
-            "%%34@..\\TestClips\\src16.ivf@5@128\n"
-            "37@..\\TestClips\\src16.ivf@5@128\n"
-            "2@..\\TestClips\\src16.ivf@5@128\n"
-            "%%42@..\\TestClips\\src16.ivf@5@128@20@100\n"
-            "17@..\\TestClips\\src16.ivf@5@128@-1@100\n"
-            "20@..\\TestClips\\src16.ivf@5@128@10@24\n"
-            "30@..\\TestClips\\src16.ivf@5@128\n"
-            "38@..\\TestClips\\src16.ivf@5@128\n"
-            "14@..\\TestClips\\BBB_720x480_2000F.ivf@5@128\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-           );
+    OSStr = "Win";
 #elif defined(__APPLE__)
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%Instructions: Replace the following: /home/jberry/CodecSDKTestVP8/MasterFile/SampleTestMaterial/src16.ivf , 128, Name_of_Oldest_Release_\n"
-            "%%             PlugIn, 6, VP8vNewest_PlugIn_DLib_DMode_API.exe, VP8vNewest_PlugIn_RLib_RMode_64Bit.exe, \n"
-            "%%              10, 100, 100, 20, and 100 with \n"
-            "%%              the settings you wish to test.\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "16@../TestClips/src16.ivf\n"
-            "%%49@../TestClips/src16.ivf@1@128@0@NA@NA@NA\n"
-            "19@../TestClips/src16.ivf@128\n"
-            "27@../TestClips/src16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "29@../TestClips/src16.ivf@128\n"
-            "36@../TestClips/src16.ivf@128\n"
-            "%%51@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "35@../TestClips/TestVectors\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "34@../TestClips/src16.ivf@0@128@10\n"
-            "34@../TestClips/src16.ivf@1@128@10\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "\n"
-            "%%%%%%%%Mode0%%%%%%%%\n"
-            "\n"
-            "7@../TestClips/src16.ivf@0@128\n"
-            "12@../TestClips/src16.ivf@0@128\n"
-            "15@../TestClips/src16.ivf@0@128\n"
-            "18@../TestClips/src16.ivf@0@128@6\n"
-            "21@../TestClips/src16.ivf@0@128\n"
-            "22@../TestClips/src16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@0@128\n"
-            "26@../TestClips/src16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@0@128\n"
-            "31@../TestClips/src16.ivf@0@128\n"
-            "%%34@../TestClips/src16.ivf@0@128\n"
-            "38@../TestClips/src16.ivf@0@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "\n"
-            "%%%%%%%%Mode1%%%%%%%%\n"
-            "1@../TestClips/BBB_1280x720_1500F.ivf@1@128\n"
-            "4@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "%%3@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "6@../TestClips/src16.ivf@1@128\n"
-            "7@../TestClips/src16.ivf@1@128\n"
-            "8@../TestClips/src16.ivf@1@128@0\n"
-            "8@../TestClips/src16.ivf@1@128@1\n"
-            "9@../TestClips/src16.ivf@1@128@0\n"
-            "9@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@0\n"
-            "10@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@1@../TestClips/SpecialCaseParameterFiles/1ChangeCPUWorksCPUUsage4.txt\n"
-            "11@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/BBB_1280x720_1500F.ivf@1@2048\n"
-            "13@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@1@128\n"
-            "18@../TestClips/src16.ivf@1@128@6\n"
-            "21@../TestClips/src16.ivf@1@128\n"
-            "22@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@1@128\n"
-            "26@../TestClips/src16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@1@128\n"
-            "31@../TestClips/src16.ivf@1@128\n"
-            "32@../TestClips/src16.ivf@1@128\n"
-            "%%34@../TestClips/src16.ivf@1@128\n"
-            "37@../TestClips/src16.ivf@1@128\n"
-            "%%%%42@../TestClips/src16.ivf@1@128@20@100\n"
-            "17@../TestClips/src16.ivf@1@128@-1@100\n"
-            "38@../TestClips/src16.ivf@1@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "\n"
-            "%%%%%%%%Mode2%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@2@128\n"
-            "6@../TestClips/src16.ivf@2@128\n"
-            "7@../TestClips/src16.ivf@2@128\n"
-            "8@../TestClips/src16.ivf@2@128@0\n"
-            "8@../TestClips/src16.ivf@2@128@1\n"
-            "9@../TestClips/src16.ivf@2@128@0\n"
-            "9@../TestClips/src16.ivf@2@128@1\n"
-            "10@../TestClips/src16.ivf@2@128@0\n"
-            "10@../TestClips/src16.ivf@2@128@1\n"
-            "11@../TestClips/src16.ivf@2@128\n"
-            "12@../TestClips/src16.ivf@2@128\n"
-            "13@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@2@128\n"
-            "18@../TestClips/src16.ivf@2@128@6\n"
-            "21@../TestClips/src16.ivf@2@128\n"
-            "22@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@2@128\n"
-            "26@../TestClips/src16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@2@128\n"
-            "31@../TestClips/src16.ivf@2@128\n"
-            "32@../TestClips/src16.ivf@2@128\n"
-            "%%34@../TestClips/src16.ivf@2@128\n"
-            "37@../TestClips/src16.ivf@2@128\n"
-            "%%%%42@../TestClips/src16.ivf@2@128@20@100\n"
-            "17@../TestClips/src16.ivf@2@128@-1@100\n"
-            "38@../TestClips/src16.ivf@2@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@2@128\n"
-
-            "%%%%%%%%Mode4%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@4@128\n"
-            "6@../TestClips/src16.ivf@4@128\n"
-            "7@../TestClips/src16.ivf@4@128\n"
-            "8@../TestClips/src16.ivf@4@128@0\n"
-            "8@../TestClips/src16.ivf@4@128@1\n"
-            "9@../TestClips/src16.ivf@4@128@0\n"
-            "9@../TestClips/src16.ivf@4@128@1\n"
-            "10@../TestClips/src16.ivf@4@128@0\n"
-            "10@../TestClips/src16.ivf@4@128@1\n"
-            "11@../TestClips/src16.ivf@4@128\n"
-            "12@../TestClips/src16.ivf@4@128\n"
-            "13@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@4@128\n"
-            "18@../TestClips/src16.ivf@4@128@6\n"
-            "21@../TestClips/src16.ivf@4@128\n"
-            "22@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@4@128\n"
-            "26@../TestClips/src16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@4@128\n"
-            "31@../TestClips/src16.ivf@4@128\n"
-            "32@../TestClips/src16.ivf@4@128\n"
-            "%%34@../TestClips/src16.ivf@4@128\n"
-            "37@../TestClips/src16.ivf@4@128\n"
-            "2@../TestClips/src16.ivf@4@128\n"
-            "%%%%42@../TestClips/src16.ivf@4@128@20@100\n"
-            "17@../TestClips/src16.ivf@4@128@-1@100\n"
-            "20@../TestClips/src16.ivf@4@128@10@24\n"
-            "30@../TestClips/src16.ivf@4@128\n"
-            "38@../TestClips/src16.ivf@4@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@4@128\n"
-            "\n"
-            "%%%%%%%%Mode5%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@5@128\n"
-            "6@../TestClips/src16.ivf@5@128\n"
-            "7@../TestClips/src16.ivf@5@128\n"
-            "8@../TestClips/src16.ivf@5@128@0\n"
-            "8@../TestClips/src16.ivf@5@128@1\n"
-            "9@../TestClips/src16.ivf@5@128@0\n"
-            "9@../TestClips/src16.ivf@5@128@1\n"
-            "10@../TestClips/src16.ivf@5@128@0\n"
-            "10@../TestClips/src16.ivf@5@128@1\n"
-            "11@../TestClips/src16.ivf@5@128\n"
-            "12@../TestClips/src16.ivf@5@128\n"
-            "13@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@5@128\n"
-            "18@../TestClips/src16.ivf@5@128@6\n"
-            "21@../TestClips/src16.ivf@5@128\n"
-            "22@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@5@128\n"
-            "26@../TestClips/src16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@5@128\n"
-            "31@../TestClips/src16.ivf@5@128\n"
-            "32@../TestClips/src16.ivf@5@128\n"
-            "%%34@../TestClips/src16.ivf@5@128\n"
-            "37@../TestClips/src16.ivf@5@128\n"
-            "2@../TestClips/src16.ivf@5@128\n"
-            "%%%%42@../TestClips/src16.ivf@5@128@20@100\n"
-            "17@../TestClips/src16.ivf@5@128@-1@100\n"
-            "20@../TestClips/src16.ivf@5@128@10@24\n"
-            "30@../TestClips/src16.ivf@5@128\n"
-            "38@../TestClips/src16.ivf@5@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@5@128\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-           );
+    OSStr = "Mac";
 #elif defined(linux)
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%Instructions: Replace the following: /home/jberry/CodecSDKTestVP8/MasterFile/SampleTestMaterial/src16.ivf , 128, Name_of_Oldest_Release_\n"
-            "%%             PlugIn, 6, VP8vNewest_PlugIn_DLib_DMode_API.exe, VP8vNewest_PlugIn_RLib_RMode_64Bit.exe, \n"
-            "%%              10, 100, 100, 20, and 100 with \n"
-            "%%              the settings you wish to test.\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "16@../TestClips/src16.ivf\n"
-            "%%49@../TestClips/src16.ivf@1@128@0@NA@NA@NA\n"
-            "19@../TestClips/src16.ivf@128\n"
-            "27@../TestClips/src16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "29@../TestClips/src16.ivf@128\n"
-            "36@../TestClips/src16.ivf@128\n"
-            "%%51@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "35@../TestClips/TestVectors\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "25@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "34@../TestClips/src16.ivf@0@128@10\n"
-            "34@../TestClips/src16.ivf@1@128@10\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "\n"
-            "%%%%%%%%Mode0%%%%%%%%\n"
-            "\n"
-            "7@../TestClips/src16.ivf@0@128\n"
-            "12@../TestClips/src16.ivf@0@128\n"
-            "15@../TestClips/src16.ivf@0@128\n"
-            "18@../TestClips/src16.ivf@0@128@6\n"
-            "21@../TestClips/src16.ivf@0@128\n"
-            "22@../TestClips/src16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@0@128\n"
-            "26@../TestClips/src16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@0@128\n"
-            "31@../TestClips/src16.ivf@0@128\n"
-            "%%34@../TestClips/src16.ivf@0@128\n"
-            "38@../TestClips/src16.ivf@0@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@0@128\n"
-            "\n"
-            "%%%%%%%%Mode1%%%%%%%%\n"
-            "1@../TestClips/BBB_1280x720_1500F.ivf@1@128\n"
-            "4@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "%%3@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "6@../TestClips/src16.ivf@1@128\n"
-            "7@../TestClips/src16.ivf@1@128\n"
-            "8@../TestClips/src16.ivf@1@128@0\n"
-            "8@../TestClips/src16.ivf@1@128@1\n"
-            "9@../TestClips/src16.ivf@1@128@0\n"
-            "9@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@0\n"
-            "10@../TestClips/src16.ivf@1@128@1\n"
-            "10@../TestClips/src16.ivf@1@128@1@../TestClips/SpecialCaseParameterFiles/1ChangeCPUWorksCPUUsage4.txt\n"
-            "11@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/src16.ivf@1@128\n"
-            "12@../TestClips/BBB_1280x720_1500F.ivf@1@2048\n"
-            "13@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@1@128\n"
-            "18@../TestClips/src16.ivf@1@128@6\n"
-            "21@../TestClips/src16.ivf@1@128\n"
-            "22@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@1@128\n"
-            "26@../TestClips/src16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@1@128\n"
-            "31@../TestClips/src16.ivf@1@128\n"
-            "32@../TestClips/src16.ivf@1@128\n"
-            "%%34@../TestClips/src16.ivf@1@128\n"
-            "37@../TestClips/src16.ivf@1@128\n"
-            "%%%%42@../TestClips/src16.ivf@1@128@20@100\n"
-            "17@../TestClips/src16.ivf@1@128@-1@100\n"
-            "38@../TestClips/src16.ivf@1@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@1@128\n"
-            "\n"
-            "%%%%%%%%Mode2%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@2@128\n"
-            "6@../TestClips/src16.ivf@2@128\n"
-            "7@../TestClips/src16.ivf@2@128\n"
-            "8@../TestClips/src16.ivf@2@128@0\n"
-            "8@../TestClips/src16.ivf@2@128@1\n"
-            "9@../TestClips/src16.ivf@2@128@0\n"
-            "9@../TestClips/src16.ivf@2@128@1\n"
-            "10@../TestClips/src16.ivf@2@128@0\n"
-            "10@../TestClips/src16.ivf@2@128@1\n"
-            "11@../TestClips/src16.ivf@2@128\n"
-            "12@../TestClips/src16.ivf@2@128\n"
-            "13@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@2@128\n"
-            "18@../TestClips/src16.ivf@2@128@6\n"
-            "21@../TestClips/src16.ivf@2@128\n"
-            "22@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@2@128\n"
-            "26@../TestClips/src16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@2@128\n"
-            "31@../TestClips/src16.ivf@2@128\n"
-            "32@../TestClips/src16.ivf@2@128\n"
-            "%%34@../TestClips/src16.ivf@2@128\n"
-            "37@../TestClips/src16.ivf@2@128\n"
-            "%%%%42@../TestClips/src16.ivf@2@128@20@100\n"
-            "17@../TestClips/src16.ivf@2@128@-1@100\n"
-            "38@../TestClips/src16.ivf@2@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@2@128\n"
-
-            "%%%%%%%%Mode4%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@4@128\n"
-            "6@../TestClips/src16.ivf@4@128\n"
-            "7@../TestClips/src16.ivf@4@128\n"
-            "8@../TestClips/src16.ivf@4@128@0\n"
-            "8@../TestClips/src16.ivf@4@128@1\n"
-            "9@../TestClips/src16.ivf@4@128@0\n"
-            "9@../TestClips/src16.ivf@4@128@1\n"
-            "10@../TestClips/src16.ivf@4@128@0\n"
-            "10@../TestClips/src16.ivf@4@128@1\n"
-            "11@../TestClips/src16.ivf@4@128\n"
-            "12@../TestClips/src16.ivf@4@128\n"
-            "13@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@4@128\n"
-            "18@../TestClips/src16.ivf@4@128@6\n"
-            "21@../TestClips/src16.ivf@4@128\n"
-            "22@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@4@128\n"
-            "26@../TestClips/src16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@4@128\n"
-            "31@../TestClips/src16.ivf@4@128\n"
-            "32@../TestClips/src16.ivf@4@128\n"
-            "%%34@../TestClips/src16.ivf@4@128\n"
-            "37@../TestClips/src16.ivf@4@128\n"
-            "2@../TestClips/src16.ivf@4@128\n"
-            "%%%%42@../TestClips/src16.ivf@4@128@20@100\n"
-            "17@../TestClips/src16.ivf@4@128@-1@100\n"
-            "20@../TestClips/src16.ivf@4@128@10@24\n"
-            "30@../TestClips/src16.ivf@4@128\n"
-            "38@../TestClips/src16.ivf@4@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@4@128\n"
-            "\n"
-            "%%%%%%%%Mode5%%%%%%%%\n"
-            "%%3@../TestClips/src16.ivf@5@128\n"
-            "6@../TestClips/src16.ivf@5@128\n"
-            "7@../TestClips/src16.ivf@5@128\n"
-            "8@../TestClips/src16.ivf@5@128@0\n"
-            "8@../TestClips/src16.ivf@5@128@1\n"
-            "9@../TestClips/src16.ivf@5@128@0\n"
-            "9@../TestClips/src16.ivf@5@128@1\n"
-            "10@../TestClips/src16.ivf@5@128@0\n"
-            "10@../TestClips/src16.ivf@5@128@1\n"
-            "11@../TestClips/src16.ivf@5@128\n"
-            "12@../TestClips/src16.ivf@5@128\n"
-            "13@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n"
-            "15@../TestClips/src16.ivf@5@128\n"
-            "18@../TestClips/src16.ivf@5@128@6\n"
-            "21@../TestClips/src16.ivf@5@128\n"
-            "22@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n"
-            "24@../TestClips/src16.ivf@5@128\n"
-            "26@../TestClips/src16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n"
-            "28@../TestClips/src16.ivf@5@128\n"
-            "31@../TestClips/src16.ivf@5@128\n"
-            "32@../TestClips/src16.ivf@5@128\n"
-            "%%34@../TestClips/src16.ivf@5@128\n"
-            "37@../TestClips/src16.ivf@5@128\n"
-            "2@../TestClips/src16.ivf@5@128\n"
-            "%%%%42@../TestClips/src16.ivf@5@128@20@100\n"
-            "17@../TestClips/src16.ivf@5@128@-1@100\n"
-            "20@../TestClips/src16.ivf@5@128@10@24\n"
-            "30@../TestClips/src16.ivf@5@128\n"
-            "38@../TestClips/src16.ivf@5@128\n"
-            "14@../TestClips/BBB_720x480_2000F.ivf@5@128\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-           );
+    OSStr = "Lin";
 #endif
 
-    printf("\n\nQuick Test file created:\n%s\n\n", TextfileString6.c_str());
-    fclose(fp6);
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%%              \n");
+    fprintf(fp5, "%%              QuickTest %s64Bit\n", OSStr.c_str());
+    fprintf(fp5, "%%              \n");
+    fprintf(fp5, "%%              \n");
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf\n", EXTFINUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", GQVBQNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML2NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVORTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", OV2PSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cTestVectors\n", TVECTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", TV2BTNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", WMLMMNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@10\n", SPEEDNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@10\n", SPEEDNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode0%%%%\n");
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode1%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128\n", AlWDFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", CHGWRNUM, slashChar, slashChar, slashChar, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode2%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@2@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode4%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ALWLGNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@4@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@10@24\n", LGIFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", PLYALNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "\n");
+    fprintf(fp5, "%%%%Mode5%%%%\n");
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ALWLGNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ALWSRNUM, slashChar, slashChar);
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@5@128@20@100\n", ALTFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@6\n", AUTKFNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", BUFLVNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CPUDENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CHGWRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DTARTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ENCBONUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ERRMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@20@80\n", FIXDQNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@10@24\n", LGIFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MAXQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MINQUNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", NOISENUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", PLYALNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", POSTPNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RECONBUF, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RSDWMNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", UNDSHNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", VERSINUM, slashChar, slashChar);
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+
+
+    printf("\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
+    fclose(fp5);
 }
 void PrintTxtFiles(string WorkingDir)
 {
@@ -2486,29 +1826,44 @@ void FormatedPrint(string SummaryStr, int selector)
     //selector == 2 -> Help
     //selector == 3 -> Function
     //selector == 4 -> Other non formatted output
+    //selector == 5 -> Individual Pass Fail output
+
     string SummaryStrOutput;
+    int EndOfLineLength = 0;
 
     if (selector == 1 || selector == 2 || selector == 3) //add padding for formating
     {
         SummaryStrOutput.append("         ");
     }
 
+    if (selector == 5) //add padding for formating
+    {
+        SummaryStrOutput.append(" * ");
+    }
+
+    //determine cut off to keep words whole
+    int Cutoff;
+
+    if (selector == 1 || selector == 2 || selector == 3)
+    {
+        Cutoff = 66;
+    }
+
+    if (selector == 4)
+    {
+        Cutoff = 79;
+    }
+
+    if (selector == 5)
+    {
+        Cutoff = 70;
+    }
+
     int x = 0;
 
-    while (x + 66 < SummaryStr.length())
+    while (x + Cutoff < SummaryStr.length())
     {
-        //determine cut off to keep words whole
-        int Cutoff;
 
-        if (selector == 1 || selector == 2 || selector == 3)
-        {
-            Cutoff = 66;
-        }
-
-        if (selector == 4)
-        {
-            Cutoff = 79;
-        }
 
         if (SummaryStr.substr(x + Cutoff + 1, 1).compare(" ") == 0 || SummaryStr.substr(x + Cutoff, 1).compare(" ") == 0)
         {
@@ -2527,9 +1882,15 @@ void FormatedPrint(string SummaryStr, int selector)
         //add the properly formated string to the output string
         SummaryStrOutput.append(SummaryStr.substr(x, Cutoff));
 
+
         if (selector == 1 || selector == 2 || selector == 3) //add padding for formating
         {
             SummaryStrOutput.append("\n         ");
+        }
+
+        if (selector == 5) //add padding for formating
+        {
+            SummaryStrOutput.append("\n   ");
         }
 
         x = x + Cutoff;
@@ -2538,6 +1899,22 @@ void FormatedPrint(string SummaryStr, int selector)
         {
             x++;
         }
+
+        if (selector == 1 || selector == 2 || selector == 3)
+        {
+            Cutoff = 66;
+        }
+
+        if (selector == 4)
+        {
+            Cutoff = 79;
+        }
+
+        if (selector == 5)
+        {
+            Cutoff = 70;
+        }
+
     }
 
     SummaryStrOutput.append(SummaryStr.substr(x, SummaryStr.length() - x));
@@ -2565,6 +1942,12 @@ void FormatedPrint(string SummaryStr, int selector)
         fprintf(stderr, "%s", SummaryStrOutput.c_str());
     }
 
+    if (selector == 5)
+    {
+        printf("%s", SummaryStrOutput.c_str());
+        fprintf(stderr, "%s", SummaryStrOutput.c_str());
+    }
+
     return;
 }
 void TestHelp(int argc, char *argv[], string WorkingDir)
@@ -2585,13 +1968,13 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
             "    <Input Text File>\n"
             "    <Optional - Input Test Directory>\n");
 
-        FormatedPrint("Runs functions from an input file and summarizes results.  Test can be run in four modes.  Mode 1: Create Compressions and run tests.  Mode 2: Create Compressions Only.  Mode 3: Run Tests on Pre-existing Compressions and Mode 4 resume Tests in progress.  To create a template driver text file use the command: CreateSampleTextFiles", 1);
+        FormatedPrint("The test runs tests from an input file and summarizes the results. The test can be run in four modes: Mode 1 - Create compressions and run tests, Mode 2 - Create compressions only, Mode 3 - Run tests on preexisting compressions, and Mode 4 - Resume tests in progress. To create a template driver text file use the command: CreateSampleTextFiles.", 1);
     }
 
-    if (selector == 1)
+    if (selector == AlWDFNUM)
     {
         printf("\nUse:\n\n"
-               " 1 AllowDF \n\n"
+               "%2i AllowDF \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2602,16 +1985,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , AlWDFNUM);
 
-        FormatedPrint("The test creates two files the first with Drop Frames on the second with Drop Frames off then tests them and compares sizes. If Drop Frames on is smaller than Drop Frames off the Test passes", 1);
+        FormatedPrint("The test creates two files; the first with Drop Frames on, the second with Drop Frames off. It then records and compares the number of frames each file has.  If Drop Frames on has fewer frames than Drop Frames off; the test passes.", 1);
 
     }
 
-    if (selector == 2)
+    if (selector == ALWLGNUM)
     {
         printf("\nUse:\n\n"
-               "2  AllowLag \n\n"
+               "%2i AllowLag \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2622,15 +2005,15 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , ALWLGNUM);
 
-        FormatedPrint("The Test creates two compressions the first with Allow Lag equal to 0 the second with Allow Lag equal to 1.  If the two files are not identical the test passes.", 1);
+        FormatedPrint("The test creates two compressions; the first with Allow Lag equal to 0, the second with Allow Lag equal to 1.  If the correct number of lagged frames are detected via quantizer output, alternate reference frames exist for Allow Lag on, Allow Lag on has the same number of visible frames as Allow Lag off, and Allow Lag on is not identical to Allow Lag off; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
     }
 
-    if (selector == 3)
+    if (selector == ALWSRNUM)
     {
         printf("\nUse:\n\n"
-               " 3 AllowSpatialResampling \n\n"
+               "%2i AllowSpatialResampling \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2641,35 +2024,35 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , ALWSRNUM);
 
-        FormatedPrint("The Test creates two files the first with  Spatial Resampling off the second with  Spatial Resampling on then tests them and compares sizes. If  Spatial Resampling on is smaller than Spatial Resampling off the Test passes", 1);
+        FormatedPrint("The test creates two files the first with Spatial Resampling off the second with Spatial Resampling on. The test then records the number of resized frames for each and computes the PSNR for Spatial Resampling on.  If the number of resized frames for Spatial Resampling on is greater than 0, the number of resized frames for Spatial Resampling off equals 0, and the PSNR calculated for Spatial Resampling on is greater than 15; the test passes.", 1);
     }
 
-    if (selector == 4)
+    //if (selector == ALWS2NUM)
+    //{
+    //    printf("\nUse:\n\n"
+    //           "%2i AllowSpatialResampling2 \n\n"
+    //           "    <inputfile>\n"
+    //           "    <Mode>\n"
+    //           "          (0)Realtime/Live Encoding\n"
+    //           "          (1)Good Quality Fast Encoding\n"
+    //           "          (2)One Pass Best Quality\n"
+    //           "          (3)Two Pass - First Pass\n"
+    //           "          (4)Two Pass\n"
+    //           "          (5)Two Pass Best Quality\n"
+    //           "    <Target Bit Rate>\n "
+    //           "	 <Optional Settings File>\n"
+    //          ,ALWS2NUM);
+
+    //    FormatedPrint("The Test creates a file with AllowSpatialResampling on and Tests its PSNR. If its PSNR is greater than 15 the test passes.", 1);
+
+    //}
+
+    if (selector == ALTFRNUM)
     {
         printf("\nUse:\n\n"
-               " 4 AllowSpatialResampling2 \n\n"
-               "    <inputfile>\n"
-               "    <Mode>\n"
-               "          (0)Realtime/Live Encoding\n"
-               "          (1)Good Quality Fast Encoding\n"
-               "          (2)One Pass Best Quality\n"
-               "          (3)Two Pass - First Pass\n"
-               "          (4)Two Pass\n"
-               "          (5)Two Pass Best Quality\n"
-               "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
-              );
-
-        FormatedPrint("The Test creates a file with AllowSpatialResampling on and Tests its PSNR. If its PSNR is greater than 15 the test passes.", 1);
-
-    }
-
-    if (selector == 5)
-    {
-        printf("\nUse:\n\n"
-               "5  AltFreqTest \n\n"
+               "%2i AltFreqTest \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2682,15 +2065,15 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Alt Freq 1>\n"
                "    <Alt Freq 2>\n"
                "	 <Optional Settings File>\n"
-              );
+               , ALTFRNUM);
 
-        FormatedPrint("The Test creates two compressions each with user input Alternate Frequencies.  It then compares the compressions.  If the files are not identical the test passes.", 1);
+        FormatedPrint("", 1);
     }
 
-    if (selector == 6)
+    if (selector == AUTKFNUM)
     {
         printf("\nUse:\n\n"
-               " 6 AutoKeyFramingWorks \n\n"
+               "%2i AutoKeyFramingWorks \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2701,16 +2084,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
                "	 <Optional Settings File>\n"
-              );
+               , AUTKFNUM);
 
-        FormatedPrint("The Test Creates two files with identical parameters setting auto key frame equal to 1.  The test then checks to make sure that the key frames for both files occur in identical locations if so the Test passes. ", 1);
+        FormatedPrint("The test creates two files with identical parameters setting Auto Key Frame equal to 6. The test then records the placement of each files key frames.  If both files key frames occur in identical locations and at least as frequently as Auto Key Frame dictates; the test passes.", 1);
 
     }
 
-    if (selector == 7)
+    if (selector == BUFLVNUM)
     {
         printf("\nUse:\n\n"
-               " 7 BufferLevelWorks \n\n"
+               "%2i BufferLevelWorks \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2721,16 +2104,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , BUFLVNUM);
 
-        FormatedPrint("The Test creates a Compression  and runs CheckPBM on it if CheckPBM Returns -11 Test Passes.", 1);
+        FormatedPrint("The test creates a compression and runs CheckPBM on it.  If no buffer under run is detected; the test passes.", 1);
 
     }
 
-    if (selector == 8)
+    if (selector == CPUDENUM)
     {
         printf("\nUse:\n\n"
-               " 8 CPUDecOnlyWorks \n\n"
+               "%2i CPUDecOnlyWorks \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2742,16 +2125,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <Version>\n"
                "	  <Optional Settings File>\n"
-              );
+               , CPUDENUM);
 
-        FormatedPrint("The Test creates a compression of the user input version and then decompresses it for On2_CPUID values ranging from 0 to 11. The Test then compares them against one another.  If all compressions are identical and the times to decompress them are not the test passes.", 1);
+        FormatedPrint("The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 11. The test then compares them against one another.  If all compressions are identical and the times to decompress them are not; the test passes.", 1);
 
     }
 
-    if (selector == 9)
+    /*if (selector == CHGCPNUM)
     {
         printf("\nUse:\n\n"
-               " 9 ChangeCPUDec \n\n"
+               "%2i ChangeCPUDec \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2763,16 +2146,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <Version>\n"
                "	  <Optional Settings File>\n"
-              );
+              ,CHGCPNUM);
 
         FormatedPrint("The Test creates a compression of the user input version and then decompresses it for On2_CPUID values 0 1 3 and 7.  The Test then compares them against one another.  If all compressions are identical and the times to compress them are not the test passes.", 1);
 
-    }
+    }*/
 
-    if (selector == 10)
+    if (selector == CHGWRNUM)
     {
         printf("\nUse:\n\n"
-               " 10 ChangeCPUWorks \n\n"
+               "%2i ChangeCPUWorks \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2784,16 +2167,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <Version>\n"
                "	  <Optional Settings File>\n"
-              );
+               , CHGWRNUM);
 
-        FormatedPrint("The Test creates compressions of the user input version with On2_CPUID's 0 1 3 7 and 15.  If all compressions are identical and compression times are not the test passes.", 1);
+        FormatedPrint("The test creates compressions of the user input version (0-3) with ON2_SIMD_CAPS values 0 1 3 7 and 15.  If all compressions are identical and compression times are not the test passes.", 1);
 
     }
 
-    if (selector == 11)
+    if (selector == DFWMWNUM)
     {
         printf("\nUse:\n\n"
-               "11 DFWMTest \n\n"
+               "%2i DFWMTest \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2804,16 +2187,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , DFWMWNUM);
 
-        FormatedPrint("The Test creates 6 Compressions with DFWM values of 100 80 60 40 20 and 0 and records their sizes.  If each successively lower DFWM compression has a equal or larger size than the previous the test passes.", 1);
+        FormatedPrint("The test creates 6 compressions with DFWM values of 100 80 60 40 20 and 0 and records their sizes.  If each successively lower DFWM compression has a equal or larger size than the previous the test passes.", 1);
 
     }
 
-    if (selector == 12)
+    if (selector == DTARTNUM)
     {
         printf("\nUse:\n\n"
-               "12 DataRateTest \n\n"
+               "%2i DataRateTest \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2824,16 +2207,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , DTARTNUM);
 
-        FormatedPrint("The Test creates a compression and tests to make sure that it is with in 10%% of its target.  If it is it passes.", 1);
+        FormatedPrint("The test creates a compression and records it data rate.  If the compressions data rate is within 30% of the input target bandwidth; the test passes.", 1);
 
     }
 
-    if (selector == 13)
+    if (selector == DBMRLNUM)
     {
         printf("\nUse:\n\n"
-               "13 DebugMatchesRelease \n\n"
+               "%2i DebugMatchesRelease \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2846,16 +2229,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
                "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
                "	 <Optional Settings File>\n"
-              );
+               , DBMRLNUM);
 
-        FormatedPrint("The Test creates two files the first using an executable built using the release libraries the second built using an executable built using the debug libraries.  If the two files are identical the test is passed.", 1);
+        FormatedPrint("The test creates two compressions the first using an executable built using the newest release library, the second using an executable built using the newest debug library.  If the two compressions are identical; the test passes.", 1);
 
     }
 
-    if (selector == 14)
+    if (selector == ENCBONUM)
     {
         printf("\nUse:\n\n"
-               "14  EncoderBreakOutTest \n\n"
+               "%2i EncoderBreakOutTest \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2866,15 +2249,15 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , ENCBONUM);
 
-        FormatedPrint("The Test creates four compressions.  The first with an EncodeBreakout of 0, the second with an EncodeBreakout of 100, the thrid with an EncodeBreakout of 500 and the fourth with an EncodeBreakout of 1000.  Decompressions of the Encoded files are then carried out and PSNR values are calculated.  If the Decompressions run and the PSNR values of each succesive EncodeBreakout trial are with in 2 dB the test passes.  If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive and if the PSNRs have greater than a 5 dB difference the test fails.", 1);
+        FormatedPrint("The test creates four compressions. The first with an EncodeBreakout of 0, the second with an EncodeBreakout of 100, the thrid with an EncodeBreakout of 500 and the fourth with an EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated.  If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are with in 2 dB the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive and if the PSNRs have greater than a 5 dB difference the test fails.", 1);
     }
 
-    if (selector == 15)
+    if (selector == ERRMWNUM)
     {
         printf("\nUse:\n\n"
-               "15  ErrorRes \n\n"
+               "%2i ErrorRes \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2883,27 +2266,28 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (3)Two Pass - First Pass\n"
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
-               "    <Target Bit Rate>\n ");
+               "    <Target Bit Rate>\n "
+               , ERRMWNUM);
 
-        FormatedPrint("The Test Creates two compressions the first with Error Resilient Mode off the second on.  If their PSNRs are with in 10%% of one another the test passes.", 1);
+        FormatedPrint("The test creates two compressions the first with Error Resilient Mode off the second on. The test then records their PSNR values.  If their PSNRs are with in 10% of one another the test passes.", 1);
 
     }
 
-    if (selector == 16)
+    if (selector == EXTFINUM)
     {
         printf("\nUse:\n\n"
-               "16 ExtraFileCheck \n\n"
+               "%2i ExtraFileCheck \n\n"
                "    <Inputfile>\n"
                "	 <Optional Settings File>\n"
-              );
+               , EXTFINUM);
 
-        FormatedPrint("The Test Creates a two pass compression and checks the current directory, the directory the executable is located in and the directory the output file is written to for extra files.  If no extra files are found the test passes.", 1);
+        FormatedPrint("The test creates a two pass compression and checks the current directory, the directory the executable is located in and the directory the output file is written to for extra files.  If no extra files are found the test passes.", 1);
     }
 
-    if (selector == 17)
+    if (selector == FIXDQNUM)
     {
         printf("\nUse:\n\n"
-               "17  FixedQ \n\n"
+               "%2i FixedQ \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2916,15 +2300,15 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <FixedQ 1>\n "
                "    <FixedQ 2>\n "
                "	 <Optional Settings File>\n"
-              );
+               , FIXDQNUM);
 
-        FormatedPrint("The Test creates Two compressions each with user input Fixed Quantizers.  The Test then compares the compressions.  If the files are not identical the test passes.", 1);
+        FormatedPrint("The test creates two compressions each with user input Fixed Quantizers and records the quantizers used to encode each frame. The test then records the compressions sizes.  If all quantizers for each compression match the input Fixed Quantizer and the smaller quantizers compression has a larger file size; the test passes.", 1);
     }
 
-    if (selector == 18)
+    if (selector == FKEFRNUM)
     {
         printf("\nUse:\n\n"
-               "18 ForceKeyFrameWorks \n\n"
+               "%2i ForceKeyFrameWorks \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2936,28 +2320,28 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <ForceKeyFrame>\n"
                "	 <Optional Settings File>\n"
-              );
+               , FKEFRNUM);
 
-        FormatedPrint("The test creates a compression using a user input value for Key Frame Frequency.  The resulting compression's Key Frames are then checked to makes sure that its key frames occur at least as frequently as Key Frame Frequency dictates.", 1);
+        FormatedPrint("The test creates a compression using a user input value for a Force Key Frame Interval. The compressor forces a key frame for every Force Key Frame Invervalith frame. The Test then records the placement of all key frames in the compression.  If key frames occur only when Force Key Frame dictates; the test passes.", 1);
 
     }
 
-    if (selector == 19)
+    if (selector == GQVBQNUM)
     {
         printf("\nUse:\n\n"
-               "19 GoodQvBestQ \n\n"
+               "%2i GoodQvBestQ \n\n"
                "    <inputfile>\n"
                "    <Target Bit Rate>\n"
                "	 <Optional Settings File>\n"
-              );
+               , GQVBQNUM);
 
-        FormatedPrint("The Test creates a compression in Good Quality and another in Best Quality Mode the Test then tests and Records their respective PSNRs and Data Rates.", 1);
+        FormatedPrint("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the good quality curve and best quality curve.  If the area under the best quality curve is greater than the area under the good quality curve; the test passes.", 1);
     }
 
-    if (selector == 20)
+    if (selector == LGIFRNUM)
     {
         printf("\nUse:\n\n"
-               "20  LagInFrames \n\n"
+               "%2i LagInFrames \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2970,15 +2354,15 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Lag in Frames 1>\n"
                "    <Lag in Frames 2>\n"
                "	 <Optional Settings File>\n"
-              );
+               , LGIFRNUM);
 
-        FormatedPrint("The Test creates three compressions one with Allow Lag set to 0 the second and third with Allow Lag set to 1.  The second compression uses the first user in put Lag in Frames value for its Lag in frames and the third uses the second user input value for its Lag in Frames.  If none of the files are identical and the PSNRs of each successive file are with in 10%% of the last the test passes.", 1);
+        FormatedPrint("The test creates three compressions one with Allow Lag set to 0 the second and third with Allow Lag set to 1. The second compression uses the first user input Lag in Frames value for its Lag in frames and the third uses the second user input value for its Lag in Frames. The test outputs each files quantizer values for each encoded frame.  If none of the files are identical, the PSNRs of each successive file are within 10% of the last and the quantizer output shows that the proper number of frames were lagged; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
     }
 
-    if (selector == 21)
+    if (selector == MAXQUNUM)
     {
         printf("\nUse:\n\n"
-               "21 MaxQTest \n\n"
+               "%2i MaxQTest \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -2989,16 +2373,16 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , MAXQUNUM);
 
-        FormatedPrint("The Test Creates nine files the first with a WorstAllowedQ equal to 3 and each subsequent file with a WorstAllowedQ eight greater than the last until 63.  If the PSNRs of each WorstAllowedQ compression from 3 to 63 increase as Worst AllowedQ decreases the Test passes.", 1);
+        FormatedPrint("The test creates nine files the first with a WorstAllowedQ equal to 3 and each subsequent file with a WorstAllowedQ eight greater than the last until 63. The test records the individual quantizer values for each encoded frame.  If the PSNRs of each WorstAllowedQ compression from 3 to 63 increase as Worst AllowedQ decreases and the recorded quantizers for each file do not exceed their corresponding WorstAllowedQ for all compressions; the test passes.", 1);
 
     }
 
-    if (selector == 22)
+    if (selector == MEML1NUM)
     {
         printf("\nUse:\n\n"
-               "22 MemLeakCheck \n\n"
+               "%2i MemLeakCheck \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3010,25 +2394,26 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <Newest Debug executable>\n"
                "	 <Optional Settings File>\n"
-              );
+               , MEML1NUM);
 
-        FormatedPrint("The Test creates a compression using the debug executable to check memory usage and record the results to an output file.  If no memory leaks are found the test passes.", 1);
+        FormatedPrint("The Test creates a compression using the debug executable to check memory usage and records the results to an output file.  If no memory leaks are found the test passes.", 1);
     }
 
-    if (selector == 23)
-    {
-        printf(
-            "23  MemLeakCheck2 \n\n"
-            "    <Mem Leak Check Exe>\n"
-            "\n");
-
-        FormatedPrint("The Test Opens and closes 10,000 instances of the Encoder and opens and closes 10,000 instance the Decoder and then checks to make sure there are no memory leaks.  If there are no Leaks the test passes.", 1);
-    }
-
-    if (selector == 24)
+    if (selector == MEML2NUM)
     {
         printf("\nUse:\n\n"
-               "24 MinQTest \n\n"
+               "%2i MemLeakCheck2 \n\n"
+               "    <Mem Leak Check Exe>\n"
+               "\n"
+               , MEML2NUM);
+
+        FormatedPrint("The test uses the debug executable to open and close 10,000 instances of the encoder and open and close 10,000 instance the decoder and then checks to make sure there are no memory leaks.  If there are no leaks the test passes.", 1);
+    }
+
+    if (selector == MINQUNUM)
+    {
+        printf("\nUse:\n\n"
+               "%2i MinQTest \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3039,30 +2424,30 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , MINQUNUM);
 
-        FormatedPrint("The Test creates two files the first with a MinQ equal to 10 the second with a  MinQ equal to 60.  If the first file has a higher PSNR than the second file the Test passes.", 1);
+        FormatedPrint("The test creates two files the first with a MinQ equal to 10 the second with a MinQ equal to 60 and records the quantizer used for each compressions frames.  If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding MinQ; the test passes.", 1);
     }
 
-    if (selector == 25)
+    if (selector == MULTTNUM)
     {
         printf("\nUse:\n\n"
-               "25  MultiThreadedTest \n\n"
+               "%2i MultiThreadedTest \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , MULTTNUM);
 
-        FormatedPrint("The Test creates two compressions the first using a MultiThreaded equal to 14 the second using a MultiThreaded equal to 0.  The Test then compares the times to compress each.  If MultiThreaded 14 is faster than 0 the test passes.", 1);
+        FormatedPrint("The test creates two compressions the first using a MultiThreaded equal to 2 the second using a MultiThreaded equal to 0. The test then compares the times to compress each.  If MultiThreaded 2 is faster than 0; the test passes.", 1);
     }
 
-    if (selector == 26)
+    if (selector == NVOPSNUM)
     {
         printf("\nUse:\n\n"
-               "26 NewVsOldPSRN \n\n"
+               "%2i NewVsOldPSRN \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3075,28 +2460,28 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Exe File To Compare>\n"
                "	 <Optional Settings File>\n"
                "\n"
-              );
+               , NVOPSNUM);
 
-        FormatedPrint("The test creates two files the first using the newest version of VP8 and the second using a separate executable built using an older version.  It then tests the new vs the old and passes if the new beats the olds PSNR Number or is at least with in 1%% of the old.", 1);
+        FormatedPrint("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. It then computes and records PSNR values for each.  If new PSNR is greater than olds PSNR or is at least within 1% of the old; the test passes.", 1);
     }
 
-    if (selector == 27)
+    if (selector == NVORTNUM)
     {
         printf("\nUse:\n\n"
-               "27 NewVsOldRealTimeSpeed \n\n"
+               "%2i NewVsOldRealTimeSpeed \n\n"
                "    <inputfile>\n"
                "    <Target Bit Rate>\n"
                "    <Exe File To Compare>\n"
                "	 <Optional Settings File>\n"
-              );
+               , NVORTNUM);
 
-        FormatedPrint("The test creates two files the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took and if the first file compresses at least 10%% faster than the second the test passes.", 1);
+        FormatedPrint("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took.  If the new compressions time is at least 10% faster than the old compressions time; the test passes.", 1);
     }
 
-    if (selector == 28)
+    if (selector == NOISENUM)
     {
         printf("\nUse:\n\n"
-               "28 NoiseSensitivityWorks \n\n"
+               "%2i NoiseSensitivityWorks \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3107,27 +2492,27 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , NOISENUM);
 
-        FormatedPrint("The Test compresses two files the first with Noise Sensitivity equal to 0 the second with Noise Sensitivity equal to 6.  If the first file has a higher PSNR than the second file the test passes.", 1);
+        FormatedPrint("The test compresses seven files with Noise Sensitivity values from 0 to 6 and computes PSNR values for each.  If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6; the test passes.", 1);
     }
 
-    if (selector == 29)
+    if (selector == OV2PSNUM)
     {
         printf("\nUse:\n\n"
-               "29 OnePassVsTwoPass \n\n"
+               "%2i OnePassVsTwoPass \n\n"
                "    <inputfile>\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , OV2PSNUM);
 
-        FormatedPrint("The Test compresses two files the first using Second Pass Good Quality Mode the second using Best Quality Mode.  The test then records and evaluates the first and second files PSNR numbers and Data Rates.  If Second Pass Good Quality Mode Produces a lower bit rate and or a Higher PSNR the test Passes", 1);
+        FormatedPrint("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at one pass good quality and two pass good quality, the second and fifth compressions for the input target bandwidth at one pass good quality and two pass good quality, and the thrid and sixth at 30% more than the input target bandwidth at one pass good quality and two pass good quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the one pass good quality curve and the two pass good quality curve.  If the area under the two pass good quality curve is greater than the area under the one pass good quality curve; the test passes.", 1);
     }
 
-    if (selector == 30)
+    if (selector == PLYALNUM)
     {
         printf("\nUse:\n\n"
-               "30  PlayAlternate \n\n"
+               "%2i PlayAlternate \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3138,15 +2523,15 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
                "	 <Optional Settings File>\n"
-              );
+               , PLYALNUM);
 
-        FormatedPrint("The Test creates two compressions the first with Play Alternate equal to 0 the second with Play Alternate equal to 1.  The Test then compares the resulting compressions if they are not equal the test passes.", 1);
+        FormatedPrint("The test creates two compressions the first with Play Alternate equal to 0 the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions.  If alternate reference frames exist for Play Alternate = 1 and not for Play Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2 are equal, and the files are not identical; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
     }
 
-    if (selector == 31)
+    if (selector == POSTPNUM)
     {
         printf("\nUse:\n\n"
-               "31 PostProcessorWorks \n\n"
+               "%2i PostProcessorWorks \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3157,93 +2542,53 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , POSTPNUM);
 
-        FormatedPrint("The Test creates a compression then creates a No Filtering decompression, decompressions for Deblock and Noise levels ranging from 0 to 15.  So long as all Deblock and Noise decompressions return a different PSNR than the No Filtering Decompression but are with in 10%% the test passes.", 1);
+        FormatedPrint("The test creates a compression then creates a No Filtering decompression, decompressions for Deblock and Noise levels ranging from 0 to 15.  If all Deblock and Noise decompressions return a different PSNR than the No Filtering Decompression but are within 10%; the test passes.", 1);
     }
 
-    if (selector == 32)
-    {
-        printf("\nUse:\n\n"
-               "32 PreProcessorWorks \n\n"
-               "    <inputfile>\n"
-               "    <Mode>\n"
-               "          (0)Realtime/Live Encoding\n"
-               "          (1)Good Quality Fast Encoding\n"
-               "          (2)One Pass Best Quality\n"
-               "          (3)Two Pass - First Pass\n"
-               "          (4)Two Pass\n"
-               "          (5)Two Pass Best Quality\n"
-               "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
-              );
+    /* if (selector == PREPRNUM)
+     {
+         printf("\nUse:\n\n"
+                "%2i PreProcessorWorks \n\n"
+                "    <inputfile>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n "
+                "	 <Optional Settings File>\n"
+               ,PREPRNUM);
 
-        FormatedPrint("The Test creates seven compressions using noise sensitivity values from 0 to 6  and records their PSNRs.  If none of the compressions PSNRs are equal the test passes.", 1);
-    }
-
-    if (selector == 33)
-    {
-        printf("\nUse:\n\n"
-               "33 ResampleDownWaterMark \n\n"
-               "    <inputfile>\n"
-               "    <Mode>\n"
-               "          (0)Realtime/Live Encoding\n"
-               "          (1)Good Quality Fast Encoding\n"
-               "          (2)One Pass Best Quality\n"
-               "          (3)Two Pass - First Pass\n"
-               "          (4)Two Pass\n"
-               "          (5)Two Pass Best Quality\n"
-               "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
-              );
-
-        FormatedPrint("The Test creates two files the first with resample-down-watermark set to 90 the second with  resample-down-watermark set to 10. If the PSNR of the first compression is less than the PSNR of the second the test passes.", 1);
-    }
-
-    if (selector == 34)
+         FormatedPrint("The Test creates seven compressions using noise sensitivity values from 0 to 6  and records their PSNRs.  If none of the compressions PSNRs are equal the test passes.", 1);
+     }*/
+    if (selector == RECONBUF)
     {
         printf(
-            "34  SpeedTest \n\n"
+            "  ReconBuffer \n\n"
             "    <inputfile>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
+            "          (2)One Pass Best Quality\n"
+            "          (3)Two Pass - First Pass\n"
+            "          (4)Two Pass\n"
+            "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n");
+            "	 <Optional Settings File>\n"
+            , RECONBUF);
 
-        FormatedPrint("The Test works for RealTime Mode and Good Quality Mode.  For Real Time Mode the test creates compresssions for CpuUsed Values from - 1 to -16 and 0 to 16.  If compression speed increases as CpuUsed increases and all PSNRs are within 10%% of the previous the Test Passes.  For Good Quality Mode the test creates compresssions for CpuUsed Values from 0 to 5.  If compression speed increases as CpuUsed increases and all PSNRs are within 10%% of the previous the Test Passes. ", 1);
+
+        FormatedPrint("The test creates a compression and internally compares the compressor’s preview frames to the decoded output produced by decompressing the compressor’s en-coded frame. The state of each frame is recorded to a text file.  If the contents of all preview frames are identical to the content of all decoded frames; the test passes.", 1);
     }
 
-    if (selector == 35)
-    {
-        printf(
-            "  TestVectorCheck \n\n"
-            "    <Input Directory>\n"
-            "\n"
-        );
-
-        FormatedPrint("This Test Decodes each VP8 Test Vector and Checks its SHA1 Checksum against the expected value.  If all Test Vectors decode properly the test passes.", 1);
-
-    }
-
-    if (selector == 36)
+    if (selector == RSDWMNUM)
     {
         printf("\nUse:\n\n"
-               "36 TwoPassVsTwoPassBest \n\n"
-               "    <inputfile>\n"
-               "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
-              );
-
-        FormatedPrint("The Test creates two files the first using Two Pass Mode the Second Two Pass Best Mode.  The test then records and evaluates the first and second files PSNR numbers and Data Rates.  If Second Pass Best Quality Mode Produces a lower bit rate and or a Higher PSNR the test Passes", 1);
-
-
-    }
-
-    if (selector == 37)
-    {
-        printf("\nUse:\n\n"
-               "37 UnderShoot \n\n"
+               "%2i ResampleDownWaterMark \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3254,15 +2599,56 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
                "	 <Optional Settings File>\n"
-              );
+               , RSDWMNUM);
 
-        FormatedPrint("The Test creates two files the first with an undershoot equal to 10 the second with an undershoot equal to 100. If the second file's Bit Rate is greater than the first's the Test passes.", 1);
+        FormatedPrint("The test creates two files the first with resample-down-watermark set to 90 the second with resample-down-watermark set to 10. The test then records the frames at which the file buffer reaches the designated thresholds, the location of key frames and location of resized frames for both files.  If the first resized frame occurs on the first instance where the frame prior to a key frame reaches the correct buffer saturation for both compressions; the test passes.", 1);
     }
 
-    if (selector == 38)
+    if (selector == SPEEDNUM)
     {
         printf("\nUse:\n\n"
-               "38  Version \n\n"
+               "%2i SpeedTest \n\n"
+               "    <inputfile>\n"
+               "    <Mode>\n"
+               "          (0)Realtime/Live Encoding\n"
+               "          (1)Good Quality Fast Encoding\n"
+               "    <Target Bit Rate>\n "
+               "	 <Optional Settings File>\n"
+               , SPEEDNUM);
+
+        FormatedPrint("The test works for RealTime Mode and Good Quality Mode. For Real Time Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions for CpuUsed Values from 0 to 5.  If compression speed increases as CpuUsed increases and all PSNRs are within 10% of the previous; the test passes.", 1);
+    }
+
+    if (selector == TV2BTNUM)
+    {
+        printf("\nUse:\n\n"
+               "%2i TestVectorCheck \n\n"
+               "    <Input Directory>\n"
+               "\n"
+               , TV2BTNUM);
+
+        FormatedPrint("This test decodes each VP8 Test Vector and Checks its MD5 checksum against the expected value.  If all Test Vectors decode properly and all MD5 checksums match their expected values; the test passes.", 1);
+
+    }
+
+    if (selector == TV2BTNUM)
+    {
+        printf("\nUse:\n\n"
+               "%2i TwoPassVsTwoPassBest \n\n"
+               "    <inputfile>\n"
+               "    <Target Bit Rate>\n "
+               "	 <Optional Settings File>\n"
+               , TV2BTNUM);
+
+        FormatedPrint("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at two pass good quality and two pass best quality, the second and fifth compressions for the input target bandwidth at two pass good quality and two pass best quality, and the third and sixth at 30% more than the input target bandwidth at two pass good quality and two pass best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the two pass good quality curve and the two pass best quality curve.  If the area under the two pass best quality curve is greater than the area under the two pass good quality curve; the test passes.", 1);
+
+
+    }
+
+    if (selector == UNDSHNUM)
+    {
+        printf("\nUse:\n\n"
+               "%2i UnderShoot \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3272,15 +2658,35 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n");
+               "	 <Optional Settings File>\n"
+               , UNDSHNUM);
 
-        FormatedPrint("The Test creates four compressions the first with Version equal to 0 the second with version equal to 1 the third with version equal to 2 the fourth with version equal to 3.  The Test then Decodes each and records the time it took to do so.  If each successive version takes less time than the prior to decode and has a Lower PSNR the test passes.", 1);
+        FormatedPrint("The test creates two files the first with an undershoot equal to 10 the second with an undershoot equal to 100.  If the Undershoot 100 compressions file size is greater than the Undershoot 10 compressions file size; the test passes.", 1);
     }
 
-    if (selector == 39)
+    if (selector == VERSINUM)
     {
         printf("\nUse:\n\n"
-               "39  WindowsMatchesLinux \n\n"
+               "%2i Version \n\n"
+               "    <inputfile>\n"
+               "    <Mode>\n"
+               "          (0)Realtime/Live Encoding\n"
+               "          (1)Good Quality Fast Encoding\n"
+               "          (2)One Pass Best Quality\n"
+               "          (3)Two Pass - First Pass\n"
+               "          (4)Two Pass\n"
+               "          (5)Two Pass Best Quality\n"
+               "    <Target Bit Rate>\n "
+               "	 <Optional Settings File>\n"
+               , VERSINUM);
+
+        FormatedPrint("The test creates four compressions the first with Version equal to 0 the second with version equal to 1 the third with version equal to 2 the fourth with version equal to 3. The test then decodes each and records the time it took to do so.  If each successive version takes less time than the prior to decode and has a lower PSNR; the test passes.", 1);
+    }
+
+    if (selector == WMLMMNUM)
+    {
+        printf("\nUse:\n\n"
+               "%2i WindowsMatchesLinux \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3295,9 +2701,9 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (1)Preform Test\n"
                "    <Input Folder - enter N/A if none>\n "
                "    <Optional Settings File>\n"
-              );
+               , WMLMMNUM);
 
-        FormatedPrint("The Test Can be run in two test modes.  The First Mode, 0 creates platform specific compressions and decompressions to be tested on another platform.  The second Mode creates platform specific compressions and decompressions and then compares them to previously encoded and decoded files created by test mode 0.  If the files are identical the test passes.", 1);
+        FormatedPrint("The test can be run in two test modes. The first Mode, 0 creates platform specific compressions and decompressions to be tested on another platform. The second Mode creates platform specific compressions and decompressions and then compares them to previously encoded and decoded files created by test mode 0.  If the files are identical the test passes.", 1);
     }
 
     //if(selector == 20)//Removed 06-07-2010
@@ -3583,6 +2989,18 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
         return 1;
     }
 
+    if (InputString.compare("CompareIVF") == 0)
+    {
+        printf(
+            "\n  CompareIVF\n\n"
+            "     <inputfile1>\n"
+            "     <inputfile2>\n"
+        );
+
+        FormatedPrint("This utility will compare the video content of two ivf files and will display if they are identical, or if they differ the first frame they differ at.", 2);
+        return 1;
+    }
+
     if (InputString.compare("CompIVFHeader") == 0)
     {
         printf("\n"
@@ -3615,23 +3033,49 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
         printf("\n"
                "  DispKeyFrames \n\n"
                "    <Input IVF File>\n"
-              );
+               "    <Write to file 0 | 1 Print to screen>\n"
+               "\n");
 
-        FormatedPrint("This utility will display the location of key frames within an ivf file.", 2);
+        FormatedPrint("This utility will display the location of key frames within an ivf file to the screen or an output file.", 2);
         return 1;
     }
 
-    if (InputString.compare("CompareIVF") == 0)
+    if (InputString.compare("DispResizedFrames") == 0)
     {
-        printf(
-            "\n  CompareIVF\n\n"
-            "     <inputfile1>\n"
-            "     <inputfile2>\n"
-        );
+        printf("\n"
+               "  DisplayResizedFrames \n\n"
+               "    <Input IVF File>\n"
+               "    <Write to file 0 | 1 Print to screen>\n"
+               "\n");
 
-        FormatedPrint("This utility will compare the video content of two ivf files and will display if they are identical, or if they differ the first frame they differ at.", 2);
+        FormatedPrint("This utility will display the location of resized frames within an ivf file to the screen or an output file.", 2);
         return 1;
     }
+
+    if (InputString.compare("DispVisibleFrames") == 0)
+    {
+        printf("\n"
+               "  DisplayVisibleFrames \n\n"
+               "    <Input IVF File>\n"
+               "    <Write to file 0 | 1 Print to screen>\n"
+               "\n");
+
+        FormatedPrint("This utility will display the location of visible frames within an ivf file to the screen or an output file.", 2);
+        return 1;
+    }
+
+    if (InputString.compare("DispAltRefFrames") == 0)
+    {
+        printf("\n"
+               "  DisplayAltRefFrames \n\n"
+               "    <Input IVF File>\n"
+               "    <Write to file 0 | 1 Print to screen>\n"
+               "\n");
+
+        FormatedPrint("This utility will display the location of alternate reference frames within an ivf file to the screen or an output file.", 2);
+        return 1;
+    }
+
 
     if (InputString.compare("CutIVF") == 0)
     {
@@ -3795,6 +3239,28 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
         return 1;
     }
 
+    if (InputString.compare("IVFEnc") == 0)
+    {
+        printf(
+            "\n  IVFEnc\n"
+            "\n"
+        );
+
+        FormatedPrint("This utility is a clone of the standard VP8 ivfenc utility.", 2);
+        return 1;
+    }
+
+    if (InputString.compare("IVFDec") == 0)
+    {
+        printf(
+            "\n  IVFDec\n"
+            "\n"
+        );
+
+        FormatedPrint("This utility is a clone of the standard VP8 ivfdec utility.", 2);
+        return 1;
+    }
+
     return 0;
 }
 void FormatSummaryByTest(char *InputFileNameCharAr, int DeleteOldFile)
@@ -3828,148 +3294,127 @@ void FormatSummaryByTest(char *InputFileNameCharAr, int DeleteOldFile)
     string TestTrackerName;
     int TestTracker = 1;
 
-    while (TestTracker < 48)
+    while (TestTracker < 40)
     {
-        if (TestTracker == 1)
+        if (TestTracker == AlWDFNUM)
             TestTrackerName = "AllowDropFrames";
 
-        if (TestTracker == 2)
-            TestTrackerName = "AllowSpatialResampling";
-
-        if (TestTracker == 3)
-            TestTrackerName = "AllowSpatialResamplingTest2";
-
-        if (TestTracker == 4)
-            TestTrackerName = "AutoKeyFramingWorks";
-
-        if (TestTracker == 5)
-            TestTrackerName = "BufferLevelWorks";
-
-        if (TestTracker == 6)
-            TestTrackerName = "CPUDecOnlyWorks";
-
-        if (TestTracker == 7)
-            TestTrackerName = "ChangeCPUDec";
-
-        if (TestTracker == 8)
-            TestTrackerName = "ChangeCPUWorks";
-
-        if (TestTracker == 9)
-            TestTrackerName = "ChangeIDCTDecWorks";
-
-        if (TestTracker == 10)
-            TestTrackerName = "ChangeIDCTWorks";
-
-        if (TestTracker == 11)
-            TestTrackerName = "ComboTestRun";
-
-        if (TestTracker == 12)
-            TestTrackerName = "DropFramesWaterMarkWorks";
-
-        if (TestTracker == 13)
-            TestTrackerName = "DataRateMaxWorks";
-
-        if (TestTracker == 14)
-            TestTrackerName = "DataRateTest";
-
-        if (TestTracker == 15)
-            TestTrackerName = "DebugMatchesRelease";
-
-        if (TestTracker == 16)
-            TestTrackerName = "ErrorResilientModeWorks";
-
-        if (TestTracker == 17)
-            TestTrackerName = "ExtraFileCheck";
-
-        if (TestTracker == 18)
-            TestTrackerName = "ForceKeyFrameWorks";
-
-        if (TestTracker == 19)
-            TestTrackerName = "GoodQualityVsBestQuality";
-
-        if (TestTracker == 20)
-            TestTrackerName = "IDCTDecOnlyWorks";
-
-        if (TestTracker == 21)
-            TestTrackerName = "InterlaceWorks";
-
-        if (TestTracker == 22)
-            TestTrackerName = "KeyInKeyOutWorks";
-
-        if (TestTracker == 23)
-            TestTrackerName = "MaxQuantizerTest";
-
-        if (TestTracker == 24)
-            TestTrackerName = "MemLeakCheck";
-
-        if (TestTracker == 25)
-            TestTrackerName = "MinQuantizerTest";
-
-        if (TestTracker == 26)
-            TestTrackerName = "NewVsOldPSNR";
-
-        if (TestTracker == 27)
-            TestTrackerName = "NewVsOldRealTimeSpeed";
-
-        if (TestTracker == 28)
-            TestTrackerName = "NewVsOldSpeed";
-
-        if (TestTracker == 29)
-            TestTrackerName = "NoiseSensitivityWorks";
-
-        if (TestTracker == 30)
-            TestTrackerName = "OnePassVsTwoPass";
-
-        if (TestTracker == 31)
-            TestTrackerName = "PostProcessorWorks";
-
-        if (TestTracker == 32)
-            TestTrackerName = "PreProcessorWorks";
-
-        if (TestTracker == 33)
-            TestTrackerName = "GraphPSNR";
-
-        if (TestTracker == 34)
-            TestTrackerName = "ResampleDownWaterMark";
-
-        if (TestTracker == 35)
-            TestTrackerName = "RandComp";
-
-        if (TestTracker == 36)
-            TestTrackerName = "SpeedTest";
-
-        if (TestTracker == 37)
-            TestTrackerName = "TwoPassVsTwoPassBest";
-
-        if (TestTracker == 38)
-            TestTrackerName = "UnderShoot";
-
-        if (TestTracker == 39)
-            TestTrackerName = "VP61vVP62";
-
-        if (TestTracker == 40)
-            TestTrackerName = "VP6MvVP60";
-
-        if (TestTracker == 41)
+        if (TestTracker == ALWLGNUM)
             TestTrackerName = "AllowLagTest";
 
-        if (TestTracker == 42)
+        if (TestTracker == ALWSRNUM)
+            TestTrackerName = "AllowSpatialResampling";
+
+        /* if (TestTracker == ALWS2NUM)
+             TestTrackerName = "AllowSpatialResamplingTest2";*/
+
+        if (TestTracker == ALTFRNUM)
             TestTrackerName = "AltFreqTest";
 
-        if (TestTracker == 43)
+        if (TestTracker == AUTKFNUM)
+            TestTrackerName = "AutoKeyFramingWorks";
+
+        if (TestTracker == BUFLVNUM)
+            TestTrackerName = "BufferLevelWorks";
+
+        if (TestTracker == CPUDENUM)
+            TestTrackerName = "CPUDecOnlyWorks";
+
+        /*if (TestTracker == CHGCPNUM)
+            TestTrackerName = "ChangeCPUDec";*/
+
+        if (TestTracker == CHGWRNUM)
+            TestTrackerName = "ChangeCPUWorks";
+
+        if (TestTracker == DFWMWNUM)
+            TestTrackerName = "DropFramesWaterMarkWorks";
+
+        if (TestTracker == DTARTNUM)
+            TestTrackerName = "DataRateTest";
+
+        if (TestTracker == DBMRLNUM)
+            TestTrackerName = "DebugMatchesRelease";
+
+        if (TestTracker == ENCBONUM)
+            TestTrackerName = "EncoderBreakOut";
+
+        if (TestTracker == ERRMWNUM)
+            TestTrackerName = "ErrorResilientModeWorks";
+
+        if (TestTracker == EXTFINUM)
+            TestTrackerName = "ExtraFileCheck";
+
+        if (TestTracker == FIXDQNUM)
             TestTrackerName = "FixedQ";
 
-        if (TestTracker == 44)
+        if (TestTracker == FKEFRNUM)
+            TestTrackerName = "ForceKeyFrameWorks";
+
+        if (TestTracker == GQVBQNUM)
+            TestTrackerName = "GoodQualityVsBestQuality";
+
+        if (TestTracker == LGIFRNUM)
             TestTrackerName = "LagInFramesTest";
 
-        if (TestTracker == 45)
+        if (TestTracker == MAXQUNUM)
+            TestTrackerName = "MaxQuantizerTest";
+
+        if (TestTracker == MEML1NUM)
+            TestTrackerName = "MemLeakCheck";
+
+        if (TestTracker == MEML2NUM)
+            TestTrackerName = "MemLeakCheck2";
+
+        if (TestTracker == MINQUNUM)
+            TestTrackerName = "MinQuantizerTest";
+
+        if (TestTracker == MULTTNUM)
             TestTrackerName = "MultiThreadedTest";
 
-        if (TestTracker == 46)
+        if (TestTracker == NVOPSNUM)
+            TestTrackerName = "NewVsOldPSNR";
+
+        if (TestTracker == NVORTNUM)
+            TestTrackerName = "NewVsOldRealTimeSpeed";
+
+        if (TestTracker == NOISENUM)
+            TestTrackerName = "NoiseSensitivityWorks";
+
+        if (TestTracker == OV2PSNUM)
+            TestTrackerName = "OnePassVsTwoPass";
+
+        if (TestTracker == PLYALNUM)
             TestTrackerName = "PlayAlternate";
 
-        if (TestTracker == 47)
+        if (TestTracker == POSTPNUM)
+            TestTrackerName = "PostProcessorWorks";
+
+        /*if (TestTracker == PREPRNUM)
+            TestTrackerName = "PreProcessorWorks";*/
+
+        if (TestTracker == RECONBUF)
+            TestTrackerName = "ReconBuffer";
+
+        if (TestTracker == RSDWMNUM)
+            TestTrackerName = "ResampleDownWaterMark";
+
+        if (TestTracker == SPEEDNUM)
+            TestTrackerName = "SpeedTest";
+
+        if (TestTracker == TVECTNUM)
+            TestTrackerName = "TestVectorCheck";
+
+        if (TestTracker == TV2BTNUM)
+            TestTrackerName = "TwoPassVsTwoPassBest";
+
+        if (TestTracker == UNDSHNUM)
+            TestTrackerName = "UnderShoot";
+
+        if (TestTracker == VERSINUM)
             TestTrackerName = "Version";
+
+        if (TestTracker == WMLMMNUM)
+            TestTrackerName = "WindowsMatchesLinux";
 
 
         fstream FormatSummaryByTestFile;
@@ -4050,8 +3495,6 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
     string TestsRun = TestsRunChar;
     TestsRun.append("TestsRun.txt");
 
-
-
     if (DeleteOldFile == 1)
     {
         fstream FormatSummaryByTestFileOutDelete;
@@ -4089,7 +3532,7 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
     int ResultTracker = 0;
 
 
-    while (TestTracker < 53)
+    while (TestTracker < 40)
     {
         ResultTracker = 0;
 
@@ -4097,161 +3540,125 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
 
         //This iterates through all possible tests run using the test tracker names to specify which was run the number is only to drive
         //The iteration through and does not represent test number
-        if (TestTracker == 1)
+        if (TestTracker == AlWDFNUM)
             TestTrackerName = "AllowDropFrames";
 
-        if (TestTracker == 2)
-            TestTrackerName = "AllowSpatialResampling";
-
-        if (TestTracker == 3)
-            TestTrackerName = "AllowSpatialResamplingTest2";
-
-        if (TestTracker == 4)
-            TestTrackerName = "AutoKeyFramingWorks";
-
-        if (TestTracker == 5)
-            TestTrackerName = "BufferLevelWorks";
-
-        if (TestTracker == 6)
-            TestTrackerName = "CPUDecOnlyWorks";
-
-        if (TestTracker == 7)
-            TestTrackerName = "ChangeCPUDec";
-
-        if (TestTracker == 8)
-            TestTrackerName = "ChangeCPUWorks";
-
-        if (TestTracker == 9)
-            TestTrackerName = "ChangeIDCTDecWorks";
-
-        if (TestTracker == 10)
-            TestTrackerName = "ChangeIDCTWorks";
-
-        if (TestTracker == 11)
-            TestTrackerName = "ComboTestRun";
-
-        if (TestTracker == 12)
-            TestTrackerName = "DropFramesWaterMarkWorks";
-
-        if (TestTracker == 13)
-            TestTrackerName = "DataRateMaxWorks";
-
-        if (TestTracker == 14)
-            TestTrackerName = "DataRateTest";
-
-        if (TestTracker == 15)
-            TestTrackerName = "DebugMatchesRelease";
-
-        if (TestTracker == 16)
-            TestTrackerName = "ErrorResilientModeWorks";
-
-        if (TestTracker == 17)
-            TestTrackerName = "ExtraFileCheck";
-
-        if (TestTracker == 18)
-            TestTrackerName = "ForceKeyFrameWorks";
-
-        if (TestTracker == 19)
-            TestTrackerName = "GoodQualityVsBestQuality";
-
-        if (TestTracker == 20)
-            TestTrackerName = "IDCTDecOnlyWorks";
-
-        if (TestTracker == 21)
-            TestTrackerName = "InterlaceWorks";
-
-        if (TestTracker == 22)
-            TestTrackerName = "KeyInKeyOutWorks";
-
-        if (TestTracker == 23)
-            TestTrackerName = "MaxQuantizerTest";
-
-        if (TestTracker == 24)
-            TestTrackerName = "MemLeakCheck";
-
-        if (TestTracker == 25)
-            TestTrackerName = "MinQuantizerTest";
-
-        if (TestTracker == 26)
-            TestTrackerName = "NewVsOldPSNR";
-
-        if (TestTracker == 27)
-            TestTrackerName = "NewVsOldRealTimeSpeed";
-
-        if (TestTracker == 28)
-            TestTrackerName = "NewVsOldSpeed";
-
-        if (TestTracker == 29)
-            TestTrackerName = "NoiseSensitivityWorks";
-
-        if (TestTracker == 30)
-            TestTrackerName = "OnePassVsTwoPass";
-
-        if (TestTracker == 31)
-            TestTrackerName = "PostProcessorWorks";
-
-        if (TestTracker == 32)
-            TestTrackerName = "PreProcessorWorks";
-
-        if (TestTracker == 33)
-            TestTrackerName = "GraphPSNR";
-
-        if (TestTracker == 34)
-            TestTrackerName = "ResampleDownWaterMark";
-
-        if (TestTracker == 35)
-            TestTrackerName = "RandComp";
-
-        if (TestTracker == 36)
-            TestTrackerName = "SpeedTest";
-
-        if (TestTracker == 37)
-            TestTrackerName = "TwoPassVsTwoPassBest";
-
-        if (TestTracker == 38)
-            TestTrackerName = "UnderShoot";
-
-        if (TestTracker == 39)
-            TestTrackerName = "VP61vVP62";
-
-        if (TestTracker == 40)
-            TestTrackerName = "VP6MvVP60";
-
-        if (TestTracker == 41)
+        if (TestTracker == ALWLGNUM)
             TestTrackerName = "AllowLagTest";
 
-        if (TestTracker == 42)
+        if (TestTracker == ALWSRNUM)
+            TestTrackerName = "AllowSpatialResampling";
+
+        /*if (TestTracker == ALWS2NUM)
+            TestTrackerName = "AllowSpatialResamplingTest2";*/
+
+        if (TestTracker == ALTFRNUM)
             TestTrackerName = "AltFreqTest";
 
-        if (TestTracker == 43)
-            TestTrackerName = "FixedQ";
+        if (TestTracker == AUTKFNUM)
+            TestTrackerName = "AutoKeyFramingWorks";
 
-        if (TestTracker == 44)
-            TestTrackerName = "LagInFramesTest";
+        if (TestTracker == BUFLVNUM)
+            TestTrackerName = "BufferLevelWorks";
 
-        if (TestTracker == 45)
-            TestTrackerName = "MultiThreadedTest";
+        if (TestTracker == CPUDENUM)
+            TestTrackerName = "CPUDecOnlyWorks";
 
-        if (TestTracker == 46)
-            TestTrackerName = "PlayAlternate";
+        /*if (TestTracker == CHGCPNUM)
+            TestTrackerName = "ChangeCPUDec";*/
 
-        if (TestTracker == 47)
-            TestTrackerName = "SpeedTest";
+        if (TestTracker == CHGWRNUM)
+            TestTrackerName = "ChangeCPUWorks";
 
-        if (TestTracker == 48)
-            TestTrackerName = "Version";
+        if (TestTracker == DFWMWNUM)
+            TestTrackerName = "DropFramesWaterMarkWorks";
 
-        if (TestTracker == 49)
-            TestTrackerName = "WindowsMatchesLinux";
+        if (TestTracker == DTARTNUM)
+            TestTrackerName = "DataRateTest";
 
-        if (TestTracker == 50)
+        if (TestTracker == DBMRLNUM)
+            TestTrackerName = "DebugMatchesRelease";
+
+        if (TestTracker == ENCBONUM)
             TestTrackerName = "EncoderBreakOut";
 
-        if (TestTracker == 51)
+        if (TestTracker == ERRMWNUM)
+            TestTrackerName = "ErrorResilientModeWorks";
+
+        if (TestTracker == EXTFINUM)
+            TestTrackerName = "ExtraFileCheck";
+
+        if (TestTracker == FIXDQNUM)
+            TestTrackerName = "FixedQ";
+
+        if (TestTracker == FKEFRNUM)
+            TestTrackerName = "ForceKeyFrameWorks";
+
+        if (TestTracker == GQVBQNUM)
+            TestTrackerName = "GoodQualityVsBestQuality";
+
+        if (TestTracker == LGIFRNUM)
+            TestTrackerName = "LagInFramesTest";
+
+        if (TestTracker == MAXQUNUM)
+            TestTrackerName = "MaxQuantizerTest";
+
+        if (TestTracker == MEML1NUM)
+            TestTrackerName = "MemLeakCheck";
+
+        if (TestTracker == MEML2NUM)
             TestTrackerName = "MemLeakCheck2";
 
-        if (TestTracker == 52)
+        if (TestTracker == MINQUNUM)
+            TestTrackerName = "MinQuantizerTest";
+
+        if (TestTracker == MULTTNUM)
+            TestTrackerName = "MultiThreadedTest";
+
+        if (TestTracker == NVOPSNUM)
+            TestTrackerName = "NewVsOldPSNR";
+
+        if (TestTracker == NVORTNUM)
+            TestTrackerName = "NewVsOldRealTimeSpeed";
+
+        if (TestTracker == NOISENUM)
+            TestTrackerName = "NoiseSensitivityWorks";
+
+        if (TestTracker == OV2PSNUM)
+            TestTrackerName = "OnePassVsTwoPass";
+
+        if (TestTracker == PLYALNUM)
+            TestTrackerName = "PlayAlternate";
+
+        if (TestTracker == POSTPNUM)
+            TestTrackerName = "PostProcessorWorks";
+
+        /*if (TestTracker == PREPRNUM)
+            TestTrackerName = "PreProcessorWorks";*/
+
+        if (TestTracker == RECONBUF)
+            TestTrackerName = "ReconBuffer";
+
+        if (TestTracker == RSDWMNUM)
+            TestTrackerName = "ResampleDownWaterMark";
+
+        if (TestTracker == SPEEDNUM)
+            TestTrackerName = "SpeedTest";
+
+        if (TestTracker == TVECTNUM)
             TestTrackerName = "TestVectorCheck";
+
+        if (TestTracker == TV2BTNUM)
+            TestTrackerName = "TwoPassVsTwoPassBest";
+
+        if (TestTracker == UNDSHNUM)
+            TestTrackerName = "UnderShoot";
+
+        if (TestTracker == VERSINUM)
+            TestTrackerName = "Version";
+
+        if (TestTracker == WMLMMNUM)
+            TestTrackerName = "WindowsMatchesLinux";
 
 
         int	PassedTrack = 0;
@@ -4410,8 +3817,8 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
                         TestsRunFile.close();
                         FormatSummaryByTestFile.close();
                         fclose(fp);
-                        printf("\nFile creation Canceled: Cannot find TestsRun.txt\n");
-                        fprintf(stderr, "\nFile creation Canceled: Cannot find TestsRun.txt\n");
+                        printf("\nFile creation Canceled: Cannot find %s\n", TestsRun.c_str());
+                        fprintf(stderr, "\nFile creation Canceled: Cannot find %s\n", TestsRun.c_str());
                         return;
                     }
 
@@ -4741,9 +4148,54 @@ int  main(int argc, char *argv[])
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////Tools//////////////////////////////////////////////////////////
     ////////////////////Public Commands/////////////////////////
+    if (TestInputString.compare("TestPrint") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    {
+        cout << "\n";
+        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 1);
+        cout << "\n";
+        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 2);
+        cout << "\n";
+        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 3);
+        cout << "\n";
+        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 4);
+        cout << "\n";
+        cout << "\n";
+        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 5);
+        cout << "\n";
+        cout << "\n";
+        return 0;
+    }
+
+    if (TestInputString.compare("Quad") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    {
+        SolveQuad();
+        return 0;
+    }
+
     if (TestInputString.compare("IVF2IVFCompr") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
     {
         ComprIVF2IVF(argc, argv, WorkingDir);
+        return 0;
+    }
+
+    if (TestInputString.compare("Thresh") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    {
+        if (argc < 8)
+        {
+            printf("\n"
+                   "  DisplayResizedFrames \n\n"
+                   "    <Input IVF File>\n"
+                   "    <bitRate>\n"
+                   "    <maxBuffer>\n"
+                   "    <preBuffer>\n"
+                   "    <optBuffer>\n"
+                   "    <Threshold>\n"
+                   "\n");
+            return 0;
+        }
+
+        IVFCheckPBMThreshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
+
         return 0;
     }
 
@@ -4807,6 +4259,75 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
+    if (TestInputString.compare("DispResizedFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    {
+        if (argc < 4)
+        {
+            printf("\n"
+                   "  DisplayResizedFrames \n\n"
+                   "    <Input IVF File>\n"
+                   "    <Write to file 1 | 0 Print to screen>\n"
+                   "\n");
+            return 0;
+        }
+
+        int resizedframes = IVFDisplayResizedFrames(argv[2], atoi(argv[3]));
+        printf("\nResized Frames Found: %i\n", resizedframes);
+        return 0;
+    }
+
+    if (TestInputString.compare("DispDroppedFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    {
+        if (argc < 4)
+        {
+            printf("\n"
+                   "  DisplayDroppedFrames \n\n"
+                   "    <Input IVF File>\n"
+                   "    <Write to file 1 | 0 Print to screen>\n"
+                   "\n");
+            return 0;
+        }
+
+        int droppedframes = IVFDisplayDropedFrames(argv[2], atoi(argv[3]));
+        printf("\nDropped Frames Counted: %i \n\n (Num is aprox as any frame droped after last encoded frame cannot be counted)\n", droppedframes);
+        return 0;
+    }
+
+    if (TestInputString.compare("DispVisibleFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    {
+        if (argc < 4)
+        {
+            printf("\n"
+                   "  DisplayVisibleFrames \n\n"
+                   "    <Input IVF File>\n"
+                   "    <Write to file 0 | 1 Print to screen>\n"
+                   "\n");
+            return 0;
+        }
+
+        int visframenum = IVFDisplayVisibleFrames(argv[2], atoi(argv[3]));
+        printf("\nVisible Frames Found: %i\n", visframenum);
+
+        return 0;
+    }
+
+    if (TestInputString.compare("DispAltRefFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    {
+        if (argc < 4)
+        {
+            printf("\n"
+                   "  DisplayAltRefFrames \n\n"
+                   "    <Input IVF File>\n"
+                   "    <Write to file 0 | 1 Print to screen>\n"
+                   "\n");
+            return 0;
+        }
+
+        int altrefframes = IVFDisplayAltRefFrames(argv[2], atoi(argv[3]));
+        printf("\nAlternate Reference Frames Found: %i\n", altrefframes);
+        return 0;
+    }
+
     if (TestInputString.compare("DispKeyFrames") == 0)					//Displays which frames are key frames for an input compressed ivf file
     {
         if (argc < 3)
@@ -4814,11 +4335,28 @@ int  main(int argc, char *argv[])
             printf("\n"
                    "  DispKeyFrames \n\n"
                    "    <Input IVF File>\n"
+                   "    <Write to file 0 | 1 Print to screen>\n"
                    "\n");
             return 0;
         }
 
-        IVFDisplayKeyFrames(argv[2], 0, "");
+        int keyframecount = IVFDisplayKeyFrames(argv[2], atoi(argv[3]));
+        printf("\nKey Frames Found: %i\n", keyframecount);
+        return 0;
+    }
+
+    if (TestInputString.compare("DispAltRefFrames") == 0)					//Displays which frames are key frames for an input compressed ivf file
+    {
+        if (argc < 3)
+        {
+            printf("\n"
+                   "  DispFrameData \n\n"
+                   "    <Input IVF File>\n"
+                   "\n");
+            return 0;
+        }
+
+        IVFDisplayAltRefFrames(argv[2], 0);
         return 0;
     }
 
@@ -4857,6 +4395,7 @@ int  main(int argc, char *argv[])
         }
 
         FormatSummaryByTestandResult(argv[2], atoi(argv[3]));
+        return 0;
     }
 
     if (TestInputString.compare("IVF2Raw") == 0)							//Converts an ivf file to a raw file
@@ -5112,6 +4651,18 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
+    if (TestInputString.compare("IVFDec") == 0)				//
+    {
+        RunIVFDec(argc, argv);
+        return 0;
+    }
+
+    if (TestInputString.compare("IVFEnc") == 0)				//
+    {
+        RunIVFEnc(argc, argv);
+        return 0;
+    }
+
 
     printf("\n");
 
@@ -5261,235 +4812,241 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (selector == 1)
+    if (selector == AlWDFNUM)
     {
         AllowDF(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 2)
+    if (selector == ALWLGNUM)
     {
         AllowLagTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 3)
+    if (selector == ALWSRNUM)
     {
         AllowSpatialResamplingTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 4)
+    /*if (selector == ALWS2NUM)
     {
         AllowSpatialResamplingTest2(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
-    }
+    }*/
 
-    if (selector == 5)
+    if (selector == ALTFRNUM)
     {
         AltFreqTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 6)
+    if (selector == AUTKFNUM)
     {
         AutoKeyFramingWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 7)
+    if (selector == BUFLVNUM)
     {
         BufferLevelWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 8)
+    if (selector == CPUDENUM)
     {
         CPUDecOnlyWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 9)
+    /*if (selector == CHGCPNUM)
     {
         ChangeCPUDec(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
-    }
+    }*/
 
-    if (selector == 10)
+    if (selector == CHGWRNUM)
     {
         ChangeCPUWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 11)
+    if (selector == DFWMWNUM)
     {
         DFWM(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 12)
+    if (selector == DTARTNUM)
     {
         DataRateTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 13)
+    if (selector == DBMRLNUM)
     {
         DebugMatchesRelease(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 14)
+    if (selector == ENCBONUM)
     {
         EncoderBreakOutTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 15)
+    if (selector == ERRMWNUM)
     {
         ErrorRes(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 16)
+    if (selector == EXTFINUM)
     {
         ExtraFileCheck(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 17)
+    if (selector == FIXDQNUM)
     {
         FixedQ(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 18)
+    if (selector == FKEFRNUM)
     {
         ForceKeyFrameWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 19)
+    if (selector == GQVBQNUM)
     {
         GoodQvBestQ(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 20)
+    if (selector == LGIFRNUM)
     {
         LagInFramesTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 21)
+    if (selector == MAXQUNUM)
     {
         MaxQTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 22)
+    if (selector == MEML1NUM)
     {
         MemLeakCheck(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 23)
+    if (selector == MEML2NUM)
     {
         MemLeakCheck2(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 24)
+    if (selector == MINQUNUM)
     {
         MinQTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 25)
+    if (selector == MULTTNUM)
     {
         MultiThreadedTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 26)
+    if (selector == NVOPSNUM)
     {
         NewVsOldPSNR(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 27)
+    if (selector == NVORTNUM)
     {
         NewVsOldRealTimeSpeed(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 28)
+    if (selector == NOISENUM)
     {
         NoiseSensitivityWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 29)
+    if (selector == OV2PSNUM)
     {
         OnePassVsTwoPass(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 30)
+    if (selector == PLYALNUM)
     {
         PlayAlternate(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 31)
+    if (selector == POSTPNUM)
     {
         PostProcessorWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 32)
+    /*if (selector == PREPRNUM)
     {
         PreProcessorWorks(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
+    }*/
+
+    if (selector == RECONBUF)
+    {
+        ReconBuffer(argc, argv, WorkingDir, EmptyAr, 1);
+        return 0;
     }
 
-    if (selector == 33)
+    if (selector == RSDWMNUM)
     {
         ResampleDownWaterMark(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 34)
+    if (selector == SPEEDNUM)
     {
         SpeedTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 35)
+    if (selector == TVECTNUM)
     {
         TestVectorCheck(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 36)
+    if (selector == TV2BTNUM)
     {
         TwoPassVsTwoPassBest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 37)
+    if (selector == UNDSHNUM)
     {
         UnderShoot(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 38)
+    if (selector == VERSINUM)
     {
         Version(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (selector == 39)
+    if (selector == WMLMMNUM)
     {
         WindowsMatchesLinux(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;

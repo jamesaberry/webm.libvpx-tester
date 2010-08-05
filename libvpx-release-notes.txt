@@ -1,0 +1,34 @@
+libvpx-tester Release Notes
+Version 0.9.1 
+
+- Standardized test result output for all tests added
+- CheckPBMBufferThreshold utility added
+- AllowDropFrames now checks for a difference in visible frames directly instead of file size difference
+- AllowLagTest now checks quantizer output to determine and verify number of frames initially lagged
+- AllowSpatialResampling2 merged with AllowSpatialResampling
+- AllowSpatialResampling now directly checks for resized frames instead of file size differences
+- ChangeCPUDec became redundant removed (currently covered by CPUDecOnlyWorks)
+- GoodQualityVsBestQuality now uses 3 data points and area under curve for pass/fail
+- OnePassVsTwoPass now uses 3 data points and area under curve for pass/fail
+- TwoPassVsTwoPassBest now uses 3 data points and area under curve for pass/fail
+- FixedQ now checks quantizer values and ensures that encode quantizers do not change when set to be fixed
+- MaxQuantizerTest now checks to make sure that the encode quantizer never goes above the input max quantizer
+- MinQuantizerTest now checks to make sure that the encode quantizer never goes below the input min quanitzer
+- ForceKeyFrameWorks content merged with AutoKeyFramingWorks
+- ForceKeyFrameWorks now tests key frames forced via encoder flag
+- PlayAlternate now directly checks for alternate reference frames.
+- PreProcessorWorks merged into NoiseSensitivityWorks
+- Recon Buffer test added
+- Resample Down Water Mark now uses CheckBPMBufferThreshold in pass/fail
+- IVFEnc tool added (clone of ivfenc.exe)
+- IVFDec tool added (clone of ivfdec.exe)
+- DispResizedFrames tool added 
+- DispVisibleFrames tool added
+- DispAltRefFrames tool added
+
+*****************************
+
+libvpx-tester Release Notes
+Version 0.9.0
+
+- Initial Release

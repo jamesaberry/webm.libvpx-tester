@@ -2,7 +2,7 @@
 SRC =  psnr.c ssim2.cpp Utilities.cpp ivf.c supportingdebug.cpp
 
 # source object files
-SRCOBJ = psnr.o ssim2.o Utilities.o ivf.o supportingdebug.o
+SRCOBJ = psnr.o ssim2.o Utilities.o ivf.o supportingdebug.o 
 
 # compiler
 CPP = g++ -m64
@@ -14,8 +14,8 @@ LFLAGS= -L../lib -lvpx_MemIMac64 -D CONFIG_MEM_TRACKER=1 -DINLINE=
 
 #Includes
 INCLUDE = -I ../include -I "../HeaderFiles" -D API -D API -DHAVE_STDINT_H
-
-VP8vNewest_PlugIn_DLib_DMode_64Bit.exe: $(SRCOBJ)
+ 
+VP8vNewest_PlugIn_DLib_DMode_64Bit.exe: $(SRCOBJ) 
 	$(CPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode_64Bit.exe" $(SRCOBJ) $(LFLAGS) $(DEBUG)
 
 ivf.o: ivf.c
@@ -33,5 +33,5 @@ Utilities.o: Utilities.cpp
 supportingdebug.o: supportingdebug.cpp
 	$(CPP) -c supportingdebug.cpp $(INCLUDE) $(LFLAGS) $(DEBUG)
 
-clean:
+clean: 
 	rm -f $(SRCOBJ) VP8vNewest_PlugIn_DLib_DMode_64Bit.exe

@@ -1,7 +1,8 @@
-vpx libvpx-tester
-README - 06-14-2010
+vpx libvpx-tester v0.9.1
+README - 08-03-2010
 
 Note: For usage see libvpx-tester-manual.pdf
+Note: For release notes see libvpx-release-notes.txt
 
 Contents:
 

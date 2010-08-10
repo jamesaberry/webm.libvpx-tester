@@ -12899,7 +12899,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDir5 = WorkingDirString;
 
         WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("ForceKeyFrameOutPut_KeyFrames.txt");
+        WorkingDir4.append("ForceKeyFrameOutput_KeyFrames.txt");
         WorkingDir5.append(slashCharStr);
         WorkingDir5.append("ForceKeyFrameOutput.ivf");
 

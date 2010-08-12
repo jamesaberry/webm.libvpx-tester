@@ -155,7 +155,7 @@ extern int AltQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int
 extern int KeyQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int GoldQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int EncoderBreakOutTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 //TestsNoLongerUsed
 extern int NewVsOldSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);

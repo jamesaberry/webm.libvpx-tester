@@ -160,7 +160,7 @@ extern int AltQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int
 extern int KeyQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int GoldQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int EncoderBreakOutTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int MemLeakCheck2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 
@@ -291,7 +291,7 @@ void OnErrorOutPut()
            "   (9)DropFramesWaterMarkWorks             IVFCheckPBM\n"
            "  (10)DataRateTest                         \n"
            "  (11)DebugMatchesRelease                  Raw2IVF\n"
-           "  (12)EncoderBreakOutTest                  IVF2Raw\n"
+           "  (12)EncoderBreakOut                      IVF2Raw\n"
            "  (13)ErrorResilientModeWorks              IVF2RawFrames\n"
            "  (14)ExtraFileCheck                       CombineIndvFrames\n"
            "  (15)FixedQ                               \n"
@@ -939,7 +939,7 @@ void Print1(string WorkingDir)
            );
 
     fprintf(stderr, "\n\n\n"
-            "50  EncoderBreakOutTest \n\n"
+            "50  EncoderBreakOut \n\n"
             "    <inputfile>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
@@ -2238,7 +2238,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
     if (selector == ENCBONUM)
     {
         printf("\nUse:\n\n"
-               "%2i EncoderBreakOutTest \n\n"
+               "%2i EncoderBreakOut \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -4892,7 +4892,7 @@ int  main(int argc, char *argv[])
 
     if (selector == ENCBONUM)
     {
-        EncoderBreakOutTest(argc, argv, WorkingDir, EmptyAr, 1);
+        EncoderBreakOut(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 

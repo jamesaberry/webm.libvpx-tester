@@ -166,7 +166,7 @@ extern int AltQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int
 extern int KeyQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int GoldQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int EncoderBreakOutTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 //TestsNoLongerUsed
 extern int NewVsOldSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
@@ -1559,7 +1559,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "EncoderBreakOut";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
-                    PassFail[PassFailInt] = EncoderBreakOutTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = EncoderBreakOut(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
                     TestsRun++;
                 }
 
@@ -8545,7 +8545,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         return 0;
     }
 }
-int EncoderBreakOutTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
 
     char *CompressString = "EncoderBreakOut";
@@ -8555,7 +8555,7 @@ int EncoderBreakOutTest(int argc, char *argv[], string WorkingDir, string FilesA
     if (!(argc == 6 || argc == 5))
     {
         printf(
-            "  EncoderBreakOutTest \n\n"
+            "  EncoderBreakOut \n\n"
             "    <inputfile>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"

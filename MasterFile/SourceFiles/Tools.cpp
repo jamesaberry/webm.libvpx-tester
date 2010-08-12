@@ -214,6 +214,15 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
 
     int CompressInt = opt.AllowDF;
 
+    ////////////Track Mem Usage//////////
+    //string MemLeakCheckTXT2Str = output;
+    //MemLeakCheckTXT2Str.append("_MemOut.txt");
+    //char MemLeakCheckTXT2[255];
+    //snprintf(MemLeakCheckTXT2, 255, "%s", MemLeakCheckTXT2Str.c_str());
+    //on2_MemoryTrackerSetLogType(0, MemLeakCheckTXT2);
+    //cout << "\nMemory Tracking to file: " << MemLeakCheckTXT2 << "\n";
+    /////////////////////////////////////
+
     if (Mode == 0)
     {
         opt.Mode = MODE_REALTIME;
@@ -293,6 +302,9 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
         }
     }
 
+    ////////////Track Mem Usage//////////
+    //on2_MemoryTrackerDump();
+    /////////////////////////////////////
     return 0;
 }
 
@@ -344,7 +356,27 @@ int DecIVF2IVF(int argc, char *argv[])
     char *inputFile = argv[2];
     char *outputFile = argv[3];
 
-    DecompressIVFtoIVFNoOutput(inputFile, outputFile);
+    ////////////Track Mem Usage//////////
+    //string MemLeakCheckTXT2Str = outputFile;
+    //MemLeakCheckTXT2Str.append("_MemOut.txt");
+    //char MemLeakCheckTXT2[255];
+//   snprintf(MemLeakCheckTXT2, 255, "%s", MemLeakCheckTXT2Str.c_str());
+    //on2_MemoryTrackerSetLogType(0, MemLeakCheckTXT2);
+    //cout << "\nMemory Tracking to file: " << MemLeakCheckTXT2 << "\n";
+    /////////////////////////////////////
+
+    int x = 0;
+
+    while (x < 4)
+    {
+        DecompressIVFtoIVFNoOutput(inputFile, outputFile);
+        x++;
+    }
+
+    ////////////Track Mem Usage//////////
+    //on2_MemoryTrackerDump();
+    /////////////////////////////////////
+
     return 0;
 }
 int DecIVF2Raw(int argc, char *argv[])
@@ -364,6 +396,7 @@ int DecIVF2Raw(int argc, char *argv[])
     char *outputFile = argv[3];
 
     DecompressIVFtoRaw(inputFile, outputFile);
+
     return 0;
 }
 int IVFDataRateTool(int argc, char *argv[])

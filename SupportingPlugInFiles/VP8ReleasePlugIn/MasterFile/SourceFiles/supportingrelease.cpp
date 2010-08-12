@@ -24,8 +24,8 @@ char TesterExePath[256];
 extern unsigned int GetTime();
 extern void FolderName2(char *DirIn, char *DirOut);
 
-extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar);
-extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt);
+extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double &SsimOut);
+extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
 
 extern int CompressIVFtoIVF_TimeOuput(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt);
 extern int DecompressIVFtoIVF(char *inputFile, char *outputFile2);
@@ -384,14 +384,15 @@ int main(int argc, char *argv[])
 
     snprintf(outputFile2Char, 255, "%s", outputFile2.c_str());
 
-    TimeCompressIVFtoIVF(inputFile, outputFile, 0, opt.TargetBandwidth, opt, "VP8 Release", 0);
+    TimeCompressIVFtoIVF(inputFile, outputFile, 0, opt.TargetBandwidth, opt, "VP8 Release", 0, 0);
 
     double totalPsnr;
 
     if (ExtraCommand == 1 || ExtraCommand == 3)
     {
         cout << "\n\n";
-        totalPsnr = IVFPSNR(inputFile, outputFile, 0, 0, 1);
+        double ssimDummyVar = 0;
+        totalPsnr = IVFPSNR(inputFile, outputFile, 0, 0, 1, ssimDummyVar);
 
         char TextFilechar1[255];
 

@@ -45,7 +45,6 @@ using namespace std;
 extern char slashChar;
 extern string slashCharStr;
 /////////////////////////////////////////////////////////////////////////////////////////////
-//This is temporary need better solution
 #ifdef DSHOW
 extern char TesterExePath[256];
 #endif
@@ -168,11 +167,6 @@ extern "C"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////API 2.0//////////////////////////////////////////////////////
-///////////////////////////////ENC///////////////////////////////
-/* This is a simple program that reads "VP6 raw" files and decodes them
-* using the new interface. Decoded frames are output as YV12 raw
-* YV12 images.
-*/
 #ifdef _MSC_VER
 #define USE_POSIX_MMAP 0
 #else
@@ -913,7 +907,80 @@ unsigned int file_is_ivf_IVF(FILE *infile, unsigned int *fourcc, FILE *out, unsi
 
     return is_ivf;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------VP8 Settings-------------------------------------------------------------------
+void VP8DefaultParms(VP8_CONFIG &opt)
+{
+    /////////Orig Tester Parms//////////
+    opt.AllowLag = 1;
+    opt.AltFreq = 16;
+    opt.AltQ = 20;
+    opt.CpuUsed = 0;
+    opt.EncodeBreakout = 0;
+    opt.GoldQ = 28;
+    opt.KeyQ = 12;
+    opt.PlayAlternate = 1;
+    opt.WorstAllowedQ = 56;
+    opt.LagInFrames = 10;
+    //////////////////////////////////
+    //////////////IVFEnc Parms////////////
+    //opt.AllowLag = 0;
+    //opt.AltFreq = 0;
+    //opt.AltQ = 0;
+    //opt.CpuUsed = -4;
+    //opt.EncodeBreakout = 800;
+    //opt.GoldQ = 0;
+    //opt.KeyQ = 0;
+    //opt.PlayAlternate = 0;
+    //opt.WorstAllowedQ = 63;
+    //opt.LagInFrames = 0;
+    //////////////////////////////////////
+
+    opt.Width = 0;
+    opt.Height = 0;
+    //included in default settings file
+    opt.AllowDF = 0;
+    //opt.AllowLag = 1;
+    opt.AllowSpatialResampling = 0;
+    //opt.AltFreq = 16;
+    //opt.AltQ = 20;
+    opt.AutoKey = 1;
+    opt.BestAllowedQ = 4;
+    //opt.CpuUsed = 0;
+    opt.DropFramesWaterMark = 70;
+    //opt.EncodeBreakout = 0; //this may need to be set to 800 defaultly check vp8_cx_iface.c LN 46
+    opt.EndUsage = 1;
+    opt.FixedQ = -1;
+    //opt.GoldQ = 28;
+    opt.KeyFreq = 999999;
+    //opt.KeyQ = 12;
+    opt.MaximumBufferSize = 6;
+    opt.Mode = 2;
+    opt.NoiseSensitivity = 0;
+    opt.OptimalBufferLevel = 5;
+    //opt.PlayAlternate = 1; //this may be being used incorrectly for EnableAutoAltRef for some reason
+    opt.ResampleDownWaterMark = 30;
+    opt.ResampleUpWaterMark = 60;
+    opt.Sharpness = 0;
+    opt.StartingBufferLevel = 4;
+    opt.TargetBandwidth = 40;
+    opt.TwoPassVBRBias = 50;
+    opt.TwoPassVBRMaxSection = 400;
+    opt.TwoPassVBRMinSection = 0;
+    opt.UnderShootPct = 95;
+    opt.Version = 0;
+    //opt.WorstAllowedQ = 56;
+
+    //not included in default settings file
+    opt.Height = 0;
+    opt.MultiThreaded = 0;
+    opt.Width = 0;
+
+    opt.TokenPartitions = 0;
+    opt.ErrorResilientMode = 0;
+
+
+}
 int OutPutSettingsAPI(char *outputFile, on2_codec_enc_cfg_t cfg)
 {
     //Saves all on2_codec_enc_cfg_t settings to a settings file
@@ -956,6 +1023,8 @@ int OutPutSettingsAPI(char *outputFile, on2_codec_enc_cfg_t cfg)
 
 int VP8CoreConfigToAPIcfg(VP8_CONFIG coreCfg, on2_codec_enc_cfg_t *cfg)
 {
+    //Converts a core configuration to api configuration
+
     cfg->g_threads = coreCfg.MultiThreaded;
     cfg->g_profile = coreCfg.Version;
     cfg->g_error_resilient = coreCfg.ErrorResilientMode;
@@ -1256,7 +1325,7 @@ VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display)
 }
 VP8_CONFIG InPutSettings(char *inputFile)
 {
-    //// Reads an input file and sets VP8_CONFIG accordingly
+    // Reads an input file and sets VP8_CONFIG accordingly
     ifstream infile2(inputFile);
 
     char firstPFile[256];
@@ -1503,6 +1572,7 @@ int OutPutSettingsIVFEnc(char *outputFile, VP8_CONFIG opt)
     outfile.close();
     return 0;
 }
+//---------------------------------------------------IVF Header Data------------------------------------------------------------------
 int PrintIVFFileHeaderData(IVF_HEADER ivf)
 {
     printf("IVF FIle Header Data\n\n"
@@ -1590,6 +1660,7 @@ int FormatFrameHeaderWrite(IVF_FRAME_HEADER &ivf_fh)
 
     return 0;
 }
+//---------------------------------------------------File Management------------------------------------------------------------------
 long FileSize(char *inFile)
 {
     //finds and returns the size of a file with output.
@@ -1719,7 +1790,7 @@ void FolderName(char *input, char *output)
 
 void FolderName2(char *DirIn, char *DirOut)
 {
-    //Takes in the full name of a file and writes the directory and file name (with out its extention) to the second file.
+    //Takes in the full name of a file and writes the directory and file name (without its extention) to the second input.
     int ArraySize = 0;
     int parser = 0;
 
@@ -1743,7 +1814,7 @@ void FolderName2(char *DirIn, char *DirOut)
 
 void CopyCharArray(char *input, char *output)
 {
-    //Gets the full name of the folder a file is in and returns it.
+    //Gets the full name of the folder a file is in and copies it to the second input.
 
     int parser = 0;
     int slashcount = 0;
@@ -2825,6 +2896,7 @@ void TestName(char *input, char *FileName)
 
     return;
 }
+//--------------------------------------------------------Math------------------------------------------------------------------------
 int DecimalPlaces(int InputNumber)
 {
     int y = 0;
@@ -2934,7 +3006,34 @@ float AreaUnderQuadradic(float A, float B, float C, float X1, float X2)
     float TotalArea = Area2 - Area1;
     return TotalArea;
 }
-//--------------------------------------------------------VP8-------------------------------------------------------------------------
+char *itoa_custom(int value, char *result, int base)
+{
+    int x = 0;
+
+    if (base < 2 || base > 16)
+    {
+        *result = 0;
+        return result;
+    }
+
+    char *out = result;
+    int quotient = value;
+
+    do
+    {
+        *out = "0123456789abcdef"[ abs(quotient % base)];
+        ++out;
+        quotient /= base;
+    }
+    while (quotient);
+
+    // Only apply negative sign for base 10
+    if (value < 0 && base == 10) *out++ = '-';
+
+    reverse(result, out);
+    *out = 0;
+    return result;
+}
 //----------------------------------------------------Cross Plat----------------------------------------------------------------------
 unsigned int ON2_GetHighResTimerTick()
 {
@@ -3037,34 +3136,6 @@ void RunExe(string RunExe)
 #endif
 
     return;
-}
-char *itoa_custom(int value, char *result, int base)
-{
-    int x = 0;
-
-    if (base < 2 || base > 16)
-    {
-        *result = 0;
-        return result;
-    }
-
-    char *out = result;
-    int quotient = value;
-
-    do
-    {
-        *out = "0123456789abcdef"[ abs(quotient % base)];
-        ++out;
-        quotient /= base;
-    }
-    while (quotient);
-
-    // Only apply negative sign for base 10
-    if (value < 0 && base == 10) *out++ = '-';
-
-    reverse(result, out);
-    *out = 0;
-    return result;
 }
 //---------------------------------------------------------IVF------------------------------------------------------------------------
 int image2yuvconfig(const on2_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
@@ -5304,78 +5375,6 @@ int FauxDecompress(char *inputChar)
 #endif
 
     return 1;
-}
-void VP8DefaultParms(VP8_CONFIG &opt)
-{
-    /////////Orig Tester Parms//////////
-    opt.AllowLag = 1;
-    opt.AltFreq = 16;
-    opt.AltQ = 20;
-    opt.CpuUsed = 0;
-    opt.EncodeBreakout = 0;
-    opt.GoldQ = 28;
-    opt.KeyQ = 12;
-    opt.PlayAlternate = 1;
-    opt.WorstAllowedQ = 56;
-    opt.LagInFrames = 10;
-    //////////////////////////////////
-    //////////////IVFEnc Parms////////////
-    //opt.AllowLag = 0;
-    //opt.AltFreq = 0;
-    //opt.AltQ = 0;
-    //opt.CpuUsed = -4;
-    //opt.EncodeBreakout = 800;
-    //opt.GoldQ = 0;
-    //opt.KeyQ = 0;
-    //opt.PlayAlternate = 0;
-    //opt.WorstAllowedQ = 63;
-    //opt.LagInFrames = 0;
-    //////////////////////////////////////
-
-    opt.Width = 0;
-    opt.Height = 0;
-    //included in default settings file
-    opt.AllowDF = 0;
-    //opt.AllowLag = 1;
-    opt.AllowSpatialResampling = 0;
-    //opt.AltFreq = 16;
-    //opt.AltQ = 20;
-    opt.AutoKey = 1;
-    opt.BestAllowedQ = 4;
-    //opt.CpuUsed = 0;
-    opt.DropFramesWaterMark = 70;
-    //opt.EncodeBreakout = 0; //this may need to be set to 800 defaultly check vp8_cx_iface.c LN 46
-    opt.EndUsage = 1;
-    opt.FixedQ = -1;
-    //opt.GoldQ = 28;
-    opt.KeyFreq = 999999;
-    //opt.KeyQ = 12;
-    opt.MaximumBufferSize = 6;
-    opt.Mode = 2;
-    opt.NoiseSensitivity = 0;
-    opt.OptimalBufferLevel = 5;
-    //opt.PlayAlternate = 1; //this may be being used incorrectly for EnableAutoAltRef for some reason
-    opt.ResampleDownWaterMark = 30;
-    opt.ResampleUpWaterMark = 60;
-    opt.Sharpness = 0;
-    opt.StartingBufferLevel = 4;
-    opt.TargetBandwidth = 40;
-    opt.TwoPassVBRBias = 50;
-    opt.TwoPassVBRMaxSection = 400;
-    opt.TwoPassVBRMinSection = 0;
-    opt.UnderShootPct = 95;
-    opt.Version = 0;
-    //opt.WorstAllowedQ = 56;
-
-    //not included in default settings file
-    opt.Height = 0;
-    opt.MultiThreaded = 0;
-    opt.Width = 0;
-
-    opt.TokenPartitions = 0;
-    opt.ErrorResilientMode = 0;
-
-
 }
 //---------------------------------------------------------IVF DShow------------------------------------------------------------------------
 #ifdef DSHOW
@@ -7840,7 +7839,8 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
 
     string out_fn4STRb = out_fn;
     out_fn4STRb.erase(out_fn4STRb.length() - 4, 4);
-    out_fn4STRb.append("_DecodeFrame\\");
+    out_fn4STRb.append("_DecodeFrame");
+    out_fn4STRb.append(slashCharStr.c_str());
 
     string CreateDir3b = out_fn4STRb;
     CreateDir3b.insert(0, "mkdir \"");
@@ -7849,7 +7849,8 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
 
     string out_fn3STRb = out_fn;
     out_fn3STRb.erase(out_fn3STRb.length() - 4, 4);
-    out_fn3STRb.append("_PreviewFrame\\");
+    out_fn3STRb.append("_PreviewFrame");
+    out_fn3STRb.append(slashCharStr.c_str());
 
     string CreateDir2b = out_fn3STRb;
     CreateDir2b.insert(0, "mkdir \"");
@@ -8128,7 +8129,8 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
                         {
                             string out_fn3STR = out_fn;
                             out_fn3STR.erase(out_fn3STR.length() - 4, 4);
-                            out_fn3STR.append("_PreviewFrame\\");
+                            out_fn3STR.append("_PreviewFrame");
+                            out_fn3STR.append(slashCharStr.c_str());
 
                             //string CreateDir2 = out_fn3STR;
                             //CreateDir2.insert(0, "mkdir \"");
@@ -8179,7 +8181,8 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
 
                             string out_fn4STR = out_fn;
                             out_fn4STR.erase(out_fn4STR.length() - 4, 4);
-                            out_fn4STR.append("_DecodeFrame\\");
+                            out_fn4STR.append("_DecodeFrame");
+                            out_fn4STR.append(slashCharStr.c_str());
 
                             //string CreateDir3 = out_fn4STR;
                             //CreateDir3.insert(0, "mkdir \"");
@@ -9624,392 +9627,6 @@ fail:
     free(buf);
     fclose(infile);
 
-    return 0;
-}
-int CompressIVFtoIVFNoErrorOutputOutputPreviewFrameProto(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
-{
-    //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
-    if (oxcf.Mode == 3) //Real Time Mode
-    {
-        return 0;
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    on2_codec_ctx_t        encoder;
-    char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
-    FILE                  *infile, *outfile, *outfile3;
-    on2_codec_enc_cfg_t    cfg;
-    on2_codec_err_t        res;
-    int                    pass, one_pass_only = 0;
-    stats_io_t             stats;
-    on2_image_t            raw;
-    const struct codec_item  *codec = codecs;
-    int                    frame_avail, got_data;
-    int                      arg_usage = 0, arg_passes = 1, arg_deadline = 0;
-    int                      arg_limit = 0;
-    static const arg_def_t **ctrl_args = no_args;
-    int                      verbose = 0;
-    int                      arg_use_i420 = 1;
-    unsigned long            cx_time = 0;
-
-    void *out;
-
-
-    /* Populate encoder configuration */
-    res = on2_codec_enc_config_default(codec->iface, &cfg, arg_usage);
-
-    if (res)
-    {
-        printf("Failed to get config: %s\n", on2_codec_err_to_string(res));
-        return EXIT_FAILURE;
-    }
-
-    //////////////////////Update CFG Settings Here////////////////////
-    // if mode == 4 or 5 arg_passes = 2
-    VP8CoreConfigToAPIcfg(oxcf, &cfg);
-
-    FILE *GetWHinfile = fopen(in_fn, "rb");
-
-    if (GetWHinfile == NULL)
-    {
-        printf("Input File not found: %s\n", in_fn);
-        fprintf(stderr, "Input File not found: %s\n", in_fn);
-        return -1;
-    }
-
-    IVF_HEADER ivfhRaw;
-    IVF_FRAME_HEADER ivf_fhRaw;
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
-    FormatIVFHeaderRead(&ivfhRaw);
-
-    int w		= ivfhRaw.width;
-    int h		= ivfhRaw.height;
-    int fr		= (ivfhRaw.rate / ivfhRaw.scale);
-
-    oxcf.Width = w;
-    oxcf.Height = h;
-
-    cfg.g_w = w;                                                          //
-    cfg.g_h = h;
-    cfg.g_timebase.num = 1000;
-    cfg.g_timebase.den = fr * 1000;
-    fclose(GetWHinfile);
-    //Deal with Mode Pass and BitRate Here
-    cfg.rc_target_bitrate = BitRate;
-
-    if (oxcf.Mode == 0) //Real Time Mode
-    {
-        arg_deadline = 1;
-    }
-
-    if (oxcf.Mode == 1) //One Pass Good
-    {
-        arg_deadline = 1000000;
-    }
-
-    if (oxcf.Mode == 2) //One Pass Best
-    {
-        arg_deadline = 0;
-    }
-
-    if (oxcf.Mode == 3) //First Pass No longer exists
-    {
-    }
-
-    if (oxcf.Mode == 4) //Two Pass Good
-    {
-        arg_passes = 2;
-        arg_deadline = 1000000;
-    }
-
-    if (oxcf.Mode == 5) //Two Pass Best
-    {
-        arg_passes = 2;
-        arg_deadline = 0;
-    }
-
-    ///////////////////////////////////////////////////////////////////
-
-    /* Handle codec specific options */
-    if (codec->iface == &on2_codec_vp8_cx_algo)
-    {
-        ctrl_args = vp8_args;
-    }
-
-    on2_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
-                  cfg.g_w, cfg.g_h, 1);
-
-    cfg.g_timebase.den *= 2;
-    memset(&stats, 0, sizeof(stats));
-
-    for (pass = 0; pass < arg_passes; pass++)
-    {
-        printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.TargetBandwidth, oxcf.WorstAllowedQ, oxcf.BestAllowedQ, CompressString, CompressInt);
-
-        int CharCount = 0;
-
-        if (pass == 0 && arg_passes == 2)
-        {
-            printf("\nFirst Pass - ");
-        }
-
-        if (pass == 1 && arg_passes == 2)
-        {
-            printf("\nSecond Pass - ");
-        }
-
-        if (oxcf.Mode == 0) //Real Time Mode
-        {
-            printf(" RealTime\n\n");
-        }
-
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
-        {
-            printf(" GoodQuality\n\n");
-        }
-
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
-        {
-            printf(" BestQuality\n\n");
-        }
-
-        printf("API - Compressing Raw IVF File to VP8 IVF File: \n");
-        //fprintf(stderr, "API - Compressing Raw IVF File to VP8 IVF File: \n");
-
-        int frames_in = 0, frames_out = 0;
-        unsigned long nbytes = 0;
-
-        infile = fopen(in_fn, "rb");
-
-        if (!infile)
-        {
-            printf("Failed to open input file: %s", in_fn);
-            fprintf(stderr, "Failed to open input file: %s", in_fn);
-            return EXIT_FAILURE;
-        }
-
-        //////////////////////read in junk IVFData//////////////////////
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), infile); //Read In File Header
-        ////////////////////////////////////////////////////////////////
-        outfile = fopen(out_fn, "wb");
-
-        /////////////////////////DELETEME//////////////////////////////////
-        string out_fn2STR = out_fn;
-        out_fn2STR.append("_RAW.raw");
-        out = out_open(out_fn2STR.c_str(), 0);
-        //outfile3 = fopen(out_fn2STR.c_str(), "wb");
-        ///////////////////////////////////////////////////////////////////
-
-        if (!outfile)
-        {
-            printf("Failed to open output file: %s", out_fn);
-            fprintf(stderr, "Failed to open output file: %s", out_fn);
-            return EXIT_FAILURE;
-        }
-
-        if (stats_fn)
-        {
-            if (!stats_open_file(&stats, stats_fn, pass))
-            {
-                printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
-            }
-        }
-        else
-        {
-            if (!stats_open_mem(&stats, pass))
-            {
-                printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
-            }
-        }
-
-        cfg.g_pass = arg_passes == 2
-                     ? pass ? ON2_RC_LAST_PASS : ON2_RC_FIRST_PASS
-                 : ON2_RC_ONE_PASS;
-#if ON2_ENCODER_ABI_VERSION > (1 + ON2_CODEC_ABI_VERSION)
-
-        if (pass)
-        {
-            cfg.rc_twopass_stats_in = stats_get(&stats);
-        }
-
-#endif
-
-        write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);
-
-        /* Construct Encoder Context */
-        if (cfg.kf_min_dist == cfg.kf_max_dist)
-            cfg.kf_mode = ON2_KF_FIXED;
-
-        //on2_codec_enc_config_set(&encoder,&cfg);
-        on2_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ctx_exit_on_error(&encoder, "Failed to initialize encoder");
-        ///////////Set Encoder Custom Settings/////////////////
-        on2_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.CpuUsed);
-        on2_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD, oxcf.EncodeBreakout);
-        on2_codec_control(&encoder, VP8E_SET_ENABLEAUTOALTREF, oxcf.PlayAlternate);
-        on2_codec_control(&encoder, VP8E_SET_NOISE_SENSITIVITY, oxcf.NoiseSensitivity);
-        on2_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
-        on2_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (on2_vp8e_token_partitions) oxcf.TokenPartitions);
-        ///////////////////////////////////////////////////////
-
-        frame_avail = 1;
-        got_data = 0;
-
-        if ((arg_passes == 2 && pass == 1) || arg_passes == 1)
-        {
-            /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
-            string OutputsettingsFile = outputFile2;
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_Paramaters.txt");
-            char OutputsettingsFileChar[255];
-
-            snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
-            OutPutSettings(OutputsettingsFileChar,  oxcf);
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
-            OutputsettingsFile.append("_APIParamaters.txt");
-            char OutputsettingsFileChar2[255];
-
-            snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
-            OutPutSettingsAPI(OutputsettingsFileChar2,  cfg);
-            ///////////////////////////////////////////////////////////////////////////////////////////
-        }
-
-        while (frame_avail || got_data)
-        {
-            on2_codec_iter_t iter = NULL;
-            const on2_codec_cx_pkt_t *pkt;
-            struct on2_usec_timer timer;
-
-            if (!arg_limit || frames_in < arg_limit)
-            {
-                //////////////////////read in junk IVFData//////////////////////
-                fread(&ivf_fhRaw.frameSize, 1, 4, infile);
-                fread(&ivf_fhRaw.timeStamp, 1, 8, infile);
-                ////////////////////////////////////////////////////////////////
-                frame_avail = read_frame(infile, &raw);
-
-                if (frame_avail)
-                    frames_in++;
-
-                if (CharCount == 79)
-                {
-                    printf("\n");
-                    CharCount = 0;
-                }
-
-                CharCount++;
-                printf(".");
-            }
-            else
-                frame_avail = 0;
-
-            on2_usec_timer_start(&timer);
-            on2_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2,
-                             2, 0, arg_deadline);
-            on2_usec_timer_mark(&timer);
-            cx_time += on2_usec_timer_elapsed(&timer);
-            ctx_exit_on_error(&encoder, "Failed to encode frame");
-            got_data = 0;
-
-            //Print Quantizers
-            //int lastQuantizerValue = 0;
-            //on2_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64, &lastQuantizerValue);
-            //printf("frame %i Quantizer: %i\n",frames_out,lastQuantizerValue);
-
-            while ((pkt = on2_codec_get_cx_data(&encoder, &iter)))
-            {
-                frames_out++;
-                got_data = 1;
-                nbytes += pkt->data.raw.sz;
-
-                switch (pkt->kind)
-                {
-                case ON2_CODEC_CX_FRAME_PKT:
-                    write_ivf_frame_header(outfile, pkt);
-                    fwrite(pkt->data.frame.buf, 1, pkt->data.frame.sz, outfile);
-                    const on2_image_t    *img;
-                    //codec->iface->enc.get_preview(vpx_codec_alg_priv_t
-                    img = vpx_codec_get_preview_frame(&encoder);
-
-                    //img = codec->iface->enc.get_preview(&encoder);
-                    //fwrite(pkt->data.raw.buf, 1, pkt->data.raw.sz, outfile3);//newtest delete me
-                    if (img)
-                    {
-
-                        unsigned int y;
-                        char out_fn[128+24];
-                        uint8_t *buf;
-
-
-
-                        buf = img->planes[PLANE_Y];
-
-                        for (y = 0; y < img->d_h; y++)
-                        {
-                            out_put(out, buf, img->d_w, 0);
-                            buf += img->stride[PLANE_Y];
-                        }
-
-                        buf = img->planes[PLANE_U];
-
-                        for (y = 0; y < img->d_h / 2; y++)
-                        {
-                            out_put(out, buf, img->d_w / 2, 0);
-                            buf += img->stride[PLANE_U];
-                        }
-
-                        buf = img->planes[PLANE_V];
-
-                        for (y = 0; y < img->d_h / 2; y++)
-                        {
-                            out_put(out, buf, img->d_w / 2, 0);
-                            buf += img->stride[PLANE_V];
-                        }
-
-
-                    }
-
-                    break;
-                case ON2_CODEC_STATS_PKT:
-                    stats_write(&stats,
-                                pkt->data.twopass_stats.buf,
-                                pkt->data.twopass_stats.sz);
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            fflush(stdout);
-        }
-
-        /* this bitrate calc is simplified and relies on the fact that this
-        * application uses 1/timebase for framerate.
-        */
-        {
-            //uint64_t temp= (uint64_t)frames_in * 1000000;
-        }
-        on2_codec_destroy(&encoder);
-
-        fclose(infile);
-        out_close(out, out_fn2STR.c_str(), 0);
-
-        if (!fseek(outfile, 0, SEEK_SET))
-            write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
-
-        fclose(outfile);
-        //fclose(outfile3);//deleteme
-        stats_close(&stats);
-        printf("\n");
-    }
-
-    on2_img_free(&raw);
     return 0;
 }
 #endif
@@ -12855,8 +12472,7 @@ int GetNumberofFrames(char *inputFile)
 
     return FrameLength;
 }
-//----------------------------------------------------------Not Used------------------------------------------------------
-//------------------------------------------------------------Test--------------------------------------------------------
+//-----------------------------------------------------------IVF Enc------------------------------------------------------
 int API20Encoder(long width, long height, char *infilechar, char *outfilechar)
 {
     on2_codec_ctx_t        encoder;

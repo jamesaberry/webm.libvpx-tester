@@ -15659,8 +15659,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         snprintf(ProgramMemLeakCheckEnc, 2048, "%s", WorkingDir9.c_str());
         snprintf(ProgramMemLeakCheckDec, 2048, "%s", WorkingDir12.c_str());
 
-        cout << "\n\n\n" << ProgramMemLeakCheckEnc << "\n\n\n";
-        cout << "\n\n\n" << ProgramMemLeakCheckDec << "\n\n\n";
+        //cout << "\n\n\n" << ProgramMemLeakCheckEnc << "\n\n\n";
+        //cout << "\n\n\n" << ProgramMemLeakCheckDec << "\n\n\n";
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -15763,66 +15763,123 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        ifstream infile4a(MemLeakCheckTXT1);
+        int fail = 0;
 
-        if (!infile4a.good())
+        printf("\n\nResults:\n\n");
+        fprintf(stderr, "\n\nResults:\n\n");
+
+        FILE *infile4 = fopen(MemLeakCheckTXT1, "rb");
+
+        if (infile4 == NULL)
         {
-            printf("%s not found\n", infile4a);
-            fprintf(stderr, "%s not found\n", infile4a);
+            char OutputChar1[255];
+            char MemLeakCheckTXTFileName[200];
+            FileName(MemLeakCheckTXT1, MemLeakCheckTXTFileName);
+            snprintf(OutputChar1, 255, "File not found: %s - Failed", MemLeakCheckTXTFileName);
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+            fail = 1;
+        }
+        else
+        {
+            char buffer4[256];
 
-            fclose(fp);
-            string File1Str = File1;
-            RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            fgets(buffer4 , 256 , infile4);
+            fgets(buffer4 , 256 , infile4);
+            fgets(buffer4 , 256 , infile4);
+            fgets(buffer4 , 256 , infile4);
+
+            string bufferString4 = buffer4;
+
+            if (bufferString4.compare(0, 24, "_currently Allocated= 0;") == 0)
+            {
+                char OutputChar1[255];
+                snprintf(OutputChar1, 255, "Encode Memory Currently Allocated == 0 - Passed");
+                string OutputChar1str = OutputChar1;
+                FormatedPrint(OutputChar1str, 5);
+                printf("\n");
+                fprintf(stderr, "\n");
+            }
+            else
+            {
+                char OutputChar1[255];
+                snprintf(OutputChar1, 255, "Encode Memory Currently Allocated != 0 - %s - Failed", bufferString4.c_str());
+                string OutputChar1str = OutputChar1;
+                FormatedPrint(OutputChar1str, 5);
+                printf("\n");
+                fprintf(stderr, "\n");
+                fail = 1;
+            }
         }
 
-        char buffer4a[256];
+        FILE *infile5 = fopen(MemLeakCheckTXT2, "rb");
 
-        infile4a.getline(buffer4a, 256);
-        infile4a.getline(buffer4a, 256);
-        infile4a.getline(buffer4a, 256);
-        infile4a.getline(buffer4a, 256);
-
-        string bufferString4a = buffer4a;
-
-        ifstream infile4b(MemLeakCheckTXT2);
-
-        if (!infile4b.good())
+        if (infile5 == NULL)
         {
-            printf("%s not found\n", infile4b);
-            fprintf(stderr, "%s not found\n", infile4b);
+            char OutputChar1[255];
+            char MemLeakCheckTXTFileName[200];
+            FileName(MemLeakCheckTXT2, MemLeakCheckTXTFileName);
+            snprintf(OutputChar1, 255, "File not found: %s - Failed", MemLeakCheckTXTFileName);
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+            fail = 1;
+        }
+        else
+        {
 
-            fclose(fp);
-            string File1Str = File1;
-            RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            char buffer5[256];
+
+            fgets(buffer5 , 256 , infile5);
+            fgets(buffer5 , 256 , infile5);
+            fgets(buffer5 , 256 , infile5);
+            fgets(buffer5 , 256 , infile5);
+
+            string bufferString5 = buffer5;
+
+            if (bufferString5.compare(0, 24, "_currently Allocated= 0;") == 0)
+            {
+                char OutputChar1[255];
+                snprintf(OutputChar1, 255, "Decode Memory Currently Allocated == 0 - Passed");
+                string OutputChar1str = OutputChar1;
+                FormatedPrint(OutputChar1str, 5);
+                printf("\n");
+                fprintf(stderr, "\n");
+            }
+            else
+            {
+                char OutputChar1[255];
+                snprintf(OutputChar1, 255, "Decode Memory Currently Allocated != 0 - %s - Failed", bufferString5.c_str());
+                string OutputChar1str = OutputChar1;
+                FormatedPrint(OutputChar1str, 5);
+                printf("\n");
+                fprintf(stderr, "\n");
+                fail = 1;
+            }
         }
 
-        char buffer4b[256];
+        if (infile4 != NULL)fclose(infile4);
 
-        infile4b.getline(buffer4b, 256);
-        infile4b.getline(buffer4b, 256);
-        infile4b.getline(buffer4b, 256);
-        infile4b.getline(buffer4b, 256);
+        if (infile5 != NULL)fclose(infile5);
 
-        string bufferString4b = buffer4b;
-
-        if (bufferString4a.compare(0, 23, "Currently Allocated= 0;") == 0 && bufferString4b.compare(0, 23, "Currently Allocated= 0;") == 0)
+        if (fail == 0)
         {
-            printf("\n\nMemory Leak Check 2 Passed\n");
-            fprintf(stderr, "\n\nMemory Leak 2 Check Passed\n");
-            infile4a.close();
-            infile4b.close();
+            printf("\nPassed\n");
+            fprintf(stderr, "\nPassed\n");
+
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
+
             return 1;
         }
         else
         {
-            printf("\nMemory Leack Check 2 Failed\n");
-            fprintf(stderr, "\nMemory Leack Check 2 Failed\n");
-            infile4a.close();
-            infile4b.close();
+            printf("\nFailed\n");
+            fprintf(stderr, "\nFailed\n");
+
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
@@ -15832,6 +15889,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
+
 
     }
     int MinQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)

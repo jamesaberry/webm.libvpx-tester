@@ -1471,7 +1471,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf\n", EXTFINUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", GQVBQNUM, slashChar, slashChar);
-    fprintf(fp5, "%%%i@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML2NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", MEML2NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVORTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", OV2PSNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cTestVectors\n", TVECTNUM, slashChar, slashChar);
@@ -1658,7 +1658,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf\n", EXTFINUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", GQVBQNUM, slashChar, slashChar);
-    fprintf(fp5, "%%%i@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML2NUM, slashChar, slashChar);
+    fprintf(fp5, "%i@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", MEML2NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVORTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", OV2PSNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cTestVectors\n", TVECTNUM, slashChar, slashChar);

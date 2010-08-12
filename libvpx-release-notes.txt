@@ -1,5 +1,5 @@
 libvpx-tester Release Notes
-Version 0.9.1 
+Version 0.9.1
 
 - Standardized test result output for all tests added
 - CheckPBMBufferThreshold utility added
@@ -19,6 +19,7 @@ Version 0.9.1
 - PlayAlternate now directly checks for alternate reference frames.
 - PreProcessorWorks merged into NoiseSensitivityWorks
 - Recon Buffer test added
+- MemLeakCheck2 Updated
 - Resample Down Water Mark now uses CheckBPMBufferThreshold in pass/fail
 - IVFEnc tool added (clone of ivfenc.exe)
 - IVFDec tool added (clone of ivfdec.exe)

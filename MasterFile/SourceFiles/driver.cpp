@@ -290,7 +290,7 @@ void OnErrorOutPut()
            "   (8)DropFramesWaterMarkWorks             IVFCheckPBM\n"
            "   (9)DataRateTest                         \n"
            "  (10)DebugMatchesRelease                  Raw2IVF\n"
-           "  (11)EncoderBreakOutTest                  IVF2Raw\n"
+           "  (11)EncoderBreakOut                      IVF2Raw\n"
            "  (12)ErrorResilientModeWorks              IVF2RawFrames\n"
            "  (13)ExtraFileCheck                       CombineIndvFrames\n"
            "  (14)FixedQ                               \n"
@@ -2499,7 +2499,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
             , RECONBUF);
 
 
-        FormatedPrint("The test creates a compression and internally compares the compressor’s preview frames to the decoded output produced by decompressing the compressor’s en-coded frame. The state of each frame is recorded to a text file.  If the contents of all preview frames are identical to the content of all decoded frames; the test passes.", 1);
+        FormatedPrint("The test creates a compression and internally compares the compressor's preview frames to the decoded output produced by decompressing the compressorï¿½s en-coded frame. The state of each frame is recorded to a text file.  If the contents of all preview frames are identical to the content of all decoded frames; the test passes.", 1);
     }
 
     if (selector == RSDWMNUM)

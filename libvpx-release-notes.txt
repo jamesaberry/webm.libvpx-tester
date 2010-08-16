@@ -20,6 +20,7 @@ Version 0.9.1
 - PreProcessorWorks merged into NoiseSensitivityWorks
 - Recon Buffer test added
 - MemLeakCheck2 Updated
+- AltRefTest Removed
 - Resample Down Water Mark now uses CheckBPMBufferThreshold in pass/fail
 - IVFEnc tool added (clone of ivfenc.exe)
 - IVFDec tool added (clone of ivfdec.exe)

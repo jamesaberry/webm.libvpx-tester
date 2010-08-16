@@ -2136,7 +2136,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                 }
                 }*/
 
-                if (selector == ALTFRNUM)
+                /*if (selector == ALTFRNUM)
                 {
                     if (!(DummyArgvVar == 7 || DummyArgvVar == 8))
                     {
@@ -2149,7 +2149,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
 
                         PassFail[PassFailInt] = -1;
                     }
-                }
+                }*/
 
                 if (selector == AUTKFNUM)
                 {
@@ -2681,7 +2681,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                 }
 
                 //Make sure that all tests input are vaild tests by checking the list (make sure to add new tests here!)
-                if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM && selector != ALTFRNUM &&
+                if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM &&
                     selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CHGWRNUM &&
                     selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&

@@ -355,6 +355,404 @@ extern void PrintHeader2(int argc, char *argv[], string WorkingDir3);
 extern void PrintHeader3(int argc, char *argv[], string WorkingDir3);
 extern void RecordTestComplete(string MainDirString, string File1String, int TestType);
 //----------------------------------------Tests No Longer Used----------------------------------------------------------------
+int AltFreqTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+{
+    //RemoveME:This test should test alt_freq sort of like key frame frequency but im seeing notes in the
+    //         source code that says this setting will not be used in the final build but i am seeing
+    //         the setting used in onyx_if.c line 1544 and 1823 to set baseline_gf_interval but it also
+    //         seems to use DEFAULT_GF_INTERVAL if no value for alt_freq exists so not sure if test should
+    //         be removed or modified currently.
+
+    char *CompressString = "AltFreq";
+
+    char *input = argv[2];
+
+    if (!(argc == 7 || argc == 8))
+    {
+        printf(
+            "  AltFreqTest \n\n"
+            "    <inputfile>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "          (2)One Pass Best Quality\n"
+            "          (3)Two Pass - First Pass\n"
+            "          (4)Two Pass\n"
+            "          (5)Two Pass Best Quality\n"
+            "    <Target Bit Rate>\n"
+            "    <Alt Freq 1>\n"
+            "    <Alt Freq 2>\n"
+            "    <Optional Settings File>\n"
+        );
+
+        return 0;
+    }
+
+    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+
+    string WorkingDirString = ""; // <- All Options need to set a value for this
+    string Mode3TestMatch = "";
+    string MainDirString = "";
+    char *MyDir = "AltFreq";
+    char WorkingDir2[255] = "";
+    char WorkingDir3[255] = "";
+    char File1[255] = "";
+
+    if (TestType == 2 || TestType == 1)
+    {
+        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
+
+        int v = 0;
+
+        while (WorkingDir2[v] != '\"')
+        {
+            WorkingDir3[v] = WorkingDir2[v];
+            v++;
+        }
+
+        WorkingDir3[v] = slashChar;
+        WorkingDir3[v+1] = '\0';
+        WorkingDirString = WorkingDir3;
+        /////////////////////////////////////////////////////////////////////////////////
+        MainDirString = WorkingDir3;
+        MainDirString.append("FileIndex.txt");
+        /////////////////////////////////////////////////////////////////////////////////
+        WorkingDirString.append(MyDir);
+        WorkingDirString.append(slashCharStr);
+        WorkingDirString.append(FilesAr[0]);
+        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
+
+        string CreateDir2 = WorkingDirString;
+        CreateDir2.insert(0, "md \"");
+        MakeDirVPX(CreateDir2.c_str());
+
+        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
+        if (TestType == 2)
+        {
+            char WorkingDirString2[255];
+            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
+            //strcpy(WorkingDirString2, WorkingDirString.c_str());
+            SubFolderName(WorkingDirString2, File1);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+    }
+    else
+    {
+        //Use WorkingDir to get the main folder
+        //Use Index File to get the rest of the string
+        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
+        char buffer[255];
+
+        string WorkingDir2 = WorkingDir;
+
+        WorkingDir2.append(slashCharStr);
+        MainDirString = WorkingDir2;
+        MainDirString.append("FileIndex.txt");
+
+        fstream FileStream;
+        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
+
+        int n = 0;
+
+        while (n < atoi(argv[argc]))
+        {
+            FileStream.getline(buffer, 255);
+            n++;
+        }
+
+        FileStream.close();
+
+        char Mode3TestMatchChar[255];
+        TestName(buffer, Mode3TestMatchChar);
+        Mode3TestMatch = Mode3TestMatchChar;
+
+        if (Mode3TestMatch.compare(MyDir) != 0)
+        {
+            printf("ErrorFileMisMatch 1");
+            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
+            return 11;
+        }
+
+        WorkingDir2.append(buffer);
+        WorkingDirString = WorkingDir2;
+
+        FileStream.close();
+    }
+
+    string WorkingDir4 = WorkingDirString;
+    string WorkingDir5 = WorkingDirString;
+
+    WorkingDir4.append(slashCharStr);
+    WorkingDir4.append("AltFreq1Output.ivf");
+    WorkingDir5.append(slashCharStr);
+    WorkingDir5.append("AltFreq2Output.ivf");
+
+    char AltFreq1[255];
+    char AltFreq2[255];
+
+    snprintf(AltFreq1, 255, "%s", WorkingDir4.c_str());
+    snprintf(AltFreq2, 255, "%s", WorkingDir5.c_str());
+
+    /////////////OutPutfile////////////
+    string TextfileString = WorkingDirString;
+    TextfileString.append(slashCharStr);
+    TextfileString.append(MyDir);
+
+    if (TestType == 2 || TestType == 1)
+        TextfileString.append(".txt");
+    else
+        TextfileString.append("_TestOnly.txt");
+
+    FILE *fp;
+
+    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    {
+        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        exit(1);
+    }
+
+    ////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    if (TestType == 1)
+    {
+        PrintHeader1(argc, argv, WorkingDir3);
+    }
+
+    if (TestType == 2)
+    {
+        PrintHeader2(argc, argv, WorkingDir3);
+    }
+
+    if (TestType == 3)
+    {
+        PrintHeader3(argc, argv, WorkingDirString);
+    }
+
+    int speed = 0;
+    int BitRate = atoi(argv[4]);;
+
+    int Mode = atoi(argv[3]);
+
+    int AltFreq1Val = atoi(argv[5]);
+    int AltFreq2Val = atoi(argv[6]);
+
+    printf("Alt Freq Test");
+    fprintf(stderr, "Alt Freq Test");
+
+    //Test is not valid for API Build so if API Build abort test.
+#ifdef API
+    printf("\nNot a valid VP8 API Test - TestNotSupported\n");
+    fprintf(stderr, "\nNot a valid VP8 API Test - TestNotSupported\n");
+    fclose(fp);
+    string File2Str = File1;
+    RecordTestComplete(MainDirString, File2Str, TestType);
+    return 12;
+#endif
+
+    VP8_CONFIG opt;
+    VP8DefaultParms(opt);
+
+    ///////////////////Use Custom Settings///////////////////
+    if (argc == 8)
+    {
+        FILE *InputCheck = fopen(argv[argc-1], "rb");
+
+        if (InputCheck == NULL)
+        {
+            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 0;
+        }
+
+        fclose(InputCheck);
+        opt = InPutSettings(argv[argc-1]);
+        BitRate = opt.TargetBandwidth;
+    }
+
+    /////////////////////////////////////////////////////////
+
+    opt.TargetBandwidth = BitRate;
+    opt.PlayAlternate = 1;
+    opt.FixedQ = 1;
+
+    //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
+    //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
+    //Test Type 3 = Mode 2 =Run Test Compressions
+
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    if (TestType == 3)
+    {
+        //here to be added to if needed later.
+    }
+    else
+    {
+        if (Mode == 0)
+        {
+            opt.Mode = MODE_REALTIME;
+            opt.AltFreq = AltFreq1Val;
+
+            if (CompressIVFtoIVF(input, AltFreq1, speed, BitRate, opt, CompressString, AltFreq1Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
+            opt.Mode = MODE_REALTIME;
+            opt.AltFreq = AltFreq2Val;
+
+            if (CompressIVFtoIVF(input, AltFreq2, speed, BitRate, opt, CompressString, AltFreq2Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+        }
+
+        if (Mode == 1)
+        {
+            opt.Mode = MODE_GOODQUALITY;
+            opt.AltFreq = AltFreq1Val;
+
+            if (CompressIVFtoIVF(input, AltFreq1, speed, BitRate, opt, CompressString, AltFreq1Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
+            opt.Mode = MODE_GOODQUALITY;
+            opt.AltFreq = AltFreq2Val;
+
+            if (CompressIVFtoIVF(input, AltFreq2, speed, BitRate, opt, CompressString, AltFreq2Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+        }
+
+        if (Mode == 2)
+        {
+            opt.Mode = MODE_BESTQUALITY;
+            opt.AltFreq = AltFreq1Val;
+
+            if (CompressIVFtoIVF(input, AltFreq1, speed, BitRate, opt, CompressString, AltFreq1Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
+            opt.Mode = MODE_BESTQUALITY;
+            opt.AltFreq = AltFreq2Val;
+
+            if (CompressIVFtoIVF(input, AltFreq2, speed, BitRate, opt, CompressString, AltFreq2Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+        }
+
+        if (Mode == 3)
+        {
+        }
+
+        if (Mode == 4)
+        {
+            opt.AltFreq = AltFreq1Val;
+            opt.Mode = MODE_SECONDPASS;
+
+            if (CompressIVFtoIVF(input, AltFreq1, speed, BitRate, opt, CompressString, AltFreq1Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
+            opt.AltFreq = AltFreq2Val;
+            opt.Mode = MODE_SECONDPASS;
+
+            if (CompressIVFtoIVF(input, AltFreq2, speed, BitRate, opt, CompressString, AltFreq2Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+        }
+
+        if (Mode == 5)
+        {
+            opt.AltFreq = AltFreq1Val;
+            opt.Mode = MODE_SECONDPASS_BEST;
+
+            if (CompressIVFtoIVF(input, AltFreq1, speed, BitRate, opt, CompressString, AltFreq1Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
+            opt.AltFreq = AltFreq2Val;
+            opt.Mode = MODE_SECONDPASS_BEST;
+
+            if (CompressIVFtoIVF(input, AltFreq2, speed, BitRate, opt, CompressString, AltFreq2Val, 0) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+        }
+    }
+
+    if (TestType == 2)
+    {
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 10;
+    }
+
+    int lngRC = CompIVF(AltFreq2, AltFreq1);
+
+    if (lngRC >= 0)
+    {
+        printf("\n\nPass: Differing Alternate Frequencies have an effect - Files differ at frame: %i\n", lngRC);
+        fprintf(stderr, "\n\nPass: Differing  Alternate Frequencies have an effect - Files differ at frame: %i\n", lngRC);
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 1;
+    }
+
+    if (lngRC == -1)
+    {
+        printf("\nFail: Differing  Alternate Frequencies have no effect - Files are identical\n");
+        fprintf(stderr, "\nFail: Differing  Alternate Frequencies have no effect - Files are identical\n");
+    }
+
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 0;
+}
 int ChangeIDCTDecWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
     printf(

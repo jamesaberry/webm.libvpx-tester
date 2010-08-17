@@ -217,10 +217,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceFiles\Tests-NotUsed.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SourceFiles\Tests.cpp"
 				>
 			</File>

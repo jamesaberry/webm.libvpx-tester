@@ -97,7 +97,7 @@ extern unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2);
 extern unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputFile, char *outputFile2);
 //extern int KeyFrameCompressIVFtoIVF(char *inputFile, char *outputFile, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, char *outputfile);
 //extern int KeyFrameInOutCompressIVFtoIVF(char *inputFile, char *outputFile, int speed, int BitRate, VP8_CONFIG opt, char *CompressString, int CompressInt, char *inputfile, char *outputfile, int InOutControl);
-extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double &SsimOut);
+extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
 extern double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double &SsimOut);
 extern int PSNRSelect(char *inFile, char *outFile);
 extern double IVFDataRate(char *inputFile, int DROuputSel);
@@ -2400,7 +2400,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         DecTimeArr[x] = TimeDecompressIVFtoIVF(outputChar, outputChar2);
 
         double ssimnumber = 0;
-        PSNRArr[x] = IVFPSNR(input, outputChar, 0, 2, 1, ssimnumber);
+        PSNRArr[x] = IVFPSNR(input, outputChar, 0, 2, 1, &ssimnumber);
         SSIMArr[x] = ssimnumber;
         DataRateArr[x] = IVFDataRate(outputChar, 1);
         x++;
@@ -3938,8 +3938,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         return 10;
     }
 
-    double ssim = 0;
-    double SpatialResampPSNR = IVFPSNR(input, Spatialon, 0, 0, 1, ssim);
+    double SpatialResampPSNR = IVFPSNR(input, Spatialon, 0, 0, 1, NULL);
 
     char SpatialonFileName[255];
     FileName(Spatialon, SpatialonFileName);
@@ -8627,12 +8626,11 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     double PSNR100;
     double PSNR500;
     double PSNR1000;
-    double ssim = 0;
 
-    PSNR0 = IVFPSNR(input, EncBreakOut0, 0, 0, 1, ssim);
-    PSNR100 = IVFPSNR(input, EncBreakOut100, 0, 0, 1, ssim);
-    PSNR500 = IVFPSNR(input, EncBreakOut500, 0, 0, 1, ssim);
-    PSNR1000 = IVFPSNR(input, EncBreakOut1000, 0, 0, 1, ssim);
+    PSNR0 = IVFPSNR(input, EncBreakOut0, 0, 0, 1, NULL);
+    PSNR100 = IVFPSNR(input, EncBreakOut100, 0, 0, 1, NULL);
+    PSNR500 = IVFPSNR(input, EncBreakOut500, 0, 0, 1, NULL);
+    PSNR1000 = IVFPSNR(input, EncBreakOut1000, 0, 0, 1, NULL);
 
 #if defined(_WIN32)
     double dB1 = absDouble(10 * log(PSNR0 / PSNR100));
@@ -9121,9 +9119,8 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     double PSNRon;
     double PSNRoff;
 
-    double ssim = 0;
-    PSNRon = IVFPSNR(input, ErrorOnOutFile, PSNRToggle, 0, 1, ssim);
-    PSNRoff = IVFPSNR(input, ErrorOffOutFile, PSNRToggle, 0, 1, ssim);
+    PSNRon = IVFPSNR(input, ErrorOnOutFile, PSNRToggle, 0, 1, NULL);
+    PSNRoff = IVFPSNR(input, ErrorOffOutFile, PSNRToggle, 0, 1, NULL);
 
     float PSRNPerc = 100 * absFloat((PSNRon - PSNRoff) / PSNRoff);
 
@@ -13061,13 +13058,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         double PSNRG3;
         double PSNRB3;
 
-        double ssim = 0;
-        PSNRG1 = IVFPSNR(input, GvBgOutFile1, 1, 0, 1, ssim);
-        PSNRB1 = IVFPSNR(input, GvBbOutFile1, 1, 0, 1, ssim);
-        PSNRG2 = IVFPSNR(input, GvBgOutFile2, 1, 0, 1, ssim);
-        PSNRB2 = IVFPSNR(input, GvBbOutFile2, 1, 0, 1, ssim);
-        PSNRG3 = IVFPSNR(input, GvBgOutFile3, 1, 0, 1, ssim);
-        PSNRB3 = IVFPSNR(input, GvBbOutFile3, 1, 0, 1, ssim);
+        PSNRG1 = IVFPSNR(input, GvBgOutFile1, 1, 0, 1, NULL);
+        PSNRB1 = IVFPSNR(input, GvBbOutFile1, 1, 0, 1, NULL);
+        PSNRG2 = IVFPSNR(input, GvBgOutFile2, 1, 0, 1, NULL);
+        PSNRB2 = IVFPSNR(input, GvBbOutFile2, 1, 0, 1, NULL);
+        PSNRG3 = IVFPSNR(input, GvBgOutFile3, 1, 0, 1, NULL);
+        PSNRB3 = IVFPSNR(input, GvBbOutFile3, 1, 0, 1, NULL);
 
         float GoodA = 0;
         float GoodB = 0;
@@ -13681,10 +13677,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        double ssim = 0;
-        double LagInFrames0PSNR = IVFPSNR(input, LagInFrames0, 0, 0, 1, ssim);
-        double LagInFrames1PSNR = IVFPSNR(input, LagInFrames1, 0, 0, 1, ssim);
-        double LagInFrames2PSNR = IVFPSNR(input, LagInFrames2, 0, 0, 1, ssim);
+        double LagInFrames0PSNR = IVFPSNR(input, LagInFrames0, 0, 0, 1, NULL);
+        double LagInFrames1PSNR = IVFPSNR(input, LagInFrames1, 0, 0, 1, NULL);
+        double LagInFrames2PSNR = IVFPSNR(input, LagInFrames2, 0, 0, 1, NULL);
 
         double TenPer0 = LagInFrames0PSNR / 10;
         double TenPer1 = LagInFrames1PSNR / 10;
@@ -14117,7 +14112,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         double PSNRArr[10];
         int MaxQArr[10];
         int i = 0;
-        double ssim = 0;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -14141,7 +14135,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (TestType != 2)
                 {
-                    PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, ssim);
+                    PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, NULL);
                 }
 
                 n = n + 8;
@@ -14239,7 +14233,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (TestType != 2)
                 {
-                    PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, ssim);
+                    PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, NULL);
                     printf("\n");
                     fprintf(stderr, "\n");
                     MaxQArr[i] = CheckMaxQ(QuantOutFile, n);
@@ -15811,9 +15805,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int PSNRToggle = PSNRSelect(input, Min10QuantOutFile);
 
-        double ssim = 0;
-        PSNRArr[0] = IVFPSNR(input, Min10QuantOutFile, PSNRToggle, 0, 1, ssim);
-        PSNRArr[1] = IVFPSNR(input, Min60QuantOutFile, PSNRToggle, 0, 1, ssim);
+        PSNRArr[0] = IVFPSNR(input, Min10QuantOutFile, PSNRToggle, 0, 1, NULL);
+        PSNRArr[1] = IVFPSNR(input, Min60QuantOutFile, PSNRToggle, 0, 1, NULL);
 
         printf("\n");
         fprintf(stderr, "\n");
@@ -16877,8 +16870,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int PSNRToggle = PSNRSelect(input, outputVP7New);
         double PSNRArr[2];
 
-        double ssim = 0;
-        PSNRArr[0] = IVFPSNR(input, outputVP7New, PSNRToggle, 0, 1, ssim);
+        PSNRArr[0] = IVFPSNR(input, outputVP7New, PSNRToggle, 0, 1, NULL);
         PSNRArr[1] = PSNROLD;
 
         printf("\nNew DataRate");
@@ -17584,8 +17576,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 printf("\n");
                 fprintf(stderr, "\n");
 
-                double ssim = 0;
-                PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, PSNRToggle, 0, 1, ssim);
+                PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, PSNRToggle, 0, 1, NULL);
                 printf("\n");
                 fprintf(stderr, "\n");
                 File2bytes[Noise] = FileSize(NoiseSenseOut);
@@ -17696,8 +17687,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     printf("\n");
                     fprintf(stderr, "\n");
 
-                    double ssim = 0;
-                    PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, PSNRToggle, 0, 1, ssim);
+                    PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, PSNRToggle, 0, 1, NULL);
                     printf("\n");
                     fprintf(stderr, "\n");
                     File2bytes[Noise] = FileSize(NoiseSenseOut);
@@ -18104,13 +18094,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         double PSNROnePass2;
         double PSNROnePass3;
 
-        double ssim = 0;
-        PSNRTwoPass1 = IVFPSNR(input, TwoPassOutFile1, 1, 0, 1, ssim);
-        PSNRTwoPass2 = IVFPSNR(input, TwoPassOutFile2, 1, 0, 1, ssim);
-        PSNRTwoPass3 = IVFPSNR(input, TwoPassOutFile3, 1, 0, 1, ssim);
-        PSNROnePass1 = IVFPSNR(input, OnePassOutFile1, 1, 0, 1, ssim);
-        PSNROnePass2 = IVFPSNR(input, OnePassOutFile2, 1, 0, 1, ssim);
-        PSNROnePass3 = IVFPSNR(input, OnePassOutFile3, 1, 0, 1, ssim);
+        PSNRTwoPass1 = IVFPSNR(input, TwoPassOutFile1, 1, 0, 1, NULL);
+        PSNRTwoPass2 = IVFPSNR(input, TwoPassOutFile2, 1, 0, 1, NULL);
+        PSNRTwoPass3 = IVFPSNR(input, TwoPassOutFile3, 1, 0, 1, NULL);
+        PSNROnePass1 = IVFPSNR(input, OnePassOutFile1, 1, 0, 1, NULL);
+        PSNROnePass2 = IVFPSNR(input, OnePassOutFile2, 1, 0, 1, NULL);
+        PSNROnePass3 = IVFPSNR(input, OnePassOutFile3, 1, 0, 1, NULL);
 
 //    double PSRNPerc = absDouble(((PSNR2 - PSNR1) / PSNR1) * 100.00);
 //    double BRPerc = absDouble(((Size2 - Size1) / Size1) * 100.00);
@@ -20083,10 +20072,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int PSNRToggle = PSNRSelect(input, DownWaterSamp90OutFile);
 
-        double ssim = 0;
-        // PSNRArr[0] = IVFPSNR(input, DownWaterSamp90OutFile, PSNRToggle, 0, 1, ssim);
-        // PSNRArr[1] = IVFPSNR(input, DownWaterSamp10OutFile, PSNRToggle, 0, 1, ssim);
-
         char DownWaterSamp10Filename[255];
         FileName(DownWaterSamp10OutFile, DownWaterSamp10Filename);
         char DownWaterSamp90Filename[255];
@@ -20550,8 +20535,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         double RealPSNRArr[17];
         double RealPSNRArrPos[18];
 
-        double ssim = 0;
-
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
@@ -20572,7 +20555,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     snprintf(SpeedTestGoodQ, 255, "%s", OutPutFile1.c_str());
 
                     GoodTotalms[counter] = TimeReturn(SpeedTestGoodQ);
-                    GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ, 1, 0, 1, ssim);
+                    GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ, 1, 0, 1, NULL);
                     counter++;
                 }
             }
@@ -20595,7 +20578,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
                     RealTotalms[counter2] = TimeReturn(SpeedTestRealTime);
-                    RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, ssim);
+                    RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
                     counter--;
                     counter2++;
                 }
@@ -20615,7 +20598,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
                     RealTotalmsPos[counter] = TimeReturn(SpeedTestRealTime);
-                    RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, ssim);
+                    RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
                     counter++;
                 }
             }
@@ -20654,7 +20637,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                     if (TestType != 2 && TestType != 3)
                     {
-                        GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ, 1, 0, 1, ssim);
+                        GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ, 1, 0, 1, NULL);
                     }
 
                     counter++;
@@ -20685,7 +20668,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                     if (TestType != 2 && TestType != 3)
                     {
-                        RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, ssim);
+                        RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
                     }
 
                     counter--;
@@ -20721,7 +20704,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                     if (TestType != 2 && TestType != 3)
                     {
-                        RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, ssim);
+                        RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
                     }
 
                     counter++;
@@ -22490,13 +22473,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         double PSNRG3;
         double PSNRB3;
 
-        double ssim = 0;
-        PSNRG1 = IVFPSNR(input, TwoPassOutFile1, 1, 0, 1, ssim);
-        PSNRB1 = IVFPSNR(input, TwoPassBestOutFile1, 1, 0, 1, ssim);
-        PSNRG2 = IVFPSNR(input, TwoPassOutFile2, 1, 0, 1, ssim);
-        PSNRB2 = IVFPSNR(input, TwoPassBestOutFile2, 1, 0, 1, ssim);
-        PSNRG3 = IVFPSNR(input, TwoPassOutFile3, 1, 0, 1, ssim);
-        PSNRB3 = IVFPSNR(input, TwoPassBestOutFile3, 1, 0, 1, ssim);
+        PSNRG1 = IVFPSNR(input, TwoPassOutFile1, 1, 0, 1, NULL);
+        PSNRB1 = IVFPSNR(input, TwoPassBestOutFile1, 1, 0, 1, NULL);
+        PSNRG2 = IVFPSNR(input, TwoPassOutFile2, 1, 0, 1, NULL);
+        PSNRB2 = IVFPSNR(input, TwoPassBestOutFile2, 1, 0, 1, NULL);
+        PSNRG3 = IVFPSNR(input, TwoPassOutFile3, 1, 0, 1, NULL);
+        PSNRB3 = IVFPSNR(input, TwoPassBestOutFile3, 1, 0, 1, NULL);
 
         float GoodA = 0;
         float GoodB = 0;
@@ -23355,11 +23337,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             float PSNRArr[4];
 
-            double ssim = 0;
-            PSNRArr[0] = IVFPSNR(input, Version0, PSNRToggle, 0, 1, ssim);
-            PSNRArr[1] = IVFPSNR(input, Version1, PSNRToggle, 0, 1, ssim);
-            PSNRArr[2] = IVFPSNR(input, Version2, PSNRToggle, 0, 1, ssim);
-            PSNRArr[3] = IVFPSNR(input, Version3, PSNRToggle, 0, 1, ssim);
+            PSNRArr[0] = IVFPSNR(input, Version0, PSNRToggle, 0, 1, NULL);
+            PSNRArr[1] = IVFPSNR(input, Version1, PSNRToggle, 0, 1, NULL);
+            PSNRArr[2] = IVFPSNR(input, Version2, PSNRToggle, 0, 1, NULL);
+            PSNRArr[3] = IVFPSNR(input, Version3, PSNRToggle, 0, 1, NULL);
 
             int Fail = 0;
 
@@ -23710,11 +23691,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         float PSNRArr[4];
 
-        double ssim = 0;
-        PSNRArr[0] = IVFPSNR(input, Version0, PSNRToggle, 0, 1, ssim);
-        PSNRArr[1] = IVFPSNR(input, Version1, PSNRToggle, 0, 1, ssim);
-        PSNRArr[2] = IVFPSNR(input, Version2, PSNRToggle, 0, 1, ssim);
-        PSNRArr[3] = IVFPSNR(input, Version3, PSNRToggle, 0, 1, ssim);
+        PSNRArr[0] = IVFPSNR(input, Version0, PSNRToggle, 0, 1, NULL);
+        PSNRArr[1] = IVFPSNR(input, Version1, PSNRToggle, 0, 1, NULL);
+        PSNRArr[2] = IVFPSNR(input, Version2, PSNRToggle, 0, 1, NULL);
+        PSNRArr[3] = IVFPSNR(input, Version3, PSNRToggle, 0, 1, NULL);
 
         cout << "\n";
         cerr << "\n";

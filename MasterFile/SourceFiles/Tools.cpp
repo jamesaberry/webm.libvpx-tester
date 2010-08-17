@@ -102,7 +102,7 @@ extern int DecompressIVFtoIVF(char *inputFile, char *outputFile2);
 extern int DecompressIVFtoIVFNoOutput(char *inputFile, char *outputFile2);
 extern unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputFile, char *outputFile2);
 extern unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2);
-extern double IVFPSNR(char *inputFile, char *outputFile, int forceUVswap, int frameStats, int printvar, double &SsimOut);
+extern double IVFPSNR(char *inputFile, char *outputFile, int forceUVswap, int frameStats, int printvar, double *SsimOut);
 extern int PSNRSelect(char *inFile, char *outFile);
 extern double IVFDataRate(char *inputFile, int DROuputSel);
 extern int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer);
@@ -426,8 +426,7 @@ int IVFPSNRrun(int argc, char *argv[])
         exit(0);
     }
 
-    double ssim = 0;
-    IVFPSNR(argv[2], argv[3], 0, 3, 0, ssim);
+    IVFPSNR(argv[2], argv[3], 0, 3, 0, NULL);
     return 0;
 }
 int IVFCheckPBMrun(int argc, char *argv[])

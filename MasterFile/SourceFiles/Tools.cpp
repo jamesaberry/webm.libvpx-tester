@@ -416,17 +416,28 @@ int IVFDataRateTool(int argc, char *argv[])
 }
 int IVFPSNRrun(int argc, char *argv[])
 {
-    if (argc < 4)
+    if (argc < 5)
     {
         printf(
             "\n  IVFPSNR\n\n"
             "     <Raw IVF File>\n"
             "     <Comp IVF File>\n"
+            "     <Run SSIM 0 no 1 yes>\n"
             "\n");
         exit(0);
     }
 
-    IVFPSNR(argv[2], argv[3], 0, 3, 0, NULL);
+    double runssim = 1;
+
+    if (atoi(argv[4]) == 1)
+    {
+        IVFPSNR(argv[2], argv[3], 0, 3, 0, &runssim);
+    }
+    else
+    {
+        IVFPSNR(argv[2], argv[3], 0, 3, 0, NULL);
+    }
+
     return 0;
 }
 int IVFCheckPBMrun(int argc, char *argv[])

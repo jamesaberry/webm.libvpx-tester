@@ -8,67 +8,55 @@
  *   Copyright (c) 1999 - 2005  On2 Technologies Inc. All Rights Reserved.
  *
  ***************************************************************************/
+#include "test-definitions.h"
 #include "yv12config.h"
+#include "math.h"
 
 #define C1 (float)(64 * 64 * 0.01*255*0.01*255)
 #define C2 (float)(64 * 64 * 0.03*255*0.03*255)
 
-static int widthY;
-static int heightY;
-static int heightUV;
-static int widthUV;
-static int strideUV;
-static int nbFrames;
+static int width_y;
+static int height_y;
+static int height_uv;
+static int width_uv;
+static int stride_uv;
 static int stride;
-static const char *fname;
-static const char *fname2;
 static int lumimask;
 static int luminance;
-static int scaled;
-static double planeSummedWeights = 0;
+static double plane_summed_weights = 0;
 
-#ifdef ARM
-static short img12_sum_block[8*864*864] ;
+static short img12_sum_block[8*4096*4096*2] ;
 
-static short img1_sum[16*864];
-static short img2_sum[16*864];
-static int   img1_sq_sum[16*864];
-static int   img2_sq_sum[16*864];
-static int   img12_mul_sum[16*864];
-#else
-static short img12_sum_block[8*2048*2048] ;
+static short img1_sum[8*4096*2];
+static short img2_sum[8*4096*2];
+static int   img1_sq_sum[8*4096*2];
+static int   img2_sq_sum[8*4096*2];
+static int   img12_mul_sum[8*4096*2];
 
 
-static short img1_sum[16*2048];
-static short img2_sum[16*2048];
-static int   img1_sq_sum[16*2048];
-static int   img2_sq_sum[16*2048];
-static int   img12_mul_sum[16*2048];
-#endif
-
-double similarity2
+double vp8_similarity
 (
-    int muX,
-    int muY,
-    int preMuX2,
-    int preMuY2,
-    int preMuXY2
+    int mu_x,
+    int mu_y,
+    int pre_mu_x2,
+    int pre_mu_y2,
+    int pre_mu_xy2
 )
 {
-    int muX2, muY2, muXY, thetaX2, thetaY2, thetaXY;
+    int mu_x2, mu_y2, mu_xy, theta_x2, theta_y2, theta_xy;
 
-    muX2 = muX * muX;
-    muY2 = muY * muY;
-    muXY = muX * muY;
+    mu_x2 = mu_x * mu_x;
+    mu_y2 = mu_y * mu_y;
+    mu_xy = mu_x * mu_y;
 
-    thetaX2 = 64 * preMuX2 - muX2;
-    thetaY2 = 64 * preMuY2 - muY2;
-    thetaXY = 64 * preMuXY2 - muXY;
+    theta_x2 = 64 * pre_mu_x2 - mu_x2;
+    theta_y2 = 64 * pre_mu_y2 - mu_y2;
+    theta_xy = 64 * pre_mu_xy2 - mu_xy;
 
-    return (2 * muXY + C1) * (2 * thetaXY + C2) / ((muX2 + muY2 + C1) * (thetaX2 + thetaY2 + C2));
+    return (2 * mu_xy + C1) * (2 * theta_xy + C2) / ((mu_x2 + mu_y2 + C1) * (theta_x2 + theta_y2 + C2));
 }
 
-double ssim2
+double vp8_ssim
 (
     const unsigned char *img1,
     const unsigned char *img2,
@@ -80,7 +68,7 @@ double ssim2
 {
     int x, y, x2, y2, img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block, temp;
 
-    double planeQuality, weight, mean;
+    double plane_quality, weight, mean;
 
     short *img1_sum_ptr1, *img1_sum_ptr2;
     short *img2_sum_ptr1, *img2_sum_ptr2;
@@ -88,12 +76,12 @@ double ssim2
     int *img2_sq_sum_ptr1, *img2_sq_sum_ptr2;
     int *img12_mul_sum_ptr1, *img12_mul_sum_ptr2;
 
-    planeQuality = 0;
+    plane_quality = 0;
 
     if (lumimask)
-        planeSummedWeights = 0.0f;
+        plane_summed_weights = 0.0f;
     else
-        planeSummedWeights = (height - 7) * (width - 7);
+        plane_summed_weights = (height - 7) * (width - 7);
 
     //some prologue for the main loop
     temp = 8 * width;
@@ -199,26 +187,26 @@ double ssim2
                     mean = (img2_block + img1_block) / 128.0f;
 
                     if (!(y2 % 2 || x2 % 2))
-                        *(img12_sum_block + y2 / 2 * widthUV + x2 / 2) = img2_block + img1_block;
+                        *(img12_sum_block + y2 / 2 * width_uv + x2 / 2) = img2_block + img1_block;
                 }
                 else
                 {
-                    mean = *(img12_sum_block + y2 * widthUV + x2);
-                    mean += *(img12_sum_block + y2 * widthUV + x2 + 4);
-                    mean += *(img12_sum_block + (y2 + 4) * widthUV + x2);
-                    mean += *(img12_sum_block + (y2 + 4) * widthUV + x2 + 4);
+                    mean = *(img12_sum_block + y2 * width_uv + x2);
+                    mean += *(img12_sum_block + y2 * width_uv + x2 + 4);
+                    mean += *(img12_sum_block + (y2 + 4) * width_uv + x2);
+                    mean += *(img12_sum_block + (y2 + 4) * width_uv + x2 + 4);
 
                     mean /= 512.0f;
                 }
 
                 weight = mean < 40 ? 0.0f :
                          (mean < 50 ? (mean - 40.0f) / 10.0f : 1.0f);
-                planeSummedWeights += weight;
+                plane_summed_weights += weight;
 
-                planeQuality += weight * similarity2(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
+                plane_quality += weight * vp8_similarity(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
             }
             else
-                planeQuality += similarity2(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
+                plane_quality += vp8_similarity(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
 
             //and for the rest
             for (x = 8; x < width; x++)
@@ -239,72 +227,296 @@ double ssim2
                         mean = (img2_block + img1_block) / 128.0f;
 
                         if (!(y2 % 2 || x2 % 2))
-                            *(img12_sum_block + y2 / 2 * widthUV + x2 / 2) = img2_block + img1_block;
+                            *(img12_sum_block + y2 / 2 * width_uv + x2 / 2) = img2_block + img1_block;
                     }
                     else
                     {
-                        mean = *(img12_sum_block + y2 * widthUV + x2);
-                        mean += *(img12_sum_block + y2 * widthUV + x2 + 4);
-                        mean += *(img12_sum_block + (y2 + 4) * widthUV + x2);
-                        mean += *(img12_sum_block + (y2 + 4) * widthUV + x2 + 4);
+                        mean = *(img12_sum_block + y2 * width_uv + x2);
+                        mean += *(img12_sum_block + y2 * width_uv + x2 + 4);
+                        mean += *(img12_sum_block + (y2 + 4) * width_uv + x2);
+                        mean += *(img12_sum_block + (y2 + 4) * width_uv + x2 + 4);
 
                         mean /= 512.0f;
                     }
 
                     weight = mean < 40 ? 0.0f :
                              (mean < 50 ? (mean - 40.0f) / 10.0f : 1.0f);
-                    planeSummedWeights += weight;
+                    plane_summed_weights += weight;
 
-                    planeQuality += weight * similarity2(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
+                    plane_quality += weight * vp8_similarity(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
                 }
                 else
-                    planeQuality += similarity2(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
+                    plane_quality += vp8_similarity(img1_block, img2_block, img1_sq_block, img2_sq_block, img12_mul_block);
             }
         }
     }
 
-    if (planeSummedWeights == 0)
+    if (plane_summed_weights == 0)
         return 1.0f;
     else
-        return planeQuality / planeSummedWeights;
+        return plane_quality / plane_summed_weights;
 }
 
-double VP8_CalcSSIM2(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, int lumamask, double *weight)
+double VP8_CalcSSIM2
+(
+    YV12_BUFFER_CONFIG *source,
+    YV12_BUFFER_CONFIG *dest,
+    int lumamask,
+    double *weight
+)
 {
     double a, b, c;
-    double frameWeight;
-    double ssimv = 0;
+    double frame_weight;
+    double ssimv;
 
-    widthY = source->YWidth;
-    heightY = source->YHeight;
-    heightUV = source->UVHeight;
-    widthUV = source->UVWidth;
-    strideUV = dest->UVStride;
+    width_y = source->YWidth;
+    height_y = source->YHeight;
+    height_uv = source->UVHeight;
+    width_uv = source->UVWidth;
+    stride_uv = dest->UVStride;
     stride = dest->YStride;
 
     lumimask = lumamask;
 
     luminance = 1;
-    a = ssim2(source->YBuffer, dest->YBuffer,
-              source->YStride, dest->YStride, source->YWidth, source->YHeight);
+    a = vp8_ssim(source->YBuffer, dest->YBuffer,
+                 source->YStride, dest->YStride, source->YWidth, source->YHeight);
     luminance = 0;
 
-    frameWeight = planeSummedWeights / ((widthY - 7) * (heightY - 7));
+    frame_weight = plane_summed_weights / ((width_y - 7) * (height_y - 7));
 
-    if (frameWeight == 0)
+    if (frame_weight == 0)
         a = b = c = 1.0f;
     else
     {
-        b = ssim2(source->UBuffer, dest->UBuffer,
-                  source->UVStride, dest->UVStride, source->UVWidth, source->UVHeight);
+        b = vp8_ssim(source->UBuffer, dest->UBuffer,
+                     source->UVStride, dest->UVStride, source->UVWidth, source->UVHeight);
 
-        c = ssim2(source->VBuffer, dest->VBuffer,
-                  source->UVStride, dest->UVStride, source->UVWidth, source->UVHeight);
+        c = vp8_ssim(source->VBuffer, dest->VBuffer,
+                     source->UVStride, dest->UVStride, source->UVWidth, source->UVHeight);
     }
 
     ssimv = a * .8 + .1 * (b + c);
 
-    *weight = frameWeight;
+    *weight = frame_weight;
 
     return ssimv;
+}
+
+// Google version of SSIM
+// SSIM
+#define KERNEL 3
+#define KERNEL_SIZE  (2 * KERNEL + 1)
+
+typedef unsigned char uint8;
+typedef unsigned int uint32;
+
+static const int K[KERNEL_SIZE] =
+{
+    1, 4, 11, 16, 11, 4, 1    // 16 * exp(-0.3 * i * i)
+};
+static const double ki_w = 1. / 2304.;  // 1 / sum(i:0..6, j..6) K[i]*K[j]
+double get_ssimg(const uint8 *org, const uint8 *rec,
+                 int xo, int yo, int W, int H,
+                 const int stride1, const int stride2
+                )
+{
+    // TODO(skal): use summed tables
+    int y, x;
+
+    const int ymin = (yo - KERNEL < 0) ? 0 : yo - KERNEL;
+    const int ymax = (yo + KERNEL > H - 1) ? H - 1 : yo + KERNEL;
+    const int xmin = (xo - KERNEL < 0) ? 0 : xo - KERNEL;
+    const int xmax = (xo + KERNEL > W - 1) ? W - 1 : xo + KERNEL;
+    // worst case of accumulation is a weight of 48 = 16 + 2 * (11 + 4 + 1)
+    // with a diff of 255, squares. That would a max error of 0x8ee0900,
+    // which fits into 32 bits integers.
+    uint32 w = 0, xm = 0, ym = 0, xxm = 0, xym = 0, yym = 0;
+    org += ymin * stride1;
+    rec += ymin * stride2;
+
+    for (y = ymin; y <= ymax; ++y, org += stride1, rec += stride2)
+    {
+        const int Wy = K[KERNEL + y - yo];
+
+        for (x = xmin; x <= xmax; ++x)
+        {
+            const  int Wxy = Wy * K[KERNEL + x - xo];
+            // TODO(skal): inlined assembly
+            w   += Wxy;
+            xm  += Wxy * org[x];
+            ym  += Wxy * rec[x];
+            xxm += Wxy * org[x] * org[x];
+            xym += Wxy * org[x] * rec[x];
+            yym += Wxy * rec[x] * rec[x];
+        }
+    }
+
+    {
+        const double iw = 1. / w;
+        const double iwx = xm * iw;
+        const double iwy = ym * iw;
+        double sxx = xxm * iw - iwx * iwx;
+        double syy = yym * iw - iwy * iwy;
+
+        // small errors are possible, due to rounding. Clamp to zero.
+        if (sxx < 0.) sxx = 0.;
+
+        if (syy < 0.) syy = 0.;
+
+        {
+            const double sxsy = sqrt(sxx * syy);
+            const double sxy = xym * iw - iwx * iwy;
+            static const double C11 = (0.01 * 0.01) * (255 * 255);
+            static const double C22 = (0.03 * 0.03) * (255 * 255);
+            static const double C33 = (0.015 * 0.015) * (255 * 255);
+            const double l = (2. * iwx * iwy + C11) / (iwx * iwx + iwy * iwy + C11);
+            const double c = (2. * sxsy      + C22) / (sxx + syy + C22);
+
+            const double s = (sxy + C33) / (sxsy + C33);
+            return l * c * s;
+
+        }
+    }
+
+}
+
+double get_ssimfull_kernelg(const uint8 *org, const uint8 *rec,
+                            int xo, int yo, int W, int H,
+                            const int stride1, const int stride2)
+{
+    // TODO(skal): use summed tables
+    // worst case of accumulation is a weight of 48 = 16 + 2 * (11 + 4 + 1)
+    // with a diff of 255, squares. That would a max error of 0x8ee0900,
+    // which fits into 32 bits integers.
+    int y_, x_;
+    uint32 xm = 0, ym = 0, xxm = 0, xym = 0, yym = 0;
+    org += (yo - KERNEL) * stride1;
+    org += (xo - KERNEL);
+    rec += (yo - KERNEL) * stride2;
+    rec += (xo - KERNEL);
+
+    for (y_ = 0; y_ < KERNEL_SIZE; ++y_, org += stride1, rec += stride2)
+    {
+        const int Wy = K[y_];
+
+        for (x_ = 0; x_ < KERNEL_SIZE; ++x_)
+        {
+            const int Wxy = Wy * K[x_];
+            // TODO(skal): inlined assembly
+            const int org_x = org[x_];
+            const int rec_x = rec[x_];
+            xm  += Wxy * org_x;
+            ym  += Wxy * rec_x;
+            xxm += Wxy * org_x * org_x;
+            xym += Wxy * org_x * rec_x;
+            yym += Wxy * rec_x * rec_x;
+        }
+    }
+
+    {
+        const double iw = ki_w;
+        const double iwx = xm * iw;
+        const double iwy = ym * iw;
+        double sxx = xxm * iw - iwx * iwx;
+        double syy = yym * iw - iwy * iwy;
+
+        // small errors are possible, due to rounding. Clamp to zero.
+        if (sxx < 0.) sxx = 0.;
+
+        if (syy < 0.) syy = 0.;
+
+        {
+            const double sxsy = sqrt(sxx * syy);
+            const double sxy = xym * iw - iwx * iwy;
+            static const double C11 = (0.01 * 0.01) * (255 * 255);
+            static const double C22 = (0.03 * 0.03) * (255 * 255);
+            static const double C33 = (0.015 * 0.015) * (255 * 255);
+            const double l = (2. * iwx * iwy + C11) / (iwx * iwx + iwy * iwy + C11);
+            const double c = (2. * sxsy      + C22) / (sxx + syy + C22);
+            const double s = (sxy + C33) / (sxsy + C33);
+            return l * c * s;
+        }
+    }
+}
+
+double calc_ssimg(const uint8 *org, const uint8 *rec,
+                  const int image_width, const int image_height,
+                  const int stride1, const int stride2
+                 )
+{
+    int j, i;
+    double SSIM = 0.;
+
+    for (j = 0; j < KERNEL; ++j)
+    {
+        for (i = 0; i < image_width; ++i)
+        {
+            SSIM += get_ssimg(org, rec, i, j, image_width, image_height, stride1, stride2);
+        }
+    }
+
+    for (j = KERNEL; j < image_height - KERNEL; ++j)
+    {
+        for (i = 0; i < KERNEL; ++i)
+        {
+            SSIM += get_ssimg(org, rec, i, j, image_width, image_height, stride1, stride2);
+        }
+
+        for (i = KERNEL; i < image_width - KERNEL; ++i)
+        {
+            SSIM += get_ssimfull_kernelg(org, rec, i, j,
+                                         image_width, image_height, stride1, stride2);
+        }
+
+        for (i = image_width - KERNEL; i < image_width; ++i)
+        {
+            SSIM += get_ssimg(org, rec, i, j, image_width, image_height, stride1, stride2);
+        }
+    }
+
+    for (j = image_height - KERNEL; j < image_height; ++j)
+    {
+        for (i = 0; i < image_width; ++i)
+        {
+            SSIM += get_ssimg(org, rec, i, j, image_width, image_height, stride1, stride2);
+        }
+    }
+
+    return SSIM;
+}
+
+
+double vp8_calc_ssimg
+(
+    YV12_BUFFER_CONFIG *source,
+    YV12_BUFFER_CONFIG *dest,
+    double *ssim_y,
+    double *ssim_u,
+    double *ssim_v
+)
+{
+    double ssim_all = 0;
+    int ysize  = source->YWidth * source->YHeight;
+    int uvsize = ysize / 4;
+
+    *ssim_y = calc_ssimg(source->YBuffer, dest->YBuffer,
+                         source->YWidth, source->YHeight,
+                         source->YStride, dest->YStride);
+
+
+    *ssim_u = calc_ssimg(source->UBuffer, dest->UBuffer,
+                         source->UVWidth, source->UVHeight,
+                         source->UVStride, dest->UVStride);
+
+
+    *ssim_v = calc_ssimg(source->VBuffer, dest->VBuffer,
+                         source->UVWidth, source->UVHeight,
+                         source->UVStride, dest->UVStride);
+
+    ssim_all = (*ssim_y + *ssim_u + *ssim_v) / (ysize + uvsize + uvsize);
+    *ssim_y /= ysize;
+    *ssim_u /= uvsize;
+    *ssim_v /= uvsize;
+    return ssim_all;
 }

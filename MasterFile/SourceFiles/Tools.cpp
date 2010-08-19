@@ -4151,9 +4151,9 @@ int TestVectorIndex(int argc, char *argv[])
     int x = 1;
     int y = 1;
 
-    while (x < 5)
+    while (x < 6)
     {
-        while (y < 29)
+        while (y < 15)
         {
 
             string CurCC = argv[2];
@@ -4170,6 +4170,7 @@ int TestVectorIndex(int argc, char *argv[])
                 CurCC.append(Charx);
                 CurCC.append("\\");
                 CurCC.append(Chary);
+                CurCC.append("\\summary");
                 CurCC.append("\\");
                 CurCC.append(currentFile);
                 CurCC.append(".c.gcov.txt");
@@ -4180,6 +4181,7 @@ int TestVectorIndex(int argc, char *argv[])
                 CurCC.append(Charx);
                 CurCC.append("\\");
                 CurCC.append(Chary);
+                CurCC.append("\\summary");
                 CurCC.append("\\UniqueActivations\\");
                 CurCC.append(currentFile);
                 CurCC.append(".c.gcov_UniqueActivations.txt");

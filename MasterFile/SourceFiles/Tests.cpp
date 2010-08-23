@@ -104,7 +104,7 @@ extern double IVFDataRate(char *inputFile, int DROuputSel);
 extern int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer);
 extern int CompIVF(char *inputFile1, char *inputFile2);
 extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
-extern int TimeReturn(char *infile);
+extern int TimeReturn(char *infile, int FileType);
 extern int DecompressIVFtoRaw(char *inputFile, char *outputFile2);
 extern int DecompressIVFtoIVFErrorDetection(char *inputFile, char *outputFile2);
 extern void VP8DefaultParms(VP8_CONFIG &opt);
@@ -707,7 +707,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
     char *MyDir = "Summary";
 
 
-////////////////////Sets Stage for Resume Mode//////////////////////
+    ////////////////////Sets Stage for Resume Mode//////////////////////
     if (TestType == 4)
     {
         // Read in whats been done already from the summary updating all variables needed
@@ -1105,8 +1105,8 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     }
 
-////////////////////////////////////////////////////////////////////
-/////////////////Makes New Working Text File From Input/////////////
+    ////////////////////////////////////////////////////////////////////
+    /////////////////Makes New Working Text File From Input/////////////
     if (TestType != 3 && MakeNewTestrun == 1)
     {
         //This copies original driving text file over to a new formated one not used for Mode 4 or 3
@@ -1249,7 +1249,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         PriorResultInputFile2.close();
     }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     fstream WorkingTextFile;
     WorkingTextFile.open(WorkingTextFilestr.c_str());
 
@@ -1260,7 +1260,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         return 0;
     }
 
-/////////////////////////////////////////Files are actualy processed and run here//////////////////////////////////////////////
+    /////////////////////////////////////////Files are actualy processed and run here//////////////////////////////////////////////
     while (!WorkingTextFile.eof())
     {
         memset(buffer, 0, sizeof(buffer));
@@ -2877,7 +2877,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        //here to be added to if needed later.
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -3302,7 +3302,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        //here to be added to if needed later.
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -3570,6 +3570,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
+        return 1;
     }
     else
     {
@@ -3578,19 +3579,8 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
+        return 0;
     }
-
-    //pass
-    //printf("\n\nPass: Allow Lag has an effect - Files differ at frame: %i\n", lngRC);
-    //fprintf(stderr, "\n\nPass: Allow Lag has an effect - Files differ at frame: %i\n", lngRC);
-
-    return 1;
-
-    //fail
-    //printf("\nFail: Allow Lag has no effect - Files are identical\n");
-    //fprintf(stderr, "\nFail: Allow Lag has no effect - Files are identical\n");
-
-    return 0;
 }
 int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -3795,7 +3785,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -4254,6 +4244,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -4785,7 +4776,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -5121,7 +5112,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        putenv("ON2_SIMD_CAPS=0");
+        //putenv("ON2_SIMD_CAPS=0");
 
         string Output2 = CPUDecOnlyWorksOut_CPU;
         Output2.append("0.ivf");
@@ -5139,7 +5130,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             char CounterChar[10];
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
-            putenv((char *)CPUIDSTRING.c_str());
+            //putenv((char *)CPUIDSTRING.c_str());
 
             //////////////////////////////////
             ///////Compresion and Time ///////
@@ -5155,7 +5146,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             char ChangedCPUDecOutFileChar[255];
             snprintf(ChangedCPUDecOutFileChar, 255, "%s", Output.c_str());
 
-            putenv("ON2_SIMD_CAPS=0");
+            //putenv("ON2_SIMD_CAPS=0");
 
             printf("\n");
             fprintf(stderr, "\n");
@@ -5170,7 +5161,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 char GetTimeChar[255];
                 snprintf(GetTimeChar, 255, "%s", Output.c_str());
 
-                totalms = TimeReturn(GetTimeChar);
+                totalms = TimeReturn(GetTimeChar, 1);
                 DoOnceSpeedRead = 1;
             }
             else
@@ -5178,7 +5169,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 char GetTimeChar[255];
                 snprintf(GetTimeChar, 255, "%s", Output.c_str());
 
-                totalms2 = TimeReturn(GetTimeChar);
+                totalms2 = TimeReturn(GetTimeChar, 1);
             }
 
             Output3.append(".ivf");
@@ -5486,580 +5477,6 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
 }
 
-int ChangeCPUDec(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
-{
-
-    char *CompressString = "Version";
-
-    if (!(argc == 7 || argc == 6))
-    {
-        printf(
-            "  ChangeCPUDec \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Version>\n"
-            "	  <Optional Settings File>\n"
-        );
-        return 0;
-    }
-
-
-
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
-    string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
-    char WorkingDir3[255] = "";
-    char *MyDir = "ChangeCPUDec";
-    string MainDirString = "";
-    char File1[255] = "";
-
-
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        //Makes sure log file and test txt file match up
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMismatch");
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
-
-
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
-
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("ChangedCPUDecOutput.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("ChangedCPUDec_CPU");
-
-    char ChangedCPUDecOutFile[255];
-    char ChangedCPUDec_CPUBase[255];
-
-    snprintf(ChangedCPUDecOutFile, 255, "%s", WorkingDir4.c_str());
-    snprintf(ChangedCPUDec_CPUBase, 255, "%s", WorkingDir5.c_str());
-
-    /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
-    TextfileString.append(MyDir);
-
-    if (TestType == 2 || TestType == 1)
-        TextfileString.append(".txt");
-    else
-        TextfileString.append("_TestOnly.txt");
-
-    FILE *fp;
-
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
-    {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
-        exit(1);
-    }
-
-    ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    if (TestType == 1)
-    {
-        PrintHeader1(argc, argv, WorkingDirString);
-    }
-
-    if (TestType == 2)
-    {
-        PrintHeader2(argc, argv, WorkingDir3);
-    }
-
-    if (TestType == 3)
-    {
-        PrintHeader3(argc, argv, WorkingDirString);
-    }
-
-    printf("Change CPU Dec Test");
-    fprintf(stderr, "Change CPU Dec Test");
-
-    char *input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int VersionNum = atoi(argv[5]);
-
-    int speed = 0;
-    int Fail = 0;
-    VP8_CONFIG opt;
-    VP8DefaultParms(opt);
-
-    ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
-    {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
-        {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fclose(fp);
-            string File1Str = File1;
-            RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
-        }
-
-        fclose(InputCheck);
-        opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
-    }
-
-    /////////////////////////////////////////////////////////
-    opt.TargetBandwidth = BitRate;
-    opt.Mode = MODE_GOODQUALITY;
-    opt.Version = VersionNum;
-    int CompressInt = opt.Version;
-
-    unsigned int totalms1 = 0;
-    unsigned int totalms = 0;
-
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
-    {
-        printf("\n\n");
-        fprintf(stderr, "\n\n");
-        int counter = 0;
-        ////////////////////////////Start Decode and recording time
-
-
-
-        string Output2 = ChangedCPUDec_CPUBase;
-        Output2.append("0.ivf");
-        char Output2Char[1024];
-        snprintf(Output2Char, 1024, "%s", Output2.c_str());
-
-        putenv("ON2_SIMD_CAPS=0");
-        counter = counter + 1;
-
-        totalms = TimeReturn(Output2Char);
-
-        int counterMax = 12;
-        int i = 1;
-        string OutputLast;
-
-        while (counter < counterMax)
-        {
-            int nameselect = 0;
-
-            printf("\n\n");
-            fprintf(stderr, "\n\n");
-
-            string CPUIDSTRING = "ON2_SIMD_CAPS=";
-            char CounterChar[10];
-            itoa_custom(counter, CounterChar, 10);
-            CPUIDSTRING.append(CounterChar);
-            putenv((char *)CPUIDSTRING.c_str());
-
-            //Name strings
-            string Output = ChangedCPUDec_CPUBase;
-            string Output3 = ChangedCPUDec_CPUBase;
-            char count[20];
-            itoa_custom(counter, count, 10);
-
-            Output.append(count);
-            Output.append(".ivf");
-
-            char ChangedCPUDecOutFileChar[255];
-            snprintf(ChangedCPUDecOutFileChar, 255, "%s", Output.c_str());
-
-            int countOld = (counter - 1) / 2;
-            itoa_custom(countOld, count, 10);
-
-            Output3.append(count);
-            Output3.append(".ivf");
-
-
-            printf("\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
-            fprintf(stderr, "\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
-
-            char Comp1[255];
-            char Comp2[255];
-
-            snprintf(Comp1, 255, "%s", Output.c_str());
-            snprintf(Comp2, 255, "%s", Output3.c_str());
-
-            int lngRC = CompIVF(Comp1, Comp2);
-
-            if (lngRC >= 0)
-            {
-                printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                Fail = 1;
-            }
-
-            if (lngRC == -1)
-            {
-                printf("\nFiles are identical");
-                fprintf(stderr, "\nFiles are identical");
-            }
-
-            if (lngRC == -2)
-            {
-                printf("\n\nFail: File 2 ends before File 1.\n");
-                fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
-                Fail = 1;
-            }
-
-            if (lngRC == -3)
-            {
-                printf("\n\nFail: File 1 ends before File 2.\n");
-                fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
-                Fail = 1;
-            }
-
-            totalms1 = TimeReturn(Comp2);
-
-            counter = (counter * 2) + 1;
-            i++;
-        }
-    }
-    else
-    {
-        if (Mode == 0)
-        {
-            opt.Mode = MODE_REALTIME;
-
-            if (CompressIVFtoIVF(input, ChangedCPUDecOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 1)
-        {
-            opt.Mode = MODE_GOODQUALITY;
-
-            if (CompressIVFtoIVF(input, ChangedCPUDecOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-
-            if (CompressIVFtoIVF(input, ChangedCPUDecOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, ChangedCPUDecOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, ChangedCPUDecOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        printf("\n\n");
-        fprintf(stderr, "\n\n");
-        int counter = 0;
-
-        ////////////////////////////Start Decode and recording time
-
-        string Output2 = ChangedCPUDec_CPUBase;
-        Output2.append("0.ivf");
-        char Output2Char[1024];
-        snprintf(Output2Char, 1024, "%s", Output2.c_str());
-
-        putenv("ON2_SIMD_CAPS=0");
-        printf("CPU:%i\n", 0);
-        fprintf(stderr, "CPU:%i\n", 0);
-
-        totalms1 = DecompressIVFtoIVFTimeAndOutput(ChangedCPUDecOutFile, Output2Char);
-        printf("Decompression Time in Microseconds: %i", totalms1);
-        fprintf(stderr, "Decompression Time in Microseconds: %i", totalms1);
-        counter = counter + 1;
-
-        int counterMax = 12;
-        int i = 1;
-        string OutputLast;
-
-        while (counter < counterMax)
-        {
-            int nameselect = 0;
-
-            printf("\n\n");
-            fprintf(stderr, "\n\n");
-
-            string CPUIDSTRING = "ON2_SIMD_CAPS=";
-            char CounterChar[10];
-            itoa_custom(counter, CounterChar, 10);
-            CPUIDSTRING.append(CounterChar);
-            putenv((char *)CPUIDSTRING.c_str());
-
-            printf("CPU:%i\n", counter);
-            fprintf(stderr, "CPU:%i\n", counter);
-
-            //Name strings
-            string Output = ChangedCPUDec_CPUBase;
-            string Output3 = ChangedCPUDec_CPUBase;
-            char count[20];
-            itoa_custom(counter, count, 10);
-
-            Output.append(count);
-            Output.append(".ivf");
-
-            char ChangedCPUDecOutFileChar[255];
-            snprintf(ChangedCPUDecOutFileChar, 255, "%s", Output.c_str());
-
-            totalms = DecompressIVFtoIVFTimeAndOutput(ChangedCPUDecOutFile, ChangedCPUDecOutFileChar);
-
-            printf("Decompression Time in Microseconds: %i", totalms);
-            fprintf(stderr, "Decompression Time in Microseconds: %i", totalms);
-
-            if (counter == 1)
-            {
-                Output3.append("0.ivf");
-            }
-            else
-            {
-                int countOld = (counter - 1) / 2;
-                itoa_custom(countOld, count, 10);
-
-                Output3.append(count);
-                Output3.append(".ivf");
-            }
-
-            if (TestType != 2)
-            {
-                printf("\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
-                fprintf(stderr, "\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
-
-                char Comp1[255];
-                char Comp2[255];
-
-                snprintf(Comp1, 255, "%s", Output.c_str());
-                snprintf(Comp2, 255, "%s", Output3.c_str());
-
-                int lngRC = CompIVF(Comp1, Comp2);
-
-                if (lngRC >= 0)
-                {
-                    printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                    fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                    Fail = 1;
-                }
-
-                if (lngRC == -1)
-                {
-                    printf("\nFiles are identical");
-                    fprintf(stderr, "\nFiles are identical");
-                }
-
-                if (lngRC == -2)
-                {
-                    printf("\n\nFail: File 2 ends before File 1.\n");
-                    fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
-                    Fail = 1;
-                }
-
-                if (lngRC == -3)
-                {
-                    printf("\n\nFail: File 1 ends before File 2.\n");
-                    fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
-                    Fail = 1;
-                }
-            }
-
-            counter = (counter * 2) + 1;
-            i++;
-        }
-
-    }
-
-    //Create Compression only stop test short.
-    if (TestType == 2)
-    {
-        putenv("ON2_SIMD_CAPS=");
-        fclose(fp);
-        string File1Str = File1;
-        RecordTestComplete(MainDirString, File1Str, TestType);
-        return 10;
-    }
-
-    int overallfail = 0;
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
-
-    if (Fail != 1)
-    {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All files are identical - Passed");
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
-    }
-
-    if (Fail == 1)
-    {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All files are not identical - Failed");
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
-        overallfail = 1;
-    }
-
-    if (totalms == totalms1)
-    {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "CPU changes are not effecting decode times - Failed");
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
-        overallfail = 1;
-    }
-
-    if (totalms != totalms1)
-    {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "CPU changes are effecting decode times - Passed");
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
-    }
-
-    if (overallfail == 0)
-    {
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
-        fclose(fp);
-        putenv("ON2_SIMD_CAPS=");
-        string File1Str = File1;
-        RecordTestComplete(MainDirString, File1Str, TestType);
-        return 1;
-    }
-    else
-    {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
-        fclose(fp);
-        putenv("ON2_SIMD_CAPS=");
-        string File1Str = File1;
-        RecordTestComplete(MainDirString, File1Str, TestType);
-        return 0;
-    }
-}
 int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
 
@@ -6286,7 +5703,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int counterMax = 16;
         counter++;
         int i = 1;
-        Time1 = TimeReturn(ChangedCPUDec0OutFile);
+        Time1 = TimeReturn(ChangedCPUDec0OutFile, 0);
 
         while (counter < counterMax)
         {
@@ -6355,7 +5772,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 Fail = 1;
             }
 
-            Time2 = TimeReturn(Comp1);
+            Time2 = TimeReturn(Comp1, 0);
 
             counter = (counter * 2) + 1;
             i++;
@@ -7322,7 +6739,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -7894,7 +7311,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -8357,7 +7774,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        //here to be added to if needed later.
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -8599,6 +8016,19 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 return 2;
             }
         }
+
+        printf("\nDecoding EncBreakOut0");
+        fprintf(stderr, "\nDecoding EncBreakOut0");
+        DecompressIVFtoIVF(EncBreakOut0, EncBreakOut0_Dec);
+        printf("\n\nDecoding EncBreakOut100");
+        fprintf(stderr, "\n\nDecoding EncBreakOut100");
+        DecompressIVFtoIVF(EncBreakOut100, EncBreakOut100_Dec);
+        printf("\n\nDecoding EncBreakOut500");
+        fprintf(stderr, "\n\nDecoding EncBreakOut500");
+        DecompressIVFtoIVF(EncBreakOut500, EncBreakOut500_Dec);
+        printf("\n\nDecoding EncBreakOut1000");
+        fprintf(stderr, "\n\nDecoding EncBreakOut1000");
+        DecompressIVFtoIVF(EncBreakOut1000, EncBreakOut1000_Dec);
     }
 
     if (TestType == 2)
@@ -8609,18 +8039,30 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         return 10;
     }
 
-    printf("\nDecoding EncBreakOut0");
-    fprintf(stderr, "\nDecoding EncBreakOut0");
-    DecompressIVFtoIVF(EncBreakOut0, EncBreakOut0_Dec);
-    printf("\n\nDecoding EncBreakOut100");
-    fprintf(stderr, "\n\nDecoding EncBreakOut100");
-    DecompressIVFtoIVF(EncBreakOut100, EncBreakOut100_Dec);
-    printf("\n\nDecoding EncBreakOut500");
-    fprintf(stderr, "\n\nDecoding EncBreakOut500");
-    DecompressIVFtoIVF(EncBreakOut500, EncBreakOut500_Dec);
-    printf("\n\nDecoding EncBreakOut1000");
-    fprintf(stderr, "\n\nDecoding EncBreakOut1000");
-    DecompressIVFtoIVF(EncBreakOut1000, EncBreakOut1000_Dec);
+    long SourceFileSize = 0;
+
+    long EncBreakOut0_Dec_FileSize = 0;
+    long EncBreakOut100_Dec_FileSize = 0;
+    long EncBreakOut500_Dec_FileSize = 0;
+    long EncBreakOut1000_Dec_FileSize = 0;
+
+    printf("\n\n");
+    fprintf(stderr, "\n\n");
+    SourceFileSize = FileSize(input);
+    printf("\n");
+    fprintf(stderr, "\n");
+    EncBreakOut0_Dec_FileSize = FileSize(EncBreakOut0_Dec);
+    printf("\n");
+    fprintf(stderr, "\n");
+    EncBreakOut100_Dec_FileSize = FileSize(EncBreakOut100_Dec);
+    printf("\n");
+    fprintf(stderr, "\n");
+    EncBreakOut500_Dec_FileSize = FileSize(EncBreakOut500_Dec);
+    printf("\n");
+    fprintf(stderr, "\n");
+    EncBreakOut1000_Dec_FileSize = FileSize(EncBreakOut1000_Dec);
+    printf("\n");
+    fprintf(stderr, "\n");
 
     double PSNR0;
     double PSNR100;
@@ -8663,6 +8105,86 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     int Pass = 1;
     int IndCount = 0;
+
+    if (SourceFileSize != EncBreakOut0_Dec_FileSize)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut0 was not properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+        Pass = 0;
+    }
+    else
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut0 was properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+    }
+
+    if (SourceFileSize != EncBreakOut100_Dec_FileSize)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut100 was not properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+        Pass = 0;
+    }
+    else
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut100 was properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+    }
+
+    if (SourceFileSize != EncBreakOut500_Dec_FileSize)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut500 was not properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+        Pass = 0;
+    }
+    else
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut500 was properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+    }
+
+    if (SourceFileSize != EncBreakOut1000_Dec_FileSize)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut1000 was not properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+        Pass = 0;
+    }
+    else
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "EncBreakOut1000 was properly decoded.");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+    }
 
     if (dB1 <= 2)
     {
@@ -8969,7 +8491,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 
     if (TestType == 3)
     {
-
+        //This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -12055,7 +11577,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -12338,7 +11860,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 1;
         }
     }
-
     int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
@@ -12547,6 +12068,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -12963,7 +12485,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -13464,7 +12986,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            //here to be added to if needed later.
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -14136,6 +13658,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 if (TestType != 2)
                 {
                     PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, NULL);
+                    printf("\n");
+                    fprintf(stderr, "\n");
+                    MaxQArr[i] = CheckMaxQ(QuantOutFile, n);
+                    printf("\n");
+                    fprintf(stderr, "\n");
+                    //PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, NULL);
                 }
 
                 n = n + 8;
@@ -14726,6 +14254,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -15297,6 +14826,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -15659,7 +15189,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -16135,8 +15665,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            Time1 = TimeReturn(MultiThreaded14OutFile);
-            Time2 = TimeReturn(MultiThreaded00OutFile);
+            Time1 = TimeReturn(MultiThreaded14OutFile, 0);
+            Time2 = TimeReturn(MultiThreaded00OutFile, 0);
         }
         else
         {
@@ -16605,7 +16135,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -16963,26 +16493,26 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char ExeInput[255];
         snprintf(ExeInput, 255, "%s", argv[4]);
 
-//#if defined(_WIN32)
-//	{
-//		snprintf(ExeInput,255,"%s",argv[4]);
-//	}
-//#elif defined(linux)
-//	{
-//		string ExeInputStr = argv[4];
-//		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-//	}
-//#elif defined(__APPLE__)
-//	{
-//		string ExeInputStr = argv[4];
-//		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-//	}
-//#elif defined(__POWERPC__)
-//	{
-//		string ExeInputStr = argv[4];
-//		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-//	}
-//#endif
+        //#if defined(_WIN32)
+        //	{
+        //		snprintf(ExeInput,255,"%s",argv[4]);
+        //	}
+        //#elif defined(linux)
+        //	{
+        //		string ExeInputStr = argv[4];
+        //		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
+        //	}
+        //#elif defined(__APPLE__)
+        //	{
+        //		string ExeInputStr = argv[4];
+        //		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
+        //	}
+        //#elif defined(__POWERPC__)
+        //	{
+        //		string ExeInputStr = argv[4];
+        //		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
+        //	}
+        //#endif
 
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";
@@ -17247,8 +16777,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            Time1 = TimeReturn(outputVP8New);
-            Time2 = TimeReturn(outputVP8Old2);
+            Time1 = TimeReturn(outputVP8New, 0);
+            Time2 = TimeReturn(outputVP8Old2, 0);
 
             cout << "\nTime1: " << Time1 << "\n";
             cout << "\nTime2: " << Time2 << "\n";
@@ -17281,7 +16811,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             fprintf(stderr, " ");
 
             system(Program);
-            Time2 = TimeReturn(outputVP8Old2);
+            Time2 = TimeReturn(outputVP8Old2, 0);
 
             printf("\n\nFile completed: Time in Microseconds: %i", Time2);
             fprintf(stderr, "\n\nFile completed: Time in Microseconds: %i", Time2);
@@ -17998,7 +17528,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -18101,8 +17631,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         PSNROnePass2 = IVFPSNR(input, OnePassOutFile2, 1, 0, 1, NULL);
         PSNROnePass3 = IVFPSNR(input, OnePassOutFile3, 1, 0, 1, NULL);
 
-//    double PSRNPerc = absDouble(((PSNR2 - PSNR1) / PSNR1) * 100.00);
-//    double BRPerc = absDouble(((Size2 - Size1) / Size1) * 100.00);
+        //    double PSRNPerc = absDouble(((PSNR2 - PSNR1) / PSNR1) * 100.00);
+        //    double BRPerc = absDouble(((Size2 - Size1) / Size1) * 100.00);
         int Pass = 0;
 
         float TwoPassA = 0;
@@ -18486,7 +18016,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            //here to be added to if needed later.
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -18948,7 +18478,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -19547,7 +19077,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            //here to be added to if needed later.
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -19926,7 +19456,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -20253,31 +19783,31 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /*if (PSNRArr[0] < PSNRArr[1])
         {
-        	char OutputChar1[255];
-        	snprintf(OutputChar1, 255, "Down Water Mark Sample 10 PSNR: %.2f > 90 PSNR: %.2f - Passed", PSNRArr[1], PSNRArr[0]);
-        	string OutputChar1str = OutputChar1;
-        	FormatedPrint(OutputChar1str, 5);
-        	printf("\n");
-        	fprintf(stderr, "\n");
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "Down Water Mark Sample 10 PSNR: %.2f > 90 PSNR: %.2f - Passed", PSNRArr[1], PSNRArr[0]);
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
         }
         if (PSNRArr[0] == PSNRArr[1])
         {
-        	char OutputChar1[255];
-        	snprintf(OutputChar1, 255, "Resample-Down-Watermark has no effect - Indeterminate");
-        	string OutputChar1str = OutputChar1;
-        	FormatedPrint(OutputChar1str, 5);
-        	printf("\n");
-        	fprintf(stderr, "\n");
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "Resample-Down-Watermark has no effect - Indeterminate");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
         }
         if(PSNRArr[0] > PSNRArr[1])
         {
-        	char OutputChar1[255];
-        	snprintf(OutputChar1, 255, "Down Water Mark Sample 90 PSNR: %f > 10 PSNR : %f \n", PSNRArr[0], PSNRArr[1]);
-        	string OutputChar1str = OutputChar1;
-        	FormatedPrint(OutputChar1str, 5);
-        	printf("\n");
-        	fprintf(stderr, "\n");
-        	fail = 1;
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "Down Water Mark Sample 90 PSNR: %f > 10 PSNR : %f \n", PSNRArr[0], PSNRArr[1]);
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        printf("\n");
+        fprintf(stderr, "\n");
+        fail = 1;
         }*/
         if (fail == 0)
         {
@@ -20554,7 +20084,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     char SpeedTestGoodQ[255];
                     snprintf(SpeedTestGoodQ, 255, "%s", OutPutFile1.c_str());
 
-                    GoodTotalms[counter] = TimeReturn(SpeedTestGoodQ);
+                    GoodTotalms[counter] = TimeReturn(SpeedTestGoodQ, 0);
                     GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ, 1, 0, 1, NULL);
                     counter++;
                 }
@@ -20577,7 +20107,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     char SpeedTestRealTime[255];
                     snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
-                    RealTotalms[counter2] = TimeReturn(SpeedTestRealTime);
+                    RealTotalms[counter2] = TimeReturn(SpeedTestRealTime, 0);
                     RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
                     counter--;
                     counter2++;
@@ -20597,7 +20127,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     char SpeedTestRealTime[255];
                     snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
-                    RealTotalmsPos[counter] = TimeReturn(SpeedTestRealTime);
+                    RealTotalmsPos[counter] = TimeReturn(SpeedTestRealTime, 0);
                     RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
                     counter++;
                 }
@@ -21606,7 +21136,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (TestType == 3)
         {
-            //here to be added to if needed later.
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -22377,7 +21907,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -22836,7 +22366,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-
+            //This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -23319,6 +22849,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         opt.TargetBandwidth = BitRate;
 
+        float PSNRArr[4];
+        unsigned int DecTime[4];
+
         //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
         //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
         //Test Type 3 = Mode 2 =Run Test Compressions
@@ -23326,99 +22859,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            unsigned int DecTime[4];
-
-            DecTime[0] = TimeReturn(Version0_Dec);
-            DecTime[1] = TimeReturn(Version1_Dec);
-            DecTime[2] = TimeReturn(Version2_Dec);
-            DecTime[3] = TimeReturn(Version3_Dec);
-
-            int PSNRToggle = PSNRSelect(input, Version0);
-
-            float PSNRArr[4];
-
-            PSNRArr[0] = IVFPSNR(input, Version0, PSNRToggle, 0, 1, NULL);
-            PSNRArr[1] = IVFPSNR(input, Version1, PSNRToggle, 0, 1, NULL);
-            PSNRArr[2] = IVFPSNR(input, Version2, PSNRToggle, 0, 1, NULL);
-            PSNRArr[3] = IVFPSNR(input, Version3, PSNRToggle, 0, 1, NULL);
-
-            int Fail = 0;
-
-            int i = 0;
-
-            while (i < 4)
-            {
-
-                int t = i + 1;
-
-                while (t < 4)
-                {
-                    //i should always have Higher PSNR than t
-                    //i should always have a higher DecTime as well.
-                    if (PSNRArr[i] < PSNRArr[t])
-                    {
-                        if (DecTime[i] < DecTime[t])
-                        {
-                            printf("\nFailed Version%i Decode Time: %d >= Version%i Decode Time: %d\n"
-                                   "       Version%i PSNR: %f <= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                            fprintf(stderr, "\nFailed Version%i Decode Time: %d >= Version%d Decode Time: %i\n"
-                                    "       Version%i PSNR: %f <= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                            Fail = 1;
-                        }
-                        else
-                        {
-                            printf("\nFailed Version%i Decode Time: %d <= Version%i Decode Time: %d\n"
-                                   "       Version%i PSNR: %f <= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                            fprintf(stderr, "\nFailed Version%i Decode Time: %d <= Version%d Decode Time: %i\n"
-                                    "       Version%i PSNR: %f <= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                            Fail = 1;
-                        }
-                    }
-                    else
-                    {
-                        if (DecTime[i] < DecTime[t])
-                        {
-                            printf("\nFailed Version%i Decode Time: %d <= Version%i Decode Time: %d\n"
-                                   "       Version%i PSNR: %f >= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                            fprintf(stderr, "\nFailed Version%i Decode Time: %d <= Version%d Decode Time: %i\n"
-                                    "       Version%i PSNR: %f >= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                            Fail = 1;
-                        }
-                        else
-                        {
-                            printf("\nPassed Version%i Decode Time: %d >= Version%i Decode Time: %d\n"
-                                   "       Version%i PSNR: %f >= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                            fprintf(stderr, "\nPassed Version%i Decode Time: %d >= Version%d Decode Time: %i\n"
-                                    "       Version%i PSNR: %f >= Version%i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                        }
-                    }
-
-                    t++;
-                }
-
-                i++;
-            }
-
-
-
-
-            if (Fail == 0)
-            {
-                printf("\n     Passed: All PSNRs Decrease or remain constant and Decode times increase or remain constant as version numbers increase\n");
-                fprintf(stderr, "\n     Passed: All PSNRs Decrease or remain constant and Decode times increase or remain constant as version numbers increase\n");
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 1;
-            }
-
-            printf("\n     Failed: Not all PSNRs Decrease or remain constant and not all Decode times increase or remain constant as version numbers increase\n");
-            fprintf(stderr, "\n     Failed: Not all PSNRs Decrease and not all Decode times increase or remain constant as version numbers increase\n");
-            fclose(fp);
-            string File1Str = File1;
-            RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
-
+            DecTime[0] = TimeReturn(Version0_Dec, 1);
+            DecTime[1] = TimeReturn(Version1_Dec, 1);
+            DecTime[2] = TimeReturn(Version2_Dec, 1);
+            DecTime[3] = TimeReturn(Version3_Dec, 1);
         }
         else
         {
@@ -23660,23 +23104,21 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
             }
+
+            printf("\n\n");
+            fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
+            DecTime[0] = TimeDecompressIVFtoIVF(Version0, Version0_Dec);
+            printf("\n");
+            fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+            DecTime[1] = TimeDecompressIVFtoIVF(Version1, Version1_Dec);
+            printf("\n");
+            fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+            DecTime[2] = TimeDecompressIVFtoIVF(Version2, Version2_Dec);
+            printf("\n");
+            fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+            DecTime[3] = TimeDecompressIVFtoIVF(Version3, Version3_Dec);
+
         }
-
-        unsigned int DecTime[4];
-
-        printf("\n\n");
-        fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
-        DecTime[0] = TimeDecompressIVFtoIVF(Version0, Version0_Dec);
-        printf("\n");
-        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        DecTime[1] = TimeDecompressIVFtoIVF(Version1, Version1_Dec);
-        printf("\n");
-        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        DecTime[2] = TimeDecompressIVFtoIVF(Version2, Version2_Dec);
-        printf("\n");
-        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        DecTime[3] = TimeDecompressIVFtoIVF(Version3, Version3_Dec);
-
 
         //Create Compression only stop test short.
         if (TestType == 2)
@@ -23688,8 +23130,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         int PSNRToggle = PSNRSelect(input, Version0);
-
-        float PSNRArr[4];
 
         PSNRArr[0] = IVFPSNR(input, Version0, PSNRToggle, 0, 1, NULL);
         PSNRArr[1] = IVFPSNR(input, Version1, PSNRToggle, 0, 1, NULL);
@@ -24834,7 +24274,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
-//----------------------------------------Code Coverage----------------------------------------------------------------
+    //----------------------------------------Code Coverage----------------------------------------------------------------
     int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])
     {
 
@@ -25189,19 +24629,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /*if(arrayname.compare("vp8_mv_cont_count")==0)
         {
-        	if(x > 4)
-        	{
-        		cout << "\nMax x Array Value = 4\n";
-        		return 0;
-        	}
-        	if(y > 3)
-        	{
-        		cout << "\nMax y Array Value = 3\n";
-        		return 0;
-        	}
-        	cout << "vp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        	cerr << "vp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        	StringFound = 1;
+        if(x > 4)
+        {
+        cout << "\nMax x Array Value = 4\n";
+        return 0;
+        }
+        if(y > 3)
+        {
+        cout << "\nMax y Array Value = 3\n";
+        return 0;
+        }
+        cout << "vp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        cerr << "vp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        StringFound = 1;
         }*/
         if (arrayname.compare("vp8_default_zig_zag1d") == 0)
         {
@@ -25594,19 +25034,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /*if(arrayname.compare("vp8_sub_mv_ref_prob2")==0)
         {
-        	if(x > 4)
-        	{
-        		cout << "\nMax x Array Value = 4\n";
-        		return 0;
-        	}
-        	if(y > 3)
-        	{
-        		cout << "\nMax y Array Value = 3\n";
-        		return 0;
-        	}
-        	cout << "vp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        	cerr << "vp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        	StringFound = 1;
+        if(x > 4)
+        {
+        cout << "\nMax x Array Value = 4\n";
+        return 0;
+        }
+        if(y > 3)
+        {
+        cout << "\nMax y Array Value = 3\n";
+        return 0;
+        }
+        cout << "vp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        cerr << "vp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        StringFound = 1;
         }*/
         if (arrayname.compare("vp8_mbsplits") == 0)
         {
@@ -26729,14 +26169,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /*if(arrayname.compare("vp8_sub_mv_ref_prob2")==0)
         {
-        	cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        	cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        	cout << "\n\n";
-        	cerr << "\n\n";
-        	StorageInt = vp8_sub_mv_ref_prob2[x][y];
-        	vp8_sub_mv_ref_prob2[x][y] = vp8_sub_mv_ref_prob2[x][y]+1;
-        	cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        	cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        cout << "\n\n";
+        cerr << "\n\n";
+        StorageInt = vp8_sub_mv_ref_prob2[x][y];
+        vp8_sub_mv_ref_prob2[x][y] = vp8_sub_mv_ref_prob2[x][y]+1;
+        cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
         }*/
         if (arrayname.compare("vp8_mbsplits") == 0)
         {
@@ -27148,108 +26588,108 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /*if(arrayname.compare("nearB")==0)
         {
-        	cout << "\n";
-        	cerr << "\n";
+        cout << "\n";
+        cerr << "\n";
 
-        	cout << "nearB[" << x << "].";
+        cout << "nearB[" << x << "].";
 
-        	if(y == 0)
-        	{
-        		cout << "row = " << nearB[x].row << "\n";
-        	}
-        	if(y == 1)
-        	{
-        		cout << "col = " << nearB[x].col << "\n";
-        	}
-        	if(y == 2)
-        	{
-        		cout << "weight = " << nearB[x].weight << "\n";
-        	}
-        	if(y == 3)
-        	{
-        		cout << "block = " << nearB[x].block << "\n";
-        	}
+        if(y == 0)
+        {
+        cout << "row = " << nearB[x].row << "\n";
+        }
+        if(y == 1)
+        {
+        cout << "col = " << nearB[x].col << "\n";
+        }
+        if(y == 2)
+        {
+        cout << "weight = " << nearB[x].weight << "\n";
+        }
+        if(y == 3)
+        {
+        cout << "block = " << nearB[x].block << "\n";
+        }
 
-        	cerr << "nearB[" << x << "].";
+        cerr << "nearB[" << x << "].";
 
-        	if(y == 0)
-        	{
-        		cerr << "row = " << nearB[x].row << "\n";
-        	}
-        	if(y == 1)
-        	{
-        		cerr << "col = " << nearB[x].col << "\n";
-        	}
-        	if(y == 2)
-        	{
-        		cerr << "weight = " << nearB[x].weight << "\n";
-        	}
-        	if(y == 3)
-        	{
-        		cerr << "block = " << nearB[x].block << "\n";
-        	}
+        if(y == 0)
+        {
+        cerr << "row = " << nearB[x].row << "\n";
+        }
+        if(y == 1)
+        {
+        cerr << "col = " << nearB[x].col << "\n";
+        }
+        if(y == 2)
+        {
+        cerr << "weight = " << nearB[x].weight << "\n";
+        }
+        if(y == 3)
+        {
+        cerr << "block = " << nearB[x].block << "\n";
+        }
 
-        	cout << "\n\n";
-        	cerr << "\n\n";
+        cout << "\n\n";
+        cerr << "\n\n";
 
-        	if(y == 0)
-        	{
-        		StorageInt = nearB[x].row;
-        		nearB[x].row = nearB[x].row+20;
-        	}
-        	if(y == 1)
-        	{
-        		StorageInt = nearB[x].col;
-        		nearB[x].col = nearB[x].col+20;
-        	}
-        	if(y == 2)
-        	{
-        		StorageInt = nearB[x].weight;
-        		nearB[x].weight = nearB[x].weight+20;
-        	}
-        	if(y == 3)
-        	{
-        		StorageInt = nearB[x].block;
-        		nearB[x].block = nearB[x].block+20;
-        	}
+        if(y == 0)
+        {
+        StorageInt = nearB[x].row;
+        nearB[x].row = nearB[x].row+20;
+        }
+        if(y == 1)
+        {
+        StorageInt = nearB[x].col;
+        nearB[x].col = nearB[x].col+20;
+        }
+        if(y == 2)
+        {
+        StorageInt = nearB[x].weight;
+        nearB[x].weight = nearB[x].weight+20;
+        }
+        if(y == 3)
+        {
+        StorageInt = nearB[x].block;
+        nearB[x].block = nearB[x].block+20;
+        }
 
-        	cout << "nearB[" << x << "].";
+        cout << "nearB[" << x << "].";
 
-        	if(y == 0)
-        	{
-        		cout << "row = " << nearB[x].row << "\n";
-        	}
-        	if(y == 1)
-        	{
-        		cout << "col = " << nearB[x].col << "\n";
-        	}
-        	if(y == 2)
-        	{
-        		cout << "weight = " << nearB[x].weight << "\n";
-        	}
-        	if(y == 3)
-        	{
-        		cout << "block = " << nearB[x].block << "\n";
-        	}
+        if(y == 0)
+        {
+        cout << "row = " << nearB[x].row << "\n";
+        }
+        if(y == 1)
+        {
+        cout << "col = " << nearB[x].col << "\n";
+        }
+        if(y == 2)
+        {
+        cout << "weight = " << nearB[x].weight << "\n";
+        }
+        if(y == 3)
+        {
+        cout << "block = " << nearB[x].block << "\n";
+        }
 
-        	cerr << "nearB[" << x << "].";
+        cerr << "nearB[" << x << "].";
 
-        	if(y == 0)
-        	{
-        		cerr << "row = " << nearB[x].row << "\n";
-        	}
-        	if(y == 1)
-        	{
-        		cerr << "col = " << nearB[x].col << "\n";
-        	}
-        	if(y == 2)
-        	{
-        		cerr << "weight = " << nearB[x].weight << "\n";
-        	}
-        	if(y == 3)
-        	{
-        		cerr << "block = " << nearB[x].block << "\n";
-        	}
+        if(y == 0)
+        {
+        cerr << "row = " << nearB[x].row << "\n";
+        }
+        if(y == 1)
+        {
+        cerr << "col = " << nearB[x].col << "\n";
+        }
+        if(y == 2)
+        {
+        cerr << "weight = " << nearB[x].weight << "\n";
+        }
+        if(y == 3)
+        {
+        cerr << "block = " << nearB[x].block << "\n";
+        }
         }*/
 
         if (arrayname.compare("vp8_CoefEncodings") == 0)

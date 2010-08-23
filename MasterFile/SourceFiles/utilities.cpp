@@ -12436,7 +12436,7 @@ int CheckFixedQ(char *inputFile, int FixedQuantizer)
 
     return -1;//result > -1 -> fail | result = -1 pass
 }
-int TimeReturn(char *infile)
+int TimeReturn(char *infile, int FileType)
 {
     int speed;
 
@@ -12444,8 +12444,17 @@ int TimeReturn(char *infile)
 
     FolderName2(infile, TextFilechar1);
 
+    char *FullName = "";
 
-    char *FullName = strcat(TextFilechar1, "CompressionTime.txt");
+    if (FileType == 0)
+    {
+        FullName = strcat(TextFilechar1, "CompressionTime.txt");
+    }
+
+    if (FileType == 1)
+    {
+        FullName = strcat(TextFilechar1, "DecompressionTime.txt");
+    }
 
     ifstream infile2(FullName);
 

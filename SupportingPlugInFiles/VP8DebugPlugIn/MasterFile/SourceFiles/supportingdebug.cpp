@@ -24,7 +24,7 @@ char TesterExePath[256];//Temporary solution for DSHOW
 extern unsigned int GetTime();
 extern void FolderName2(char *DirIn, char *DirOut);
 
-extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double &SsimOut);
+extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
 extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
 
 extern int CompressIVFtoIVF_TimeOuput(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt);
@@ -485,7 +485,7 @@ int main(int argc, char *argv[])
     {
         cout << "\n\n";
         double ssimDummyVar = 0;
-        totalPsnr = IVFPSNR(inputFile, outputFile, 0, 0, 1, ssimDummyVar);
+        totalPsnr = IVFPSNR(inputFile, outputFile, 0, 0, 1, NULL);
 
         char TextFilechar1[255];
 

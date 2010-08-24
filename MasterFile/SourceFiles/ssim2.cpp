@@ -8,7 +8,7 @@
  *   Copyright (c) 1999 - 2005  On2 Technologies Inc. All Rights Reserved.
  *
  ***************************************************************************/
-#include "test-definitions.h"
+
 #include "yv12config.h"
 #include "math.h"
 

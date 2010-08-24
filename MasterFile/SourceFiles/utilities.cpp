@@ -3165,6 +3165,8 @@ int image2yuvconfig(const on2_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
 }
 double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
 {
+    frameStats = 1;//Overide to print individual frames to screen
+
     double summedQuality = 0;
     double summedWeights = 0;
     double summedPsnr = 0;
@@ -4018,6 +4020,8 @@ double IVFPSNR_CORE(char *inputFile1, char *inputFile2, int forceUVswap, int fra
 }
 double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double &SsimOut)
 {
+    frameStats = 1;//Overide to print individual frames to screen
+
     double summedQuality = 0;
     double summedWeights = 0;
     double summedPsnr = 0;

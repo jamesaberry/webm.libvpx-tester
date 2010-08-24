@@ -2136,7 +2136,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                 }
                 }*/
 
-                if (selector == ALTFRNUM)
+                /*if (selector == ALTFRNUM)
                 {
                     if (!(DummyArgvVar == 7 || DummyArgvVar == 8))
                     {
@@ -2149,7 +2149,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
 
                         PassFail[PassFailInt] = -1;
                     }
-                }
+                }*/
 
                 if (selector == AUTKFNUM)
                 {
@@ -2681,7 +2681,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                 }
 
                 //Make sure that all tests input are vaild tests by checking the list (make sure to add new tests here!)
-                if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM && selector != ALTFRNUM &&
+                if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM &&
                     selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CHGWRNUM &&
                     selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
@@ -3163,8 +3163,10 @@ int image2yuvconfig(const on2_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
     //	yv12->clrtype = (/*img->fmt == IMG_FMT_ON2I420 || img->fmt == */IMG_FMT_ON2YV12); //REG_YUV = 0
     return 0;
 }
-double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double &SsimOut)
+double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
 {
+    frameStats = 1;//Overide to print individual frames to screen
+
     double summedQuality = 0;
     double summedWeights = 0;
     double summedPsnr = 0;
@@ -3446,10 +3448,13 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             //////////////////////////////////////////////////////////////////////
 
             ///////////////////////////Preform PSNR Calc///////////////////////////////////
-            double weight;
-            double thisSsim = VP8_CalcSSIM2(&Raw_YV12, &Comp_YV12, 1, &weight);
-            summedQuality += thisSsim * weight ;
-            summedWeights += weight;
+            if (SsimOut)
+            {
+                double weight;
+                double thisSsim = VP8_CalcSSIM2(&Raw_YV12, &Comp_YV12, 1, &weight);
+                summedQuality += thisSsim * weight ;
+                summedWeights += weight;
+            }
 
             double YPsnr;
             double UPsnr;
@@ -3539,6 +3544,10 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     double samples = 3.0 / 2 * frameCount * Raw_YV12.YWidth * Raw_YV12.YHeight;
     double avgPsnr = summedPsnr / frameCount;
     double totalPsnr = VP8_Mse2Psnr(samples, 255.0, sumSqError);
+
+    if (summedWeights < 1.0)
+        summedWeights = 1.0;
+
     double totalSSim = 100 * pow(summedQuality / summedWeights, 8.0);
 
     ////////Printing////////
@@ -3546,29 +3555,32 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     {
         if (frameStats == 3)
         {
-            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
+            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
                    sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,					//divided by two added when rate doubled to handle doubling of timestamp
                    sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,				//divided by two added when rate doubled to handle doubling of timestamp
                    avgPsnr, 1.0 * summedYPsnr / frameCount,
                    1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                   totalPsnr, totalSSim);
+                   totalPsnr);
+            printf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
 
         }
         else
         {
-            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
+            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
                    sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
                    sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
                    avgPsnr, 1.0 * summedYPsnr / frameCount,
                    1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                   totalPsnr, totalSSim);
+                   totalPsnr);
+            printf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
 
-            fprintf(stderr, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
+            fprintf(stderr, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
                     sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
                     sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
                     avgPsnr, 1.0 * summedYPsnr / frameCount,
                     1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                    totalPsnr, totalSSim);
+                    totalPsnr);
+            fprintf(stderr, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
         }
     }
 
@@ -3577,6 +3589,9 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
         printf("\n                        --------------------------------\n");
         fprintf(stderr, "\n                        --------------------------------\n");
     }
+
+    if (SsimOut)
+        *SsimOut = totalSSim;
 
     ////////////////////////
     fclose(RawFile);
@@ -4005,6 +4020,8 @@ double IVFPSNR_CORE(char *inputFile1, char *inputFile2, int forceUVswap, int fra
 }
 double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double &SsimOut)
 {
+    frameStats = 1;//Overide to print individual frames to screen
+
     double summedQuality = 0;
     double summedWeights = 0;
     double summedPsnr = 0;
@@ -12423,7 +12440,7 @@ int CheckFixedQ(char *inputFile, int FixedQuantizer)
 
     return -1;//result > -1 -> fail | result = -1 pass
 }
-int TimeReturn(char *infile)
+int TimeReturn(char *infile, int FileType)
 {
     int speed;
 
@@ -12431,8 +12448,17 @@ int TimeReturn(char *infile)
 
     FolderName2(infile, TextFilechar1);
 
+    char *FullName = "";
 
-    char *FullName = strcat(TextFilechar1, "CompressionTime.txt");
+    if (FileType == 0)
+    {
+        FullName = strcat(TextFilechar1, "CompressionTime.txt");
+    }
+
+    if (FileType == 1)
+    {
+        FullName = strcat(TextFilechar1, "DecompressionTime.txt");
+    }
 
     ifstream infile2(FullName);
 

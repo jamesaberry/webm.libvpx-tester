@@ -14439,27 +14439,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char MemLeakExe[255];
         char DecInFile[255];
 
-#if defined(_WIN32)
-        {
             snprintf(MemLeakExe, 255, "%s", argv[2]);
             snprintf(DecInFile, 255, "%s", argv[3]);
-        }
-#elif defined(linux)
-        {
-            string MemLeakExeStr = argv[2];
-            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
-        }
-#elif defined(__APPLE__)
-        {
-            string MemLeakExeStr = argv[2];
-            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
-        }
-#elif defined(__POWERPC__)
-        {
-            string MemLeakExeStr = argv[2];
-            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
-        }
-#endif
 
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";
@@ -14670,8 +14651,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir12.append(WorkingDir10);		// Mem Output File
             WorkingDir12.append("\" \"");
             WorkingDir12.append(DecInFile);
-            WorkingDir11.append("\"\"");
-            WorkingDir12.append("\"\"");
+            WorkingDir11.append("\"");
+            WorkingDir12.append("\"");
         }
 #elif defined(linux)
         {
@@ -14691,8 +14672,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir12.append(WorkingDir10);		// Mem Output File
             WorkingDir12.append("\' \'");
             WorkingDir12.append(DecInFile);
-            WorkingDir11.append("\'\'");
-            WorkingDir12.append("\'\'");
+            WorkingDir11.append("\'");
+            WorkingDir12.append("\'");
         }
 #elif defined(__APPLE__)
         {
@@ -14712,8 +14693,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir12.append(WorkingDir10);		// Mem Output File
             WorkingDir12.append("\" \"");
             WorkingDir12.append(DecInFile);
-            WorkingDir11.append("\"\"");
-            WorkingDir12.append("\"\"");
+            WorkingDir11.append("\"");
+            WorkingDir12.append("\"");
         }
 #elif defined(__POWERPC__)
         {
@@ -14733,8 +14714,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir12.append(WorkingDir10);		// Mem Output File
             WorkingDir12.append("\" \"");
             WorkingDir12.append(DecInFile);
-            WorkingDir11.append("\"\"");
-            WorkingDir12.append("\"\"");
+            WorkingDir11.append("\"");
+            WorkingDir12.append("\"");
         }
 #endif
 

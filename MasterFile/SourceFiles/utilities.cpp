@@ -921,7 +921,7 @@ void VP8DefaultParms(VP8_CONFIG &opt)
     opt.KeyQ = 12;
     opt.PlayAlternate = 1;
     opt.WorstAllowedQ = 56;
-    opt.LagInFrames = 10;
+    opt.LagInFrames = 0;
     //////////////////////////////////
     //////////////IVFEnc Parms////////////
     //opt.AllowLag = 0;

@@ -14030,7 +14030,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         WorkingDir7.append("MemLeakCheckOutput.txt");
 
         WorkingDir8.append(slashCharStr);
-        WorkingDir8.append("MemLeackCheckParFile.txt");
+        WorkingDir8.append("MemLeakCheckParFile.txt");
 
 #if defined(_WIN32)
         {
@@ -14550,7 +14550,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         WorkingDir7.append("MemLeakCheckOutput");
 
         WorkingDir8.append(slashCharStr);
-        WorkingDir8.append("MemLeackCheckParFile");
+        WorkingDir8.append("MemLeakCheckParFile");
 
 #if defined(_WIN32)
         {

@@ -1485,7 +1485,6 @@ void Print5(string WorkingDir)
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode0%%%%\n");
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", AUTKFNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar, slashChar);
@@ -1671,7 +1670,6 @@ void Print6(string WorkingDir)
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode0%%%%\n");
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", AUTKFNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar, slashChar);

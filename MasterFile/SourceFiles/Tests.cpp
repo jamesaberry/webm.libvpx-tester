@@ -4552,8 +4552,8 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         printf("\n");
         fprintf(stderr, "\n");
 
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        printf("\nFailed\n");
+        fprintf(stderr, "\nFailed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);

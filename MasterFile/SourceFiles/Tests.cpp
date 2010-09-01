@@ -14439,8 +14439,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char MemLeakExe[255];
         char DecInFile[255];
 
-            snprintf(MemLeakExe, 255, "%s", argv[2]);
-            snprintf(DecInFile, 255, "%s", argv[3]);
+        snprintf(MemLeakExe, 255, "%s", argv[2]);
+        snprintf(DecInFile, 255, "%s", argv[3]);
 
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";

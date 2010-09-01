@@ -921,7 +921,7 @@ void VP8DefaultParms(VP8_CONFIG &opt)
     opt.KeyQ = 12;
     opt.PlayAlternate = 1;
     opt.WorstAllowedQ = 56;
-    opt.LagInFrames = 10;
+    opt.LagInFrames = 0;
     //////////////////////////////////
     //////////////IVFEnc Parms////////////
     //opt.AllowLag = 0;
@@ -1669,43 +1669,42 @@ long FileSize(char *inFile)
 
     printf("Size of %s: ", FileNameinFile);
     fprintf(stderr, "Size of %s: ", FileNameinFile);
-    long l, m;
-    ifstream file;
-    file.open(inFile, ios::in | ios::binary);
 
-    if (!file.is_open())
-    {
-        printf("Error opening file: %s\n", inFile);
-        fprintf(stderr, "Error opening file: %s\n", inFile);
-        return -1;
-    }
+    long pos;
+    long end;
 
-    l = file.tellg();
-    file.seekg(0, ios::end);
-    m = file.tellg();
-    file.close();
-    long Filebytes;
-    Filebytes = m - l;
+    FILE *f;
+    f = fopen(inFile , "r");
 
-    printf("%i bytes", Filebytes);
-    fprintf(stderr, "%i bytes", Filebytes);
+    pos = ftell(f);
+    fseek(f, 0, SEEK_END);
+    end = ftell(f);
+    fseek(f, pos, SEEK_SET);
 
-    return Filebytes;
+    printf("%i bytes", end - pos);
+    fprintf(stderr, "%i bytes", end - pos);
+
+    fclose(f);
+
+    return end - pos;
 }
 long FileSize2(char *inFile)
 {
     //finds and returns the size of a file without output.
-    long l, m;
-    ifstream file;
-    file.open(inFile, ios::in | ios::binary);
+    long pos;
+    long end;
 
-    l = file.tellg();
-    file.seekg(0, ios::end);
-    m = file.tellg();
-    file.close();
-    long Filebytes;
-    Filebytes = m - l;
-    return Filebytes;
+    FILE *f;
+    f = fopen(inFile , "r");
+
+    pos = ftell(f);
+    fseek(f, 0, SEEK_END);
+    end = ftell(f);
+    fseek(f, pos, SEEK_SET);
+
+    fclose(f);
+
+    return end - pos;
 }
 void FileName(char *input, char *FileName)
 {
@@ -12191,7 +12190,7 @@ int IVFDFWMCheck(char *InputFile, int printselect)
         KeyFramesFile >> curkeyframe;
 
         int curThreshFrame = 0;
-        CheckPBMFile.seekg(0, ios::beg);
+        CheckPBMFile.seekg(ios::beg);
 
         while (!CheckPBMFile.eof() && curThreshFrame < curkeyframe) //get threshold status for frame just prior to keyframe
         {

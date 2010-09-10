@@ -14,8 +14,8 @@ extern "C"
 {
 #endif
 
-#define VP7BORDERINPIXELS		48
-#define VP8BORDERINPIXELS		32
+#define VP7BORDERINPIXELS       48
+#define VP8BORDERINPIXELS       32
 
     /*************************************
      For INT_YUV:
@@ -30,8 +30,8 @@ extern "C"
     ************************************/
     typedef enum
     {
-        REG_YUV = 0,	// Regular yuv
-        INT_YUV = 1		// The type of yuv that can be tranfer to and from RGB through integer transform
+        REG_YUV = 0,    // Regular yuv
+        INT_YUV = 1     // The type of yuv that can be tranfer to and from RGB through integer transform
               }
               YUV_TYPE;
 

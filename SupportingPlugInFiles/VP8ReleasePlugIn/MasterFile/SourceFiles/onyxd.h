@@ -26,9 +26,9 @@ extern "C"
     typedef void   *VP8D_PTR;
     typedef struct
     {
-        int		Width;
-        int		Height;
-        int		Version;
+        int     Width;
+        int     Height;
+        int     Version;
         int     postprocess;
         int     max_threads;
     } VP8D_CONFIG;

@@ -39,8 +39,8 @@ $History: $
 ==============================================================================*/
 
 #ifndef mmioFOURCC
-#define mmioFOURCC( ch0, ch1, ch2, ch3 )				\
-    ( (DWORD)(BYTE)(ch0) | ( (DWORD)(BYTE)(ch1) << 8 ) |	\
+#define mmioFOURCC( ch0, ch1, ch2, ch3 )                \
+    ( (DWORD)(BYTE)(ch0) | ( (DWORD)(BYTE)(ch1) << 8 ) |    \
       ( (DWORD)(BYTE)(ch2) << 16 ) | ( (DWORD)(BYTE)(ch3) << 24 ) )
 #endif
 
@@ -48,8 +48,8 @@ $History: $
 #define ICERR_OK                0L
 #define ICERR_DONTDRAW          1L
 #define ICERR_NEWPALETTE        2L
-#define ICERR_GOTOKEYFRAME	3L
-#define ICERR_STOPDRAWING 	4L
+#define ICERR_GOTOKEYFRAME  3L
+#define ICERR_STOPDRAWING   4L
 
 #define ICERR_UNSUPPORTED      -1L
 #define ICERR_BADFORMAT        -2L
@@ -60,7 +60,7 @@ $History: $
 #define ICERR_BADSIZE          -7L
 #define ICERR_BADHANDLE        -8L
 #define ICERR_CANTUPDATE       -9L
-#define ICERR_ABORT	       -10L
+#define ICERR_ABORT        -10L
 #define ICERR_ERROR            -100L
 #define ICERR_BADBITDEPTH      -200L
 #define ICERR_BADIMAGESIZE     -201L
@@ -92,10 +92,10 @@ $History: $
 #define DRV_RESERVED            0x0800
 #define DRV_USER                0x4000
 
-#define ICM_USER					(DRV_USER+0x0000)
-#define ICM_RESERVED_LOW			(DRV_USER+0x1000)
-#define ICM_RESERVED_HIGH			(DRV_USER+0x2000)
-#define ICM_RESERVED				ICM_RESERVED_LOW
+#define ICM_USER                    (DRV_USER+0x0000)
+#define ICM_RESERVED_LOW            (DRV_USER+0x1000)
+#define ICM_RESERVED_HIGH           (DRV_USER+0x2000)
+#define ICM_RESERVED                ICM_RESERVED_LOW
 #define ICM_GETSTATE                (ICM_RESERVED+0)    // Get compressor state
 #define ICM_SETSTATE                (ICM_RESERVED+1)    // Set compressor state
 #define ICM_GETINFO                 (ICM_RESERVED+2)    // Query info vp7about the compressor
@@ -104,8 +104,8 @@ $History: $
 #define ICM_GETDEFAULTQUALITY       (ICM_RESERVED+30)   // get the default value for quality
 #define ICM_GETQUALITY              (ICM_RESERVED+31)   // get the current value for quality
 #define ICM_SETQUALITY              (ICM_RESERVED+32)   // set the default value for quality
-#define ICM_SET						(ICM_RESERVED+40)	// Tell the driver something
-#define ICM_GET						(ICM_RESERVED+41)	// Ask the driver something
+#define ICM_SET                     (ICM_RESERVED+40)   // Tell the driver something
+#define ICM_GET                     (ICM_RESERVED+41)   // Ask the driver something
 
 #define ICM_GETDEFAULTKEYFRAMERATE  (ICM_USER+42)   // get the default value for key frames
 
@@ -129,7 +129,7 @@ $History: $
 #define ICM_DECOMPRESSEX_END        (ICM_USER+63)   // end a series of decompress calls
 
 #define ICM_COMPRESS_FRAMES_INFO    (ICM_USER+70)   // tell vp7about compress to come
-#define ICM_SET_STATUS_PROC	        (ICM_USER+72)   // set status callback
+#define ICM_SET_STATUS_PROC         (ICM_USER+72)   // set status callback
 
 
 #define ICMF_CONFIGURE_QUERY     0x00000001
@@ -143,8 +143,8 @@ $History: $
 
 /* Values for dwFlags of ICOpen() */
 #ifndef ICMODE_COMPRESS
-#define ICMODE_COMPRESS		1
-#define ICMODE_DECOMPRESS	2
+#define ICMODE_COMPRESS     1
+#define ICMODE_DECOMPRESS   2
 #define ICMODE_FASTDECOMPRESS   3
 #define ICMODE_QUERY            4
 #define ICMODE_FASTCOMPRESS     5
@@ -164,7 +164,7 @@ $History: $
 
 
 
-#define ICCOMPRESS_KEYFRAME	0x00000001L
+#define ICCOMPRESS_KEYFRAME 0x00000001L
 #define AVIIF_LIST          0x00000001L // chunk is a 'LIST'
 #define AVIIF_KEYFRAME      0x00000010L // this frame is a key frame.
 
@@ -242,7 +242,7 @@ typedef struct
 
     LPBITMAPINFOHEADER  lpbiOutput; // DIB to decompress to
     LPVOID              lpOutput;
-    DWORD		ckid;	    // ckid from AVI file
+    DWORD       ckid;       // ckid from AVI file
 } ICDECOMPRESS;
 
 
@@ -304,11 +304,11 @@ typedef struct
     LONG                lDataRate;      // data rate
     LONG                lKeyRate;       // key frame rate
 
-    DWORD		dwRate;		// frame rate, as always
-    DWORD		dwScale;
+    DWORD       dwRate;     // frame rate, as always
+    DWORD       dwScale;
 
-    DWORD		dwOverheadPerFrame;
-    DWORD		dwReserved2;
+    DWORD       dwOverheadPerFrame;
+    DWORD       dwReserved2;
 
     LONG(CALLBACK *GetData)(LPARAM lInput, LONG lFrame, LPVOID lpBits, LONG len);
     LONG(CALLBACK *PutData)(LPARAM lOutput, LONG lFrame, LPVOID lpBits, LONG len);

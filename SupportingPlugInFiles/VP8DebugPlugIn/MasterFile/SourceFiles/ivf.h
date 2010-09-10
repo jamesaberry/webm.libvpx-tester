@@ -23,16 +23,16 @@ extern "C"
 
     typedef struct
     {
-        unsigned char 	signature[4]; //='DKIF';
-        unsigned short	version		; //= 0;
-        unsigned short	headersize	; //= 32;
-        unsigned int	FourCC;
-        unsigned short	width;
-        unsigned short	height;
-        unsigned int	rate;
-        unsigned int	scale;
-        unsigned int	length;
-        unsigned char	unused[4];
+        unsigned char   signature[4]; //='DKIF';
+        unsigned short  version     ; //= 0;
+        unsigned short  headersize  ; //= 32;
+        unsigned int    FourCC;
+        unsigned short  width;
+        unsigned short  height;
+        unsigned int    rate;
+        unsigned int    scale;
+        unsigned int    length;
+        unsigned char   unused[4];
     }  IVF_HEADER;
 #pragma pack(4)
     typedef struct

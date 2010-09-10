@@ -344,7 +344,7 @@ extern "C" struct VP8_TokenStruct vp8_UVmodeEncodings[4];
 
 typedef struct
 {
-    INT16		  MinVal;
+    INT16         MinVal;
     INT16         Length;
     UINT8 Probs[12];
 } TOKENEXTRABITS;
@@ -353,10 +353,10 @@ extern "C" TOKENEXTRABITS vp8d_token_extra_bits2[12];
 
 //extern "C" struct
 //{
-//	int row;
-//	int col;
-//	int weight;	 /*	 was 5 - (abs(nearB[i].row) + abs(nearB[i].col)) */
-//	int block;
+//  int row;
+//  int col;
+//  int weight;  /*  was 5 - (abs(nearB[i].row) + abs(nearB[i].col)) */
+//  int block;
 //} nearB[3];
 /////////////////////////////////////////////////////////////////////////////////
 #endif
@@ -715,25 +715,25 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         // Test not completed.  So long as all arrays are updated properly and variables are as well it should work
         // Seemlessly.
 
-        WorkingDir = argv[3];											//location of main dir in as workingdir
+        WorkingDir = argv[3];                                           //location of main dir in as workingdir
 
         WorkingTextFilestr = WorkingDir;
         WorkingTextFilestr.append(slashCharStr);
-        WorkingTextFilestr.append("TestsRun.txt");						//TestsRun.txt original file ided
+        WorkingTextFilestr.append("TestsRun.txt");                      //TestsRun.txt original file ided
 
         //Determines which test is in the process of being run and sets the correct text file as input file
         SummCompAndTest = WorkingDir;
         SummCompAndTest.append(slashCharStr);
-        SummCompAndTest.append("Mode1Results.txt");		// Mode 1
-        //SummCompAndTest.append("Summary_CompressionsANDTests.txt");		// Mode 1
+        SummCompAndTest.append("Mode1Results.txt");     // Mode 1
+        //SummCompAndTest.append("Summary_CompressionsANDTests.txt");       // Mode 1
         SummComp = WorkingDir;
         SummComp.append(slashCharStr);
-        SummComp.append("Mode2Results.txt");				// Mode 2
-        //SummComp.append("Summary_CompressionsOnly.txt");				// Mode 2
+        SummComp.append("Mode2Results.txt");                // Mode 2
+        //SummComp.append("Summary_CompressionsOnly.txt");              // Mode 2
         SummTest = WorkingDir;
         SummTest.append(slashCharStr);
-        SummTest.append("Mode3Results.txt");						// Mode 3
-        //SummTest.append("Summary_TestsOnly.txt");						// Mode 3
+        SummTest.append("Mode3Results.txt");                        // Mode 3
+        //SummTest.append("Summary_TestsOnly.txt");                     // Mode 3
 
         int TestRunning = 0;
 
@@ -1156,11 +1156,11 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
     {
 
 
-        WorkingDir = argv[3];								//location of main dir in as workingdir
+        WorkingDir = argv[3];                               //location of main dir in as workingdir
 
         WorkingTextFilestr = WorkingDir;
         WorkingTextFilestr.append(slashCharStr);
-        WorkingTextFilestr.append("TestsRun.txt");			//TestsRun.txt original file ided
+        WorkingTextFilestr.append("TestsRun.txt");          //TestsRun.txt original file ided
 
         WorkingDir.append("\"");
 
@@ -14035,62 +14035,62 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #if defined(_WIN32)
         {
             WorkingDir9 = "\"\"";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\" 8 \"");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\" 4 \"");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"\"");
         }
 
 #elif defined(linux)
         {
             WorkingDir9 = "\'";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\' \'");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\' \'");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\' 8 \'");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\' 4 \'");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\'");
         }
 #elif defined(__APPLE__)
         {
             WorkingDir9 = "\"";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\" 8 \"");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\" 4 \"");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"");
         }
 #elif defined(__POWERPC__)
         {
             WorkingDir9 = "\"";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\" 8 \"");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\" 4 \"");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"");
         }
 #endif
@@ -14105,61 +14105,61 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #if defined(_WIN32)
         {
             WorkingDir11 = "\"\"";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);		// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);        // Exe Name
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\" 8 \"");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir11.append("\" 4 \"");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
             WorkingDir11.append("\"\"");
         }
 #elif defined(linux)
         {
             WorkingDir11 = "\'";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);			// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);            // Exe Name
             WorkingDir11.append("\' \'");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\' \'");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\' 8 \'");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir11.append("\' 4 \'");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
             WorkingDir11.append("\'");
         }
 #elif defined(__APPLE__)
         {
             WorkingDir11 = "\"";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);			// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);            // Exe Name
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\" 8 \"");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir11.append("\" 4 \"");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
             WorkingDir11.append("\"");
         }
 #elif defined(__POWERPC__)
         {
             WorkingDir11 = "\"";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);			// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);            // Exe Name
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\" 8 \"");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir11.append("\" 4 \"");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
             WorkingDir11.append("\"");
         }
 #endif
@@ -14555,62 +14555,62 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #if defined(_WIN32)
         {
             WorkingDir9 = "\"\"";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\" 0 \"");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\" 5 \"");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"\"");
         }
 
 #elif defined(linux)
         {
             WorkingDir9 = "\'";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\' \'");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\' \'");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\' 0 \'");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\' 5 \'");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\'");
         }
 #elif defined(__APPLE__)
         {
             WorkingDir9 = "\"";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\" 0 \"");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\" 5 \"");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"");
         }
 #elif defined(__POWERPC__)
         {
             WorkingDir9 = "\"";
-            WorkingDir9.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir9.append(MemLeakExe);			// Exe Name
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);				// Input
+            WorkingDir9.append(input);              // Input
             WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);		// Output
+            WorkingDir9.append(WorkingDir4);        // Output
             WorkingDir9.append("\" 0 \"");
-            WorkingDir9.append(WorkingDir8);		// Par File
+            WorkingDir9.append(WorkingDir8);        // Par File
             WorkingDir9.append("\" 5 \"");
-            WorkingDir9.append(WorkingDir7);		// Mem Output File
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"");
         }
 #endif
@@ -14636,19 +14636,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #if defined(_WIN32)
         {
             WorkingDir11 = "\"\"";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);			// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);            // Exe Name
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\" 0 \"");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir12 = WorkingDir11;
             WorkingDir11.append("\" 5 \"");
             WorkingDir12.append("\" 6 \"");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
-            WorkingDir12.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
+            WorkingDir12.append(WorkingDir10);      // Mem Output File
             WorkingDir12.append("\" \"");
             WorkingDir12.append(DecInFile);
             WorkingDir11.append("\"");
@@ -14657,19 +14657,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #elif defined(linux)
         {
             WorkingDir11 = "\'";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);			// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);            // Exe Name
             WorkingDir11.append("\' \'");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\' \'");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\' 0 \'");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir12 = WorkingDir11;
             WorkingDir11.append("\' 5 \'");
             WorkingDir12.append("\' 6 \'");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
-            WorkingDir12.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
+            WorkingDir12.append(WorkingDir10);      // Mem Output File
             WorkingDir12.append("\' \'");
             WorkingDir12.append(DecInFile);
             WorkingDir11.append("\'");
@@ -14678,19 +14678,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #elif defined(__APPLE__)
         {
             WorkingDir11 = "\"";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);			// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);            // Exe Name
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\" 0 \"");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir12 = WorkingDir11;
             WorkingDir11.append("\" 5 \"");
             WorkingDir12.append("\" 6 \"");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
-            WorkingDir12.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
+            WorkingDir12.append(WorkingDir10);      // Mem Output File
             WorkingDir12.append("\" \"");
             WorkingDir12.append(DecInFile);
             WorkingDir11.append("\"");
@@ -14699,19 +14699,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #elif defined(__POWERPC__)
         {
             WorkingDir11 = "\"";
-            WorkingDir11.append(ExeCharMemLeakStr);	// Exe Path
-            WorkingDir11.append(MemLeakExe);			// Exe Name
+            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
+            WorkingDir11.append(MemLeakExe);            // Exe Name
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(input);				// Input
+            WorkingDir11.append(input);             // Input
             WorkingDir11.append("\" \"");
-            WorkingDir11.append(WorkingDir4);		// Output
+            WorkingDir11.append(WorkingDir4);       // Output
             WorkingDir11.append("\" 0 \"");
-            WorkingDir11.append(WorkingDir8);		// Par File
+            WorkingDir11.append(WorkingDir8);       // Par File
             WorkingDir12 = WorkingDir11;
             WorkingDir11.append("\" 5 \"");
             WorkingDir12.append("\" 6 \"");
-            WorkingDir11.append(WorkingDir10);		// Mem Output File
-            WorkingDir12.append(WorkingDir10);		// Mem Output File
+            WorkingDir11.append(WorkingDir10);      // Mem Output File
+            WorkingDir12.append(WorkingDir10);      // Mem Output File
             WorkingDir12.append("\" \"");
             WorkingDir12.append(DecInFile);
             WorkingDir11.append("\"");
@@ -16475,24 +16475,24 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         snprintf(ExeInput, 255, "%s", argv[4]);
 
         //#if defined(_WIN32)
-        //	{
-        //		snprintf(ExeInput,255,"%s",argv[4]);
-        //	}
+        //  {
+        //      snprintf(ExeInput,255,"%s",argv[4]);
+        //  }
         //#elif defined(linux)
-        //	{
-        //		string ExeInputStr = argv[4];
-        //		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-        //	}
+        //  {
+        //      string ExeInputStr = argv[4];
+        //      snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
+        //  }
         //#elif defined(__APPLE__)
-        //	{
-        //		string ExeInputStr = argv[4];
-        //		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-        //	}
+        //  {
+        //      string ExeInputStr = argv[4];
+        //      snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
+        //  }
         //#elif defined(__POWERPC__)
-        //	{
-        //		string ExeInputStr = argv[4];
-        //		snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-        //	}
+        //  {
+        //      string ExeInputStr = argv[4];
+        //      snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
+        //  }
         //#endif
 
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
@@ -24652,14 +24652,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_block2context")==0)
         //{
-        //	if(x > 74)
-        //	{
-        //		cout << "\nMax Array Value = 74\n";
-        //		return 0;
-        //	}
-        //	cout << "vp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	cerr << "vp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	StringFound = 1;
+        //  if(x > 74)
+        //  {
+        //      cout << "\nMax Array Value = 74\n";
+        //      return 0;
+        //  }
+        //  cout << "vp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cerr << "vp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  StringFound = 1;
         //}
 
         if (arrayname.compare("vp8_block2left") == 0)
@@ -25180,47 +25180,47 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_LowMVtree")==0)//Char
         //{
-        //	if(x > 5)
-        //	{
-        //		cout << "\nMax Array Value = 5\n";
-        //		return 0;
-        //	}
-        //	cout << "vp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	cerr << "vp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	StringFound = 1;
+        //  if(x > 5)
+        //  {
+        //      cout << "\nMax Array Value = 5\n";
+        //      return 0;
+        //  }
+        //  cout << "vp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cerr << "vp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  StringFound = 1;
         //}
         //if(arrayname.compare("vp8_HighMVtree")==0)//Char
         //{
-        //	if(x > 7)
-        //	{
-        //		cout << "\nMax Array Value = 7\n";
-        //		return 0;
-        //	}
-        //	cout << "vp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	cerr << "vp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	StringFound = 1;
+        //  if(x > 7)
+        //  {
+        //      cout << "\nMax Array Value = 7\n";
+        //      return 0;
+        //  }
+        //  cout << "vp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cerr << "vp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  StringFound = 1;
         //}
         //if(arrayname.compare("vp8_Reverse3bits")==0)
         //{
-        //	if(x > 7)
-        //	{
-        //		cout << "\nMax Array Value = 7\n";
-        //		return 0;
-        //	}
-        //	cout << "vp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	cerr << "vp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	StringFound = 1;
+        //  if(x > 7)
+        //  {
+        //      cout << "\nMax Array Value = 7\n";
+        //      return 0;
+        //  }
+        //  cout << "vp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cerr << "vp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  StringFound = 1;
         //}
         //if(arrayname.compare("vp8_Reverse4bits")==0)
         //{
-        //	if(x > 15)
-        //	{
-        //		cout << "\nMax Array Value = 15\n";
-        //		return 0;
-        //	}
-        //	cout << "vp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	cerr << "vp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	StringFound = 1;
+        //  if(x > 15)
+        //  {
+        //      cout << "\nMax Array Value = 15\n";
+        //      return 0;
+        //  }
+        //  cout << "vp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cerr << "vp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  StringFound = 1;
         //}
         if (arrayname.compare("vp8_mv_update_probs") == 0)
         {
@@ -25300,35 +25300,35 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("idctMatrix1")==0)
         //{
-        //	if(x > 3)
-        //	{
-        //		cout << "\nMax x Array Value = 3\n";
-        //		return 0;
-        //	}
-        //	if(y > 3)
-        //	{
-        //		cout << "\nMax y Array Value = 3\n";
-        //		return 0;
-        //	}
-        //	cout << "idctMatrix1[" << x << "][" << y << "] = " << idctMatrix1[x][y] << "\n";
-        //	cerr << "idctMatrix1[" << x << "][" << y << "] = " << idctMatrix1[x][y] << "\n";
-        //	StringFound = 1;
+        //  if(x > 3)
+        //  {
+        //      cout << "\nMax x Array Value = 3\n";
+        //      return 0;
+        //  }
+        //  if(y > 3)
+        //  {
+        //      cout << "\nMax y Array Value = 3\n";
+        //      return 0;
+        //  }
+        //  cout << "idctMatrix1[" << x << "][" << y << "] = " << idctMatrix1[x][y] << "\n";
+        //  cerr << "idctMatrix1[" << x << "][" << y << "] = " << idctMatrix1[x][y] << "\n";
+        //  StringFound = 1;
         //}
         //if(arrayname.compare("idctMatrix2")==0)
         //{
-        //	if(x > 3)
-        //	{
-        //		cout << "\nMax x Array Value = 3\n";
-        //		return 0;
-        //	}
-        //	if(y > 3)
-        //	{
-        //		cout << "\nMax y Array Value = 3\n";
-        //		return 0;
-        //	}
-        //	cout << "idctMatrix2[" << x << "][" << y << "] = " << idctMatrix2[x][y] << "\n";
-        //	cerr << "idctMatrix2[" << x << "][" << y << "] = " << idctMatrix2[x][y] << "\n";
-        //	StringFound = 1;
+        //  if(x > 3)
+        //  {
+        //      cout << "\nMax x Array Value = 3\n";
+        //      return 0;
+        //  }
+        //  if(y > 3)
+        //  {
+        //      cout << "\nMax y Array Value = 3\n";
+        //      return 0;
+        //  }
+        //  cout << "idctMatrix2[" << x << "][" << y << "] = " << idctMatrix2[x][y] << "\n";
+        //  cerr << "idctMatrix2[" << x << "][" << y << "] = " << idctMatrix2[x][y] << "\n";
+        //  StringFound = 1;
         //}
         if (arrayname.compare("vp8_mode_contexts") == 0)
         {
@@ -25493,64 +25493,64 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 cerr << "Probs[" << z << "] = " << vp8d_token_extra_bits2[x].Probs[z] << "\n";
             }
 
-            //				vp8d_token_extra_bits2[0].Probs[1];
-            //				vp8d_token_extra_bits2[0].Probs[1];
+            //              vp8d_token_extra_bits2[0].Probs[1];
+            //              vp8d_token_extra_bits2[0].Probs[1];
 
             StringFound = 1;
         }
 
         //if(arrayname.compare("nearB")==0)
         //{
-        //	if(x > 2)
-        //	{
-        //		cout << "\nMax x Array Value = 2\n";
-        //		return 0;
-        //	}
-        //	if(y > 3)
-        //	{
-        //		cout << "\nMax y Array Value = 3\n";
-        //		return 0;
-        //	}
+        //  if(x > 2)
+        //  {
+        //      cout << "\nMax x Array Value = 2\n";
+        //      return 0;
+        //  }
+        //  if(y > 3)
+        //  {
+        //      cout << "\nMax y Array Value = 3\n";
+        //      return 0;
+        //  }
 
-        //	cout << "nearB[" << x << "].";
+        //  cout << "nearB[" << x << "].";
 
-        //	if(y == 0)
-        //	{
-        //		cout << "row = " << nearB[x].row << "\n";
-        //	}
-        //	if(y == 1)
-        //	{
-        //		cout << "col = " << nearB[x].col << "\n";
-        //	}
-        //	if(y == 2)
-        //	{
-        //		cout << "weight = " << nearB[x].weight << "\n";
-        //	}
-        //	if(y == 3)
-        //	{
-        //		cout << "block = " << nearB[x].block << "\n";
-        //	}
+        //  if(y == 0)
+        //  {
+        //      cout << "row = " << nearB[x].row << "\n";
+        //  }
+        //  if(y == 1)
+        //  {
+        //      cout << "col = " << nearB[x].col << "\n";
+        //  }
+        //  if(y == 2)
+        //  {
+        //      cout << "weight = " << nearB[x].weight << "\n";
+        //  }
+        //  if(y == 3)
+        //  {
+        //      cout << "block = " << nearB[x].block << "\n";
+        //  }
 
-        //	cerr << "nearB[" << x << "].";
+        //  cerr << "nearB[" << x << "].";
 
-        //	if(y == 0)
-        //	{
-        //		cerr << "row = " << nearB[x].row << "\n";
-        //	}
-        //	if(y == 1)
-        //	{
-        //		cerr << "col = " << nearB[x].col << "\n";
-        //	}
-        //	if(y == 2)
-        //	{
-        //		cerr << "weight = " << nearB[x].weight << "\n";
-        //	}
-        //	if(y == 3)
-        //	{
-        //		cerr << "block = " << nearB[x].block << "\n";
-        //	}
+        //  if(y == 0)
+        //  {
+        //      cerr << "row = " << nearB[x].row << "\n";
+        //  }
+        //  if(y == 1)
+        //  {
+        //      cerr << "col = " << nearB[x].col << "\n";
+        //  }
+        //  if(y == 2)
+        //  {
+        //      cerr << "weight = " << nearB[x].weight << "\n";
+        //  }
+        //  if(y == 3)
+        //  {
+        //      cerr << "block = " << nearB[x].block << "\n";
+        //  }
 
-        //	StringFound = 1;
+        //  StringFound = 1;
         //}
         if (arrayname.compare("vp8_CoefEncodings") == 0)
         {
@@ -25762,14 +25762,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_mv_cont_count")==0)
         //{
-        //	cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        //	cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        //	cout << "\n\n";
-        //	cerr << "\n\n";
-        //	StorageInt = vp8_mv_cont_count[x][y];
-        //	vp8_mv_cont_count[x][y] = vp8_mv_cont_count[x][y]+1;
-        //	cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        //	cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  cout << "\n\n";
+        //  cerr << "\n\n";
+        //  StorageInt = vp8_mv_cont_count[x][y];
+        //  vp8_mv_cont_count[x][y] = vp8_mv_cont_count[x][y]+1;
+        //  cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
         //}
         if (arrayname.compare("vp8_default_zig_zag1d") == 0)
         {
@@ -25798,14 +25798,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_block2context")==0)
         //{
-        //	cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	cout << "\n\n";
-        //	cerr << "\n\n";
-        //	StorageInt = vp8_block2context[x];
-        //	vp8_block2context[x] = vp8_block2context[x]  + 20;
-        //	cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cout << "\n\n";
+        //  cerr << "\n\n";
+        //  StorageInt = vp8_block2context[x];
+        //  vp8_block2context[x] = vp8_block2context[x]  + 20;
+        //  cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
         //}
         if (arrayname.compare("vp8_block2left") == 0)
         {
@@ -26293,47 +26293,47 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_LowMVtree")==0)//Char
         //{
-        //	cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	cout << "\n\n";
-        //	cerr << "\n\n";
-        //	StorageChar = vp8_LowMVtree[x];
-        //	vp8_LowMVtree[x] = vp8_LowMVtree[x]  + 20;
-        //	cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cout << "\n\n";
+        //  cerr << "\n\n";
+        //  StorageChar = vp8_LowMVtree[x];
+        //  vp8_LowMVtree[x] = vp8_LowMVtree[x]  + 20;
+        //  cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
         //}
         //if(arrayname.compare("vp8_HighMVtree")==0)//Char
         //{
-        //	cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	cout << "\n\n";
-        //	cerr << "\n\n";
-        //	StorageChar = vp8_HighMVtree[x];
-        //	vp8_HighMVtree[x] = vp8_HighMVtree[x]  + 20;
-        //	cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cout << "\n\n";
+        //  cerr << "\n\n";
+        //  StorageChar = vp8_HighMVtree[x];
+        //  vp8_HighMVtree[x] = vp8_HighMVtree[x]  + 20;
+        //  cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
         //}
         //if(arrayname.compare("vp8_Reverse3bits")==0)
         //{
-        //	cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	cout << "\n\n";
-        //	cerr << "\n\n";
-        //	StorageInt = vp8_Reverse3bits[x];
-        //	vp8_Reverse3bits[x] = vp8_Reverse3bits[x]  + 20;
-        //	cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cout << "\n\n";
+        //  cerr << "\n\n";
+        //  StorageInt = vp8_Reverse3bits[x];
+        //  vp8_Reverse3bits[x] = vp8_Reverse3bits[x]  + 20;
+        //  cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
         //}
         //if(arrayname.compare("vp8_Reverse4bits")==0)
         //{
-        //	cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	cout << "\n\n";
-        //	cerr << "\n\n";
-        //	StorageInt = vp8_Reverse4bits[x];
-        //	vp8_Reverse4bits[x] = vp8_Reverse4bits[x]  + 20;
-        //	cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cout << "\n\n";
+        //  cerr << "\n\n";
+        //  StorageInt = vp8_Reverse4bits[x];
+        //  vp8_Reverse4bits[x] = vp8_Reverse4bits[x]  + 20;
+        //  cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
         //}
         if (arrayname.compare("vp8_mv_update_probs") == 0)
         {
@@ -26837,13 +26837,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_mv_cont_count")==0)
         //{
-        //	cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        //	cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        //	vp8_mv_cont_count[x][y]=StorageInt;
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
-        //	cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
-        //	cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  vp8_mv_cont_count[x][y]=StorageInt;
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
+        //  cout << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
+        //  cerr << "\nvp8_mv_cont_count[" << x << "][" << y << "] = " << vp8_mv_cont_count[x][y] << "\n";
         //}
         if (arrayname.compare("vp8_default_zig_zag1d") == 0)
         {
@@ -26869,13 +26869,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_block2context")==0)
         //{
-        //	cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	vp8_block2context[x] = StorageInt;
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
-        //	cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
-        //	cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  vp8_block2context[x] = StorageInt;
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
+        //  cout << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
+        //  cerr << "\nvp8_block2context[" << x << "] = " << vp8_block2context[x] << "\n";
         //}
         if (arrayname.compare("vp8_block2left") == 0)
         {
@@ -27176,13 +27176,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_sub_mv_ref_prob2")==0)
         //{
-        //	cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        //	cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        //	vp8_sub_mv_ref_prob2[x][y]=StorageInt;
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
-        //	cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
-        //	cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        //  cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        //  cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        //  vp8_sub_mv_ref_prob2[x][y]=StorageInt;
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
+        //  cout << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
+        //  cerr << "\nvp8_sub_mv_ref_prob2[" << x << "][" << y << "] = " << vp8_sub_mv_ref_prob2[x][y] << "\n";
         //}
         if (arrayname.compare("vp8_mbsplits") == 0)
         {
@@ -27307,43 +27307,43 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("vp8_LowMVtree")==0)//Char
         //{
-        //	cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	vp8_LowMVtree[x] = StorageChar;
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
-        //	cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
-        //	cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  vp8_LowMVtree[x] = StorageChar;
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
+        //  cout << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
+        //  cerr << "\nvp8_LowMVtree[" << x << "] = " << vp8_LowMVtree[x] << "\n";
         //}
         //if(arrayname.compare("vp8_HighMVtree")==0)//Char
         //{
-        //	cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	vp8_HighMVtree[x] = StorageChar;
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
-        //	cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
-        //	cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  vp8_HighMVtree[x] = StorageChar;
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
+        //  cout << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
+        //  cerr << "\nvp8_HighMVtree[" << x << "] = " << vp8_HighMVtree[x] << "\n";
         //}
         //if(arrayname.compare("vp8_Reverse3bits")==0)
         //{
-        //	cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	vp8_Reverse3bits[x] = StorageInt;
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
-        //	cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  vp8_Reverse3bits[x] = StorageInt;
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
+        //  cout << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse3bits[" << x << "] = " << vp8_Reverse3bits[x] << "\n";
         //}
         //if(arrayname.compare("vp8_Reverse4bits")==0)
         //{
-        //	cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	vp8_Reverse4bits[x] = StorageInt;
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
-        //	cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
-        //	cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  vp8_Reverse4bits[x] = StorageInt;
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
+        //  cout << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
+        //  cerr << "\nvp8_Reverse4bits[" << x << "] = " << vp8_Reverse4bits[x] << "\n";
         //}
         if (arrayname.compare("vp8_mv_update_probs") == 0)
         {
@@ -27560,105 +27560,105 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         //if(arrayname.compare("nearB")==0)
         //{
-        //	cout << "\n";
-        //	cerr << "\n";
+        //  cout << "\n";
+        //  cerr << "\n";
 
-        //	cout << "nearB[" << x << "].";
+        //  cout << "nearB[" << x << "].";
 
-        //	if(y == 0)
-        //	{
-        //		cout << "row = " << nearB[x].row << "\n";
-        //	}
-        //	if(y == 1)
-        //	{
-        //		cout << "col = " << nearB[x].col << "\n";
-        //	}
-        //	if(y == 2)
-        //	{
-        //		cout << "weight = " << nearB[x].weight << "\n";
-        //	}
-        //	if(y == 3)
-        //	{
-        //		cout << "block = " << nearB[x].block << "\n";
-        //	}
+        //  if(y == 0)
+        //  {
+        //      cout << "row = " << nearB[x].row << "\n";
+        //  }
+        //  if(y == 1)
+        //  {
+        //      cout << "col = " << nearB[x].col << "\n";
+        //  }
+        //  if(y == 2)
+        //  {
+        //      cout << "weight = " << nearB[x].weight << "\n";
+        //  }
+        //  if(y == 3)
+        //  {
+        //      cout << "block = " << nearB[x].block << "\n";
+        //  }
 
-        //	cerr << "nearB[" << x << "].";
+        //  cerr << "nearB[" << x << "].";
 
-        //	if(y == 0)
-        //	{
-        //		cerr << "row = " << nearB[x].row << "\n";
-        //	}
-        //	if(y == 1)
-        //	{
-        //		cerr << "col = " << nearB[x].col << "\n";
-        //	}
-        //	if(y == 2)
-        //	{
-        //		cerr << "weight = " << nearB[x].weight << "\n";
-        //	}
-        //	if(y == 3)
-        //	{
-        //		cerr << "block = " << nearB[x].block << "\n";
-        //	}
+        //  if(y == 0)
+        //  {
+        //      cerr << "row = " << nearB[x].row << "\n";
+        //  }
+        //  if(y == 1)
+        //  {
+        //      cerr << "col = " << nearB[x].col << "\n";
+        //  }
+        //  if(y == 2)
+        //  {
+        //      cerr << "weight = " << nearB[x].weight << "\n";
+        //  }
+        //  if(y == 3)
+        //  {
+        //      cerr << "block = " << nearB[x].block << "\n";
+        //  }
 
-        //	//vp8_kf_default_bmode_counts[x][y][z]=StorageInt;
-        //	if(y == 0)
-        //	{
-        //		nearB[x].row = StorageInt;
-        //	}
-        //	if(y == 1)
-        //	{
-        //		nearB[x].col = StorageInt;
-        //	}
-        //	if(y == 2)
-        //	{
-        //		nearB[x].weight = StorageInt;
-        //	}
-        //	if(y == 3)
-        //	{
-        //		nearB[x].block = StorageInt;
-        //	}
+        //  //vp8_kf_default_bmode_counts[x][y][z]=StorageInt;
+        //  if(y == 0)
+        //  {
+        //      nearB[x].row = StorageInt;
+        //  }
+        //  if(y == 1)
+        //  {
+        //      nearB[x].col = StorageInt;
+        //  }
+        //  if(y == 2)
+        //  {
+        //      nearB[x].weight = StorageInt;
+        //  }
+        //  if(y == 3)
+        //  {
+        //      nearB[x].block = StorageInt;
+        //  }
 
-        //	cout << "\nArray Var Reset to:";
-        //	cerr << "\nArray Var Reset to:";
+        //  cout << "\nArray Var Reset to:";
+        //  cerr << "\nArray Var Reset to:";
 
-        //	cout << "nearB[" << x << "].";
+        //  cout << "nearB[" << x << "].";
 
-        //	if(y == 0)
-        //	{
-        //		cout << "row = " << nearB[x].row << "\n";
-        //	}
-        //	if(y == 1)
-        //	{
-        //		cout << "col = " << nearB[x].col << "\n";
-        //	}
-        //	if(y == 2)
-        //	{
-        //		cout << "weight = " << nearB[x].weight << "\n";
-        //	}
-        //	if(y == 3)
-        //	{
-        //		cout << "block = " << nearB[x].block << "\n";
-        //	}
+        //  if(y == 0)
+        //  {
+        //      cout << "row = " << nearB[x].row << "\n";
+        //  }
+        //  if(y == 1)
+        //  {
+        //      cout << "col = " << nearB[x].col << "\n";
+        //  }
+        //  if(y == 2)
+        //  {
+        //      cout << "weight = " << nearB[x].weight << "\n";
+        //  }
+        //  if(y == 3)
+        //  {
+        //      cout << "block = " << nearB[x].block << "\n";
+        //  }
 
-        //	cerr << "nearB[" << x << "].";
+        //  cerr << "nearB[" << x << "].";
 
-        //	if(y == 0)
-        //	{
-        //		cerr << "row = " << nearB[x].row << "\n";
-        //	}
-        //	if(y == 1)
-        //	{
-        //		cerr << "col = " << nearB[x].col << "\n";
-        //	}
-        //	if(y == 2)
-        //	{
-        //		cerr << "weight = " << nearB[x].weight << "\n";
-        //	}
-        //	if(y == 3)
-        //	{
-        //		cerr << "block = " << nearB[x].block << "\n";
-        //	}
+        //  if(y == 0)
+        //  {
+        //      cerr << "row = " << nearB[x].row << "\n";
+        //  }
+        //  if(y == 1)
+        //  {
+        //      cerr << "col = " << nearB[x].col << "\n";
+        //  }
+        //  if(y == 2)
+        //  {
+        //      cerr << "weight = " << nearB[x].weight << "\n";
+        //  }
+        //  if(y == 3)
+        //  {
+        //      cerr << "block = " << nearB[x].block << "\n";
+        //  }
         //}
         if (arrayname.compare("vp8_CoefEncodings") == 0)
         {

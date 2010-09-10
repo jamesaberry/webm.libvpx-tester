@@ -14,10 +14,10 @@
 void ivf_write_header
 (
     FILE *outfile,
-    unsigned int	width,
-    unsigned short	height,
-    unsigned int	rate,
-    unsigned int	scale,
+    unsigned int    width,
+    unsigned short  height,
+    unsigned int    rate,
+    unsigned int    scale,
     unsigned int    length
 );
 int ivf_read_header

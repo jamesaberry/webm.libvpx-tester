@@ -73,40 +73,40 @@ typedef unsigned int  DWORD;
 #endif
 
 #define HEADER_SIZE 32
-#define IVF_SCALE	1000
+#define IVF_SCALE   1000
 
 #ifdef __POWERPC__
 # define make_endian_16(a) \
     (((unsigned int)(a & 0xff)) << 8) | (((unsigned int)(a & 0xff00)) >> 8)
-# define make_endian_32(a)																	\
-    (((unsigned int)(a & 0xff)) << 24)    | (((unsigned int)(a & 0xff00)) << 8) |	\
+# define make_endian_32(a)                                                                  \
+    (((unsigned int)(a & 0xff)) << 24)    | (((unsigned int)(a & 0xff00)) << 8) |   \
     (((unsigned int)(a & 0xff0000)) >> 8) | (((unsigned int)(a & 0xff000000)) >> 24)
-# define make_endian_64(a)	\
-    ((a & 0xff) << 56 			|	\
-     ((a >>  8) & 0xff) << 48	|	\
-     ((a >> 16) & 0xff) << 40	|	\
-     ((a >> 24) & 0xff) << 32	|	\
-     ((a >> 32) & 0xff) << 24	|	\
-     ((a >> 40) & 0xff) << 16	|	\
-     ((a >> 48) & 0xff) <<  8	|	\
+# define make_endian_64(a)  \
+    ((a & 0xff) << 56           |   \
+     ((a >>  8) & 0xff) << 48   |   \
+     ((a >> 16) & 0xff) << 40   |   \
+     ((a >> 24) & 0xff) << 32   |   \
+     ((a >> 32) & 0xff) << 24   |   \
+     ((a >> 40) & 0xff) << 16   |   \
+     ((a >> 48) & 0xff) <<  8   |   \
      ((a >> 56) & 0xff))
-# define MAKEFOURCC(ch0, ch1, ch2, ch3)									\
-    ((DWORD)(BYTE)(ch0) << 24 | ((DWORD)(BYTE)(ch1) << 16) |	\
+# define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
+    ((DWORD)(BYTE)(ch0) << 24 | ((DWORD)(BYTE)(ch1) << 16) |    \
      ((DWORD)(BYTE)(ch2) << 8) | ((DWORD)(BYTE)(ch3)))
 #else
-# define make_endian_16(a)	a
-# define make_endian_32(a)	a
-# define make_endian_64(a)	a
-# define MAKEFOURCC(ch0, ch1, ch2, ch3)									\
-    ((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |			\
+# define make_endian_16(a)  a
+# define make_endian_32(a)  a
+# define make_endian_64(a)  a
+# define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
+    ((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |           \
      ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
 #endif
 
 #if defined(__POWERPC__)
 # define swap4(d)\
-    ((d&0x000000ff)<<24) |	\
-    ((d&0x0000ff00)<<8)  |	\
-    ((d&0x00ff0000)>>8)  |	\
+    ((d&0x000000ff)<<24) |  \
+    ((d&0x0000ff00)<<8)  |  \
+    ((d&0x00ff0000)>>8)  |  \
     ((d&0xff000000)>>24)
 #else
 # define swap4(d) d
@@ -645,9 +645,9 @@ void ivf_write_headerDec(FILE *outfile, unsigned int width, unsigned short heigh
 {
     IVF_HEADER ivf;
     strncpy((char *)(ivf.signature), "DKIF", 4);
-    ivf.version	= 0;
+    ivf.version = 0;
     ivf.headersize = make_endian_16(32);
-    ivf.FourCC     = MAKEFOURCC('I', '4', '1', '0');
+    ivf.FourCC     = MAKEFOURCC('I', '4', '2', '0');
     ivf.width      = make_endian_16(width);
     ivf.height     = make_endian_16(height);
     ivf.scale      = make_endian_32(scale);
@@ -888,7 +888,7 @@ unsigned int file_is_ivf_IVF(FILE *infile, unsigned int *fourcc, FILE *out, unsi
             ///////////////////Write Header Info///////////////////
             IVF_HEADER ivfhRaw;
             memcpy(&ivfhRaw, raw_hdr, 32);
-            ivfhRaw.FourCC = 808596553;
+            ivfhRaw.FourCC = 808596553;   //I420 FourCC
             *width = ivfhRaw.width;
             *height = ivfhRaw.height;
             ivf_write_headerDec(out, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate, ivfhRaw.scale, ivfhRaw.length);
@@ -1036,23 +1036,23 @@ int VP8CoreConfigToAPIcfg(VP8_CONFIG coreCfg, on2_codec_enc_cfg_t *cfg)
     cfg->rc_max_quantizer = coreCfg.WorstAllowedQ;
     cfg->rc_undershoot_pct = coreCfg.UnderShootPct;
     cfg->rc_buf_sz = coreCfg.MaximumBufferSize * 1000;
-    cfg->rc_buf_initial_sz	= coreCfg.StartingBufferLevel * 1000;
-    cfg->rc_buf_optimal_sz	= coreCfg.OptimalBufferLevel * 1000;
-    cfg->rc_2pass_vbr_bias_pct		= coreCfg.TwoPassVBRBias;
-    cfg->rc_2pass_vbr_minsection_pct	= coreCfg.TwoPassVBRMinSection;
+    cfg->rc_buf_initial_sz  = coreCfg.StartingBufferLevel * 1000;
+    cfg->rc_buf_optimal_sz  = coreCfg.OptimalBufferLevel * 1000;
+    cfg->rc_2pass_vbr_bias_pct      = coreCfg.TwoPassVBRBias;
+    cfg->rc_2pass_vbr_minsection_pct    = coreCfg.TwoPassVBRMinSection;
     cfg->rc_2pass_vbr_maxsection_pct  = coreCfg.TwoPassVBRMaxSection;
 
     if (coreCfg.AutoKey == 0)
     {
-        cfg->kf_mode				= ON2_KF_FIXED;
+        cfg->kf_mode                = ON2_KF_FIXED;
     }
 
     if (coreCfg.AutoKey == 1)
     {
-        cfg->kf_mode				= ON2_KF_AUTO;
+        cfg->kf_mode                = ON2_KF_AUTO;
     }
 
-    cfg->kf_max_dist				= coreCfg.KeyFreq;
+    cfg->kf_max_dist                = coreCfg.KeyFreq;
 
     if (coreCfg.FixedQ != -1)
     {
@@ -1128,9 +1128,9 @@ VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display)
         fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
         FormatIVFHeaderRead(&ivfhRaw);
 
-        w		= ivfhRaw.width;
-        h		= ivfhRaw.height;
-        fr		= (ivfhRaw.rate / ivfhRaw.scale);
+        w       = ivfhRaw.width;
+        h       = ivfhRaw.height;
+        fr      = (ivfhRaw.rate / ivfhRaw.scale);
         length  = ivfhRaw.length;
 
         fclose(GetWHinfile);
@@ -1140,7 +1140,7 @@ VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display)
 
     if (opt.Mode == 0)
         opt.NoiseSensitivity = 0;           //valid Range:
-    else	                            //if Not Real Time Mode 0 to 6
+    else                                //if Not Real Time Mode 0 to 6
         opt.NoiseSensitivity = rand() % 7;  //if Real Time Mode 0 to 0
 
     if (opt.Mode == 0)
@@ -1157,7 +1157,7 @@ VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display)
     {
         opt.CpuUsed = rand() % 13 + 4;  //valid Range:
 
-        if (rand() % 2)			      //if Not Real Time Mode -16 to 16
+        if (rand() % 2)               //if Not Real Time Mode -16 to 16
             opt.CpuUsed = opt.CpuUsed * -1; //if Real Time Mode -16 to -4 or 4 to 16
     }
     else
@@ -1600,11 +1600,11 @@ int FormatIVFHeaderRead(IVF_HEADER *ivf)
     // For big endian systems need to swap bytes on height and width
     ivf->width  = ((ivf->width & 0xff) << 8)  | ((ivf->width >> 8) & 0xff);
     ivf->height = ((ivf->height & 0xff) << 8) | ((ivf->height >> 8) & 0xff);
-    ivf->rate = (((ivf->rate & 0xff)) << 24)    | (((ivf->rate & 0xff00)) << 8) |	\
+    ivf->rate = (((ivf->rate & 0xff)) << 24)    | (((ivf->rate & 0xff00)) << 8) |   \
                 (((ivf->rate & 0xff0000)) >> 8) | (((ivf->rate & 0xff000000)) >> 24);
-    ivf->scale = (((ivf->scale & 0xff)) << 24)    | (((ivf->scale & 0xff00)) << 8) |	\
+    ivf->scale = (((ivf->scale & 0xff)) << 24)    | (((ivf->scale & 0xff00)) << 8) |    \
                  (((ivf->scale & 0xff0000)) >> 8) | (((ivf->scale & 0xff000000)) >> 24);
-    ivf->length = (((ivf->length & 0xff)) << 24)    | (((ivf->length & 0xff00)) << 8) |	\
+    ivf->length = (((ivf->length & 0xff)) << 24)    | (((ivf->length & 0xff00)) << 8) | \
                   (((ivf->length & 0xff0000)) >> 8) | (((ivf->length & 0xff000000)) >> 24);
 #endif
 
@@ -1612,7 +1612,7 @@ int FormatIVFHeaderRead(IVF_HEADER *ivf)
 }
 int FormatIVFHeaderWrite(IVF_HEADER &ivf)
 {
-    ivf.version	= 0;
+    ivf.version = 0;
     ivf.headersize = make_endian_16(32);
 
     ivf.width      = make_endian_16(ivf.width);
@@ -1637,13 +1637,13 @@ int FormatFrameHeaderRead(IVF_FRAME_HEADER &ivf_fh)
                        ((ivf_fh.frameSize & 0xff00) << 8) |
                        ((ivf_fh.frameSize & 0xff0000) >> 8) |
                        ((ivf_fh.frameSize & 0xff000000) >> 24);
-    ivf_fh.timeStamp = ((ivf_fh.timeStamp & 0xff) << 56 			|	\
-                        ((ivf_fh.timeStamp >>  8) & 0xff) << 48	|	\
-                        ((ivf_fh.timeStamp >> 16) & 0xff) << 40	|	\
-                        ((ivf_fh.timeStamp >> 24) & 0xff) << 32	|	\
-                        ((ivf_fh.timeStamp >> 32) & 0xff) << 24	|	\
-                        ((ivf_fh.timeStamp >> 40) & 0xff) << 16	|	\
-                        ((ivf_fh.timeStamp >> 48) & 0xff) <<  8	|	\
+    ivf_fh.timeStamp = ((ivf_fh.timeStamp & 0xff) << 56             |   \
+                        ((ivf_fh.timeStamp >>  8) & 0xff) << 48 |   \
+                        ((ivf_fh.timeStamp >> 16) & 0xff) << 40 |   \
+                        ((ivf_fh.timeStamp >> 24) & 0xff) << 32 |   \
+                        ((ivf_fh.timeStamp >> 32) & 0xff) << 24 |   \
+                        ((ivf_fh.timeStamp >> 40) & 0xff) << 16 |   \
+                        ((ivf_fh.timeStamp >> 48) & 0xff) <<  8 |   \
                         ((ivf_fh.timeStamp >> 56) & 0xff));
 
     //cout << "POWERPC-Read\n";
@@ -1897,7 +1897,7 @@ int TimeStampCompare(string TimeStampNow, string TimeStampPrevious)
     snprintf(TimeStamp1, 255, "%s", TimeStampNow.c_str());
     snprintf(TimeStamp2, 255, "%s", TimeStampPrevious.c_str());
 
-    int	i = 0;
+    int i = 0;
 
     while (i < 24)
     {
@@ -3159,7 +3159,7 @@ int image2yuvconfig(const on2_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
     int uvplane_size = ((1 + img->d_h) / 2 + yv12->border) * ((1 + img->d_w) / 2 + yv12->border);
     yv12->frame_size = yplane_size + 2 * uvplane_size;
 
-    //	yv12->clrtype = (/*img->fmt == IMG_FMT_ON2I420 || img->fmt == */IMG_FMT_ON2YV12); //REG_YUV = 0
+    //  yv12->clrtype = (/*img->fmt == IMG_FMT_ON2I420 || img->fmt == */IMG_FMT_ON2YV12); //REG_YUV = 0
     return 0;
 }
 double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
@@ -3212,10 +3212,10 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     Raw_YV12.UVWidth  = Raw_YV12.YWidth >> 1;
     Raw_YV12.UVHeight = Raw_YV12.YHeight >> 1;
     Raw_YV12.UVStride = Raw_YV12.YStride >> 1;
-    Raw_YV12.BufferAlloc		= RawVideoBuffer;
-    Raw_YV12.YBuffer			= RawVideoBuffer;
-    Raw_YV12.UBuffer			= Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
-    Raw_YV12.VBuffer			= Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
+    Raw_YV12.BufferAlloc        = RawVideoBuffer;
+    Raw_YV12.YBuffer            = RawVideoBuffer;
+    Raw_YV12.UBuffer            = Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
+    Raw_YV12.VBuffer            = Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -3224,9 +3224,12 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
         }
     }
 
+    //I420 hex-0x30323449 dec-808596553
+    //YV12 hex-0x32315659 dec-842094169
+
     if (ivfhRaw.FourCC == 842094169)
     {
-        forceUVswap = 0;   //if YV12 Do not swap Frames
+        forceUVswap = 1;   //if YV12 Do not swap Frames
     }
 
     if (forceUVswap == 1)
@@ -3555,8 +3558,8 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
         if (frameStats == 3)
         {
             printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,					//divided by two added when rate doubled to handle doubling of timestamp
-                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,				//divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                   //divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,               //divided by two added when rate doubled to handle doubling of timestamp
                    avgPsnr, 1.0 * summedYPsnr / frameCount,
                    1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
                    totalPsnr);
@@ -3652,10 +3655,10 @@ double IVFPSNR_CORE(char *inputFile1, char *inputFile2, int forceUVswap, int fra
     Raw_YV12.UVWidth  = Raw_YV12.YWidth >> 1;
     Raw_YV12.UVHeight = Raw_YV12.YHeight >> 1;
     Raw_YV12.UVStride = Raw_YV12.YStride >> 1;
-    Raw_YV12.BufferAlloc		= RawVideoBuffer;
-    Raw_YV12.YBuffer			= RawVideoBuffer;
-    Raw_YV12.UBuffer			= Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
-    Raw_YV12.VBuffer			= Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
+    Raw_YV12.BufferAlloc        = RawVideoBuffer;
+    Raw_YV12.YBuffer            = RawVideoBuffer;
+    Raw_YV12.UBuffer            = Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
+    Raw_YV12.VBuffer            = Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -3702,13 +3705,13 @@ double IVFPSNR_CORE(char *inputFile1, char *inputFile2, int forceUVswap, int fra
     Comp_YV12.UVHeight = ivfhComp.height / 2;
     Comp_YV12.UVStride = Comp_YV12.YStride / 2;
 
-    unsigned char *Comp_YBuffer			= new unsigned char [ivfhComp.width * ivfhComp.height];
-    unsigned char *Comp_UBuffer			= new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
-    unsigned char *Comp_VBuffer			= new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    unsigned char *Comp_YBuffer         = new unsigned char [ivfhComp.width * ivfhComp.height];
+    unsigned char *Comp_UBuffer         = new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    unsigned char *Comp_VBuffer         = new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
 
-    Comp_YV12.YBuffer			= &Comp_YBuffer[ivfhComp.width * ivfhComp.height];
-    Comp_YV12.UBuffer			= &Comp_UBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
-    Comp_YV12.VBuffer			= &Comp_VBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    Comp_YV12.YBuffer           = &Comp_YBuffer[ivfhComp.width * ivfhComp.height];
+    Comp_YV12.UBuffer           = &Comp_UBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    Comp_YV12.VBuffer           = &Comp_VBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
 
     if (CompressedFrameOffset > 0) //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
     {
@@ -4067,10 +4070,10 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     Raw_YV12.UVWidth  = Raw_YV12.YWidth >> 1;
     Raw_YV12.UVHeight = Raw_YV12.YHeight >> 1;
     Raw_YV12.UVStride = Raw_YV12.YStride >> 1;
-    Raw_YV12.BufferAlloc		= RawVideoBuffer;
-    Raw_YV12.YBuffer			= RawVideoBuffer;
-    Raw_YV12.UBuffer			= Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
-    Raw_YV12.VBuffer			= Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
+    Raw_YV12.BufferAlloc        = RawVideoBuffer;
+    Raw_YV12.YBuffer            = RawVideoBuffer;
+    Raw_YV12.UBuffer            = Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
+    Raw_YV12.VBuffer            = Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -4171,14 +4174,14 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
 
     //if(noise_level != 0)
     //{
-    //	ppcfg.PostProcFlag |= VP8_ADDNOISE;
-    //	ppcfg.NoiseLevel = noise_level;
+    //  ppcfg.PostProcFlag |= VP8_ADDNOISE;
+    //  ppcfg.NoiseLevel = noise_level;
 
     //}
     //if(deblock_level != 0)
     //{
-    //	ppcfg.PostProcFlag |= VP8_DEMACROBLOCK;
-    //	ppcfg.DeblockingLevel = deblock_level;
+    //  ppcfg.PostProcFlag |= VP8_DEMACROBLOCK;
+    //  ppcfg.DeblockingLevel = deblock_level;
 
     //}
 
@@ -4422,8 +4425,8 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
         if (frameStats == 3)
         {
             printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
-                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,						//divided by two added when rate doubled to handle doubling of timestamp
-                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,					//divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                       //divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,                   //divided by two added when rate doubled to handle doubling of timestamp
                    avgPsnr, 1.0 * summedYPsnr / frameCount,
                    1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
                    totalPsnr, totalSSim);
@@ -4432,15 +4435,15 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
         else
         {
             printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
-                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,						//divided by two added when rate doubled to handle doubling of timestamp
-                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,					//divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                       //divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,                   //divided by two added when rate doubled to handle doubling of timestamp
                    avgPsnr, 1.0 * summedYPsnr / frameCount,
                    1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
                    totalPsnr, totalSSim);
 
             fprintf(stderr, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
-                    sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,						//divided by two added when rate doubled to handle doubling of timestamp
-                    sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,					//divided by two added when rate doubled to handle doubling of timestamp
+                    sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                      //divided by two added when rate doubled to handle doubling of timestamp
+                    sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,                  //divided by two added when rate doubled to handle doubling of timestamp
                     avgPsnr, 1.0 * summedYPsnr / frameCount,
                     1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
                     totalPsnr, totalSSim);
@@ -4509,10 +4512,10 @@ double PostProcIVFPSNR_CORE(char *inputFile1, char *inputFile2, int forceUVswap,
     Raw_YV12.UVWidth  = Raw_YV12.YWidth >> 1;
     Raw_YV12.UVHeight = Raw_YV12.YHeight >> 1;
     Raw_YV12.UVStride = Raw_YV12.YStride >> 1;
-    Raw_YV12.BufferAlloc		= RawVideoBuffer;
-    Raw_YV12.YBuffer			= RawVideoBuffer;
-    Raw_YV12.UBuffer			= Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
-    Raw_YV12.VBuffer			= Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
+    Raw_YV12.BufferAlloc        = RawVideoBuffer;
+    Raw_YV12.YBuffer            = RawVideoBuffer;
+    Raw_YV12.UBuffer            = Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
+    Raw_YV12.VBuffer            = Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -4561,13 +4564,13 @@ double PostProcIVFPSNR_CORE(char *inputFile1, char *inputFile2, int forceUVswap,
     Comp_YV12.UVHeight = ivfhComp.height / 2;
     Comp_YV12.UVStride = Comp_YV12.YStride / 2;
 
-    unsigned char *Comp_YBuffer			= new unsigned char [ivfhComp.width * ivfhComp.height];
-    unsigned char *Comp_UBuffer			= new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
-    unsigned char *Comp_VBuffer			= new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    unsigned char *Comp_YBuffer         = new unsigned char [ivfhComp.width * ivfhComp.height];
+    unsigned char *Comp_UBuffer         = new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    unsigned char *Comp_VBuffer         = new unsigned char [Comp_YV12.UVWidth * Comp_YV12.UVWidth];
 
-    Comp_YV12.YBuffer			= &Comp_YBuffer[ivfhComp.width * ivfhComp.height];
-    Comp_YV12.UBuffer			= &Comp_UBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
-    Comp_YV12.VBuffer			= &Comp_VBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    Comp_YV12.YBuffer           = &Comp_YBuffer[ivfhComp.width * ivfhComp.height];
+    Comp_YV12.UBuffer           = &Comp_UBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
+    Comp_YV12.VBuffer           = &Comp_VBuffer[Comp_YV12.UVWidth * Comp_YV12.UVWidth];
 
     if (CompressedFrameOffset > 0) //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
     {
@@ -5353,7 +5356,7 @@ int FauxDecompress(char *inputChar)
     on2_codec_dec_cfg_t     cfg;
     uint8_t               *buf = NULL;
     uint32_t               buf_sz = 0, buf_alloc_sz = 0;
-    int					   width, height;
+    int                    width, height;
     FILE *infile = fopen(inputChar, "rb");
 
     char raw_hdr[32];
@@ -5461,7 +5464,7 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     string UniqueFirstPassFile = outputFile2;
     UniqueFirstPassFile.erase(UniqueFirstPassFile.length() - 4, 4);
     UniqueFirstPassFile.append(".fpf");
-    //	strcpy(oxcf.FirstPassFile, UniqueFirstPassFile.c_str());
+    //  strcpy(oxcf.FirstPassFile, UniqueFirstPassFile.c_str());
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////
@@ -5482,10 +5485,10 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    oxcf.Width		= ivfhRaw.width;
-    oxcf.Height		= ivfhRaw.height;
+    oxcf.Width      = ivfhRaw.width;
+    oxcf.Height     = ivfhRaw.height;
 
-    oxcf.FrameRate	= (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
+    oxcf.FrameRate  = (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
     fclose(in);
 
     printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.TargetBandwidth, oxcf.WorstAllowedQ, oxcf.BestAllowedQ, CompressString, CompressInt);
@@ -5629,7 +5632,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     string UniqueFirstPassFile = outputFile2;
     UniqueFirstPassFile.erase(UniqueFirstPassFile.length() - 4, 4);
     UniqueFirstPassFile.append(".fpf");
-    //	strcpy(oxcf.FirstPassFile, UniqueFirstPassFile.c_str());
+    //  strcpy(oxcf.FirstPassFile, UniqueFirstPassFile.c_str());
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////
@@ -5650,10 +5653,10 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    oxcf.Width		= ivfhRaw.width;
-    oxcf.Height		= ivfhRaw.height;
+    oxcf.Width      = ivfhRaw.width;
+    oxcf.Height     = ivfhRaw.height;
 
-    oxcf.FrameRate	= (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
+    oxcf.FrameRate  = (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
     fclose(in);
 
     printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.TargetBandwidth, oxcf.WorstAllowedQ, oxcf.BestAllowedQ, CompressString, CompressInt);
@@ -5794,7 +5797,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
     string UniqueFirstPassFile = outputFile2;
     UniqueFirstPassFile.erase(UniqueFirstPassFile.length() - 4, 4);
     UniqueFirstPassFile.append(".fpf");
-    //	strcpy(oxcf.FirstPassFile, UniqueFirstPassFile.c_str());
+    //  strcpy(oxcf.FirstPassFile, UniqueFirstPassFile.c_str());
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////
@@ -5815,10 +5818,10 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    oxcf.Width		= ivfhRaw.width;
-    oxcf.Height		= ivfhRaw.height;
+    oxcf.Width      = ivfhRaw.width;
+    oxcf.Height     = ivfhRaw.height;
 
-    oxcf.FrameRate	= (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
+    oxcf.FrameRate  = (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
     fclose(in);
 
     printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.TargetBandwidth, oxcf.WorstAllowedQ, oxcf.BestAllowedQ, CompressString, CompressInt);
@@ -6324,9 +6327,14 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    int w		= ivfhRaw.width;
-    int h		= ivfhRaw.height;
-    int fr		= (ivfhRaw.rate / ivfhRaw.scale);
+    if (ivfhRaw.four_cc == 842094169) //if yv12
+    {
+        arg_use_i420 = 0;
+    }
+
+    int w       = ivfhRaw.width;
+    int h       = ivfhRaw.height;
+    int fr      = (ivfhRaw.rate / ivfhRaw.scale);
 
     oxcf.Width = w;
     oxcf.Height = h;
@@ -6684,9 +6692,14 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    int w		= ivfhRaw.width;
-    int h		= ivfhRaw.height;
-    int fr		= (ivfhRaw.rate / ivfhRaw.scale);
+    if (ivfhRaw.four_cc == 842094169) //if yv12
+    {
+        arg_use_i420 = 0;
+    }
+
+    int w       = ivfhRaw.width;
+    int h       = ivfhRaw.height;
+    int fr      = (ivfhRaw.rate / ivfhRaw.scale);
 
     oxcf.Width = w;
     oxcf.Height = h;
@@ -7019,9 +7032,14 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    int w		= ivfhRaw.width;
-    int h		= ivfhRaw.height;
-    int fr		= (ivfhRaw.rate / ivfhRaw.scale);
+    if (ivfhRaw.four_cc == 842094169) //if yv12
+    {
+        arg_use_i420 = 0;
+    }
+
+    int w       = ivfhRaw.width;
+    int h       = ivfhRaw.height;
+    int fr      = (ivfhRaw.rate / ivfhRaw.scale);
 
     oxcf.Width = w;
     oxcf.Height = h;
@@ -7387,9 +7405,14 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed,
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    int w		= ivfhRaw.width;
-    int h		= ivfhRaw.height;
-    int fr		= (ivfhRaw.rate / ivfhRaw.scale);
+    if (ivfhRaw.four_cc == 842094169) //if yv12
+    {
+        arg_use_i420 = 0;
+    }
+
+    int w       = ivfhRaw.width;
+    int h       = ivfhRaw.height;
+    int fr      = (ivfhRaw.rate / ivfhRaw.scale);
 
     oxcf.Width = w;
     oxcf.Height = h;
@@ -7792,9 +7815,14 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    int w		= ivfhRaw.width;
-    int h		= ivfhRaw.height;
-    int fr		= (ivfhRaw.rate / ivfhRaw.scale);
+    if (ivfhRaw.four_cc == 842094169) //if yv12
+    {
+        arg_use_i420 = 0;
+    }
+
+    int w       = ivfhRaw.width;
+    int h       = ivfhRaw.height;
+    int fr      = (ivfhRaw.rate / ivfhRaw.scale);
 
     oxcf.Width = w;
     oxcf.Height = h;
@@ -8529,17 +8557,17 @@ int DecompressIVFtoIVF(char *inputchar, char *outputchar)
 
                 buf = img->planes[flipuv?PLANE_V:PLANE_U];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_U];
                 }
 
                 buf = img->planes[flipuv?PLANE_U:PLANE_V];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_V];
                 }
 
@@ -8721,7 +8749,7 @@ int DecompressIVFtoRaw(char *inputchar, char *outputchar)
 
             //else
             //{
-            //	printf("\n\n NO IMG \n\n");
+            //  printf("\n\n NO IMG \n\n");
             //}
         }
 
@@ -8876,17 +8904,17 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
 
                 buf = img->planes[flipuv?PLANE_V:PLANE_U];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_U];
                 }
 
                 buf = img->planes[flipuv?PLANE_U:PLANE_V];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_V];
                 }
 
@@ -9047,17 +9075,17 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
 
                 buf = img->planes[flipuv?PLANE_V:PLANE_U];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_U];
                 }
 
                 buf = img->planes[flipuv?PLANE_U:PLANE_V];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_V];
                 }
 
@@ -9222,17 +9250,17 @@ unsigned int TimeDecompressIVFtoIVF(char *inputchar, char *outputchar)
 
                 buf = img->planes[flipuv?PLANE_V:PLANE_U];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_U];
                 }
 
                 buf = img->planes[flipuv?PLANE_U:PLANE_V];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_V];
                 }
 
@@ -9411,17 +9439,17 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputchar, char *outputchar)
 
                 buf = img->planes[flipuv?PLANE_V:PLANE_U];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_U];
                 }
 
                 buf = img->planes[flipuv?PLANE_U:PLANE_V];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_V];
                 }
 
@@ -9702,7 +9730,7 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
     "Frame Rate Rate        - %i \n"
     "Frame Rate Scale       - %i \n"
     "Video Length in Frames - %i \n"
-    "Unused				    - %c \n"
+    "Unused                 - %c \n"
     "\n\n"
     ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
     ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.FourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
@@ -9748,7 +9776,7 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
                 //ivf_fhCompressed.timeStamp = NewTimeStamp;
 
 
-                /*	if(currentVideoFrame != frameCount)
+                /*  if(currentVideoFrame != frameCount)
                 {
                 printf("FRAME HEADER %i\n\n"
                 "Frame Size            - %i \n"
@@ -9768,7 +9796,7 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
             unsigned int FrameSizeStorage = ivf_fhRaw.frameSize;
             ivf_fhCompressed.frameSize = ivf_fhRaw.frameSize;
             ivf_fhCompressed.timeStamp = NewTimeStamp;
-            //ivf_fhCompressed.timeStamp = ivf_fhRaw.timeStamp;//0;		// not defined, use rate and scale in header replaced by line: memset(&ivf_fh, 0, sizeof(ivf_fh));
+            //ivf_fhCompressed.timeStamp = ivf_fhRaw.timeStamp;//0;     // not defined, use rate and scale in header replaced by line: memset(&ivf_fh, 0, sizeof(ivf_fh));
 
             FormatFrameHeaderWrite(ivf_fhCompressed);
             fwrite(&ivf_fhCompressed.frameSize, 1, sizeof(ivf_fhCompressed.frameSize), out);
@@ -9795,24 +9823,24 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
 
             //if(!feof(in))
             //{
-            //	fread(&ivf_fhRaw.frameSize,1,4,in);
-            //	fread(&ivf_fhRaw.timeStamp,1,8,in);
-            //	FormatFrameHeaderRead(ivf_fhRaw);
-            //	fread(inputVideoBuffer,1,ivf_fhRaw.frameSize,in);
+            //  fread(&ivf_fhRaw.frameSize,1,4,in);
+            //  fread(&ivf_fhRaw.timeStamp,1,8,in);
+            //  FormatFrameHeaderRead(ivf_fhRaw);
+            //  fread(inputVideoBuffer,1,ivf_fhRaw.frameSize,in);
 
-            //	/*	if(currentVideoFrame != frameCount)
-            //	{
-            //	printf("FRAME HEADER %i\n\n"
-            //	"Frame Size            - %i \n"
-            //	"Time Stamp            - %i \n"
-            //	"\n"
+            //  /*  if(currentVideoFrame != frameCount)
+            //  {
+            //  printf("FRAME HEADER %i\n\n"
+            //  "Frame Size            - %i \n"
+            //  "Time Stamp            - %i \n"
+            //  "\n"
 
-            //	,currentVideoFrame,ivf_fhRaw.frameSize,ivf_fhRaw.timeStamp);
-            //	}*/
+            //  ,currentVideoFrame,ivf_fhRaw.frameSize,ivf_fhRaw.timeStamp);
+            //  }*/
             //}
             //else
             //{
-            //	break;
+            //  break;
             //}
         }
         else
@@ -9922,7 +9950,7 @@ int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingF
     "Frame Rate Rate        - %i \n"
     "Frame Rate Scale       - %i \n"
     "Video Length in Frames - %i \n"
-    "Unused				    - %c \n"
+    "Unused                 - %c \n"
     "\n\n"
     ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
     ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.FourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
@@ -9961,7 +9989,7 @@ int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingF
     "Frame Rate Rate        - %i \n"
     "Frame Rate Scale       - %i \n"
     "Video Length in Frames - %i \n"
-    "Unused				    - %c \n"
+    "Unused                 - %c \n"
     "\n\n"
     ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
     ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.FourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
@@ -10003,7 +10031,7 @@ int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingF
 
             unsigned int FrameSizeStorage = ivf_fhRaw2.frameSize;
             ivf_fhCompressed.frameSize = ivf_fhRaw2.frameSize;
-            ivf_fhCompressed.timeStamp = ivf_fhRaw2.timeStamp;//0;		// not defined, use rate and scale in header replaced by line: memset(&ivf_fh, 0, sizeof(ivf_fh));
+            ivf_fhCompressed.timeStamp = ivf_fhRaw2.timeStamp;//0;      // not defined, use rate and scale in header replaced by line: memset(&ivf_fh, 0, sizeof(ivf_fh));
 
             FormatFrameHeaderWrite(ivf_fhCompressed);
             fwrite(&ivf_fhCompressed.frameSize, 1, sizeof(ivf_fhCompressed.frameSize), out);
@@ -10034,7 +10062,7 @@ int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingF
                 FormatFrameHeaderRead(ivf_fhRaw2);
                 fread(inputVideoBuffer2, 1, ivf_fhRaw2.frameSize, in2);
 
-                /*	if(currentVideoFrame != frameCount)
+                /*  if(currentVideoFrame != frameCount)
                 {
                 printf("FRAME HEADER %i\n\n"
                 "Frame Size            - %i \n"
@@ -10056,7 +10084,7 @@ int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingF
 
             unsigned int FrameSizeStorage = ivf_fhRaw1.frameSize;
             ivf_fhCompressed.frameSize = ivf_fhRaw1.frameSize;
-            ivf_fhCompressed.timeStamp = ivf_fhRaw1.timeStamp;//0;		// not defined, use rate and scale in header replaced by line: memset(&ivf_fh, 0, sizeof(ivf_fh));
+            ivf_fhCompressed.timeStamp = ivf_fhRaw1.timeStamp;//0;      // not defined, use rate and scale in header replaced by line: memset(&ivf_fh, 0, sizeof(ivf_fh));
 
             FormatFrameHeaderWrite(ivf_fhCompressed);
             fwrite(&ivf_fhCompressed.frameSize, 1, sizeof(ivf_fhCompressed.frameSize), out);
@@ -10088,7 +10116,7 @@ int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingF
                 FormatFrameHeaderRead(ivf_fhRaw1);
                 fread(inputVideoBuffer1, 1, ivf_fhRaw1.frameSize, in1);
 
-                /*	if(currentVideoFrame != frameCount)
+                /*  if(currentVideoFrame != frameCount)
                 {
                 printf("FRAME HEADER %i\n\n"
                 "Frame Size            - %i \n"
@@ -12790,9 +12818,9 @@ int API20EncoderIVF2IVF(char *inputFile, char *outputFile2, int speed, int BitRa
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
     FormatIVFHeaderRead(&ivfhRaw);
 
-    int w		= ivfhRaw.width;
-    int h		= ivfhRaw.height;
-    int fr		= (ivfhRaw.rate / ivfhRaw.scale);
+    int w       = ivfhRaw.width;
+    int h       = ivfhRaw.height;
+    int fr      = (ivfhRaw.rate / ivfhRaw.scale);
 
     cfg.g_w = w;                                                          //
     cfg.g_h = h;
@@ -12809,25 +12837,25 @@ int API20EncoderIVF2IVF(char *inputFile, char *outputFile2, int speed, int BitRa
 
     if (oxcf.Mode == 1) //One Pass Good
     {
-        //			on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_GOOD_QUALITY_ENCODING);
+        //          on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_GOOD_QUALITY_ENCODING);
         cfg.g_profile = 1;
     }
 
     if (oxcf.Mode == 2) //One Pass Best
     {
-        //			on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_BEST_QUALITY_ENCODING);
+        //          on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_BEST_QUALITY_ENCODING);
         cfg.g_profile = 2;
     }
 
     if (oxcf.Mode == 3) //First Pass
     {
-        //			on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_GOOD_QUALITY_ENCODING);
+        //          on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_GOOD_QUALITY_ENCODING);
         cfg.g_profile = 3;
     }
 
     if (oxcf.Mode == 4) //Two Pass Good
     {
-        //			on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_GOOD_QUALITY_ENCODING);
+        //          on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_GOOD_QUALITY_ENCODING);
         cfg.g_profile = 0;
         arg_passes = 2;
 
@@ -12835,7 +12863,7 @@ int API20EncoderIVF2IVF(char *inputFile, char *outputFile2, int speed, int BitRa
 
     if (oxcf.Mode == 5) //Two Pass Best
     {
-        //			on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_BEST_QUALITY_ENCODING);
+        //          on2_codec_control_(&codec, VP8E_SET_ENCODING_MODE, VP8_BEST_QUALITY_ENCODING);
         cfg.g_profile = 2;
         arg_passes = 2;
     }
@@ -13167,17 +13195,17 @@ int API20Decoder(char *inputchar, char *outputchar)
 
                 buf = img->planes[flipuv?PLANE_V:PLANE_U];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_U];
                 }
 
                 buf = img->planes[flipuv?PLANE_U:PLANE_V];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_V];
                 }
 
@@ -13333,17 +13361,17 @@ int API20DecoderIVF2IVF(char *inputchar, char *outputchar)
 
                 buf = img->planes[flipuv?PLANE_V:PLANE_U];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_U];
                 }
 
                 buf = img->planes[flipuv?PLANE_U:PLANE_V];
 
-                for (y = 0; y < img->d_h / 2; y++)
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
                 {
-                    out_put(out, buf, img->d_w / 2, do_md5);
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
                     buf += img->stride[PLANE_V];
                 }
 

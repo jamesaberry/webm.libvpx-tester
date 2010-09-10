@@ -16,6 +16,6 @@ void InitIVFHeader(IVF_HEADER *ivf)
 {
     memset(ivf, 0, sizeof(IVF_HEADER));
     strncpy((char *)(ivf->signature), "DKIF", 4);
-    ivf->version	= 0;
+    ivf->version    = 0;
     ivf->headersize = 32;
 }

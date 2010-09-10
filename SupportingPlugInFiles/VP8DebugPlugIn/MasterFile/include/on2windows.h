@@ -107,8 +107,8 @@ typedef unsigned int UINT;
 //typedef long * LONG_PTR;
 //typedef long FXPT2DOT30, FAR *LPFXPT2DOT30;
 
-	A long on a TI part is 40bits so inorder to be compatible on the TI, a long
-	must be defined as an int.
+    A long on a TI part is 40bits so inorder to be compatible on the TI, a long
+    must be defined as an int.
 */
 typedef unsigned int DWORD;
 typedef int LONG;

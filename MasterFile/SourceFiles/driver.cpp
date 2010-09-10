@@ -87,7 +87,7 @@ extern int compareIVF(int argc, char *argv[]);
 extern int ChangeCPUDecIVF(int argc, char *argv[], string WorkingDir);
 extern int RawDataIVF(char *input, char *output);
 extern int WriteIndividualFramesOut(int argc, char *argv[]);
-extern int CutIVF(int argc, char *argv[]);
+extern int CutIVFTool(int argc, char *argv[]);
 extern int PlayCompIVF(int argc, char *argv[]);
 extern int PlayDecIVF(int argc, char *argv[]);
 extern int DeleteAllIVFFiles(int argc, char *argv[]);
@@ -316,7 +316,7 @@ void OnErrorOutPut()
            "  (34)UnderShoot                           RandIVFComp\n"
            "  (35)Version                              GraphPSNR\n"
            "  (36)WindowsMatchesLinux                  Help\n"
-           "\n"
+           "                                           \n"
           );
 }
 void Print1(string WorkingDir)
@@ -2989,40 +2989,40 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
         printf("\n  TestVectorIndex\n");
         FormatedPrint("This Utility makes use of the TestVectorsIndividualRunsResults Directory to locate the first report of a line being covered by a test vector and reports relevant information about it.", 2);
         /*printf("\n  Valid Files to check include:\n"
-        		"     alloccommon\n"
-        		"     blockd\n"
-        		"     dboolhuff\n"
-        		"     decodemv\n"
-        		"     decodframe\n"
-        		"     demode\n"
-        		"     dequantize\n"
-        		"     detokenize\n"
-        		"     dsystemdependent\n"
-        		"     entropy\n"
-        		"     entropymode\n"
-        		"     extend\n"
-        		"     filter_c\n"
-        		"     findnearmv\n"
-        		"     getproc\n"
-        		"     idctllm\n"
-        		"     loopfilter\n"
-        		"     mbpitch\n"
-        		"     onyxd_if\n"
-        		"     postproc\n"
-        		"     quant_common\n"
-        		"     recon\n"
-        		"     reconinter\n"
-        		"     reconintra\n"
-        		"     reconintra4x4\n"
-        		"     Segmentation_common\n"
-        		"     swapyv12buffer\n"
-        		"     systemdependent\n"
-        		"     textblit\n"
-        		"     threading\n"
-        		"     treecoder\n"
-        		"     treereader\n"
-        		"     yv12config\n"
-        		"     yv12extend\n\n");*/
+                "     alloccommon\n"
+                "     blockd\n"
+                "     dboolhuff\n"
+                "     decodemv\n"
+                "     decodframe\n"
+                "     demode\n"
+                "     dequantize\n"
+                "     detokenize\n"
+                "     dsystemdependent\n"
+                "     entropy\n"
+                "     entropymode\n"
+                "     extend\n"
+                "     filter_c\n"
+                "     findnearmv\n"
+                "     getproc\n"
+                "     idctllm\n"
+                "     loopfilter\n"
+                "     mbpitch\n"
+                "     onyxd_if\n"
+                "     postproc\n"
+                "     quant_common\n"
+                "     recon\n"
+                "     reconinter\n"
+                "     reconintra\n"
+                "     reconintra4x4\n"
+                "     Segmentation_common\n"
+                "     swapyv12buffer\n"
+                "     systemdependent\n"
+                "     textblit\n"
+                "     threading\n"
+                "     treecoder\n"
+                "     treereader\n"
+                "     yv12config\n"
+                "     yv12extend\n\n");*/
         return 1;
     }
 
@@ -3424,7 +3424,7 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
             TestTrackerName = "WindowsMatchesLinux";
 
 
-        int	PassedTrack = 0;
+        int PassedTrack = 0;
         int FailedTrack = 0;
         int IndeterminateTrack = 0;
         int SeeComboRunLogTrack = 0;
@@ -3911,7 +3911,7 @@ int  main(int argc, char *argv[])
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////Tools//////////////////////////////////////////////////////////
     ////////////////////Public Commands/////////////////////////
-    if (TestInputString.compare("TestPrint") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("TestPrint") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         cout << "\n";
         FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 1);
@@ -3929,19 +3929,19 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("Quad") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("Quad") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
     {
         SolveQuad();
         return 0;
     }
 
-    if (TestInputString.compare("IVF2IVFCompr") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("IVF2IVFCompr") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
     {
         ComprIVF2IVF(argc, argv, WorkingDir);
         return 0;
     }
 
-    if (TestInputString.compare("Thresh") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("Thresh") == 0)                 //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 8)
         {
@@ -3962,67 +3962,67 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("IVF2IVFDec") == 0)						//Decompresses and IVF Compressed file to an IVF Raw File
+    if (TestInputString.compare("IVF2IVFDec") == 0)                     //Decompresses and IVF Compressed file to an IVF Raw File
     {
         DecIVF2IVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFDataRate") == 0)						//Computes Data Rate for an input IVF File
+    if (TestInputString.compare("IVFDataRate") == 0)                        //Computes Data Rate for an input IVF File
     {
         IVFDataRateTool(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFPSNR") == 0)							//Computes PSNR for two input files
+    if (TestInputString.compare("IVFPSNR") == 0)                            //Computes PSNR for two input files
     {
         IVFPSNRrun(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFCheckPBM") == 0)						//Computes PBM For an input file
+    if (TestInputString.compare("IVFCheckPBM") == 0)                        //Computes PBM For an input file
     {
         IVFCheckPBMrun(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompIVFHeader") == 0)					//Compares the Headers of two ivf files
+    if (TestInputString.compare("CompIVFHeader") == 0)                  //Compares the Headers of two ivf files
     {
         CompareIVFHeaderInfo(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("DispIVFHeader") == 0)					//Displays the header contents of an ivf file
+    if (TestInputString.compare("DispIVFHeader") == 0)                  //Displays the header contents of an ivf file
     {
         DisplayIVFHeaderInfo(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompareIVF") == 0)						//Compares two ivf files
+    if (TestInputString.compare("CompareIVF") == 0)                     //Compares two ivf files
     {
         compareIVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CreateSampleTextFiles") == 0)			//Creates sample text files that include quick test and other templates
+    if (TestInputString.compare("CreateSampleTextFiles") == 0)          //Creates sample text files that include quick test and other templates
     {
         PrintTxtFiles(WorkingDir);
         return 0;
     }
 
-    if (TestInputString.compare("CutIVF") == 0)							//Modifies an ivf files size
+    if (TestInputString.compare("CutIVF") == 0)                         //Modifies an ivf files size
     {
-        CutIVF(argc, argv);
+        CutIVFTool(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("PasteIVF") == 0)							//Modifies an ivf files size
+    if (TestInputString.compare("PasteIVF") == 0)                           //Modifies an ivf files size
     {
         PasteIVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("DispResizedFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("DispResizedFrames") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -4039,7 +4039,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispDroppedFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("DispDroppedFrames") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -4056,7 +4056,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispVisibleFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("DispVisibleFrames") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -4074,7 +4074,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispAltRefFrames") == 0)					//Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("DispAltRefFrames") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -4091,7 +4091,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispKeyFrames") == 0)					//Displays which frames are key frames for an input compressed ivf file
+    if (TestInputString.compare("DispKeyFrames") == 0)                  //Displays which frames are key frames for an input compressed ivf file
     {
         if (argc < 3)
         {
@@ -4108,7 +4108,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispAltRefFrames") == 0)					//Displays which frames are key frames for an input compressed ivf file
+    if (TestInputString.compare("DispAltRefFrames") == 0)                   //Displays which frames are key frames for an input compressed ivf file
     {
         if (argc < 3)
         {
@@ -4123,7 +4123,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("FormatSummaryByTest") == 0)				//Formats a Test Results output file by test
+    if (TestInputString.compare("FormatSummaryByTest") == 0)                //Formats a Test Results output file by test
     {
         if (argc < 4)
         {
@@ -4144,7 +4144,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("FormatSummaryByTestandResult") == 0)	//Formats a test results output file by test and result
+    if (TestInputString.compare("FormatSummaryByTestandResult") == 0)   //Formats a test results output file by test and result
     {
         if (argc < 4)
         {
@@ -4161,7 +4161,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("IVF2Raw") == 0)							//Converts an ivf file to a raw file
+    if (TestInputString.compare("IVF2Raw") == 0)                            //Converts an ivf file to a raw file
     {
         if (argc < 4)
         {
@@ -4178,32 +4178,32 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("PlayCompIVF") == 0)						//Plays a compressed ivf file (Decodes the file to an ivf then converts that ivf to a raw then used tnmplay.exe to play that file.)
+    if (TestInputString.compare("PlayCompIVF") == 0)                        //Plays a compressed ivf file (Decodes the file to an ivf then converts that ivf to a raw then used tnmplay.exe to play that file.)
     {
         PlayCompIVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("PlayDecIVF") == 0)						// Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
+    if (TestInputString.compare("PlayDecIVF") == 0)                     // Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
     {
         PlayDecIVF(argc, argv);
         return 0;
     }
 
     ////////////////////Hidden Commands/////////////////////////
-    if (TestInputString.compare("ShowHidden") == 0)						//Shows Hidden Commands
+    if (TestInputString.compare("ShowHidden") == 0)                     //Shows Hidden Commands
     {
         ShowHiddenCmds();
         return 0;
     }
 
-    if (TestInputString.compare("APICOMPRESS") == 0)						//API Compresion Clone
+    if (TestInputString.compare("APICOMPRESS") == 0)                        //API Compresion Clone
     {
         APICOMPRESS(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("APIDECOMPRESS") == 0)					//API Decompression Clone
+    if (TestInputString.compare("APIDECOMPRESS") == 0)                  //API Decompression Clone
     {
         APIDECOMPRESS(argc, argv);
         return 0;
@@ -4215,55 +4215,55 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("CompareCodeCoverage") == 0)				//Compares New Code Coverage Results to Old Code Coverage Results and merges the files to an updated version
+    if (TestInputString.compare("CompareCodeCoverage") == 0)                //Compares New Code Coverage Results to Old Code Coverage Results and merges the files to an updated version
     {
         CompareCodeCoverage(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("FormatCodeCoverageFile") == 0)			//Formats Cygwin Code Coverage files to the same format as regular linux
+    if (TestInputString.compare("FormatCodeCoverageFile") == 0)         //Formats Cygwin Code Coverage files to the same format as regular linux
     {
         FormatCodeCoverageFile(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFDECTestVectorCheck") == 0)			//
+    if (TestInputString.compare("IVFDECTestVectorCheck") == 0)          //
     {
         IVFDECTestVectorCheck(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("TestVectorIndex") == 0)					//Will search a data base and return the Test Vector that covers an input File and Line Number
+    if (TestInputString.compare("TestVectorIndex") == 0)                    //Will search a data base and return the Test Vector that covers an input File and Line Number
     {
         TestVectorIndex(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompMatchesIVFenc") == 0)				//Makes sure that the Tester compressor matches ivfenc compressor
+    if (TestInputString.compare("CompMatchesIVFenc") == 0)              //Makes sure that the Tester compressor matches ivfenc compressor
     {
         CompMatchesIVFenc(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompressionEquiv") == 0)				//makes sure that all variations of the compressor produce the same output
+    if (TestInputString.compare("CompressionEquiv") == 0)               //makes sure that all variations of the compressor produce the same output
     {
         CompressionEquiv(argc, argv, WorkingDir);
         return 0;
     }
 
-    if (TestInputString.compare("PrintVersion") == 0)					//Prints the internal version number - make sure all libs built in same multithreadedmode - properties  C++ CodeGen RuntimeLibrary
+    if (TestInputString.compare("PrintVersion") == 0)                   //Prints the internal version number - make sure all libs built in same multithreadedmode - properties  C++ CodeGen RuntimeLibrary
     {
         PrintVersion();
         return 0;
     }
 
-    if (TestInputString.compare("Test0InputTextCheck") == 0)				//Checks to make sure a Multi Run Input file has the correct format
+    if (TestInputString.compare("Test0InputTextCheck") == 0)                //Checks to make sure a Multi Run Input file has the correct format
     {
         Test0InputTextCheck(argv[2], 1);
         return 0;
     }
 
-    if (TestInputString.compare("ConvertParFileToIVFEnc") == 0)			//converts Tester Parameter file to a IVFenc ParFile - obsolete
+    if (TestInputString.compare("ConvertParFileToIVFEnc") == 0)         //converts Tester Parameter file to a IVFenc ParFile - obsolete
     {
         if (argc < 4)
         {
@@ -4279,37 +4279,37 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("CopyAllTxtFiles") == 0)					//Copies all text files in a directory to a new directory preserving file structure
+    if (TestInputString.compare("CopyAllTxtFiles") == 0)                    //Copies all text files in a directory to a new directory preserving file structure
     {
         CopyAllTxtFiles(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVF2RawDec") == 0)						//Decodes IVF File to Raw File
+    if (TestInputString.compare("IVF2RawDec") == 0)                     //Decodes IVF File to Raw File
     {
         DecIVF2Raw(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("DeleteAllIVFFiles") == 0)				//Deletes all IVF files in a directory be very care with this function!
+    if (TestInputString.compare("DeleteAllIVFFiles") == 0)              //Deletes all IVF files in a directory be very care with this function!
     {
         DeleteAllIVFFiles(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("Raw2IVF") == 0)							//Converts an IVF File to a Raw File
+    if (TestInputString.compare("Raw2IVF") == 0)                            //Converts an IVF File to a Raw File
     {
         Raw2IVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("SideBySideText") == 0)					//Prints out the input from two text files side by side as coloums to an output txt file
+    if (TestInputString.compare("SideBySideText") == 0)                 //Prints out the input from two text files side by side as coloums to an output txt file
     {
         SideBySideText(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVF2RawFrames") == 0)					//Converts an ivf file to a raw file
+    if (TestInputString.compare("IVF2RawFrames") == 0)                  //Converts an ivf file to a raw file
     {
         if (argc < 3)
         {
@@ -4326,61 +4326,61 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("ArrayCovFailListToFull") == 0)			//
+    if (TestInputString.compare("ArrayCovFailListToFull") == 0)         //
     {
         ArrayCovFailListToFullList(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("ArrayCovSummaryFile") == 0)				//
+    if (TestInputString.compare("ArrayCovSummaryFile") == 0)                //
     {
         ArrayCovSummaryFile(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("WinMemMonFormat") == 0)				//
+    if (TestInputString.compare("WinMemMonFormat") == 0)                //
     {
         WinMemMonFormat(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("WinMemMonGraph") == 0)				//
+    if (TestInputString.compare("WinMemMonGraph") == 0)             //
     {
         WinMemMonGraph(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CombineIndvFrames") == 0)				//
+    if (TestInputString.compare("CombineIndvFrames") == 0)              //
     {
         CombineIndvFrames(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("GraphPSNR") == 0)				//
+    if (TestInputString.compare("GraphPSNR") == 0)              //
     {
         GraphPSNR(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (TestInputString.compare("RandIVFComp") == 0)				//
+    if (TestInputString.compare("RandIVFComp") == 0)                //
     {
         RandComp(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (TestInputString.compare("RandParFile") == 0)				//
+    if (TestInputString.compare("RandParFile") == 0)                //
     {
         CreateRandParFile(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFDec") == 0)				//
+    if (TestInputString.compare("IVFDec") == 0)             //
     {
         RunIVFDec(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFEnc") == 0)				//
+    if (TestInputString.compare("IVFEnc") == 0)             //
     {
         RunIVFEnc(argc, argv);
         return 0;
@@ -4468,13 +4468,13 @@ int  main(int argc, char *argv[])
 
             SummCompAndTest = argv[3];
             SummCompAndTest.append(slashCharStr);
-            SummCompAndTest.append("Mode1Results.txt");			// Mode 1
+            SummCompAndTest.append("Mode1Results.txt");         // Mode 1
             SummComp = argv[3];
             SummComp.append(slashCharStr);
-            SummComp.append("Mode2Results.txt");					// Mode 2
+            SummComp.append("Mode2Results.txt");                    // Mode 2
             SummTest = argv[3];
             SummTest.append(slashCharStr);
-            SummTest.append("Mode3Results.txt");							// Mode 3
+            SummTest.append("Mode3Results.txt");                            // Mode 3
 
             int TestRunning = 0;
             fstream SummCompAndTestFile;

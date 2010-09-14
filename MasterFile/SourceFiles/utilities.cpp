@@ -396,12 +396,11 @@ on2_fixed_buf_t stats_get(stats_io_t *stats)
     return stats->buf;
 }
 
-static int read_frame(FILE *f, on2_image_t *img)
+static int read_frame_enc(FILE *f, on2_image_t *img, int to_read)
 {
-    size_t nbytes, to_read;
+    size_t nbytes;
     int    res = 1;
 
-    to_read = img->w * img->h * 3 / 2;
     nbytes = fread(img->planes[0], 1, to_read, f);
 
     if (nbytes != to_read)
@@ -3164,7 +3163,10 @@ int image2yuvconfig(const on2_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
 }
 double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
 {
-    frameStats = 1;//Overide to print individual frames to screen
+    if (frameStats != 3)
+    {
+        frameStats = 1;//Overide to print individual frames to screen
+    }
 
     double summedQuality = 0;
     double summedWeights = 0;
@@ -6539,7 +6541,7 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
                 fread(&ivf_fhRaw.frameSize, 1, 4, infile);
                 fread(&ivf_fhRaw.timeStamp, 1, 8, infile);
                 ////////////////////////////////////////////////////////////////
-                frame_avail = read_frame(infile, &raw);
+                frame_avail = read_frame_enc(infile, &raw, ivf_fhRaw.frameSize);
 
                 if (frame_avail)
                     frames_in++;
@@ -6898,7 +6900,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
                 fread(&ivf_fhRaw.frameSize, 1, 4, infile);
                 fread(&ivf_fhRaw.timeStamp, 1, 8, infile);
                 ////////////////////////////////////////////////////////////////
-                frame_avail = read_frame(infile, &raw);
+                frame_avail = read_frame_enc(infile, &raw, ivf_fhRaw.frameSize);
 
                 if (frame_avail)
                     frames_in++;
@@ -7242,7 +7244,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
                 fread(&ivf_fhRaw.frameSize, 1, 4, infile);
                 fread(&ivf_fhRaw.timeStamp, 1, 8, infile);
                 ////////////////////////////////////////////////////////////////
-                frame_avail = read_frame(infile, &raw);
+                frame_avail = read_frame_enc(infile, &raw, ivf_fhRaw.frameSize);
 
                 if (frame_avail)
                     frames_in++;
@@ -7619,7 +7621,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed,
                 fread(&ivf_fhRaw.frameSize, 1, 4, infile);
                 fread(&ivf_fhRaw.timeStamp, 1, 8, infile);
                 ////////////////////////////////////////////////////////////////
-                frame_avail = read_frame(infile, &raw);
+                frame_avail = read_frame_enc(infile, &raw, ivf_fhRaw.frameSize);
 
                 if (frame_avail)
                     frames_in++;
@@ -8098,7 +8100,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
                 fread(&ivf_fhRaw.frameSize, 1, 4, infile);
                 fread(&ivf_fhRaw.timeStamp, 1, 8, infile);
                 ////////////////////////////////////////////////////////////////
-                frame_avail = read_frame(infile, &raw);
+                frame_avail = read_frame_enc(infile, &raw, ivf_fhRaw.frameSize);
 
                 if (frame_avail)
                     frames_in++;
@@ -9875,6 +9877,228 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
     fseek(out , 0 , SEEK_SET);
     FormatIVFHeaderWrite(ivfhCompressed);
     fwrite(&ivfhCompressed, 1, 32, out);
+
+    fclose(in);
+    fclose(out);
+
+    delete [] inputVideoBuffer;
+
+    return(0);
+}
+int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF)
+{
+    bool verbose = 1;
+
+    FILE *out = fopen(outputFile, "wb");
+    FILE *in = fopen(inputFile, "rb");
+
+    if (in == NULL)
+    {
+        printf("\nInput file does not exist");
+        fclose(in);
+        fclose(out);
+        return 0;
+    }
+
+    if (out == NULL)
+    {
+        printf("\nOutput file does not exist");
+        fclose(in);
+        fclose(out);
+        return 0;
+    }
+
+    int currentVideoFrame = 0;
+    int CharCount = 0;
+
+    IVF_HEADER ivfhRaw;
+
+    InitIVFHeader(&ivfhRaw);
+    memset(&ivfhRaw, 0, sizeof(ivfhRaw));
+    int storage;
+    fread(&ivfhRaw.signature, 1, 4, in);
+    fread(&ivfhRaw.version, 1, 2, in);
+    fread(&ivfhRaw.headersize, 1, 2, in);
+    fread(&ivfhRaw.FourCC, 1, 4, in);
+    fread(&ivfhRaw.width, 1, 2, in);
+    fread(&ivfhRaw.height, 1, 2, in);
+    fread(&ivfhRaw.rate, 1, 4, in);
+    fread(&ivfhRaw.scale, 1, 4, in);
+    fread(&ivfhRaw.length, 1, 4, in);
+    fread(&storage, 1, 4, in);
+    FormatIVFHeaderRead(&ivfhRaw);
+
+    img_fmt_t vidFormat = IMG_FMT_NONE;
+
+    int flipuv = 0;
+
+    if (ivfhRaw.FourCC == 842094169)
+    {
+        vidFormat = IMG_FMT_YV12;
+        flipuv = 1;
+    }
+
+    if (ivfhRaw.FourCC == 808596553)
+    {
+        vidFormat = IMG_FMT_I420;
+    }
+
+    if (vidFormat == IMG_FMT_NONE)
+    {
+        printf("\n Video Format not found.  Currently supported: I420 and YV12.\n");
+        return 0;
+    }
+
+    unsigned char *inputVideoBuffer = new unsigned char [ivfhRaw.width * ivfhRaw.height*3/2];
+
+    IVF_FRAME_HEADER ivf_fhRaw;
+
+    IVF_HEADER  ivfhCropped;
+    InitIVFHeader(& ivfhCropped);
+    memset(& ivfhCropped, 0, sizeof(ivfhCropped));
+    ivfhCropped = ivfhRaw;
+
+    IVF_FRAME_HEADER ivf_fhCropped;
+    FormatIVFHeaderWrite(ivfhCropped);
+
+    if (FileIsIVF == 1)
+    {
+        fwrite((char *)& ivfhCropped, 1, 32, out);
+    };
+
+    FormatIVFHeaderRead(& ivfhCropped);
+
+    printf("\nCrop IVF file to IVF file: \n");
+
+    int frameCount = ivfhRaw.length;
+
+    currentVideoFrame = 0;
+
+    int WrittenoutVideoFrames = 0;
+
+    int NewTimeStamp = 0;
+
+    while (currentVideoFrame < frameCount)
+    {
+        memset(inputVideoBuffer, 0, sizeof(inputVideoBuffer));
+
+        vpx_image_t img;
+
+        if (!feof(in))
+        {
+            fread(&ivf_fhRaw.frameSize, 1, 4, in);
+            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
+            FormatFrameHeaderRead(ivf_fhRaw);
+            fread(inputVideoBuffer, 1, ivf_fhRaw.frameSize, in);
+        }
+        else
+        {
+            break;
+        }
+
+        vpx_img_wrap(&img, vidFormat, ivfhRaw.width, ivfhRaw.height, 1, inputVideoBuffer);
+
+        if (vpx_img_set_rect(&img, xoffset, yoffset, newFrameWidth, newFrameHeight) != 0)
+        {
+            printf("ERROR: INVALID RESIZE\n");
+            break;
+        }
+
+        ivfhCropped.height = newFrameHeight;
+        ivfhCropped.width = newFrameWidth;
+
+        ivf_fhRaw.frameSize = newFrameWidth * newFrameHeight + ((newFrameWidth + 1) / 2) * ((newFrameHeight + 1) / 2) + ((newFrameWidth + 1) / 2) * ((newFrameHeight + 1) / 2);
+
+        memset(&ivf_fhCropped, 0, sizeof(ivf_fhCropped));
+
+        unsigned int FrameSizeStorage = ivf_fhRaw.frameSize;
+        ivf_fhCropped.frameSize = ivf_fhRaw.frameSize;
+        ivf_fhCropped.timeStamp = NewTimeStamp;
+
+
+        FormatFrameHeaderWrite(ivf_fhCropped);
+
+
+        unsigned int y;
+        char out_fn[128+24];
+        uint8_t *buf;
+        const char *sfx = 0;
+        int do_md5 = 0;
+
+        if (FileIsIVF == 1)
+        {
+            ivf_write_frameAPI(out, ivf_fhCropped.timeStamp, ivf_fhCropped.frameSize);
+        }
+
+        int size = 0;
+        int offset = 0;
+
+        /*    size = ftell(out);
+            offset = size;
+            printf("\nStart = %i\nPredicted Y: %i\nPredicted U: %i\nPredicted V: %i\n", size, newFrameWidth * newFrameHeight, ((newFrameWidth + 1) / 2)*((newFrameHeight + 1) / 2), ((newFrameWidth + 1) / 2)*((newFrameHeight + 1) / 2));*/
+
+        buf = img.planes[PLANE_Y];
+
+        for (y = 0; y < img.d_h; y++)
+        {
+            out_put(out, buf, img.d_w, do_md5);
+            buf += img.stride[PLANE_Y];
+        }
+
+        /*size = ftell(out);
+        printf("\YPlane = %i\n", size - offset);
+        offset = size;*/
+
+        buf = img.planes[flipuv?PLANE_V:PLANE_U];
+
+        for (y = 0; y < (1 + img.d_h) / 2; y++)
+        {
+            out_put(out, buf, (1 + img.d_w) / 2, do_md5);
+            buf += img.stride[PLANE_U];
+        }
+
+        /* size = ftell(out);
+         printf("UPlane = %i\n", size - offset);
+         offset = size;*/
+
+        buf = img.planes[flipuv?PLANE_U:PLANE_V];
+
+        for (y = 0; y < (1 + img.d_h) / 2; y++)
+        {
+            out_put(out, buf, (1 + img.d_w) / 2, do_md5);
+            buf += img.stride[PLANE_V];
+        }
+
+        /*size = ftell(out);
+        printf("VPlane = %i\n", size - offset);
+        offset = size;*/
+
+        if (CharCount == 79)
+        {
+            printf("\n");
+            CharCount = 0;
+        }
+
+        printf(".");
+        ++currentVideoFrame;
+        WrittenoutVideoFrames++;
+        CharCount++;
+        NewTimeStamp = NewTimeStamp + 2;
+
+        ivf_fhRaw.frameSize = 0;
+        ivf_fhRaw.timeStamp = 0;
+    }
+
+    printf("\n");
+
+    ivfhCropped.length = WrittenoutVideoFrames;
+
+    if (FileIsIVF == 1)
+    {
+        fseek(out , 0 , SEEK_SET);
+        FormatIVFHeaderWrite(ivfhCropped);
+        fwrite(& ivfhCropped, 1, 32, out);
+    }
 
     fclose(in);
     fclose(out);
@@ -12706,7 +12930,7 @@ int API20Encoder(long width, long height, char *infilechar, char *outfilechar)
 
             if (!arg_limit || frames_in < arg_limit)
             {
-                frame_avail = read_frame(infile, &raw);
+                frame_avail = read_frame_enc(infile, &raw, width * height * 3 / 2);
 
                 if (frame_avail)
                     frames_in++;
@@ -13008,7 +13232,7 @@ int API20EncoderIVF2IVF(char *inputFile, char *outputFile2, int speed, int BitRa
                 fread(&ivf_fhRaw.frameSize, 1, 4, infile);
                 fread(&ivf_fhRaw.timeStamp, 1, 8, infile);
                 ////////////////////////////////////////////////////////////////
-                frame_avail = read_frame(infile, &raw);
+                frame_avail = read_frame_enc(infile, &raw, ivf_fhRaw.frameSize);
 
                 if (frame_avail)
                     frames_in++;

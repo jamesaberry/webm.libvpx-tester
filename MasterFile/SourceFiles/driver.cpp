@@ -88,6 +88,7 @@ extern int ChangeCPUDecIVF(int argc, char *argv[], string WorkingDir);
 extern int RawDataIVF(char *input, char *output);
 extern int WriteIndividualFramesOut(int argc, char *argv[]);
 extern int CutIVFTool(int argc, char *argv[]);
+extern int CropRawIVFTool(int argc, char *argv[]);
 extern int PlayCompIVF(int argc, char *argv[]);
 extern int PlayDecIVF(int argc, char *argv[]);
 extern int DeleteAllIVFFiles(int argc, char *argv[]);
@@ -303,20 +304,21 @@ void OnErrorOutPut()
            "  (21)MinQuantizerTest                     DispVisibleFrames\n"
            "  (22)MultiThreadedTest                    DispAltRefFrames\n"
            "  (23)NewVsOldPSNR                         \n"
-           "  (24)NewVsOldRealTimeSpeed                CutIVF\n"
-           "  (25)NoiseSensitivityWorks                PasteIVF\n"
-           "  (26)OnePassVsTwoPass                     \n"
-           "  (27)PlayAlternate                        PlayDecIVF\n"
-           "  (28)PostProcessorWorks                   PlayCompIVF\n"
-           "  (29)ReconBuffer                          \n"
-           "  (30)ResampleDownWaterMark                CreateSampleTextFiles\n"
-           "  (31)SpeedTest                            PrintVersion\n"
-           "  (32)TestVectorCheck                      \n"
-           "  (33)TwoPassVsTwoPassBest                 RandParFile\n"
-           "  (34)UnderShoot                           RandIVFComp\n"
-           "  (35)Version                              GraphPSNR\n"
-           "  (36)WindowsMatchesLinux                  Help\n"
-           "                                           \n"
+           "  (24)NewVsOldRealTimeSpeed                CropRawIVF\n"
+           "  (25)NoiseSensitivityWorks                CutIVF\n"
+           "  (26)OnePassVsTwoPass                     PasteIVF\n"
+           "  (27)PlayAlternate                        \n"
+           "  (28)PostProcessorWorks                   PlayDecIVF\n"
+           "  (29)ReconBuffer                          PlayCompIVF\n"
+           "  (30)ResampleDownWaterMark                \n"
+           "  (31)SpeedTest                            CreateSampleTextFiles\n"
+           "  (32)TestVectorCheck                      PrintVersion\n"
+           "  (33)TwoPassVsTwoPassBest                 \n"
+           "  (34)UnderShoot                           RandParFile\n"
+           "  (35)Version                              RandIVFComp\n"
+           "  (36)WindowsMatchesLinux                  GraphPSNR\n"
+           "                                           Help\n"
+           "\n"
           );
 }
 void Print1(string WorkingDir)
@@ -3048,6 +3050,23 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
         return 1;
     }
 
+    if (InputString.compare("CropRawIVF") == 0)
+    {
+        printf(
+            "\n  CropRawIVF\n\n"
+            "    <inputfile>\n"
+            "    <outputfile>\n"
+            "    <xoffset>\n"
+            "    <yoffset>\n"
+            "    <New Frame Width>\n"
+            "    <New Frame Height>\n"
+            "    <Raw/IVF 0-Raw 1-IVF>\n"
+        );
+
+        FormatedPrint("This utility will take in a raw ivf file and produce a croped raw ivf file using the input size parameters.", 2);
+        return 1;
+    }
+
     return 0;
 }
 void FormatSummaryByTest(char *InputFileNameCharAr, int DeleteOldFile)
@@ -4016,6 +4035,12 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
+    if (TestInputString.compare("CropRawIVF") == 0)                         //Modifies an ivf files size
+    {
+        CropRawIVFTool(argc, argv);
+        return 0;
+    }
+
     if (TestInputString.compare("PasteIVF") == 0)                           //Modifies an ivf files size
     {
         PasteIVF(argc, argv);
@@ -4385,6 +4410,8 @@ int  main(int argc, char *argv[])
         RunIVFEnc(argc, argv);
         return 0;
     }
+
+
 
 
     printf("\n");

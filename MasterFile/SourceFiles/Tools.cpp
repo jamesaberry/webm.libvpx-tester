@@ -108,6 +108,7 @@ extern double IVFDataRate(char *inputFile, int DROuputSel);
 extern int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer);
 extern int CompressAVItoIVFandAVI(char *inputFile, char *outputFile2, char *outputFile, int speed, int BitRate, VP8_CONFIG opt, char *CompressString, int CompressInt);
 extern int CompressAVitoa_customVI(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG oxcf, char *CompressString, int CompressInt);
+extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF);
 extern int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame);
 extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
 extern int CompIVF(char *inputFile1, char *inputFile2);
@@ -418,8 +419,10 @@ int IVFPSNRrun(int argc, char *argv[])
     }
     else
     {
-        IVFPSNR(Raw, Comp, 0, 0, 1, NULL);
+        IVFPSNR(Raw, Comp, 0, 3, 0, NULL);
     }
+
+    printf("\n");
 
     return 0;
 }
@@ -1049,7 +1052,34 @@ int CutIVFTool(int argc, char *argv[])
 
     return 0;
 }
+int CropRawIVFTool(int argc, char *argv[])
+{
+    if (argc < 8)
+    {
+        printf(
+            "\n  CropRawIVF\n\n"
+            "    <inputfile>\n"
+            "    <outputfile>\n"
+            "    <xoffset>\n"
+            "    <yoffset>\n"
+            "    <New Frame Width>\n"
+            "    <New Frame Height>\n"
+            "    <Raw/IVF 0-Raw 1-IVF>\n"
+        );
+        return 0;
+    }
 
+    char *inputFile = argv[2];
+    char *outputFile = argv[3];
+    int xoffset = atoi(argv[4]);
+    int yoffset = atoi(argv[5]);
+    int newFrameWidth = atoi(argv[6]);
+    int newFrameHeight = atoi(argv[7]);
+    int FileIsIVF  = atoi(argv[8]);
+
+    CropRawIVF(inputFile, outputFile, xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF);
+    return 0;
+}
 int PasteIVF(int argc, char *argv[])
 {
     if (argc < 5)

@@ -92,7 +92,7 @@ extern int FormatFrameHeaderRead(IVF_FRAME_HEADER &ivf_fh);
 extern int FormatFrameHeaderWrite(IVF_FRAME_HEADER &ivf_fh);
 extern long FileSize2(char *inFile);
 extern void FolderName(char *input, char *output);
-extern void FileName(char *input, char *FileName);
+extern void FileName(char *input, char *FileName, int removeExt);
 extern int MakeDirVPX(string CreateDir2);
 extern double PSNR(char *inputFile, char *outputFile, int forceUVswap, int frameStats, int printvar);
 extern int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
@@ -108,7 +108,7 @@ extern double IVFDataRate(char *inputFile, int DROuputSel);
 extern int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer);
 extern int CompressAVItoIVFandAVI(char *inputFile, char *outputFile2, char *outputFile, int speed, int BitRate, VP8_CONFIG opt, char *CompressString, int CompressInt);
 extern int CompressAVitoa_customVI(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG oxcf, char *CompressString, int CompressInt);
-extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF);
+extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
 extern int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame);
 extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
 extern int CompIVF(char *inputFile1, char *inputFile2);
@@ -661,7 +661,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
         outputDirStr2.append(slashCharStr);
 
         char InputFileName[255];
-        FileName(inputFile, InputFileName);
+        FileName(inputFile, InputFileName, 0);
         string InputFileNameStr = InputFileName;
 
         if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 1).compare(".") == 0) //if file extension is present remove it
@@ -706,7 +706,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
 
         outputDirStr.append(slashCharStr);
         char InputFileName2[255];
-        FileName(inputFile, InputFileName2);
+        FileName(inputFile, InputFileName2, 0);
         string InputFileNameStr2 = InputFileName2;
 
         if (InputFileNameStr2.substr(InputFileNameStr2.length() - 4, 1).compare(".") == 0) //if file extension is present remove it
@@ -834,7 +834,8 @@ int IVF2Raw(char *inputFile, char *outputDir)
         MakeDirVPX(OutputDirStrwithQuotes);
     }
 
-    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
+    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 2];
+
 
     string outputDirStr2 = outputDir;
     char outputDirChar2[255];
@@ -857,7 +858,8 @@ int IVF2Raw(char *inputFile, char *outputDir)
     while (currentVideoFrame < frameCount)
     {
         cout << ".";
-        memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
+        memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 2);
+        //memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
         fread(inbuff, 1, ivf_fhRaw.frameSize, in);
 
         string outputDirStr = outputDir;
@@ -1077,7 +1079,7 @@ int CropRawIVFTool(int argc, char *argv[])
     int newFrameHeight = atoi(argv[7]);
     int FileIsIVF  = atoi(argv[8]);
 
-    CropRawIVF(inputFile, outputFile, xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF);
+    CropRawIVF(inputFile, outputFile, xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF, 0);
     return 0;
 }
 int PasteIVF(int argc, char *argv[])
@@ -1200,7 +1202,7 @@ int CombineIndvFrames(int argc, char *argv[])
         char CurIndividualFrameFileNameChar[255];
         char CurIndividualFrameFileNameOnly[255];
         snprintf(CurIndividualFrameFileNameChar, 255, "%s", CurIndividualFrameFileName.c_str());
-        FileName(CurIndividualFrameFileNameChar, CurIndividualFrameFileNameOnly);
+        FileName(CurIndividualFrameFileNameChar, CurIndividualFrameFileNameOnly, 0);
 
         int fileSize = FileSize2(CurIndividualFrameFileNameChar);
 
@@ -3467,7 +3469,7 @@ int CompMatchesIVFenc(int argc, char *argv[])
     int Mode = atoi(argv[5]);
 
     char FileNameChar[256];
-    FileName(input, FileNameChar);
+    FileName(input, FileNameChar, 0);
 
     /////////////////////Tester Par File//////////////////
     string OutputsettingsFile = output;
@@ -3512,9 +3514,9 @@ int CompMatchesIVFenc(int argc, char *argv[])
     snprintf(IVFEncOutput1FP, 255, "%s", IVFEncOutput1STR.c_str());
     snprintf(IVFEncOutput2FP, 255, "%s", IVFEncOutput2STR.c_str());
 
-    FileName(ParameterFileIVFEncFP, ParameterFileIVFEncNO); // name only part of parm file for ivfenc
-    FileName(IVFEncOutput1FP, IVFEncOutput1NO);
-    FileName(IVFEncOutput2FP, IVFEncOutput2NO);
+    FileName(ParameterFileIVFEncFP, ParameterFileIVFEncNO, 0); // name only part of parm file for ivfenc
+    FileName(IVFEncOutput1FP, IVFEncOutput1NO, 0);
+    FileName(IVFEncOutput2FP, IVFEncOutput2NO, 0);
 
     cout << "\n\n";
     cout << "ParameterFileTesterFP: " << ParameterFileTesterFP << "\n";

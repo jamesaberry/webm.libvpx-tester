@@ -56,7 +56,7 @@ const int PSNR_MAX = 999.;
 const int sizBuff = 512;
 
 extern int IVF2Raw(char *inputFile, char *outputDir);
-extern void FileName(char *input, char *FileName);
+extern void FileName(char *input, char *FileName, int removeExt);
 extern void FormatedPrint(string SummaryStr, int selector);
 
 extern void VP8DefaultParms(VP8_CONFIG &opt);
@@ -139,7 +139,7 @@ extern "C"
     );
 
     unsigned int ON2_GetHighResTimerTick();
-    unsigned int ON2_GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick);
+
     extern int vp8_On2YV12_AllocFrameBuffer(YV12_BUFFER_CONFIG *ybf, int width, int height, int border);
     extern void vp8_ScaleMachineSpecificConfig(void);
     extern int vp8_On2YV12_DeAllocFrameBuffer(YV12_BUFFER_CONFIG *ybf);
@@ -398,20 +398,42 @@ on2_fixed_buf_t stats_get(stats_io_t *stats)
 
 static int read_frame_enc(FILE *f, on2_image_t *img, int to_read)
 {
-    size_t nbytes;
-    int    res = 1;
 
-    nbytes = fread(img->planes[0], 1, to_read, f);
+    int file_type = 0;
 
-    if (nbytes != to_read)
+    int plane = 0;
+
+    for (plane = 0; plane < 3; plane++)
     {
-        res = 0;
+        unsigned char *ptr;
+        int w = (plane ? (1 + img->d_w) / 2 : img->d_w);
+        int h = (plane ? (1 + img->d_h) / 2 : img->d_h);
+        int r;
 
-        if (nbytes > 0)
-            printf("Warning: Read partial frame. Check your width & height!\n");
+        /* Determine the correct plane based on the image format. The for-loop
+         * always counts in Y,U,V order, but this may not match the order of
+         * the data on disk.
+         */
+        switch (plane)
+        {
+        case 1:
+            ptr = img->planes[img->fmt==IMG_FMT_YV12? PLANE_V : PLANE_U];
+            break;
+        case 2:
+            ptr = img->planes[img->fmt==IMG_FMT_YV12?PLANE_U : PLANE_V];
+            break;
+        default:
+            ptr = img->planes[plane];
+        }
+
+        for (r = 0; r < h; r++)
+        {
+            fread(ptr, 1, w, f);
+            ptr += img->stride[plane];
+        }
     }
 
-    return res;
+    return !feof(f);
 }
 
 static void write_ivf_file_header(FILE *outfile,
@@ -1664,7 +1686,7 @@ long FileSize(char *inFile)
 {
     //finds and returns the size of a file with output.
     char FileNameinFile[256];
-    FileName(inFile, FileNameinFile);
+    FileName(inFile, FileNameinFile, 0);
 
     printf("Size of %s: ", FileNameinFile);
     fprintf(stderr, "Size of %s: ", FileNameinFile);
@@ -1705,7 +1727,7 @@ long FileSize2(char *inFile)
 
     return end - pos;
 }
-void FileName(char *input, char *FileName)
+void FileName(char *input, char *FileName, int removeExt)
 {
     //Extracts only the files name from its full path.
 
@@ -1743,7 +1765,9 @@ void FileName(char *input, char *FileName)
         parser++;
     }
 
-    FileName[parser2] = '\0';
+    if (removeExt == 0)FileName[parser2] = '\0';
+
+    if (removeExt == 1)FileName[parser2-4] = '\0';
 
     return;
 }
@@ -1958,22 +1982,14 @@ int Test0InputTextCheck(char *input, int MoreInfo)
     int DummyArgvVar = 1;
     int CommentBool = 0;
 
-    //int PassFail[9999];
     int *PassFail = new int[numberoftests+2];
-    //PassFail[0] = 0;
     int PassFailInt = 0;
     int TestsRun = 0;
 
-    //string StringAr[9999];
-    string *StringAr = new string[99];
-    //StringAr[0] = "";
-    //string SelectorAr[9999];
-    string *SelectorAr = new string[99];
-    //SelectorAr[0] = "";
-    //SelectorAr = NULL;
-    //string SelectorAr2[9999];
+    string *StringAr = new string[numberoftests+2];
+    string *SelectorAr = new string[numberoftests+2];
     string *SelectorAr2 = new string[numberoftests+2];
-    //SelectorAr2[0] = "";
+
 
     int SelectorArInt = 0;
     int y;
@@ -2345,6 +2361,21 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                     }
                 }
 
+                if (selector == FRSZTNUM)
+                {
+                    if (!(DummyArgvVar == 8 || DummyArgvVar == 7))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "FrameSizeTest";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
                 if (selector == GQVBQNUM)
                 {
                     if (!(DummyArgvVar == 4 || DummyArgvVar == 5))
@@ -2355,8 +2386,6 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                     }
                     else
                     {
-
-                        //SelectorAr[SelectorArInt] = buffer;
                         PassFail[PassFailInt] = -1;
                     }
                 }
@@ -2679,7 +2708,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                 }
 
                 //Make sure that all tests input are vaild tests by checking the list (make sure to add new tests here!)
-                if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM &&
+                if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM && selector != FRSZTNUM &&
                     selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CHGWRNUM &&
                     selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
@@ -2701,7 +2730,6 @@ int Test0InputTextCheck(char *input, int MoreInfo)
 
     y = 0;
     printf("\n");
-
 
     while (y < SelectorArInt)
     {
@@ -3144,19 +3172,19 @@ int image2yuvconfig(const on2_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
     yv12->UBuffer = img->planes[PLANE_U];
     yv12->VBuffer = img->planes[PLANE_V];
 
-    yv12->YWidth  = img->w;
-    yv12->YHeight = img->h;
-    yv12->UVWidth = yv12->YWidth / 2;
-    yv12->UVHeight = yv12->YHeight / 2;
+    yv12->YWidth  = img->d_w;
+    yv12->YHeight = img->d_h;
+    yv12->UVWidth = (1 + yv12->YWidth) / 2;
+    yv12->UVHeight = (1 + yv12->YHeight) / 2;
 
     yv12->YStride = img->stride[PLANE_Y];
     yv12->UVStride = img->stride[PLANE_U];
 
     yv12->border  = (img->stride[PLANE_Y] - img->w) / 2;
 
-    int yplane_size = (img->d_h + 2 * yv12->border) * (img->d_w + 2 * yv12->border);
-    int uvplane_size = ((1 + img->d_h) / 2 + yv12->border) * ((1 + img->d_w) / 2 + yv12->border);
-    yv12->frame_size = yplane_size + 2 * uvplane_size;
+    //int yplane_size = (img->d_h + 2 * yv12->border) * (img->d_w + 2 * yv12->border);
+    //int uvplane_size = ((1 + img->d_h) / 2 + yv12->border) * ((1 + img->d_w) / 2 + yv12->border);
+    //yv12->frame_size = yplane_size + 2 * uvplane_size;
 
     //  yv12->clrtype = (/*img->fmt == IMG_FMT_ON2I420 || img->fmt == */IMG_FMT_ON2YV12); //REG_YUV = 0
     return 0;
@@ -3205,19 +3233,21 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     int buffer_sz = 32;
     unsigned int frameCount = ivfhRaw.length;
 
-    unsigned char *RawVideoBuffer = new unsigned char[ivfhRaw.width*ivfhRaw.height*3];
+
+    on2_image_t    raw_img;
+    on2_img_alloc(&raw_img, IMG_FMT_I420, ivfhRaw.width, ivfhRaw.height, 1);
 
     YV12_BUFFER_CONFIG Raw_YV12;
-    Raw_YV12.YWidth   = ivfhRaw.width;
-    Raw_YV12.YHeight  = ivfhRaw.height;
-    Raw_YV12.YStride  = Raw_YV12.YWidth;
-    Raw_YV12.UVWidth  = Raw_YV12.YWidth >> 1;
-    Raw_YV12.UVHeight = Raw_YV12.YHeight >> 1;
-    Raw_YV12.UVStride = Raw_YV12.YStride >> 1;
-    Raw_YV12.BufferAlloc        = RawVideoBuffer;
-    Raw_YV12.YBuffer            = RawVideoBuffer;
-    Raw_YV12.UBuffer            = Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
-    Raw_YV12.VBuffer            = Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
+    Raw_YV12.YWidth   = raw_img.d_w;
+    Raw_YV12.YHeight  = raw_img.d_h;
+    Raw_YV12.YStride  = raw_img.stride[PLANE_Y];
+    Raw_YV12.UVWidth  = (1 + Raw_YV12.YWidth) / 2;
+    Raw_YV12.UVHeight = (1 + Raw_YV12.YHeight) / 2;
+    Raw_YV12.UVStride = raw_img.stride[PLANE_U];
+    Raw_YV12.BufferAlloc        = raw_img.img_data;
+    Raw_YV12.YBuffer            = raw_img.img_data;
+    Raw_YV12.UBuffer = raw_img.planes[PLANE_U];
+    Raw_YV12.VBuffer = raw_img.planes[PLANE_V];
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -3250,7 +3280,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
         fprintf(stderr, "\nError Opening Compressed File: %s\n", inputFile2);
         fclose(RawFile);
         fclose(CompFile);
-        delete [] RawVideoBuffer;
+
         return 0;
     }
 
@@ -3362,7 +3392,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-            delete [] RawVideoBuffer;
+
             return 0;
         }
 
@@ -3381,7 +3411,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-            delete [] RawVideoBuffer;
+
             delete [] CompBuff;
             return 0;
         }
@@ -3426,7 +3456,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
                 fclose(CompFile);
                 delete timeStamp2;
                 delete timeEndStamp2;
-                delete [] RawVideoBuffer;
+
                 return 0;
             }
 
@@ -3435,19 +3465,12 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             bytes1 = ivf_fhRaw.frameSize;
             sumBytes += bytes1;
 
-            memset(RawVideoBuffer, 0, ivfhRaw.width * ivfhRaw.height * 3);
 
-            if (!fread(RawVideoBuffer, 1, ivf_fhRaw.frameSize, RawFile))
-            {
-                printf("\nError Computing PSNR\n");
-                fprintf(stderr, "\nError Computing PSNR\n");
-                fclose(RawFile);
-                fclose(CompFile);
-                delete timeStamp2;
-                delete timeEndStamp2;
-                delete [] RawVideoBuffer;
-                return 0;
-            }
+
+
+
+
+            read_frame_enc(RawFile, &raw_img, ivf_fhRaw.frameSize);
 
             //////////////////////////////////////////////////////////////////////
 
@@ -3603,7 +3626,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
 
     delete timeStamp2;
     delete timeEndStamp2;
-    delete [] RawVideoBuffer;
+
 
     //vp8_yv12_de_alloc_frame_buffer(&Tempsd);
 
@@ -4899,7 +4922,7 @@ double IVFDataRate(char *inputFile, int DROuputSel)
 
         char FileNameOnly[256];
 
-        FileName(inputFile, FileNameOnly);
+        FileName(inputFile, FileNameOnly, 0);
         printf("Data Rate for: %s", FileNameOnly);
         fprintf(stderr, "Data Rate for: %s", FileNameOnly);
     }
@@ -6852,8 +6875,9 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
         if (cfg.kf_min_dist == cfg.kf_max_dist)
             cfg.kf_mode = ON2_KF_FIXED;
 
-        //on2_codec_enc_config_set(&encoder,&cfg);
+
         on2_codec_enc_init(&encoder, codec->iface, &cfg, 0);
+        on2_codec_enc_config_set(&encoder, &cfg);
         ctx_exit_on_error(&encoder, "Failed to initialize encoder");
         ///////////Set Encoder Custom Settings/////////////////
         on2_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.CpuUsed);
@@ -9885,9 +9909,14 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
 
     return(0);
 }
-int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF)
+int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile)
 {
     bool verbose = 1;
+
+    if (OutputToFile != 1)
+    {
+        OutputToFile = 0;
+    }
 
     FILE *out = fopen(outputFile, "wb");
     FILE *in = fopen(inputFile, "rb");
@@ -9895,6 +9924,12 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
     if (in == NULL)
     {
         printf("\nInput file does not exist");
+
+        if (OutputToFile)
+        {
+            fprintf(stderr, "\nInput file does not exist");
+        }
+
         fclose(in);
         fclose(out);
         return 0;
@@ -9903,6 +9938,12 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
     if (out == NULL)
     {
         printf("\nOutput file does not exist");
+
+        if (OutputToFile)
+        {
+            fprintf(stderr, "\nOutput file does not exist");
+        }
+
         fclose(in);
         fclose(out);
         return 0;
@@ -9932,20 +9973,19 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
 
     int flipuv = 0;
 
-    if (ivfhRaw.FourCC == 842094169)
-    {
-        vidFormat = IMG_FMT_YV12;
-        flipuv = 1;
-    }
 
-    if (ivfhRaw.FourCC == 808596553)
-    {
-        vidFormat = IMG_FMT_I420;
-    }
+    vidFormat = IMG_FMT_I420;
+
 
     if (vidFormat == IMG_FMT_NONE)
     {
         printf("\n Video Format not found.  Currently supported: I420 and YV12.\n");
+
+        if (OutputToFile)
+        {
+            fprintf(stderr, "\n Video Format not found.  Currently supported: I420 and YV12.\n");
+        }
+
         return 0;
     }
 
@@ -9968,7 +10008,32 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
 
     FormatIVFHeaderRead(& ivfhCropped);
 
-    printf("\nCrop IVF file to IVF file: \n");
+    printf("\nCrop IVF file to ");
+
+    if (OutputToFile)
+    {
+        fprintf(stderr, "\nCrop IVF file to ");
+    }
+
+    if (FileIsIVF == 0)
+    {
+        printf("RAW file: \n");
+
+        if (OutputToFile)
+        {
+            fprintf(stderr, "RAW file: \n");
+        }
+    }
+
+    if (FileIsIVF == 1)
+    {
+        printf("IVF file: \n");
+
+        if (OutputToFile)
+        {
+            fprintf(stderr, "IVF file: \n");
+        }
+    }
 
     int frameCount = ivfhRaw.length;
 
@@ -9983,24 +10048,29 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
         memset(inputVideoBuffer, 0, sizeof(inputVideoBuffer));
 
         vpx_image_t img;
+        on2_img_alloc(&img, IMG_FMT_I420, ivfhRaw.width, ivfhRaw.height, 1);
 
         if (!feof(in))
         {
             fread(&ivf_fhRaw.frameSize, 1, 4, in);
             fread(&ivf_fhRaw.timeStamp, 1, 8, in);
             FormatFrameHeaderRead(ivf_fhRaw);
-            fread(inputVideoBuffer, 1, ivf_fhRaw.frameSize, in);
+            read_frame_enc(in, &img, ivf_fhRaw.frameSize);
         }
         else
         {
             break;
         }
 
-        vpx_img_wrap(&img, vidFormat, ivfhRaw.width, ivfhRaw.height, 1, inputVideoBuffer);
-
         if (vpx_img_set_rect(&img, xoffset, yoffset, newFrameWidth, newFrameHeight) != 0)
         {
             printf("ERROR: INVALID RESIZE\n");
+
+            if (OutputToFile)
+            {
+                fprintf(stderr, "ERROR: INVALID RESIZE\n");
+            }
+
             break;
         }
 
@@ -10015,9 +10085,7 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
         ivf_fhCropped.frameSize = ivf_fhRaw.frameSize;
         ivf_fhCropped.timeStamp = NewTimeStamp;
 
-
         FormatFrameHeaderWrite(ivf_fhCropped);
-
 
         unsigned int y;
         char out_fn[128+24];
@@ -10076,10 +10144,22 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
         if (CharCount == 79)
         {
             printf("\n");
+
+            if (OutputToFile)
+            {
+                fprintf(stderr, "\n");
+            }
+
             CharCount = 0;
         }
 
         printf(".");
+
+        if (OutputToFile)
+        {
+            fprintf(stderr, ".");
+        }
+
         ++currentVideoFrame;
         WrittenoutVideoFrames++;
         CharCount++;
@@ -10087,9 +10167,16 @@ int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int 
 
         ivf_fhRaw.frameSize = 0;
         ivf_fhRaw.timeStamp = 0;
+
+        on2_img_free(&img);
     }
 
     printf("\n");
+
+    if (OutputToFile)
+    {
+        fprintf(stderr, "\n");
+    }
 
     ivfhCropped.length = WrittenoutVideoFrames;
 
@@ -12515,7 +12602,7 @@ int IVFDFWMCheck(char *InputFile, int printselect)
 int CheckMinQ(char *inputFile, int MinQuantizer)
 {
     char QuantDispNameChar[255] = "";
-    FileName(inputFile, QuantDispNameChar);
+    FileName(inputFile, QuantDispNameChar, 0);
 
     printf("Checking %s min quantizer:\n", QuantDispNameChar);
     fprintf(stderr, "Checking %s min quantizer:\n", QuantDispNameChar);
@@ -12575,7 +12662,7 @@ int CheckMinQ(char *inputFile, int MinQuantizer)
 int CheckMaxQ(char *inputFile, int MaxQuantizer)
 {
     char QuantDispNameChar[255] = "";
-    FileName(inputFile, QuantDispNameChar);
+    FileName(inputFile, QuantDispNameChar, 0);
 
     printf("Checking %s max quantizer:\n", QuantDispNameChar);
     fprintf(stderr, "Checking %s max quantizer:\n", QuantDispNameChar);
@@ -12634,7 +12721,7 @@ int CheckMaxQ(char *inputFile, int MaxQuantizer)
 int CheckFixedQ(char *inputFile, int FixedQuantizer)
 {
     char QuantDispNameChar[255] = "";
-    FileName(inputFile, QuantDispNameChar);
+    FileName(inputFile, QuantDispNameChar, 0);
 
     printf("Checking %s fixed quantizer:", QuantDispNameChar);
     fprintf(stderr, "Checking %s fixed quantizer:", QuantDispNameChar);

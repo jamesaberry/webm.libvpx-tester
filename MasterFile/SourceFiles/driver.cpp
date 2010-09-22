@@ -164,6 +164,7 @@ extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string
 extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int MemLeakCheck2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int FrameSizeTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 
 //TestsNoLongerUsed
 extern int NewVsOldSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
@@ -296,29 +297,29 @@ void OnErrorOutPut()
            "  (13)ExtraFileCheck                       CombineIndvFrames\n"
            "  (14)FixedQ                               \n"
            "  (15)ForceKeyFrameWorks                   CompareIVF\n"
-           "  (16)GoodQualityVsBestQuality             CompIVFHeader\n"
-           "  (17)LagInFramesTest                      DispIVFHeader\n"
-           "  (18)MaxQuantizerTest                     \n"
-           "  (19)MemLeakCheck                         DispKeyFrames\n"
-           "  (20)MemLeakCheck2                        DispResizedFrames\n"
-           "  (21)MinQuantizerTest                     DispVisibleFrames\n"
-           "  (22)MultiThreadedTest                    DispAltRefFrames\n"
-           "  (23)NewVsOldPSNR                         \n"
-           "  (24)NewVsOldRealTimeSpeed                CropRawIVF\n"
-           "  (25)NoiseSensitivityWorks                CutIVF\n"
-           "  (26)OnePassVsTwoPass                     PasteIVF\n"
-           "  (27)PlayAlternate                        \n"
-           "  (28)PostProcessorWorks                   PlayDecIVF\n"
-           "  (29)ReconBuffer                          PlayCompIVF\n"
-           "  (30)ResampleDownWaterMark                \n"
-           "  (31)SpeedTest                            CreateSampleTextFiles\n"
-           "  (32)TestVectorCheck                      PrintVersion\n"
-           "  (33)TwoPassVsTwoPassBest                 \n"
-           "  (34)UnderShoot                           RandParFile\n"
-           "  (35)Version                              RandIVFComp\n"
-           "  (36)WindowsMatchesLinux                  GraphPSNR\n"
-           "                                           Help\n"
-           "\n"
+           "  (16)FrameSizeTest                        CompIVFHeader\n"
+           "  (17)GoodQualityVsBestQuality             DispIVFHeader\n"
+           "  (18)LagInFramesTest                      \n"
+           "  (19)MaxQuantizerTest                     DispKeyFrames\n"
+           "  (20)MemLeakCheck                         DispResizedFrames\n"
+           "  (21)MemLeakCheck2                        DispVisibleFrames\n"
+           "  (22)MinQuantizerTest                     DispAltRefFrames\n"
+           "  (23)MultiThreadedTest                    \n"
+           "  (24)NewVsOldPSNR                         CropRawIVF\n"
+           "  (25)NewVsOldRealTimeSpeed                CutIVF\n"
+           "  (26)NoiseSensitivityWorks                PasteIVF\n"
+           "  (27)OnePassVsTwoPass                     \n"
+           "  (28)PlayAlternate                        PlayDecIVF\n"
+           "  (29)PostProcessorWorks                   PlayCompIVF\n"
+           "  (30)ReconBuffer                          \n"
+           "  (31)ResampleDownWaterMark                CreateSampleTextFiles\n"
+           "  (32)SpeedTest                            PrintVersion\n"
+           "  (33)TestVectorCheck                      \n"
+           "  (34)TwoPassVsTwoPassBest                 RandParFile\n"
+           "  (35)UnderShoot                           RandIVFComp\n"
+           "  (36)Version                              GraphPSNR\n"
+           "  (37)WindowsMatchesLinux                  Help\n"
+           "                                           \n"
           );
 }
 void Print1(string WorkingDir)
@@ -1494,6 +1495,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MINQUNUM, slashChar, slashChar);
@@ -1523,6 +1525,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MINQUNUM, slashChar, slashChar);
@@ -1549,6 +1552,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MINQUNUM, slashChar, slashChar);
@@ -1576,6 +1580,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@10@24\n", LGIFRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
@@ -1605,6 +1610,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@10@24\n", LGIFRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar, slashChar);
@@ -1679,6 +1685,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MINQUNUM, slashChar, slashChar);
@@ -1708,6 +1715,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MINQUNUM, slashChar, slashChar);
@@ -1734,6 +1742,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MINQUNUM, slashChar, slashChar);
@@ -1761,6 +1770,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@10@24\n", LGIFRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
@@ -1790,6 +1800,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ERRMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@20@60\n", FIXDQNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@24\n", FKEFRNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@176@144\n", FRSZTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@10@24\n", LGIFRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MAXQUNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar, slashChar);
@@ -2259,6 +2270,26 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
 
         FormatedPrint("The test creates a compression using a user input value for a Force Key Frame Interval. The compressor forces a key frame for every Force Key Frame Invervalith frame. The Test then records the placement of all key frames in the compression.  If key frames occur only when Force Key Frame dictates; the test passes.", 1);
 
+    }
+
+    if (selector == FRSZTNUM)
+    {
+        printf("\nUse:\n\n"
+               "  FrameSizeTest \n\n"
+               "    <inputfile>\n"
+               "    <Mode>\n"
+               "          (0)Realtime/Live Encoding\n"
+               "          (1)Good Quality Fast Encoding\n"
+               "          (2)One Pass Best Quality\n"
+               "          (3)Two Pass - First Pass\n"
+               "          (4)Two Pass\n"
+               "          (5)Two Pass Best Quality\n"
+               "    <Target Bit Rate>\n"
+               "    <Starting Width-must be a mult of 16>\n"
+               "    <Starting Height-must be a mult of 16>\n"
+               "	 <Optional Settings File>\n"
+              );
+        FormatedPrint("The test creates fourty-six cropped raw ivf files from a user input file, starting height and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs within three percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.", 1);
     }
 
     if (selector == GQVBQNUM)
@@ -3147,6 +3178,9 @@ void FormatSummaryByTest(char *InputFileNameCharAr, int DeleteOldFile)
         if (TestTracker == FKEFRNUM)
             TestTrackerName = "ForceKeyFrameWorks";
 
+        if (TestTracker == FRSZTNUM)
+            TestTrackerName = "FrameSizeTest";
+
         if (TestTracker == GQVBQNUM)
             TestTrackerName = "GoodQualityVsBestQuality";
 
@@ -3378,6 +3412,9 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
 
         if (TestTracker == FKEFRNUM)
             TestTrackerName = "ForceKeyFrameWorks";
+
+        if (TestTracker == FRSZTNUM)
+            TestTrackerName = "FrameSizeTest";
 
         if (TestTracker == GQVBQNUM)
             TestTrackerName = "GoodQualityVsBestQuality";
@@ -4649,6 +4686,12 @@ int  main(int argc, char *argv[])
     if (selector == FKEFRNUM)
     {
         ForceKeyFrameWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return 0;
+    }
+
+    if (selector == FRSZTNUM)
+    {
+        FrameSizeTest(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 

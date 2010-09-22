@@ -80,7 +80,7 @@ extern long FileSize(char *inFile);
 extern long FileSize2(char *inFile);
 extern void FolderName2(char *DirIn, char *DirOut);
 extern void FolderName(char *input, char *output);
-extern void FileName(char *input, char *FileName);
+extern void FileName(char *input, char *FileName, int removeExt);
 extern string ExtractDateTime(string InputStr);
 extern void TestName(char *input, char *TestName);
 extern int TimeStampCompare(string TimeStampNow, string TimeStampPrevious);
@@ -123,6 +123,8 @@ extern int GetNumberofFrames(char *inputFile);
 extern int IVFDFWMCheck(char *InputFile, int printselect);
 extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
 extern int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
+extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
+extern unsigned int ON2_GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick);
 
 /////Tests
 extern int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofTests);
@@ -168,6 +170,7 @@ extern int GoldQ(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int FrameSizeTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 //TestsNoLongerUsed
 extern int NewVsOldSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int SpeedTest2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
@@ -220,6 +223,7 @@ extern "C"
     );
 
     extern const char *on2_codec_build_config(void);
+#include "vpx_timer.h"
 }
 extern unsigned int ON2_GetProcCoreCount();
 
@@ -677,6 +681,14 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
     string TimeStampAr2[2];
     string SelectorAr[999];
     string SelectorAr2[999];
+
+    unsigned long RunTimeRecAr[999];
+    /////////////////////////////Record Time it took to run test/////////////////////////////
+    int RecordRunTimes = 0; //If set to one will record run times of tests
+    unsigned int RunTime1 = 0;
+    unsigned int RunTime2 = 0;
+
+    /////////////////////////////////////////////////////////////////////////////////////////
 
     int y = 0;
     int Buf1Var = 0;
@@ -1445,7 +1457,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "AllowDropFrames";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = AllowDF(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1454,7 +1479,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "AllowLagTest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = AllowLagTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1463,7 +1501,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "AllowSpatialResampling";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = AllowSpatialResamplingTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1472,7 +1523,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "AutoKeyFramingWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = AutoKeyFramingWorks(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1481,7 +1545,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "BufferLevelWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = BufferLevelWorks(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1490,7 +1567,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "CPUDecOnlyWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = CPUDecOnlyWorks(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1499,7 +1589,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "ChangeCPUWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = ChangeCPUWorks(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1508,7 +1611,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "DropFramesWaterMarkWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = DFWM(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1517,7 +1633,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "DataRateTest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = DataRateTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1526,7 +1655,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "DebugMatchesRelease";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = DebugMatchesRelease(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1535,7 +1677,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "EncoderBreakOut";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = EncoderBreakOut(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1544,7 +1699,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "ErrorResilientModeWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = ErrorRes(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1553,7 +1721,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "ExtraFileCheck";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = ExtraFileCheck(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1562,7 +1743,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "FixedQ";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = FixedQ(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1571,7 +1765,42 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "ForceKeyFrameWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = ForceKeyFrameWorks(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
+                    TestsRun++;
+                }
+
+                if (selector == FRSZTNUM)
+                {
+                    SelectorAr[SelectorArInt] = "FrameSizeTest";
+                    CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
+                    SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
+                    PassFail[PassFailInt] = FrameSizeTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1580,7 +1809,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "GoodQualityVsBestQuality";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = GoodQvBestQ(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1589,7 +1831,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "LagInFramesTest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = LagInFramesTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1598,7 +1853,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "MaxQuantizerTest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = MaxQTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1607,7 +1875,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "MemLeakCheck";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = MemLeakCheck(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1616,7 +1897,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "MemLeakCheck2";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = MemLeakCheck2(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1625,7 +1919,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "MinQuantizerTest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = MinQTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1634,7 +1941,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "MultiThreadedTest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = MultiThreadedTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1643,7 +1963,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "NewVsOldPSNR";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = NewVsOldPSNR(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1652,7 +1985,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "NewVsOldRealTimeSpeed";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = NewVsOldRealTimeSpeed(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1661,7 +2007,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "NoiseSensitivityWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = NoiseSensitivityWorks(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1670,7 +2029,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "OnePassVsTwoPass";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = OnePassVsTwoPass(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1679,7 +2051,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "PlayAlternate";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = PlayAlternate(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1688,7 +2073,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "PostProcessorWorks";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = PostProcessorWorks(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1697,7 +2095,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "ReconBuffer";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = ReconBuffer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1706,7 +2117,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "ResampleDownWaterMark";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = ResampleDownWaterMark(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1715,7 +2139,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "SpeedTest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = SpeedTest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1724,7 +2161,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "TestVectorCheck";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = TestVectorCheck(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1733,7 +2183,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "TwoPassVsTwoPassBest";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = TwoPassVsTwoPassBest(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1742,7 +2205,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "UnderShoot";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = UnderShoot(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1751,7 +2227,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "Version";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = Version(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -1760,7 +2249,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     SelectorAr[SelectorArInt] = "WindowsMatchesLinux";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = GetTime();
+                    }
+
                     PassFail[PassFailInt] = WindowsMatchesLinux(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = GetTime();
+                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                    }
+
                     TestsRun++;
                 }
 
@@ -2228,6 +2730,50 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             printf("NONE\n\n");
             fprintf(stderr, "NONE\n\n");
         }
+
+        /////////////////////////////Output Time it took to run test/////////////////////////////
+        if (RecordRunTimes == 1)
+        {
+            string TimeoutputStr = WorkDirFileStr;
+            TimeoutputStr.erase(TimeoutputStr.length() - 4, 4);
+            TimeoutputStr.append("_Times.txt");
+
+            FILE *outputTime;
+            outputTime = fopen(TimeoutputStr.c_str() , "w");
+
+            printf("\n--------------------------------------------------------------------------------\n"
+                   "                       Time to Run Tests\n");
+
+            fprintf(outputTime, "\n--------------------------------------------------------------------------------\n"
+                    "                      Time to Run Tests\n");
+
+            printf("\n\n%4s %-28s%s\n\n", "", " Test Name", "            Time");
+            fprintf(outputTime, "\n\n%4s %-28s%s\n\n", "", " Test Name", "            Time");
+
+            y = 0;
+
+            while (y < TestsRun)
+            {
+                printf("   %s", SelectorAr[y].c_str());
+                fprintf(outputTime, "   %s", SelectorAr[y].c_str());
+                int z = SelectorAr[y].size();
+
+                while (z <= 25)
+                {
+                    printf(" ");
+                    fprintf(outputTime, " ");
+                    z++;
+                }
+
+                printf("%20u ms\n", RunTimeRecAr[y]);
+                fprintf(outputTime, "%20u ms\n", RunTimeRecAr[y]);
+                y++;
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+
+
     }
 
     fclose(fp);
@@ -2329,7 +2875,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
     int speed = 0;
 
     char  FileNameChar[255];
-    FileName(input, FileNameChar);
+    FileName(input, FileNameChar, 0);
     string InputName = FileNameChar;
     InputName.resize(InputName.length() - 4, ' ');
     OutPutStr.append(InputName.c_str());
@@ -2544,7 +3090,7 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     WorkingDir4.append(slashCharStr);
 
     char InputFileName[255];
-    FileName(input, InputFileName);
+    FileName(input, InputFileName, 0);
     string InputFileNameStr = InputFileName;
 
     if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 4).compare(".ivf") == 0) //if file extension is present remove it
@@ -3465,9 +4011,9 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     //cout << "VisibleFrameOFFCount: " << VisibleFrameOFFCount << "\n";
 
     char AllowLagonFilename[255];
-    FileName(AllowLagon, AllowLagonFilename);
+    FileName(AllowLagon, AllowLagonFilename, 0);
     char AllowLagoffFilename[255];
-    FileName(AllowLagoff, AllowLagoffFilename);
+    FileName(AllowLagoff, AllowLagoffFilename, 0);
 
     int lngRC = CompIVF(AllowLagoff, AllowLagon);
 
@@ -3931,9 +4477,9 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     double SpatialResampPSNR = IVFPSNR(input, Spatialon, 0, 0, 1, NULL);
 
     char SpatialonFileName[255];
-    FileName(Spatialon, SpatialonFileName);
+    FileName(Spatialon, SpatialonFileName, 0);
     char SpatialoffFileName[255];
-    FileName(Spatialoff, SpatialoffFileName);
+    FileName(Spatialoff, SpatialoffFileName, 0);
 
     printf("\nChecking: %s for resized frames\n", SpatialonFileName);
     fprintf(stderr, "\nChecking: %s for resized frames\n", SpatialonFileName);
@@ -4434,9 +4980,9 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     infile2.close();
 
     char AutoKeyFramingWorks1FileName[255];
-    FileName(AutoKeyFramingWorks1, AutoKeyFramingWorks1FileName);
+    FileName(AutoKeyFramingWorks1, AutoKeyFramingWorks1FileName, 0);
     char AutoKeyFramingWorks2FileName[255];
-    FileName(AutoKeyFramingWorks2, AutoKeyFramingWorks2FileName);
+    FileName(AutoKeyFramingWorks2, AutoKeyFramingWorks2FileName, 0);
 
     printf("\n\nResults:\n\n");
     fprintf(stderr, "\n\nResults:\n\n");
@@ -11747,8 +12293,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char FixedQ1FileName[255] = "";
         char FixedQ2FileName[255] = "";
 
-        FileName(FixedQ1, FixedQ1FileName);
-        FileName(FixedQ2, FixedQ2FileName);
+        FileName(FixedQ1, FixedQ1FileName, 0);
+        FileName(FixedQ2, FixedQ2FileName, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -12266,6 +12812,1163 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
 
+    }
+    int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    {
+        char *CompressString = "Frame Size";
+
+        int StartingWidth = 0;
+        int StartingHeight = 0;
+
+        if (!(argc == 8 || argc == 7))
+        {
+            printf(
+                "  FrameSizeTest \n\n"
+                "    <inputfile>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Starting Width-must be a mult of 16>\n"
+                "    <Starting Height-must be a mult of 16>\n"
+                "	 <Optional Settings File>\n"
+            );
+
+            return 0;
+        }
+
+        StartingWidth = atoi(argv[5]);
+        StartingHeight = atoi(argv[6]);
+
+
+
+        char *input = argv[2];
+
+        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+
+        string WorkingDirString = ""; // <- All Options need to set a value for this
+        string Mode3TestMatch = "";
+        string MainDirString = "";
+        char *MyDir = "FrameSizeTest";
+        char WorkingDir2[255] = "";
+        char WorkingDir3[255] = "";
+        char File1[255] = "";
+
+        if (TestType == 2 || TestType == 1)
+        {
+            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
+
+            int v = 0;
+
+            while (WorkingDir2[v] != '\"')
+            {
+                WorkingDir3[v] = WorkingDir2[v];
+                v++;
+            }
+
+            WorkingDir3[v] = slashChar;
+            WorkingDir3[v+1] = '\0';
+            WorkingDirString = WorkingDir3;
+            /////////////////////////////////////////////////////////////////////////////////
+            MainDirString = WorkingDir3;
+            MainDirString.append("FileIndex.txt");
+            /////////////////////////////////////////////////////////////////////////////////
+            WorkingDirString.append(MyDir);
+            WorkingDirString.append(slashCharStr);
+            WorkingDirString.append(FilesAr[0]);
+            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
+
+            string CreateDir2 = WorkingDirString;
+            CreateDir2.insert(0, "md \"");
+            MakeDirVPX(CreateDir2.c_str());
+
+            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
+            if (TestType == 2)
+            {
+                char WorkingDirString2[255];
+                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
+                SubFolderName(WorkingDirString2, File1);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+        }
+        else
+        {
+            //Use WorkingDir to get the main folder
+            //Use Index File to get the rest of the string
+            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
+            char buffer[255];
+
+            string WorkingDir2 = WorkingDir;
+
+            WorkingDir2.append(slashCharStr);
+            MainDirString = WorkingDir2;
+            MainDirString.append("FileIndex.txt");
+
+            fstream FileStream;
+            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
+
+            int n = 0;
+
+            while (n < atoi(argv[argc]))
+            {
+                FileStream.getline(buffer, 255);
+                n++;
+            }
+
+            FileStream.close();
+
+            char Mode3TestMatchChar[255];
+            TestName(buffer, Mode3TestMatchChar);
+            Mode3TestMatch = Mode3TestMatchChar;
+
+            if (Mode3TestMatch.compare(MyDir) != 0)
+            {
+                printf("ErrorFileMisMatch ");
+                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
+                return 11;
+            }
+
+            WorkingDir2.append(buffer);
+            WorkingDirString = WorkingDir2;
+        }
+
+        char InputFileName[256] = "";
+        FileName(input, InputFileName, 1);
+
+        string WorkingDir4 = WorkingDirString;
+        WorkingDir4.append(slashCharStr);
+        WorkingDir4.append(InputFileName);
+
+        char NewWidth[20];
+        char NewHeight[20];
+
+        //string RawCrop17 = WorkingDir4;
+        //RawCrop17.append("_");
+        //itoa_custom(StartingWidth,NewWidth-0,10);//width
+        //RawCrop17.append(NewWidth);
+        //RawCrop17.append("x");
+        //itoa_custom(StartingHeight,NewHeight,10);//height
+        //RawCrop17.append(NewHeight);
+        //RawCrop17.append("_raw.ivf");
+
+        //height
+        string RawCrop[47];
+
+        RawCrop[1] = WorkingDir4;
+        RawCrop[1].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[1].append(NewWidth);
+        RawCrop[1].append("x");
+        itoa_custom(StartingHeight - 0, NewHeight, 10); //height
+        RawCrop[1].append(NewHeight);
+        RawCrop[1].append("_raw.ivf");
+
+        RawCrop[2] = WorkingDir4;
+        RawCrop[2].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[2].append(NewWidth);
+        RawCrop[2].append("x");
+        itoa_custom(StartingHeight - 1, NewHeight, 10); //height
+        RawCrop[2].append(NewHeight);
+        RawCrop[2].append("_raw.ivf");
+
+        RawCrop[3] = WorkingDir4;
+        RawCrop[3].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[3].append(NewWidth);
+        RawCrop[3].append("x");
+        itoa_custom(StartingHeight - 2, NewHeight, 10); //height
+        RawCrop[3].append(NewHeight);
+        RawCrop[3].append("_raw.ivf");
+
+        RawCrop[4] = WorkingDir4;
+        RawCrop[4].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[4].append(NewWidth);
+        RawCrop[4].append("x");
+        itoa_custom(StartingHeight - 3, NewHeight, 10); //height
+        RawCrop[4].append(NewHeight);
+        RawCrop[4].append("_raw.ivf");
+
+        RawCrop[5] = WorkingDir4;
+        RawCrop[5].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[5].append(NewWidth);
+        RawCrop[5].append("x");
+        itoa_custom(StartingHeight - 4, NewHeight, 10); //height
+        RawCrop[5].append(NewHeight);
+        RawCrop[5].append("_raw.ivf");
+
+        RawCrop[6] = WorkingDir4;
+        RawCrop[6].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[6].append(NewWidth);
+        RawCrop[6].append("x");
+        itoa_custom(StartingHeight - 5, NewHeight, 10); //height
+        RawCrop[6].append(NewHeight);
+        RawCrop[6].append("_raw.ivf");
+
+        RawCrop[7] = WorkingDir4;
+        RawCrop[7].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[7].append(NewWidth);
+        RawCrop[7].append("x");
+        itoa_custom(StartingHeight - 6, NewHeight, 10); //height
+        RawCrop[7].append(NewHeight);
+        RawCrop[7].append("_raw.ivf");
+
+        RawCrop[8] = WorkingDir4;
+        RawCrop[8].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[8].append(NewWidth);
+        RawCrop[8].append("x");
+        itoa_custom(StartingHeight - 7, NewHeight, 10); //height
+        RawCrop[8].append(NewHeight);
+        RawCrop[8].append("_raw.ivf");
+
+        RawCrop[9] = WorkingDir4;
+        RawCrop[9].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[9].append(NewWidth);
+        RawCrop[9].append("x");
+        itoa_custom(StartingHeight - 8, NewHeight, 10); //height
+        RawCrop[9].append(NewHeight);
+        RawCrop[9].append("_raw.ivf");
+
+        RawCrop[10] = WorkingDir4;
+        RawCrop[10].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[10].append(NewWidth);
+        RawCrop[10].append("x");
+        itoa_custom(StartingHeight - 9, NewHeight, 10); //height
+        RawCrop[10].append(NewHeight);
+        RawCrop[10].append("_raw.ivf");
+
+        RawCrop[11] = WorkingDir4;
+        RawCrop[11].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[11].append(NewWidth);
+        RawCrop[11].append("x");
+        itoa_custom(StartingHeight - 10, NewHeight, 10); //height
+        RawCrop[11].append(NewHeight);
+        RawCrop[11].append("_raw.ivf");
+
+        RawCrop[12] = WorkingDir4;
+        RawCrop[12].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[12].append(NewWidth);
+        RawCrop[12].append("x");
+        itoa_custom(StartingHeight - 11, NewHeight, 10); //height
+        RawCrop[12].append(NewHeight);
+        RawCrop[12].append("_raw.ivf");
+
+        RawCrop[13] = WorkingDir4;
+        RawCrop[13].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[13].append(NewWidth);
+        RawCrop[13].append("x");
+        itoa_custom(StartingHeight - 12, NewHeight, 10); //height
+        RawCrop[13].append(NewHeight);
+        RawCrop[13].append("_raw.ivf");
+
+        RawCrop[14] = WorkingDir4;
+        RawCrop[14].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[14].append(NewWidth);
+        RawCrop[14].append("x");
+        itoa_custom(StartingHeight - 13, NewHeight, 10); //height
+        RawCrop[14].append(NewHeight);
+        RawCrop[14].append("_raw.ivf");
+
+        RawCrop[15] = WorkingDir4;
+        RawCrop[15].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[15].append(NewWidth);
+        RawCrop[15].append("x");
+        itoa_custom(StartingHeight - 14, NewHeight, 10); //height
+        RawCrop[15].append(NewHeight);
+        RawCrop[15].append("_raw.ivf");
+
+        RawCrop[16] = WorkingDir4;
+        RawCrop[16].append("_");
+        itoa_custom(StartingWidth, NewWidth, 10); //width
+        RawCrop[16].append(NewWidth);
+        RawCrop[16].append("x");
+        itoa_custom(StartingHeight - 15, NewHeight, 10); //height
+        RawCrop[16].append(NewHeight);
+        RawCrop[16].append("_raw.ivf");
+
+        //width
+
+        RawCrop[17] = WorkingDir4;
+        RawCrop[17].append("_");
+        itoa_custom(StartingWidth - 1, NewWidth, 10); //width
+        RawCrop[17].append(NewWidth);
+        RawCrop[17].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[17].append(NewHeight);
+        RawCrop[17].append("_raw.ivf");
+
+        RawCrop[18] = WorkingDir4;
+        RawCrop[18].append("_");
+        itoa_custom(StartingWidth - 2, NewWidth, 10); //width
+        RawCrop[18].append(NewWidth);
+        RawCrop[18].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[18].append(NewHeight);
+        RawCrop[18].append("_raw.ivf");
+
+        RawCrop[19] = WorkingDir4;
+        RawCrop[19].append("_");
+        itoa_custom(StartingWidth - 3, NewWidth, 10); //width
+        RawCrop[19].append(NewWidth);
+        RawCrop[19].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[19].append(NewHeight);
+        RawCrop[19].append("_raw.ivf");
+
+        RawCrop[20] = WorkingDir4;
+        RawCrop[20].append("_");
+        itoa_custom(StartingWidth - 4, NewWidth, 10); //width
+        RawCrop[20].append(NewWidth);
+        RawCrop[20].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[20].append(NewHeight);
+        RawCrop[20].append("_raw.ivf");
+
+        RawCrop[21] = WorkingDir4;
+        RawCrop[21].append("_");
+        itoa_custom(StartingWidth - 5, NewWidth, 10); //width
+        RawCrop[21].append(NewWidth);
+        RawCrop[21].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[21].append(NewHeight);
+        RawCrop[21].append("_raw.ivf");
+
+        RawCrop[22] = WorkingDir4;
+        RawCrop[22].append("_");
+        itoa_custom(StartingWidth - 6, NewWidth, 10); //width
+        RawCrop[22].append(NewWidth);
+        RawCrop[22].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[22].append(NewHeight);
+        RawCrop[22].append("_raw.ivf");
+
+        RawCrop[23] = WorkingDir4;
+        RawCrop[23].append("_");
+        itoa_custom(StartingWidth - 7, NewWidth, 10); //width
+        RawCrop[23].append(NewWidth);
+        RawCrop[23].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[23].append(NewHeight);
+        RawCrop[23].append("_raw.ivf");
+
+        RawCrop[24] = WorkingDir4;
+        RawCrop[24].append("_");
+        itoa_custom(StartingWidth - 8, NewWidth, 10); //width
+        RawCrop[24].append(NewWidth);
+        RawCrop[24].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[24].append(NewHeight);
+        RawCrop[24].append("_raw.ivf");
+
+        RawCrop[25] = WorkingDir4;
+        RawCrop[25].append("_");
+        itoa_custom(StartingWidth - 9, NewWidth, 10); //width
+        RawCrop[25].append(NewWidth);
+        RawCrop[25].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[25].append(NewHeight);
+        RawCrop[25].append("_raw.ivf");
+
+        RawCrop[26] = WorkingDir4;
+        RawCrop[26].append("_");
+        itoa_custom(StartingWidth - 10, NewWidth, 10); //width
+        RawCrop[26].append(NewWidth);
+        RawCrop[26].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[26].append(NewHeight);
+        RawCrop[26].append("_raw.ivf");
+
+        RawCrop[27] = WorkingDir4;
+        RawCrop[27].append("_");
+        itoa_custom(StartingWidth - 11, NewWidth, 10); //width
+        RawCrop[27].append(NewWidth);
+        RawCrop[27].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[27].append(NewHeight);
+        RawCrop[27].append("_raw.ivf");
+
+        RawCrop[28] = WorkingDir4;
+        RawCrop[28].append("_");
+        itoa_custom(StartingWidth - 12, NewWidth, 10); //width
+        RawCrop[28].append(NewWidth);
+        RawCrop[28].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[28].append(NewHeight);
+        RawCrop[28].append("_raw.ivf");
+
+        RawCrop[29] = WorkingDir4;
+        RawCrop[29].append("_");
+        itoa_custom(StartingWidth - 13, NewWidth, 10); //width
+        RawCrop[29].append(NewWidth);
+        RawCrop[29].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[29].append(NewHeight);
+        RawCrop[29].append("_raw.ivf");
+
+        RawCrop[30] = WorkingDir4;
+        RawCrop[30].append("_");
+        itoa_custom(StartingWidth - 14, NewWidth, 10); //width
+        RawCrop[30].append(NewWidth);
+        RawCrop[30].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[30].append(NewHeight);
+        RawCrop[30].append("_raw.ivf");
+
+        RawCrop[31] = WorkingDir4;
+        RawCrop[31].append("_");
+        itoa_custom(StartingWidth - 15, NewWidth, 10); //width
+        RawCrop[31].append(NewWidth);
+        RawCrop[31].append("x");
+        itoa_custom(StartingHeight, NewHeight, 10); //height
+        RawCrop[31].append(NewHeight);
+        RawCrop[31].append("_raw.ivf");
+
+        //width + height
+
+        RawCrop[32] = WorkingDir4;
+        RawCrop[32].append("_");
+        itoa_custom(StartingWidth - 1, NewWidth, 10); //width
+        RawCrop[32].append(NewWidth);
+        RawCrop[32].append("x");
+        itoa_custom(StartingHeight - 1, NewHeight, 10); //height
+        RawCrop[32].append(NewHeight);
+        RawCrop[32].append("_raw.ivf");
+
+        RawCrop[33] = WorkingDir4;
+        RawCrop[33].append("_");
+        itoa_custom(StartingWidth - 2, NewWidth, 10); //width
+        RawCrop[33].append(NewWidth);
+        RawCrop[33].append("x");
+        itoa_custom(StartingHeight - 2, NewHeight, 10); //height
+        RawCrop[33].append(NewHeight);
+        RawCrop[33].append("_raw.ivf");
+
+        RawCrop[34] = WorkingDir4;
+        RawCrop[34].append("_");
+        itoa_custom(StartingWidth - 3, NewWidth, 10); //width
+        RawCrop[34].append(NewWidth);
+        RawCrop[34].append("x");
+        itoa_custom(StartingHeight - 3, NewHeight, 10); //height
+        RawCrop[34].append(NewHeight);
+        RawCrop[34].append("_raw.ivf");
+
+        RawCrop[35] = WorkingDir4;
+        RawCrop[35].append("_");
+        itoa_custom(StartingWidth - 4, NewWidth, 10); //width
+        RawCrop[35].append(NewWidth);
+        RawCrop[35].append("x");
+        itoa_custom(StartingHeight - 4, NewHeight, 10); //height
+        RawCrop[35].append(NewHeight);
+        RawCrop[35].append("_raw.ivf");
+
+        RawCrop[36] = WorkingDir4;
+        RawCrop[36].append("_");
+        itoa_custom(StartingWidth - 5, NewWidth, 10); //width
+        RawCrop[36].append(NewWidth);
+        RawCrop[36].append("x");
+        itoa_custom(StartingHeight - 5, NewHeight, 10); //height
+        RawCrop[36].append(NewHeight);
+        RawCrop[36].append("_raw.ivf");
+
+        RawCrop[37] = WorkingDir4;
+        RawCrop[37].append("_");
+        itoa_custom(StartingWidth - 6, NewWidth, 10); //width
+        RawCrop[37].append(NewWidth);
+        RawCrop[37].append("x");
+        itoa_custom(StartingHeight - 6, NewHeight, 10); //height
+        RawCrop[37].append(NewHeight);
+        RawCrop[37].append("_raw.ivf");
+
+        RawCrop[38] = WorkingDir4;
+        RawCrop[38].append("_");
+        itoa_custom(StartingWidth - 7, NewWidth, 10); //width
+        RawCrop[38].append(NewWidth);
+        RawCrop[38].append("x");
+        itoa_custom(StartingHeight - 7, NewHeight, 10); //height
+        RawCrop[38].append(NewHeight);
+        RawCrop[38].append("_raw.ivf");
+
+        RawCrop[39] = WorkingDir4;
+        RawCrop[39].append("_");
+        itoa_custom(StartingWidth - 8, NewWidth, 10); //width
+        RawCrop[39].append(NewWidth);
+        RawCrop[39].append("x");
+        itoa_custom(StartingHeight - 8, NewHeight, 10); //height
+        RawCrop[39].append(NewHeight);
+        RawCrop[39].append("_raw.ivf");
+
+        RawCrop[40] = WorkingDir4;
+        RawCrop[40].append("_");
+        itoa_custom(StartingWidth - 9, NewWidth, 10); //width
+        RawCrop[40].append(NewWidth);
+        RawCrop[40].append("x");
+        itoa_custom(StartingHeight - 9, NewHeight, 10); //height
+        RawCrop[40].append(NewHeight);
+        RawCrop[40].append("_raw.ivf");
+
+        RawCrop[41] = WorkingDir4;
+        RawCrop[41].append("_");
+        itoa_custom(StartingWidth - 10, NewWidth, 10); //width
+        RawCrop[41].append(NewWidth);
+        RawCrop[41].append("x");
+        itoa_custom(StartingHeight - 10, NewHeight, 10); //height
+        RawCrop[41].append(NewHeight);
+        RawCrop[41].append("_raw.ivf");
+
+        RawCrop[42] = WorkingDir4;
+        RawCrop[42].append("_");
+        itoa_custom(StartingWidth - 11, NewWidth, 10); //width
+        RawCrop[42].append(NewWidth);
+        RawCrop[42].append("x");
+        itoa_custom(StartingHeight - 11, NewHeight, 10); //height
+        RawCrop[42].append(NewHeight);
+        RawCrop[42].append("_raw.ivf");
+
+        RawCrop[43] = WorkingDir4;
+        RawCrop[43].append("_");
+        itoa_custom(StartingWidth - 12, NewWidth, 10); //width
+        RawCrop[43].append(NewWidth);
+        RawCrop[43].append("x");
+        itoa_custom(StartingHeight - 12, NewHeight, 10); //height
+        RawCrop[43].append(NewHeight);
+        RawCrop[43].append("_raw.ivf");
+
+        RawCrop[44] = WorkingDir4;
+        RawCrop[44].append("_");
+        itoa_custom(StartingWidth - 13, NewWidth, 10); //width
+        RawCrop[44].append(NewWidth);
+        RawCrop[44].append("x");
+        itoa_custom(StartingHeight - 13, NewHeight, 10); //height
+        RawCrop[44].append(NewHeight);
+        RawCrop[44].append("_raw.ivf");
+
+        RawCrop[45] = WorkingDir4;
+        RawCrop[45].append("_");
+        itoa_custom(StartingWidth - 14, NewWidth, 10); //width
+        RawCrop[45].append(NewWidth);
+        RawCrop[45].append("x");
+        itoa_custom(StartingHeight - 14, NewHeight, 10); //height
+        RawCrop[45].append(NewHeight);
+        RawCrop[45].append("_raw.ivf");
+
+        RawCrop[46] = WorkingDir4;
+        RawCrop[46].append("_");
+        itoa_custom(StartingWidth - 15, NewWidth, 10); //width
+        RawCrop[46].append(NewWidth);
+        RawCrop[46].append("x");
+        itoa_custom(StartingHeight - 15, NewHeight, 10); //height
+        RawCrop[46].append(NewHeight);
+        RawCrop[46].append("_raw.ivf");
+
+        //Encoded Files
+        string EncCrop[47];
+
+        EncCrop[0] = "";
+        EncCrop[1] = RawCrop[1];
+        EncCrop[1].erase(EncCrop[1].end() - 7, EncCrop[1].end());
+        EncCrop[1].append("enc.ivf");
+        EncCrop[2] = RawCrop[2];
+        EncCrop[2].erase(EncCrop[2].end() - 7, EncCrop[2].end());
+        EncCrop[2].append("enc.ivf");
+        EncCrop[3] = RawCrop[3];
+        EncCrop[3].erase(EncCrop[3].end() - 7, EncCrop[3].end());
+        EncCrop[3].append("enc.ivf");
+        EncCrop[4] = RawCrop[4];
+        EncCrop[4].erase(EncCrop[4].end() - 7, EncCrop[4].end());
+        EncCrop[4].append("enc.ivf");
+        EncCrop[5] = RawCrop[5];
+        EncCrop[5].erase(EncCrop[5].end() - 7, EncCrop[5].end());
+        EncCrop[5].append("enc.ivf");
+        EncCrop[6] = RawCrop[6];
+        EncCrop[6].erase(EncCrop[6].end() - 7, EncCrop[6].end());
+        EncCrop[6].append("enc.ivf");
+        EncCrop[7] = RawCrop[7];
+        EncCrop[7].erase(EncCrop[7].end() - 7, EncCrop[7].end());
+        EncCrop[7].append("enc.ivf");
+        EncCrop[8] = RawCrop[8];
+        EncCrop[8].erase(EncCrop[8].end() - 7, EncCrop[8].end());
+        EncCrop[8].append("enc.ivf");
+        EncCrop[9] = RawCrop[9];
+        EncCrop[9].erase(EncCrop[9].end() - 7, EncCrop[9].end());
+        EncCrop[9].append("enc.ivf");
+        EncCrop[10] = RawCrop[10];
+        EncCrop[10].erase(EncCrop[10].end() - 7, EncCrop[10].end());
+        EncCrop[10].append("enc.ivf");
+        EncCrop[11] = RawCrop[11];
+        EncCrop[11].erase(EncCrop[11].end() - 7, EncCrop[11].end());
+        EncCrop[11].append("enc.ivf");
+        EncCrop[12] = RawCrop[12];
+        EncCrop[12].erase(EncCrop[12].end() - 7, EncCrop[12].end());
+        EncCrop[12].append("enc.ivf");
+        EncCrop[13] = RawCrop[13];
+        EncCrop[13].erase(EncCrop[13].end() - 7, EncCrop[13].end());
+        EncCrop[13].append("enc.ivf");
+        EncCrop[14] = RawCrop[14];
+        EncCrop[14].erase(EncCrop[14].end() - 7, EncCrop[14].end());
+        EncCrop[14].append("enc.ivf");
+        EncCrop[15] = RawCrop[15];
+        EncCrop[15].erase(EncCrop[15].end() - 7, EncCrop[15].end());
+        EncCrop[15].append("enc.ivf");
+        EncCrop[16] = RawCrop[16];
+        EncCrop[16].erase(EncCrop[16].end() - 7, EncCrop[16].end());
+        EncCrop[16].append("enc.ivf");
+        EncCrop[17] = RawCrop[17];
+        EncCrop[17].erase(EncCrop[17].end() - 7, EncCrop[17].end());
+        EncCrop[17].append("enc.ivf");
+        EncCrop[18] = RawCrop[18];
+        EncCrop[18].erase(EncCrop[18].end() - 7, EncCrop[18].end());
+        EncCrop[18].append("enc.ivf");
+        EncCrop[19] = RawCrop[19];
+        EncCrop[19].erase(EncCrop[19].end() - 7, EncCrop[19].end());
+        EncCrop[19].append("enc.ivf");
+        EncCrop[20] = RawCrop[20];
+        EncCrop[20].erase(EncCrop[20].end() - 7, EncCrop[20].end());
+        EncCrop[20].append("enc.ivf");
+        EncCrop[21] = RawCrop[21];
+        EncCrop[21].erase(EncCrop[21].end() - 7, EncCrop[21].end());
+        EncCrop[21].append("enc.ivf");
+        EncCrop[22] = RawCrop[22];
+        EncCrop[22].erase(EncCrop[22].end() - 7, EncCrop[22].end());
+        EncCrop[22].append("enc.ivf");
+        EncCrop[23] = RawCrop[23];
+        EncCrop[23].erase(EncCrop[23].end() - 7, EncCrop[23].end());
+        EncCrop[23].append("enc.ivf");
+        EncCrop[24] = RawCrop[24];
+        EncCrop[24].erase(EncCrop[24].end() - 7, EncCrop[24].end());
+        EncCrop[24].append("enc.ivf");
+        EncCrop[25] = RawCrop[25];
+        EncCrop[25].erase(EncCrop[25].end() - 7, EncCrop[25].end());
+        EncCrop[25].append("enc.ivf");
+        EncCrop[26] = RawCrop[26];
+        EncCrop[26].erase(EncCrop[26].end() - 7, EncCrop[26].end());
+        EncCrop[26].append("enc.ivf");
+        EncCrop[27] = RawCrop[27];
+        EncCrop[27].erase(EncCrop[27].end() - 7, EncCrop[27].end());
+        EncCrop[27].append("enc.ivf");
+        EncCrop[28] = RawCrop[28];
+        EncCrop[28].erase(EncCrop[28].end() - 7, EncCrop[28].end());
+        EncCrop[28].append("enc.ivf");
+        EncCrop[29] = RawCrop[29];
+        EncCrop[29].erase(EncCrop[29].end() - 7, EncCrop[29].end());
+        EncCrop[29].append("enc.ivf");
+        EncCrop[30] = RawCrop[30];
+        EncCrop[30].erase(EncCrop[30].end() - 7, EncCrop[30].end());
+        EncCrop[30].append("enc.ivf");
+        EncCrop[31] = RawCrop[31];
+        EncCrop[31].erase(EncCrop[31].end() - 7, EncCrop[31].end());
+        EncCrop[31].append("enc.ivf");
+        EncCrop[32] = RawCrop[32];
+        EncCrop[32].erase(EncCrop[32].end() - 7, EncCrop[32].end());
+        EncCrop[32].append("enc.ivf");
+        EncCrop[33] = RawCrop[33];
+        EncCrop[33].erase(EncCrop[33].end() - 7, EncCrop[33].end());
+        EncCrop[33].append("enc.ivf");
+        EncCrop[34] = RawCrop[34];
+        EncCrop[34].erase(EncCrop[34].end() - 7, EncCrop[34].end());
+        EncCrop[34].append("enc.ivf");
+        EncCrop[35] = RawCrop[35];
+        EncCrop[35].erase(EncCrop[35].end() - 7, EncCrop[35].end());
+        EncCrop[35].append("enc.ivf");
+        EncCrop[36] = RawCrop[36];
+        EncCrop[36].erase(EncCrop[36].end() - 7, EncCrop[36].end());
+        EncCrop[36].append("enc.ivf");
+        EncCrop[37] = RawCrop[37];
+        EncCrop[37].erase(EncCrop[37].end() - 7, EncCrop[37].end());
+        EncCrop[37].append("enc.ivf");
+        EncCrop[38] = RawCrop[38];
+        EncCrop[38].erase(EncCrop[38].end() - 7, EncCrop[38].end());
+        EncCrop[38].append("enc.ivf");
+        EncCrop[39] = RawCrop[39];
+        EncCrop[39].erase(EncCrop[39].end() - 7, EncCrop[39].end());
+        EncCrop[39].append("enc.ivf");
+        EncCrop[40] = RawCrop[40];
+        EncCrop[40].erase(EncCrop[40].end() - 7, EncCrop[40].end());
+        EncCrop[40].append("enc.ivf");
+        EncCrop[41] = RawCrop[41];
+        EncCrop[41].erase(EncCrop[41].end() - 7, EncCrop[41].end());
+        EncCrop[41].append("enc.ivf");
+        EncCrop[42] = RawCrop[42];
+        EncCrop[42].erase(EncCrop[42].end() - 7, EncCrop[42].end());
+        EncCrop[42].append("enc.ivf");
+        EncCrop[43] = RawCrop[43];
+        EncCrop[43].erase(EncCrop[43].end() - 7, EncCrop[43].end());
+        EncCrop[43].append("enc.ivf");
+        EncCrop[44] = RawCrop[44];
+        EncCrop[44].erase(EncCrop[44].end() - 7, EncCrop[44].end());
+        EncCrop[44].append("enc.ivf");
+        EncCrop[45] = RawCrop[45];
+        EncCrop[45].erase(EncCrop[45].end() - 7, EncCrop[45].end());
+        EncCrop[45].append("enc.ivf");
+        EncCrop[46] = RawCrop[46];
+        EncCrop[46].erase(EncCrop[46].end() - 7, EncCrop[46].end());
+        EncCrop[46].append("enc.ivf");
+
+        /*printf("\nRAW FILES\n");
+        printf("\n%s",RawCrop1.c_str());
+        printf("\n%s",RawCrop2.c_str());
+        printf("\n%s",RawCrop3.c_str());
+        printf("\n%s",RawCrop4.c_str());
+        printf("\n%s",RawCrop5.c_str());
+        printf("\n%s",RawCrop6.c_str());
+        printf("\n%s",RawCrop7.c_str());
+        printf("\n%s",RawCrop8.c_str());
+        printf("\n%s",RawCrop9.c_str());
+        printf("\n%s",RawCrop10.c_str());
+        printf("\n%s",RawCrop11.c_str());
+        printf("\n%s",RawCrop12.c_str());
+        printf("\n%s",RawCrop13.c_str());
+        printf("\n%s",RawCrop14.c_str());
+        printf("\n%s",RawCrop15.c_str());
+        printf("\n%s",RawCrop16.c_str());
+        printf("\n%s",RawCrop17.c_str());
+        printf("\n%s",RawCrop18.c_str());
+        printf("\n%s",RawCrop19.c_str());
+        printf("\n%s",RawCrop20.c_str());
+        printf("\n%s",RawCrop21.c_str());
+        printf("\n%s",RawCrop22.c_str());
+        printf("\n%s",RawCrop23.c_str());
+        printf("\n%s",RawCrop24.c_str());
+        printf("\n%s",RawCrop25.c_str());
+        printf("\n%s",RawCrop26.c_str());
+        printf("\n%s",RawCrop27.c_str());
+        printf("\n%s",RawCrop28.c_str());
+        printf("\n%s",RawCrop29.c_str());
+        printf("\n%s",RawCrop30.c_str());
+        printf("\n%s",RawCrop31.c_str());
+        printf("\n%s",RawCrop32.c_str());
+        printf("\n%s",RawCrop33.c_str());
+        printf("\n%s",RawCrop34.c_str());
+        printf("\n%s",RawCrop35.c_str());
+        printf("\n%s",RawCrop36.c_str());
+        printf("\n%s",RawCrop37.c_str());
+        printf("\n%s",RawCrop38.c_str());
+        printf("\n%s",RawCrop39.c_str());
+        printf("\n%s",RawCrop40.c_str());
+        printf("\n%s",RawCrop41.c_str());
+        printf("\n%s",RawCrop42.c_str());
+        printf("\n%s",RawCrop43.c_str());
+        printf("\n%s",RawCrop44.c_str());
+        printf("\n%s",RawCrop45.c_str());
+        printf("\n%s",RawCrop46.c_str());
+
+        printf("\n\nENCODED FILES\n");
+
+        printf("\n%s",EncCrop1.c_str());
+        printf("\n%s",EncCrop2.c_str());
+        printf("\n%s",EncCrop3.c_str());
+        printf("\n%s",EncCrop4.c_str());
+        printf("\n%s",EncCrop5.c_str());
+        printf("\n%s",EncCrop6.c_str());
+        printf("\n%s",EncCrop7.c_str());
+        printf("\n%s",EncCrop8.c_str());
+        printf("\n%s",EncCrop9.c_str());
+        printf("\n%s",EncCrop10.c_str());
+        printf("\n%s",EncCrop11.c_str());
+        printf("\n%s",EncCrop12.c_str());
+        printf("\n%s",EncCrop13.c_str());
+        printf("\n%s",EncCrop14.c_str());
+        printf("\n%s",EncCrop15.c_str());
+        printf("\n%s",EncCrop16.c_str());
+        printf("\n%s",EncCrop17.c_str());
+        printf("\n%s",EncCrop18.c_str());
+        printf("\n%s",EncCrop19.c_str());
+        printf("\n%s",EncCrop20.c_str());
+        printf("\n%s",EncCrop21.c_str());
+        printf("\n%s",EncCrop22.c_str());
+        printf("\n%s",EncCrop23.c_str());
+        printf("\n%s",EncCrop24.c_str());
+        printf("\n%s",EncCrop25.c_str());
+        printf("\n%s",EncCrop26.c_str());
+        printf("\n%s",EncCrop27.c_str());
+        printf("\n%s",EncCrop28.c_str());
+        printf("\n%s",EncCrop29.c_str());
+        printf("\n%s",EncCrop30.c_str());
+        printf("\n%s",EncCrop31.c_str());
+        printf("\n%s",EncCrop32.c_str());
+        printf("\n%s",EncCrop33.c_str());
+        printf("\n%s",EncCrop34.c_str());
+        printf("\n%s",EncCrop35.c_str());
+        printf("\n%s",EncCrop36.c_str());
+        printf("\n%s",EncCrop37.c_str());
+        printf("\n%s",EncCrop38.c_str());
+        printf("\n%s",EncCrop39.c_str());
+        printf("\n%s",EncCrop40.c_str());
+        printf("\n%s",EncCrop41.c_str());
+        printf("\n%s",EncCrop42.c_str());
+        printf("\n%s",EncCrop43.c_str());
+        printf("\n%s",EncCrop44.c_str());
+        printf("\n%s",EncCrop45.c_str());
+        printf("\n%s",EncCrop46.c_str());*/
+
+        /////////////OutPutfile////////////
+        string TextfileString = WorkingDirString;
+        TextfileString.append(slashCharStr);
+        TextfileString.append(MyDir);
+
+        if (TestType == 2 || TestType == 1)
+            TextfileString.append(".txt");
+        else
+            TextfileString.append("_TestOnly.txt");
+
+
+        FILE *fp;
+
+        if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+        {
+            printf("Cannot open out put file: %s\n", TextfileString.c_str());
+            exit(1);
+        }
+
+        ////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (TestType == 1)
+        {
+            PrintHeader1(argc, argv, WorkingDir3);
+        }
+
+        if (TestType == 2)
+        {
+            PrintHeader2(argc, argv, WorkingDir3);
+        }
+
+        if (TestType == 3)
+        {
+            PrintHeader3(argc, argv, WorkingDirString);
+        }
+
+        //Make sure starting width and height are mults of 16
+        if ((StartingWidth % 16 != 0) && (StartingHeight % 16 != 0))
+        {
+            printf("\nError: Starting width and height are not multiples of 16\n");
+            fprintf(stderr, "\nError: Starting width and height are not multiples of 16\n");
+
+            printf("\nFailed\n");
+            fprintf(stderr, "\nFailed\n");
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 0;
+        }
+
+        if (StartingHeight % 16 != 0)
+        {
+            printf("\nError: Starting height is not a multiple of 16\n");
+            fprintf(stderr, "\nError: Starting height is not a multiple of 16\n");
+
+            printf("\nFailed\n");
+            fprintf(stderr, "\nFailed\n");
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 0;
+        }
+
+        if (StartingWidth % 16 != 0)
+        {
+            printf("\nError: Starting width is not a multiple of 16\n");
+            fprintf(stderr, "\nError: Starting width is not a multiple of 16\n");
+
+            printf("\nFailed\n");
+            fprintf(stderr, "\nFailed\n");
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 0;
+        }
+
+        int speed = 0;
+        int BitRate = atoi(argv[4]);
+
+        int Mode = atoi(argv[3]);
+
+        printf("Frame Size Test");
+        fprintf(stderr, "Frame Size Test");
+
+        VP8_CONFIG opt;
+        VP8DefaultParms(opt);
+
+        ///////////////////Use Custom Settings///////////////////
+        if (argc == 8)
+        {
+            FILE *InputCheck = fopen(argv[argc-1], "rb");
+
+            if (InputCheck == NULL)
+            {
+                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 0;
+            }
+
+            fclose(InputCheck);
+            opt = InPutSettings(argv[argc-1]);
+            BitRate = opt.TargetBandwidth;
+        }
+
+        /////////////////////////////////////////////////////////
+
+        opt.TargetBandwidth = BitRate;
+
+        //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
+        //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
+        //Test Type 3 = Mode 2 = Run Test Compressions
+
+        //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+        if (TestType == 3)
+        {
+            //This test requires no preperation before a Test Only Run
+        }
+        else
+        {
+
+            //Create Raw Crops
+            int x = 0;
+            int RawCropNum = 1;
+
+            while (x < 16)
+            {
+                printf("\nCroping to %i %i", StartingWidth, StartingHeight - x);
+                fprintf(stderr, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
+                CropRawIVF(input, (char *)RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
+                x++;
+                RawCropNum++;
+                //return 0;
+            }
+
+            x = 1;
+
+            while (x < 16)
+            {
+                printf("\nCroping to %i %i", StartingWidth - x, StartingHeight);
+                fprintf(stderr, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
+                CropRawIVF(input, (char *)RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
+                x++;
+                RawCropNum++;
+            }
+
+            x = 1;
+
+            while (x < 16)
+            {
+                printf("\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
+                fprintf(stderr, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
+                CropRawIVF(input, (char *)RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
+                x++;
+                RawCropNum++;
+            }
+
+            if (Mode == 0)
+            {
+                opt.Mode = MODE_REALTIME;
+            }
+
+            if (Mode == 1)
+            {
+                opt.Mode = MODE_GOODQUALITY;
+            }
+
+            if (Mode == 2)
+            {
+                opt.Mode = MODE_BESTQUALITY;
+            }
+
+            if (Mode == 4)
+            {
+                opt.Mode = MODE_SECONDPASS;
+            }
+
+            if (Mode == 5)
+            {
+                opt.Mode = MODE_SECONDPASS_BEST;
+            }
+
+            //Create Compressions
+            RawCropNum = 1;
+
+            while (RawCropNum < 47)
+            {
+                char FileNameChar[256];
+                char FileNameChar2[256];
+                snprintf(FileNameChar, 256, RawCrop[RawCropNum].c_str());
+                FileName(FileNameChar, FileNameChar2, 1);
+
+                printf("\nCompressing %s", FileNameChar2);
+                fprintf(stderr, "\nCompressing %s", FileNameChar2);
+
+                if (CompressIVFtoIVF((char *)RawCrop[RawCropNum].c_str(), (char *)EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+                {
+                    fclose(fp);
+                    string File1Str = File1;
+                    RecordTestComplete(MainDirString, File1Str, TestType);
+                    return 2;
+                }
+
+                RawCropNum++;
+            }
+        }
+
+        if (TestType == 2)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 10;
+        }
+
+        int PercentFail = 0;
+        int MinPSNRFail = 0;
+        double PSNRAr[46];
+
+        int RawCropNum = 1;
+
+        while (RawCropNum < 47)
+        {
+            PSNRAr[RawCropNum-1] = IVFPSNR((char *)RawCrop[RawCropNum].c_str(), (char *)EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+            RawCropNum++;
+        }
+
+        RawCropNum = 1;
+        double ThreePercentPSNR = (3 * PSNRAr[0]) / 100;
+
+        while (RawCropNum < 47)
+        {
+            char FileNameChar[256];
+            char FileNameChar2[256];
+            snprintf(FileNameChar, 256, EncCrop[RawCropNum].c_str());
+            FileName(FileNameChar, FileNameChar2, 0);
+
+            if (RawCropNum == 1)
+            {
+                printf("\n\n PSNR %s: %.2f", FileNameChar2, PSNRAr[RawCropNum-1]);
+            }
+            else if (PSNRAr[RawCropNum-1] <  PSNRAr[0] + ThreePercentPSNR && PSNRAr[RawCropNum-1] >  PSNRAr[0] - ThreePercentPSNR)
+            {
+                printf("\n PSNR %s: %.2f within 3%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                fprintf(stderr, "\n PSNR %s: %.2f within 3%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+            }
+            else
+            {
+                printf("\n PSNR %s: %.2f not within 3%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                fprintf(stderr, "\n PSNR %s: %.2f not within 3%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                PercentFail = 1;
+            }
+
+            RawCropNum++;
+        }
+
+        printf("\n\n");
+        fprintf(stderr, "\n\n");
+
+        RawCropNum = 1;
+
+        while (RawCropNum < 47)
+        {
+            char FileNameChar[256];
+            char FileNameChar2[256];
+            snprintf(FileNameChar, 256, EncCrop[RawCropNum].c_str());
+            FileName(FileNameChar, FileNameChar2, 0);
+
+            if (PSNRAr[RawCropNum-1] > 25.0)
+            {
+                printf("\n PSNR %s: %.2f > %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+                fprintf(stderr, "\n PSNR %s: %.2f > %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+            }
+            else
+            {
+                printf("\n PSNR %s: %.2f < %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+                fprintf(stderr, "\n PSNR %s: %.2f <%.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+                MinPSNRFail = 1;
+            }
+
+            RawCropNum++;
+        }
+
+
+        printf("\n");
+
+        printf("\n\nResults:\n\n");
+        fprintf(stderr, "\n\nResults:\n\n");
+
+        int fail = 0;
+
+        if (PercentFail == 0)
+        {
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "All PSNRs are within 3%% of %.2f - Passed", PSNRAr[0]);
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+        }
+        else
+        {
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "Not all PSNRs are within 3%% of %.2f - Failed", PSNRAr[0]);
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+            fail = 1;
+        }
+
+        if (MinPSNRFail == 0)
+        {
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "All PSNRs are greater than 25.0 - Passed");
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+        }
+        else
+        {
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "Not all PSNRs are greater than 25.0 - Failed");
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+            fail = 1;
+        }
+
+        if (fail == 0)
+        {
+            printf("\nPassed\n");
+            fprintf(stderr, "\nPassed\n");
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 1;
+        }
+        else
+        {
+            printf("\nFailed\n");
+            fprintf(stderr, "\nFailed\n");
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 0;
+        }
     }
     int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -13238,9 +14941,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char LagInFrames1FileName[255] = "";
         char LagInFrames2FileName[255] = "";
 
-        FileName(LagInFrames0, LagInFrames0FileName);
-        FileName(LagInFrames1, LagInFrames1FileName);
-        FileName(LagInFrames2, LagInFrames2FileName);
+        FileName(LagInFrames0, LagInFrames0FileName, 0);
+        FileName(LagInFrames1, LagInFrames1FileName, 0);
+        FileName(LagInFrames2, LagInFrames2FileName, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -14848,7 +16551,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             char OutputChar1[255];
             char MemLeakCheckTXTFileName[200];
-            FileName(MemLeakCheckTXT1, MemLeakCheckTXTFileName);
+            FileName(MemLeakCheckTXT1, MemLeakCheckTXTFileName, 0);
             snprintf(OutputChar1, 255, "File not found: %s - Failed", MemLeakCheckTXTFileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
@@ -14894,7 +16597,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             char OutputChar1[255];
             char MemLeakCheckTXTFileName[200];
-            FileName(MemLeakCheckTXT2, MemLeakCheckTXTFileName);
+            FileName(MemLeakCheckTXT2, MemLeakCheckTXTFileName, 0);
             snprintf(OutputChar1, 255, "File not found: %s - Failed", MemLeakCheckTXTFileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
@@ -15331,8 +17034,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char Min10FileName[255] = "";
         char Min60FileName[255] = "";
 
-        FileName(Min10QuantOutFile, Min10FileName);
-        FileName(Min60QuantOutFile, Min60FileName);
+        FileName(Min10QuantOutFile, Min10FileName, 0);
+        FileName(Min60QuantOutFile, Min60FileName, 0);
 
         int fail = 0;
 
@@ -15720,8 +17423,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char Time1FileName[255] = "";
         char Time2FileName[255] = "";
 
-        FileName(MultiThreaded14OutFile, Time1FileName);
-        FileName(MultiThreaded00OutFile, Time2FileName);
+        FileName(MultiThreaded14OutFile, Time1FileName, 0);
+        FileName(MultiThreaded00OutFile, Time2FileName, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -18149,9 +19852,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int VisibleFrameOFFCount = IVFDisplayVisibleFrames(PlayAlternate1, 1);
 
         char PlayAlternateOnFilename[255];
-        FileName(PlayAlternate2, PlayAlternateOnFilename);
+        FileName(PlayAlternate2, PlayAlternateOnFilename, 0);
         char PlayAlternateOffFilename[255];
-        FileName(PlayAlternate1, PlayAlternateOffFilename);
+        FileName(PlayAlternate1, PlayAlternateOffFilename, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -19584,9 +21287,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int PSNRToggle = PSNRSelect(input, DownWaterSamp90OutFile);
 
         char DownWaterSamp10Filename[255];
-        FileName(DownWaterSamp10OutFile, DownWaterSamp10Filename);
+        FileName(DownWaterSamp10OutFile, DownWaterSamp10Filename, 0);
         char DownWaterSamp90Filename[255];
-        FileName(DownWaterSamp90OutFile, DownWaterSamp90Filename);
+        FileName(DownWaterSamp90OutFile, DownWaterSamp90Filename, 0);
 
         int DispKeyFrames10int = IVFDisplayKeyFrames(DownWaterSamp10OutFile, 1);
         int DispResized10int = IVFDisplayResizedFrames(DownWaterSamp10OutFile, 1);
@@ -20560,6 +22263,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Test Vector Check";
+        int CurTestVector = 1;
+        int LastTestVector = 102;
 
         char *input = argv[2];
 
@@ -20663,395 +22368,959 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDirString = WorkingDir2;
         }
 
-        string SourceDir4(argv[2]);
-        string SourceDir5(argv[2]);
-        string SourceDir6(argv[2]);
-        string SourceDir7(argv[2]);
-        string SourceDir8(argv[2]);
-        string SourceDir9(argv[2]);
-        string SourceDir10(argv[2]);
-        string SourceDir11(argv[2]);
-        string SourceDir12(argv[2]);
-        string SourceDir13(argv[2]);
-        string SourceDir14(argv[2]);
-        string SourceDir15(argv[2]);
-        string SourceDir16(argv[2]);
-        string SourceDir17(argv[2]);
-        string SourceDir18(argv[2]);
-        string SourceDir19(argv[2]);
-        string SourceDir20(argv[2]);
-        string SourceDir21(argv[2]);
-        string SourceDir22(argv[2]);
-        string SourceDir23(argv[2]);
-        string SourceDir24(argv[2]);
-        string SourceDir25(argv[2]);
-        string SourceDir26(argv[2]);
-        string SourceDir27(argv[2]);
+        string TestVectorFolder = argv[2];
+        string TestVectorOutFolder = WorkingDirString.c_str();
+        //TestVectorOutFolder.erase(TestVectorOutFolder.end() - 1);
 
-        string TestVecText4(WorkingDirString.c_str());
-        string TestVecText5(WorkingDirString.c_str());
-        string TestVecText6(WorkingDirString.c_str());
-        string TestVecText7(WorkingDirString.c_str());
-        string TestVecText8(WorkingDirString.c_str());
-        string TestVecText9(WorkingDirString.c_str());
-        string TestVecText10(WorkingDirString.c_str());
-        string TestVecText11(WorkingDirString.c_str());
-        string TestVecText12(WorkingDirString.c_str());
-        string TestVecText13(WorkingDirString.c_str());
-        string TestVecText14(WorkingDirString.c_str());
-        string TestVecText15(WorkingDirString.c_str());
-        string TestVecText16(WorkingDirString.c_str());
-        string TestVecText17(WorkingDirString.c_str());
-        string TestVecText18(WorkingDirString.c_str());
-        string TestVecText19(WorkingDirString.c_str());
-        string TestVecText20(WorkingDirString.c_str());
-        string TestVecText21(WorkingDirString.c_str());
-        string TestVecText22(WorkingDirString.c_str());
-        string TestVecText23(WorkingDirString.c_str());
-        string TestVecText24(WorkingDirString.c_str());
-        string TestVecText25(WorkingDirString.c_str());
-        string TestVecText26(WorkingDirString.c_str());
-        string TestVecText27(WorkingDirString.c_str());
+        string TestVector[102];
 
-        string WorkingDir4(WorkingDirString.c_str());
-        string WorkingDir5(WorkingDirString.c_str());
-        string WorkingDir6(WorkingDirString.c_str());
-        string WorkingDir7(WorkingDirString.c_str());
-        string WorkingDir8(WorkingDirString.c_str());
-        string WorkingDir9(WorkingDirString.c_str());
-        string WorkingDir10(WorkingDirString.c_str());
-        string WorkingDir11(WorkingDirString.c_str());
-        string WorkingDir12(WorkingDirString.c_str());
-        string WorkingDir13(WorkingDirString.c_str());
-        string WorkingDir14(WorkingDirString.c_str());
-        string WorkingDir15(WorkingDirString.c_str());
-        string WorkingDir16(WorkingDirString.c_str());
-        string WorkingDir17(WorkingDirString.c_str());
-        string WorkingDir18(WorkingDirString.c_str());
-        string WorkingDir19(WorkingDirString.c_str());
-        string WorkingDir20(WorkingDirString.c_str());
-        string WorkingDir21(WorkingDirString.c_str());
-        string WorkingDir22(WorkingDirString.c_str());
-        string WorkingDir23(WorkingDirString.c_str());
-        string WorkingDir24(WorkingDirString.c_str());
-        string WorkingDir25(WorkingDirString.c_str());
-        string WorkingDir26(WorkingDirString.c_str());
-        string WorkingDir27(WorkingDirString.c_str());
+        TestVector[0] = TestVectorFolder;
+        TestVector[1] = TestVectorFolder;
+        TestVector[2] = TestVectorFolder;
+        TestVector[3] = TestVectorFolder;
+        TestVector[4] = TestVectorFolder;
+        TestVector[5] = TestVectorFolder;
+        TestVector[6] = TestVectorFolder;
+        TestVector[7] = TestVectorFolder;
+        TestVector[8] = TestVectorFolder;
+        TestVector[9] = TestVectorFolder;
+        TestVector[10] = TestVectorFolder;
+        TestVector[11] = TestVectorFolder;
+        TestVector[12] = TestVectorFolder;
+        TestVector[13] = TestVectorFolder;
+        TestVector[14] = TestVectorFolder;
+        TestVector[15] = TestVectorFolder;
+        TestVector[16] = TestVectorFolder;
+        TestVector[17] = TestVectorFolder;
+        TestVector[18] = TestVectorFolder;
+        TestVector[19] = TestVectorFolder;
+        TestVector[20] = TestVectorFolder;
+        TestVector[21] = TestVectorFolder;
+        TestVector[22] = TestVectorFolder;
+        TestVector[23] = TestVectorFolder;
+        TestVector[24] = TestVectorFolder;
+        TestVector[25] = TestVectorFolder;
+        TestVector[26] = TestVectorFolder;
+        TestVector[27] = TestVectorFolder;
+        TestVector[28] = TestVectorFolder;
+        TestVector[29] = TestVectorFolder;
+        TestVector[30] = TestVectorFolder;
+        TestVector[31] = TestVectorFolder;
+        TestVector[32] = TestVectorFolder;
+        TestVector[33] = TestVectorFolder;
+        TestVector[34] = TestVectorFolder;
+        TestVector[35] = TestVectorFolder;
+        TestVector[36] = TestVectorFolder;
+        TestVector[37] = TestVectorFolder;
+        TestVector[38] = TestVectorFolder;
+        TestVector[39] = TestVectorFolder;
+        TestVector[40] = TestVectorFolder;
+        TestVector[41] = TestVectorFolder;
+        TestVector[42] = TestVectorFolder;
+        TestVector[43] = TestVectorFolder;
+        TestVector[44] = TestVectorFolder;
+        TestVector[45] = TestVectorFolder;
+        TestVector[46] = TestVectorFolder;
+        TestVector[47] = TestVectorFolder;
+        TestVector[48] = TestVectorFolder;
+        TestVector[49] = TestVectorFolder;
+        TestVector[50] = TestVectorFolder;
+        TestVector[51] = TestVectorFolder;
+        TestVector[52] = TestVectorFolder;
+        TestVector[53] = TestVectorFolder;
+        TestVector[54] = TestVectorFolder;
+        TestVector[55] = TestVectorFolder;
+        TestVector[56] = TestVectorFolder;
+        TestVector[57] = TestVectorFolder;
+        TestVector[58] = TestVectorFolder;
+        TestVector[59] = TestVectorFolder;
+        TestVector[60] = TestVectorFolder;
+        TestVector[61] = TestVectorFolder;
+        TestVector[62] = TestVectorFolder;
+        TestVector[63] = TestVectorFolder;
+        TestVector[64] = TestVectorFolder;
+        TestVector[65] = TestVectorFolder;
+        TestVector[66] = TestVectorFolder;
+        TestVector[67] = TestVectorFolder;
+        TestVector[68] = TestVectorFolder;
+        TestVector[69] = TestVectorFolder;
+        TestVector[70] = TestVectorFolder;
+        TestVector[71] = TestVectorFolder;
+        TestVector[72] = TestVectorFolder;
+        TestVector[73] = TestVectorFolder;
+        TestVector[74] = TestVectorFolder;
+        TestVector[75] = TestVectorFolder;
+        TestVector[76] = TestVectorFolder;
+        TestVector[77] = TestVectorFolder;
+        TestVector[78] = TestVectorFolder;
+        TestVector[79] = TestVectorFolder;
+        TestVector[80] = TestVectorFolder;
+        TestVector[81] = TestVectorFolder;
+        TestVector[82] = TestVectorFolder;
+        TestVector[83] = TestVectorFolder;
+        TestVector[84] = TestVectorFolder;
+        TestVector[85] = TestVectorFolder;
+        TestVector[86] = TestVectorFolder;
+        TestVector[87] = TestVectorFolder;
+        TestVector[88] = TestVectorFolder;
+        TestVector[89] = TestVectorFolder;
+        TestVector[90] = TestVectorFolder;
+        TestVector[91] = TestVectorFolder;
+        TestVector[92] = TestVectorFolder;
+        TestVector[93] = TestVectorFolder;
+        TestVector[94] = TestVectorFolder;
+        TestVector[95] = TestVectorFolder;
+        TestVector[96] = TestVectorFolder;
+        TestVector[97] = TestVectorFolder;
+        TestVector[98] = TestVectorFolder;
+        TestVector[99] = TestVectorFolder;
+        TestVector[100] = TestVectorFolder;
+        TestVector[101] = TestVectorFolder;
 
-        string WorkingDir32(WorkingDirString.c_str());
-        string WorkingDir33(WorkingDirString.c_str());
-        string WorkingDir34(WorkingDirString.c_str());
-        string WorkingDir35(WorkingDirString.c_str());
-        string WorkingDir36(WorkingDirString.c_str());
-        string WorkingDir37(WorkingDirString.c_str());
-        string WorkingDir38(WorkingDirString.c_str());
-        string WorkingDir39(WorkingDirString.c_str());
-        string WorkingDir40(WorkingDirString.c_str());
-        string WorkingDir41(WorkingDirString.c_str());
-        string WorkingDir42(WorkingDirString.c_str());
-        string WorkingDir43(WorkingDirString.c_str());
-        string WorkingDir44(WorkingDirString.c_str());
-        string WorkingDir45(WorkingDirString.c_str());
-        string WorkingDir46(WorkingDirString.c_str());
-        string WorkingDir47(WorkingDirString.c_str());
-        string WorkingDir48(WorkingDirString.c_str());
-        string WorkingDir49(WorkingDirString.c_str());
-        string WorkingDir50(WorkingDirString.c_str());
-        string WorkingDir51(WorkingDirString.c_str());
-        string WorkingDir52(WorkingDirString.c_str());
-        string WorkingDir53(WorkingDirString.c_str());
-        string WorkingDir54(WorkingDirString.c_str());
-        string WorkingDir55(WorkingDirString.c_str());
+        string TestVector_Text[102];
 
-        SourceDir4.append(slashCharStr);
-        SourceDir4.append("vp80-00-comprehensive-001.ivf");
-        SourceDir5.append(slashCharStr);
-        SourceDir5.append("vp80-00-comprehensive-002.ivf");
-        SourceDir6.append(slashCharStr);
-        SourceDir6.append("vp80-00-comprehensive-003.ivf");
-        SourceDir7.append(slashCharStr);
-        SourceDir7.append("vp80-00-comprehensive-004.ivf");
-        SourceDir8.append(slashCharStr);
-        SourceDir8.append("vp80-00-comprehensive-005.ivf");
-        SourceDir9.append(slashCharStr);
-        SourceDir9.append("vp80-00-comprehensive-006.ivf");
-        SourceDir10.append(slashCharStr);
-        SourceDir10.append("vp80-00-comprehensive-007.ivf");
-        SourceDir11.append(slashCharStr);
-        SourceDir11.append("vp80-00-comprehensive-008.ivf");
-        SourceDir12.append(slashCharStr);
-        SourceDir12.append("vp80-00-comprehensive-009.ivf");
-        SourceDir13.append(slashCharStr);
-        SourceDir13.append("vp80-00-comprehensive-010.ivf");
-        SourceDir14.append(slashCharStr);
-        SourceDir14.append("vp80-00-comprehensive-011.ivf");
-        SourceDir15.append(slashCharStr);
-        SourceDir15.append("vp80-00-comprehensive-012.ivf");
-        SourceDir16.append(slashCharStr);
-        SourceDir16.append("vp80-00-comprehensive-013.ivf");
-        SourceDir17.append(slashCharStr);
-        SourceDir17.append("vp80-00-comprehensive-014.ivf");
-        SourceDir18.append(slashCharStr);
-        SourceDir18.append("vp80-00-comprehensive-015.ivf");
-        SourceDir19.append(slashCharStr);
-        SourceDir19.append("vp80-00-comprehensive-016.ivf");
-        SourceDir20.append(slashCharStr);
-        SourceDir20.append("vp80-00-comprehensive-017.ivf");
-        SourceDir21.append(slashCharStr);
+        TestVector_Text[0] = (TestVectorOutFolder.c_str());
+        TestVector_Text[1] = (TestVectorOutFolder.c_str());
+        TestVector_Text[2] = (TestVectorOutFolder.c_str());
+        TestVector_Text[3] = (TestVectorOutFolder.c_str());
+        TestVector_Text[4] = (TestVectorOutFolder.c_str());
+        TestVector_Text[5] = (TestVectorOutFolder.c_str());
+        TestVector_Text[6] = (TestVectorOutFolder.c_str());
+        TestVector_Text[7] = (TestVectorOutFolder.c_str());
+        TestVector_Text[8] = (TestVectorOutFolder.c_str());
+        TestVector_Text[9] = (TestVectorOutFolder.c_str());
+        TestVector_Text[10] = (TestVectorOutFolder.c_str());
+        TestVector_Text[11] = (TestVectorOutFolder.c_str());
+        TestVector_Text[12] = (TestVectorOutFolder.c_str());
+        TestVector_Text[13] = (TestVectorOutFolder.c_str());
+        TestVector_Text[14] = (TestVectorOutFolder.c_str());
+        TestVector_Text[15] = (TestVectorOutFolder.c_str());
+        TestVector_Text[16] = (TestVectorOutFolder.c_str());
+        TestVector_Text[17] = (TestVectorOutFolder.c_str());
+        TestVector_Text[18] = (TestVectorOutFolder.c_str());
+        TestVector_Text[19] = (TestVectorOutFolder.c_str());
+        TestVector_Text[20] = (TestVectorOutFolder.c_str());
+        TestVector_Text[21] = (TestVectorOutFolder.c_str());
+        TestVector_Text[22] = (TestVectorOutFolder.c_str());
+        TestVector_Text[23] = (TestVectorOutFolder.c_str());
+        TestVector_Text[24] = (TestVectorOutFolder.c_str());
+        TestVector_Text[25] = (TestVectorOutFolder.c_str());
+        TestVector_Text[26] = (TestVectorOutFolder.c_str());
+        TestVector_Text[27] = (TestVectorOutFolder.c_str());
+        TestVector_Text[28] = (TestVectorOutFolder.c_str());
+        TestVector_Text[29] = (TestVectorOutFolder.c_str());
+        TestVector_Text[30] = (TestVectorOutFolder.c_str());
+        TestVector_Text[31] = (TestVectorOutFolder.c_str());
+        TestVector_Text[32] = (TestVectorOutFolder.c_str());
+        TestVector_Text[33] = (TestVectorOutFolder.c_str());
+        TestVector_Text[34] = (TestVectorOutFolder.c_str());
+        TestVector_Text[35] = (TestVectorOutFolder.c_str());
+        TestVector_Text[36] = (TestVectorOutFolder.c_str());
+        TestVector_Text[37] = (TestVectorOutFolder.c_str());
+        TestVector_Text[38] = (TestVectorOutFolder.c_str());
+        TestVector_Text[39] = (TestVectorOutFolder.c_str());
+        TestVector_Text[40] = (TestVectorOutFolder.c_str());
+        TestVector_Text[41] = (TestVectorOutFolder.c_str());
+        TestVector_Text[42] = (TestVectorOutFolder.c_str());
+        TestVector_Text[43] = (TestVectorOutFolder.c_str());
+        TestVector_Text[44] = (TestVectorOutFolder.c_str());
+        TestVector_Text[45] = (TestVectorOutFolder.c_str());
+        TestVector_Text[46] = (TestVectorOutFolder.c_str());
+        TestVector_Text[47] = (TestVectorOutFolder.c_str());
+        TestVector_Text[48] = (TestVectorOutFolder.c_str());
+        TestVector_Text[49] = (TestVectorOutFolder.c_str());
+        TestVector_Text[50] = (TestVectorOutFolder.c_str());
+        TestVector_Text[51] = (TestVectorOutFolder.c_str());
+        TestVector_Text[52] = (TestVectorOutFolder.c_str());
+        TestVector_Text[53] = (TestVectorOutFolder.c_str());
+        TestVector_Text[54] = (TestVectorOutFolder.c_str());
+        TestVector_Text[55] = (TestVectorOutFolder.c_str());
+        TestVector_Text[56] = (TestVectorOutFolder.c_str());
+        TestVector_Text[57] = (TestVectorOutFolder.c_str());
+        TestVector_Text[58] = (TestVectorOutFolder.c_str());
+        TestVector_Text[59] = (TestVectorOutFolder.c_str());
+        TestVector_Text[60] = (TestVectorOutFolder.c_str());
+        TestVector_Text[61] = (TestVectorOutFolder.c_str());
+        TestVector_Text[62] = (TestVectorOutFolder.c_str());
+        TestVector_Text[63] = (TestVectorOutFolder.c_str());
+        TestVector_Text[64] = (TestVectorOutFolder.c_str());
+        TestVector_Text[65] = (TestVectorOutFolder.c_str());
+        TestVector_Text[66] = (TestVectorOutFolder.c_str());
+        TestVector_Text[67] = (TestVectorOutFolder.c_str());
+        TestVector_Text[68] = (TestVectorOutFolder.c_str());
+        TestVector_Text[69] = (TestVectorOutFolder.c_str());
+        TestVector_Text[70] = (TestVectorOutFolder.c_str());
+        TestVector_Text[71] = (TestVectorOutFolder.c_str());
+        TestVector_Text[72] = (TestVectorOutFolder.c_str());
+        TestVector_Text[73] = (TestVectorOutFolder.c_str());
+        TestVector_Text[74] = (TestVectorOutFolder.c_str());
+        TestVector_Text[75] = (TestVectorOutFolder.c_str());
+        TestVector_Text[76] = (TestVectorOutFolder.c_str());
+        TestVector_Text[77] = (TestVectorOutFolder.c_str());
+        TestVector_Text[78] = (TestVectorOutFolder.c_str());
+        TestVector_Text[79] = (TestVectorOutFolder.c_str());
+        TestVector_Text[80] = (TestVectorOutFolder.c_str());
+        TestVector_Text[81] = (TestVectorOutFolder.c_str());
+        TestVector_Text[82] = (TestVectorOutFolder.c_str());
+        TestVector_Text[83] = (TestVectorOutFolder.c_str());
+        TestVector_Text[84] = (TestVectorOutFolder.c_str());
+        TestVector_Text[85] = (TestVectorOutFolder.c_str());
+        TestVector_Text[86] = (TestVectorOutFolder.c_str());
+        TestVector_Text[87] = (TestVectorOutFolder.c_str());
+        TestVector_Text[88] = (TestVectorOutFolder.c_str());
+        TestVector_Text[89] = (TestVectorOutFolder.c_str());
+        TestVector_Text[90] = (TestVectorOutFolder.c_str());
+        TestVector_Text[91] = (TestVectorOutFolder.c_str());
+        TestVector_Text[92] = (TestVectorOutFolder.c_str());
+        TestVector_Text[93] = (TestVectorOutFolder.c_str());
+        TestVector_Text[94] = (TestVectorOutFolder.c_str());
+        TestVector_Text[95] = (TestVectorOutFolder.c_str());
+        TestVector_Text[96] = (TestVectorOutFolder.c_str());
+        TestVector_Text[97] = (TestVectorOutFolder.c_str());
+        TestVector_Text[98] = (TestVectorOutFolder.c_str());
+        TestVector_Text[99] = (TestVectorOutFolder.c_str());
+        TestVector_Text[100] = (TestVectorOutFolder.c_str());
+        TestVector_Text[101] = (TestVectorOutFolder.c_str());
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("vp80-00-comprehensive-001Dec.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("vp80-00-comprehensive-002Dec.ivf");
-        WorkingDir6.append(slashCharStr);
-        WorkingDir6.append("vp80-00-comprehensive-003Dec.ivf");
-        WorkingDir7.append(slashCharStr);
-        WorkingDir7.append("vp80-00-comprehensive-004Dec.ivf");
-        WorkingDir8.append(slashCharStr);
-        WorkingDir8.append("vp80-00-comprehensive-005Dec.ivf");
-        WorkingDir9.append(slashCharStr);
-        WorkingDir9.append("vp80-00-comprehensive-006Dec.ivf");
-        WorkingDir10.append(slashCharStr);
-        WorkingDir10.append("vp80-00-comprehensive-007Dec.ivf");
-        WorkingDir11.append(slashCharStr);
-        WorkingDir11.append("vp80-00-comprehensive-008Dec.ivf");
-        WorkingDir12.append(slashCharStr);
-        WorkingDir12.append("vp80-00-comprehensive-009Dec.ivf");
-        WorkingDir13.append(slashCharStr);
-        WorkingDir13.append("vp80-00-comprehensive-010Dec.ivf");
-        WorkingDir14.append(slashCharStr);
-        WorkingDir14.append("vp80-00-comprehensive-011Dec.ivf");
-        WorkingDir15.append(slashCharStr);
-        WorkingDir15.append("vp80-00-comprehensive-012Dec.ivf");
-        WorkingDir16.append(slashCharStr);
-        WorkingDir16.append("vp80-00-comprehensive-013Dec.ivf");
-        WorkingDir17.append(slashCharStr);
-        WorkingDir17.append("vp80-00-comprehensive-014Dec.ivf");
-        WorkingDir18.append(slashCharStr);
-        WorkingDir18.append("vp80-00-comprehensive-015Dec.ivf");
-        WorkingDir19.append(slashCharStr);
-        WorkingDir19.append("vp80-00-comprehensive-016Dec.ivf");
-        WorkingDir20.append(slashCharStr);
-        WorkingDir20.append("vp80-00-comprehensive-017Dec.ivf");
-        WorkingDir21.append(slashCharStr);
+        string TestVector_Raw[102];
 
-        WorkingDir32.append(slashCharStr);
-        WorkingDir32.append("vp80-00-comprehensive-001.raw");
-        WorkingDir33.append(slashCharStr);
-        WorkingDir33.append("vp80-00-comprehensive-002.raw");
-        WorkingDir34.append(slashCharStr);
-        WorkingDir34.append("vp80-00-comprehensive-003.raw");
-        WorkingDir35.append(slashCharStr);
-        WorkingDir35.append("vp80-00-comprehensive-004.raw");
-        WorkingDir36.append(slashCharStr);
-        WorkingDir36.append("vp80-00-comprehensive-005.raw");
-        WorkingDir37.append(slashCharStr);
-        WorkingDir37.append("vp80-00-comprehensive-006.raw");
-        WorkingDir38.append(slashCharStr);
-        WorkingDir38.append("vp80-00-comprehensive-007.raw");
-        WorkingDir39.append(slashCharStr);
-        WorkingDir39.append("vp80-00-comprehensive-008.raw");
-        WorkingDir40.append(slashCharStr);
-        WorkingDir40.append("vp80-00-comprehensive-009.raw");
-        WorkingDir41.append(slashCharStr);
-        WorkingDir41.append("vp80-00-comprehensive-010.raw");
-        WorkingDir42.append(slashCharStr);
-        WorkingDir42.append("vp80-00-comprehensive-011.raw");
-        WorkingDir43.append(slashCharStr);
-        WorkingDir43.append("vp80-00-comprehensive-012.raw");
-        WorkingDir44.append(slashCharStr);
-        WorkingDir44.append("vp80-00-comprehensive-013.raw");
-        WorkingDir45.append(slashCharStr);
-        WorkingDir45.append("vp80-00-comprehensive-014.raw");
-        WorkingDir46.append(slashCharStr);
-        WorkingDir46.append("vp80-00-comprehensive-015.raw");
-        WorkingDir47.append(slashCharStr);
-        WorkingDir47.append("vp80-00-comprehensive-016.raw");
-        WorkingDir48.append(slashCharStr);
-        WorkingDir48.append("vp80-00-comprehensive-017.raw");
-        WorkingDir49.append(slashCharStr);
+        TestVector_Raw[0] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[1] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[2] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[3] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[4] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[5] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[6] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[7] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[8] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[9] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[10] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[11] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[12] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[13] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[14] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[15] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[16] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[17] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[18] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[19] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[20] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[21] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[22] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[23] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[24] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[25] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[26] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[27] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[28] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[29] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[30] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[31] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[32] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[33] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[34] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[35] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[36] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[37] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[38] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[39] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[40] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[41] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[42] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[43] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[44] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[45] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[46] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[47] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[48] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[49] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[50] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[51] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[52] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[53] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[54] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[55] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[56] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[57] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[58] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[59] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[60] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[61] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[62] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[63] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[64] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[65] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[66] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[67] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[68] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[69] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[70] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[71] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[72] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[73] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[74] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[75] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[76] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[77] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[78] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[79] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[80] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[81] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[82] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[83] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[84] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[85] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[86] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[87] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[88] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[89] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[90] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[91] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[92] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[93] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[94] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[95] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[96] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[97] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[98] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[99] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[100] = (TestVectorOutFolder.c_str());
+        TestVector_Raw[101] = (TestVectorOutFolder.c_str());
 
-        TestVecText4.append(slashCharStr);
-        TestVecText4.append("vp80-00-comprehensive-001_MD5.txt");
-        TestVecText5.append(slashCharStr);
-        TestVecText5.append("vp80-00-comprehensive-002_MD5.txt");
-        TestVecText6.append(slashCharStr);
-        TestVecText6.append("vp80-00-comprehensive-003_MD5.txt");
-        TestVecText7.append(slashCharStr);
-        TestVecText7.append("vp80-00-comprehensive-004_MD5.txt");
-        TestVecText8.append(slashCharStr);
-        TestVecText8.append("vp80-00-comprehensive-005_MD5.txt");
-        TestVecText9.append(slashCharStr);
-        TestVecText9.append("vp80-00-comprehensive-006_MD5.txt");
-        TestVecText10.append(slashCharStr);
-        TestVecText10.append("vp80-00-comprehensive-007_MD5.txt");
-        TestVecText11.append(slashCharStr);
-        TestVecText11.append("vp80-00-comprehensive-008_MD5.txt");
-        TestVecText12.append(slashCharStr);
-        TestVecText12.append("vp80-00-comprehensive-009_MD5.txt");
-        TestVecText13.append(slashCharStr);
-        TestVecText13.append("vp80-00-comprehensive-010_MD5.txt");
-        TestVecText14.append(slashCharStr);
-        TestVecText14.append("vp80-00-comprehensive-011_MD5.txt");
-        TestVecText15.append(slashCharStr);
-        TestVecText15.append("vp80-00-comprehensive-012_MD5.txt");
-        TestVecText16.append(slashCharStr);
-        TestVecText16.append("vp80-00-comprehensive-013_MD5.txt");
-        TestVecText17.append(slashCharStr);
-        TestVecText17.append("vp80-00-comprehensive-014_MD5.txt");
-        TestVecText18.append(slashCharStr);
-        TestVecText18.append("vp80-00-comprehensive-015_MD5.txt");
-        TestVecText19.append(slashCharStr);
-        TestVecText19.append("vp80-00-comprehensive-016_MD5.txt");
-        TestVecText20.append(slashCharStr);
-        TestVecText20.append("vp80-00-comprehensive-017_MD5.txt");
-        TestVecText21.append(slashCharStr);
+        TestVector[1].append(slashCharStr);
+        TestVector[1].append("vp80-00-comprehensive-001.ivf");
+        TestVector[2].append(slashCharStr);
+        TestVector[2].append("vp80-00-comprehensive-002.ivf");
+        TestVector[3].append(slashCharStr);
+        TestVector[3].append("vp80-00-comprehensive-003.ivf");
+        TestVector[4].append(slashCharStr);
+        TestVector[4].append("vp80-00-comprehensive-004.ivf");
+        TestVector[5].append(slashCharStr);
+        TestVector[5].append("vp80-00-comprehensive-005.ivf");
+        TestVector[6].append(slashCharStr);
+        TestVector[6].append("vp80-00-comprehensive-006.ivf");
+        TestVector[7].append(slashCharStr);
+        TestVector[7].append("vp80-00-comprehensive-007.ivf");
+        TestVector[8].append(slashCharStr);
+        TestVector[8].append("vp80-00-comprehensive-008.ivf");
+        TestVector[9].append(slashCharStr);
+        TestVector[9].append("vp80-00-comprehensive-009.ivf");
+        TestVector[10].append(slashCharStr);
+        TestVector[10].append("vp80-00-comprehensive-010.ivf");
+        TestVector[11].append(slashCharStr);
+        TestVector[11].append("vp80-00-comprehensive-011.ivf");
+        TestVector[12].append(slashCharStr);
+        TestVector[12].append("vp80-00-comprehensive-012.ivf");
+        TestVector[13].append(slashCharStr);
+        TestVector[13].append("vp80-00-comprehensive-013.ivf");
+        TestVector[14].append(slashCharStr);
+        TestVector[14].append("vp80-00-comprehensive-014.ivf");
+        TestVector[15].append(slashCharStr);
+        TestVector[15].append("vp80-00-comprehensive-015.ivf");
+        TestVector[16].append(slashCharStr);
+        TestVector[16].append("vp80-00-comprehensive-016.ivf");
+        TestVector[17].append(slashCharStr);
+        TestVector[17].append("vp80-00-comprehensive-017.ivf");
+        TestVector[18].append(slashCharStr);
+        TestVector[18].append("vp80-01-intra-1400.ivf");
+        TestVector[19].append(slashCharStr);
+        TestVector[19].append("vp80-01-intra-1411.ivf");
+        TestVector[20].append(slashCharStr);
+        TestVector[20].append("vp80-01-intra-1416.ivf");
+        TestVector[21].append(slashCharStr);
+        TestVector[21].append("vp80-01-intra-1417.ivf");
+        TestVector[22].append(slashCharStr);
+        TestVector[22].append("vp80-02-inter-1402.ivf");
+        TestVector[23].append(slashCharStr);
+        TestVector[23].append("vp80-02-inter-1412.ivf");
+        TestVector[24].append(slashCharStr);
+        TestVector[24].append("vp80-02-inter-1418.ivf");
+        TestVector[25].append(slashCharStr);
+        TestVector[25].append("vp80-02-inter-1424.ivf");
+        TestVector[26].append(slashCharStr);
+        TestVector[26].append("vp80-03-segmentation-1401.ivf");
+        TestVector[27].append(slashCharStr);
+        TestVector[27].append("vp80-03-segmentation-1403.ivf");
+        TestVector[28].append(slashCharStr);
+        TestVector[28].append("vp80-03-segmentation-1407.ivf");
+        TestVector[29].append(slashCharStr);
+        TestVector[29].append("vp80-03-segmentation-1408.ivf");
+        TestVector[30].append(slashCharStr);
+        TestVector[30].append("vp80-03-segmentation-1409.ivf");
+        TestVector[31].append(slashCharStr);
+        TestVector[31].append("vp80-03-segmentation-1410.ivf");
+        TestVector[32].append(slashCharStr);
+        TestVector[32].append("vp80-03-segmentation-1413.ivf");
+        TestVector[33].append(slashCharStr);
+        TestVector[33].append("vp80-03-segmentation-1414.ivf");
+        TestVector[34].append(slashCharStr);
+        TestVector[34].append("vp80-03-segmentation-1415.ivf");
+        TestVector[35].append(slashCharStr);
+        TestVector[35].append("vp80-03-segmentation-1425.ivf");
+        TestVector[36].append(slashCharStr);
+        TestVector[36].append("vp80-03-segmentation-1426.ivf");
+        TestVector[37].append(slashCharStr);
+        TestVector[37].append("vp80-03-segmentation-1427.ivf");
+        TestVector[38].append(slashCharStr);
+        TestVector[38].append("vp80-03-segmentation-1432.ivf");
+        TestVector[39].append(slashCharStr);
+        TestVector[39].append("vp80-03-segmentation-1435.ivf");
+        TestVector[40].append(slashCharStr);
+        TestVector[40].append("vp80-03-segmentation-1436.ivf");
+        TestVector[41].append(slashCharStr);
+        TestVector[41].append("vp80-03-segmentation-1437.ivf");
+        TestVector[42].append(slashCharStr);
+        TestVector[42].append("vp80-03-segmentation-1441.ivf");
+        TestVector[43].append(slashCharStr);
+        TestVector[43].append("vp80-03-segmentation-1442.ivf");
+        TestVector[44].append(slashCharStr);
+        TestVector[44].append("vp80-04-partitions-1404.ivf");
+        TestVector[45].append(slashCharStr);
+        TestVector[45].append("vp80-04-partitions-1405.ivf");
+        TestVector[46].append(slashCharStr);
+        TestVector[46].append("vp80-04-partitions-1406.ivf");
+        TestVector[47].append(slashCharStr);
+        TestVector[47].append("vp80-05-sharpness-1428.ivf");
+        TestVector[48].append(slashCharStr);
+        TestVector[48].append("vp80-05-sharpness-1429.ivf");
+        TestVector[49].append(slashCharStr);
+        TestVector[49].append("vp80-05-sharpness-1430.ivf");
+        TestVector[50].append(slashCharStr);
+        TestVector[50].append("vp80-05-sharpness-1431.ivf");
+        TestVector[51].append(slashCharStr);
+        TestVector[51].append("vp80-05-sharpness-1433.ivf");
+        TestVector[52].append(slashCharStr);
+        TestVector[52].append("vp80-05-sharpness-1434.ivf");
+        TestVector[53].append(slashCharStr);
+        TestVector[53].append("vp80-05-sharpness-1438.ivf");
+        TestVector[54].append(slashCharStr);
+        TestVector[54].append("vp80-05-sharpness-1439.ivf");
+        TestVector[55].append(slashCharStr);
+        TestVector[55].append("vp80-05-sharpness-1440.ivf");
+        TestVector[56].append(slashCharStr);
+        TestVector[56].append("vp80-05-sharpness-1443.ivf");
+        TestVector[57].append(slashCharStr);
+        TestVector[57].append("vp80-06-cropping-001.ivf");
+        TestVector[58].append(slashCharStr);
+        TestVector[58].append("vp80-06-cropping-002.ivf");
+        TestVector[59].append(slashCharStr);
+        TestVector[59].append("vp80-06-cropping-003.ivf");
+        TestVector[60].append(slashCharStr);
+        TestVector[60].append("vp80-06-cropping-004.ivf");
+        TestVector[61].append(slashCharStr);
+        TestVector[61].append("vp80-06-cropping-005.ivf");
+        TestVector[62].append(slashCharStr);
+        TestVector[62].append("vp80-06-cropping-006.ivf");
+        TestVector[63].append(slashCharStr);
+        TestVector[63].append("vp80-06-cropping-007.ivf");
+        TestVector[64].append(slashCharStr);
+        TestVector[64].append("vp80-06-cropping-008.ivf");
+        TestVector[65].append(slashCharStr);
+        TestVector[65].append("vp80-06-cropping-009.ivf");
+        TestVector[66].append(slashCharStr);
+        TestVector[66].append("vp80-06-cropping-010.ivf");
+        TestVector[67].append(slashCharStr);
+        TestVector[67].append("vp80-06-cropping-011.ivf");
+        TestVector[68].append(slashCharStr);
+        TestVector[68].append("vp80-06-cropping-012.ivf");
+        TestVector[69].append(slashCharStr);
+        TestVector[69].append("vp80-06-cropping-013.ivf");
+        TestVector[70].append(slashCharStr);
+        TestVector[70].append("vp80-06-cropping-014.ivf");
+        TestVector[71].append(slashCharStr);
+        TestVector[71].append("vp80-06-cropping-015.ivf");
+        TestVector[72].append(slashCharStr);
+        TestVector[72].append("vp80-06-cropping-016.ivf");
+        TestVector[73].append(slashCharStr);
+        TestVector[73].append("vp80-06-cropping-017.ivf");
+        TestVector[74].append(slashCharStr);
+        TestVector[74].append("vp80-06-cropping-018.ivf");
+        TestVector[75].append(slashCharStr);
+        TestVector[75].append("vp80-06-cropping-019.ivf");
+        TestVector[76].append(slashCharStr);
+        TestVector[76].append("vp80-06-cropping-020.ivf");
+        TestVector[77].append(slashCharStr);
+        TestVector[77].append("vp80-06-cropping-021.ivf");
+        TestVector[78].append(slashCharStr);
+        TestVector[78].append("vp80-06-cropping-022.ivf");
+        TestVector[79].append(slashCharStr);
+        TestVector[79].append("vp80-06-cropping-023.ivf");
+        TestVector[80].append(slashCharStr);
+        TestVector[80].append("vp80-06-cropping-024.ivf");
+        TestVector[81].append(slashCharStr);
+        TestVector[81].append("vp80-06-cropping-025.ivf");
+        TestVector[82].append(slashCharStr);
+        TestVector[82].append("vp80-06-cropping-026.ivf");
+        TestVector[83].append(slashCharStr);
+        TestVector[83].append("vp80-06-cropping-027.ivf");
+        TestVector[84].append(slashCharStr);
+        TestVector[84].append("vp80-06-cropping-028.ivf");
+        TestVector[85].append(slashCharStr);
+        TestVector[85].append("vp80-06-cropping-029.ivf");
+        TestVector[86].append(slashCharStr);
+        TestVector[86].append("vp80-06-cropping-030.ivf");
+        TestVector[87].append(slashCharStr);
+        TestVector[87].append("vp80-06-cropping-031.ivf");
+        TestVector[88].append(slashCharStr);
+        TestVector[88].append("vp80-06-cropping-032.ivf");
+        TestVector[89].append(slashCharStr);
+        TestVector[89].append("vp80-06-cropping-033.ivf");
+        TestVector[90].append(slashCharStr);
+        TestVector[90].append("vp80-06-cropping-034.ivf");
+        TestVector[91].append(slashCharStr);
+        TestVector[91].append("vp80-06-cropping-035.ivf");
+        TestVector[92].append(slashCharStr);
+        TestVector[92].append("vp80-06-cropping-036.ivf");
+        TestVector[93].append(slashCharStr);
+        TestVector[93].append("vp80-06-cropping-037.ivf");
+        TestVector[94].append(slashCharStr);
+        TestVector[94].append("vp80-06-cropping-038.ivf");
+        TestVector[95].append(slashCharStr);
+        TestVector[95].append("vp80-06-cropping-039.ivf");
+        TestVector[96].append(slashCharStr);
+        TestVector[96].append("vp80-06-cropping-040.ivf");
+        TestVector[97].append(slashCharStr);
+        TestVector[97].append("vp80-06-cropping-041.ivf");
+        TestVector[98].append(slashCharStr);
+        TestVector[98].append("vp80-06-cropping-042.ivf");
+        TestVector[99].append(slashCharStr);
+        TestVector[99].append("vp80-06-cropping-043.ivf");
+        TestVector[100].append(slashCharStr);
+        TestVector[100].append("vp80-06-cropping-044.ivf");
+        TestVector[101].append(slashCharStr);
+        TestVector[101].append("vp80-06-cropping-045.ivf");
 
-        char TestVector1[255];
-        char TestVector2[255];
-        char TestVector3[255];
-        char TestVector4[255];
-        char TestVector5[255];
-        char TestVector6[255];
-        char TestVector7[255];
-        char TestVector8[255];
-        char TestVector9[255];
-        char TestVector10[255];
-        char TestVector11[255];
-        char TestVector12[255];
-        char TestVector13[255];
-        char TestVector14[255];
-        char TestVector15[255];
-        char TestVector16[255];
-        char TestVector17[255];
 
-        char TestVector1Dec[255];
-        char TestVector2Dec[255];
-        char TestVector3Dec[255];
-        char TestVector4Dec[255];
-        char TestVector5Dec[255];
-        char TestVector6Dec[255];
-        char TestVector7Dec[255];
-        char TestVector8Dec[255];
-        char TestVector9Dec[255];
-        char TestVector10Dec[255];
-        char TestVector11Dec[255];
-        char TestVector12Dec[255];
-        char TestVector13Dec[255];
-        char TestVector14Dec[255];
-        char TestVector15Dec[255];
-        char TestVector16Dec[255];
-        char TestVector17Dec[255];
+        TestVector_Raw[1].append(slashCharStr);
+        TestVector_Raw[1].append("vp80-00-comprehensive-001.raw");
+        TestVector_Raw[2].append(slashCharStr);
+        TestVector_Raw[2].append("vp80-00-comprehensive-002.raw");
+        TestVector_Raw[3].append(slashCharStr);
+        TestVector_Raw[3].append("vp80-00-comprehensive-003.raw");
+        TestVector_Raw[4].append(slashCharStr);
+        TestVector_Raw[4].append("vp80-00-comprehensive-004.raw");
+        TestVector_Raw[5].append(slashCharStr);
+        TestVector_Raw[5].append("vp80-00-comprehensive-005.raw");
+        TestVector_Raw[6].append(slashCharStr);
+        TestVector_Raw[6].append("vp80-00-comprehensive-006.raw");
+        TestVector_Raw[7].append(slashCharStr);
+        TestVector_Raw[7].append("vp80-00-comprehensive-007.raw");
+        TestVector_Raw[8].append(slashCharStr);
+        TestVector_Raw[8].append("vp80-00-comprehensive-008.raw");
+        TestVector_Raw[9].append(slashCharStr);
+        TestVector_Raw[9].append("vp80-00-comprehensive-009.raw");
+        TestVector_Raw[10].append(slashCharStr);
+        TestVector_Raw[10].append("vp80-00-comprehensive-010.raw");
+        TestVector_Raw[11].append(slashCharStr);
+        TestVector_Raw[11].append("vp80-00-comprehensive-011.raw");
+        TestVector_Raw[12].append(slashCharStr);
+        TestVector_Raw[12].append("vp80-00-comprehensive-012.raw");
+        TestVector_Raw[13].append(slashCharStr);
+        TestVector_Raw[13].append("vp80-00-comprehensive-013.raw");
+        TestVector_Raw[14].append(slashCharStr);
+        TestVector_Raw[14].append("vp80-00-comprehensive-014.raw");
+        TestVector_Raw[15].append(slashCharStr);
+        TestVector_Raw[15].append("vp80-00-comprehensive-015.raw");
+        TestVector_Raw[16].append(slashCharStr);
+        TestVector_Raw[16].append("vp80-00-comprehensive-016.raw");
+        TestVector_Raw[17].append(slashCharStr);
+        TestVector_Raw[17].append("vp80-00-comprehensive-017.raw");
+        TestVector_Raw[18].append(slashCharStr);
+        TestVector_Raw[18].append("vp80-01-intra-1400.raw");
+        TestVector_Raw[19].append(slashCharStr);
+        TestVector_Raw[19].append("vp80-01-intra-1411.raw");
+        TestVector_Raw[20].append(slashCharStr);
+        TestVector_Raw[20].append("vp80-01-intra-1416.raw");
+        TestVector_Raw[21].append(slashCharStr);
+        TestVector_Raw[21].append("vp80-01-intra-1417.raw");
+        TestVector_Raw[22].append(slashCharStr);
+        TestVector_Raw[22].append("vp80-02-inter-1402.raw");
+        TestVector_Raw[23].append(slashCharStr);
+        TestVector_Raw[23].append("vp80-02-inter-1412.raw");
+        TestVector_Raw[24].append(slashCharStr);
+        TestVector_Raw[24].append("vp80-02-inter-1418.raw");
+        TestVector_Raw[25].append(slashCharStr);
+        TestVector_Raw[25].append("vp80-02-inter-1424.raw");
+        TestVector_Raw[26].append(slashCharStr);
+        TestVector_Raw[26].append("vp80-03-segmentation-1401.raw");
+        TestVector_Raw[27].append(slashCharStr);
+        TestVector_Raw[27].append("vp80-03-segmentation-1403.raw");
+        TestVector_Raw[28].append(slashCharStr);
+        TestVector_Raw[28].append("vp80-03-segmentation-1407.raw");
+        TestVector_Raw[29].append(slashCharStr);
+        TestVector_Raw[29].append("vp80-03-segmentation-1408.raw");
+        TestVector_Raw[30].append(slashCharStr);
+        TestVector_Raw[30].append("vp80-03-segmentation-1409.raw");
+        TestVector_Raw[31].append(slashCharStr);
+        TestVector_Raw[31].append("vp80-03-segmentation-1410.raw");
+        TestVector_Raw[32].append(slashCharStr);
+        TestVector_Raw[32].append("vp80-03-segmentation-1413.raw");
+        TestVector_Raw[33].append(slashCharStr);
+        TestVector_Raw[33].append("vp80-03-segmentation-1414.raw");
+        TestVector_Raw[34].append(slashCharStr);
+        TestVector_Raw[34].append("vp80-03-segmentation-1415.raw");
+        TestVector_Raw[35].append(slashCharStr);
+        TestVector_Raw[35].append("vp80-03-segmentation-1425.raw");
+        TestVector_Raw[36].append(slashCharStr);
+        TestVector_Raw[36].append("vp80-03-segmentation-1426.raw");
+        TestVector_Raw[37].append(slashCharStr);
+        TestVector_Raw[37].append("vp80-03-segmentation-1427.raw");
+        TestVector_Raw[38].append(slashCharStr);
+        TestVector_Raw[38].append("vp80-03-segmentation-1432.raw");
+        TestVector_Raw[39].append(slashCharStr);
+        TestVector_Raw[39].append("vp80-03-segmentation-1435.raw");
+        TestVector_Raw[40].append(slashCharStr);
+        TestVector_Raw[40].append("vp80-03-segmentation-1436.raw");
+        TestVector_Raw[41].append(slashCharStr);
+        TestVector_Raw[41].append("vp80-03-segmentation-1437.raw");
+        TestVector_Raw[42].append(slashCharStr);
+        TestVector_Raw[42].append("vp80-03-segmentation-1441.raw");
+        TestVector_Raw[43].append(slashCharStr);
+        TestVector_Raw[43].append("vp80-03-segmentation-1442.raw");
+        TestVector_Raw[44].append(slashCharStr);
+        TestVector_Raw[44].append("vp80-04-partitions-1404.raw");
+        TestVector_Raw[45].append(slashCharStr);
+        TestVector_Raw[45].append("vp80-04-partitions-1405.raw");
+        TestVector_Raw[46].append(slashCharStr);
+        TestVector_Raw[46].append("vp80-04-partitions-1406.raw");
+        TestVector_Raw[47].append(slashCharStr);
+        TestVector_Raw[47].append("vp80-05-sharpness-1428.raw");
+        TestVector_Raw[48].append(slashCharStr);
+        TestVector_Raw[48].append("vp80-05-sharpness-1429.raw");
+        TestVector_Raw[49].append(slashCharStr);
+        TestVector_Raw[49].append("vp80-05-sharpness-1430.raw");
+        TestVector_Raw[50].append(slashCharStr);
+        TestVector_Raw[50].append("vp80-05-sharpness-1431.raw");
+        TestVector_Raw[51].append(slashCharStr);
+        TestVector_Raw[51].append("vp80-05-sharpness-1433.raw");
+        TestVector_Raw[52].append(slashCharStr);
+        TestVector_Raw[52].append("vp80-05-sharpness-1434.raw");
+        TestVector_Raw[53].append(slashCharStr);
+        TestVector_Raw[53].append("vp80-05-sharpness-1438.raw");
+        TestVector_Raw[54].append(slashCharStr);
+        TestVector_Raw[54].append("vp80-05-sharpness-1439.raw");
+        TestVector_Raw[55].append(slashCharStr);
+        TestVector_Raw[55].append("vp80-05-sharpness-1440.raw");
+        TestVector_Raw[56].append(slashCharStr);
+        TestVector_Raw[56].append("vp80-05-sharpness-1443.raw");
+        TestVector_Raw[57].append(slashCharStr);
+        TestVector_Raw[57].append("vp80-06-cropping-001.raw");
+        TestVector_Raw[58].append(slashCharStr);
+        TestVector_Raw[58].append("vp80-06-cropping-002.raw");
+        TestVector_Raw[59].append(slashCharStr);
+        TestVector_Raw[59].append("vp80-06-cropping-003.raw");
+        TestVector_Raw[60].append(slashCharStr);
+        TestVector_Raw[60].append("vp80-06-cropping-004.raw");
+        TestVector_Raw[61].append(slashCharStr);
+        TestVector_Raw[61].append("vp80-06-cropping-005.raw");
+        TestVector_Raw[62].append(slashCharStr);
+        TestVector_Raw[62].append("vp80-06-cropping-006.raw");
+        TestVector_Raw[63].append(slashCharStr);
+        TestVector_Raw[63].append("vp80-06-cropping-007.raw");
+        TestVector_Raw[64].append(slashCharStr);
+        TestVector_Raw[64].append("vp80-06-cropping-008.raw");
+        TestVector_Raw[65].append(slashCharStr);
+        TestVector_Raw[65].append("vp80-06-cropping-009.raw");
+        TestVector_Raw[66].append(slashCharStr);
+        TestVector_Raw[66].append("vp80-06-cropping-010.raw");
+        TestVector_Raw[67].append(slashCharStr);
+        TestVector_Raw[67].append("vp80-06-cropping-011.raw");
+        TestVector_Raw[68].append(slashCharStr);
+        TestVector_Raw[68].append("vp80-06-cropping-012.raw");
+        TestVector_Raw[69].append(slashCharStr);
+        TestVector_Raw[69].append("vp80-06-cropping-013.raw");
+        TestVector_Raw[70].append(slashCharStr);
+        TestVector_Raw[70].append("vp80-06-cropping-014.raw");
+        TestVector_Raw[71].append(slashCharStr);
+        TestVector_Raw[71].append("vp80-06-cropping-015.raw");
+        TestVector_Raw[72].append(slashCharStr);
+        TestVector_Raw[72].append("vp80-06-cropping-016.raw");
+        TestVector_Raw[73].append(slashCharStr);
+        TestVector_Raw[73].append("vp80-06-cropping-017.raw");
+        TestVector_Raw[74].append(slashCharStr);
+        TestVector_Raw[74].append("vp80-06-cropping-018.raw");
+        TestVector_Raw[75].append(slashCharStr);
+        TestVector_Raw[75].append("vp80-06-cropping-019.raw");
+        TestVector_Raw[76].append(slashCharStr);
+        TestVector_Raw[76].append("vp80-06-cropping-020.raw");
+        TestVector_Raw[77].append(slashCharStr);
+        TestVector_Raw[77].append("vp80-06-cropping-021.raw");
+        TestVector_Raw[78].append(slashCharStr);
+        TestVector_Raw[78].append("vp80-06-cropping-022.raw");
+        TestVector_Raw[79].append(slashCharStr);
+        TestVector_Raw[79].append("vp80-06-cropping-023.raw");
+        TestVector_Raw[80].append(slashCharStr);
+        TestVector_Raw[80].append("vp80-06-cropping-024.raw");
+        TestVector_Raw[81].append(slashCharStr);
+        TestVector_Raw[81].append("vp80-06-cropping-025.raw");
+        TestVector_Raw[82].append(slashCharStr);
+        TestVector_Raw[82].append("vp80-06-cropping-026.raw");
+        TestVector_Raw[83].append(slashCharStr);
+        TestVector_Raw[83].append("vp80-06-cropping-027.raw");
+        TestVector_Raw[84].append(slashCharStr);
+        TestVector_Raw[84].append("vp80-06-cropping-028.raw");
+        TestVector_Raw[85].append(slashCharStr);
+        TestVector_Raw[85].append("vp80-06-cropping-029.raw");
+        TestVector_Raw[86].append(slashCharStr);
+        TestVector_Raw[86].append("vp80-06-cropping-030.raw");
+        TestVector_Raw[87].append(slashCharStr);
+        TestVector_Raw[87].append("vp80-06-cropping-031.raw");
+        TestVector_Raw[88].append(slashCharStr);
+        TestVector_Raw[88].append("vp80-06-cropping-032.raw");
+        TestVector_Raw[89].append(slashCharStr);
+        TestVector_Raw[89].append("vp80-06-cropping-033.raw");
+        TestVector_Raw[90].append(slashCharStr);
+        TestVector_Raw[90].append("vp80-06-cropping-034.raw");
+        TestVector_Raw[91].append(slashCharStr);
+        TestVector_Raw[91].append("vp80-06-cropping-035.raw");
+        TestVector_Raw[92].append(slashCharStr);
+        TestVector_Raw[92].append("vp80-06-cropping-036.raw");
+        TestVector_Raw[93].append(slashCharStr);
+        TestVector_Raw[93].append("vp80-06-cropping-037.raw");
+        TestVector_Raw[94].append(slashCharStr);
+        TestVector_Raw[94].append("vp80-06-cropping-038.raw");
+        TestVector_Raw[95].append(slashCharStr);
+        TestVector_Raw[95].append("vp80-06-cropping-039.raw");
+        TestVector_Raw[96].append(slashCharStr);
+        TestVector_Raw[96].append("vp80-06-cropping-040.raw");
+        TestVector_Raw[97].append(slashCharStr);
+        TestVector_Raw[97].append("vp80-06-cropping-041.raw");
+        TestVector_Raw[98].append(slashCharStr);
+        TestVector_Raw[98].append("vp80-06-cropping-042.raw");
+        TestVector_Raw[99].append(slashCharStr);
+        TestVector_Raw[99].append("vp80-06-cropping-043.raw");
+        TestVector_Raw[100].append(slashCharStr);
+        TestVector_Raw[100].append("vp80-06-cropping-044.raw");
+        TestVector_Raw[101].append(slashCharStr);
+        TestVector_Raw[101].append("vp80-06-cropping-045.raw");
 
-        char TestVector1Raw[255];
-        char TestVector2Raw[255];
-        char TestVector3Raw[255];
-        char TestVector4Raw[255];
-        char TestVector5Raw[255];
-        char TestVector6Raw[255];
-        char TestVector7Raw[255];
-        char TestVector8Raw[255];
-        char TestVector9Raw[255];
-        char TestVector10Raw[255];
-        char TestVector11Raw[255];
-        char TestVector12Raw[255];
-        char TestVector13Raw[255];
-        char TestVector14Raw[255];
-        char TestVector15Raw[255];
-        char TestVector16Raw[255];
-        char TestVector17Raw[255];
 
-        char TestVector_Text1[255];
-        char TestVector_Text2[255];
-        char TestVector_Text3[255];
-        char TestVector_Text4[255];
-        char TestVector_Text5[255];
-        char TestVector_Text6[255];
-        char TestVector_Text7[255];
-        char TestVector_Text8[255];
-        char TestVector_Text9[255];
-        char TestVector_Text10[255];
-        char TestVector_Text11[255];
-        char TestVector_Text12[255];
-        char TestVector_Text13[255];
-        char TestVector_Text14[255];
-        char TestVector_Text15[255];
-        char TestVector_Text16[255];
-        char TestVector_Text17[255];
+        TestVector_Text[1].append(slashCharStr);
+        TestVector_Text[1].append("vp80-00-comprehensive-001_MD5.txt");
+        TestVector_Text[2].append(slashCharStr);
+        TestVector_Text[2].append("vp80-00-comprehensive-002_MD5.txt");
+        TestVector_Text[3].append(slashCharStr);
+        TestVector_Text[3].append("vp80-00-comprehensive-003_MD5.txt");
+        TestVector_Text[4].append(slashCharStr);
+        TestVector_Text[4].append("vp80-00-comprehensive-004_MD5.txt");
+        TestVector_Text[5].append(slashCharStr);
+        TestVector_Text[5].append("vp80-00-comprehensive-005_MD5.txt");
+        TestVector_Text[6].append(slashCharStr);
+        TestVector_Text[6].append("vp80-00-comprehensive-006_MD5.txt");
+        TestVector_Text[7].append(slashCharStr);
+        TestVector_Text[7].append("vp80-00-comprehensive-007_MD5.txt");
+        TestVector_Text[8].append(slashCharStr);
+        TestVector_Text[8].append("vp80-00-comprehensive-008_MD5.txt");
+        TestVector_Text[9].append(slashCharStr);
+        TestVector_Text[9].append("vp80-00-comprehensive-009_MD5.txt");
+        TestVector_Text[10].append(slashCharStr);
+        TestVector_Text[10].append("vp80-00-comprehensive-010_MD5.txt");
+        TestVector_Text[11].append(slashCharStr);
+        TestVector_Text[11].append("vp80-00-comprehensive-011_MD5.txt");
+        TestVector_Text[12].append(slashCharStr);
+        TestVector_Text[12].append("vp80-00-comprehensive-012_MD5.txt");
+        TestVector_Text[13].append(slashCharStr);
+        TestVector_Text[13].append("vp80-00-comprehensive-013_MD5.txt");
+        TestVector_Text[14].append(slashCharStr);
+        TestVector_Text[14].append("vp80-00-comprehensive-014_MD5.txt");
+        TestVector_Text[15].append(slashCharStr);
+        TestVector_Text[15].append("vp80-00-comprehensive-015_MD5.txt");
+        TestVector_Text[16].append(slashCharStr);
+        TestVector_Text[16].append("vp80-00-comprehensive-016_MD5.txt");
+        TestVector_Text[17].append(slashCharStr);
+        TestVector_Text[17].append("vp80-00-comprehensive-017_MD5.txt");
+        TestVector_Text[18].append(slashCharStr);
+        TestVector_Text[18].append("vp80-01-intra-1400_MD5.txt");
+        TestVector_Text[19].append(slashCharStr);
+        TestVector_Text[19].append("vp80-01-intra-1411_MD5.txt");
+        TestVector_Text[20].append(slashCharStr);
+        TestVector_Text[20].append("vp80-01-intra-1416_MD5.txt");
+        TestVector_Text[21].append(slashCharStr);
+        TestVector_Text[21].append("vp80-01-intra-1417_MD5.txt");
+        TestVector_Text[22].append(slashCharStr);
+        TestVector_Text[22].append("vp80-02-inter-1402_MD5.txt");
+        TestVector_Text[23].append(slashCharStr);
+        TestVector_Text[23].append("vp80-02-inter-1412_MD5.txt");
+        TestVector_Text[24].append(slashCharStr);
+        TestVector_Text[24].append("vp80-02-inter-1418_MD5.txt");
+        TestVector_Text[25].append(slashCharStr);
+        TestVector_Text[25].append("vp80-02-inter-1424_MD5.txt");
+        TestVector_Text[26].append(slashCharStr);
+        TestVector_Text[26].append("vp80-03-segmentation-1401_MD5.txt");
+        TestVector_Text[27].append(slashCharStr);
+        TestVector_Text[27].append("vp80-03-segmentation-1403_MD5.txt");
+        TestVector_Text[28].append(slashCharStr);
+        TestVector_Text[28].append("vp80-03-segmentation-1407_MD5.txt");
+        TestVector_Text[29].append(slashCharStr);
+        TestVector_Text[29].append("vp80-03-segmentation-1408_MD5.txt");
+        TestVector_Text[30].append(slashCharStr);
+        TestVector_Text[30].append("vp80-03-segmentation-1409_MD5.txt");
+        TestVector_Text[31].append(slashCharStr);
+        TestVector_Text[31].append("vp80-03-segmentation-1410_MD5.txt");
+        TestVector_Text[32].append(slashCharStr);
+        TestVector_Text[32].append("vp80-03-segmentation-1413_MD5.txt");
+        TestVector_Text[33].append(slashCharStr);
+        TestVector_Text[33].append("vp80-03-segmentation-1414_MD5.txt");
+        TestVector_Text[34].append(slashCharStr);
+        TestVector_Text[34].append("vp80-03-segmentation-1415_MD5.txt");
+        TestVector_Text[35].append(slashCharStr);
+        TestVector_Text[35].append("vp80-03-segmentation-1425_MD5.txt");
+        TestVector_Text[36].append(slashCharStr);
+        TestVector_Text[36].append("vp80-03-segmentation-1426_MD5.txt");
+        TestVector_Text[37].append(slashCharStr);
+        TestVector_Text[37].append("vp80-03-segmentation-1427_MD5.txt");
+        TestVector_Text[38].append(slashCharStr);
+        TestVector_Text[38].append("vp80-03-segmentation-1432_MD5.txt");
+        TestVector_Text[39].append(slashCharStr);
+        TestVector_Text[39].append("vp80-03-segmentation-1435_MD5.txt");
+        TestVector_Text[40].append(slashCharStr);
+        TestVector_Text[40].append("vp80-03-segmentation-1436_MD5.txt");
+        TestVector_Text[41].append(slashCharStr);
+        TestVector_Text[41].append("vp80-03-segmentation-1437_MD5.txt");
+        TestVector_Text[42].append(slashCharStr);
+        TestVector_Text[42].append("vp80-03-segmentation-1441_MD5.txt");
+        TestVector_Text[43].append(slashCharStr);
+        TestVector_Text[43].append("vp80-03-segmentation-1442_MD5.txt");
+        TestVector_Text[44].append(slashCharStr);
+        TestVector_Text[44].append("vp80-04-partitions-1404_MD5.txt");
+        TestVector_Text[45].append(slashCharStr);
+        TestVector_Text[45].append("vp80-04-partitions-1405_MD5.txt");
+        TestVector_Text[46].append(slashCharStr);
+        TestVector_Text[46].append("vp80-04-partitions-1406_MD5.txt");
+        TestVector_Text[47].append(slashCharStr);
+        TestVector_Text[47].append("vp80-05-sharpness-1428_MD5.txt");
+        TestVector_Text[48].append(slashCharStr);
+        TestVector_Text[48].append("vp80-05-sharpness-1429_MD5.txt");
+        TestVector_Text[49].append(slashCharStr);
+        TestVector_Text[49].append("vp80-05-sharpness-1430_MD5.txt");
+        TestVector_Text[50].append(slashCharStr);
+        TestVector_Text[50].append("vp80-05-sharpness-1431_MD5.txt");
+        TestVector_Text[51].append(slashCharStr);
+        TestVector_Text[51].append("vp80-05-sharpness-1433_MD5.txt");
+        TestVector_Text[52].append(slashCharStr);
+        TestVector_Text[52].append("vp80-05-sharpness-1434_MD5.txt");
+        TestVector_Text[53].append(slashCharStr);
+        TestVector_Text[53].append("vp80-05-sharpness-1438_MD5.txt");
+        TestVector_Text[54].append(slashCharStr);
+        TestVector_Text[54].append("vp80-05-sharpness-1439_MD5.txt");
+        TestVector_Text[55].append(slashCharStr);
+        TestVector_Text[55].append("vp80-05-sharpness-1440_MD5.txt");
+        TestVector_Text[56].append(slashCharStr);
+        TestVector_Text[56].append("vp80-05-sharpness-1443_MD5.txt");
+        TestVector_Text[57].append(slashCharStr);
+        TestVector_Text[57].append("vp80-06-cropping-001_MD5.txt");
+        TestVector_Text[58].append(slashCharStr);
+        TestVector_Text[58].append("vp80-06-cropping-002_MD5.txt");
+        TestVector_Text[59].append(slashCharStr);
+        TestVector_Text[59].append("vp80-06-cropping-003_MD5.txt");
+        TestVector_Text[60].append(slashCharStr);
+        TestVector_Text[60].append("vp80-06-cropping-004_MD5.txt");
+        TestVector_Text[61].append(slashCharStr);
+        TestVector_Text[61].append("vp80-06-cropping-005_MD5.txt");
+        TestVector_Text[62].append(slashCharStr);
+        TestVector_Text[62].append("vp80-06-cropping-006_MD5.txt");
+        TestVector_Text[63].append(slashCharStr);
+        TestVector_Text[63].append("vp80-06-cropping-007_MD5.txt");
+        TestVector_Text[64].append(slashCharStr);
+        TestVector_Text[64].append("vp80-06-cropping-008_MD5.txt");
+        TestVector_Text[65].append(slashCharStr);
+        TestVector_Text[65].append("vp80-06-cropping-009_MD5.txt");
+        TestVector_Text[66].append(slashCharStr);
+        TestVector_Text[66].append("vp80-06-cropping-010_MD5.txt");
+        TestVector_Text[67].append(slashCharStr);
+        TestVector_Text[67].append("vp80-06-cropping-011_MD5.txt");
+        TestVector_Text[68].append(slashCharStr);
+        TestVector_Text[68].append("vp80-06-cropping-012_MD5.txt");
+        TestVector_Text[69].append(slashCharStr);
+        TestVector_Text[69].append("vp80-06-cropping-013_MD5.txt");
+        TestVector_Text[70].append(slashCharStr);
+        TestVector_Text[70].append("vp80-06-cropping-014_MD5.txt");
+        TestVector_Text[71].append(slashCharStr);
+        TestVector_Text[71].append("vp80-06-cropping-015_MD5.txt");
+        TestVector_Text[72].append(slashCharStr);
+        TestVector_Text[72].append("vp80-06-cropping-016_MD5.txt");
+        TestVector_Text[73].append(slashCharStr);
+        TestVector_Text[73].append("vp80-06-cropping-017_MD5.txt");
+        TestVector_Text[74].append(slashCharStr);
+        TestVector_Text[74].append("vp80-06-cropping-018_MD5.txt");
+        TestVector_Text[75].append(slashCharStr);
+        TestVector_Text[75].append("vp80-06-cropping-019_MD5.txt");
+        TestVector_Text[76].append(slashCharStr);
+        TestVector_Text[76].append("vp80-06-cropping-020_MD5.txt");
+        TestVector_Text[77].append(slashCharStr);
+        TestVector_Text[77].append("vp80-06-cropping-021_MD5.txt");
+        TestVector_Text[78].append(slashCharStr);
+        TestVector_Text[78].append("vp80-06-cropping-022_MD5.txt");
+        TestVector_Text[79].append(slashCharStr);
+        TestVector_Text[79].append("vp80-06-cropping-023_MD5.txt");
+        TestVector_Text[80].append(slashCharStr);
+        TestVector_Text[80].append("vp80-06-cropping-024_MD5.txt");
+        TestVector_Text[81].append(slashCharStr);
+        TestVector_Text[81].append("vp80-06-cropping-025_MD5.txt");
+        TestVector_Text[82].append(slashCharStr);
+        TestVector_Text[82].append("vp80-06-cropping-026_MD5.txt");
+        TestVector_Text[83].append(slashCharStr);
+        TestVector_Text[83].append("vp80-06-cropping-027_MD5.txt");
+        TestVector_Text[84].append(slashCharStr);
+        TestVector_Text[84].append("vp80-06-cropping-028_MD5.txt");
+        TestVector_Text[85].append(slashCharStr);
+        TestVector_Text[85].append("vp80-06-cropping-029_MD5.txt");
+        TestVector_Text[86].append(slashCharStr);
+        TestVector_Text[86].append("vp80-06-cropping-030_MD5.txt");
+        TestVector_Text[87].append(slashCharStr);
+        TestVector_Text[87].append("vp80-06-cropping-031_MD5.txt");
+        TestVector_Text[88].append(slashCharStr);
+        TestVector_Text[88].append("vp80-06-cropping-032_MD5.txt");
+        TestVector_Text[89].append(slashCharStr);
+        TestVector_Text[89].append("vp80-06-cropping-033_MD5.txt");
+        TestVector_Text[90].append(slashCharStr);
+        TestVector_Text[90].append("vp80-06-cropping-034_MD5.txt");
+        TestVector_Text[91].append(slashCharStr);
+        TestVector_Text[91].append("vp80-06-cropping-035_MD5.txt");
+        TestVector_Text[92].append(slashCharStr);
+        TestVector_Text[92].append("vp80-06-cropping-036_MD5.txt");
+        TestVector_Text[93].append(slashCharStr);
+        TestVector_Text[93].append("vp80-06-cropping-037_MD5.txt");
+        TestVector_Text[94].append(slashCharStr);
+        TestVector_Text[94].append("vp80-06-cropping-038_MD5.txt");
+        TestVector_Text[95].append(slashCharStr);
+        TestVector_Text[95].append("vp80-06-cropping-039_MD5.txt");
+        TestVector_Text[96].append(slashCharStr);
+        TestVector_Text[96].append("vp80-06-cropping-040_MD5.txt");
+        TestVector_Text[97].append(slashCharStr);
+        TestVector_Text[97].append("vp80-06-cropping-041_MD5.txt");
+        TestVector_Text[98].append(slashCharStr);
+        TestVector_Text[98].append("vp80-06-cropping-042_MD5.txt");
+        TestVector_Text[99].append(slashCharStr);
+        TestVector_Text[99].append("vp80-06-cropping-043_MD5.txt");
+        TestVector_Text[100].append(slashCharStr);
+        TestVector_Text[100].append("vp80-06-cropping-044_MD5.txt");
+        TestVector_Text[101].append(slashCharStr);
+        TestVector_Text[101].append("vp80-06-cropping-045_MD5.txt");
 
-        snprintf(TestVector1, 255, "%s", SourceDir4.c_str());
-        snprintf(TestVector2, 255, "%s", SourceDir5.c_str());
-        snprintf(TestVector3, 255, "%s", SourceDir6.c_str());
-        snprintf(TestVector4, 255, "%s", SourceDir7.c_str());
-        snprintf(TestVector5, 255, "%s", SourceDir8.c_str());
-        snprintf(TestVector6, 255, "%s", SourceDir9.c_str());
-        snprintf(TestVector7, 255, "%s", SourceDir10.c_str());
-        snprintf(TestVector8, 255, "%s", SourceDir11.c_str());
-        snprintf(TestVector9, 255, "%s", SourceDir12.c_str());
-        snprintf(TestVector10, 255, "%s", SourceDir13.c_str());
-        snprintf(TestVector11, 255, "%s", SourceDir14.c_str());
-        snprintf(TestVector12, 255, "%s", SourceDir15.c_str());
-        snprintf(TestVector13, 255, "%s", SourceDir16.c_str());
-        snprintf(TestVector14, 255, "%s", SourceDir17.c_str());
-        snprintf(TestVector15, 255, "%s", SourceDir18.c_str());
-        snprintf(TestVector16, 255, "%s", SourceDir19.c_str());
-        snprintf(TestVector17, 255, "%s", SourceDir20.c_str());
+        ////print out the names above
+        //CurTestVector = 1;
+        //while(CurTestVector < LastTestVector)
+        //{
+        //  //printf("\n%s",TestVector[CurTestVector].c_str());
+        //  CurTestVector++;
+        //}
 
-        snprintf(TestVector1Dec, 255, "%s", WorkingDir4.c_str());
-        snprintf(TestVector2Dec, 255, "%s", WorkingDir5.c_str());
-        snprintf(TestVector3Dec, 255, "%s", WorkingDir6.c_str());
-        snprintf(TestVector4Dec, 255, "%s", WorkingDir7.c_str());
-        snprintf(TestVector5Dec, 255, "%s", WorkingDir8.c_str());
-        snprintf(TestVector6Dec, 255, "%s", WorkingDir9.c_str());
-        snprintf(TestVector7Dec, 255, "%s", WorkingDir10.c_str());
-        snprintf(TestVector8Dec, 255, "%s", WorkingDir11.c_str());
-        snprintf(TestVector9Dec, 255, "%s", WorkingDir12.c_str());
-        snprintf(TestVector10Dec, 255, "%s", WorkingDir13.c_str());
-        snprintf(TestVector11Dec, 255, "%s", WorkingDir14.c_str());
-        snprintf(TestVector12Dec, 255, "%s", WorkingDir15.c_str());
-        snprintf(TestVector13Dec, 255, "%s", WorkingDir16.c_str());
-        snprintf(TestVector14Dec, 255, "%s", WorkingDir17.c_str());
-        snprintf(TestVector15Dec, 255, "%s", WorkingDir18.c_str());
-        snprintf(TestVector16Dec, 255, "%s", WorkingDir19.c_str());
-        snprintf(TestVector17Dec, 255, "%s", WorkingDir20.c_str());
+        //CurTestVector = 1;
+        //while(CurTestVector < LastTestVector)
+        //{
+        //  //printf("\n%s",TestVector_Raw[CurTestVector].c_str());
+        //  CurTestVector++;
+        //}
 
-        snprintf(TestVector1Raw, 255, "%s", WorkingDir32.c_str());
-        snprintf(TestVector2Raw, 255, "%s", WorkingDir33.c_str());
-        snprintf(TestVector3Raw, 255, "%s", WorkingDir34.c_str());
-        snprintf(TestVector4Raw, 255, "%s", WorkingDir35.c_str());
-        snprintf(TestVector5Raw, 255, "%s", WorkingDir36.c_str());
-        snprintf(TestVector6Raw, 255, "%s", WorkingDir37.c_str());
-        snprintf(TestVector7Raw, 255, "%s", WorkingDir38.c_str());
-        snprintf(TestVector8Raw, 255, "%s", WorkingDir39.c_str());
-        snprintf(TestVector9Raw, 255, "%s", WorkingDir40.c_str());
-        snprintf(TestVector10Raw, 255, "%s", WorkingDir41.c_str());
-        snprintf(TestVector11Raw, 255, "%s", WorkingDir42.c_str());
-        snprintf(TestVector12Raw, 255, "%s", WorkingDir43.c_str());
-        snprintf(TestVector13Raw, 255, "%s", WorkingDir44.c_str());
-        snprintf(TestVector14Raw, 255, "%s", WorkingDir45.c_str());
-        snprintf(TestVector15Raw, 255, "%s", WorkingDir46.c_str());
-        snprintf(TestVector16Raw, 255, "%s", WorkingDir47.c_str());
-        snprintf(TestVector17Raw, 255, "%s", WorkingDir48.c_str());
+        //CurTestVector = 1;
+        //while(CurTestVector < LastTestVector)
+        //{
+        //  //printf("\n%s",TestVector_Text[CurTestVector].c_str());
+        //  CurTestVector++;
+        //}
 
-        snprintf(TestVector_Text1, 255, "%s", TestVecText4.c_str());
-        snprintf(TestVector_Text2, 255, "%s", TestVecText5.c_str());
-        snprintf(TestVector_Text3, 255, "%s", TestVecText6.c_str());
-        snprintf(TestVector_Text4, 255, "%s", TestVecText7.c_str());
-        snprintf(TestVector_Text5, 255, "%s", TestVecText8.c_str());
-        snprintf(TestVector_Text6, 255, "%s", TestVecText9.c_str());
-        snprintf(TestVector_Text7, 255, "%s", TestVecText10.c_str());
-        snprintf(TestVector_Text8, 255, "%s", TestVecText11.c_str());
-        snprintf(TestVector_Text9, 255, "%s", TestVecText12.c_str());
-        snprintf(TestVector_Text10, 255, "%s", TestVecText13.c_str());
-        snprintf(TestVector_Text11, 255, "%s", TestVecText14.c_str());
-        snprintf(TestVector_Text12, 255, "%s", TestVecText15.c_str());
-        snprintf(TestVector_Text13, 255, "%s", TestVecText16.c_str());
-        snprintf(TestVector_Text14, 255, "%s", TestVecText17.c_str());
-        snprintf(TestVector_Text15, 255, "%s", TestVecText18.c_str());
-        snprintf(TestVector_Text16, 255, "%s", TestVecText19.c_str());
-        snprintf(TestVector_Text17, 255, "%s", TestVecText20.c_str());
-
-        string MD5Key[24];
+        string MD5Key[101];
 
         //New Test Vectors 2.0.0 MD5 Checksums
         MD5Key[0].assign("fad126074e1bd5363d43b9d1cadddb71");
@@ -21071,6 +23340,90 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         MD5Key[14].assign("23b9cc582e344726e76cda092b416bcf");
         MD5Key[15].assign("55e889d22f99718cf6936d55f8ade12b");
         MD5Key[16].assign("95a68ffb228d1d8c6ee54f16a10fb9eb");
+        MD5Key[17].assign("53b08ac91398a5dd948434e41b31b47e");  /*vp80-01-intra-1400.raw*/
+        MD5Key[18].assign("8fa1762329e65c97245393a933cd0f00");  /*vp80-01-intra-1411.raw*/
+        MD5Key[19].assign("cffd1299fa7a0330264cb411d9482bb0");  /*vp80-01-intra-1416.raw*/
+        MD5Key[20].assign("0e6c13a78a203d95fe12d206a432f642");  /*vp80-01-intra-1417.raw*/
+        MD5Key[21].assign("184ee9c5cd6e32f2fe7b2f5a463d37b3");  /*vp80-02-inter-1402.raw*/
+        MD5Key[22].assign("6928dc8e7886914b0ba5825518e54bd7");  /*vp80-02-inter-1412.raw*/
+        MD5Key[23].assign("45302aa645ff5c139fe580ac30482245");  /*vp80-02-inter-1418.raw*/
+        MD5Key[24].assign("4816cb607488b930ceadeb2cdb034c49");  /*vp80-02-inter-1424.raw*/
+        MD5Key[25].assign("f7acb74e99528568714129e2994ceca5");  /*vp80-03-segmentation-1401.raw*/
+        MD5Key[26].assign("4e651f545a21863e97547185f93dbd7b");  /*vp80-03-segmentation-1403.raw*/
+        MD5Key[27].assign("fa76612d673cbfcb8ec58eda08400388");  /*vp80-03-segmentation-1407.raw*/
+        MD5Key[28].assign("886f15167bbdd5ea6c099e8b74452c7c");  /*vp80-03-segmentation-1408.raw*/
+        MD5Key[29].assign("780cc4d060eecec04c2746c98065ec6f");  /*vp80-03-segmentation-1409.raw*/
+        MD5Key[30].assign("f3468778cd11642f095b4e5dcb19fbda");  /*vp80-03-segmentation-1410.raw*/
+        MD5Key[31].assign("6a0564ccc1a655d929390a72ff558db9");  /*vp80-03-segmentation-1413.raw*/
+        MD5Key[32].assign("0f887b4bc1bb0aae670c50c9b7f0142f");  /*vp80-03-segmentation-1414.raw*/
+        MD5Key[33].assign("8b83e0a3ca0da9e8d7f47a06dc08e18b");  /*vp80-03-segmentation-1415.raw*/
+        MD5Key[34].assign("96ffacf0c3eae59b58252be24a60e9b2");  /*vp80-03-segmentation-1425.raw*/
+        MD5Key[35].assign("ab1062e4e45e6802d80313da52028af2");  /*vp80-03-segmentation-1426.raw*/
+        MD5Key[36].assign("761c3d8e23314516592a1f876865c22a");  /*vp80-03-segmentation-1427.raw*/
+        MD5Key[37].assign("c5a7776fdfe8908fcc64e58c317c8cf3");  /*vp80-03-segmentation-1432.raw*/
+        MD5Key[38].assign("36a77df963d0d8c3bc098827be403bdb");  /*vp80-03-segmentation-1435.raw*/
+        MD5Key[39].assign("bfd17a557ee1ba347c755a18ce5a64a6");  /*vp80-03-segmentation-1436.raw*/
+        MD5Key[40].assign("876e7c782ee4dd23866498b794856fd1");  /*vp80-03-segmentation-1437.raw*/
+        MD5Key[41].assign("d7a1e99d0ec80ac2b95cc7277bf4db3c");  /*vp80-03-segmentation-1441.raw*/
+        MD5Key[42].assign("1a23409897f51ad2920d5ddb999eac71");  /*vp80-03-segmentation-1442.raw*/
+        MD5Key[43].assign("27837df047de5b5ae2dc8f2e9d318cb3");  /*vp80-04-partitions-1404.raw*/
+        MD5Key[44].assign("12fb1d187ee70738265d8f3a0a70ef26");  /*vp80-04-partitions-1405.raw*/
+        MD5Key[45].assign("2da53f93a051dcb8290f884a55272dd9");  /*vp80-04-partitions-1406.raw*/
+        MD5Key[46].assign("14b537dae40c6013079fd3d25cb16e7a");  /*vp80-05-sharpness-1428.raw*/
+        MD5Key[47].assign("e836423126f8a7de2c6c9777e0a84214");  /*vp80-05-sharpness-1429.raw*/
+        MD5Key[48].assign("51503f7a786032d2cbed84ed11430ff3");  /*vp80-05-sharpness-1430.raw*/
+        MD5Key[49].assign("7f7f534b2d6e28002e119ed269c8f282");  /*vp80-05-sharpness-1431.raw*/
+        MD5Key[50].assign("a2ff07ccbb019f48e020507ca5f5ee90");  /*vp80-05-sharpness-1433.raw*/
+        MD5Key[51].assign("110a65e1729fc54e0a25dbf9cc367ccf");  /*vp80-05-sharpness-1434.raw*/
+        MD5Key[52].assign("cc468ac5ce042c85f04d62a8e09c97ff");  /*vp80-05-sharpness-1438.raw*/
+        MD5Key[53].assign("ebfc41ade751e96220e74491bffda736");  /*vp80-05-sharpness-1439.raw*/
+        MD5Key[54].assign("903a267bcc69ad5f8d886db6478d997a");  /*vp80-05-sharpness-1440.raw*/
+        MD5Key[55].assign("3c5c3c66cad414d6b79de77e977f115b");  /*vp80-05-sharpness-1443.raw*/
+        MD5Key[56].assign("9f8e73e634493ab3e56aad63321f8e11");  /*vp80-06-cropping-001.raw*/
+        MD5Key[57].assign("aef0cfaf282d07cd7ac360fb4f7a1f6b");  /*vp80-06-cropping-002.raw*/
+        MD5Key[58].assign("609e845f662e3455daf57c68b859a4f6");  /*vp80-06-cropping-003.raw*/
+        MD5Key[59].assign("c37c1c11bf3f5adcfa62a39b35cf3d07");  /*vp80-06-cropping-004.raw*/
+        MD5Key[60].assign("82641ff61fe1d6bb7ba8accfa5b399ad");  /*vp80-06-cropping-005.raw*/
+        MD5Key[61].assign("b8fa425191154685444164157bfbf53d");  /*vp80-06-cropping-006.raw*/
+        MD5Key[62].assign("ee19c6b8947c3521b810b66ae080368a");  /*vp80-06-cropping-007.raw*/
+        MD5Key[63].assign("1d99ee17a5ba002dbb185a00ea517427");  /*vp80-06-cropping-008.raw*/
+        MD5Key[64].assign("017e2e8066397e6f4fdf9522cc2d3428");  /*vp80-06-cropping-009.raw*/
+        MD5Key[65].assign("2e66d33de5a4550b168524b569799858");  /*vp80-06-cropping-010.raw*/
+        MD5Key[66].assign("3afdb776a6260ab3a3722d5ed0a51ea6");  /*vp80-06-cropping-011.raw*/
+        MD5Key[67].assign("ee370c45dd534c994e83454962f05e4a");  /*vp80-06-cropping-012.raw*/
+        MD5Key[68].assign("de95d19355f402c2ce9a75562ef45a88");  /*vp80-06-cropping-013.raw*/
+        MD5Key[69].assign("79d1c72208f9a40a770a065b48d7c9b6");  /*vp80-06-cropping-014.raw*/
+        MD5Key[70].assign("eac91c3f679b57fb0d41965a58515c58");  /*vp80-06-cropping-015.raw*/
+        MD5Key[71].assign("1ade1e1d87d045a3df99c1c4431c3770");  /*vp80-06-cropping-016.raw*/
+        MD5Key[72].assign("a92acb085407d9f38d6b86a25dcd31b6");  /*vp80-06-cropping-017.raw*/
+        MD5Key[73].assign("633ab126a1f74babedef090b7a9f79f3");  /*vp80-06-cropping-018.raw*/
+        MD5Key[74].assign("336b86b25f320eb63eb0476ab84229cd");  /*vp80-06-cropping-019.raw*/
+        MD5Key[75].assign("d4bf42f6671d06dbda405c105984f4a6");  /*vp80-06-cropping-020.raw*/
+        MD5Key[76].assign("a857394e5ad0b52ffcffd61d0be108ed");  /*vp80-06-cropping-021.raw*/
+        MD5Key[77].assign("2f985c573f020c5bac55d48fa5e24489");  /*vp80-06-cropping-022.raw*/
+        MD5Key[78].assign("8a56b8c71b671503018727917fcdb145");  /*vp80-06-cropping-023.raw*/
+        MD5Key[79].assign("2369693e71dcb565327b49c31fdc513e");  /*vp80-06-cropping-024.raw*/
+        MD5Key[80].assign("9be67b80d50f157bbae891e2a465909e");  /*vp80-06-cropping-025.raw*/
+        MD5Key[81].assign("20ed8b808ad8f3be05a9c80e0328f0e5");  /*vp80-06-cropping-026.raw*/
+        MD5Key[82].assign("d4178440ab559d89df2d036c6606cda6");  /*vp80-06-cropping-027.raw*/
+        MD5Key[83].assign("c65520731d9caae321de26fa41e77bf2");  /*vp80-06-cropping-028.raw*/
+        MD5Key[84].assign("097c3f56e8917306fa5f1a60e63c95b9");  /*vp80-06-cropping-029.raw*/
+        MD5Key[85].assign("f52c5fc26a9439aa8226d533bcdada98");  /*vp80-06-cropping-030.raw*/
+        MD5Key[86].assign("5df73922d1ed6680e4d2ac35d86b061a");  /*vp80-06-cropping-031.raw*/
+        MD5Key[87].assign("9d9a31179bfb0daf3a884625e7f1c116");  /*vp80-06-cropping-032.raw*/
+        MD5Key[88].assign("bbafe2fdf7b927ff0b403f91646ed80b");  /*vp80-06-cropping-033.raw*/
+        MD5Key[89].assign("b2d27a6f08e37e1a26bfd31e229684d8");  /*vp80-06-cropping-034.raw*/
+        MD5Key[90].assign("dd5138a4831475284d285a6e821387d6");  /*vp80-06-cropping-035.raw*/
+        MD5Key[91].assign("8fd17178a7d163a8eb9b439d9fa42797");  /*vp80-06-cropping-036.raw*/
+        MD5Key[92].assign("0e7960d1d71e1aa5a97d22f152c10a8f");  /*vp80-06-cropping-037.raw*/
+        MD5Key[93].assign("84b6553703153de46aefb09bc479bca5");  /*vp80-06-cropping-038.raw*/
+        MD5Key[94].assign("971f42513a93493c4c7bce8177a07da4");  /*vp80-06-cropping-039.raw*/
+        MD5Key[95].assign("98e3e9253baa99f5bf40316eb54d9e36");  /*vp80-06-cropping-040.raw*/
+        MD5Key[96].assign("1e57bb03f8872d07d64a3177d2a31ceb");  /*vp80-06-cropping-041.raw*/
+        MD5Key[97].assign("1a2360cc18b06016777fb9614ac4de61");  /*vp80-06-cropping-042.raw*/
+        MD5Key[98].assign("18924afc1f5acb60d3933184ff1f93c8");  /*vp80-06-cropping-043.raw*/
+        MD5Key[99].assign("62f5de3feb4346072c94d643d6946fb4");  /*vp80-06-cropping-044.raw*/
+        MD5Key[100].assign("8319b0f71a76787f894f2927b7923897");  /*vp80-06-cropping-045.raw*/
 
         int printKeyTracker = 0;
         int DeleteTV = 0; // if = 1 will delete decompressed tesetvectors if 0 will not
@@ -21121,91 +23474,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\n\nTestVector 1\n");
-            fprintf(stderr, "\n\nTestVector 1\n");
+            CurTestVector = 1;
 
-            DecompressIVFtoRaw(TestVector1, TestVector1Raw);
-            ////////////////////////////////////////////////////
-            printf("\n\nTestVector 2\n");
-            fprintf(stderr, "\n\nTestVector 2\n");
+            while (CurTestVector < LastTestVector)
+            {
+                printf("\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
+                fprintf(stderr, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
-            DecompressIVFtoRaw(TestVector2, TestVector2Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 3\n");
-            fprintf(stderr, "\n\nTestVector 3\n");
-
-            DecompressIVFtoRaw(TestVector3, TestVector3Raw);
-            ////////////////////////////////////////////////////
-            printf("\n\nTestVector 4\n");
-            fprintf(stderr, "\n\nTestVector 4\n");
-
-            DecompressIVFtoRaw(TestVector4, TestVector4Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 5\n");
-            fprintf(stderr, "\n\nTestVector 5\n");
-
-            DecompressIVFtoRaw(TestVector5, TestVector5Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 6\n");
-            fprintf(stderr, "\n\nTestVector 6\n");
-
-            DecompressIVFtoRaw(TestVector6, TestVector6Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 7\n");
-            fprintf(stderr, "\n\nTestVector 7\n");
-
-            DecompressIVFtoRaw(TestVector7, TestVector7Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 8\n");
-            fprintf(stderr, "\n\nTestVector 8\n");
-
-            DecompressIVFtoRaw(TestVector8, TestVector8Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 9\n");
-            fprintf(stderr, "\n\nTestVector 9\n");
-
-            DecompressIVFtoRaw(TestVector9, TestVector9Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 10\n");
-            fprintf(stderr, "\n\nTestVector 10\n");
-
-            DecompressIVFtoRaw(TestVector10, TestVector10Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 11\n");
-            fprintf(stderr, "\n\nTestVector 11\n");
-
-            DecompressIVFtoRaw(TestVector11, TestVector11Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 12\n");
-            fprintf(stderr, "\n\nTestVector 12\n");
-
-            DecompressIVFtoRaw(TestVector12, TestVector12Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 13\n");
-            fprintf(stderr, "\n\nTestVector 13\n");
-
-            DecompressIVFtoRaw(TestVector13, TestVector13Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 14\n");
-            fprintf(stderr, "\n\nTestVector 14\n");
-
-            DecompressIVFtoRaw(TestVector14, TestVector14Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 15\n");
-            fprintf(stderr, "\n\nTestVector 15\n");
-
-            DecompressIVFtoRaw(TestVector15, TestVector15Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 16\n");
-            fprintf(stderr, "\n\nTestVector 16\n");
-
-            DecompressIVFtoRaw(TestVector16, TestVector16Raw);
-            ///////////////////////////////////////////////////////
-            printf("\n\nTestVector 17\n");
-            fprintf(stderr, "\n\nTestVector 17\n");
-
-            DecompressIVFtoRaw(TestVector17, TestVector17Raw);
-            /////////////////////////////////////////////////////////
+                DecompressIVFtoRaw((char *)TestVector[CurTestVector].c_str(), (char *)TestVector_Raw[CurTestVector].c_str());
+                CurTestVector++;
+            }
         }
 
         vector<int> FailVector;
@@ -21218,246 +23496,34 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        int u = 1;
+        //Compute MD5 CheckSums
+        CurTestVector = 1;
 
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        u++;
-        DecComputeMD5(TestVector1, TestVector_Text1);
+        while (CurTestVector < LastTestVector)
+        {
+            printf("\n\nComputing MD5 for TestVector %i", CurTestVector);
+            fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", CurTestVector);
 
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector2, TestVector_Text2);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector3, TestVector_Text3);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector4, TestVector_Text4);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector5, TestVector_Text5);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector6, TestVector_Text6);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector7, TestVector_Text7);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector8, TestVector_Text8);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector9, TestVector_Text9);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector10, TestVector_Text10);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector11, TestVector_Text11);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector12, TestVector_Text12);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector13, TestVector_Text13);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector14, TestVector_Text14);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector15, TestVector_Text15);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector16, TestVector_Text16);
-
-        fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", u);
-        printf("\n\nComputing MD5 for TestVector %i", u);
-        u++;
-        DecComputeMD5(TestVector17, TestVector_Text17);
+            DecComputeMD5((char *)TestVector[CurTestVector].c_str(), (char *)TestVector_Text[CurTestVector].c_str());
+            CurTestVector++;
+        }
 
         if (DeleteTV == 1)
         {
-            if (remove(TestVector1Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector1Raw);
-            }
+            CurTestVector = 1;
 
-            if (remove(TestVector2Raw) == 0)
+            while (CurTestVector < LastTestVector)
             {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector2Raw);
-            }
+                if (remove((char *)TestVector_Raw[CurTestVector].c_str()) == 0)
+                {
+                    /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
+                }
+                else
+                {
+                    printf("Error: %s Not Deleted\n\n", (char *)TestVector_Raw[CurTestVector].c_str());
+                }
 
-            if (remove(TestVector3Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector3Raw);
-            }
-
-            if (remove(TestVector4Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector4Raw);
-            }
-
-            if (remove(TestVector5Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector5Raw);
-            }
-
-            if (remove(TestVector6Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector6Raw);
-            }
-
-            if (remove(TestVector7Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector7Raw);
-            }
-
-            if (remove(TestVector8Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector8Raw);
-            }
-
-            if (remove(TestVector9Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector9Raw);
-            }
-
-            if (remove(TestVector10Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector10Raw);
-            }
-
-            if (remove(TestVector11Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector11Raw);
-            }
-
-            if (remove(TestVector12Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector12Raw);
-            }
-
-            if (remove(TestVector13Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector13Raw);
-            }
-
-            if (remove(TestVector14Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector14Raw);
-            }
-
-            if (remove(TestVector15Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector15Raw);
-            }
-
-            if (remove(TestVector16Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector16Raw);
-            }
-
-            if (remove(TestVector17Raw) == 0)
-            {
-                /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
-            }
-            else
-            {
-                printf("Error: %s Not Deleted\n\n", TestVector17Raw);
+                CurTestVector++;
             }
         }
 
@@ -21465,94 +23531,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int x = 0;
         int Fail = 0;
 
-        while (x < 17)
+        CurTestVector = 1;
+
+        while (CurTestVector < LastTestVector)
         {
             char TextInput[255];
-
-            if (x == 0)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text1);
-            }
-
-            if (x == 1)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text2);
-            }
-
-            if (x == 2)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text3);
-            }
-
-            if (x == 3)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text4);
-            }
-
-            if (x == 4)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text5);
-            }
-
-            if (x == 5)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text6);
-            }
-
-            if (x == 6)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text7);
-            }
-
-            if (x == 7)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text8);
-            }
-
-            if (x == 8)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text9);
-            }
-
-            if (x == 9)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text10);
-            }
-
-            if (x == 10)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text11);
-            }
-
-            if (x == 11)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text12);
-            }
-
-            if (x == 12)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text13);
-            }
-
-            if (x == 13)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text14);
-            }
-
-            if (x == 14)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text15);
-            }
-
-            if (x == 15)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text16);
-            }
-
-            if (x == 16)
-            {
-                snprintf(TextInput, 255, "%s", TestVector_Text17);
-            }
+            char TestVectFileName[255];
+            snprintf(TextInput, 255, "%s", TestVector_Text[CurTestVector].c_str());
+            FileName((char *)TestVector[CurTestVector].c_str(), TestVectFileName, 1);
 
             char buffer[1024];
             fstream infile;
@@ -21565,17 +23551,37 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (MD5Key[x].compare(buffer) == 0)
             {
-                printf("     VP8 Test Vector %i \n %s \n %s \n - Pass \n\n", x + 1, buffer, MD5Key[x].c_str());
-                fprintf(stderr, "     VP8 Test Vector %i \n %s \n %s \n - Pass \n\n", x + 1, buffer, MD5Key[x].c_str());
+                printf(" VP8 Test Vector %i: %s \n"
+                       " Observed: %s \n"
+                       " Expected: %s \n"
+                       " -Pass \n\n"
+                       , x + 1, TestVectFileName, buffer, MD5Key[x].c_str());
+
+                fprintf(stderr, " VP8 Test Vector %i: %s \n"
+                        " Observed: %s \n"
+                        " Expected: %s \n"
+                        " -Pass \n\n"
+                        , x + 1, TestVectFileName, buffer, MD5Key[x].c_str());
             }
             else
             {
-                printf("     VP8 Test Vector %i \n %s \n %s \n - Fail \n\n", x + 1, buffer, MD5Key[x].c_str());
-                fprintf(stderr, "     VP8 Test Vector %i \n %s \n %s \n - Fail \n\n", x + 1, buffer, MD5Key[x].c_str());
+                printf(" VP8 Test Vector %i: %s \n"
+                       " Observed: %s \n"
+                       " Expected: %s \n"
+                       " -Fail \n\n"
+                       , x + 1, TestVectFileName, buffer, MD5Key[x].c_str());
+
+                fprintf(stderr, " VP8 Test Vector %i: %s \n"
+                        " Observed: %s \n"
+                        " Expected: %s \n"
+                        " -Fail \n\n"
+                        , x + 1, TestVectFileName, buffer, MD5Key[x].c_str());
+
                 FailVector.push_back(x + 1);
                 Fail = 1;
             }
 
+            CurTestVector++;
             x++;
         }
 

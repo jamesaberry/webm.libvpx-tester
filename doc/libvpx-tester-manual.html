@@ -1,0 +1,937 @@
+<html>
+<head>
+  <title>libvpx-tester: VP8 Test Harness | Webm Project</title>
+  <meta name="generator" content="kramdown 0.10.0" />
+  <style type="text/css">
+  body {
+    color: #000;
+    background-color: #fff;
+    margin: 10%;
+    font-family: "Liberation Sans", "DejaVu Sans", "Bitstream Vera Sans", Arial, sans-serif;
+    line-height: 1.4;
+  }
+  h2 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0;
+  }
+  table {
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #999;
+    padding: .5em .7em;;
+  }
+  th {
+    color: #fff;
+    background-color: #000;
+  }
+  td {
+  }
+  hr {
+  }
+  pre {
+    background-color: #eee;
+    padding: 1em;
+    border: 1px solid #ccc;
+    width: 42em;
+    overflow: auto;
+    font-family: "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Consolata, monospace;
+  }
+  pre.terminal {
+    color: #fff;
+    background-color: #000;
+    border: 1px solid #ccc;
+    max-height: 30em;
+  }
+  code {
+    color: #060;
+    background-color: #eee;
+    padding: 0 3px;
+    font-family: "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Consolata, monospace;
+  }
+  pre.terminal code {
+    color: #fff;
+    background-color: #000;
+    font-size: smaller;
+  }
+  #markdown-toc ul {
+    list-style-type: disc;
+  }
+  ul#markdown-toc {
+    margin-top: -1em;
+    visibility: hidden;
+    -webkit-padding-start: 0;
+  }
+  ul#markdown-toc ul {
+    visibility: visible;
+  }
+  ul#markdown-toc ul ul{
+    visibility: visible;
+  }
+  ul#markdown-toc + hr {
+    margin-bottom: 4em;
+  }
+  .caption {
+  }
+  </style>
+</head>
+<body>
+<!--
+  This plain text document may be easily converted to HTML using the 
+  Ruby lib kramdown (http://kramdown.rubyforge.org/), and an ERB 
+  template similar to the one provided (template.html). Install 
+  kramdown with the RubyGems package manager (http://rubygems.org/), 
+  and run the following command:
+  
+  $ kramdown libvpx-tester-manual.txt --template template.html > libvpx-tester-manual.html
+-------------------------------------------------------------------- -->
+
+<h1 id="vp8-codec-tester-v092">VP8 Codec-Tester v0.9.2</h1>
+
+<p><em>Updated 2010-09-23</em></p>
+
+<hr />
+
+<p><strong>Contents</strong></p>
+
+<ul id="markdown-toc">
+  <li><a href="#vp8-codec-tester-v092">VP8 Codec-Tester v0.9.2</a>    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#using-the-tester">Using the Tester</a></li>
+      <li><a href="#running-a-single-test">Running a Single Test</a>        <ul>
+          <li><a href="#single-test-example">Single Test Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#running-multiple-tests">Running Multiple Tests</a>        <ul>
+          <li><a href="#multiple-tests-example">Multiple Tests Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#using-tools">Using Tools</a>        <ul>
+          <li><a href="#tools-example">Tools Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#checking-the-progess-of-multiple-tests">Checking the Progess of Multiple Tests</a></li>
+      <li><a href="#resuming-a-stopped-multiple-test">Resuming a Stopped Multiple Test</a></li>
+      <li><a href="#creating-control-files-manually">Creating Control Files Manually</a></li>
+      <li><a href="#evaluating-results-of-a-multiple-test">Evaluating Results of a Multiple Test</a></li>
+      <li><a href="#tests-overview">Tests Overview</a></li>
+      <li><a href="#tools-overview">Tools Overview</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="overview">Overview</h2>
+
+<p>libvpx-tester is a test harness for the WebM VP8 Codec SDK (libvpx).  See <code>README.txt</code> for configuration and build instructions.  Successfully building libvpx-tester produces the executable file <code>VP8_Tester_API_32Bit.exe</code> or <code>VP8_Tester_API_64Bit.exe</code>, or both.</p>
+
+<p>The raw video files used as example input in this document are available for download at <a href="http://www.downloads.webproject.org/libvpx-tester-clips-v1.zip" target="_blank">http://www.downloads.webproject.org/libvpx-tester-clips-v1.zip </a>.</p>
+
+<h2 id="using-the-tester">Using the Tester</h2>
+
+<p>Open a terminal window and change to a directory containing the linvpx-tester executable (<code>VP8_Tester_API_32Bit.exe</code> or <code>VP8_Tester_API_64Bit.exe</code>).  Running the command with no arguments displays the usage information shown in Figure 1, which is a list of the various tests and tools available.</p>
+
+<pre class="terminal"><code>$ VP8_Tester_API_64Bit.exe 
+
+Instructions for Use
+
+ VP8 Test Program
+
+  &lt;Test Number&gt;                          Tools
+                                           
+   (0)RunTestsFromFile                     IVFEnc
+   (1)AllowDropFrames                      IVFDec
+   (2)AllowLagTest                         IVF2IVFCompr
+   (3)AllowSpatialResampling               IVF2IVFDec
+   (4)AutoKeyFramingWorks                  IVF2RawDec
+   (5)BufferLevelWorks                     
+   (6)CPUDecOnlyWorks                      IVFDataRate
+   (7)ChangeCPUWorks                       IVFPSNR
+   (8)DropFramesWaterMarkWorks             IVFCheckPBM
+   (9)DataRateTest                         
+  (10)DebugMatchesRelease                  Raw2IVF
+  (11)EncoderBreakOut                      IVF2Raw
+  (12)ErrorResilientModeWorks              IVF2RawFrames
+  (13)ExtraFileCheck                       CombineIndvFrames
+  (14)FixedQ                               
+  (15)ForceKeyFrameWorks                   CompareIVF
+  (16)FrameSizeTest                        CompIVFHeader
+  (17)GoodQualityVsBestQuality             DispIVFHeader
+  (18)LagInFramesTest                      
+  (19)MaxQuantizerTest                     DispKeyFrames
+  (20)MemLeakCheck                         DispResizedFrames
+  (21)MemLeakCheck2                        DispVisibleFrames
+  (22)MinQuantizerTest                     DispAltRefFrames
+  (23)MultiThreadedTest                    
+  (24)NewVsOldPSNR                         CropRawIVF
+  (25)NewVsOldRealTimeSpeed                CutIVF
+  (26)NoiseSensitivityWorks                PasteIVF
+  (27)OnePassVsTwoPass                     
+  (28)PlayAlternate                        PlayDecIVF
+  (29)PostProcessorWorks                   PlayCompIVF
+  (30)ReconBuffer                          
+  (31)ResampleDownWaterMark                CreateSampleTextFiles
+  (32)SpeedTest                            PrintVersion
+  (33)TestVectorCheck                      
+  (34)TwoPassVsTwoPassBest                 RandParFile
+  (35)UnderShoot                           RandIVFComp
+  (36)Version                              GraphPSNR
+  (37)WindowsMatchesLinux                  Help
+
+</code></pre>
+<p><strong><em>Figure 1</em></strong></p>
+
+<p>The test or tool you&rsquo;d like to run should be given as the first command line argument.  Tests are invoked by their number (as shown in Figure 1), tools by their name.  Appending the argument <code>Help</code> to any command gives verbose usage.</p>
+
+<p>Arguments may be specified at the command line or from a control file.  See <strong>Running Multiple Tests</strong>, below.</p>
+
+<h2 id="running-a-single-test">Running a Single Test</h2>
+
+<p>To run a single test, run the executable with the number of the desired test as the first command line argument. If the test you are running requires additional arguments, the tester will describe them (Figure 2).</p>
+
+<pre class="terminal"><code>$ VP8_Tester_API_64Bit.exe 1
+
+  AllowDF
+
+    &lt;inputfile&gt;
+    &lt;Mode&gt;
+          (0)Realtime/Live Encoding
+          (1)Good Quality Fast Encoding
+          (2)One Pass Best Quality
+          (3)Two Pass - First Pass
+          (4)Two Pass
+          (5)Two Pass Best Quality
+    &lt;Target Bit Rate&gt;
+         &lt;Optional Settings File&gt;
+</code></pre>
+<p><strong><em>Figure 2</em></strong></p>
+
+<h3 id="single-test-example">Single Test Example</h3>
+
+<pre><code>./VP8_Tester_API_64Bit.exe 1 BBB_1280x720_1500F.ivf 1 128
+</code></pre>
+
+<p>The first <code>1</code> is the test number, <code>BBB_1280x720_1500F.ivf</code> is the input file, the second <code>1</code> is the mode to run the compression in, and <code>128</code> is the target bitrate in kbps.  Output will be similar to Figure 3.</p>
+
+<pre class="terminal"><code>$ VP8_Tester_API_64Bit.exe 1 BBB_1280x720_1500F.ivf  1 128
+
+                      WebM Project VP8 Encoder v0.9.2-12-g71a1c19
+                       Test Machine is Running: Linux
+
+
+/////////////////////////////////Full Test/////////////////////////////////
+Input: VP8_Tester_API_64Bit.exe 1 BBB_1280x720_1500F.ivf 1 128
+
+Output: Thu_Sep_23_09_44_20_2010/
+///////////////////////////////////////////////////////////////////////////
+
+Allow Drop Frames Test
+
+ Target Bit Rate: 128
+ Max Quantizer: 56
+ Min Quantizer 4
+ Allow Drop Frames: 0
+
+ GoodQuality
+
+API - Compressing Raw IVF File to VP8 IVF File:
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+
+
+ Target Bit Rate: 128
+ Max Quantizer: 56
+ Min Quantizer 4
+ Allow Drop Frames: 1
+
+ GoodQuality
+
+API - Compressing Raw IVF File to VP8 IVF File:
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+...............................................................................
+
+
+Results:
+
+ * DF on frames = 889 &lt; DF off frames = 1500 - Passed
+
+Passed
+
+</code></pre>
+<p><strong><em>Figure 3</em></strong></p>
+
+<h2 id="running-multiple-tests">Running Multiple Tests</h2>
+
+<p>Multiple Tests are run by reading commands from a user-created control file specifying which tests are to be run, and their conditions. A sample control file can be created in the working directory by using the tester&rsquo;s <code>CreateSampleTextFiles</code> tool (see <strong>Using Tools</strong>, below). Four modes are available:</p>
+
+<ul>
+  <li>Mode 1 - Run compressions and tests</li>
+  <li>Mode 2 - Run compressions only</li>
+  <li>Mode 3 - Run tests on preexisting compressions</li>
+  <li>Mode 4 - Resume last mode</li>
+</ul>
+
+<p>To run multiple tests, use <code>0</code> as the first argument (for <code>RunTestsFromFile</code>), then the desired mode, followed by (1) the name of your control file (for Modes 0 and 1), or (2) the directory containing your earlier compressions and tests (for Modes 3 and 4).</p>
+
+<h3 id="multiple-tests-example">Multiple Tests Example</h3>
+
+<pre><code>./VP8_Tester_API_64Bit.exe 0 1 QuickTest_64Bit.txt
+</code></pre>
+
+<p>The sample control file generated by <code>CreateSampleTextFiles</code> assumes that your input <code>.ivf</code> files are located in a parent directory <code>../TestClips</code>.  Output will be similar to Figure 4.</p>
+
+<pre class="terminal"><code>$ VP8_Tester_API_64Bit.exe 0 1 QuickTest_64Bit.txt
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%              QuickTest Lin64Bit
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%Tests That Run Once Per input File%%%%%%%%%%
+13@../TestClips/src16.ivf
+17@../TestClips/src16.ivf@128
+21@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@../TestClips/MemLeakCheck2_Compression
+.ivf
+25@../TestClips/src16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2
+27@../TestClips/src16.ivf@128
+33@../TestClips/TestVectors
+34@../TestClips/src16.ivf@128
+%37@../TestClips/src16.ivf@1@128@0@NA@NA@NA
+%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%
+23@../TestClips/BBB_720x480_2000F.ivf@0@128
+23@../TestClips/BBB_720x480_2000F.ivf@1@128
+32@../TestClips/src16.ivf@0@128@10
+32@../TestClips/src16.ivf@1@128@10
+%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%
+
+%%Mode0%%
+3@../TestClips/BBB_720x480_2000F.ivf@0@128
+5@../TestClips/src16.ivf@0@128
+8@../TestClips/src16.ivf@0@128
+9@../TestClips/src16.ivf@0@128
+11@../TestClips/BBB_720x480_2000F.ivf@0@128
+12@../TestClips/src16.ivf@0@128
+14@../TestClips/src16.ivf@0@128@20@60
+15@../TestClips/src16.ivf@0@128@6
+16@../TestClips/src16.ivf@0@128@176@144
+19@../TestClips/src16.ivf@0@128
+20@../TestClips/src16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+22@../TestClips/src16.ivf@0@128
+24@../TestClips/src16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2
+26@../TestClips/src16.ivf@0@128
+29@../TestClips/src16.ivf@0@128
+30@../TestClips/src16.ivf@0@128
+31@../TestClips/src16.ivf@0@128
+35@../TestClips/src16.ivf@0@128
+36@../TestClips/src16.ivf@0@128
+
+%%Mode1%%
+1@../TestClips/BBB_1280x720_1500F.ivf@1@128
+3@../TestClips/BBB_720x480_2000F.ivf@1@128
+4@../TestClips/src16.ivf@1@128@6
+5@../TestClips/src16.ivf@1@128
+6@../TestClips/src16.ivf@1@128@0
+6@../TestClips/src16.ivf@1@128@1
+7@../TestClips/src16.ivf@1@128@0
+7@../TestClips/src16.ivf@1@128@1
+7@../TestClips/src16.ivf@1@128@1@../TestClips/SpecialCaseParameterFiles/1ChangeC
+PUWorksCPUUsage4.txt
+8@../TestClips/src16.ivf@1@128
+9@../TestClips/src16.ivf@1@128
+9@../TestClips/BBB_1280x720_1500F.ivf@1@2048
+10@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewes
+t_PlugIn_RLib_RMode_64Bit.exe
+11@../TestClips/BBB_720x480_2000F.ivf@1@128
+12@../TestClips/src16.ivf@1@128
+14@../TestClips/src16.ivf@1@128@20@60
+15@../TestClips/src16.ivf@1@128@24
+16@../TestClips/src16.ivf@1@128@176@144
+19@../TestClips/src16.ivf@1@128
+20@../TestClips/src16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+22@../TestClips/src16.ivf@1@128
+24@../TestClips/src16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2
+26@../TestClips/src16.ivf@1@128
+29@../TestClips/src16.ivf@1@128
+30@../TestClips/src16.ivf@1@128
+31@../TestClips/src16.ivf@1@128
+35@../TestClips/src16.ivf@1@128
+36@../TestClips/src16.ivf@1@128
+
+%%Mode2%%
+3@../TestClips/BBB_720x480_2000F.ivf@2@128
+4@../TestClips/src16.ivf@2@128@6
+5@../TestClips/src16.ivf@2@128
+6@../TestClips/src16.ivf@2@128@0
+6@../TestClips/src16.ivf@2@128@1
+7@../TestClips/src16.ivf@2@128@0
+7@../TestClips/src16.ivf@2@128@1
+8@../TestClips/src16.ivf@2@128
+9@../TestClips/src16.ivf@2@128
+10@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewes
+t_PlugIn_RLib_RMode_64Bit.exe
+11@../TestClips/BBB_720x480_2000F.ivf@2@128
+12@../TestClips/src16.ivf@2@128
+14@../TestClips/src16.ivf@2@128@20@60
+15@../TestClips/src16.ivf@2@128@24
+16@../TestClips/src16.ivf@2@128@176@144
+19@../TestClips/src16.ivf@2@128
+20@../TestClips/src16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+22@../TestClips/src16.ivf@2@128
+24@../TestClips/src16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2
+26@../TestClips/src16.ivf@2@128
+29@../TestClips/src16.ivf@2@128
+30@../TestClips/src16.ivf@2@128
+31@../TestClips/src16.ivf@2@128
+35@../TestClips/src16.ivf@2@128
+36@../TestClips/src16.ivf@2@128
+
+%%Mode4%%
+2@../TestClips/src16.ivf@4@128
+3@../TestClips/BBB_720x480_2000F.ivf@4@128
+4@../TestClips/src16.ivf@4@128@6
+5@../TestClips/src16.ivf@4@128
+6@../TestClips/src16.ivf@4@128@0
+6@../TestClips/src16.ivf@4@128@1
+7@../TestClips/src16.ivf@4@128@0
+7@../TestClips/src16.ivf@4@128@1
+8@../TestClips/src16.ivf@4@128
+9@../TestClips/src16.ivf@4@128
+10@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewes
+t_PlugIn_RLib_RMode_64Bit.exe
+11@../TestClips/BBB_720x480_2000F.ivf@4@128
+12@../TestClips/src16.ivf@4@128
+14@../TestClips/src16.ivf@4@128@20@60
+15@../TestClips/src16.ivf@4@128@24
+16@../TestClips/src16.ivf@4@128@176@144
+18@../TestClips/src16.ivf@4@128@10@24
+19@../TestClips/src16.ivf@4@128
+20@../TestClips/src16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+22@../TestClips/src16.ivf@4@128
+24@../TestClips/src16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2
+26@../TestClips/src16.ivf@4@128
+28@../TestClips/src16.ivf@4@128
+29@../TestClips/src16.ivf@4@128
+30@../TestClips/src16.ivf@4@128
+31@../TestClips/src16.ivf@4@128
+35@../TestClips/src16.ivf@4@128
+36@../TestClips/src16.ivf@4@128
+
+%%Mode5%%
+2@../TestClips/src16.ivf@5@128
+3@../TestClips/BBB_720x480_2000F.ivf@5@128
+4@../TestClips/src16.ivf@5@128@6
+5@../TestClips/src16.ivf@5@128
+6@../TestClips/src16.ivf@5@128@0
+6@../TestClips/src16.ivf@5@128@1
+7@../TestClips/src16.ivf@5@128@0
+7@../TestClips/src16.ivf@5@128@1
+8@../TestClips/src16.ivf@5@128
+9@../TestClips/src16.ivf@5@128
+10@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewes
+t_PlugIn_RLib_RMode_64Bit.exe
+11@../TestClips/BBB_720x480_2000F.ivf@5@128
+12@../TestClips/src16.ivf@5@128
+14@../TestClips/src16.ivf@5@128@20@60
+15@../TestClips/src16.ivf@5@128@24
+16@../TestClips/src16.ivf@5@128@176@144
+18@../TestClips/src16.ivf@5@128@10@24
+19@../TestClips/src16.ivf@5@128
+20@../TestClips/src16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+22@../TestClips/src16.ivf@5@128
+24@../TestClips/src16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2
+26@../TestClips/src16.ivf@5@128
+28@../TestClips/src16.ivf@5@128
+29@../TestClips/src16.ivf@5@128
+30@../TestClips/src16.ivf@5@128
+31@../TestClips/src16.ivf@5@128
+35@../TestClips/src16.ivf@5@128
+36@../TestClips/src16.ivf@5@128
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+All 139 Tests in text file: QuickTest_64Bit.txt - are properly Formatted
+
+
+                      WebM Project VP8 Encoder v0.9.2-12-g71a1c19
+                       Test Machine is Running: Linux
+
+
+/////////////////////////////////Full Test/////////////////////////////////
+Input: ./VP8_Tester_API_64Bit.exe  13 ../TestClips/src16.ivf
+
+Output: ./Thu_Sep_23_09_58_37_2010/
+///////////////////////////////////////////////////////////////////////////
+
+Extra File Check
+---------------------------Checking for OPSNR Files----------------------------
+
+Checking: /usr/local/google/jamesberry/VP8Builds/libvpx-09-23-2010/MasterFile/So
+urceFiles For opsnr.stt
+opsnr.stt File not found.
+
+Checking: ./Thu_Sep_23_09_58_37_2010/Extra File Check Test/Thu_Sep_23_09_58_37_2
+010 For opsnr.stt
+opsnr.stt File not found.
+-------------------------------------------------------------------------------
+
+
+ Target Bit Rate: 40
+ Max Quantizer: 56
+ Min Quantizer 4
+ opt.DeleteFirstPassFile: 0
+
+
+First Pass -  BestQuality
+
+API - Compressing Raw IVF File to VP8 IVF File:
+...............................................................................
+...............................................................................
+...............................................................................
+.........................
+
+</code></pre>
+<p><strong><em>Figure 4</em></strong></p>
+
+<h2 id="using-tools">Using Tools</h2>
+
+<p>To use a tool, give the tool&rsquo;s name as the first command line argument. The tester will describe any further arguments or input that the tool requires.</p>
+
+<h3 id="tools-example">Tools Example</h3>
+
+<pre><code>./VP8_Tester_API_64Bit.exe IVFPSNR
+</code></pre>
+
+<p>Output:</p>
+
+<pre class="terminal"><code>$ VP8_Tester_API_64Bit.exe IVFPSNR
+
+  IVFPSNR
+
+     &lt;Raw IVF File&gt;
+     &lt;Comp IVF File&gt;
+     &lt;Run SSIM 0 no 1 yes&gt;
+
+</code></pre>
+<p><strong><em>Figure 5</em></strong></p>
+
+<p>See the column labeled <strong>Tools</strong> in the tester&rsquo;s usage output or <strong>Tools Overview</strong> below for a full list of available tools.</p>
+
+<h2 id="checking-the-progess-of-multiple-tests">Checking the Progess of Multiple Tests</h2>
+
+<p>To check the status of a currently running multiple test you can check both <code>TestsRun.txt</code> and <code>Mode1Results.txt</code> (or <code>Mode2Results.txt</code>, etc.). </p>
+
+<p><code>TestsRun.txt</code> tracks the tester&rsquo;s progress through the original input control text file. Tests that have been fully completed are marked with a <code>+</code> to their left. Tests that have had compressions-only completed are marked with a <code>-</code> and tests that have not been completed at all have no marking.</p>
+
+<p><code>Mode1Results.txt</code> and similar records the result of each test the tester has run along with the directory name it is saved to. <code>Mode2Results.txt</code> records if compressions have been made properly and the directory names they were saved to.</p>
+
+<p><code>Mode3Results.txt</code> records the outcome of the final tests run on pre-compressed material and the directory names they were saved to.</p>
+
+<h2 id="resuming-a-stopped-multiple-test">Resuming a Stopped Multiple Test</h2>
+
+<p>To resume a stopped multiple test, execute the following:</p>
+
+<pre><code>./VP8_Tester_API_64Bit.exe 0 4 TestFolderName
+</code></pre>
+
+<p>&hellip; where <code>TestFolderName</code> is the name of the directory containing data for the tests you wish to resume.</p>
+
+<h2 id="creating-control-files-manually">Creating Control Files Manually</h2>
+
+<p>Control files are simple text files.  Each line cites the arguments you would give to the tester executable at the command line; the lines are executed in order.</p>
+
+<p>Control files recognize two special characters: </p>
+
+<ul>
+  <li>Lines beginning with <code>%</code> are treated as comments and not evaluated.</li>
+  <li>The <code>@</code> symbol is used to delimit command arguments.  For example, 
+<code>&lt;X&gt;@&lt;Y&gt;@input.ivf</code> would invoke test number <code>X</code> in mode number <code>Y</code> 
+on file <code>input.ivf</code>.</li>
+</ul>
+
+<h2 id="evaluating-results-of-a-multiple-test">Evaluating Results of a Multiple Test</h2>
+
+<p>When a Multiple Test finishes, the results summary will be saved in two formats. A condensed results file (<code>Mode1Results.txt</code>, <code>Mode2Results.txt</code>, <code>Mode3Results.txt</code>) and an expanded results file(<code>Mode1Results_Expanded.txt</code>, <code>Mode2Results_Expanded.txt</code>, <code>Mode3Results_Expanded.txt</code>).</p>
+
+<p>The condensed results file contains the type of test that was run, the order it was run in, the directory name of the in-depth test output, and final Pass/Fail status of the test. This file lists tests run in chronological order.</p>
+
+<p>The expanded results file groups results for individual test types. In addition to the information contained in the condensed results file, expanded results lists the parameters used a summary of how many total passes and fails occurred for each type of test.</p>
+
+<h2 id="tests-overview">Tests Overview</h2>
+
+<table>
+  <col align="center" />
+  <col />
+  <col />
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>RunTestsFromFile</td>
+      <td>The test runs tests from an input file and summarizes the results. The test can be run in four modes: Mode 1 = Create compressions and run tests; Mode 2 = Create compressions only; Mode 3 = Run tests on pre-existing compressions; and Mode 4 = Resume tests in progress. To create a template driver text file use the command <code>CreateSampleTextFiles</code>.</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>AllowDropFrames</td>
+      <td>The test creates two files, the first with Drop Frames on, the second with Drop Frames off. It then records and compares the number of frames each file has. If Drop Frames on has fewer frames than Drop Frames off, the test passes.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>AllowLagTest</td>
+      <td>The test creates two compressions. The first with Allow Lag equal to 0, the second with Allow Lag equal to 1. If the correct number of lagged frames are detected via quantizer output, alternate reference frames exist for Allow Lag on, Allow Lag on has the same number of visible frames as Allow Lag off, and Allow Lag on is not identical to Allow Lag off; the test passes.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>AllowSpatialResampling</td>
+      <td>The test creates two files, the first with Spatial Resampling off, the second with Spatial Resampling on. The test then records the number of resized frames for each and computes the PSNR for Spatial Resampling on.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>AutoKeyFramingWorks</td>
+      <td>The test creates two files with identical parameters setting Auto Key Frame equal to 6. The test then records the placement of each file&rsquo;s key frames. If both files&rsquo; key frames occur in identical locations and at least as frequently as Auto Key Frame dictates, the test passes.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>BufferLevelWorks</td>
+      <td>The test creates a compression and runs CheckPBM on it. If no buffer underrun is detected, the test passes.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>CPUDecOnlyWorks</td>
+      <td>The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 11. The test then compares them against one another. If all compressions are identical and the times to decompress them are not, the test passes.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>ChangeCPUWorks</td>
+      <td>The test creates compressions of the user input version (0-3) with ON2_SIMD_CAPS values 0, 1, 3, 7 and 15. If all compressions are identical and compression times are not, the test passes.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>DropFramesWaterMarkWorks</td>
+      <td>The test creates 6 compressions with DFWM values of 100, 80, 60, 40, 20 and 0, and records their sizes. If each successively lower DFWM compression has an equal or larger size than the previous, the test passes.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>DataRateTest</td>
+      <td>The test creates a compression and records its data rate. If the compression&rsquo;s data rate is within 30% of the input target bandwidth, the test passes.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>DebugMatchesRelease</td>
+      <td>The test creates two compressions, the first using an executable built using the newest release library, the second using an executable built using the newest debug library. If the two compressions are identical, the test passes.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>EncoderBreakOutTest</td>
+      <td>The test creates four compressions. The first has an EncodeBreakout of 0, the second EncodeBreakout of 100, the third EncodeBreakoutof 500 and the fourth EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated. If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are within 2 dB, the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive, and if the PSNRs have greater than a 5 dB difference the test fails.</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>ErrorResilientModeWorks</td>
+      <td>The test creates two compressions, the first with Error Resilient Mode off, the second on. The test then records their PSNR values. If their PSNRs are within 10% of each other, the test passes.</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>ExtraFileCheck</td>
+      <td>The test creates a two-pass compression and checks for extra files in the current directory, the directory the executable is located in, and the directory the output file is written to. If no extra files are found, the test passes.</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>FixedQ</td>
+      <td>The test creates two compressions, each with user input Fixed Quantizers, and records the quantizers used to encode each frame. The test then records the compressions&rsquo; sizes. If all quantizers for each compression match the input Fixed Quantizer, and the smaller quantizer&rsquo;s compression has a larger file size, the test passes.</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>ForceKeyFrameWorks</td>
+      <td>The test creates a compression using a user-input value as a Force Key Frame Interval. The Test then records the placement of all key frames in the compression. If key frames occur only when Force Key Frame dictates, the test passes.</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>FrameSizeTest</td>
+      <td>The test creates fourty-six cropped raw ivf files from a user inputfile, starting height and starting width (where starting height andstarting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs are within five percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>GoodQualityVsBestQuality</td>
+      <td>The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each file&rsquo;s data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>LagInFramesTest</td>
+      <td>The test creates three compressions, one with Allow Lag set to 0 the second and third with Allow Lag set to 1. The second compression uses the first user-input Lag in Frames value for its Lag in frames and the third uses the second user-input value for its Lag in Frames. The test outputs each file&rsquo;s quantizer values for each encoded frame. If none of the files are identical, the PSNRs of each successive file are within 10% of the last, and the quantizer output shows that the proper number of frames were lagged, the test passes.</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>MaxQuantizerTest</td>
+      <td>The test creates nine files, the first with a WorstAllowedQ equal to 3 and each subsequent file with a WorstAllowedQ 8 greater than the last until 63. The test records the individual quantizer values for each encoded frame. If the PSNRs of each WorstAllowedQ compression from 3 to 63 increase as Worst AllowedQ decreases and the recorded quantizers for each file do not exceed their corresponding WorstAllowedQ for all compressions, the test passes.</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>MemLeakCheck</td>
+      <td>The test creates a compression using the debug executable to check memory usage and records the results to an output file. If no memory leaks are found, the test passes.</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>MemLeakCheck2</td>
+      <td>The test uses the debug executable to open and close 10,000 instances of the encoder and 10,000 instances of the decoder, and then checks for no memory leaks. If there are no leaks, the test passes.</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>MinQuantizerTest</td>
+      <td>The test creates two files, the first with a MinQ equal to 10, the second with a MinQ equal to 60, and records the quantizer used for each compression&rsquo;s frames. If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding MinQ, the test passes.</td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td>MultiThreadedTest</td>
+      <td>The test creates two compressions, the first using a MultiThreaded equal to 2 the second using a MultiThreaded equal to 0. The test then compares the times to compress each. If MultiThreaded 2 is faster than 0, the test passes.</td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td>NewVsOldPSNR</td>
+      <td>The test creates two compressions, the first using the newest version of VP8 and the second using a separate executable built using an older version. It then computes and records PSNR values for each. If new&rsquo;s PSNR is greater than old&rsquo;s PSNR (or within 1%), the test passes.</td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td>NewVsOldRealTimeSpeed</td>
+      <td>The test creates two compressions, the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took. If the new compression&rsquo;s time is at least 10% faster than the old compression&rsquo;s time, the test passes.</td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td>NoiseSensitivityWorks</td>
+      <td>The test compresses seven files with Noise Sensitivity values from 0 to 6 and computes PSNR values for each. If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6, the test passes.</td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td>OnePassVsTwoPass</td>
+      <td>The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at one-pass good quality and two-pass good quality, the second and fifth compressions for the input target bandwidth at one-pass good quality and two-pass good quality, and the third and sixth at 30% more than the input target bandwidth at one-pass good quality and two-pass good quality. The test then records each file&rsquo;s data rate and PSNR and computes the area under the curve for the common interval between the one-pass good quality curve and the two-pass good quality curve. If the area under the two-pass good quality curve is greater than the area under the one-pass good quality curve, the test passes.</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>PlayAlternate</td>
+      <td>The test creates two compressions, the first with Play Alternate equal to 0, the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions. If alternate reference frames exist for Play Alternate = 1 and not forPlay Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2are equal, and the files are not identical, the test passes.</td>
+    </tr>
+    <tr>
+      <td>29</td>
+      <td>PostProcessorWorks</td>
+      <td>The test creates a compression, then creates a No Filtering decompression, decompressions for Deblock and Noise levels ranging from 0 to 15. If allDeblock and Noise decompressions return a different PSNR than the NoFiltering Decompression but are within 10%, the test passes.</td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td>ReconBuffer</td>
+      <td>The test creates a compression and internally compares the compressor&rsquo;s preview frames to the decoded output produced by decompressing the compressor&rsquo;s encoded frame. The state of each frame is recorded to a text file. If the contents of all preview frames are identical to the content of all decoded frames, the test passes.</td>
+    </tr>
+    <tr>
+      <td>31</td>
+      <td>ResampleDownWaterMark</td>
+      <td>The test creates two files the first with resample-down-watermark set to 90the second with resample-down-watermark set to 10. The test then recordsthe frames at which the file buffer reaches the designated thresholds, thelocation of key frames and location of resized frames for both files. If thefirst resized frame occurs on the first instance where the frame prior to akey frame reaches the correct buffer saturation for both compressions; thetest passes.</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>SpeedTest</td>
+      <td>The test works for RealTime Mode and Good Quality Mode. For RealTime Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions forCpuUsed Values from 0 to 5. If compression speed increases as CpuUsedincreases and all PSNRs are within 10% of the previous; the test passes.</td>
+    </tr>
+    <tr>
+      <td>33</td>
+      <td>TestVectorCheck</td>
+      <td>This test decodes each VP8 Test Vector and Checks its MD5 checksumagainst the expected value. f all Test Vectors decode properly and all MD5checksums match their expected values; the test passes.</td>
+    </tr>
+    <tr>
+      <td>34</td>
+      <td>TwoPassVsTwoPassBest</td>
+      <td>The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at two-pass good quality and two-pass best quality, the second and fifth compressions for the input target bandwidth at two-pass good quality and two-pass best quality, and the third and sixth at 30% more than the input target bandwidth at two-pass good quality and two-pass best quality. The test then records each file&rsquo;s data rate and PSNR, and computes the area under the curve for the common interval between the two-pass good quality curve and the two-pass best quality curve. If the area under the two-pass best quality curve is greater than the area under the two-pass good quality curve, the test passes.</td>
+    </tr>
+    <tr>
+      <td>35</td>
+      <td>UnderShoot</td>
+      <td>The test creates two files, the first with an undershoot equal to 10 the second with an undershoot equal to 100. If the Undershoot 100 compression&rsquo;s filesize is greater than the Undershoot 10 compression&rsquo;s file size, the test passes.</td>
+    </tr>
+    <tr>
+      <td>36</td>
+      <td>Version</td>
+      <td>The test creates four compressions, the first with Version equal to 0, the second with Version equal to 1, the third with Version equal to 2, and the fourth with Version equal to 3. The test then decodes each and records the time it took to do so. If each successive version takes less time than the prior to decode and has a lower PSNR, the test passes.</td>
+    </tr>
+    <tr>
+      <td>37</td>
+      <td>WindowsMatchesLinux</td>
+      <td>The test can be run in two test modes. The first, Mode 0, creates platform-specific compressions and decompressions to be tested on another platform. The second Mode creates platform-specific compressions and decompressions, and then compares them to previously encoded and decoded files created by Mode 0. If the files are identical, the test passes.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="tools-overview">Tools Overview</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>IVFEnc</td>
+      <td>IVFEnc.exe clone</td>
+    </tr>
+    <tr>
+      <td>IVFDec</td>
+      <td>IVFDec.exe clone</td>
+    </tr>
+    <tr>
+      <td>IVF2IVFCompr</td>
+      <td>This utility will take in a raw IVF file and produce an encoded IVF file using the given mode and bitrate. Default encode settings can be overridden by specifying a parameter file.</td>
+    </tr>
+    <tr>
+      <td>IVF2IVFDec</td>
+      <td>This utility will take in an encoded IVF file and output a decoded IVF file.</td>
+    </tr>
+    <tr>
+      <td>IVF2RawDec</td>
+      <td>This utility will take in an encoded IVF file and output a decoded raw file.</td>
+    </tr>
+    <tr>
+      <td>IVFDataRate</td>
+      <td>This utility will take in an IVF file and compute its average, min, max, and file data rates.</td>
+    </tr>
+    <tr>
+      <td>IVFPSNR</td>
+      <td>This utility will compute an encoded file&rsquo;s PSNR using the encoded file&rsquo;s IVF source file.</td>
+    </tr>
+    <tr>
+      <td>IVFCheckPBM</td>
+      <td>This utility will run CheckPBM to make sure a buffer underrun won&rsquo;t occur.</td>
+    </tr>
+    <tr>
+      <td>Raw2IVF</td>
+      <td>This utility will take in a raw file and produce a raw IVF file.</td>
+    </tr>
+    <tr>
+      <td>IVF2Raw</td>
+      <td>This utility will take in an IVF file and produce a raw file.</td>
+    </tr>
+    <tr>
+      <td>IVF2RawFrames</td>
+      <td>This utility will take in an IVF file and produce individual raw frames for each frame that exists in a user-specified directory.</td>
+    </tr>
+    <tr>
+      <td>CombineIndvFrames</td>
+      <td>This utility will combine all individual decoded frames in a directory into a single raw file in numerical order.</td>
+    </tr>
+    <tr>
+      <td>CompareIVF</td>
+      <td>This utility will compare the video content of two IVF files and will display if they are identical or, if they differ, the first frame they differ at.</td>
+    </tr>
+    <tr>
+      <td>CompIVFHeader</td>
+      <td>This utility will compare the file and frame headers of two IVF files.</td>
+    </tr>
+    <tr>
+      <td>DispIVFHeader</td>
+      <td>This utility will display the file and frame headers of an IVF file.</td>
+    </tr>
+    <tr>
+      <td>DispKeyFrames</td>
+      <td>This utility will display the location of key frames within an IVF file.</td>
+    </tr>
+    <tr>
+      <td>DispResizedFrames</td>
+      <td>This utility will display the location of resized frames within an IVF file.</td>
+    </tr>
+    <tr>
+      <td>DispVisibleFrames</td>
+      <td>This utility will display the location of visible frames within an IVF file.</td>
+    </tr>
+    <tr>
+      <td>DispAltRefFrames</td>
+      <td>This utility will display the location of alternate reference frames within an IVF file.</td>
+    </tr>
+    <tr>
+      <td>CropRawIVF</td>
+      <td>This utility will take in a raw ivf file and produce a croped raw ivf file using the input size parameters.</td>
+    </tr>
+    <tr>
+      <td>CutIVF</td>
+      <td>This utility will cut a portion of an IVF file starting at Starting Frame and ending at Ending Frame to a new output file</td>
+    </tr>
+    <tr>
+      <td>PasteIVF</td>
+      <td>This utility will paste the contents of Inputfile2 into Inputfile1 starting at Inputfile1&rsquo;s First Paste Frame to a new output file.</td>
+    </tr>
+    <tr>
+      <td>PlayDecIVF</td>
+      <td>This Tool will convert an uncompressed IVF file to a raw YUV file and play it using tmnplay or mplayer.</td>
+    </tr>
+    <tr>
+      <td>PlayCompIVF</td>
+      <td>This Tool will convert a compressed IVF file to a raw YUV file and play it using tmnplay or mplayer.</td>
+    </tr>
+    <tr>
+      <td>CreateSampleTextFiles</td>
+      <td>This utility will create sample text files.</td>
+    </tr>
+    <tr>
+      <td>PrintVersion</td>
+      <td>This utility will print the version of VP8 being used by the tester.</td>
+    </tr>
+    <tr>
+      <td>RandParFile</td>
+      <td>This utility will create a valid VP8 random parameter file.</td>
+    </tr>
+    <tr>
+      <td>RandIVFComp</td>
+      <td>This utility will create a compression using random parameters for an input IVF file.</td>
+    </tr>
+    <tr>
+      <td>GraphPSNR</td>
+      <td>The utility creates a series of compressions from user-input values for starting bit rate, ending bit rate, and an increment. Output files are created, and the utility computes and outputs the data rates and PSNRs of the files.</td>
+    </tr>
+    <tr>
+      <td>Help</td>
+      <td>Displays tester help instructions</td>
+    </tr>
+  </tbody>
+</table>
+
+
+</body>
+</html>

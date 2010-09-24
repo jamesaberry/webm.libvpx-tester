@@ -1,6 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
 //////////////////////////
-#include "on2-vpx-shim.h"
 #include "test-definitions.h"
 #include "yv12config.h"
 #include <math.h>

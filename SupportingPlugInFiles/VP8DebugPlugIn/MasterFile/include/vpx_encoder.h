@@ -1,10 +1,11 @@
 /*
  *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
  *
- *  Use of this source code is governed by a BSD-style license and patent
- *  grant that can be found in the LICENSE file in the root of the source
- *  tree. All contributing project authors may be found in the AUTHORS
- *  file in the root of the source tree.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 
@@ -41,6 +42,29 @@ extern "C" {
      * fields to structures
      */
 #define VPX_ENCODER_ABI_VERSION (2 + VPX_CODEC_ABI_VERSION) /**<\hideinitializer*/
+
+
+    /*! \brief Encoder capabilities bitfield
+     *
+     *  Each encoder advertises the capabilities it supports as part of its
+     *  ::vpx_codec_iface_t interface structure. Capabilities are extra
+     *  interfaces or functionality, and are not required to be supported
+     *  by an encoder.
+     *
+     *  The available flags are specifiedby VPX_CODEC_CAP_* defines.
+     */
+#define VPX_CODEC_CAP_PSNR  0x10000 /**< Can issue PSNR packets */
+
+
+    /*! \brief Initialization-time Feature Enabling
+     *
+     *  Certain codec features must be known at initialization time, to allow
+     *  for proper memory allocation.
+     *
+     *  The available flags are specified by VPX_CODEC_USE_* defines.
+     */
+#define VPX_CODEC_USE_PSNR  0x10000 /**< Calculate PSNR on each frame */
+
 
     /*!\brief Generic fixed size buffer structure
      *
@@ -87,6 +111,7 @@ extern "C" {
     {
         VPX_CODEC_CX_FRAME_PKT,    /**< Compressed video frame */
         VPX_CODEC_STATS_PKT,       /**< Two-pass statistics for this frame */
+        VPX_CODEC_PSNR_PKT,        /**< PSNR statistics for this frame */
         VPX_CODEC_CUSTOM_PKT = 256 /**< Algorithm extensions  */
     };
 
@@ -112,7 +137,20 @@ extern "C" {
                 vpx_codec_frame_flags_t  flags;    /**< flags for this frame */
             } frame;  /**< data for compressed frame packet */
             struct vpx_fixed_buf twopass_stats;  /**< data for two-pass packet */
-            struct vpx_fixed_buf raw;            /**< data for arbitrary packets */
+            struct vpx_psnr_pkt
+            {
+                unsigned int samples[4];  /**< Number of samples, total/y/u/v */
+                uint64_t     sse[4];      /**< sum squared error, total/y/u/v */
+                double       psnr[4];     /**< PSNR, total/y/u/v */
+            } psnr;                       /**< data for PSNR packet */
+            struct vpx_fixed_buf raw;     /**< data for arbitrary packets */
+
+            /* This packet size is fixed to allow codecs to extend this
+             * interface without having to manage storage for raw packets,
+             * ie if it's smaller than 128 bytes, you can store in the
+             * packet list directly.
+             */
+            char pad[128 - sizeof(enum vpx_codec_cx_pkt_kind)]; /**< fixed sz */
         } data; /**< packet data */
     } vpx_codec_cx_pkt_t; /**< alias for struct vpx_codec_cx_pkt */
 

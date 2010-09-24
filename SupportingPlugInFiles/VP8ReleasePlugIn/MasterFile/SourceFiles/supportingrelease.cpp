@@ -1,5 +1,4 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "on2-vpx-shim.h"
 #include "onyx.h"
 #include "ivf.h"
 #include <map>
@@ -44,41 +43,41 @@ typedef unsigned char BYTE;
 // very ugly quick and dirty parameter parsing...
 // this constitutes all member variables in VP8_CONFIG structure we care about
 #define ALLPARMS(O,DOTHIS) \
-    DOTHIS(O,  TargetBandwidth)\
-    DOTHIS(O,  NoiseSensitivity)\
+    DOTHIS(O,  target_bandwidth)\
+    DOTHIS(O,  noise_sensitivity)\
     DOTHIS(O,  Sharpness)\
-    DOTHIS(O,  CpuUsed)\
+    DOTHIS(O,  cpu_used)\
     DOTHIS(O,  Mode)\
-    DOTHIS(O,  AutoKey)\
-    DOTHIS(O,  KeyFreq)\
-    DOTHIS(O,  EndUsage)\
-    DOTHIS(O,  UnderShootPct)\
-    DOTHIS(O,  StartingBufferLevel)\
-    DOTHIS(O,  OptimalBufferLevel)\
-    DOTHIS(O,  MaximumBufferSize)\
-    DOTHIS(O,  FixedQ)\
-    DOTHIS(O,  WorstAllowedQ)\
-    DOTHIS(O,  BestAllowedQ)\
-    DOTHIS(O,  AllowSpatialResampling)\
-    DOTHIS(O,  ResampleDownWaterMark)\
-    DOTHIS(O,  ResampleUpWaterMark)\
-    DOTHIS(O,  AllowDF)\
-    DOTHIS(O,  DropFramesWaterMark)\
-    DOTHIS(O,  AllowLag)\
-    DOTHIS(O,  PlayAlternate)\
-    DOTHIS(O,  AltQ)\
-    DOTHIS(O,  AltFreq)\
-    DOTHIS(O,  GoldQ)\
-    DOTHIS(O,  KeyQ)\
+    DOTHIS(O,  auto_key)\
+    DOTHIS(O,  key_freq)\
+    DOTHIS(O,  end_usage)\
+    DOTHIS(O,  under_shoot_pct)\
+    DOTHIS(O,  starting_buffer_level)\
+    DOTHIS(O,  optimal_buffer_level)\
+    DOTHIS(O,  maximum_buffer_size)\
+    DOTHIS(O,  fixed_q)\
+    DOTHIS(O,  worst_allowed_q)\
+    DOTHIS(O,  best_allowed_q)\
+    DOTHIS(O,  allow_spatial_resampling)\
+    DOTHIS(O,  resample_down_water_mark)\
+    DOTHIS(O,  resample_up_water_mark)\
+    DOTHIS(O,  allow_df)\
+    DOTHIS(O,  drop_frames_water_mark)\
+    DOTHIS(O,  allow_lag)\
+    DOTHIS(O,  play_alternate)\
+    DOTHIS(O,  alt_q)\
+    DOTHIS(O,  alt_freq)\
+    DOTHIS(O,  gold_q)\
+    DOTHIS(O,  key_q)\
     DOTHIS(O,  Version)\
-    DOTHIS(O,  LagInFrames)\
-    DOTHIS(O,  TwoPassVBRBias)\
-    DOTHIS(O,  TwoPassVBRMinSection)\
-    DOTHIS(O,  TwoPassVBRMaxSection)\
-    DOTHIS(O,  EncodeBreakout)\
-    DOTHIS(O,  TokenPartitions) \
-    DOTHIS(O,  MultiThreaded) \
-    DOTHIS(O,  ErrorResilientMode)
+    DOTHIS(O,  lag_in_frames)\
+    DOTHIS(O,  two_pass_vbrbias)\
+    DOTHIS(O,  two_pass_vbrmin_section)\
+    DOTHIS(O,  two_pass_vbrmax_section)\
+    DOTHIS(O,  encode_breakout)\
+    DOTHIS(O,  token_partitions) \
+    DOTHIS(O,  multi_threaded) \
+    DOTHIS(O,  error_resilient_mode)
 
 // expands GET(oxf,AllowDF) to oxcf->AllowDF = x["AllowDF"] (x is our parmmap)
 #define GET(O,V) O->V = x[#V];
@@ -343,7 +342,7 @@ int main(int argc, char *argv[])
                "      <3 Record Compression Time and Run PSNR>\n"
                "\n"
                "\n"
-               "   Release Exe using: %s\n", on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+               "   Release Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
         return 0;
     }
 
@@ -367,8 +366,8 @@ int main(int argc, char *argv[])
         opt = InPutSettings(parfile);
     }
 
-    printf("\nRelease Exe using: %s\n", on2_codec_iface_name(&on2_codec_vp8_cx_algo));
-    fprintf(stderr, "\nRelease Exe using: %s\n", on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    printf("\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+    fprintf(stderr, "\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     cout << "inputFile: " << inputFile << "\n";
     cout << "outputFile: " << outputFile << "\n";
@@ -384,7 +383,7 @@ int main(int argc, char *argv[])
 
     snprintf(outputFile2Char, 255, "%s", outputFile2.c_str());
 
-    TimeCompressIVFtoIVF(inputFile, outputFile, 0, opt.TargetBandwidth, opt, "VP8 Release", 0, 0);
+    TimeCompressIVFtoIVF(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0);
 
     double totalPsnr;
 

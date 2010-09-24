@@ -5,7 +5,6 @@
 //
 //------------------------------------------------------------------------------
 //////////////////////////
-#include "on2-vpx-shim.h"
 #include "ivf.h"
 #include <stdio.h>
 #include <math.h>
@@ -206,14 +205,14 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     if (argc == 8)
     {
         opt = InPutSettings(argv[7]);
     }
 
-    int CompressInt = opt.AllowDF;
+    int CompressInt = opt.allow_df;
 
     ////////////Track Mem Usage//////////
     //string MemLeakCheckTXT2Str = output;
@@ -332,9 +331,9 @@ int CopyIVF2IVF(int argc, char *argv[], string WorkingDir)
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
-    int CompressInt = opt.AllowDF;
+    int CompressInt = opt.allow_df;
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     opt.Mode = MODE_GOODQUALITY;
 
@@ -617,7 +616,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
     "Unused                 - %c \n"
     "\n\n"
     ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.FourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
+    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.fourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
     ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
 
     IVF_FRAME_HEADER ivf_fhRaw;
@@ -800,7 +799,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
     "Unused                 - %c \n"
     "\n\n"
     ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.FourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
+    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.fourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
     ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
 
     IVF_FRAME_HEADER ivf_fhRaw;
@@ -943,12 +942,12 @@ int Raw2IVF(int argc, char *argv[])
 
     if (FourCC.compare("I420") == 0)
     {
-        ivfhRaw.FourCC     = MAKEFOURCC('I', '4', '2', '0');
+        ivfhRaw.four_cc    = MAKEFOURCC('I', '4', '2', '0');
     }
 
     if (FourCC.compare("YV12") == 0)
     {
-        ivfhRaw.FourCC     = MAKEFOURCC('Y', 'V', '1', '2');
+        ivfhRaw.four_cc    = MAKEFOURCC('Y', 'V', '1', '2');
 
     }
 
@@ -977,7 +976,7 @@ int Raw2IVF(int argc, char *argv[])
            "Unused                 - %c \n"
            "\n\n"
            , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
-           , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.FourCC, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
+           , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
            , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
 
     IVF_FRAME_HEADER ivf_fhRaw;
@@ -1509,7 +1508,7 @@ int PlayDecIVF(int argc, char *argv[])
     int FrameRate = (ivfhRaw.rate / ivfhRaw.scale);
     int YUV = 1;
 
-    if (ivfhRaw.FourCC == 808596553)//I420
+    if (ivfhRaw.four_cc == 808596553)//I420
     {
         YUV = 0;
     }
@@ -1724,7 +1723,7 @@ int DecoderCheck(int argc, char *argv[])
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     if (Mode == 1)
     {
@@ -3307,7 +3306,7 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     if (argc == 7)
     {
@@ -3322,7 +3321,7 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
     output2.append("_CompressIVFtoIVFNoErrorOutput.ivf");
     output3.append("_TimeCompressIVFtoIVF.ivf");
 
-    int CompressInt = opt.AllowDF;
+    int CompressInt = opt.allow_df;
 
     if (Mode == 0)
     {
@@ -3537,14 +3536,14 @@ int CompMatchesIVFenc(int argc, char *argv[])
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     if (argc == 7)
     {
         opt = InPutSettings(argv[6]);
     }
 
-    int CompressInt = opt.AllowDF;
+    int CompressInt = opt.allow_df;
 
     if (Mode == 0)
     {
@@ -3585,7 +3584,7 @@ int CompMatchesIVFenc(int argc, char *argv[])
 
     int Width = opt.Width;
     int Height = opt.Height;
-    int FrameRate = opt.FrameRate;
+    int FrameRate = opt.frame_rate;
     char ConversionHolder[256];
 
     //Make System Exe string for IVFENC to Create Compression

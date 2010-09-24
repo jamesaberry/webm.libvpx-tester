@@ -26,7 +26,7 @@ extern "C"
         unsigned char   signature[4]; //='DKIF';
         unsigned short  version     ; //= 0;
         unsigned short  headersize  ; //= 32;
-        unsigned int    FourCC;
+        unsigned int    four_cc;
         unsigned short  width;
         unsigned short  height;
         unsigned int    rate;

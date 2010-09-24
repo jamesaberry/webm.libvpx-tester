@@ -5,7 +5,6 @@
 //
 //------------------------------------------------------------------------------
 /////VP8//////////////////
-#include "on2-vpx-shim.h"
 #include "test-definitions.h"
 #include "onyx.h"
 #include "onyxd.h"
@@ -193,7 +192,7 @@ extern int VP6MvVP60(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
 //Tools
 extern int WriteIndividualFramesOut(int argc, char *argv[]);
-extern "C" on2_codec_iface_t on2_codec_vp8_cx_algo;
+extern "C" vpx_codec_iface_t vpx_codec_vp8_cx_algo;
 
 extern void FormatedPrint(string SummaryStr, int selector);
 extern "C"
@@ -386,7 +385,7 @@ void RecordTestComplete(string MainDirString, string File1String, int TestType)
 }
 int PrintVersion()
 {
-    printf("\n%s\n", on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    printf("\n%s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
     return 0;
 }
 void PrintHeader1(int argc, char *argv[], string WorkingDir3)
@@ -426,24 +425,24 @@ void PrintHeader1(int argc, char *argv[], string WorkingDir3)
     string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
 #if defined(_WIN32)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
     TestMachineInfo.append("\n                     Test Machine is Running: Windows\n\n");
 #endif
 #if defined(linux)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                       Test Machine is Running: Linux\n\n");
 #endif
 #if defined(__APPLE__)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                       Test Machine is Running: Mac\n\n");
 #endif
 #if defined(__POWERPC__)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                      Test Machine is Running: PowerPC\n\n");
 #endif
@@ -494,25 +493,25 @@ void PrintHeader2(int argc, char *argv[], string WorkingDir3)
 
 #if defined(_WIN32)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                      Test Machine is Running: Windows\n\n");
 #endif
 #if defined(linux)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                       Test Machine is Running: Linux\n\n");
 #endif
 #if defined(__APPLE__)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                        Test Machine is Running: Mac\n\n");
 #endif
 #if defined(__POWERPC__)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                      Test Machine is Running: PowerPC\n\n");
 #endif
@@ -572,25 +571,25 @@ void PrintHeader3(int argc, char *argv[], string  WorkingDir3)
 
 #if defined(_WIN32)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                     Test Machine is Running: Windows\n\n");
 #endif
 #if defined(linux)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                       Test Machine is Running: Linux\n\n");
 #endif
 #if defined(__APPLE__)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                        Test Machine is Running: Mac\n\n");
 #endif
 #if defined(__POWERPC__)
     TestMachineInfo = "                      ";
-    TestMachineInfo.append(on2_codec_iface_name(&on2_codec_vp8_cx_algo));
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                      Test Machine is Running: PowerPC\n\n");
 #endif
@@ -2899,7 +2898,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         opt = InPutSettings(ParFile);
     }
 
-    opt.TargetBandwidth = FirstBitRate;
+    opt.target_bandwidth = FirstBitRate;
 
     ///////////output Par file////////////////////
     ParFileOut.append("_ParameterFile.txt");
@@ -2911,16 +2910,16 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
     int x = 0;
     int DoONce = 0;
 
-    while (opt.TargetBandwidth <= LastBitRate)
+    while (opt.target_bandwidth <= LastBitRate)
     {
-        if (opt.TargetBandwidth == LastBitRate && DoONce == 0)
+        if (opt.target_bandwidth == LastBitRate && DoONce == 0)
         {
             DoONce = 1;
         }
 
         string OutPutStr2 = OutPutStr;
         char TBChar[8];
-        itoa_custom(opt.TargetBandwidth, TBChar, 10);
+        itoa_custom(opt.target_bandwidth, TBChar, 10);
         OutPutStr2.append(TBChar);
         string OutPutStr3 = OutPutStr2;
         OutPutStr3.append("_Dec");
@@ -2933,7 +2932,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         char outputChar2[255];
         snprintf(outputChar2, 255, "%s", OutPutStr3.c_str());
 
-        EncTimeArr[x] = TimeCompressIVFtoIVF(input, outputChar , speed, opt.TargetBandwidth, opt, CompressString, 0, 0);
+        EncTimeArr[x] = TimeCompressIVFtoIVF(input, outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0);
 
         if (EncTimeArr[x] == -1)
         {
@@ -2953,11 +2952,11 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
 
 
 
-        opt.TargetBandwidth = opt.TargetBandwidth + BitRateStep;
+        opt.target_bandwidth = opt.target_bandwidth + BitRateStep;
 
-        if (opt.TargetBandwidth > LastBitRate && DoONce == 0)
+        if (opt.target_bandwidth > LastBitRate && DoONce == 0)
         {
-            opt.TargetBandwidth = LastBitRate;
+            opt.target_bandwidth = LastBitRate;
             DoONce = 1;
         }
 
@@ -3149,8 +3148,8 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     {
         opt.Mode = MODE_REALTIME;
         //OutPutSettings(RandCompParOut,opt);
-        int speed = opt.MultiThreaded;
-        int BitRate = opt.TargetBandwidth;
+        int speed = opt.multi_threaded;
+        int BitRate = opt.target_bandwidth;
 
         if (CompressIVFtoIVF(input, RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
@@ -3165,8 +3164,8 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     {
         opt.Mode = MODE_GOODQUALITY;
         //OutPutSettings(RandCompParOut,opt);
-        int speed = opt.MultiThreaded;
-        int BitRate = opt.TargetBandwidth;
+        int speed = opt.multi_threaded;
+        int BitRate = opt.target_bandwidth;
 
         if (CompressIVFtoIVF(input, RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
@@ -3181,8 +3180,8 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     {
         opt.Mode = MODE_BESTQUALITY;
         //OutPutSettings(RandCompParOut,opt);
-        int speed = opt.MultiThreaded;
-        int BitRate = opt.TargetBandwidth;
+        int speed = opt.multi_threaded;
+        int BitRate = opt.target_bandwidth;
 
         if (CompressIVFtoIVF(input, RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
@@ -3199,8 +3198,8 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 
     if (Mode == 4)
     {
-        int speed = opt.MultiThreaded;
-        int BitRate = opt.TargetBandwidth;
+        int speed = opt.multi_threaded;
+        int BitRate = opt.target_bandwidth;
         opt.Mode = MODE_SECONDPASS_BEST;
 
         //OutPutSettings(RandCompParOut,opt);
@@ -3409,12 +3408,12 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
     //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
@@ -3430,7 +3429,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            opt.AllowDF = 0;
+            opt.allow_df = 0;
 
             if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -3441,7 +3440,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             }
 
             opt.Mode = MODE_REALTIME;
-            opt.AllowDF = 1;
+            opt.allow_df = 1;
 
             if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -3455,7 +3454,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            opt.AllowDF = 0;
+            opt.allow_df = 0;
 
             if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -3466,7 +3465,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             }
 
             opt.Mode = MODE_GOODQUALITY;
-            opt.AllowDF = 1;
+            opt.allow_df = 1;
 
             if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -3480,7 +3479,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
-            opt.AllowDF = 0;
+            opt.allow_df = 0;
 
             if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -3491,7 +3490,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             }
 
             opt.Mode = MODE_BESTQUALITY;
-            opt.AllowDF = 1;
+            opt.allow_df = 1;
 
             if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -3504,7 +3503,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
 
         if (Mode == 4)
         {
-            opt.AllowDF = 0;
+            opt.allow_df = 0;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -3515,7 +3514,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
                 return 2;
             }
 
-            opt.AllowDF = 1;
+            opt.allow_df = 1;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
@@ -3529,7 +3528,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
 
         if (Mode == 5)
         {
-            opt.AllowDF = 0;
+            opt.allow_df = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -3540,7 +3539,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
                 return 2;
             }
 
-            opt.AllowDF = 1;
+            opt.allow_df = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
@@ -3833,13 +3832,13 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
-    opt.LagInFrames = 10;
+    opt.target_bandwidth = BitRate;
+    opt.lag_in_frames = 10;
 
     //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
     //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
@@ -3855,7 +3854,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            opt.AllowLag = 0;
+            opt.allow_lag = 0;
 
             if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
@@ -3866,7 +3865,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             }
 
             opt.Mode = MODE_REALTIME;
-            opt.AllowLag = 1;
+            opt.allow_lag = 1;
 
             if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
@@ -3880,7 +3879,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            opt.AllowLag = 0;
+            opt.allow_lag = 0;
 
             if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
@@ -3891,7 +3890,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             }
 
             opt.Mode = MODE_GOODQUALITY;
-            opt.AllowLag = 1;
+            opt.allow_lag = 1;
 
             if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
@@ -3905,7 +3904,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
-            opt.AllowLag = 0;
+            opt.allow_lag = 0;
 
             if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
@@ -3916,7 +3915,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             }
 
             opt.Mode = MODE_BESTQUALITY;
-            opt.AllowLag = 1;
+            opt.allow_lag = 1;
 
             if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
@@ -3933,7 +3932,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         if (Mode == 4)
         {
-            opt.AllowLag = 0;
+            opt.allow_lag = 0;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
@@ -3944,7 +3943,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
                 return 2;
             }
 
-            opt.AllowLag = 1;
+            opt.allow_lag = 1;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
@@ -3958,7 +3957,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         if (Mode == 5)
         {
-            opt.AllowLag = 0;
+            opt.allow_lag = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
@@ -3969,7 +3968,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
                 return 2;
             }
 
-            opt.AllowLag = 1;
+            opt.allow_lag = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
@@ -4028,10 +4027,10 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     int fail = 0;
 
-    if (LagInFramesFound == opt.LagInFrames)
+    if (LagInFramesFound == opt.lag_in_frames)
     {
         char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Correct number of LagInFrames (%i) detected in compression for %s - Passed", opt.LagInFrames, AllowLagonFilename);
+        snprintf(OutputChar1, 255, "Correct number of LagInFrames (%i) detected in compression for %s - Passed", opt.lag_in_frames, AllowLagonFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
         printf("\n");
@@ -4040,7 +4039,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     else
     {
         char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Correct number of LagInFrames (%i) not detected in compression for %s - Failed", opt.LagInFrames, AllowLagonFilename);
+        snprintf(OutputChar1, 255, "Correct number of LagInFrames (%i) not detected in compression for %s - Failed", opt.lag_in_frames, AllowLagonFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
         printf("\n");
@@ -4318,15 +4317,15 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
-    opt.EndUsage = 0;
-    opt.ResampleDownWaterMark = 60;
-    opt.ResampleUpWaterMark = 80;
+    opt.target_bandwidth = BitRate;
+    opt.end_usage = 0;
+    opt.resample_down_water_mark = 60;
+    opt.resample_up_water_mark = 80;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
@@ -4338,7 +4337,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            opt.AllowSpatialResampling = 0;
+            opt.allow_spatial_resampling = 0;
 
             if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -4349,7 +4348,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             }
 
             opt.Mode = MODE_REALTIME;
-            opt.AllowSpatialResampling = 1;
+            opt.allow_spatial_resampling = 1;
 
             if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -4363,7 +4362,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            opt.AllowSpatialResampling = 0;
+            opt.allow_spatial_resampling = 0;
 
             if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -4374,7 +4373,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             }
 
             opt.Mode = MODE_GOODQUALITY;
-            opt.AllowSpatialResampling = 1;
+            opt.allow_spatial_resampling = 1;
 
             if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -4388,7 +4387,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
-            opt.AllowSpatialResampling = 0;
+            opt.allow_spatial_resampling = 0;
 
             if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -4399,7 +4398,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             }
 
             opt.Mode = MODE_BESTQUALITY;
-            opt.AllowSpatialResampling = 1;
+            opt.allow_spatial_resampling = 1;
 
             if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -4416,7 +4415,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
 
         if (Mode == 4)
         {
-            opt.AllowSpatialResampling = 0;
+            opt.allow_spatial_resampling = 0;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -4427,7 +4426,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
                 return 2;
             }
 
-            opt.AllowSpatialResampling = 1;
+            opt.allow_spatial_resampling = 1;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
@@ -4441,7 +4440,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
 
         if (Mode == 5)
         {
-            opt.AllowSpatialResampling = 0;
+            opt.allow_spatial_resampling = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -4452,7 +4451,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
                 return 2;
             }
 
-            opt.AllowSpatialResampling = 1;
+            opt.allow_spatial_resampling = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
@@ -4577,7 +4576,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
 
 int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "opt.AutoKeyFrame";
+    char *CompressString = "opt.auto_keyFrame";
 
     if (!(argc == 7 || argc == 6))
     {
@@ -4778,13 +4777,13 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
-    opt.AutoKey = 1;
+    opt.target_bandwidth = BitRate;
+    opt.auto_key = 1;
     opt.key_freq = AutoKeyFramingInt;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
@@ -5308,16 +5307,16 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
-    opt.AllowDF = 1;
-    int CompressInt = opt.AllowDF;
+    opt.allow_df = 1;
+    int CompressInt = opt.allow_df;
 
-    opt.TargetBandwidth = BitRate;
-    opt.StartingBufferLevel = StartingBufferLvl;
-    opt.MaximumBufferSize = MaximumBufferLevel;
+    opt.target_bandwidth = BitRate;
+    opt.starting_buffer_level = StartingBufferLvl;
+    opt.maximum_buffer_size = MaximumBufferLevel;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
@@ -5642,12 +5641,12 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
     opt.Mode = MODE_GOODQUALITY;
     opt.Version = VersionNum;
     int CompressInt = opt.Version;
@@ -6229,13 +6228,13 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
     opt.Version = VersionNum;
     int CompressInt = opt.Version;
     opt.Mode = MODE_GOODQUALITY;
@@ -6827,16 +6826,16 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
     /////Newly added//////
-    opt.WorstAllowedQ = 15;
-    opt.AllowDF = 1;
-    opt.AllowSpatialResampling = 0;
+    opt.worst_allowed_q = 15;
+    opt.allow_df = 1;
+    opt.allow_spatial_resampling = 0;
     opt.end_usage = 0;
     //////////////////////
 
@@ -6851,7 +6850,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
     {
         while (n >= 0)
         {
-            opt.DropFramesWaterMark = n;
+            opt.drop_frames_water_mark = n;
             //update file name
             char num[20];
             itoa_custom(n, num, 10);
@@ -6879,7 +6878,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
     {
         while (n >= 0)
         {
-            opt.DropFramesWaterMark = n;
+            opt.drop_frames_water_mark = n;
             //update file name
             char num[20];
             itoa_custom(n, num, 10);
@@ -7265,22 +7264,22 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
     int TargetDataRatePercentage = 30;
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     ////////////////Data Rate Specific Settings////////////////
-    opt.BestAllowedQ = 0;
-    opt.WorstAllowedQ = 63;
-    opt.AllowDF = 1;
+    opt.best_allowed_q = 0;
+    opt.worst_allowed_q = 63;
+    opt.allow_df = 1;
     ///////////////////////////////////////////////////////////
 
-    int CompressInt = opt.AllowDF;
+    int CompressInt = opt.allow_df;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
@@ -7817,7 +7816,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     FILE *ReleaseFileCheck = fopen(ReleaseExeLoc.c_str(), "rb");
@@ -7849,7 +7848,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     //cout << "\n\n" << ProgramDebug << "\n\n";
     //cout << "\n\n" << ParFileRelease << "\n\n";
@@ -8306,12 +8305,12 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
     //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
@@ -8327,7 +8326,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            opt.EncodeBreakout = 0;
+            opt.encode_breakout = 0;
 
             if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -8338,7 +8337,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_REALTIME;
-            opt.EncodeBreakout = 100;
+            opt.encode_breakout = 100;
 
             if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
@@ -8349,7 +8348,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_REALTIME;
-            opt.EncodeBreakout = 500;
+            opt.encode_breakout = 500;
 
             if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
@@ -8360,7 +8359,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_REALTIME;
-            opt.EncodeBreakout = 1000;
+            opt.encode_breakout = 1000;
 
             if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
@@ -8374,7 +8373,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            opt.EncodeBreakout = 0;
+            opt.encode_breakout = 0;
 
             if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -8385,7 +8384,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_GOODQUALITY;
-            opt.EncodeBreakout = 100;
+            opt.encode_breakout = 100;
 
             if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
@@ -8396,7 +8395,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_GOODQUALITY;
-            opt.EncodeBreakout = 500;
+            opt.encode_breakout = 500;
 
             if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
@@ -8407,7 +8406,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_GOODQUALITY;
-            opt.EncodeBreakout = 1000;
+            opt.encode_breakout = 1000;
 
             if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
@@ -8421,7 +8420,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
-            opt.EncodeBreakout = 0;
+            opt.encode_breakout = 0;
 
             if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -8432,7 +8431,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_BESTQUALITY;
-            opt.EncodeBreakout = 100;
+            opt.encode_breakout = 100;
 
             if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
@@ -8443,7 +8442,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_BESTQUALITY;
-            opt.EncodeBreakout = 500;
+            opt.encode_breakout = 500;
 
             if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
@@ -8454,7 +8453,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             }
 
             opt.Mode = MODE_BESTQUALITY;
-            opt.EncodeBreakout = 1000;
+            opt.encode_breakout = 1000;
 
             if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
@@ -8471,7 +8470,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         if (Mode == 4)
         {
-            opt.EncodeBreakout = 0;
+            opt.encode_breakout = 0;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -8482,7 +8481,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 return 2;
             }
 
-            opt.EncodeBreakout = 100;
+            opt.encode_breakout = 100;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
@@ -8493,7 +8492,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 return 2;
             }
 
-            opt.EncodeBreakout = 500;
+            opt.encode_breakout = 500;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
@@ -8504,7 +8503,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 return 2;
             }
 
-            opt.EncodeBreakout = 1000;
+            opt.encode_breakout = 1000;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
@@ -8518,7 +8517,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         if (Mode == 5)
         {
-            opt.EncodeBreakout = 0;
+            opt.encode_breakout = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -8529,7 +8528,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 return 2;
             }
 
-            opt.EncodeBreakout = 100;
+            opt.encode_breakout = 100;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
@@ -8540,7 +8539,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 return 2;
             }
 
-            opt.EncodeBreakout = 500;
+            opt.encode_breakout = 500;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
@@ -8551,7 +8550,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 return 2;
             }
 
-            opt.EncodeBreakout = 1000;
+            opt.encode_breakout = 1000;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
@@ -9033,7 +9032,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
 
-    opt.TargetBandwidth = BitRate;
+    opt.target_bandwidth = BitRate;
 
     if (TestType == 3)
     {
@@ -9044,7 +9043,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            opt.ErrorResilientMode = 1;
+            opt.error_resilient_mode = 1;
 
             if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -9055,7 +9054,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             }
 
             opt.Mode = MODE_REALTIME;
-            opt.ErrorResilientMode = 0;
+            opt.error_resilient_mode = 0;
 
             if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -9069,7 +9068,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            opt.ErrorResilientMode = 1;
+            opt.error_resilient_mode = 1;
 
             if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -9080,7 +9079,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             }
 
             opt.Mode = MODE_GOODQUALITY;
-            opt.ErrorResilientMode = 0;
+            opt.error_resilient_mode = 0;
 
             if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -9094,7 +9093,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
-            opt.ErrorResilientMode = 1;
+            opt.error_resilient_mode = 1;
 
             if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -9105,7 +9104,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             }
 
             opt.Mode = MODE_BESTQUALITY;
-            opt.ErrorResilientMode = 0;
+            opt.error_resilient_mode = 0;
 
             if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
@@ -9122,7 +9121,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 
         if (Mode == 4)
         {
-            opt.ErrorResilientMode = 1;
+            opt.error_resilient_mode = 1;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -9133,7 +9132,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
                 return 2;
             }
 
-            opt.ErrorResilientMode = 0;
+            opt.error_resilient_mode = 0;
             opt.Mode = MODE_SECONDPASS;
 
             if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
@@ -9147,7 +9146,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 
         if (Mode == 5)
         {
-            opt.ErrorResilientMode = 1;
+            opt.error_resilient_mode = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -9158,7 +9157,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
                 return 2;
             }
 
-            opt.ErrorResilientMode = 0;
+            opt.error_resilient_mode = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
             if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
@@ -9485,8 +9484,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     /////////////////////////////////////////////////////////
 
-    int CompressInt = opt.AllowDF;
-    int BitRate = opt.TargetBandwidth;
+    int CompressInt = opt.allow_df;
+    int BitRate = opt.target_bandwidth;
     int Fail = 0;
 
     ///////////////////////////Record all files in the executable + Current directory///////////////////////////
@@ -9579,7 +9578,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     {
         opt.Mode = MODE_SECONDPASS_BEST;
 
-        if (CompressIVFtoIVF(input, ExtraFileCheck, opt.MultiThreaded, BitRate, opt, CompressString, 0, 0/*opt.DeleteFirstPassFile*/) == -1)
+        if (CompressIVFtoIVF(input, ExtraFileCheck, opt.multi_threaded, BitRate, opt, CompressString, 0, 0/*opt.DeleteFirstPassFile*/) == -1)
         {
             fclose(fp);
             string File1Str = File1;
@@ -10163,8 +10162,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     /////////////////////////////////////////////////////////
 
-    int CompressInt = opt.AllowDF;
-    int BitRate = opt.TargetBandwidth;
+    int CompressInt = opt.allow_df;
+    int BitRate = opt.target_bandwidth;
     int Fail = 0;
 
     ///////////////////////////Record all files in the executable + Current directory///////////////////////////
@@ -10257,7 +10256,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     {
         opt.Mode = MODE_SECONDPASS_BEST;
 
-        if (CompressIVFtoIVF(input, ExtraFileCheck, opt.MultiThreaded, BitRate, opt, CompressString, 0, 0) == -1)
+        if (CompressIVFtoIVF(input, ExtraFileCheck, opt.multi_threaded, BitRate, opt, CompressString, 0, 0) == -1)
         {
             fclose(fp);
             string File1Str = File1;
@@ -10841,8 +10840,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////////////////////////////////////////////////
 
-        int CompressInt = opt.AllowDF;
-        int BitRate = opt.TargetBandwidth;
+        int CompressInt = opt.allow_df;
+        int BitRate = opt.target_bandwidth;
         int Fail = 0;
 
         ///////////////////////////Record all files in the executable + Current directory///////////////////////////
@@ -10935,7 +10934,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, ExtraFileCheck, opt.MultiThreaded, BitRate, opt, CompressString, 0, 0, 0/*opt.DeleteFirstPassFile*/) == -1)
+            if (CompressIVFtoIVF(input, ExtraFileCheck, opt.multi_threaded, BitRate, opt, CompressString, 0, 0, 0/*opt.DeleteFirstPassFile*/) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -11526,8 +11525,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////////////////////////////////////////////////
 
-        int CompressInt = opt.AllowDF;
-        int BitRate = opt.TargetBandwidth;
+        int CompressInt = opt.allow_df;
+        int BitRate = opt.target_bandwidth;
         int Fail = 0;
 
         //Record all files in the executable directory
@@ -11602,7 +11601,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, ExtraFileCheck, opt.MultiThreaded, BitRate, opt, CompressString, 1, 0/*opt.DeleteFirstPassFile*/) == -1)
+            if (CompressIVFtoIVF(input, ExtraFileCheck, opt.multi_threaded, BitRate, opt, CompressString, 1, 0/*opt.DeleteFirstPassFile*/) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -12098,12 +12097,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
-        opt.TargetBandwidth = BitRate;
-        opt.FixedQ = 1;
+        opt.target_bandwidth = BitRate;
+        opt.fixed_q = 1;
         int FixedQCheck1 = FixedQ1Int;
         int FixedQCheck2 = FixedQ2Int;
 
@@ -12130,7 +12129,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.FixedQ = FixedQ1Int;
+                opt.fixed_q = FixedQ1Int;
 
                 if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
@@ -12141,7 +12140,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.FixedQ = FixedQ2Int;
+                opt.fixed_q = FixedQ2Int;
 
                 if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
@@ -12155,7 +12154,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.FixedQ = FixedQ1Int;
+                opt.fixed_q = FixedQ1Int;
 
                 if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
@@ -12166,7 +12165,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.FixedQ = FixedQ2Int;
+                opt.fixed_q = FixedQ2Int;
 
                 if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
@@ -12180,7 +12179,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.FixedQ = FixedQ1Int;
+                opt.fixed_q = FixedQ1Int;
 
                 if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
@@ -12191,7 +12190,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_BESTQUALITY;
-                opt.FixedQ = FixedQ2Int;
+                opt.fixed_q = FixedQ2Int;
 
                 if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
@@ -12208,7 +12207,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.FixedQ = FixedQ1Int;
+                opt.fixed_q = FixedQ1Int;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
@@ -12219,7 +12218,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.FixedQ = FixedQ2Int;
+                opt.fixed_q = FixedQ2Int;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
@@ -12233,7 +12232,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.FixedQ = FixedQ1Int;
+                opt.fixed_q = FixedQ1Int;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
@@ -12244,7 +12243,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.FixedQ = FixedQ2Int;
+                opt.fixed_q = FixedQ2Int;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
@@ -12409,7 +12408,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
-        char *CompressString = "opt.KeyFreq";
+        char *CompressString = "opt.key_freq";
         char *input = argv[2];
 
         if (!(argc == 6 || argc == 7))
@@ -12603,13 +12602,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
-        opt.AutoKey = 0;//1;
+        opt.target_bandwidth = BitRate;
+        opt.auto_key = 0;//1;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -12621,7 +12620,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.KeyFreq = 0;//ForceKeyFrameInt;
+                opt.key_freq = 0;//ForceKeyFrameInt;
 
                 if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
@@ -12635,7 +12634,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.KeyFreq = 0;//ForceKeyFrameInt;
+                opt.key_freq = 0;//ForceKeyFrameInt;
 
                 if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
@@ -12649,7 +12648,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.KeyFreq = 0;//ForceKeyFrameInt;
+                opt.key_freq = 0;//ForceKeyFrameInt;
 
                 if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
@@ -12666,7 +12665,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.KeyFreq = 0;//ForceKeyFrameInt;
+                opt.key_freq = 0;//ForceKeyFrameInt;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
@@ -12680,7 +12679,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.KeyFreq = 0;//ForceKeyFrameInt;
+                opt.key_freq = 0;//ForceKeyFrameInt;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
@@ -13722,12 +13721,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
 
         //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
         //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
@@ -14173,17 +14172,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
-        int CompressInt = opt.AllowDF;
+        int CompressInt = opt.allow_df;
 
         int BitRate1 = BitRate - (BitRate * 0.3);
         int BitRate2 = BitRate;
         int BitRate3 = BitRate + (BitRate * 0.3);
 
-        //opt.TargetBandwidth = BitRate;
+        //opt.target_bandwidth = BitRate;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -14192,7 +14191,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            opt.TargetBandwidth = BitRate1;
+            opt.target_bandwidth = BitRate1;
             opt.Mode = MODE_GOODQUALITY;
 
             if (CompressIVFtoIVF(input, GvBgOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
@@ -14203,7 +14202,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate2;
+            opt.target_bandwidth = BitRate2;
 
             if (CompressIVFtoIVF(input, GvBgOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -14213,7 +14212,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate3;
+            opt.target_bandwidth = BitRate3;
 
             if (CompressIVFtoIVF(input, GvBgOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -14223,7 +14222,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate1;
+            opt.target_bandwidth = BitRate1;
             opt.Mode = MODE_BESTQUALITY;
 
             if (CompressIVFtoIVF(input, GvBbOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
@@ -14234,7 +14233,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate2;
+            opt.target_bandwidth = BitRate2;
 
             if (CompressIVFtoIVF(input, GvBbOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -14244,7 +14243,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate3;
+            opt.target_bandwidth = BitRate3;
 
             if (CompressIVFtoIVF(input, GvBbOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -14663,12 +14662,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
 
         if (LagInFrames1Val > 25 || LagInFrames2Val > 25 || LagInFrames2Val < 0 || LagInFrames1Val < 0)
         {
@@ -14696,8 +14695,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.AllowLag = 0;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 0;
+                opt.lag_in_frames = LagInFrames1Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
@@ -14708,8 +14707,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames1Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
@@ -14720,8 +14719,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames2Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames2Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
@@ -14735,8 +14734,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.AllowLag = 0;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 0;
+                opt.lag_in_frames = LagInFrames1Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
@@ -14748,8 +14747,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames1Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
                 {
@@ -14760,8 +14759,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames2Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames2Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
@@ -14775,8 +14774,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.AllowLag = 0;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 0;
+                opt.lag_in_frames = LagInFrames1Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
@@ -14787,8 +14786,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_BESTQUALITY;
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames1Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
                 {
@@ -14799,8 +14798,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_BESTQUALITY;
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames2Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames2Val;
 
                 if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
@@ -14817,8 +14816,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.AllowLag = 0;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 0;
+                opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
@@ -14829,8 +14828,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
@@ -14841,8 +14840,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames2Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames2Val;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
@@ -14856,8 +14855,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.AllowLag = 0;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 0;
+                opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
@@ -14868,8 +14867,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames1Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
@@ -14880,8 +14879,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.AllowLag = 1;
-                opt.LagInFrames = LagInFrames2Val;
+                opt.allow_lag = 1;
+                opt.lag_in_frames = LagInFrames2Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
@@ -15325,12 +15324,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
         int PSNRToggle = 0;
 
         int n = 3;
@@ -15343,7 +15342,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             while (n < 63)
             {
-                opt.WorstAllowedQ = n;
+                opt.worst_allowed_q = n;
 
                 char num[20];
                 itoa_custom(n, num, 10);
@@ -15378,7 +15377,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             while (n < 63)
             {
 
-                opt.WorstAllowedQ = n;
+                opt.worst_allowed_q = n;
 
                 char num[20];
                 itoa_custom(n, num, 10);
@@ -15947,12 +15946,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate ;
+        opt.target_bandwidth = BitRate ;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -16500,12 +16499,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate ;
+        opt.target_bandwidth = BitRate ;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -16860,12 +16859,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
         double PSNRArr[2];
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
         opt.worst_allowed_q = 63;
 
         int n = 0;
@@ -16880,7 +16879,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.BestAllowedQ = 10;
+                opt.best_allowed_q = 10;
 
                 if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
                 {
@@ -16891,7 +16890,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.BestAllowedQ = 60;
+                opt.best_allowed_q = 60;
 
                 if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
                 {
@@ -16905,7 +16904,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.BestAllowedQ = 10;
+                opt.best_allowed_q = 10;
 
                 if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
                 {
@@ -16916,7 +16915,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.BestAllowedQ = 60;
+                opt.best_allowed_q = 60;
 
                 if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
                 {
@@ -16930,7 +16929,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.BestAllowedQ = 10;
+                opt.best_allowed_q = 10;
 
                 if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
                 {
@@ -16941,7 +16940,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_BESTQUALITY;
-                opt.BestAllowedQ = 60;
+                opt.best_allowed_q = 60;
 
                 if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
                 {
@@ -16958,7 +16957,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.BestAllowedQ = 10;
+                opt.best_allowed_q = 10;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
@@ -16969,7 +16968,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.BestAllowedQ = 60;
+                opt.best_allowed_q = 60;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
@@ -16983,7 +16982,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.BestAllowedQ = 10;
+                opt.best_allowed_q = 10;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
@@ -16994,7 +16993,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.BestAllowedQ = 60;
+                opt.best_allowed_q = 60;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
@@ -17338,13 +17337,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
-        opt.EndUsage = 0;
+        opt.target_bandwidth = BitRate;
+        opt.end_usage = 0;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -17357,8 +17356,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.MultiThreaded = CoreCount;
-                opt.CpuUsed = -1;
+                opt.multi_threaded = CoreCount;
+                opt.cpu_used = -1;
                 Time1 = TimeCompressIVFtoIVF(input, MultiThreaded14OutFile, MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
 
                 if (Time1 == -1)
@@ -17370,7 +17369,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.MultiThreaded = 0;
+                opt.multi_threaded = 0;
                 Time2 = TimeCompressIVFtoIVF(input, MultiThreaded00OutFile, MultiThreaded, BitRate, opt, CompressString, 0, 0);
 
                 if (Time2 == -1)
@@ -17385,7 +17384,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.MultiThreaded = CoreCount;
+                opt.multi_threaded = CoreCount;
                 Time1 = TimeCompressIVFtoIVF(input, MultiThreaded14OutFile, MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
 
                 if (Time1 == -1)
@@ -17397,7 +17396,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.MultiThreaded = 0;
+                opt.multi_threaded = 0;
                 Time2 = TimeCompressIVFtoIVF(input, MultiThreaded00OutFile, MultiThreaded, BitRate, opt, CompressString, 0, 0);
 
                 if (Time2 == -1)
@@ -17808,13 +17807,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
-        opt.AutoKey = 1;
+        opt.target_bandwidth = BitRate;
+        opt.auto_key = 1;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -17904,7 +17903,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 if (ParFileNum == 1) //The old encoding method for two pass required for the encoder to be called twice once to run the first pass then again for the second
                 {
                     opt.Mode = MODE_SECONDPASS;
-                    opt.LagInFrames = 10;
+                    opt.lag_in_frames = 10;
 
                     if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
                     {
@@ -17978,7 +17977,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 if (ParFileNum == 1) //The old encoding method for two pass required for the encoder to be called twice once to run the first pass then again for the second
                 {
                     opt.Mode = MODE_SECONDPASS_BEST;
-                    opt.LagInFrames = 10;
+                    opt.lag_in_frames = 10;
 
                     if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
                     {
@@ -18449,14 +18448,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
-        opt.AutoKey = 1;
-        opt.CpuUsed = -1;
+        opt.target_bandwidth = BitRate;
+        opt.auto_key = 1;
+        opt.cpu_used = -1;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -18753,12 +18752,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
 
         int Noise = 0;
         long File2bytes[7];
@@ -18818,7 +18817,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 if (Mode == 0)
                 {
                     opt.Mode = MODE_REALTIME;
-                    opt.NoiseSensitivity = Noise;
+                    opt.noise_sensitivity = Noise;
 
                     if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
@@ -18832,7 +18831,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 if (Mode == 1)
                 {
                     opt.Mode = MODE_GOODQUALITY;
-                    opt.NoiseSensitivity = Noise;
+                    opt.noise_sensitivity = Noise;
 
                     if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
@@ -18847,7 +18846,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 if (Mode == 2)
                 {
                     opt.Mode = MODE_BESTQUALITY;
-                    opt.NoiseSensitivity = Noise;
+                    opt.noise_sensitivity = Noise;
 
                     if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
@@ -18864,7 +18863,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (Mode == 4)
                 {
-                    opt.NoiseSensitivity = Noise;
+                    opt.noise_sensitivity = Noise;
                     opt.Mode = MODE_SECONDPASS;
 
                     if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
@@ -18878,7 +18877,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (Mode == 5)
                 {
-                    opt.NoiseSensitivity = Noise;
+                    opt.noise_sensitivity = Noise;
                     opt.Mode = MODE_SECONDPASS_BEST;
 
                     if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
@@ -19198,11 +19197,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
-        int CompressInt = opt.AllowDF;
+        int CompressInt = opt.allow_df;
 
         int BitRate1 = BitRate - (BitRate * 0.3);
         int BitRate2 = BitRate;
@@ -19217,7 +19216,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         else
         {
             opt.Mode = 5;
-            opt.TargetBandwidth = BitRate1;
+            opt.target_bandwidth = BitRate1;
 
             if (CompressIVFtoIVF(input, TwoPassOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -19227,7 +19226,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate2;
+            opt.target_bandwidth = BitRate2;
 
             if (CompressIVFtoIVF(input, TwoPassOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -19237,7 +19236,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate3;
+            opt.target_bandwidth = BitRate3;
 
             if (CompressIVFtoIVF(input, TwoPassOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -19248,7 +19247,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             }
 
             opt.Mode = 2;
-            opt.TargetBandwidth = BitRate1;
+            opt.target_bandwidth = BitRate1;
 
             if (CompressIVFtoIVF(input, OnePassOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -19258,7 +19257,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate2;
+            opt.target_bandwidth = BitRate2;
 
             if (CompressIVFtoIVF(input, OnePassOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -19268,7 +19267,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate3;
+            opt.target_bandwidth = BitRate3;
 
             if (CompressIVFtoIVF(input, OnePassOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -19683,15 +19682,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
-        opt.AllowLag = 1;
-        opt.LagInFrames = 10;
-        opt.EndUsage = 1;
+        opt.target_bandwidth = BitRate;
+        opt.allow_lag = 1;
+        opt.lag_in_frames = 10;
+        opt.end_usage = 1;
 
         //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
         //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
@@ -19707,7 +19706,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.PlayAlternate = PlayAlternate1Val;
+                opt.play_alternate = PlayAlternate1Val;
 
                 if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
@@ -19718,7 +19717,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.PlayAlternate = PlayAlternate2Val;
+                opt.play_alternate = PlayAlternate2Val;
 
                 if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
@@ -19732,7 +19731,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.PlayAlternate = PlayAlternate1Val;
+                opt.play_alternate = PlayAlternate1Val;
 
                 if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
@@ -19743,7 +19742,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.PlayAlternate = PlayAlternate2Val;
+                opt.play_alternate = PlayAlternate2Val;
 
                 if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
@@ -19757,7 +19756,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.PlayAlternate = PlayAlternate1Val;
+                opt.play_alternate = PlayAlternate1Val;
 
                 if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
@@ -19768,7 +19767,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_BESTQUALITY;
-                opt.PlayAlternate = PlayAlternate2Val;
+                opt.play_alternate = PlayAlternate2Val;
 
                 if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
@@ -19785,7 +19784,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.PlayAlternate = PlayAlternate1Val;
+                opt.play_alternate = PlayAlternate1Val;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
@@ -19796,7 +19795,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.PlayAlternate = PlayAlternate2Val;
+                opt.play_alternate = PlayAlternate2Val;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
@@ -19810,7 +19809,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.PlayAlternate = PlayAlternate1Val;
+                opt.play_alternate = PlayAlternate1Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
@@ -19821,7 +19820,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.PlayAlternate = PlayAlternate2Val;
+                opt.play_alternate = PlayAlternate2Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
@@ -20147,13 +20146,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
-        int CompressInt = opt.AllowDF;
+        int CompressInt = opt.allow_df;
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
 
         int n = 0;
         int i = 0;
@@ -20255,22 +20254,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int countme = 0;
         double ssim = 0;
 
-        printf("\nCaculating PSNR: NOFILTERING DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
-        fprintf(stderr, "\nCaculating PSNR: ONYXD_NOFILTERING DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
+        printf("\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+        fprintf(stderr, "\nCaculating PSNR: ONYXD_NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, 0, flags, ssim);
         countme++;
 
         flags++;
-        printf("\nCaculating PSNR: DEBLOCK DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
-        fprintf(stderr, "\nCaculating PSNR: ONYXD_DEBLOCK DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
+        printf("\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+        fprintf(stderr, "\nCaculating PSNR: ONYXD_DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, noise_level, flags, ssim);
         countme++;
         flags++;
 
         while (deblock_level != 16)
         {
-            printf("\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
-            fprintf(stderr, "\nCaculating PSNR: ONYXD_DEMACROBLOCK DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
+            printf("\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+            fprintf(stderr, "\nCaculating PSNR: ONYXD_DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, 0, flags, ssim);
             countme++;
             deblock_level++;
@@ -20282,8 +20281,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         while (noise_level != 8)
         {
-            printf("\nCaculating PSNR: ADDNOISE DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
-            fprintf(stderr, "\nCaculating PSNR: ADDNOISE DeblockLevel %i NoiseLevel %i \n", deblock_level, noise_level);
+            printf("\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+            fprintf(stderr, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, noise_level, flags, ssim);
             countme++;
 
@@ -20370,27 +20369,27 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (PSNRArr[0] != PSNRArr[x])
             {
                 char OutputChar1[255];
-                snprintf(OutputChar1, 255, "NoiseLevel %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
                 printf("\n");
                 fprintf(stderr, "\n");
 
-                //printf("ADDNOISE NoiseLevel %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE NoiseLevel %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //printf("ADDNOISE noise_level %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
 
             }
             else
             {
                 char OutputChar1[255];
-                snprintf(OutputChar1, 255, "NoiseLevel %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f - Failed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f - Failed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
                 printf("\n");
                 fprintf(stderr, "\n");
 
-                //printf("ADDNOISE NoiseLevel %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE NoiseLevel %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //printf("ADDNOISE noise_level %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 TestFail = 1;
             }
 
@@ -20479,27 +20478,27 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (PSNRPercent < 0.1)
             {
                 char OutputChar1[255];
-                snprintf(OutputChar1, 255, "NoiseLevel %*i PSNR: %4.2f within 10%% of %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f within 10%% of %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
                 printf("\n");
                 fprintf(stderr, "\n");
 
-                //printf("ADDNOISE NoiseLevel %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE NoiseLevel %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //printf("ADDNOISE noise_level %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
 
             }
             else
             {
                 char OutputChar1[255];
-                snprintf(OutputChar1, 255, "NoiseLevel %*i PSNR: %4.2f not within 10%% of %4.2f - Indeterminate", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f not within 10%% of %4.2f - Indeterminate", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
                 printf("\n");
                 fprintf(stderr, "\n");
 
-                //printf("ADDNOISE NoiseLevel %*i PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE NoiseLevel %*i PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //printf("ADDNOISE noise_level %*i PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
+                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 TenPercent = 1;
             }
 
@@ -20742,12 +20741,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
         opt.lag_in_frames = 0;
         opt.play_alternate = 0;
         //opt.lag_in_frames = 18; //Test works when lag in frames = 0 but does not work if lag in
@@ -20781,7 +20780,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.AllowDF = 0;
+                opt.allow_df = 0;
 
                 if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
@@ -20795,7 +20794,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.AllowDF = 0;
+                opt.allow_df = 0;
 
                 if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
@@ -20808,7 +20807,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.AllowDF = 0;
+                opt.allow_df = 0;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -20822,7 +20821,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.AllowDF = 0;
+                opt.allow_df = 0;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -21119,15 +21118,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
         //opt.auto_key = 0;
         opt.allow_lag = 0;
-        opt.AllowSpatialResampling = 1;
-        opt.EndUsage = 0;
-        opt.TargetBandwidth = BitRate;
+        opt.allow_spatial_resampling = 1;
+        opt.end_usage = 0;
+        opt.target_bandwidth = BitRate;
 
         int ResampleDownWaterMarkHigh = 90;
         int ResampleDownWaterMarkLow = 20;
@@ -21135,7 +21134,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int n = 0;
         double PSNRArr[2];
 
-        opt.ResampleUpWaterMark = 100;
+        opt.resample_up_water_mark = 100;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -21147,9 +21146,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkHigh;
+                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21158,9 +21157,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkLow;
+                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21172,9 +21171,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkHigh;
+                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21183,9 +21182,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkLow;
+                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21197,9 +21196,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkHigh;
+                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21208,9 +21207,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_BESTQUALITY;
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkLow;
+                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21225,10 +21224,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkHigh;
+                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21236,10 +21235,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkLow;
+                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21250,10 +21249,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkHigh;
+                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21261,10 +21260,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.ResampleDownWaterMark = ResampleDownWaterMarkLow;
+                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.ResampleDownWaterMark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21729,14 +21728,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
-        int CompressInt = opt.CpuUsed;
-        opt.TargetBandwidth = BitRate;
+        int CompressInt = opt.cpu_used;
+        opt.target_bandwidth = BitRate;
         opt.Mode = MODE_GOODQUALITY;
-        opt.LagInFrames = LagInFramesInput;
+        opt.lag_in_frames = LagInFramesInput;
 
         printf("\nLagInFrames: %i\n", LagInFramesInput);
         fprintf(stderr, "\nLagInFrames: %i\n", LagInFramesInput);
@@ -21836,8 +21835,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     char SpeedTestGoodQ[255];
                     snprintf(SpeedTestGoodQ, 255, "%s", OutPutFile1.c_str());
 
-                    opt.CpuUsed = counter;
-                    CompressInt = opt.CpuUsed;
+                    opt.cpu_used = counter;
+                    CompressInt = opt.cpu_used;
                     opt.Mode = MODE_GOODQUALITY;
                     GoodTotalms[counter] = TimeCompressIVFtoIVF(input, SpeedTestGoodQ, speed, BitRate, opt, CompressString, CompressInt, 0);
 
@@ -21875,8 +21874,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     char SpeedTestRealTime[255];
                     snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
-                    opt.CpuUsed = counter;
-                    CompressInt = opt.CpuUsed;
+                    opt.cpu_used = counter;
+                    CompressInt = opt.cpu_used;
                     opt.Mode = MODE_REALTIME;
                     RealTotalms[counter2] = TimeCompressIVFtoIVF(input, SpeedTestRealTime, speed, BitRate, opt, CompressString, CompressInt, 0);
 
@@ -21903,8 +21902,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     char SpeedTestRealTime[255];
                     snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
-                    opt.CpuUsed = counter;
-                    CompressInt = opt.CpuUsed;
+                    opt.cpu_used = counter;
+                    CompressInt = opt.cpu_used;
                     opt.Mode = MODE_REALTIME;
                     RealTotalmsPos[counter] = TimeCompressIVFtoIVF(input, SpeedTestRealTime, speed, BitRate, opt, CompressString, CompressInt, 0);
 
@@ -23880,11 +23879,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
-        int CompressInt = opt.AllowDF;
+        int CompressInt = opt.allow_df;
 
         int BitRate1 = BitRate - (BitRate * 0.3);
         int BitRate2 = BitRate;
@@ -23900,7 +23899,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
 
             opt.Mode = MODE_SECONDPASS;
-            opt.TargetBandwidth = BitRate1;
+            opt.target_bandwidth = BitRate1;
 
             if (CompressIVFtoIVF(input, TwoPassOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -23910,7 +23909,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate2;
+            opt.target_bandwidth = BitRate2;
 
             if (CompressIVFtoIVF(input, TwoPassOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -23920,7 +23919,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate3;
+            opt.target_bandwidth = BitRate3;
 
             if (CompressIVFtoIVF(input, TwoPassOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -23931,7 +23930,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             }
 
             opt.Mode = MODE_SECONDPASS_BEST;
-            opt.TargetBandwidth = BitRate1;
+            opt.target_bandwidth = BitRate1;
 
             if (CompressIVFtoIVF(input, TwoPassBestOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -23941,7 +23940,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate2;
+            opt.target_bandwidth = BitRate2;
 
             if (CompressIVFtoIVF(input, TwoPassBestOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -23951,7 +23950,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 2;
             }
 
-            opt.TargetBandwidth = BitRate3;
+            opt.target_bandwidth = BitRate3;
 
             if (CompressIVFtoIVF(input, TwoPassBestOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
@@ -24343,12 +24342,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -24360,7 +24359,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                opt.UnderShootPct = 10;
+                opt.under_shoot_pct = 10;
 
                 if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
@@ -24371,7 +24370,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_REALTIME;
-                opt.UnderShootPct = 100;
+                opt.under_shoot_pct = 100;
 
                 if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
@@ -24385,7 +24384,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                opt.UnderShootPct = 10;
+                opt.under_shoot_pct = 10;
 
                 if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
@@ -24396,7 +24395,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_GOODQUALITY;
-                opt.UnderShootPct = 100;
+                opt.under_shoot_pct = 100;
 
                 if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
@@ -24410,7 +24409,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                opt.UnderShootPct = 10;
+                opt.under_shoot_pct = 10;
 
                 if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
@@ -24421,7 +24420,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
 
                 opt.Mode = MODE_BESTQUALITY;
-                opt.UnderShootPct = 100;
+                opt.under_shoot_pct = 100;
 
                 if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
@@ -24438,7 +24437,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 4)
             {
-                opt.UnderShootPct = 10;
+                opt.under_shoot_pct = 10;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
@@ -24449,7 +24448,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.UnderShootPct = 100;
+                opt.under_shoot_pct = 100;
                 opt.Mode = MODE_SECONDPASS;
 
                 if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
@@ -24463,7 +24462,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (Mode == 5)
             {
-                opt.UnderShootPct = 10;
+                opt.under_shoot_pct = 10;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
@@ -24474,7 +24473,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                opt.UnderShootPct = 100;
+                opt.under_shoot_pct = 100;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
                 if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
@@ -24829,12 +24828,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
 
         float PSNRArr[4];
         unsigned int DecTime[4];
@@ -25777,7 +25776,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 fclose(InputCheck);
                 opt = InPutSettings(argv[argc-1]);
-                BitRate = opt.TargetBandwidth;
+                BitRate = opt.target_bandwidth;
             }
         }
 
@@ -25879,11 +25878,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             fclose(InputCheck);
             opt = InPutSettings(ParmFile);
-            BitRate = opt.TargetBandwidth;
+            BitRate = opt.target_bandwidth;
         }
 
         /////////////////////////////////////////////////////////
-        BitRate = opt.TargetBandwidth;
+        BitRate = opt.target_bandwidth;
 
 
         if (TestType == 3)
@@ -26522,7 +26521,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
 
-        opt.TargetBandwidth = BitRate;
+        opt.target_bandwidth = BitRate;
         string CompressControl = argv[5];
 
         if (CompressControl.compare("MakeCompression") == 0)

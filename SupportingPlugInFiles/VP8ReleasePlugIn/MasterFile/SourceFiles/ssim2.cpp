@@ -257,7 +257,7 @@ double vp8_ssim
         return plane_quality / plane_summed_weights;
 }
 
-double VP8_CalcSSIM2
+double VP8_CalcSSIM_Tester
 (
     YV12_BUFFER_CONFIG *source,
     YV12_BUFFER_CONFIG *dest,

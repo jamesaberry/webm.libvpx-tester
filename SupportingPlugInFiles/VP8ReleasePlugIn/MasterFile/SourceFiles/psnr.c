@@ -4,7 +4,7 @@
 #define MAX_PSNR 60
 
 
-double VP8_Mse2Psnr(double Samples, double Peak, double Mse)
+double VP8_Mse2Psnr_Tester(double Samples, double Peak, double Mse)
 {
     double psnr;
 
@@ -19,7 +19,7 @@ double VP8_Mse2Psnr(double Samples, double Peak, double Mse)
     return psnr;
 }
 
-double VP8_CalcPSNR(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, double *YPsnr, double *UPsnr, double *VPsnr, double *SqError)
+double VP8_CalcPSNR_Tester(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, double *YPsnr, double *UPsnr, double *VPsnr, double *SqError)
 {
     int i, j;
     int Diff;
@@ -47,7 +47,7 @@ double VP8_CalcPSNR(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, double
     }
 
     // Work out Y PSNR
-    *YPsnr = VP8_Mse2Psnr(source->YHeight * source->YWidth, 255.0, Total);
+    *YPsnr = VP8_Mse2Psnr_Tester(source->YHeight * source->YWidth, 255.0, Total);
     GrandTotal += Total;
     Total = 0;
 
@@ -70,7 +70,7 @@ double VP8_CalcPSNR(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, double
     }
 
     // Work out U PSNR
-    *UPsnr = VP8_Mse2Psnr(source->UVHeight * source->UVWidth, 255.0, Total);
+    *UPsnr = VP8_Mse2Psnr_Tester(source->UVHeight * source->UVWidth, 255.0, Total);
     GrandTotal += Total;
     Total = 0;
 
@@ -93,12 +93,12 @@ double VP8_CalcPSNR(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, double
     }
 
     // Work out UV PSNR
-    *VPsnr = VP8_Mse2Psnr(source->UVHeight * source->UVWidth, 255.0, Total);
+    *VPsnr = VP8_Mse2Psnr_Tester(source->UVHeight * source->UVWidth, 255.0, Total);
     GrandTotal += Total;
     Total = 0;
 
     // Work out total PSNR
-    FramePsnr = VP8_Mse2Psnr(source->YHeight * source->YWidth * 3 / 2 , 255.0, GrandTotal);
+    FramePsnr = VP8_Mse2Psnr_Tester(source->YHeight * source->YWidth * 3 / 2 , 255.0, GrandTotal);
 
     *SqError = 1.0 * GrandTotal;
 

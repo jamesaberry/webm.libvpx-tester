@@ -1,79 +1,56 @@
 #define _CRT_SECURE_NO_WARNINGS
-/////////////////////////
 #include "test-definitions.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <math.h>
-#include <vector>
-/////VP8////////////////
 #include "onyx.h"
-#include "onyxd.h"
-#include "vp8.h"
-#include <map>
-#include <iomanip>
-#include <sstream>
-#include <stdarg.h>
-/////VP8 IVF PSNR///////
 #include <cassert>
 #include "yv12config.h"
-/////PSNR///
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <string.h>
 #include "ivf.h"
 #include "header.h"
-using namespace std;
-////////////////////////
-#include <stdio.h>
-#include <sys/stat.h>
-////////////////////////
-///////////itoa_custom/////////
 #include <algorithm>
-////////////////////////
 
-#if defined(_WIN32)
-#include <windows.h>
-#include "on2vpplugin.h"
-#define snprintf _snprintf
-#endif
-#include <cstdio>
-//////////////////////////////////////////////////////////////
-////////////////////////Global Slash Character Definion for multiplat////////////////////////
-extern char slashChar;
-extern string slashCharStr;
-/////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef DSHOW
-extern char TesterExePath[256];
-#endif
+using namespace std;
 
-#if defined(_WIN32)
-#include "stdafx.h"
-#endif
-const int PSNR_MAX = 999.;
-const int sizBuff = 512;
-
-extern int IVF2Raw(char *inputFile, char *outputDir);
-extern void FileName(char *input, char *FileName, int removeExt);
-extern void FormatedPrint(string SummaryStr, int selector);
-
-extern void VP8DefaultParms(VP8_CONFIG &opt);
-extern void writeframe(YV12_BUFFER_CONFIG &sd, ofstream &outputfile);
-
-extern double VP8_CalcSSIM2(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, int lumamask, double *weight);
-extern int FormatIVFHeaderRead(IVF_HEADER *ivf);
-
-/////////////////////////////////////////////Endian Conversions/////////////////////////////////////////////
 typedef unsigned char BYTE;
-
-#ifndef _WIN32
-typedef unsigned int  DWORD;
-#endif
-
 #define HEADER_SIZE 32
 #define IVF_SCALE   1000
 
+#if defined(_WIN32)
+#include <windows.h>
+#include "stdafx.h"
+#include "on2vpplugin.h"
+#define snprintf _snprintf
+#else
+typedef unsigned int  DWORD;
+#endif
+#ifdef _MSC_VER
+#define USE_POSIX_MMAP 0
+#else
+#define USE_POSIX_MMAP 1
+#endif
+#include "vp8cx.h"
+#include "vpx_encoder.h"
+#include "mem_ops.h"
+#include "vpx_timer.h"
+#if USE_POSIX_MMAP
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+#ifdef DSHOW
+	extern int IVF2Raw(char *inputFile, char *outputDir);
+	extern char TesterExePath[256];
+#endif
+#if CONFIG_MD5
+#include "md5_utils.h"
+#endif
+
+/////////////////////////////////////////////Endian Conversions////////////////////////////////////////////
 #ifdef __POWERPC__
 # define make_endian_16(a) \
     (((unsigned int)(a & 0xff)) << 8) | (((unsigned int)(a & 0xff00)) >> 8)
@@ -92,6 +69,11 @@ typedef unsigned int  DWORD;
 # define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
     ((DWORD)(BYTE)(ch0) << 24 | ((DWORD)(BYTE)(ch1) << 16) |    \
      ((DWORD)(BYTE)(ch2) << 8) | ((DWORD)(BYTE)(ch3)))
+# define swap4(d)\
+    ((d&0x000000ff)<<24) |  \
+    ((d&0x0000ff00)<<8)  |  \
+    ((d&0x00ff0000)>>8)  |  \
+    ((d&0xff000000)>>24)
 #else
 # define make_endian_16(a)  a
 # define make_endian_32(a)  a
@@ -99,95 +81,33 @@ typedef unsigned int  DWORD;
 # define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
     ((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |           \
      ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
-#endif
-
-#if defined(__POWERPC__)
-# define swap4(d)\
-    ((d&0x000000ff)<<24) |  \
-    ((d&0x0000ff00)<<8)  |  \
-    ((d&0x00ff0000)>>8)  |  \
-    ((d&0xff000000)>>24)
-#else
 # define swap4(d) d
 #endif
+////////////////////////Global Slash Character Definion for multiplat////////////////////////
+extern char slashChar;
+extern string slashCharStr;
+/////////////////////////////////////////////////////////////////////////////////////////////
+const int PSNR_MAX = 999.;
+const int sizBuff = 512;
+extern void FileName(char *input, char *FileName, int removeExt);
+
+extern int FormatIVFHeaderRead(IVF_HEADER *ivf);
+extern unsigned int GetHighResTimerTick();
+
+extern double VP8_CalcSSIM_Tester(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, int lumamask, double *weight);
+extern "C" double VP8_CalcPSNR_Tester(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, double *YPsnr, double *UPsnr, double *VPsnr, double *SqError);
+extern "C" double VP8_Mse2Psnr_Tester(double Samples, double Peak, double Mse);
 
 extern "C"
 {
-    double VP8_CalcSSIM
-    (
-        YV12_BUFFER_CONFIG *source,
-        YV12_BUFFER_CONFIG *dest,
-        int lumamask,
-        double *weight
-    );
-
-    double VP8_CalcPSNR
-    (
-        YV12_BUFFER_CONFIG *source,
-        YV12_BUFFER_CONFIG *dest,
-        double *YPsnr,
-        double *UPsnr,
-        double *VPsnr,
-        double *SqError
-    );
-    double VP8_Mse2Psnr
-    (
-        double Samples,
-        double Peak,
-        double Mse
-    );
-
-    unsigned int ON2_GetHighResTimerTick();
-
     extern int vp8_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height, int border);
     extern void vp8_scale_machine_specific_config(void);
-    extern int vp8_On2YV12_DeAllocFrameBuffer(YV12_BUFFER_CONFIG *ybf);
+    extern int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf);
     extern vpx_codec_iface_t vpx_enc_vp8_algo;
-
-    extern void vp8_yv12_scale_or_center
-    (
-        YV12_BUFFER_CONFIG *src_yuv_config,
-        YV12_BUFFER_CONFIG *dst_yuv_config,
-        int expanded_frame_width,
-        int expanded_frame_height,
-        int scaling_mode,
-        int HScale,
-        int HRatio,
-        int VScale,
-        int VRatio
-    );
-
-
+    extern void vp8_yv12_scale_or_center(YV12_BUFFER_CONFIG *src_yuv_config, YV12_BUFFER_CONFIG *dst_yuv_config, int expanded_frame_width, int expanded_frame_height, int scaling_mode, int HScale, int HRatio, int VScale, int VRatio);
 }
-
-#if CONFIG_MD5
-#include "md5_utils.h"
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////API 2.0//////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#define USE_POSIX_MMAP 0
-#else
-#define USE_POSIX_MMAP 1
-#endif
-//////////////API 2.0//////////
-#include "vp8cx.h"
-#include "vpx_encoder.h"
-#include "mem_ops.h"
-#include "vpx_timer.h"
-/////////////////////////////
-#if USE_POSIX_MMAP
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-/////////////API//////////
-#include "vpx_integer.h"
-//////////////////////////
-
 struct vp8_extracfg
 {
     struct on2_codec__pkt_list *pkt_list;
@@ -1123,7 +1043,7 @@ VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display)
 
     //////////////////////////////////Randomly Generated\\\\\\\\\\\\\\\\\\\\\
 
-    srand(ON2_GetHighResTimerTick());
+    srand(GetHighResTimerTick());
     int w = 0;
     int h = 0;
     int fr  = 0;
@@ -3058,7 +2978,7 @@ char *itoa_custom(int value, char *result, int base)
     return result;
 }
 //----------------------------------------------------Cross Plat----------------------------------------------------------------------
-unsigned int ON2_GetHighResTimerTick()
+unsigned int GetHighResTimerTick()
 {
 #if defined(_WIN32)
     LARGE_INTEGER pf;                       // Performance Counter Frequency
@@ -3083,7 +3003,7 @@ unsigned int ON2_GetHighResTimerTick()
     return (0xffffffff & (tv.tv_sec * 1000000 + tv.tv_usec)) ;
 #endif
 }
-unsigned int ON2_GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick)
+unsigned int GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick)
 {
 #if defined(_WIN32)
     LARGE_INTEGER pf;
@@ -3103,14 +3023,14 @@ unsigned int ON2_GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick
     return duration;
 #endif
 }
-unsigned int ON2_GetProcCoreCount()
+unsigned int VPX_GetProcCoreCount()
 {
     return 2;
 }
 unsigned int GetTime()
 {
     unsigned int Time = 0;
-    Time = ON2_GetHighResTimerTick();
+    Time = GetHighResTimerTick();
     return Time;
 }
 int MakeDirVPX(string CreateDir2)
@@ -3389,6 +3309,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
 
             return 0;
         }
@@ -3408,8 +3329,8 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-
             delete [] CompBuff;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3453,7 +3374,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
                 fclose(CompFile);
                 delete timeStamp2;
                 delete timeEndStamp2;
-
+				vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
                 return 0;
             }
 
@@ -3475,7 +3396,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             if (SsimOut)
             {
                 double weight;
-                double thisSsim = VP8_CalcSSIM2(&Raw_YV12, &Comp_YV12, 1, &weight);
+                double thisSsim = VP8_CalcSSIM_Tester(&Raw_YV12, &Comp_YV12, 1, &weight);
                 summedQuality += thisSsim * weight ;
                 summedWeights += weight;
             }
@@ -3484,7 +3405,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             double UPsnr;
             double VPsnr;
             double SqError;
-            double thisPsnr = VP8_CalcPSNR(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
+            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
 
             summedYPsnr += YPsnr;
             summedUPsnr += UPsnr;
@@ -3567,7 +3488,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     //Over All PSNR Calc
     double samples = 3.0 / 2 * frameCount * Raw_YV12.YWidth * Raw_YV12.YHeight;
     double avgPsnr = summedPsnr / frameCount;
-    double totalPsnr = VP8_Mse2Psnr(samples, 255.0, sumSqError);
+    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
 
     if (summedWeights < 1.0)
         summedWeights = 1.0;
@@ -3620,18 +3541,18 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     ////////////////////////
     fclose(RawFile);
     fclose(CompFile);
-
     delete timeStamp2;
     delete timeEndStamp2;
-
-
-    //vp8_yv12_de_alloc_frame_buffer(&Tempsd);
+    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
 
     return totalPsnr;
 }
-double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double &SsimOut)
+double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut)
 {
-    frameStats = 1;//Overide to print individual frames to screen
+    if (frameStats != 3)
+    {
+        frameStats = 1;//Overide to print individual frames to screen
+    }
 
     double summedQuality = 0;
     double summedWeights = 0;
@@ -3670,19 +3591,21 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     int buffer_sz = 32;
     unsigned int frameCount = ivfhRaw.length;
 
-    unsigned char *RawVideoBuffer = new unsigned char[ivfhRaw.width*ivfhRaw.height*3];
+
+    vpx_image_t    raw_img;
+    vpx_img_alloc(&raw_img, IMG_FMT_I420, ivfhRaw.width, ivfhRaw.height, 1);
 
     YV12_BUFFER_CONFIG Raw_YV12;
-    Raw_YV12.YWidth   = ivfhRaw.width;
-    Raw_YV12.YHeight  = ivfhRaw.height;
-    Raw_YV12.YStride  = Raw_YV12.YWidth;
-    Raw_YV12.UVWidth  = Raw_YV12.YWidth >> 1;
-    Raw_YV12.UVHeight = Raw_YV12.YHeight >> 1;
-    Raw_YV12.UVStride = Raw_YV12.YStride >> 1;
-    Raw_YV12.BufferAlloc        = RawVideoBuffer;
-    Raw_YV12.YBuffer            = RawVideoBuffer;
-    Raw_YV12.UBuffer            = Raw_YV12.YBuffer + Raw_YV12.YWidth * Raw_YV12.YHeight;
-    Raw_YV12.VBuffer            = Raw_YV12.UBuffer + Raw_YV12.UVWidth * Raw_YV12.UVHeight;
+    Raw_YV12.YWidth   = raw_img.d_w;
+    Raw_YV12.YHeight  = raw_img.d_h;
+    Raw_YV12.YStride  = raw_img.stride[PLANE_Y];
+    Raw_YV12.UVWidth  = (1 + Raw_YV12.YWidth) / 2;
+    Raw_YV12.UVHeight = (1 + Raw_YV12.YHeight) / 2;
+    Raw_YV12.UVStride = raw_img.stride[PLANE_U];
+    Raw_YV12.BufferAlloc        = raw_img.img_data;
+    Raw_YV12.YBuffer            = raw_img.img_data;
+    Raw_YV12.UBuffer = raw_img.planes[PLANE_U];
+    Raw_YV12.VBuffer = raw_img.planes[PLANE_V];
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -3691,9 +3614,12 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
         }
     }
 
+    //I420 hex-0x30323449 dec-808596553
+    //YV12 hex-0x32315659 dec-842094169
+
     if (ivfhRaw.four_cc == 842094169)
     {
-        forceUVswap = 0;   //if YV12 Do not swap Frames
+        forceUVswap = 1;   //if YV12 Do not swap Frames
     }
 
     if (forceUVswap == 1)
@@ -3712,7 +3638,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
         fprintf(stderr, "\nError Opening Compressed File: %s\n", inputFile2);
         fclose(RawFile);
         fclose(CompFile);
-        delete [] RawVideoBuffer;
+
         return 0;
     }
 
@@ -3722,6 +3648,8 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     FormatIVFHeaderRead(&ivfhComp);
 
     YV12_BUFFER_CONFIG Comp_YV12;
+    //memset(&Comp_YV12, 0, sizeof(Comp_YV12));
+    //vp8_yv12_alloc_frame_buffer(&Comp_YV12, ivfhRaw.height, ivfhRaw.width, 32);
 
     if (CompressedFrameOffset > 0) //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
     {
@@ -3776,8 +3704,10 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
 
     //////////////////////////////////////////New//////////////////////////////////////////
     vpx_codec_ctx_t       decoder;
-    vpx_codec_iface_t       *iface = &vpx_codec_vp8_algo;
+    vpx_codec_iface_t       *iface = NULL;
+    vpx_codec_iface_t  *ivf_iface = ifaces[0].iface;
     vpx_codec_dec_cfg_t     cfg = {0};
+    iface = ivf_iface;
 
     vp8_postproc_cfg_t ppcfg = {0};
 
@@ -3801,7 +3731,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     ppcfg.noise_level = noise_level;
     ppcfg.deblocking_level = deblock_level;
 
-    if (vpx_codec_dec_init(&decoder, iface, &cfg, VPX_CODEC_USE_POSTPROC))
+    if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, VPX_CODEC_USE_POSTPROC))
     {
         printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
         return EXIT_FAILURE;
@@ -3841,7 +3771,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-            delete [] RawVideoBuffer;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3860,15 +3790,13 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-            delete [] RawVideoBuffer;
             delete [] CompBuff;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
-
-        //vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
 
         if (vpx_codec_decode(&decoder, (uint8_t *) CompBuff, ivf_fhComp.frameSize, NULL, 0))
         {
@@ -3907,7 +3835,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
                 fclose(CompFile);
                 delete timeStamp2;
                 delete timeEndStamp2;
-                delete [] RawVideoBuffer;
+				vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
                 return 0;
             }
 
@@ -3916,33 +3844,29 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             bytes1 = ivf_fhRaw.frameSize;
             sumBytes += bytes1;
 
-            memset(RawVideoBuffer, 0, ivfhRaw.width * ivfhRaw.height * 3);
 
-            if (!fread(RawVideoBuffer, 1, ivf_fhRaw.frameSize, RawFile))
-            {
-                printf("\nError Computing PSNR\n");
-                fprintf(stderr, "\nError Computing PSNR\n");
-                fclose(RawFile);
-                fclose(CompFile);
-                delete timeStamp2;
-                delete timeEndStamp2;
-                delete [] RawVideoBuffer;
-                return 0;
-            }
+
+
+
+
+            read_frame_enc(RawFile, &raw_img, ivf_fhRaw.frameSize);
 
             //////////////////////////////////////////////////////////////////////
 
             ///////////////////////////Preform PSNR Calc///////////////////////////////////
-            double weight;
-            double thisSsim = VP8_CalcSSIM2(&Raw_YV12, &Comp_YV12, 1, &weight);
-            summedQuality += thisSsim * weight ;
-            summedWeights += weight;
+            if (SsimOut)
+            {
+                double weight;
+                double thisSsim = VP8_CalcSSIM_Tester(&Raw_YV12, &Comp_YV12, 1, &weight);
+                summedQuality += thisSsim * weight ;
+                summedWeights += weight;
+            }
 
             double YPsnr;
             double UPsnr;
             double VPsnr;
             double SqError;
-            double thisPsnr = VP8_CalcPSNR(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
+            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
 
             summedYPsnr += YPsnr;
             summedUPsnr += UPsnr;
@@ -4025,7 +3949,11 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     //Over All PSNR Calc
     double samples = 3.0 / 2 * frameCount * Raw_YV12.YWidth * Raw_YV12.YHeight;
     double avgPsnr = summedPsnr / frameCount;
-    double totalPsnr = VP8_Mse2Psnr(samples, 255.0, sumSqError);
+    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
+
+    if (summedWeights < 1.0)
+        summedWeights = 1.0;
+
     double totalSSim = 100 * pow(summedQuality / summedWeights, 8.0);
 
     ////////Printing////////
@@ -4033,29 +3961,32 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     {
         if (frameStats == 3)
         {
-            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
-                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                       //divided by two added when rate doubled to handle doubling of timestamp
-                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,                   //divided by two added when rate doubled to handle doubling of timestamp
+            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                   //divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,               //divided by two added when rate doubled to handle doubling of timestamp
                    avgPsnr, 1.0 * summedYPsnr / frameCount,
                    1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                   totalPsnr, totalSSim);
+                   totalPsnr);
+            printf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
 
         }
         else
         {
-            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
-                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                       //divided by two added when rate doubled to handle doubling of timestamp
-                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,                   //divided by two added when rate doubled to handle doubling of timestamp
+            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
+                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
                    avgPsnr, 1.0 * summedYPsnr / frameCount,
                    1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                   totalPsnr, totalSSim);
+                   totalPsnr);
+            printf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
 
-            fprintf(stderr, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, SSIM: %8.2f\n",
-                    sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,                      //divided by two added when rate doubled to handle doubling of timestamp
-                    sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,                  //divided by two added when rate doubled to handle doubling of timestamp
+            fprintf(stderr, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+                    sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
+                    sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
                     avgPsnr, 1.0 * summedYPsnr / frameCount,
                     1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                    totalPsnr, totalSSim);
+                    totalPsnr);
+            fprintf(stderr, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
         }
     }
 
@@ -4065,20 +3996,17 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
         fprintf(stderr, "\n                        --------------------------------\n");
     }
 
+    if (SsimOut)
+        *SsimOut = totalSSim;
+
     ////////////////////////
     fclose(RawFile);
     fclose(CompFile);
-
     delete timeStamp2;
     delete timeEndStamp2;
-    delete [] RawVideoBuffer;
+    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
 
     return totalPsnr;
-}
-int PSNRSelect(char *inFile, char *outFile)
-{
-    int PSNRToggle = 1;
-    return PSNRToggle;
 }
 double IVFDataRate(char *inputFile, int DROuputSel)
 {

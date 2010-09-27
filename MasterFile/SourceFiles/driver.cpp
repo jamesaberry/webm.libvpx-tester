@@ -1,18 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS
-//////////////////////////
 #include "test-definitions.h"
-#include "yv12config.h"
-#include <math.h>
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <stdio.h>
 #include <time.h>
-using namespace std;
-//////////////////////////
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
+
+using namespace std;
+
 ////////////////////////Slash Character Definion for multiplat////////////////////////
 #if defined(_WIN32)
 char slashChar = '\\';
@@ -49,7 +44,6 @@ string slashCharStr = "/";
 #include <sys/types.h>
 #include <dirent.h>
 #endif
-#include <cstdio>
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //This is temporary need better solution
@@ -58,136 +52,100 @@ char TesterExePath[256];
 #endif
 
 //Utilities
-extern long FileSize(char *inFile);
 extern void FolderName(char *DirIn, char *DirOut);
 extern int Test0InputTextCheck(char *input, int MoreInfo);
-extern int CompareIVFHeaderInfo(int argc, char *argv[]);
+extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
 extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
-extern int CompIVF(char *inputFile1, char *inputFile2);
-extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
-extern int API20Encoder(long width, long height, char *infilechar, char *outfilechar);
-extern int API20Decoder(char *inputchar, char *outputchar);
-extern int MakeDirVPX(string CreateDir2);
-extern double IVFDisplayAltRefFrames(char *inputFile, int Selector);
+extern int CompareIVFHeaderInfo(int argc, char *argv[]);
+extern double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch);
 extern double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch);
 extern double IVFDisplayVisibleFrames(char *inputchar, int PrintSwitch);
-extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
-extern double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch);
+extern double IVFDisplayAltRefFrames(char *inputFile, int Selector);
+extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
 
 //Tools
-extern int ComprAVI2IVF(int argc, char *argv[], string WorkingDir);
 extern int ComprIVF2IVF(int argc, char *argv[], string WorkingDir);
-extern int CopyIVF2IVF(int argc, char *argv[], string WorkingDir);
 extern int DecIVF2IVF(int argc, char *argv[]);
+extern int DecIVF2Raw(int argc, char *argv[]);
 extern int IVFDataRateTool(int argc, char *argv[]);
 extern int IVFPSNRrun(int argc, char *argv[]);
 extern int IVFCheckPBMrun(int argc, char *argv[]);
 extern int compareIVF(int argc, char *argv[]);
-extern int ChangeCPUDecIVF(int argc, char *argv[], string WorkingDir);
-extern int RawDataIVF(char *input, char *output);
 extern int WriteIndividualFramesOut(int argc, char *argv[]);
+extern int IVF2Raw(char *inputFile, char *outputDir);
+extern int Raw2IVF(int argc, char *argv[]);
 extern int CutIVFTool(int argc, char *argv[]);
 extern int CropRawIVFTool(int argc, char *argv[]);
+extern int PasteIVF(int argc, char *argv[]);
+extern int CombineIndvFrames(int argc, char *argv[]);
 extern int PlayCompIVF(int argc, char *argv[]);
 extern int PlayDecIVF(int argc, char *argv[]);
 extern int DeleteAllIVFFiles(int argc, char *argv[]);
 extern int CopyAllTxtFiles(int argc, char *argv[]);
 extern int SideBySideText(int argc, char *argv[]);
 extern int CompressionEquiv(int argc, char *argv[], string WorkingDir);
-extern int Raw2IVF(int argc, char *argv[]);
 extern int ConvertParmFileToIVFenc(char *input, char *output);
 extern int CompMatchesIVFenc(int argc, char *argv[]);
 extern int CompareCodeCoverage(int argc, char *argv[]);
-extern int DecIVF2Raw(int argc, char *argv[]);
 extern int FormatCodeCoverageFile(int argc, char *argv[]);
 extern int TestVectorIndex(int argc, char *argv[]);
 extern int APICOMPRESS(int argc, char *argv[]);
 extern int APIDECOMPRESS(int argc, char *argv[]);
 extern int IVFDECTestVectorCheck(int argc, char *argv[]);
 extern int ArrayCovFailListToFullList(int argc, char *argv[]);
-extern int IVF2Raw(char *inputFile, char *outputDir);
 extern int ArrayCovSummaryFile(int argc, char *argv[]);
 extern int WinMemMonFormat(int argc, char *argv[]);
 extern int WinMemMonGraph(int argc, char *argv[]);
-extern int PasteIVF(int argc, char *argv[]);
-extern int PrintVersion();
-extern int CombineIndvFrames(int argc, char *argv[]);
 extern int CreateRandParFile(int argc, char *argv[]);
 extern int RunIVFDec(int argc, char *argv[]);
 extern int RunIVFEnc(int argc, char *argv[]);
 extern int SolveQuad();
 
 /////Tests
-extern int ExternalTestRunner(int argc, char *argv[], string WorkingDir, int NumberofTests);
-extern int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AllowSpatialResamplingTest2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ComboCheckRun(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DataRateMaxWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ForceKeyFrameWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int GoodQvBestQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int InterlaceWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int KeyInKeyOutWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MaxQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MemLeakCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MinQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int NewVsOldPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int NoiseSensitivityWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int PostProcessorWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int PreProcessorWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int PrintVersion();
+extern int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofTests);
 extern int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int SpeedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int TwoPassVsTwoPassBest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int UnderShoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ReconBuffer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-
-/////NewVP8Tests
+extern int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AltFreqTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int FixedQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int LagInFramesTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MultiThreadedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int PlayAlternate(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int TokenPartitionTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int Version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AltQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int KeyQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int GoldQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MemLeakCheck2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int FrameSizeTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-
-//TestsNoLongerUsed
-extern int NewVsOldSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int SpeedTest2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-
-/////TestsNotUsed
+extern int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeCPUDec(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeIDCTDecWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeIDCTWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int IDCTDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int FixedQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ForceKeyFrameWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int FrameSizeTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int GoodQvBestQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int LagInFramesTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int MaxQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int MemLeakCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int MemLeakCheck2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int MinQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int MultiThreadedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int NewVsOldPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int NewVsOldRealTimeSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int NoiseSensitivityWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int OnePassVsTwoPass(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int PlayAlternate(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int PostProcessorWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ReconBuffer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int ResampleDownWaterMark(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int SpeedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int TwoPassVsTwoPassBest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int UnderShoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int Version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 
 //CodeCoverage
 extern int CodeCoverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
-
-//Misc Tools
-extern int DecoderCheck(int argc, char *argv[]);
-extern "C" const char *on2_codec_build_config(void);
 
 int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
 {

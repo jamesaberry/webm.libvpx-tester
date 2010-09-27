@@ -21,7 +21,7 @@ ivf.o: ivf.c
 	$(CCC) -c ivf.c $(INCLUDE)  $(LFLAGS)
 
 psnr.o: psnr.c
-	$(CPP) -c psnr.c $(INCLUDE)  $(LFLAGS)
+	$(CCC) -c psnr.c $(INCLUDE)  $(LFLAGS)
 
 ssim2.o: ssim2.cpp
 	$(CPP) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)

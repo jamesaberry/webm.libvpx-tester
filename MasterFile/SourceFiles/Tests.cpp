@@ -1,46 +1,32 @@
 #define _CRT_SECURE_NO_WARNINGS
-//------------------------------------------------------------------------------
-//
-//  Copyright (c) 1999-2005  On2 Technologies Inc.  All Rights Reserved.
-//
-//------------------------------------------------------------------------------
-/////VP8//////////////////
 #include "test-definitions.h"
 #include "onyx.h"
 #include "onyxd.h"
+#include "yv12config.h"
+#include "vpx_mem.h"
+#include "ivf.h"
+#include "CompIVF.h"
 #include <map>
 #include <iomanip>
 #include <sstream>
 #include <stdarg.h>
-//////////////////////////
 #include <stdio.h>
 #include <math.h>
 #include <vector>
 #include <stdlib.h>
-/////PSNR/////
-#include "yv12config.h"
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "vpx_mem.h"
-#include "ivf.h"
-using namespace std;
-////////CompIVF////////////
-#include "CompIVF.h"
-//////////////////////////
-
-//windows only testing//
-#if defined(_WIN32)
-#define snprintf _snprintf
-#include "on2vpplugin.h"
-#endif
-///////////////////////
 #include <cstdio>
 
+using namespace std;
+
 #if defined(_WIN32)
+#include "on2vpplugin.h"
 #include <windows.h>
 #include <tchar.h>
 #include <direct.h>
+#define snprintf _snprintf
 #elif defined(linux)
 #include <stddef.h>
 #include <stdio.h>
@@ -62,172 +48,122 @@ using namespace std;
 extern char slashChar;
 extern string slashCharStr;
 /////////////////////////////////////////////////////////////////////////////////////////////
-extern char *itoa_custom(int value, char *result, int base);
+
+extern "C"
+{
+	#include "vpx_timer.h"
+	extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
+}
 
 //driver
 extern string DateString();
+extern void FormatedPrint(string SummaryStr, int selector);
 
 //Utilities
-extern int absInt(int input);
-extern float absFloat(float input);
-extern double absDouble(double input);
+extern void VP8DefaultParms(VP8_CONFIG &opt);
 extern VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display);
 extern VP8_CONFIG InPutSettings(char *inputFile);
 extern int OutPutSettings(char *outputFile, VP8_CONFIG opt);
 extern int OutPutCompatSettings(char *outputFile, VP8_CONFIG opt, int ParVersionNum);
+
 extern long FileSize(char *inFile);
 extern long FileSize2(char *inFile);
-extern void FolderName2(char *DirIn, char *DirOut);
-extern void FolderName(char *input, char *output);
 extern void FileName(char *input, char *FileName, int removeExt);
+extern void FolderName(char *input, char *output);
+extern void FolderName2(char *DirIn, char *DirOut);
 extern string ExtractDateTime(string InputStr);
-extern void TestName(char *input, char *TestName);
 extern int TimeStampCompare(string TimeStampNow, string TimeStampPrevious);
-extern void SubFolderName(char *input, char *FileName);
 extern int Test0InputTextCheck(char *input, int MoreInfo);
 extern int FileExistsCheck(string input);
+extern void SubFolderName(char *input, char *FileName);
+extern void TestName(char *input, char *TestName);
+
+extern int absInt(int input);
+extern float absFloat(float input);
+extern double absDouble(double input);
+extern int SolveQuadradic(float X1, float X2, float X3, float Y1, float Y2, float Y3, float &A, float &B, float &C);
+extern float AreaUnderQuadradic(float A, float B, float C, float X1, float X2);
+extern char *itoa_custom(int value, char *result, int base);
+
+extern unsigned int GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick);
+extern unsigned int VPX_GetProcCoreCount();
 extern unsigned int GetTime();
 extern int MakeDirVPX(string CreateDir2);
 extern void RunExe(string RunExe);
-extern int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
-extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
-extern int DecompressIVFtoIVF(char *inputFile, char *outputFile2);
-extern unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2);
-extern unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputFile, char *outputFile2);
-//extern int KeyFrameCompressIVFtoIVF(char *inputFile, char *outputFile, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, char *outputfile);
-//extern int KeyFrameInOutCompressIVFtoIVF(char *inputFile, char *outputFile, int speed, int BitRate, VP8_CONFIG opt, char *CompressString, int CompressInt, char *inputfile, char *outputfile, int InOutControl);
+
 extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
-extern double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double &SsimOut);
-extern int PSNRSelect(char *inFile, char *outFile);
+extern double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
 extern double IVFDataRate(char *inputFile, int DROuputSel);
 extern int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer);
-extern int CompIVF(char *inputFile1, char *inputFile2);
-extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
-extern int TimeReturn(char *infile, int FileType);
+extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
+
+extern int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
+extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
+extern int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame);
+extern int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
+extern int DecompressIVFtoIVF(char *inputFile, char *outputFile2);
 extern int DecompressIVFtoRaw(char *inputFile, char *outputFile2);
-extern int DecompressIVFtoIVFErrorDetection(char *inputFile, char *outputFile2);
-extern void VP8DefaultParms(VP8_CONFIG &opt);
+extern unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2);
+extern unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputFile, char *outputFile2);
 extern int DecComputeMD5(char *inputchar, char *outputchar);
+
+extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
+extern int CompIVF(char *inputFile1, char *inputFile2);
+extern double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch);
+extern double IVFDisplayVisibleFrames(char *inputFile, int Selector);
+extern double IVFDisplayAltRefFrames(char *inputFile, int Selector);
+extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
+extern int IVFLagInFramesCheck(char *QuantInChar);
+extern int IVFDFWMCheck(char *InputFile, int printselect);
 extern int CheckMinQ(char *inputFile, int MinQuantizer);
 extern int CheckMaxQ(char *inputFile, int MaxQuantizer);
 extern int CheckFixedQ(char *inputFile, int FixedQuantizer);
-extern double IVFDisplayAltRefFrames(char *inputFile, int Selector);
-extern double IVFDisplayVisibleFrames(char *inputFile, int Selector);
-extern double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch);
-extern int SolveQuadradic(float X1, float X2, float X3, float Y1, float Y2, float Y3, float &A, float &B, float &C);
-extern float AreaUnderQuadradic(float A, float B, float C, float X1, float X2);
-extern int IVFLagInFramesCheck(char *QuantInChar);
-extern int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame);
+extern int TimeReturn(char *infile, int FileType);
 extern int GetNumberofFrames(char *inputFile);
-extern int IVFDFWMCheck(char *InputFile, int printselect);
-extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
-extern int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
-extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
-extern unsigned int ON2_GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick);
 
 /////Tests
 extern int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofTests);
+extern int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AllowSpatialResamplingTest2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ComboCheckRun(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DataRateMaxWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int FixedQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int ForceKeyFrameWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int FrameSizeTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int GoodQvBestQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int InterlaceWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int KeyInKeyOutWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int LagInFramesTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int MaxQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int MemLeakCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int MemLeakCheck2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int MinQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int MultiThreadedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int NewVsOldPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int NewVsOldRealTimeSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int NoiseSensitivityWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int OnePassVsTwoPass(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int PlayAlternate(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int PostProcessorWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int PreProcessorWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ReconBuffer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int ResampleDownWaterMark(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int SpeedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int TwoPassVsTwoPassBest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int UnderShoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ReconBuffer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-/////NewVP8Tests
-extern int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AltFreqTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int FixedQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int LagInFramesTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MultiThreadedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int PlayAlternate(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int Version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AltQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int KeyQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int GoldQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int FrameSizeTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-//TestsNoLongerUsed
-extern int NewVsOldSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int SpeedTest2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-
-
-/////TestsNotUsed
-extern int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeCPUDec(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeIDCTDecWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeIDCTWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int IDCTDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int NewVsOldRealTimeSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int OnePassVsTwoPass(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ResampleDownWaterMark(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int VP61vVP62(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int VP6MvVP60(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-
-//Tools
-extern int WriteIndividualFramesOut(int argc, char *argv[]);
-extern "C" vpx_codec_iface_t vpx_codec_vp8_cx_algo;
-
-extern void FormatedPrint(string SummaryStr, int selector);
-extern "C"
-{
-    double VP8_CalcSSIM
-    (
-        YV12_BUFFER_CONFIG *source,
-        YV12_BUFFER_CONFIG *dest,
-        int lumamask,
-        double *weight
-    );
-
-    double VP8_CalcPSNR
-    (
-        YV12_BUFFER_CONFIG *source,
-        YV12_BUFFER_CONFIG *dest,
-        double *YPsnr,
-        double *UPsnr,
-        double *VPsnr,
-        double *SqError
-    );
-    double VP8_Mse2Psnr
-    (
-        double Samples,
-        double Peak,
-        double Mse
-    );
-
-    extern const char *on2_codec_build_config(void);
-#include "vpx_timer.h"
-}
-extern unsigned int ON2_GetProcCoreCount();
 
 ///////////////////////////////External Arrays to Test/////////////////////////////
-
 //#define DATA_COV /* If DataCov Definition is commented out Array Code Coverage Tests are not inclued if it is not they are */
 #if defined(DATA_COV)
 
@@ -1467,7 +1403,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1489,7 +1425,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1511,7 +1447,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1533,7 +1469,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1555,7 +1491,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1577,7 +1513,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1599,7 +1535,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1621,7 +1557,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1643,7 +1579,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1665,7 +1601,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1687,7 +1623,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1709,7 +1645,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1731,7 +1667,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1753,7 +1689,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1775,7 +1711,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1797,7 +1733,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1819,7 +1755,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1841,7 +1777,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1863,7 +1799,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1885,7 +1821,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1907,7 +1843,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1929,7 +1865,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1951,7 +1887,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1973,7 +1909,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -1995,7 +1931,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2017,7 +1953,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2039,7 +1975,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2061,7 +1997,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2083,7 +2019,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2105,7 +2041,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2127,7 +2063,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2149,7 +2085,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2171,7 +2107,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2193,7 +2129,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2215,7 +2151,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2237,7 +2173,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -2259,7 +2195,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (RecordRunTimes == 1)
                     {
                         RunTime2 = GetTime();
-                        RunTimeRecAr[SelectorArInt] = ON2_GetTimeInMicroSec(RunTime1, RunTime2);
+                        RunTimeRecAr[SelectorArInt] = GetTimeInMicroSec(RunTime1, RunTime2);
                     }
 
                     TestsRun++;
@@ -9178,16 +9114,14 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         return 10;
     }
 
-    int PSNRToggle = PSNRSelect(input, ErrorOnOutFile);
-
     printf("\n");
     fprintf(stderr, "\n");
 
     double PSNRon;
     double PSNRoff;
 
-    PSNRon = IVFPSNR(input, ErrorOnOutFile, PSNRToggle, 0, 1, NULL);
-    PSNRoff = IVFPSNR(input, ErrorOffOutFile, PSNRToggle, 0, 1, NULL);
+    PSNRon = IVFPSNR(input, ErrorOnOutFile, 0, 0, 1, NULL);
+    PSNRoff = IVFPSNR(input, ErrorOffOutFile, 0, 0, 1, NULL);
 
     float PSRNPerc = 100 * absFloat((PSNRon - PSNRoff) / PSNRoff);
 
@@ -11897,7 +11831,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         return 0;
 
     }
-    int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "FixedQ";
@@ -12405,7 +12339,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 1;
         }
     }
-    int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "opt.key_freq";
@@ -12812,7 +12746,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
     }
-    int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Frame Size";
 
@@ -13969,7 +13903,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "Allow DF";
@@ -14273,8 +14207,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         float GoodSize3 = IVFDataRate(GvBgOutFile3, 1);
         float BestSize3 = IVFDataRate(GvBbOutFile3, 1);
 
-        //int PSNRToggle = PSNRSelect(input, GvBgOutFile);
-
         double PSNRG1;
         double PSNRB1;
         double PSNRG2;
@@ -14456,7 +14388,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Lag In Frames";
 
@@ -15131,7 +15063,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "QuantizerMax";
@@ -15575,7 +15507,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int MemLeakCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int MemLeakCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         // So long as Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
 
@@ -16121,7 +16053,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         return 0;
 
     }
-    int MemLeakCheck2(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int MemLeakCheck2(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         // So long as Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
 
@@ -16668,7 +16600,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
     }
-    int MinQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int MinQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "BestAllowedQ";
@@ -17016,10 +16948,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        int PSNRToggle = PSNRSelect(input, Min10QuantOutFile);
-
-        PSNRArr[0] = IVFPSNR(input, Min10QuantOutFile, PSNRToggle, 0, 1, NULL);
-        PSNRArr[1] = IVFPSNR(input, Min60QuantOutFile, PSNRToggle, 0, 1, NULL);
+        PSNRArr[0] = IVFPSNR(input, Min10QuantOutFile, 0, 0, 1, NULL);
+        PSNRArr[1] = IVFPSNR(input, Min60QuantOutFile, 0, 0, 1, NULL);
 
         printf("\n");
         fprintf(stderr, "\n");
@@ -17123,7 +17053,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
     }
 
-    int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "MultiThreaded";
 
@@ -17288,11 +17218,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         unsigned int Time1;
         unsigned int Time2;
 
-        unsigned int CoreCount = ON2_GetProcCoreCount();
+        unsigned int CoreCount = VPX_GetProcCoreCount();
 
         if (!(CoreCount > 1))
         {
-            printf("\nMulti Core not found: Test Aborted: %i\n", ON2_GetProcCoreCount());
+            printf("\nMulti Core not found: Test Aborted: %i\n", VPX_GetProcCoreCount());
             fclose(fp);
             return 0;
         }
@@ -17482,7 +17412,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         if (!(argc == 7 || argc == 8))
@@ -18080,10 +18010,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         infile.close();
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        int PSNRToggle = PSNRSelect(input, outputVP7New);
         double PSNRArr[2];
 
-        PSNRArr[0] = IVFPSNR(input, outputVP7New, PSNRToggle, 0, 1, NULL);
+        PSNRArr[0] = IVFPSNR(input, outputVP7New, 0, 0, 1, NULL);
         PSNRArr[1] = PSNROLD;
 
         printf("\nNew DataRate");
@@ -18153,7 +18082,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         if (!(argc == 7 || argc == 6))
         {
@@ -18566,7 +18495,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 2;
         }
     }
-    int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         //This test looks a lot like NoiseSensitivityWorks but has a different purpose.  This test ensures
         //That different noise sensitivities have an effect for each possible noise sensitivity value and
@@ -18782,14 +18711,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (doOnce == 1)
                 {
-                    PSNRToggle = PSNRSelect(input, NoiseSenseOut);
                     doOnce = 0;
                 }
 
                 printf("\n");
                 fprintf(stderr, "\n");
 
-                PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, PSNRToggle, 0, 1, NULL);
+                PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, 0, 0, 1, NULL);
                 printf("\n");
                 fprintf(stderr, "\n");
                 File2bytes[Noise] = FileSize(NoiseSenseOut);
@@ -18891,16 +18819,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (TestType != 2)
                 {
-                    if (doOnce == 1)
-                    {
-                        PSNRToggle = PSNRSelect(input, NoiseSenseOut);
-                        doOnce = 0;
-                    }
 
                     printf("\n");
                     fprintf(stderr, "\n");
 
-                    PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, PSNRToggle, 0, 1, NULL);
+                    PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, 0, 0, 1, NULL);
                     printf("\n");
                     fprintf(stderr, "\n");
                     File2bytes[Noise] = FileSize(NoiseSenseOut);
@@ -18997,7 +18920,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "AllowDF";
 
@@ -19297,8 +19220,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         float SizeTwoPass3 = IVFDataRate(TwoPassOutFile3, 1);
         float SizeOnePass3 = IVFDataRate(OnePassOutFile3, 1);
 
-        //int PSNRToggle = PSNRSelect(input, TwoPassOutFile);
-
         double PSNRTwoPass1;
         double PSNRTwoPass2;
         double PSNRTwoPass3;
@@ -19485,7 +19406,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
 
 
-    int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "PlayAlternate";
 
@@ -19961,7 +19882,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
     }
 
-    int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "AllowDF";
         char *input = argv[2];
@@ -20246,8 +20167,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        int PSNRToggle = PSNRSelect(input, PostProcOutFile);
-
         int deblock_level = 0;
         int flags = 0;
         int noise_level = 0;
@@ -20256,13 +20175,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         printf("\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         fprintf(stderr, "\nCaculating PSNR: ONYXD_NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, 0, flags, ssim);
+        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, 0, flags, &ssim);
         countme++;
 
         flags++;
         printf("\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         fprintf(stderr, "\nCaculating PSNR: ONYXD_DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, noise_level, flags, ssim);
+        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, noise_level, flags, &ssim);
         countme++;
         flags++;
 
@@ -20270,7 +20189,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             printf("\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             fprintf(stderr, "\nCaculating PSNR: ONYXD_DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, 0, flags, ssim);
+            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, 0, flags, &ssim);
             countme++;
             deblock_level++;
         }
@@ -20283,7 +20202,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             printf("\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             fprintf(stderr, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, PSNRToggle, 0, 1, deblock_level, noise_level, flags, ssim);
+            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, noise_level, flags, &ssim);
             countme++;
 
             noise_level++;
@@ -20547,7 +20466,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "Allow Drop Frames";
@@ -20929,7 +20848,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "ResampleDownWaterMark";
 
@@ -21283,8 +21202,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        int PSNRToggle = PSNRSelect(input, DownWaterSamp90OutFile);
-
         char DownWaterSamp10Filename[255];
         FileName(DownWaterSamp10OutFile, DownWaterSamp10Filename, 0);
         char DownWaterSamp90Filename[255];
@@ -21535,7 +21452,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "CpuUsed";
 
@@ -22259,7 +22176,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
     }
-    int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Test Vector Check";
         int CurTestVector = 1;
@@ -23680,7 +23597,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-    int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "AllowDF";
         char *input = argv[2];
@@ -23980,8 +23897,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         float GoodSize3 = IVFDataRate(TwoPassOutFile3, 1);
         float BestSize3 = IVFDataRate(TwoPassBestOutFile3, 1);
 
-        //int PSNRToggle = PSNRSelect(input, TwoPassOutFile);
-
         double PSNRG1;
         double PSNRB1;
         double PSNRG2;
@@ -24153,7 +24068,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
     }
 
-    int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "UnderShootPct";
@@ -24574,7 +24489,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
     }
 
-    int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Version";
 
@@ -25115,12 +25030,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        int PSNRToggle = PSNRSelect(input, Version0);
-
-        PSNRArr[0] = IVFPSNR(input, Version0, PSNRToggle, 0, 1, NULL);
-        PSNRArr[1] = IVFPSNR(input, Version1, PSNRToggle, 0, 1, NULL);
-        PSNRArr[2] = IVFPSNR(input, Version2, PSNRToggle, 0, 1, NULL);
-        PSNRArr[3] = IVFPSNR(input, Version3, PSNRToggle, 0, 1, NULL);
+        PSNRArr[0] = IVFPSNR(input, Version0, 0, 0, 1, NULL);
+        PSNRArr[1] = IVFPSNR(input, Version1, 0, 0, 1, NULL);
+        PSNRArr[2] = IVFPSNR(input, Version2, 0, 0, 1, NULL);
+        PSNRArr[3] = IVFPSNR(input, Version3, 0, 0, 1, NULL);
 
         cout << "\n";
         cerr << "\n";
@@ -25286,7 +25199,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 1;
         }
     }
-    int WindowsMatchesLinux(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+int WindowsMatchesLinux(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "WindowsMatchesLinux";
         char *input = argv[2];
@@ -26260,8 +26173,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
-    //----------------------------------------Code Coverage----------------------------------------------------------------
-    int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])
+//----------------------------------------Code Coverage----------------------------------------------------------------
+int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])
     {
 
         //DATA COVERED AS OF 05-23-2010

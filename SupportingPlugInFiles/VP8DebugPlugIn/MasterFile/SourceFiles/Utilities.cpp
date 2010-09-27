@@ -1,79 +1,56 @@
 #define _CRT_SECURE_NO_WARNINGS
-/////////////////////////
 #include "test-definitions.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <math.h>
-#include <vector>
-/////VP8////////////////
 #include "onyx.h"
-#include "onyxd.h"
-#include "vp8.h"
-#include <map>
-#include <iomanip>
-#include <sstream>
-#include <stdarg.h>
-/////VP8 IVF PSNR///////
 #include <cassert>
 #include "yv12config.h"
-/////PSNR///
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <string.h>
 #include "ivf.h"
 #include "header.h"
-using namespace std;
-////////////////////////
-#include <stdio.h>
-#include <sys/stat.h>
-////////////////////////
-///////////itoa_custom/////////
 #include <algorithm>
-////////////////////////
 
-#if defined(_WIN32)
-#include <windows.h>
-#include "on2vpplugin.h"
-#define snprintf _snprintf
-#endif
-#include <cstdio>
-//////////////////////////////////////////////////////////////
-////////////////////////Global Slash Character Definion for multiplat////////////////////////
-extern char slashChar;
-extern string slashCharStr;
-/////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef DSHOW
-extern char TesterExePath[256];
-#endif
+using namespace std;
 
-#if defined(_WIN32)
-#include "stdafx.h"
-#endif
-const int PSNR_MAX = 999.;
-const int sizBuff = 512;
-
-extern int IVF2Raw(char *inputFile, char *outputDir);
-extern void FileName(char *input, char *FileName, int removeExt);
-extern void FormatedPrint(string SummaryStr, int selector);
-
-extern void VP8DefaultParms(VP8_CONFIG &opt);
-extern void writeframe(YV12_BUFFER_CONFIG &sd, ofstream &outputfile);
-
-extern double VP8_CalcSSIM2(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, int lumamask, double *weight);
-extern int FormatIVFHeaderRead(IVF_HEADER *ivf);
-
-/////////////////////////////////////////////Endian Conversions/////////////////////////////////////////////
 typedef unsigned char BYTE;
-
-#ifndef _WIN32
-typedef unsigned int  DWORD;
-#endif
-
 #define HEADER_SIZE 32
 #define IVF_SCALE   1000
 
+#if defined(_WIN32)
+#include <windows.h>
+#include "stdafx.h"
+#include "on2vpplugin.h"
+#define snprintf _snprintf
+#else
+typedef unsigned int  DWORD;
+#endif
+#ifdef _MSC_VER
+#define USE_POSIX_MMAP 0
+#else
+#define USE_POSIX_MMAP 1
+#endif
+#include "vp8cx.h"
+#include "vpx_encoder.h"
+#include "mem_ops.h"
+#include "vpx_timer.h"
+#if USE_POSIX_MMAP
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+#ifdef DSHOW
+	extern int IVF2Raw(char *inputFile, char *outputDir);
+	extern char TesterExePath[256];
+#endif
+#if CONFIG_MD5
+#include "md5_utils.h"
+#endif
+
+/////////////////////////////////////////////Endian Conversions////////////////////////////////////////////
 #ifdef __POWERPC__
 # define make_endian_16(a) \
     (((unsigned int)(a & 0xff)) << 8) | (((unsigned int)(a & 0xff00)) >> 8)
@@ -92,6 +69,11 @@ typedef unsigned int  DWORD;
 # define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
     ((DWORD)(BYTE)(ch0) << 24 | ((DWORD)(BYTE)(ch1) << 16) |    \
      ((DWORD)(BYTE)(ch2) << 8) | ((DWORD)(BYTE)(ch3)))
+# define swap4(d)\
+    ((d&0x000000ff)<<24) |  \
+    ((d&0x0000ff00)<<8)  |  \
+    ((d&0x00ff0000)>>8)  |  \
+    ((d&0xff000000)>>24)
 #else
 # define make_endian_16(a)  a
 # define make_endian_32(a)  a
@@ -99,95 +81,33 @@ typedef unsigned int  DWORD;
 # define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
     ((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |           \
      ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
-#endif
-
-#if defined(__POWERPC__)
-# define swap4(d)\
-    ((d&0x000000ff)<<24) |  \
-    ((d&0x0000ff00)<<8)  |  \
-    ((d&0x00ff0000)>>8)  |  \
-    ((d&0xff000000)>>24)
-#else
 # define swap4(d) d
 #endif
+////////////////////////Global Slash Character Definion for multiplat////////////////////////
+extern char slashChar;
+extern string slashCharStr;
+/////////////////////////////////////////////////////////////////////////////////////////////
+const int PSNR_MAX = 999.;
+const int sizBuff = 512;
+extern void FileName(char *input, char *FileName, int removeExt);
+
+extern int FormatIVFHeaderRead(IVF_HEADER *ivf);
+extern unsigned int GetHighResTimerTick();
+
+extern double VP8_CalcSSIM_Tester(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, int lumamask, double *weight);
+extern "C" double VP8_CalcPSNR_Tester(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest, double *YPsnr, double *UPsnr, double *VPsnr, double *SqError);
+extern "C" double VP8_Mse2Psnr_Tester(double Samples, double Peak, double Mse);
 
 extern "C"
 {
-    double VP8_CalcSSIM
-    (
-        YV12_BUFFER_CONFIG *source,
-        YV12_BUFFER_CONFIG *dest,
-        int lumamask,
-        double *weight
-    );
-
-    double VP8_CalcPSNR
-    (
-        YV12_BUFFER_CONFIG *source,
-        YV12_BUFFER_CONFIG *dest,
-        double *YPsnr,
-        double *UPsnr,
-        double *VPsnr,
-        double *SqError
-    );
-    double VP8_Mse2Psnr
-    (
-        double Samples,
-        double Peak,
-        double Mse
-    );
-
-    unsigned int ON2_GetHighResTimerTick();
-
     extern int vp8_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height, int border);
     extern void vp8_scale_machine_specific_config(void);
-    extern int vp8_On2YV12_DeAllocFrameBuffer(YV12_BUFFER_CONFIG *ybf);
+    extern int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf);
     extern vpx_codec_iface_t vpx_enc_vp8_algo;
-
-    extern void vp8_yv12_scale_or_center
-    (
-        YV12_BUFFER_CONFIG *src_yuv_config,
-        YV12_BUFFER_CONFIG *dst_yuv_config,
-        int expanded_frame_width,
-        int expanded_frame_height,
-        int scaling_mode,
-        int HScale,
-        int HRatio,
-        int VScale,
-        int VRatio
-    );
-
-
+    extern void vp8_yv12_scale_or_center(YV12_BUFFER_CONFIG *src_yuv_config, YV12_BUFFER_CONFIG *dst_yuv_config, int expanded_frame_width, int expanded_frame_height, int scaling_mode, int HScale, int HRatio, int VScale, int VRatio);
 }
-
-#if CONFIG_MD5
-#include "md5_utils.h"
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////API 2.0//////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#define USE_POSIX_MMAP 0
-#else
-#define USE_POSIX_MMAP 1
-#endif
-//////////////API 2.0//////////
-#include "vp8cx.h"
-#include "vpx_encoder.h"
-#include "mem_ops.h"
-#include "vpx_timer.h"
-/////////////////////////////
-#if USE_POSIX_MMAP
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-/////////////API//////////
-#include "vpx_integer.h"
-//////////////////////////
-
 struct vp8_extracfg
 {
     struct on2_codec__pkt_list *pkt_list;
@@ -1123,7 +1043,7 @@ VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display)
 
     //////////////////////////////////Randomly Generated\\\\\\\\\\\\\\\\\\\\\
 
-    srand(ON2_GetHighResTimerTick());
+    srand(GetHighResTimerTick());
     int w = 0;
     int h = 0;
     int fr  = 0;
@@ -3058,7 +2978,7 @@ char *itoa_custom(int value, char *result, int base)
     return result;
 }
 //----------------------------------------------------Cross Plat----------------------------------------------------------------------
-unsigned int ON2_GetHighResTimerTick()
+unsigned int GetHighResTimerTick()
 {
 #if defined(_WIN32)
     LARGE_INTEGER pf;                       // Performance Counter Frequency
@@ -3083,7 +3003,7 @@ unsigned int ON2_GetHighResTimerTick()
     return (0xffffffff & (tv.tv_sec * 1000000 + tv.tv_usec)) ;
 #endif
 }
-unsigned int ON2_GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick)
+unsigned int GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick)
 {
 #if defined(_WIN32)
     LARGE_INTEGER pf;
@@ -3103,14 +3023,14 @@ unsigned int ON2_GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick
     return duration;
 #endif
 }
-unsigned int ON2_GetProcCoreCount()
+unsigned int VPX_GetProcCoreCount()
 {
     return 2;
 }
 unsigned int GetTime()
 {
     unsigned int Time = 0;
-    Time = ON2_GetHighResTimerTick();
+    Time = GetHighResTimerTick();
     return Time;
 }
 int MakeDirVPX(string CreateDir2)
@@ -3389,6 +3309,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
 
             return 0;
         }
@@ -3408,8 +3329,8 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-
             delete [] CompBuff;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3453,7 +3374,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
                 fclose(CompFile);
                 delete timeStamp2;
                 delete timeEndStamp2;
-
+				vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
                 return 0;
             }
 
@@ -3475,7 +3396,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             if (SsimOut)
             {
                 double weight;
-                double thisSsim = VP8_CalcSSIM2(&Raw_YV12, &Comp_YV12, 1, &weight);
+                double thisSsim = VP8_CalcSSIM_Tester(&Raw_YV12, &Comp_YV12, 1, &weight);
                 summedQuality += thisSsim * weight ;
                 summedWeights += weight;
             }
@@ -3484,7 +3405,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             double UPsnr;
             double VPsnr;
             double SqError;
-            double thisPsnr = VP8_CalcPSNR(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
+            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
 
             summedYPsnr += YPsnr;
             summedUPsnr += UPsnr;
@@ -3567,7 +3488,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     //Over All PSNR Calc
     double samples = 3.0 / 2 * frameCount * Raw_YV12.YWidth * Raw_YV12.YHeight;
     double avgPsnr = summedPsnr / frameCount;
-    double totalPsnr = VP8_Mse2Psnr(samples, 255.0, sumSqError);
+    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
 
     if (summedWeights < 1.0)
         summedWeights = 1.0;
@@ -3620,12 +3541,9 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
     ////////////////////////
     fclose(RawFile);
     fclose(CompFile);
-
     delete timeStamp2;
     delete timeEndStamp2;
-
-
-    //vp8_yv12_de_alloc_frame_buffer(&Tempsd);
+    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
 
     return totalPsnr;
 }
@@ -3842,6 +3760,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             delete timeStamp2;
             delete timeEndStamp2;
             delete [] RawVideoBuffer;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3862,6 +3781,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             delete timeEndStamp2;
             delete [] RawVideoBuffer;
             delete [] CompBuff;
+			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3908,6 +3828,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
                 delete timeStamp2;
                 delete timeEndStamp2;
                 delete [] RawVideoBuffer;
+				vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
                 return 0;
             }
 
@@ -3927,6 +3848,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
                 delete timeStamp2;
                 delete timeEndStamp2;
                 delete [] RawVideoBuffer;
+				vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
                 return 0;
             }
 
@@ -3934,7 +3856,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
 
             ///////////////////////////Preform PSNR Calc///////////////////////////////////
             double weight;
-            double thisSsim = VP8_CalcSSIM2(&Raw_YV12, &Comp_YV12, 1, &weight);
+            double thisSsim = VP8_CalcSSIM_Tester(&Raw_YV12, &Comp_YV12, 1, &weight);
             summedQuality += thisSsim * weight ;
             summedWeights += weight;
 
@@ -3942,7 +3864,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             double UPsnr;
             double VPsnr;
             double SqError;
-            double thisPsnr = VP8_CalcPSNR(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
+            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
 
             summedYPsnr += YPsnr;
             summedUPsnr += UPsnr;
@@ -4025,7 +3947,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     //Over All PSNR Calc
     double samples = 3.0 / 2 * frameCount * Raw_YV12.YWidth * Raw_YV12.YHeight;
     double avgPsnr = summedPsnr / frameCount;
-    double totalPsnr = VP8_Mse2Psnr(samples, 255.0, sumSqError);
+    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
     double totalSSim = 100 * pow(summedQuality / summedWeights, 8.0);
 
     ////////Printing////////
@@ -4072,13 +3994,9 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
     delete timeStamp2;
     delete timeEndStamp2;
     delete [] RawVideoBuffer;
+	vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
 
     return totalPsnr;
-}
-int PSNRSelect(char *inFile, char *outFile)
-{
-    int PSNRToggle = 1;
-    return PSNRToggle;
 }
 double IVFDataRate(char *inputFile, int DROuputSel)
 {

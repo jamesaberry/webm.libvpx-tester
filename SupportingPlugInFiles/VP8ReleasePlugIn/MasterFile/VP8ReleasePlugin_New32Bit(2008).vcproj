@@ -46,7 +46,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;VP7_ONLY=1;ON2_TRACK_MEM_USAGE=1;CONFIG_MEM_TRACKER=1;API"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;VP7_ONLY=1;ON2_TRACK_MEM_USAGE=1;API"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -66,8 +66,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib lib\vpxmtd.lib"
-				OutputFile="$(OutDir)/VP8v--_PlugIn_DLib_DMode.exe"
+				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib lib\on2_codecsmt.lib"
+				OutputFile="$(OutDir)/VP8v--_PlugIn_RLib_DMode_API.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libm.lib, libirc.lib, libmmt.lib"
 				GenerateDebugInformation="true"
@@ -97,7 +97,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -134,8 +133,8 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\jberry.CORP\Desktop\Done Functions\Copy of _Master\Master File&quot;;include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ON2_TRACK_MEM_USAGE=1"
+				AdditionalIncludeDirectories="include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ON2_TRACK_MEM_USAGE=1;API"
 				StringPooling="false"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
@@ -156,9 +155,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib libVP8\onyxc_lib.lib libVP8\onyxe_lib.lib libVP8\onyxd_lib.lib libVP8\cpu_id.lib libVP8\on2scale.lib libVP8\on2_mem.lib"
-				OutputFile="$(OutDir)/VP8v--_PlugIn_DLib_RMode.exe"
+				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib newlib\vpxmt_32Bit.lib"
+				OutputFile="$(OutDir)/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe"
 				LinkIncremental="2"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -212,7 +212,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceFiles\supportingdebug.cpp"
+				RelativePath=".\SourceFiles\supportingrelease.cpp"
 				>
 			</File>
 			<File

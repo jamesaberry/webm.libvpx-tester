@@ -156,8 +156,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib lib\vpxmt.lib"
-				OutputFile="$(OutDir)/VP8_Tester_API.exe"
+				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib lib\vpxmt_32Bit.lib"
+				OutputFile="$(OutDir)/VP8_Tester_API_32Bit.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"

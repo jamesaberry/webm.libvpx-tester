@@ -51,8 +51,8 @@ extern string slashCharStr;
 
 extern "C"
 {
-	#include "vpx_timer.h"
-	extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
+#include "vpx_timer.h"
+    extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
 }
 
 //driver
@@ -63,14 +63,14 @@ extern void FormatedPrint(string SummaryStr, int selector);
 extern void VP8DefaultParms(VP8_CONFIG &opt);
 extern VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display);
 extern VP8_CONFIG InPutSettings(char *inputFile);
-extern int OutPutSettings(char *outputFile, VP8_CONFIG opt);
-extern int OutPutCompatSettings(char *outputFile, VP8_CONFIG opt, int ParVersionNum);
+extern int OutPutSettings(const char *outputFile, VP8_CONFIG opt);
+extern int OutPutCompatSettings(const char *outputFile, VP8_CONFIG opt, int ParVersionNum);
 
-extern long FileSize(char *inFile);
-extern long FileSize2(char *inFile);
-extern void FileName(char *input, char *FileName, int removeExt);
-extern void FolderName(char *input, char *output);
-extern void FolderName2(char *DirIn, char *DirOut);
+extern long FileSize(const char *inFile);
+extern long FileSize2(const char *inFile);
+extern void FileName(const char *input, char *FileName, int removeExt);
+extern void FolderName(const char *input, char *output);
+extern void FolderName2(const char *DirIn, char *DirOut);
 extern string ExtractDateTime(string InputStr);
 extern int TimeStampCompare(string TimeStampNow, string TimeStampPrevious);
 extern int Test0InputTextCheck(char *input, int MoreInfo);
@@ -91,35 +91,35 @@ extern unsigned int GetTime();
 extern int MakeDirVPX(string CreateDir2);
 extern void RunExe(string RunExe);
 
-extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
-extern double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
-extern double IVFDataRate(char *inputFile, int DROuputSel);
-extern int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer);
-extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
+extern double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
+extern double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
+extern double IVFDataRate(const char *inputFile, int DROuputSel);
+extern int IVFCheckPBM(const char *inputFile, int bitRate, int maxBuffer, int preBuffer);
+extern int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
 
-extern int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
-extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
-extern int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame);
-extern int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
-extern int DecompressIVFtoIVF(char *inputFile, char *outputFile2);
-extern int DecompressIVFtoRaw(char *inputFile, char *outputFile2);
-extern unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2);
-extern unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputFile, char *outputFile2);
-extern int DecComputeMD5(char *inputchar, char *outputchar);
+extern int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
+extern unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
+extern int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame);
+extern int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
+extern int DecompressIVFtoIVF(const char *inputFile, const char *outputFile2);
+extern int DecompressIVFtoRaw(const char *inputFile, const char *outputFile2);
+extern unsigned int TimeDecompressIVFtoIVF(const char *inputFile, const char *outputFile2);
+extern unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputFile, const char *outputFile2);
+extern int DecComputeMD5(const char *inputchar, const char *outputchar);
 
-extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
-extern int CompIVF(char *inputFile1, char *inputFile2);
-extern double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch);
-extern double IVFDisplayVisibleFrames(char *inputFile, int Selector);
-extern double IVFDisplayAltRefFrames(char *inputFile, int Selector);
-extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
-extern int IVFLagInFramesCheck(char *QuantInChar);
-extern int IVFDFWMCheck(char *InputFile, int printselect);
+extern int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
+extern int CompIVF(const char *inputFile1, const char *inputFile2);
+extern double IVFDisplayResizedFrames(const char *inputchar, int PrintSwitch);
+extern double IVFDisplayVisibleFrames(const char *inputFile, int Selector);
+extern double IVFDisplayAltRefFrames(const char *inputFile, int Selector);
+extern double IVFDisplayKeyFrames(const char *inputFile, int Selector);
+extern int IVFLagInFramesCheck(const char *QuantInChar);
+extern int IVFDFWMCheck(const char *InputFile, int printselect);
 extern int CheckMinQ(char *inputFile, int MinQuantizer);
-extern int CheckMaxQ(char *inputFile, int MaxQuantizer);
-extern int CheckFixedQ(char *inputFile, int FixedQuantizer);
-extern int TimeReturn(char *infile, int FileType);
-extern int GetNumberofFrames(char *inputFile);
+extern int CheckMaxQ(const char *inputFile, int MaxQuantizer);
+extern int CheckFixedQ(const char *inputFile, int FixedQuantizer);
+extern int TimeReturn(const char *infile, int FileType);
+extern int GetNumberofFrames(const char *inputFile);
 
 /////Tests
 extern int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofTests);
@@ -3265,19 +3265,13 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string AllowDFon = WorkingDirString;
+    string AllowDFoff = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("AllowDFOnOutput.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("AllowDFOffOutput.ivf");
-
-    char AllowDFon[255];
-    char AllowDFoff[255];
-
-    snprintf(AllowDFon, 255, "%s", WorkingDir4.c_str());
-    snprintf(AllowDFoff, 255, "%s", WorkingDir5.c_str());
+    AllowDFon.append(slashCharStr);
+    AllowDFon.append("AllowDFOnOutput.ivf");
+    AllowDFoff.append(slashCharStr);
+    AllowDFoff.append("AllowDFOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -3367,7 +3361,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.Mode = MODE_REALTIME;
             opt.allow_df = 0;
 
-            if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3378,7 +3372,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.Mode = MODE_REALTIME;
             opt.allow_df = 1;
 
-            if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3392,7 +3386,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.Mode = MODE_GOODQUALITY;
             opt.allow_df = 0;
 
-            if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3403,7 +3397,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.Mode = MODE_GOODQUALITY;
             opt.allow_df = 1;
 
-            if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3417,7 +3411,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.Mode = MODE_BESTQUALITY;
             opt.allow_df = 0;
 
-            if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3428,7 +3422,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.Mode = MODE_BESTQUALITY;
             opt.allow_df = 1;
 
-            if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3442,7 +3436,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.allow_df = 0;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3453,7 +3447,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.allow_df = 1;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3467,7 +3461,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.allow_df = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, AllowDFoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3478,7 +3472,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             opt.allow_df = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, AllowDFon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3496,8 +3490,8 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         return 10;
     }
 
-    int AllowDFonFrames = IVFDisplayVisibleFrames(AllowDFon, 1);
-    int AllowDFoffFrames = IVFDisplayVisibleFrames(AllowDFoff, 1);
+    int AllowDFonFrames = IVFDisplayVisibleFrames(AllowDFon.c_str(), 1);
+    int AllowDFoffFrames = IVFDisplayVisibleFrames(AllowDFoff.c_str(), 1);
 
     /*printf("\n\n");
     fprintf(stderr, "\n\n");
@@ -3687,19 +3681,13 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         FileStream.close();
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string AllowLagon = WorkingDirString;
+    string AllowLagoff = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("AllowLagOnOutput.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("AllowLagOffOutput.ivf");
-
-    char AllowLagon[255];
-    char AllowLagoff[255];
-
-    snprintf(AllowLagon, 255, "%s", WorkingDir4.c_str());
-    snprintf(AllowLagoff, 255, "%s", WorkingDir5.c_str());
+    AllowLagon.append(slashCharStr);
+    AllowLagon.append("AllowLagOnOutput.ivf");
+    AllowLagoff.append(slashCharStr);
+    AllowLagoff.append("AllowLagOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -3792,7 +3780,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.Mode = MODE_REALTIME;
             opt.allow_lag = 0;
 
-            if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3803,7 +3791,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.Mode = MODE_REALTIME;
             opt.allow_lag = 1;
 
-            if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3817,7 +3805,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.Mode = MODE_GOODQUALITY;
             opt.allow_lag = 0;
 
-            if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3828,7 +3816,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.Mode = MODE_GOODQUALITY;
             opt.allow_lag = 1;
 
-            if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3842,7 +3830,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.Mode = MODE_BESTQUALITY;
             opt.allow_lag = 0;
 
-            if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3853,7 +3841,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.Mode = MODE_BESTQUALITY;
             opt.allow_lag = 1;
 
-            if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3871,7 +3859,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.allow_lag = 0;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3882,7 +3870,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.allow_lag = 1;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3896,7 +3884,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.allow_lag = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, AllowLagoff, speed, BitRate, opt, CompressString, 0, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3907,7 +3895,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             opt.allow_lag = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, AllowLagon, speed, BitRate, opt, CompressString, 1, 1) == -1)
+            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -3935,28 +3923,17 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     int LagInFramesFound = IVFLagInFramesCheck(QuantInChar);
 
-    int AllowLagONAltRefCount = IVFDisplayAltRefFrames(AllowLagon, 1);
-    int AllowLagOFFAltRefCount = IVFDisplayAltRefFrames(AllowLagoff, 1);
-    int VisibleFrameONCount = IVFDisplayVisibleFrames(AllowLagon, 1);
-    int VisibleFrameOFFCount = IVFDisplayVisibleFrames(AllowLagoff, 1);
-
-    //cout << "AllowLagONAltRefCount: " << AllowLagONAltRefCount << "\n";
-    //cout << "AllowLagOFFAltRefCount: " << AllowLagOFFAltRefCount << "\n";
-    //cout << "VisibleFrameONCount: " << VisibleFrameONCount << "\n";
-    //cout << "VisibleFrameOFFCount: " << VisibleFrameOFFCount << "\n";
+    int AllowLagONAltRefCount = IVFDisplayAltRefFrames(AllowLagon.c_str(), 1);
+    int AllowLagOFFAltRefCount = IVFDisplayAltRefFrames(AllowLagoff.c_str(), 1);
+    int VisibleFrameONCount = IVFDisplayVisibleFrames(AllowLagon.c_str(), 1);
+    int VisibleFrameOFFCount = IVFDisplayVisibleFrames(AllowLagoff.c_str(), 1);
 
     char AllowLagonFilename[255];
-    FileName(AllowLagon, AllowLagonFilename, 0);
+    FileName(AllowLagon.c_str(), AllowLagonFilename, 0);
     char AllowLagoffFilename[255];
-    FileName(AllowLagoff, AllowLagoffFilename, 0);
+    FileName(AllowLagoff.c_str(), AllowLagoffFilename, 0);
 
-    int lngRC = CompIVF(AllowLagoff, AllowLagon);
-
-    /*char OutputChar1[255];
-    snprintf(OutputChar1, 255, "",);
-    string OutputChar1str = OutputChar1;
-    FormatedPrint(OutputChar1str, 5);
-    printf("\n");fprintf(stderr, "\n");*/
+    int lngRC = CompIVF(AllowLagoff.c_str(), AllowLagon.c_str());
 
     printf("\n\nResults:\n\n");
     fprintf(stderr, "\n\nResults:\n\n");
@@ -4173,19 +4150,13 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string Spatialon = WorkingDirString;
+    string Spatialoff = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("SpatialOnOutput.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("SpatialOffOutput.ivf");
-
-    char Spatialon[255];
-    char Spatialoff[255];
-
-    snprintf(Spatialon, 255, "%s", WorkingDir4.c_str());
-    snprintf(Spatialoff, 255, "%s", WorkingDir5.c_str());
+    Spatialon.append(slashCharStr);
+    Spatialon.append("SpatialOnOutput.ivf");
+    Spatialoff.append(slashCharStr);
+    Spatialoff.append("SpatialOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -4275,7 +4246,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.Mode = MODE_REALTIME;
             opt.allow_spatial_resampling = 0;
 
-            if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4286,7 +4257,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.Mode = MODE_REALTIME;
             opt.allow_spatial_resampling = 1;
 
-            if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4300,7 +4271,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.Mode = MODE_GOODQUALITY;
             opt.allow_spatial_resampling = 0;
 
-            if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4311,7 +4282,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.Mode = MODE_GOODQUALITY;
             opt.allow_spatial_resampling = 1;
 
-            if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4325,7 +4296,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.Mode = MODE_BESTQUALITY;
             opt.allow_spatial_resampling = 0;
 
-            if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4336,7 +4307,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.Mode = MODE_BESTQUALITY;
             opt.allow_spatial_resampling = 1;
 
-            if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4354,7 +4325,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.allow_spatial_resampling = 0;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4365,7 +4336,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.allow_spatial_resampling = 1;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4379,7 +4350,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.allow_spatial_resampling = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, Spatialoff, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4390,7 +4361,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             opt.allow_spatial_resampling = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, Spatialon, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4409,20 +4380,20 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         return 10;
     }
 
-    double SpatialResampPSNR = IVFPSNR(input, Spatialon, 0, 0, 1, NULL);
+    double SpatialResampPSNR = IVFPSNR(input, Spatialon.c_str(), 0, 0, 1, NULL);
 
     char SpatialonFileName[255];
-    FileName(Spatialon, SpatialonFileName, 0);
+    FileName(Spatialon.c_str(), SpatialonFileName, 0);
     char SpatialoffFileName[255];
-    FileName(Spatialoff, SpatialoffFileName, 0);
+    FileName(Spatialoff.c_str(), SpatialoffFileName, 0);
 
     printf("\nChecking: %s for resized frames\n", SpatialonFileName);
     fprintf(stderr, "\nChecking: %s for resized frames\n", SpatialonFileName);
-    int AllowSpatResampleONFramesResized = IVFDisplayResizedFrames(Spatialon, 1);
+    int AllowSpatResampleONFramesResized = IVFDisplayResizedFrames(Spatialon.c_str(), 1);
 
     printf("Checking: %s for resized frames\n", SpatialoffFileName);
     fprintf(stderr, "Checking: %s for resized frames\n", SpatialoffFileName);
-    int AllowSpatResampleOFFFramesResized = IVFDisplayResizedFrames(Spatialoff, 1);
+    int AllowSpatResampleOFFFramesResized = IVFDisplayResizedFrames(Spatialoff.c_str(), 1);
 
     int fail = 0;
     printf("\n\nResults:\n\n");
@@ -4629,29 +4600,20 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     }
 
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
-    string WorkingDir6 = WorkingDirString;
-    string WorkingDir7 = WorkingDirString;
+    string KeyFrameTxtOut1 = WorkingDirString;
+    string KeyFrameTxtOut2 = WorkingDirString;
+    string AutoKeyFramingWorks1 = WorkingDirString;
+    string AutoKeyFramingWorks2 = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("AutoKeyFramingWorksOutput1_KeyFrames.txt");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("AutoKeyFramingWorksOutput1.ivf");
-    WorkingDir6.append(slashCharStr);
-    WorkingDir6.append("AutoKeyFramingWorksOutput2_KeyFrames.txt");
-    WorkingDir7.append(slashCharStr);
-    WorkingDir7.append("AutoKeyFramingWorksOutput2.ivf");
+    KeyFrameTxtOut1.append(slashCharStr);
+    KeyFrameTxtOut1.append("AutoKeyFramingWorksOutput1_KeyFrames.txt");
+    AutoKeyFramingWorks1.append(slashCharStr);
+    AutoKeyFramingWorks1.append("AutoKeyFramingWorksOutput1.ivf");
+    KeyFrameTxtOut2.append(slashCharStr);
+    KeyFrameTxtOut2.append("AutoKeyFramingWorksOutput2_KeyFrames.txt");
+    AutoKeyFramingWorks2.append(slashCharStr);
+    AutoKeyFramingWorks2.append("AutoKeyFramingWorksOutput2.ivf");
 
-    char outputfile1[255];
-    char outputfile2[255];
-    char AutoKeyFramingWorks1[255];
-    char AutoKeyFramingWorks2[255];
-
-    snprintf(outputfile1, 255, "%s", WorkingDir4.c_str());
-    snprintf(outputfile2, 255, "%s", WorkingDir6.c_str());
-    snprintf(AutoKeyFramingWorks1, 255, "%s", WorkingDir5.c_str());
-    snprintf(AutoKeyFramingWorks2, 255, "%s", WorkingDir7.c_str());
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -4733,7 +4695,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         {
             opt.Mode = MODE_REALTIME;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4743,7 +4705,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
             opt.Mode = MODE_REALTIME;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4756,7 +4718,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         {
             opt.Mode = MODE_GOODQUALITY;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4766,7 +4728,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
             opt.Mode = MODE_GOODQUALITY;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4779,7 +4741,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4789,7 +4751,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
             opt.Mode = MODE_BESTQUALITY;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4807,7 +4769,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4817,7 +4779,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4830,7 +4792,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         {
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4840,7 +4802,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2, speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -4859,16 +4821,16 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         return 10;
     }
 
-    IVFDisplayKeyFrames(AutoKeyFramingWorks1, 1);
-    IVFDisplayKeyFrames(AutoKeyFramingWorks2, 1);
+    IVFDisplayKeyFrames(AutoKeyFramingWorks1.c_str(), 1);
+    IVFDisplayKeyFrames(AutoKeyFramingWorks2.c_str(), 1);
 
-    ifstream infile1(outputfile1);
-    ifstream infile2(outputfile2);
+    ifstream infile1(KeyFrameTxtOut1.c_str());
+    ifstream infile2(KeyFrameTxtOut2.c_str());
 
     if (!infile1.good())
     {
-        printf("\nKey Frame File Not Present\n");
-        fprintf(stderr, "\nKey Frame File Not Present\n");
+        printf("\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
+        fprintf(stderr, "\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4877,8 +4839,8 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (!infile2.good())
     {
-        printf("\nKey Frame File Not Present\n");
-        fprintf(stderr, "\nKey Frame File Not Present\n");
+        printf("\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
+        fprintf(stderr, "\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4915,16 +4877,16 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     infile2.close();
 
     char AutoKeyFramingWorks1FileName[255];
-    FileName(AutoKeyFramingWorks1, AutoKeyFramingWorks1FileName, 0);
+    FileName(AutoKeyFramingWorks1.c_str(), AutoKeyFramingWorks1FileName, 0);
     char AutoKeyFramingWorks2FileName[255];
-    FileName(AutoKeyFramingWorks2, AutoKeyFramingWorks2FileName, 0);
+    FileName(AutoKeyFramingWorks2.c_str(), AutoKeyFramingWorks2FileName, 0);
 
     printf("\n\nResults:\n\n");
     fprintf(stderr, "\n\nResults:\n\n");
 
     //////////////////////////////////////////////////////////////////////////////////
     int fail2 = 0;
-    ifstream infile(outputfile1);
+    ifstream infile(KeyFrameTxtOut1.c_str());
 
     if (!infile.good())
     {
@@ -4983,7 +4945,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         maxKeyFrame = y2;
     }
 
-    int NumberofFrames = GetNumberofFrames(AutoKeyFramingWorks1);
+    int NumberofFrames = GetNumberofFrames(AutoKeyFramingWorks1.c_str());
 
     if (NumberofFrames - 1 >= (maxKeyFrame + AutoKeyFramingInt))
     {
@@ -5154,14 +5116,14 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
     }
 
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string BufferLevelWorksOut = WorkingDirString;
+    //string WorkingDir5 = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("BufferLevelWorksOutput.ivf");
+    BufferLevelWorksOut.append(slashCharStr);
+    BufferLevelWorksOut.append("BufferLevelWorksOutput.ivf");
 
-    char BufferLevelWorksOut[255];
-    snprintf(BufferLevelWorksOut, 255, "%s", WorkingDir4.c_str());
+    //char BufferLevelWorksOut[255];
+    //snprintf(BufferLevelWorksOut, 255, "%s", WorkingDir4.c_str());
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -5265,7 +5227,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         {
             opt.Mode = MODE_REALTIME;
 
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5279,7 +5241,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         {
             opt.Mode = MODE_GOODQUALITY;
 
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5292,7 +5254,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5309,7 +5271,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         {
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5322,7 +5284,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         {
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5340,7 +5302,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         return 10;
     }
 
-    int PassFail = IVFCheckPBM(BufferLevelWorksOut, BitRate, MaximumBufferLevel * 1000, StartingBufferLvl * 1000);
+    int PassFail = IVFCheckPBM(BufferLevelWorksOut.c_str(), BitRate, MaximumBufferLevel * 1000, StartingBufferLvl * 1000);
 
     printf("\n\nResults:\n\n");
     fprintf(stderr, "\n\nResults:\n\n");
@@ -5493,19 +5455,19 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string CPUDecOnlyWorksOutFile = WorkingDirString;
+    string CPUDecOnlyWorksOut_CPU = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("CPUDecOnlyWorksOutput.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("CPUDecOnlyWorksOutput_CPU");
+    CPUDecOnlyWorksOutFile.append(slashCharStr);
+    CPUDecOnlyWorksOutFile.append("CPUDecOnlyWorksOutput.ivf");
+    CPUDecOnlyWorksOut_CPU.append(slashCharStr);
+    CPUDecOnlyWorksOut_CPU.append("CPUDecOnlyWorksOutput_CPU");
 
-    char CPUDecOnlyWorksOutFile[255];
-    char CPUDecOnlyWorksOut_CPU[255];
+    //char CPUDecOnlyWorksOutFile[255];
+    //char CPUDecOnlyWorksOut_CPU[255];
 
-    snprintf(CPUDecOnlyWorksOutFile, 255, "%s", WorkingDir4.c_str());
-    snprintf(CPUDecOnlyWorksOut_CPU, 255, "%s", WorkingDir5.c_str());
+    //snprintf(CPUDecOnlyWorksOutFile, 255, "%s", WorkingDir4.c_str());
+    //snprintf(CPUDecOnlyWorksOut_CPU, 255, "%s", WorkingDir5.c_str());
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -5593,8 +5555,6 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        //putenv("ON2_SIMD_CAPS=0");
-
         string Output2 = CPUDecOnlyWorksOut_CPU;
         Output2.append("0.ivf");
         char Output2Char[1024];
@@ -5611,7 +5571,6 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             char CounterChar[10];
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
-            //putenv((char *)CPUIDSTRING.c_str());
 
             //////////////////////////////////
             ///////Compresion and Time ///////
@@ -5626,8 +5585,6 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
             char ChangedCPUDecOutFileChar[255];
             snprintf(ChangedCPUDecOutFileChar, 255, "%s", Output.c_str());
-
-            //putenv("ON2_SIMD_CAPS=0");
 
             printf("\n");
             fprintf(stderr, "\n");
@@ -5707,7 +5664,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         {
             opt.Mode = MODE_REALTIME;
 
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5720,7 +5677,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         {
             opt.Mode = MODE_GOODQUALITY;
 
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5733,7 +5690,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5750,7 +5707,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         {
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5763,7 +5720,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         {
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -5774,18 +5731,13 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         putenv("ON2_SIMD_CAPS=0");
 
-        string Output2 = CPUDecOnlyWorksOut_CPU;
-        Output2.append("0.ivf");
-        char Output2Char[1024];
-        snprintf(Output2Char, 1024, "%s", Output2.c_str());
+        string Output2Str = CPUDecOnlyWorksOut_CPU;
+        Output2Str.append("0.ivf");
 
-        printf("\n\n");
-        fprintf(stderr, "\n\n");
+        printf("\n\nCPU:%i\n", 0);
+        fprintf(stderr, "\n\nCPU:%i\n", 0);
 
-        printf("CPU:%i\n", 0);
-        fprintf(stderr, "CPU:%i\n", 0);
-
-        totalms = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile, Output2Char);
+        totalms = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str());
 
         printf("\n\n");
         fprintf(stderr, "\n\n");
@@ -5800,7 +5752,10 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             char CounterChar[10];
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
-            putenv((char *)CPUIDSTRING.c_str());
+			
+			char CPUChar[255];
+			snprintf(CPUChar,255,CPUIDSTRING.c_str());
+            putenv(CPUChar);
 
             printf("CPU:%i", counter);
             fprintf(stderr, "CPU:%i", counter);
@@ -5808,40 +5763,30 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             //////////////////////////////////
             ///////Compresion and Time ///////
 
-            string Output = CPUDecOnlyWorksOut_CPU;
-            string Output3 = CPUDecOnlyWorksOut_CPU;
+            string ChangedCPUDecOutFileStr1 = CPUDecOnlyWorksOut_CPU;
+            string ChangedCPUDecOutFileStr2 = CPUDecOnlyWorksOut_CPU;
+
             char count[20];
             itoa_custom(counter, count, 10);
-
-            Output.append(count);
-            Output.append(".ivf");
-
-            char ChangedCPUDecOutFileChar[255];
-            snprintf(ChangedCPUDecOutFileChar, 255, "%s", Output.c_str());
+            ChangedCPUDecOutFileStr1.append(count);
+            ChangedCPUDecOutFileStr1.append(".ivf");
 
             printf("\n");
             fprintf(stderr, "\n");
 
-            totalms2 = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile, ChangedCPUDecOutFileChar);
+            totalms2 = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), ChangedCPUDecOutFileStr1.c_str());
 
             int countOld = (counter - 1);
             itoa_custom(countOld, count, 10);
-
-            Output3.append(count);
-            Output3.append(".ivf");
+            ChangedCPUDecOutFileStr2.append(count);
+            ChangedCPUDecOutFileStr2.append(".ivf");
 
             if (TestType != 2)
             {
-                char Comp1[255];
-                char Comp2[255];
-
-                snprintf(Comp1, 255, "%s", Output.c_str());
-                snprintf(Comp2, 255, "%s", Output3.c_str());
-
-                cout << "\ncomparing " << Comp1 << " \n\nto\n\n " << Comp2 << "\n\n";
+                printf("comparing CPU:%i to CPU:%i", counter - 1, counter);
                 fprintf(stderr, "\ncomparing CPU:%i to CPU:%i", counter - 1, counter);
 
-                int lngRC = CompIVF(Comp1, Comp2);
+                int lngRC = CompIVF(ChangedCPUDecOutFileStr1.c_str(), ChangedCPUDecOutFileStr2.c_str());
 
                 if (lngRC >= 0)
                 {
@@ -6072,19 +6017,13 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string ChangedCPUDec0OutFile = WorkingDirString;
+    string ChangedCPUDecNOutBase = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("ChangedCPUNOutputCPU0.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("ChangedCPUNOutputCPU");
-
-    char ChangedCPUDec0OutFile[255];
-    char ChangedCPUDecNOutFile[255];
-
-    snprintf(ChangedCPUDec0OutFile, 255, "%s", WorkingDir4.c_str());
-    snprintf(ChangedCPUDecNOutFile, 255, "%s", WorkingDir5.c_str());
+    ChangedCPUDec0OutFile.append(slashCharStr);
+    ChangedCPUDec0OutFile.append("ChangedCPUNOutputCPU0.ivf");
+    ChangedCPUDecNOutBase.append(slashCharStr);
+    ChangedCPUDecNOutBase.append("ChangedCPUNOutputCPU");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -6130,19 +6069,19 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     int BitRate = atoi(argv[4]);
     int VersionNum = atoi(argv[5]);
 
-    unsigned int totalms1 = 0;
-    unsigned int totalms2 = 0;
-    unsigned int totalms3 = 0;
+    //unsigned int totalms1 = 0;
+    //unsigned int totalms2 = 0;
+    //unsigned int totalms3 = 0;
 
-    unsigned int totalms1b = 0;
-    unsigned int totalms2b = 0;
-    unsigned int totalms3b = 0;
+    //unsigned int totalms1b = 0;
+    //unsigned int totalms2b = 0;
+    //unsigned int totalms3b = 0;
 
     int speed = 0;
     int Fail = 0;
 
-    unsigned int Time1;
-    unsigned int Time2;
+    unsigned int Time1 = 0;
+    unsigned int Time2 = 0;
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
@@ -6182,54 +6121,44 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     if (TestType == 3)
     {
         int counterMax = 16;
-        counter++;
-        int i = 1;
-        Time1 = TimeReturn(ChangedCPUDec0OutFile, 0);
+        counter = 1;
+        int FileNumber = 1;
 
         while (counter < counterMax)
         {
-            ///updating CPU
-
+            ///////////Updating CPU///////////
             string CPUIDSTRING = "ON2_SIMD_CAPS=";
             char CounterChar[10];
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
-            putenv((char *)CPUIDSTRING.c_str());
 
-            //////////////////////////////////
+			char CPUChar[255];
+			snprintf(CPUChar,255,CPUIDSTRING.c_str());
+            putenv(CPUChar);
+
             ///////Compresion and Time ///////
+            string ChangedCPUDecNOutCurrent = ChangedCPUDecNOutBase;
+            string ChangedCPUDecNOutLast = ChangedCPUDecNOutBase;
 
-            string Output = ChangedCPUDecNOutFile;
-            string Output3 = ChangedCPUDecNOutFile;
             char count[20];
             itoa_custom(counter, count, 10);
-
-            Output.append(count);
-            Output.append(".ivf");
-
-            char ChangedCPUDecNOutFileFinal[255];
-            snprintf(ChangedCPUDecNOutFileFinal, 255, "%s", Output.c_str());
+            ChangedCPUDecNOutCurrent.append(count);
+            ChangedCPUDecNOutCurrent.append(".ivf");
 
             int countOld = (counter - 1) / 2;
             itoa_custom(countOld, count, 10);
+            ChangedCPUDecNOutLast.append(count);
+            ChangedCPUDecNOutLast.append(".ivf");
 
-            Output3.append(count);
-            Output3.append(".ivf");
+            printf("\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
+            fprintf(stderr, "\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
 
-            char Comp1[255];
-            snprintf(Comp1, 255, "%s", Output.c_str());
-            char Comp2[255];
-            snprintf(Comp2, 255, "%s", Output3.c_str());
-
-            printf("\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", Comp1, Comp2);
-            fprintf(stderr, "\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", Comp1, Comp2);
-
-            int lngRC = CompIVF(Comp1, Comp2);
+            int lngRC = CompIVF(ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
 
             if (lngRC >= 0)
             {
-                printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
+                printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
+                fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
                 Fail = 1;
             }
 
@@ -6253,126 +6182,51 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 Fail = 1;
             }
 
-            Time2 = TimeReturn(Comp1, 0);
+            Time2 = TimeReturn(ChangedCPUDecNOutCurrent.c_str(), 0);
 
             counter = (counter * 2) + 1;
-            i++;
+            FileNumber++;
         }
     }
     else
     {
 
-        printf("\n\nCPU:%i", 0);
-        fprintf(stderr, "\n\nCPU:%i", 0);
-
-        if (Mode == 0)
-        {
-            opt.Mode = MODE_REALTIME;
-            Time1 = TimeCompressIVFtoIVF(input, ChangedCPUDec0OutFile, speed, BitRate, opt, CompressString, CompressInt, 0);
-
-            if (Time1 == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 1)
-        {
-            opt.Mode = MODE_GOODQUALITY;
-            Time1 = TimeCompressIVFtoIVF(input, ChangedCPUDec0OutFile, speed, BitRate, opt, CompressString, CompressInt, 0);
-
-            if (Time1 == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-            Time1 = TimeCompressIVFtoIVF(input, ChangedCPUDec0OutFile, speed, BitRate, opt, CompressString, CompressInt, 0);
-
-            if (Time1 == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.Mode = MODE_SECONDPASS;
-            Time1 = TimeCompressIVFtoIVF(input, ChangedCPUDec0OutFile, speed, BitRate, opt, CompressString, CompressInt, 0);
-
-            if (Time1 == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-            Time1 = TimeCompressIVFtoIVF(input, ChangedCPUDec0OutFile, speed, BitRate, opt, CompressString, CompressInt, 0);
-
-            if (Time1 == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
         int counterMax = 16;
-        counter++;
-        int i = 1;
+        int FileNumber = 1;
 
         while (counter < counterMax)
         {
-            ///updating CPU
-
+            ///////////Updating CPU///////////
             string CPUIDSTRING = "ON2_SIMD_CAPS=";
             char CounterChar[10];
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
-            putenv((char *)CPUIDSTRING.c_str());
-            printf("\n\nCPU:%i", counter);
+            
+			char CPUChar[255];
+			snprintf(CPUChar,255,CPUIDSTRING.c_str());
+			putenv(CPUChar);
+           
+			printf("\n\nCPU:%i", counter);
             fprintf(stderr, "\n\nCPU:%i", counter);
 
-            //////////////////////////////////
             ///////Compresion and Time ///////
+            string ChangedCPUDecNOutCurrent = ChangedCPUDecNOutBase;
+            string ChangedCPUDecNOutLast = ChangedCPUDecNOutBase;
 
-            string Output = ChangedCPUDecNOutFile;
-            string Output3 = ChangedCPUDecNOutFile;
             char count[20];
             itoa_custom(counter, count, 10);
+            ChangedCPUDecNOutCurrent.append(count);
+            ChangedCPUDecNOutCurrent.append(".ivf");
 
-            Output.append(count);
-            Output.append(".ivf");
-
-            char ChangedCPUDecNOutFileFinal[255];
-            snprintf(ChangedCPUDecNOutFileFinal, 255, "%s", Output.c_str());
+            int countOld = (counter - 1) / 2;
+            itoa_custom(countOld, count, 10);
+            ChangedCPUDecNOutLast.append(count);
+            ChangedCPUDecNOutLast.append(".ivf");
 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutFileFinal, speed, BitRate, opt, CompressString, CompressInt, 0);
+                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                 if (Time2 == -1)
                 {
@@ -6386,7 +6240,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 1)
             {
                 opt.Mode = MODE_GOODQUALITY;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutFileFinal, speed, BitRate, opt, CompressString, CompressInt, 0);
+                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                 if (Time2 == -1)
                 {
@@ -6400,7 +6254,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 2)
             {
                 opt.Mode = MODE_BESTQUALITY;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutFileFinal, speed, BitRate, opt, CompressString, CompressInt, 0);
+                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                 if (Time2 == -1)
                 {
@@ -6418,7 +6272,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 4)
             {
                 opt.Mode = MODE_SECONDPASS;
-                Time2 = Time2 + TimeCompressIVFtoIVF(input, ChangedCPUDecNOutFileFinal, speed, BitRate, opt, CompressString, CompressInt, 0);
+                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                 if (Time2 == -1)
                 {
@@ -6432,7 +6286,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             if (Mode == 5)
             {
                 opt.Mode = MODE_SECONDPASS_BEST;
-                Time2 = Time2 + TimeCompressIVFtoIVF(input, ChangedCPUDecNOutFileFinal, speed, BitRate, opt, CompressString, CompressInt, 0);
+                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                 if (Time2 == -1)
                 {
@@ -6443,30 +6297,17 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 }
             }
 
-
-            //compavi
-            int countOld = (counter - 1) / 2;
-            itoa_custom(countOld, count, 10);
-
-            Output3.append(count);
-            Output3.append(".ivf");
-
-            char Comp1[255];
-            snprintf(Comp1, 255, "%s", Output.c_str());
-            char Comp2[255];
-            snprintf(Comp2, 255, "%s", Output3.c_str());
-
-            if (TestType != 2)
+            if (TestType != 2 && counter != 0)
             {
                 printf("\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
                 fprintf(stderr, "\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
 
-                int lngRC = CompIVF(Comp1, Comp2);
+                int lngRC = CompIVF(ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
 
                 if (lngRC >= 0)
                 {
-                    printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                    fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
+                    printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
+                    fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
                     Fail = 1;
                 }
 
@@ -6492,16 +6333,13 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             }
 
             counter = (counter * 2) + 1;
-            i++;
+            FileNumber++;
         }
-
-
     }
 
     //Create Compression only stop test short.
     if (TestType == 2)
     {
-        //Compression only run
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -6509,7 +6347,9 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         return 10;
     }
 
+    Time1 = TimeReturn(ChangedCPUDec0OutFile.c_str(), 0);
     int overallfail = 0;
+
     printf("\n\n\nResults:\n\n");
     fprintf(stderr, "\n\n\nResults:\n\n");
 
@@ -6537,7 +6377,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     if (Time1 == Time2)
     {
         char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Time1: %i == Time2: %i - Failed", Time1, Time2);
+        snprintf(OutputChar1, 255, "Time1: %u == Time2: %u - Failed", Time1, Time2);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
         printf("\n");
@@ -6548,7 +6388,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     if (Time1 != Time2)
     {
         char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Time 1: %i != Time 2: %i - Passed", Time1, Time2);
+        snprintf(OutputChar1, 255, "Time 1: %u != Time 2: %u - Passed", Time1, Time2);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
         printf("\n");
@@ -6600,7 +6440,6 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
 
         return 0;
     }
-
 
     ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
     string WorkingDirString = "";
@@ -6690,11 +6529,10 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string DFWMOutFileBase = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("DFWMOutput");
+    DFWMOutFileBase.append(slashCharStr);
+    DFWMOutFileBase.append("DFWMOutput");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -6786,28 +6624,23 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
     {
         while (n >= 0)
         {
-            opt.drop_frames_water_mark = n;
-            //update file name
+            ///////Update File Name///////
             char num[20];
             itoa_custom(n, num, 10);
-
-            string WorkingDir5 = WorkingDir4;
-            WorkingDir5.append(num);
-            WorkingDir5.append(".ivf");
-
-            char DFWMOutFile[255];
-            snprintf(DFWMOutFile, 255, "%s", WorkingDir5.c_str());
+            string DFWMOutFile = DFWMOutFileBase;
+            DFWMOutFile.append(num);
+            DFWMOutFile.append(".ivf");
 
             printf("\n");
             fprintf(stderr, "\n");
-            DMFW[i] = FileSize(DFWMOutFile);
+            DMFW[i] = FileSize(DFWMOutFile.c_str());
             printf("\n");
             fprintf(stderr, "\n");
 
             i++;
             n = n - 20;
 
-            WorkingDir5.clear();
+            DFWMOutFile.clear();
         }
     }
     else
@@ -6815,22 +6648,19 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
         while (n >= 0)
         {
             opt.drop_frames_water_mark = n;
-            //update file name
+
+            ///////Update File Name///////
             char num[20];
             itoa_custom(n, num, 10);
-
-            string WorkingDir5 = WorkingDir4;
-            WorkingDir5.append(num);
-            WorkingDir5.append(".ivf");
-
-            char DFWMOutFile[255];
-            snprintf(DFWMOutFile, 255, "%s", WorkingDir5.c_str());
+            string DFWMOutFile = DFWMOutFileBase;
+            DFWMOutFile.append(num);
+            DFWMOutFile.append(".ivf");
 
             if (Mode == 0)
             {
                 opt.Mode = MODE_REALTIME;
 
-                if (CompressIVFtoIVF(input, DFWMOutFile, speed, BitRate, opt, CompressString, n, 0) == -1)
+                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -6843,7 +6673,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             {
                 opt.Mode = MODE_GOODQUALITY;
 
-                if (CompressIVFtoIVF(input, DFWMOutFile, speed, BitRate, opt, CompressString, n, 0) == -1)
+                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -6856,7 +6686,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             {
                 opt.Mode = MODE_BESTQUALITY;
 
-                if (CompressIVFtoIVF(input, DFWMOutFile, speed, BitRate, opt, CompressString, n, 0) == -1)
+                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -6873,7 +6703,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             {
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, DFWMOutFile, speed, BitRate, opt, CompressString, n, 0) == -1)
+                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -6886,7 +6716,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             {
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, DFWMOutFile, speed, BitRate, opt, CompressString, n, 0) == -1)
+                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -6899,7 +6729,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             {
                 printf("\n");
                 fprintf(stderr, "\n");
-                DMFW[i] = FileSize(DFWMOutFile);
+                DMFW[i] = FileSize(DFWMOutFile.c_str());
                 printf("\n");
                 fprintf(stderr, "\n");
             }
@@ -6907,7 +6737,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             i++;
             n = n - 20;
 
-            WorkingDir5.clear();
+            DFWMOutFile.clear();
         }
     }
 
@@ -6920,65 +6750,66 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
         return 10;
     }
 
-    n = 0;
-    i = 100;
+    i = 0;
+    n = 100;
     int EqualBool = 0;
     int testBool = 1;
-    cout << "\n";
-    cerr << "\n";
 
-    while (n < 6)
+    printf("\n\n");
+    fprintf(stderr, "\n\n");
+
+    while (i < 6)
     {
-        cout << "DFWM" << i << " Size " << DMFW[n] << "\n";
-        cerr << "DFWM" << i << " Size " << DMFW[n] << "\n";
-        n++;
-        i = i - 20;
+        printf("DFWM%4i Size: %8i bytes\n", n, DMFW[i]);//cout << "DFWM" << n << " Size " << DMFW[i] << "\n";
+        fprintf(stderr, "DFWM%4i Size: %8i bytes\n", n, DMFW[i]);//cerr << "DFWM" << n << " Size " << DMFW[i] << "\n";
+        i++;
+        n = n - 20;
     }
 
-    i = 100;
-    n = 0;
+    n = 100;
+    i = 0;
 
     printf("\n\nResults:\n\n");
     fprintf(stderr, "\n\nResults:\n\n");
 
-    while (n < 5)
+    while (i < 5)
     {
-        if (DMFW[n+1] == DMFW[n])
+        if (DMFW[i+1] == DMFW[i])
         {
             EqualBool++;
 
             char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %i = DFWM%4i: %i - Indeterminate", i - 20, DMFW[n+1], i, DMFW[n]);
+            snprintf(OutputChar1, 255, "DFWM%4i: %i = DFWM%4i: %i - Indeterminate", n - 20, DMFW[i+1], n, DMFW[i]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
             printf("\n");
             fprintf(stderr, "\n");
         }
 
-        if (DMFW[n+1] > DMFW[n])
+        if (DMFW[i+1] > DMFW[i])
         {
             char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %i > DFWM%4i: %i - Passed", i - 20, DMFW[n+1], i, DMFW[n]);
+            snprintf(OutputChar1, 255, "DFWM%4i: %i > DFWM%4i: %i - Passed", n - 20, DMFW[i+1], n, DMFW[i]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
             printf("\n");
             fprintf(stderr, "\n");
         }
 
-        if (DMFW[n+1] < DMFW[n])
+        if (DMFW[i+1] < DMFW[i])
         {
             testBool = 0;
 
             char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %i < DFWM%4i: %i - Fail", i - 20, DMFW[n+1], i, DMFW[n]);
+            snprintf(OutputChar1, 255, "DFWM%4i: %i < DFWM%4i: %i - Failed", n - 20, DMFW[i+1], n, DMFW[i]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
             printf("\n");
             fprintf(stderr, "\n");
         }
 
-        n++;
-        i = i - 20;
+        i++;
+        n = n - 20;
     }
 
     if (testBool == 0)
@@ -7123,15 +6954,14 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string TargetBitRate1 = WorkingDirString;
+    //string WorkingDir5 = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("TargetBitRateOutput.ivf");
+    TargetBitRate1.append(slashCharStr);
+    TargetBitRate1.append("TargetBitRateOutput.ivf");
 
-    char TargetBitRate1[255];
-
-    snprintf(TargetBitRate1, 255, "%s", WorkingDir4.c_str());
+    //char TargetBitRate1[255];
+    //snprintf(TargetBitRate1, 255, "%s", WorkingDir4.c_str());
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -7228,7 +7058,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         {
             opt.Mode = MODE_REALTIME;
 
-            if (CompressIVFtoIVF(input, TargetBitRate1, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -7242,7 +7072,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         {
             opt.Mode = MODE_GOODQUALITY;
 
-            if (CompressIVFtoIVF(input, TargetBitRate1, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -7256,7 +7086,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            if (CompressIVFtoIVF(input, TargetBitRate1, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -7274,7 +7104,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         {
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, TargetBitRate1, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -7287,7 +7117,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         {
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, TargetBitRate1, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -7314,7 +7144,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     printf("\n");
     fprintf(stderr, "\n");
-    double FileDataRate = IVFDataRate(TargetBitRate1, 1);
+    double FileDataRate = IVFDataRate(TargetBitRate1.c_str(), 1);
     double DataRateProx = absDouble(100 - absDouble(((FileDataRate * 100) / BitRate)));
 
     printf("\n\nResults:\n\n");
@@ -7410,26 +7240,8 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     char *ExeInputDebug = argv[5];
     char ExeInputRelease[255];
 
-#if defined(_WIN32)
-    {
-        snprintf(ExeInputRelease, 255, "%s", argv[6]);
-    }
-#elif defined(linux)
-    {
-        string ExeInputReleaseStr = argv[6];
-        snprintf(ExeInputRelease, 255, "%s", ExeInputReleaseStr.c_str());
-    }
-#elif defined(__APPLE__)
-    {
-        string ExeInputReleaseStr = argv[6];
-        snprintf(ExeInputRelease, 255, "%s", ExeInputReleaseStr.c_str());
-    }
-#elif defined(__POWERPC__)
-    {
-        string ExeInputReleaseStr = argv[6];
-        snprintf(ExeInputRelease, 255, "%s", ExeInputReleaseStr.c_str());
-    }
-#endif
+    snprintf(ExeInputRelease, 255, "%s", argv[6]);
+
     ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
     string WorkingDirString = "";
     string Mode3TestMatch = "";
@@ -7522,166 +7334,137 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     FolderName(argv[0], ExeCharDebugRelease);
     string ExeCharDebugReleaseString = ExeCharDebugRelease;
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string DebugOutput = WorkingDirString;
+    string ReleaseOutput = WorkingDirString;
     string WorkingDir6 = WorkingDirString;
-    string WorkingDir7 = WorkingDirString;
-    string WorkingDir8 = WorkingDirString;
-    string WorkingDir9 = ExeCharDebugReleaseString;
-    string WorkingDir10 = ExeCharDebugReleaseString;
+    string ParFileDebug = WorkingDirString;
+    string ParFileRelease = WorkingDirString;
+    string ProgramDebug = ExeCharDebugReleaseString;
+    string ProgramRelease = ExeCharDebugReleaseString;
 
     string DebugExeLoc = ExeCharDebugReleaseString;
     DebugExeLoc.append(ExeInputDebug);
     string ReleaseExeLoc = ExeCharDebugReleaseString;
     ReleaseExeLoc.append(ExeInputRelease);
 
+    DebugOutput.append(slashCharStr);
+    DebugOutput.append("output_Debug.ivf");
+    ReleaseOutput.append(slashCharStr);
+    ReleaseOutput.append("output_Release.ivf");
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("output_Debug.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("output_Release.ivf");
-
-    WorkingDir7.append(slashCharStr);
-    WorkingDir7.append("ParFileDebug.txt");
-    WorkingDir8.append(slashCharStr);
-    WorkingDir8.append("ParFileRelease.txt");
+    ParFileDebug.append(slashCharStr);
+    ParFileDebug.append("ParFileDebug.txt");
+    ParFileRelease.append(slashCharStr);
+    ParFileRelease.append("ParFileRelease.txt");
 
 #if defined(_WIN32)
     {
-        WorkingDir9.append(ExeInputRelease);
-        WorkingDir9.append("\" \"");
-        WorkingDir9.append(input);
-        WorkingDir9.append("\" \"");
-        WorkingDir9.append(WorkingDir4);
-        WorkingDir9.append("\" 8");
-        WorkingDir9.append(" \"");
-        WorkingDir9.append(WorkingDir7);
-        WorkingDir9.append("\"");
-        WorkingDir9.append(" 0");
-        WorkingDir9.append("\"");
-        WorkingDir10.append(ExeInputDebug);
-        WorkingDir10.append("\" \"");
-        WorkingDir10.append(input);
-        WorkingDir10.append("\" \"");
-        WorkingDir10.append(WorkingDir5);
-        WorkingDir10.append("\" 8");
-        WorkingDir10.append(" \"");
-        WorkingDir10.append(WorkingDir8);
-        WorkingDir10.append("\"");
-        WorkingDir10.append(" 0");
-        WorkingDir10.append("\"");
+        ProgramDebug.append(ExeInputRelease);
+        ProgramDebug.append("\" \"");
+        ProgramDebug.append(input);
+        ProgramDebug.append("\" \"");
+        ProgramDebug.append(DebugOutput);
+        ProgramDebug.append("\" 8");
+        ProgramDebug.append(" \"");
+        ProgramDebug.append(ParFileDebug);
+        ProgramDebug.append("\"");
+        ProgramDebug.append(" 0");
+        ProgramDebug.append("\"");
+        ProgramRelease.append(ExeInputDebug);
+        ProgramRelease.append("\" \"");
+        ProgramRelease.append(input);
+        ProgramRelease.append("\" \"");
+        ProgramRelease.append(ReleaseOutput);
+        ProgramRelease.append("\" 8");
+        ProgramRelease.append(" \"");
+        ProgramRelease.append(ParFileRelease);
+        ProgramRelease.append("\"");
+        ProgramRelease.append(" 0");
+        ProgramRelease.append("\"");
     }
 #elif defined(linux)
     {
-        WorkingDir9.append(ExeInputRelease);
-        WorkingDir9.append("\' \'");
-        WorkingDir9.append(input);
-        WorkingDir9.append("\' \'");
-        WorkingDir9.append(WorkingDir4);
-        WorkingDir9.append("\' 8");
-        WorkingDir9.append(" \'");
-        WorkingDir9.append(WorkingDir7);
-        WorkingDir9.append("\'");
-        WorkingDir9.append(" 0");
-        WorkingDir10.append(ExeInputDebug);
-        WorkingDir10.append("\' \'");
-        WorkingDir10.append(input);
-        WorkingDir10.append("\' \'");
-        WorkingDir10.append(WorkingDir5);
-        WorkingDir10.append("\' 8");
-        WorkingDir10.append(" \'");
-        WorkingDir10.append(WorkingDir8);
-        WorkingDir10.append("\'");
-        WorkingDir10.append(" 0");
+        ProgramDebug.append(ExeInputRelease);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(input);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(DebugOutput);
+        ProgramDebug.append("\' 8");
+        ProgramDebug.append(" \'");
+        ProgramDebug.append(ParFileDebug);
+        ProgramDebug.append("\'");
+        ProgramDebug.append(" 0");
+        ProgramRelease.append(ExeInputDebug);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(input);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(ReleaseOutput);
+        ProgramRelease.append("\' 8");
+        ProgramRelease.append(" \'");
+        ProgramRelease.append(ParFileRelease);
+        ProgramRelease.append("\'");
+        ProgramRelease.append(" 0");
 
     }
 #elif defined(__APPLE__)
     {
-        WorkingDir9.append(ExeInputRelease);
-        WorkingDir9.append("\' \'");
-        WorkingDir9.append(input);
-        WorkingDir9.append("\' \'");
-        WorkingDir9.append(WorkingDir4);
-        WorkingDir9.append("\' 8");
-        WorkingDir9.append(" \'");
-        WorkingDir9.append(WorkingDir7);
-        WorkingDir9.append("\'");
-        WorkingDir9.append(" 0");
-        WorkingDir10.append(ExeInputDebug);
-        WorkingDir10.append("\' \'");
-        WorkingDir10.append(input);
-        WorkingDir10.append("\' \'");
-        WorkingDir10.append(WorkingDir5);
-        WorkingDir10.append("\' 8");
-        WorkingDir10.append(" \'");
-        WorkingDir10.append(WorkingDir8);
-        WorkingDir10.append("\'");
-        WorkingDir10.append(" 0");
+        ProgramDebug.append(ExeInputRelease);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(input);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(DebugOutput);
+        ProgramDebug.append("\' 8");
+        ProgramDebug.append(" \'");
+        ProgramDebug.append(ParFileDebug);
+        ProgramDebug.append("\'");
+        ProgramDebug.append(" 0");
+        ProgramRelease.append(ExeInputDebug);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(input);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(ReleaseOutput);
+        ProgramRelease.append("\' 8");
+        ProgramRelease.append(" \'");
+        ProgramRelease.append(ParFileRelease);
+        ProgramRelease.append("\'");
+        ProgramRelease.append(" 0");
     }
 #elif defined(__POWERPC__)
     {
-        WorkingDir9.append(ExeInputRelease);
-        WorkingDir9.append("\' \'");
-        WorkingDir9.append(input);
-        WorkingDir9.append("\' \'");
-        WorkingDir9.append(WorkingDir4);
-        WorkingDir9.append("\' 8");
-        WorkingDir9.append(" \'");
-        WorkingDir9.append(WorkingDir7);
-        WorkingDir9.append("\'");
-        WorkingDir9.append(" 0");
-        WorkingDir10.append(ExeInputDebug);
-        WorkingDir10.append("\' \'");
-        WorkingDir10.append(input);
-        WorkingDir10.append("\' \'");
-        WorkingDir10.append(WorkingDir5);
-        WorkingDir10.append("\' 8");
-        WorkingDir10.append(" \'");
-        WorkingDir10.append(WorkingDir8);
-        WorkingDir10.append("\'");
-        WorkingDir10.append(" 0");
+        ProgramDebug.append(ExeInputRelease);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(input);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(DebugOutput);
+        ProgramDebug.append("\' 8");
+        ProgramDebug.append(" \'");
+        ProgramDebug.append(ParFileDebug);
+        ProgramDebug.append("\'");
+        ProgramDebug.append(" 0");
+        ProgramRelease.append(ExeInputDebug);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(input);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(ReleaseOutput);
+        ProgramRelease.append("\' 8");
+        ProgramRelease.append(" \'");
+        ProgramRelease.append(ParFileRelease);
+        ProgramRelease.append("\'");
+        ProgramRelease.append(" 0");
     }
 #endif
-
-    char outputVP7Debug[255];
-    char outputVP7Release[255];
-
-    char ParFileDebug[255];
-    char ParFileRelease[255];
-
-    char ProgramDebug[1024];
-    char ProgramRelease[1024];
-
-    snprintf(outputVP7Debug, 255, "%s", WorkingDir4.c_str());
-    snprintf(outputVP7Release, 255, "%s", WorkingDir5.c_str());
-
-    snprintf(ParFileDebug, 255, "%s", WorkingDir7.c_str());
-    snprintf(ParFileRelease, 255, "%s", WorkingDir8.c_str());
-
 #if defined(_WIN32)
     {
-        WorkingDir9.insert(0, "\"\"");
-        WorkingDir10.insert(0, "\"\"");
+        ProgramDebug.insert(0, "\"\"");
+        ProgramRelease.insert(0, "\"\"");
     }
-#elif defined(linux)
+#else
     {
-        WorkingDir9.insert(0, "\'");
-        WorkingDir10.insert(0, "\'");
-    }
-#elif defined(__APPLE__)
-    {
-        WorkingDir9.insert(0, "\'");
-        WorkingDir10.insert(0, "\'");
-    }
-#elif defined(__POWERPC__)
-    {
-        WorkingDir9.insert(0, "\'");
-        WorkingDir10.insert(0, "\'");
+        ProgramDebug.insert(0, "\'");
+        ProgramRelease.insert(0, "\'");
     }
 #endif
 
-    snprintf(ProgramDebug, 1024, "%s", WorkingDir9.c_str());
-    snprintf(ProgramRelease, 1024, "%s", WorkingDir10.c_str());
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -7786,9 +7569,6 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
 
     opt.target_bandwidth = BitRate;
 
-    //cout << "\n\n" << ProgramDebug << "\n\n";
-    //cout << "\n\n" << ParFileRelease << "\n\n";
-
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
@@ -7800,10 +7580,9 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         {
             opt.Mode = MODE_REALTIME;
 
-            OutPutSettings(ParFileDebug, opt);
-
+            OutPutSettings(ParFileDebug.c_str(), opt);
             RunExe(ProgramDebug);
-            OutPutSettings(ParFileRelease, opt);
+            OutPutSettings(ParFileRelease.c_str(), opt);
 
             fclose(fp);
 
@@ -7820,10 +7599,10 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            OutPutSettings(ParFileDebug, opt);
 
+            OutPutSettings(ParFileDebug.c_str(), opt);
             RunExe(ProgramDebug);
-            OutPutSettings(ParFileRelease, opt);
+            OutPutSettings(ParFileRelease.c_str(), opt);
 
             fclose(fp);
 
@@ -7841,10 +7620,10 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
-            OutPutSettings(ParFileDebug, opt);
 
+            OutPutSettings(ParFileDebug.c_str(), opt);
             RunExe(ProgramDebug);
-            OutPutSettings(ParFileRelease, opt);
+            OutPutSettings(ParFileRelease.c_str(), opt);
 
             fclose(fp);
 
@@ -7866,11 +7645,10 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         if (Mode == 4)
         {
             opt.Mode = MODE_SECONDPASS;
-            OutPutSettings(ParFileDebug, opt);
-            RunExe(ProgramDebug);
 
-            opt.Mode = MODE_SECONDPASS;
-            OutPutSettings(ParFileRelease, opt);
+            OutPutSettings(ParFileDebug.c_str(), opt);
+            RunExe(ProgramDebug);
+            OutPutSettings(ParFileRelease.c_str(), opt);
 
             fclose(fp);
 
@@ -7888,11 +7666,10 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         if (Mode == 5)
         {
             opt.Mode = MODE_SECONDPASS_BEST;
-            OutPutSettings(ParFileDebug, opt);
-            RunExe(ProgramDebug);
 
-            opt.Mode = MODE_SECONDPASS_BEST;
-            OutPutSettings(ParFileRelease, opt);
+            OutPutSettings(ParFileDebug.c_str(), opt);
+            RunExe(ProgramDebug);
+            OutPutSettings(ParFileRelease.c_str(), opt);
 
             fclose(fp);
 
@@ -7921,7 +7698,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     printf("\n\nComparing Files: ");
     fprintf(stderr, "\n\nComparing Files: ");
 
-    int lngRC = CompIVF(outputVP7Release, outputVP7Debug);
+    int lngRC = CompIVF(ReleaseOutput.c_str(), DebugOutput.c_str());
 
     int fail = 0;
 
@@ -8127,53 +7904,33 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
-    string WorkingDir6 = WorkingDirString;
-    string WorkingDir7 = WorkingDirString;
+    string EncBreakOut0 = WorkingDirString;
+    string EncBreakOut100 = WorkingDirString;
+    string EncBreakOut500 = WorkingDirString;
+    string EncBreakOut1000 = WorkingDirString;
 
-    string WorkingDir8 = WorkingDirString;
-    string WorkingDir9 = WorkingDirString;
-    string WorkingDir10 = WorkingDirString;
-    string WorkingDir11 = WorkingDirString;
+    string EncBreakOut0_Dec = WorkingDirString;
+    string EncBreakOut100_Dec = WorkingDirString;
+    string EncBreakOut500_Dec = WorkingDirString;
+    string EncBreakOut1000_Dec = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("EncBreakOut0.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("EncBreakOut100.ivf");
-    WorkingDir6.append(slashCharStr);
-    WorkingDir6.append("EncBreakOut500.ivf");
-    WorkingDir7.append(slashCharStr);
-    WorkingDir7.append("EncBreakOut1000.ivf");
+    EncBreakOut0.append(slashCharStr);
+    EncBreakOut0.append("EncBreakOut0.ivf");
+    EncBreakOut100.append(slashCharStr);
+    EncBreakOut100.append("EncBreakOut100.ivf");
+    EncBreakOut500.append(slashCharStr);
+    EncBreakOut500.append("EncBreakOut500.ivf");
+    EncBreakOut1000.append(slashCharStr);
+    EncBreakOut1000.append("EncBreakOut1000.ivf");
 
-    WorkingDir8.append(slashCharStr);
-    WorkingDir8.append("EncBreakOut0_Dec.ivf");
-    WorkingDir9.append(slashCharStr);
-    WorkingDir9.append("EncBreakOut100_Dec.ivf");
-    WorkingDir10.append(slashCharStr);
-    WorkingDir10.append("EncBreakOut500_Dec.ivf");
-    WorkingDir11.append(slashCharStr);
-    WorkingDir11.append("EncBreakOut1000_Dec.ivf");
-
-    char EncBreakOut0[255];
-    char EncBreakOut100[255];
-    char EncBreakOut500[255];
-    char EncBreakOut1000[255];
-
-    char EncBreakOut0_Dec[255];
-    char EncBreakOut100_Dec[255];
-    char EncBreakOut500_Dec[255];
-    char EncBreakOut1000_Dec[255];
-
-    snprintf(EncBreakOut0, 255, "%s", WorkingDir4.c_str());
-    snprintf(EncBreakOut100, 255, "%s", WorkingDir5.c_str());
-    snprintf(EncBreakOut500, 255, "%s", WorkingDir6.c_str());
-    snprintf(EncBreakOut1000, 255, "%s", WorkingDir7.c_str());
-
-    snprintf(EncBreakOut0_Dec, 255, "%s", WorkingDir8.c_str());
-    snprintf(EncBreakOut100_Dec, 255, "%s", WorkingDir9.c_str());
-    snprintf(EncBreakOut500_Dec, 255, "%s", WorkingDir10.c_str());
-    snprintf(EncBreakOut1000_Dec, 255, "%s", WorkingDir11.c_str());
+    EncBreakOut0_Dec.append(slashCharStr);
+    EncBreakOut0_Dec.append("EncBreakOut0_Dec.ivf");
+    EncBreakOut100_Dec.append(slashCharStr);
+    EncBreakOut100_Dec.append("EncBreakOut100_Dec.ivf");
+    EncBreakOut500_Dec.append(slashCharStr);
+    EncBreakOut500_Dec.append("EncBreakOut500_Dec.ivf");
+    EncBreakOut1000_Dec.append(slashCharStr);
+    EncBreakOut1000_Dec.append("EncBreakOut1000_Dec.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -8264,7 +8021,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_REALTIME;
             opt.encode_breakout = 0;
 
-            if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8275,7 +8032,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_REALTIME;
             opt.encode_breakout = 100;
 
-            if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8286,7 +8043,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_REALTIME;
             opt.encode_breakout = 500;
 
-            if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8297,7 +8054,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_REALTIME;
             opt.encode_breakout = 1000;
 
-            if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8311,7 +8068,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_GOODQUALITY;
             opt.encode_breakout = 0;
 
-            if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8322,7 +8079,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_GOODQUALITY;
             opt.encode_breakout = 100;
 
-            if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8333,7 +8090,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_GOODQUALITY;
             opt.encode_breakout = 500;
 
-            if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8344,7 +8101,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_GOODQUALITY;
             opt.encode_breakout = 1000;
 
-            if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8358,7 +8115,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_BESTQUALITY;
             opt.encode_breakout = 0;
 
-            if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8369,7 +8126,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_BESTQUALITY;
             opt.encode_breakout = 100;
 
-            if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8380,7 +8137,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_BESTQUALITY;
             opt.encode_breakout = 500;
 
-            if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8391,7 +8148,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.Mode = MODE_BESTQUALITY;
             opt.encode_breakout = 1000;
 
-            if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8409,7 +8166,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 0;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8420,7 +8177,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 100;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8431,7 +8188,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 500;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8442,7 +8199,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 1000;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8456,7 +8213,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, EncBreakOut0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8467,7 +8224,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 100;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, EncBreakOut100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8478,7 +8235,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 500;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, EncBreakOut500, speed, BitRate, opt, CompressString, 500, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8489,7 +8246,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             opt.encode_breakout = 1000;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, EncBreakOut1000, speed, BitRate, opt, CompressString, 1000, 0) == -1)
+            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8500,16 +8257,19 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         printf("\nDecoding EncBreakOut0");
         fprintf(stderr, "\nDecoding EncBreakOut0");
-        DecompressIVFtoIVF(EncBreakOut0, EncBreakOut0_Dec);
+        DecompressIVFtoIVF(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str());
+
         printf("\n\nDecoding EncBreakOut100");
         fprintf(stderr, "\n\nDecoding EncBreakOut100");
-        DecompressIVFtoIVF(EncBreakOut100, EncBreakOut100_Dec);
+        DecompressIVFtoIVF(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str());
+
         printf("\n\nDecoding EncBreakOut500");
         fprintf(stderr, "\n\nDecoding EncBreakOut500");
-        DecompressIVFtoIVF(EncBreakOut500, EncBreakOut500_Dec);
+        DecompressIVFtoIVF(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str());
+
         printf("\n\nDecoding EncBreakOut1000");
         fprintf(stderr, "\n\nDecoding EncBreakOut1000");
-        DecompressIVFtoIVF(EncBreakOut1000, EncBreakOut1000_Dec);
+        DecompressIVFtoIVF(EncBreakOut1000.c_str(), EncBreakOut1000_Dec.c_str());
     }
 
     if (TestType == 2)
@@ -8530,18 +8290,23 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     printf("\n\n");
     fprintf(stderr, "\n\n");
     SourceFileSize = FileSize(input);
+
     printf("\n");
     fprintf(stderr, "\n");
-    EncBreakOut0_Dec_FileSize = FileSize(EncBreakOut0_Dec);
+    EncBreakOut0_Dec_FileSize = FileSize(EncBreakOut0_Dec.c_str());
+
     printf("\n");
     fprintf(stderr, "\n");
-    EncBreakOut100_Dec_FileSize = FileSize(EncBreakOut100_Dec);
+    EncBreakOut100_Dec_FileSize = FileSize(EncBreakOut100_Dec.c_str());
+
     printf("\n");
     fprintf(stderr, "\n");
-    EncBreakOut500_Dec_FileSize = FileSize(EncBreakOut500_Dec);
+    EncBreakOut500_Dec_FileSize = FileSize(EncBreakOut500_Dec.c_str());
+
     printf("\n");
     fprintf(stderr, "\n");
-    EncBreakOut1000_Dec_FileSize = FileSize(EncBreakOut1000_Dec);
+    EncBreakOut1000_Dec_FileSize = FileSize(EncBreakOut1000_Dec.c_str());
+
     printf("\n");
     fprintf(stderr, "\n");
 
@@ -8550,36 +8315,23 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     double PSNR500;
     double PSNR1000;
 
-    PSNR0 = IVFPSNR(input, EncBreakOut0, 0, 0, 1, NULL);
-    PSNR100 = IVFPSNR(input, EncBreakOut100, 0, 0, 1, NULL);
-    PSNR500 = IVFPSNR(input, EncBreakOut500, 0, 0, 1, NULL);
-    PSNR1000 = IVFPSNR(input, EncBreakOut1000, 0, 0, 1, NULL);
+    PSNR0 = IVFPSNR(input, EncBreakOut0.c_str(), 0, 0, 1, NULL);
+    PSNR100 = IVFPSNR(input, EncBreakOut100.c_str(), 0, 0, 1, NULL);
+    PSNR500 = IVFPSNR(input, EncBreakOut500.c_str(), 0, 0, 1, NULL);
+    PSNR1000 = IVFPSNR(input, EncBreakOut1000.c_str(), 0, 0, 1, NULL);
 
-#if defined(_WIN32)
     double dB1 = absDouble(10 * log(PSNR0 / PSNR100));
     double dB2 = absDouble(10 * log(PSNR100 / PSNR500));
     double dB3 = absDouble(10 * log(PSNR500 / PSNR1000));
-#elif defined(linux)
-    double dB1 = absDouble(10 * log(PSNR0 / PSNR100));
-    double dB2 = absDouble(10 * log(PSNR100 / PSNR500));
-    double dB3 = absDouble(10 * log(PSNR500 / PSNR1000));
-#elif defined(__APPLE__)
-    double dB1 = absDouble(10 * log(PSNR0 / PSNR100));
-    double dB2 = absDouble(10 * log(PSNR100 / PSNR500));
-    double dB3 = absDouble(10 * log(PSNR500 / PSNR1000));
-#elif defined(__POWERPC__)
-    double dB1 = absDouble(10 * log(PSNR0 / PSNR100));
-    double dB2 = absDouble(10 * log(PSNR100 / PSNR500));
-    double dB3 = absDouble(10 * log(PSNR500 / PSNR1000));
-#endif
 
-    cout << "\ndB1: " << dB1 << "\n";
-    cout << "dB2: " << dB2 << "\n";
-    cout << "dB3: " << dB3 << "\n";
+    printf("\ndB1: %f \n", dB1);
+    fprintf(stderr, "\ndB1: %f \n", dB1);
 
-    cerr << "\ndB1: " << dB1 << "\n";
-    cerr << "dB2: " << dB2 << "\n";
-    cerr << "dB3: " << dB3 << "\n";
+    printf("dB2: %f \n", dB1);
+    fprintf(stderr, "dB2: %f \n", dB1);
+
+    printf("dB3: %f \n", dB1);
+    fprintf(stderr, "dB3: %f \n", dB1);
 
     printf("\n\nResults:\n\n");
     fprintf(stderr, "\n\nResults:\n\n");
@@ -8904,19 +8656,13 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         WorkingDirString = WorkingDir2;
     }
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string ErrorOnOutFile = WorkingDirString;
+    string ErrorOffOutFile = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
-    WorkingDir4.append("ErrorOnOutput.ivf");
-    WorkingDir5.append(slashCharStr);
-    WorkingDir5.append("ErrorOffOutput.ivf");
-
-    char ErrorOnOutFile[255];
-    char ErrorOffOutFile[255];
-
-    snprintf(ErrorOnOutFile, 255, "%s", WorkingDir4.c_str());
-    snprintf(ErrorOffOutFile, 255, "%s", WorkingDir5.c_str());
+    ErrorOnOutFile.append(slashCharStr);
+    ErrorOnOutFile.append("ErrorOnOutput.ivf");
+    ErrorOffOutFile.append(slashCharStr);
+    ErrorOffOutFile.append("ErrorOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -8981,7 +8727,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.Mode = MODE_REALTIME;
             opt.error_resilient_mode = 1;
 
-            if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -8992,7 +8738,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.Mode = MODE_REALTIME;
             opt.error_resilient_mode = 0;
 
-            if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9006,7 +8752,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.Mode = MODE_GOODQUALITY;
             opt.error_resilient_mode = 1;
 
-            if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9017,7 +8763,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.Mode = MODE_GOODQUALITY;
             opt.error_resilient_mode = 0;
 
-            if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9031,7 +8777,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.Mode = MODE_BESTQUALITY;
             opt.error_resilient_mode = 1;
 
-            if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9042,7 +8788,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.Mode = MODE_BESTQUALITY;
             opt.error_resilient_mode = 0;
 
-            if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9060,7 +8806,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.error_resilient_mode = 1;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9071,7 +8817,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.error_resilient_mode = 0;
             opt.Mode = MODE_SECONDPASS;
 
-            if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9085,7 +8831,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.error_resilient_mode = 1;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, ErrorOnOutFile, speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9096,7 +8842,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
             opt.error_resilient_mode = 0;
             opt.Mode = MODE_SECONDPASS_BEST;
 
-            if (CompressIVFtoIVF(input, ErrorOffOutFile, speed, BitRate, opt, CompressString, 1, 0) == -1)
+            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -9120,8 +8866,8 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     double PSNRon;
     double PSNRoff;
 
-    PSNRon = IVFPSNR(input, ErrorOnOutFile, 0, 0, 1, NULL);
-    PSNRoff = IVFPSNR(input, ErrorOffOutFile, 0, 0, 1, NULL);
+    PSNRon = IVFPSNR(input, ErrorOnOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRoff = IVFPSNR(input, ErrorOffOutFile.c_str(), 0, 0, 1, NULL);
 
     float PSRNPerc = 100 * absFloat((PSNRon - PSNRoff) / PSNRoff);
 
@@ -11831,7 +11577,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         return 0;
 
     }
-int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "FixedQ";
@@ -11946,25 +11692,25 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string FixedQ1 = WorkingDirString;
+        string FixedQ2 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("FixedQ_");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("FixedQ_");
+        FixedQ1.append(slashCharStr);
+        FixedQ1.append("FixedQ_");
+        FixedQ2.append(slashCharStr);
+        FixedQ2.append("FixedQ_");
 
-        WorkingDir4.append(argv[5]);
-        WorkingDir5.append(argv[6]);
+        FixedQ1.append(argv[5]);
+        FixedQ2.append(argv[6]);
 
-        WorkingDir4.append(".ivf");
-        WorkingDir5.append(".ivf");
+        FixedQ1.append(".ivf");
+        FixedQ2.append(".ivf");
 
-        char FixedQ1[255];
-        char FixedQ2[255];
+        //char FixedQ1[255];
+        //char FixedQ2[255];
 
-        snprintf(FixedQ1, 255, "%s", WorkingDir4.c_str());
-        snprintf(FixedQ2, 255, "%s", WorkingDir5.c_str());
+        //snprintf(FixedQ1, 255, "%s", WorkingDir4.c_str());
+        //snprintf(FixedQ2, 255, "%s", WorkingDir5.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -12065,7 +11811,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.Mode = MODE_REALTIME;
                 opt.fixed_q = FixedQ1Int;
 
-                if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12076,7 +11822,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.Mode = MODE_REALTIME;
                 opt.fixed_q = FixedQ2Int;
 
-                if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12090,7 +11836,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.Mode = MODE_GOODQUALITY;
                 opt.fixed_q = FixedQ1Int;
 
-                if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12101,7 +11847,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.Mode = MODE_GOODQUALITY;
                 opt.fixed_q = FixedQ2Int;
 
-                if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12115,7 +11861,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.Mode = MODE_BESTQUALITY;
                 opt.fixed_q = FixedQ1Int;
 
-                if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12126,7 +11872,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.Mode = MODE_BESTQUALITY;
                 opt.fixed_q = FixedQ2Int;
 
-                if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12144,7 +11890,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.fixed_q = FixedQ1Int;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12155,7 +11901,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.fixed_q = FixedQ2Int;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12169,7 +11915,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.fixed_q = FixedQ1Int;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, FixedQ1, speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12180,7 +11926,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
                 opt.fixed_q = FixedQ2Int;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, FixedQ2, speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
+                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12207,27 +11953,27 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
 
         printf("\n");
         fprintf(stderr, "\n");
-        int FixedQCheckVal1 = CheckFixedQ(FixedQ1, FixedQ1Int);
+        int FixedQCheckVal1 = CheckFixedQ(FixedQ1.c_str(), FixedQ1Int);
         printf("\n");
         fprintf(stderr, "\n");
-        int FixedQCheckVal2 = CheckFixedQ(FixedQ2, FixedQ2Int);
+        int FixedQCheckVal2 = CheckFixedQ(FixedQ2.c_str(), FixedQ2Int);
         printf("\n");
         fprintf(stderr, "\n");
 
         printf("\n");
         fprintf(stderr, "\n");
-        int FixedQSize1 = FileSize(FixedQ1);
+        int FixedQSize1 = FileSize(FixedQ1.c_str());
         printf("\n");
         fprintf(stderr, "\n");
-        int FixedQSize2 = FileSize(FixedQ2);
+        int FixedQSize2 = FileSize(FixedQ2.c_str());
         printf("\n");
         fprintf(stderr, "\n");
 
         char FixedQ1FileName[255] = "";
         char FixedQ2FileName[255] = "";
 
-        FileName(FixedQ1, FixedQ1FileName, 0);
-        FileName(FixedQ2, FixedQ2FileName, 0);
+        FileName(FixedQ1.c_str(), FixedQ1FileName, 0);
+        FileName(FixedQ2.c_str(), FixedQ2FileName, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -12339,7 +12085,7 @@ int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int Tes
             return 1;
         }
     }
-int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "opt.key_freq";
@@ -12461,19 +12207,19 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string KeyFrameoutputfile = WorkingDirString;
+        string ForceKeyFrame = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("ForceKeyFrameOutput_KeyFrames.txt");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("ForceKeyFrameOutput.ivf");
+        KeyFrameoutputfile.append(slashCharStr);
+        KeyFrameoutputfile.append("ForceKeyFrameOutput_KeyFrames.txt");
+        ForceKeyFrame.append(slashCharStr);
+        ForceKeyFrame.append("ForceKeyFrameOutput.ivf");
 
-        char outputfile[255];
-        char ForceKeyFrame[255];
+        //char KeyFrameoutputfile[255];
+        //char ForceKeyFrame[255];
 
-        snprintf(outputfile, 255, "%s", WorkingDir4.c_str());
-        snprintf(ForceKeyFrame, 255, "%s", WorkingDir5.c_str());
+        //snprintf(outputfile, 255, "%s", WorkingDir4.c_str());
+        //snprintf(ForceKeyFrame, 255, "%s", WorkingDir5.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -12556,7 +12302,7 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
                 opt.Mode = MODE_REALTIME;
                 opt.key_freq = 0;//ForceKeyFrameInt;
 
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
+                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12570,7 +12316,7 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
                 opt.Mode = MODE_GOODQUALITY;
                 opt.key_freq = 0;//ForceKeyFrameInt;
 
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
+                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12584,7 +12330,7 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
                 opt.Mode = MODE_BESTQUALITY;
                 opt.key_freq = 0;//ForceKeyFrameInt;
 
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
+                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12602,7 +12348,7 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
                 opt.key_freq = 0;//ForceKeyFrameInt;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
+                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12616,7 +12362,7 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
                 opt.key_freq = 0;//ForceKeyFrameInt;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame, speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
+                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -12635,9 +12381,9 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
             return 10;
         }
 
-        IVFDisplayKeyFrames(ForceKeyFrame, 1);
+        IVFDisplayKeyFrames(ForceKeyFrame.c_str(), 1);
         //////////////////////////////////////////////////////////////////////////////////
-        ifstream infile(outputfile);
+        ifstream infile(KeyFrameoutputfile.c_str());
 
         if (!infile.good())
         {
@@ -12701,7 +12447,7 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
             maxKeyFrame = y2;
         }
 
-        int NumberofFrames = GetNumberofFrames(ForceKeyFrame);
+        int NumberofFrames = GetNumberofFrames(ForceKeyFrame.c_str());
 
         if (NumberofFrames - 1 >= (maxKeyFrame + ForceKeyFrameInt))
         {
@@ -12746,7 +12492,7 @@ int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesA
 
 
     }
-int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Frame Size";
 
@@ -12879,678 +12625,75 @@ int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], 
 
         char NewWidth[20];
         char NewHeight[20];
-
-        //string RawCrop17 = WorkingDir4;
-        //RawCrop17.append("_");
-        //itoa_custom(StartingWidth,NewWidth-0,10);//width
-        //RawCrop17.append(NewWidth);
-        //RawCrop17.append("x");
-        //itoa_custom(StartingHeight,NewHeight,10);//height
-        //RawCrop17.append(NewHeight);
-        //RawCrop17.append("_raw.ivf");
-
-        //height
         string RawCrop[47];
 
-        RawCrop[1] = WorkingDir4;
-        RawCrop[1].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[1].append(NewWidth);
-        RawCrop[1].append("x");
-        itoa_custom(StartingHeight - 0, NewHeight, 10); //height
-        RawCrop[1].append(NewHeight);
-        RawCrop[1].append("_raw.ivf");
+        //height
+        int counter = 0;
+        int FileNum = 1;
 
-        RawCrop[2] = WorkingDir4;
-        RawCrop[2].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[2].append(NewWidth);
-        RawCrop[2].append("x");
-        itoa_custom(StartingHeight - 1, NewHeight, 10); //height
-        RawCrop[2].append(NewHeight);
-        RawCrop[2].append("_raw.ivf");
+        while (counter < 16)
+        {
+            RawCrop[FileNum] = WorkingDir4;
+            RawCrop[FileNum].append("_");
+            itoa_custom(StartingWidth, NewWidth, 10); //width
+            RawCrop[FileNum].append(NewWidth);
+            RawCrop[FileNum].append("x");
+            itoa_custom(StartingHeight - (counter), NewHeight, 10); //height
+            RawCrop[FileNum].append(NewHeight);
+            RawCrop[FileNum].append("_raw.ivf");
 
-        RawCrop[3] = WorkingDir4;
-        RawCrop[3].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[3].append(NewWidth);
-        RawCrop[3].append("x");
-        itoa_custom(StartingHeight - 2, NewHeight, 10); //height
-        RawCrop[3].append(NewHeight);
-        RawCrop[3].append("_raw.ivf");
-
-        RawCrop[4] = WorkingDir4;
-        RawCrop[4].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[4].append(NewWidth);
-        RawCrop[4].append("x");
-        itoa_custom(StartingHeight - 3, NewHeight, 10); //height
-        RawCrop[4].append(NewHeight);
-        RawCrop[4].append("_raw.ivf");
-
-        RawCrop[5] = WorkingDir4;
-        RawCrop[5].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[5].append(NewWidth);
-        RawCrop[5].append("x");
-        itoa_custom(StartingHeight - 4, NewHeight, 10); //height
-        RawCrop[5].append(NewHeight);
-        RawCrop[5].append("_raw.ivf");
-
-        RawCrop[6] = WorkingDir4;
-        RawCrop[6].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[6].append(NewWidth);
-        RawCrop[6].append("x");
-        itoa_custom(StartingHeight - 5, NewHeight, 10); //height
-        RawCrop[6].append(NewHeight);
-        RawCrop[6].append("_raw.ivf");
-
-        RawCrop[7] = WorkingDir4;
-        RawCrop[7].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[7].append(NewWidth);
-        RawCrop[7].append("x");
-        itoa_custom(StartingHeight - 6, NewHeight, 10); //height
-        RawCrop[7].append(NewHeight);
-        RawCrop[7].append("_raw.ivf");
-
-        RawCrop[8] = WorkingDir4;
-        RawCrop[8].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[8].append(NewWidth);
-        RawCrop[8].append("x");
-        itoa_custom(StartingHeight - 7, NewHeight, 10); //height
-        RawCrop[8].append(NewHeight);
-        RawCrop[8].append("_raw.ivf");
-
-        RawCrop[9] = WorkingDir4;
-        RawCrop[9].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[9].append(NewWidth);
-        RawCrop[9].append("x");
-        itoa_custom(StartingHeight - 8, NewHeight, 10); //height
-        RawCrop[9].append(NewHeight);
-        RawCrop[9].append("_raw.ivf");
-
-        RawCrop[10] = WorkingDir4;
-        RawCrop[10].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[10].append(NewWidth);
-        RawCrop[10].append("x");
-        itoa_custom(StartingHeight - 9, NewHeight, 10); //height
-        RawCrop[10].append(NewHeight);
-        RawCrop[10].append("_raw.ivf");
-
-        RawCrop[11] = WorkingDir4;
-        RawCrop[11].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[11].append(NewWidth);
-        RawCrop[11].append("x");
-        itoa_custom(StartingHeight - 10, NewHeight, 10); //height
-        RawCrop[11].append(NewHeight);
-        RawCrop[11].append("_raw.ivf");
-
-        RawCrop[12] = WorkingDir4;
-        RawCrop[12].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[12].append(NewWidth);
-        RawCrop[12].append("x");
-        itoa_custom(StartingHeight - 11, NewHeight, 10); //height
-        RawCrop[12].append(NewHeight);
-        RawCrop[12].append("_raw.ivf");
-
-        RawCrop[13] = WorkingDir4;
-        RawCrop[13].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[13].append(NewWidth);
-        RawCrop[13].append("x");
-        itoa_custom(StartingHeight - 12, NewHeight, 10); //height
-        RawCrop[13].append(NewHeight);
-        RawCrop[13].append("_raw.ivf");
-
-        RawCrop[14] = WorkingDir4;
-        RawCrop[14].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[14].append(NewWidth);
-        RawCrop[14].append("x");
-        itoa_custom(StartingHeight - 13, NewHeight, 10); //height
-        RawCrop[14].append(NewHeight);
-        RawCrop[14].append("_raw.ivf");
-
-        RawCrop[15] = WorkingDir4;
-        RawCrop[15].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[15].append(NewWidth);
-        RawCrop[15].append("x");
-        itoa_custom(StartingHeight - 14, NewHeight, 10); //height
-        RawCrop[15].append(NewHeight);
-        RawCrop[15].append("_raw.ivf");
-
-        RawCrop[16] = WorkingDir4;
-        RawCrop[16].append("_");
-        itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[16].append(NewWidth);
-        RawCrop[16].append("x");
-        itoa_custom(StartingHeight - 15, NewHeight, 10); //height
-        RawCrop[16].append(NewHeight);
-        RawCrop[16].append("_raw.ivf");
+            counter++;
+            FileNum++;
+        }
 
         //width
+        counter = 1;
 
-        RawCrop[17] = WorkingDir4;
-        RawCrop[17].append("_");
-        itoa_custom(StartingWidth - 1, NewWidth, 10); //width
-        RawCrop[17].append(NewWidth);
-        RawCrop[17].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[17].append(NewHeight);
-        RawCrop[17].append("_raw.ivf");
+        while (counter < 16)
+        {
+            RawCrop[FileNum] = WorkingDir4;
+            RawCrop[FileNum].append("_");
+            itoa_custom(StartingWidth - (counter), NewWidth, 10); //width
+            RawCrop[FileNum].append(NewWidth);
+            RawCrop[FileNum].append("x");
+            itoa_custom(StartingHeight, NewHeight, 10); //height
+            RawCrop[FileNum].append(NewHeight);
+            RawCrop[FileNum].append("_raw.ivf");
 
-        RawCrop[18] = WorkingDir4;
-        RawCrop[18].append("_");
-        itoa_custom(StartingWidth - 2, NewWidth, 10); //width
-        RawCrop[18].append(NewWidth);
-        RawCrop[18].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[18].append(NewHeight);
-        RawCrop[18].append("_raw.ivf");
+            counter++;
+            FileNum++;
+        }
 
-        RawCrop[19] = WorkingDir4;
-        RawCrop[19].append("_");
-        itoa_custom(StartingWidth - 3, NewWidth, 10); //width
-        RawCrop[19].append(NewWidth);
-        RawCrop[19].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[19].append(NewHeight);
-        RawCrop[19].append("_raw.ivf");
+        //width and height
+        counter = 1;
 
-        RawCrop[20] = WorkingDir4;
-        RawCrop[20].append("_");
-        itoa_custom(StartingWidth - 4, NewWidth, 10); //width
-        RawCrop[20].append(NewWidth);
-        RawCrop[20].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[20].append(NewHeight);
-        RawCrop[20].append("_raw.ivf");
+        while (counter < 16)
+        {
+            RawCrop[FileNum] = WorkingDir4;
+            RawCrop[FileNum].append("_");
+            itoa_custom(StartingWidth - (counter), NewWidth, 10); //width
+            RawCrop[FileNum].append(NewWidth);
+            RawCrop[FileNum].append("x");
+            itoa_custom(StartingHeight - (counter), NewHeight, 10); //height
+            RawCrop[FileNum].append(NewHeight);
+            RawCrop[FileNum].append("_raw.ivf");
 
-        RawCrop[21] = WorkingDir4;
-        RawCrop[21].append("_");
-        itoa_custom(StartingWidth - 5, NewWidth, 10); //width
-        RawCrop[21].append(NewWidth);
-        RawCrop[21].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[21].append(NewHeight);
-        RawCrop[21].append("_raw.ivf");
+            counter++;
+            FileNum++;
+        }
 
-        RawCrop[22] = WorkingDir4;
-        RawCrop[22].append("_");
-        itoa_custom(StartingWidth - 6, NewWidth, 10); //width
-        RawCrop[22].append(NewWidth);
-        RawCrop[22].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[22].append(NewHeight);
-        RawCrop[22].append("_raw.ivf");
-
-        RawCrop[23] = WorkingDir4;
-        RawCrop[23].append("_");
-        itoa_custom(StartingWidth - 7, NewWidth, 10); //width
-        RawCrop[23].append(NewWidth);
-        RawCrop[23].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[23].append(NewHeight);
-        RawCrop[23].append("_raw.ivf");
-
-        RawCrop[24] = WorkingDir4;
-        RawCrop[24].append("_");
-        itoa_custom(StartingWidth - 8, NewWidth, 10); //width
-        RawCrop[24].append(NewWidth);
-        RawCrop[24].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[24].append(NewHeight);
-        RawCrop[24].append("_raw.ivf");
-
-        RawCrop[25] = WorkingDir4;
-        RawCrop[25].append("_");
-        itoa_custom(StartingWidth - 9, NewWidth, 10); //width
-        RawCrop[25].append(NewWidth);
-        RawCrop[25].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[25].append(NewHeight);
-        RawCrop[25].append("_raw.ivf");
-
-        RawCrop[26] = WorkingDir4;
-        RawCrop[26].append("_");
-        itoa_custom(StartingWidth - 10, NewWidth, 10); //width
-        RawCrop[26].append(NewWidth);
-        RawCrop[26].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[26].append(NewHeight);
-        RawCrop[26].append("_raw.ivf");
-
-        RawCrop[27] = WorkingDir4;
-        RawCrop[27].append("_");
-        itoa_custom(StartingWidth - 11, NewWidth, 10); //width
-        RawCrop[27].append(NewWidth);
-        RawCrop[27].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[27].append(NewHeight);
-        RawCrop[27].append("_raw.ivf");
-
-        RawCrop[28] = WorkingDir4;
-        RawCrop[28].append("_");
-        itoa_custom(StartingWidth - 12, NewWidth, 10); //width
-        RawCrop[28].append(NewWidth);
-        RawCrop[28].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[28].append(NewHeight);
-        RawCrop[28].append("_raw.ivf");
-
-        RawCrop[29] = WorkingDir4;
-        RawCrop[29].append("_");
-        itoa_custom(StartingWidth - 13, NewWidth, 10); //width
-        RawCrop[29].append(NewWidth);
-        RawCrop[29].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[29].append(NewHeight);
-        RawCrop[29].append("_raw.ivf");
-
-        RawCrop[30] = WorkingDir4;
-        RawCrop[30].append("_");
-        itoa_custom(StartingWidth - 14, NewWidth, 10); //width
-        RawCrop[30].append(NewWidth);
-        RawCrop[30].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[30].append(NewHeight);
-        RawCrop[30].append("_raw.ivf");
-
-        RawCrop[31] = WorkingDir4;
-        RawCrop[31].append("_");
-        itoa_custom(StartingWidth - 15, NewWidth, 10); //width
-        RawCrop[31].append(NewWidth);
-        RawCrop[31].append("x");
-        itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[31].append(NewHeight);
-        RawCrop[31].append("_raw.ivf");
-
-        //width + height
-
-        RawCrop[32] = WorkingDir4;
-        RawCrop[32].append("_");
-        itoa_custom(StartingWidth - 1, NewWidth, 10); //width
-        RawCrop[32].append(NewWidth);
-        RawCrop[32].append("x");
-        itoa_custom(StartingHeight - 1, NewHeight, 10); //height
-        RawCrop[32].append(NewHeight);
-        RawCrop[32].append("_raw.ivf");
-
-        RawCrop[33] = WorkingDir4;
-        RawCrop[33].append("_");
-        itoa_custom(StartingWidth - 2, NewWidth, 10); //width
-        RawCrop[33].append(NewWidth);
-        RawCrop[33].append("x");
-        itoa_custom(StartingHeight - 2, NewHeight, 10); //height
-        RawCrop[33].append(NewHeight);
-        RawCrop[33].append("_raw.ivf");
-
-        RawCrop[34] = WorkingDir4;
-        RawCrop[34].append("_");
-        itoa_custom(StartingWidth - 3, NewWidth, 10); //width
-        RawCrop[34].append(NewWidth);
-        RawCrop[34].append("x");
-        itoa_custom(StartingHeight - 3, NewHeight, 10); //height
-        RawCrop[34].append(NewHeight);
-        RawCrop[34].append("_raw.ivf");
-
-        RawCrop[35] = WorkingDir4;
-        RawCrop[35].append("_");
-        itoa_custom(StartingWidth - 4, NewWidth, 10); //width
-        RawCrop[35].append(NewWidth);
-        RawCrop[35].append("x");
-        itoa_custom(StartingHeight - 4, NewHeight, 10); //height
-        RawCrop[35].append(NewHeight);
-        RawCrop[35].append("_raw.ivf");
-
-        RawCrop[36] = WorkingDir4;
-        RawCrop[36].append("_");
-        itoa_custom(StartingWidth - 5, NewWidth, 10); //width
-        RawCrop[36].append(NewWidth);
-        RawCrop[36].append("x");
-        itoa_custom(StartingHeight - 5, NewHeight, 10); //height
-        RawCrop[36].append(NewHeight);
-        RawCrop[36].append("_raw.ivf");
-
-        RawCrop[37] = WorkingDir4;
-        RawCrop[37].append("_");
-        itoa_custom(StartingWidth - 6, NewWidth, 10); //width
-        RawCrop[37].append(NewWidth);
-        RawCrop[37].append("x");
-        itoa_custom(StartingHeight - 6, NewHeight, 10); //height
-        RawCrop[37].append(NewHeight);
-        RawCrop[37].append("_raw.ivf");
-
-        RawCrop[38] = WorkingDir4;
-        RawCrop[38].append("_");
-        itoa_custom(StartingWidth - 7, NewWidth, 10); //width
-        RawCrop[38].append(NewWidth);
-        RawCrop[38].append("x");
-        itoa_custom(StartingHeight - 7, NewHeight, 10); //height
-        RawCrop[38].append(NewHeight);
-        RawCrop[38].append("_raw.ivf");
-
-        RawCrop[39] = WorkingDir4;
-        RawCrop[39].append("_");
-        itoa_custom(StartingWidth - 8, NewWidth, 10); //width
-        RawCrop[39].append(NewWidth);
-        RawCrop[39].append("x");
-        itoa_custom(StartingHeight - 8, NewHeight, 10); //height
-        RawCrop[39].append(NewHeight);
-        RawCrop[39].append("_raw.ivf");
-
-        RawCrop[40] = WorkingDir4;
-        RawCrop[40].append("_");
-        itoa_custom(StartingWidth - 9, NewWidth, 10); //width
-        RawCrop[40].append(NewWidth);
-        RawCrop[40].append("x");
-        itoa_custom(StartingHeight - 9, NewHeight, 10); //height
-        RawCrop[40].append(NewHeight);
-        RawCrop[40].append("_raw.ivf");
-
-        RawCrop[41] = WorkingDir4;
-        RawCrop[41].append("_");
-        itoa_custom(StartingWidth - 10, NewWidth, 10); //width
-        RawCrop[41].append(NewWidth);
-        RawCrop[41].append("x");
-        itoa_custom(StartingHeight - 10, NewHeight, 10); //height
-        RawCrop[41].append(NewHeight);
-        RawCrop[41].append("_raw.ivf");
-
-        RawCrop[42] = WorkingDir4;
-        RawCrop[42].append("_");
-        itoa_custom(StartingWidth - 11, NewWidth, 10); //width
-        RawCrop[42].append(NewWidth);
-        RawCrop[42].append("x");
-        itoa_custom(StartingHeight - 11, NewHeight, 10); //height
-        RawCrop[42].append(NewHeight);
-        RawCrop[42].append("_raw.ivf");
-
-        RawCrop[43] = WorkingDir4;
-        RawCrop[43].append("_");
-        itoa_custom(StartingWidth - 12, NewWidth, 10); //width
-        RawCrop[43].append(NewWidth);
-        RawCrop[43].append("x");
-        itoa_custom(StartingHeight - 12, NewHeight, 10); //height
-        RawCrop[43].append(NewHeight);
-        RawCrop[43].append("_raw.ivf");
-
-        RawCrop[44] = WorkingDir4;
-        RawCrop[44].append("_");
-        itoa_custom(StartingWidth - 13, NewWidth, 10); //width
-        RawCrop[44].append(NewWidth);
-        RawCrop[44].append("x");
-        itoa_custom(StartingHeight - 13, NewHeight, 10); //height
-        RawCrop[44].append(NewHeight);
-        RawCrop[44].append("_raw.ivf");
-
-        RawCrop[45] = WorkingDir4;
-        RawCrop[45].append("_");
-        itoa_custom(StartingWidth - 14, NewWidth, 10); //width
-        RawCrop[45].append(NewWidth);
-        RawCrop[45].append("x");
-        itoa_custom(StartingHeight - 14, NewHeight, 10); //height
-        RawCrop[45].append(NewHeight);
-        RawCrop[45].append("_raw.ivf");
-
-        RawCrop[46] = WorkingDir4;
-        RawCrop[46].append("_");
-        itoa_custom(StartingWidth - 15, NewWidth, 10); //width
-        RawCrop[46].append(NewWidth);
-        RawCrop[46].append("x");
-        itoa_custom(StartingHeight - 15, NewHeight, 10); //height
-        RawCrop[46].append(NewHeight);
-        RawCrop[46].append("_raw.ivf");
-
-        //Encoded Files
+        //encoded file names
+        FileNum = 1;
         string EncCrop[47];
 
-        EncCrop[0] = "";
-        EncCrop[1] = RawCrop[1];
-        EncCrop[1].erase(EncCrop[1].end() - 7, EncCrop[1].end());
-        EncCrop[1].append("enc.ivf");
-        EncCrop[2] = RawCrop[2];
-        EncCrop[2].erase(EncCrop[2].end() - 7, EncCrop[2].end());
-        EncCrop[2].append("enc.ivf");
-        EncCrop[3] = RawCrop[3];
-        EncCrop[3].erase(EncCrop[3].end() - 7, EncCrop[3].end());
-        EncCrop[3].append("enc.ivf");
-        EncCrop[4] = RawCrop[4];
-        EncCrop[4].erase(EncCrop[4].end() - 7, EncCrop[4].end());
-        EncCrop[4].append("enc.ivf");
-        EncCrop[5] = RawCrop[5];
-        EncCrop[5].erase(EncCrop[5].end() - 7, EncCrop[5].end());
-        EncCrop[5].append("enc.ivf");
-        EncCrop[6] = RawCrop[6];
-        EncCrop[6].erase(EncCrop[6].end() - 7, EncCrop[6].end());
-        EncCrop[6].append("enc.ivf");
-        EncCrop[7] = RawCrop[7];
-        EncCrop[7].erase(EncCrop[7].end() - 7, EncCrop[7].end());
-        EncCrop[7].append("enc.ivf");
-        EncCrop[8] = RawCrop[8];
-        EncCrop[8].erase(EncCrop[8].end() - 7, EncCrop[8].end());
-        EncCrop[8].append("enc.ivf");
-        EncCrop[9] = RawCrop[9];
-        EncCrop[9].erase(EncCrop[9].end() - 7, EncCrop[9].end());
-        EncCrop[9].append("enc.ivf");
-        EncCrop[10] = RawCrop[10];
-        EncCrop[10].erase(EncCrop[10].end() - 7, EncCrop[10].end());
-        EncCrop[10].append("enc.ivf");
-        EncCrop[11] = RawCrop[11];
-        EncCrop[11].erase(EncCrop[11].end() - 7, EncCrop[11].end());
-        EncCrop[11].append("enc.ivf");
-        EncCrop[12] = RawCrop[12];
-        EncCrop[12].erase(EncCrop[12].end() - 7, EncCrop[12].end());
-        EncCrop[12].append("enc.ivf");
-        EncCrop[13] = RawCrop[13];
-        EncCrop[13].erase(EncCrop[13].end() - 7, EncCrop[13].end());
-        EncCrop[13].append("enc.ivf");
-        EncCrop[14] = RawCrop[14];
-        EncCrop[14].erase(EncCrop[14].end() - 7, EncCrop[14].end());
-        EncCrop[14].append("enc.ivf");
-        EncCrop[15] = RawCrop[15];
-        EncCrop[15].erase(EncCrop[15].end() - 7, EncCrop[15].end());
-        EncCrop[15].append("enc.ivf");
-        EncCrop[16] = RawCrop[16];
-        EncCrop[16].erase(EncCrop[16].end() - 7, EncCrop[16].end());
-        EncCrop[16].append("enc.ivf");
-        EncCrop[17] = RawCrop[17];
-        EncCrop[17].erase(EncCrop[17].end() - 7, EncCrop[17].end());
-        EncCrop[17].append("enc.ivf");
-        EncCrop[18] = RawCrop[18];
-        EncCrop[18].erase(EncCrop[18].end() - 7, EncCrop[18].end());
-        EncCrop[18].append("enc.ivf");
-        EncCrop[19] = RawCrop[19];
-        EncCrop[19].erase(EncCrop[19].end() - 7, EncCrop[19].end());
-        EncCrop[19].append("enc.ivf");
-        EncCrop[20] = RawCrop[20];
-        EncCrop[20].erase(EncCrop[20].end() - 7, EncCrop[20].end());
-        EncCrop[20].append("enc.ivf");
-        EncCrop[21] = RawCrop[21];
-        EncCrop[21].erase(EncCrop[21].end() - 7, EncCrop[21].end());
-        EncCrop[21].append("enc.ivf");
-        EncCrop[22] = RawCrop[22];
-        EncCrop[22].erase(EncCrop[22].end() - 7, EncCrop[22].end());
-        EncCrop[22].append("enc.ivf");
-        EncCrop[23] = RawCrop[23];
-        EncCrop[23].erase(EncCrop[23].end() - 7, EncCrop[23].end());
-        EncCrop[23].append("enc.ivf");
-        EncCrop[24] = RawCrop[24];
-        EncCrop[24].erase(EncCrop[24].end() - 7, EncCrop[24].end());
-        EncCrop[24].append("enc.ivf");
-        EncCrop[25] = RawCrop[25];
-        EncCrop[25].erase(EncCrop[25].end() - 7, EncCrop[25].end());
-        EncCrop[25].append("enc.ivf");
-        EncCrop[26] = RawCrop[26];
-        EncCrop[26].erase(EncCrop[26].end() - 7, EncCrop[26].end());
-        EncCrop[26].append("enc.ivf");
-        EncCrop[27] = RawCrop[27];
-        EncCrop[27].erase(EncCrop[27].end() - 7, EncCrop[27].end());
-        EncCrop[27].append("enc.ivf");
-        EncCrop[28] = RawCrop[28];
-        EncCrop[28].erase(EncCrop[28].end() - 7, EncCrop[28].end());
-        EncCrop[28].append("enc.ivf");
-        EncCrop[29] = RawCrop[29];
-        EncCrop[29].erase(EncCrop[29].end() - 7, EncCrop[29].end());
-        EncCrop[29].append("enc.ivf");
-        EncCrop[30] = RawCrop[30];
-        EncCrop[30].erase(EncCrop[30].end() - 7, EncCrop[30].end());
-        EncCrop[30].append("enc.ivf");
-        EncCrop[31] = RawCrop[31];
-        EncCrop[31].erase(EncCrop[31].end() - 7, EncCrop[31].end());
-        EncCrop[31].append("enc.ivf");
-        EncCrop[32] = RawCrop[32];
-        EncCrop[32].erase(EncCrop[32].end() - 7, EncCrop[32].end());
-        EncCrop[32].append("enc.ivf");
-        EncCrop[33] = RawCrop[33];
-        EncCrop[33].erase(EncCrop[33].end() - 7, EncCrop[33].end());
-        EncCrop[33].append("enc.ivf");
-        EncCrop[34] = RawCrop[34];
-        EncCrop[34].erase(EncCrop[34].end() - 7, EncCrop[34].end());
-        EncCrop[34].append("enc.ivf");
-        EncCrop[35] = RawCrop[35];
-        EncCrop[35].erase(EncCrop[35].end() - 7, EncCrop[35].end());
-        EncCrop[35].append("enc.ivf");
-        EncCrop[36] = RawCrop[36];
-        EncCrop[36].erase(EncCrop[36].end() - 7, EncCrop[36].end());
-        EncCrop[36].append("enc.ivf");
-        EncCrop[37] = RawCrop[37];
-        EncCrop[37].erase(EncCrop[37].end() - 7, EncCrop[37].end());
-        EncCrop[37].append("enc.ivf");
-        EncCrop[38] = RawCrop[38];
-        EncCrop[38].erase(EncCrop[38].end() - 7, EncCrop[38].end());
-        EncCrop[38].append("enc.ivf");
-        EncCrop[39] = RawCrop[39];
-        EncCrop[39].erase(EncCrop[39].end() - 7, EncCrop[39].end());
-        EncCrop[39].append("enc.ivf");
-        EncCrop[40] = RawCrop[40];
-        EncCrop[40].erase(EncCrop[40].end() - 7, EncCrop[40].end());
-        EncCrop[40].append("enc.ivf");
-        EncCrop[41] = RawCrop[41];
-        EncCrop[41].erase(EncCrop[41].end() - 7, EncCrop[41].end());
-        EncCrop[41].append("enc.ivf");
-        EncCrop[42] = RawCrop[42];
-        EncCrop[42].erase(EncCrop[42].end() - 7, EncCrop[42].end());
-        EncCrop[42].append("enc.ivf");
-        EncCrop[43] = RawCrop[43];
-        EncCrop[43].erase(EncCrop[43].end() - 7, EncCrop[43].end());
-        EncCrop[43].append("enc.ivf");
-        EncCrop[44] = RawCrop[44];
-        EncCrop[44].erase(EncCrop[44].end() - 7, EncCrop[44].end());
-        EncCrop[44].append("enc.ivf");
-        EncCrop[45] = RawCrop[45];
-        EncCrop[45].erase(EncCrop[45].end() - 7, EncCrop[45].end());
-        EncCrop[45].append("enc.ivf");
-        EncCrop[46] = RawCrop[46];
-        EncCrop[46].erase(EncCrop[46].end() - 7, EncCrop[46].end());
-        EncCrop[46].append("enc.ivf");
+        while (FileNum < 47)
+        {
+            EncCrop[FileNum] = RawCrop[FileNum];
+            EncCrop[FileNum].erase(EncCrop[FileNum].end() - 7, EncCrop[FileNum].end());
+            EncCrop[FileNum].append("enc.ivf");
+            FileNum++;
+        }
 
-        /*printf("\nRAW FILES\n");
-        printf("\n%s",RawCrop1.c_str());
-        printf("\n%s",RawCrop2.c_str());
-        printf("\n%s",RawCrop3.c_str());
-        printf("\n%s",RawCrop4.c_str());
-        printf("\n%s",RawCrop5.c_str());
-        printf("\n%s",RawCrop6.c_str());
-        printf("\n%s",RawCrop7.c_str());
-        printf("\n%s",RawCrop8.c_str());
-        printf("\n%s",RawCrop9.c_str());
-        printf("\n%s",RawCrop10.c_str());
-        printf("\n%s",RawCrop11.c_str());
-        printf("\n%s",RawCrop12.c_str());
-        printf("\n%s",RawCrop13.c_str());
-        printf("\n%s",RawCrop14.c_str());
-        printf("\n%s",RawCrop15.c_str());
-        printf("\n%s",RawCrop16.c_str());
-        printf("\n%s",RawCrop17.c_str());
-        printf("\n%s",RawCrop18.c_str());
-        printf("\n%s",RawCrop19.c_str());
-        printf("\n%s",RawCrop20.c_str());
-        printf("\n%s",RawCrop21.c_str());
-        printf("\n%s",RawCrop22.c_str());
-        printf("\n%s",RawCrop23.c_str());
-        printf("\n%s",RawCrop24.c_str());
-        printf("\n%s",RawCrop25.c_str());
-        printf("\n%s",RawCrop26.c_str());
-        printf("\n%s",RawCrop27.c_str());
-        printf("\n%s",RawCrop28.c_str());
-        printf("\n%s",RawCrop29.c_str());
-        printf("\n%s",RawCrop30.c_str());
-        printf("\n%s",RawCrop31.c_str());
-        printf("\n%s",RawCrop32.c_str());
-        printf("\n%s",RawCrop33.c_str());
-        printf("\n%s",RawCrop34.c_str());
-        printf("\n%s",RawCrop35.c_str());
-        printf("\n%s",RawCrop36.c_str());
-        printf("\n%s",RawCrop37.c_str());
-        printf("\n%s",RawCrop38.c_str());
-        printf("\n%s",RawCrop39.c_str());
-        printf("\n%s",RawCrop40.c_str());
-        printf("\n%s",RawCrop41.c_str());
-        printf("\n%s",RawCrop42.c_str());
-        printf("\n%s",RawCrop43.c_str());
-        printf("\n%s",RawCrop44.c_str());
-        printf("\n%s",RawCrop45.c_str());
-        printf("\n%s",RawCrop46.c_str());
-
-        printf("\n\nENCODED FILES\n");
-
-        printf("\n%s",EncCrop1.c_str());
-        printf("\n%s",EncCrop2.c_str());
-        printf("\n%s",EncCrop3.c_str());
-        printf("\n%s",EncCrop4.c_str());
-        printf("\n%s",EncCrop5.c_str());
-        printf("\n%s",EncCrop6.c_str());
-        printf("\n%s",EncCrop7.c_str());
-        printf("\n%s",EncCrop8.c_str());
-        printf("\n%s",EncCrop9.c_str());
-        printf("\n%s",EncCrop10.c_str());
-        printf("\n%s",EncCrop11.c_str());
-        printf("\n%s",EncCrop12.c_str());
-        printf("\n%s",EncCrop13.c_str());
-        printf("\n%s",EncCrop14.c_str());
-        printf("\n%s",EncCrop15.c_str());
-        printf("\n%s",EncCrop16.c_str());
-        printf("\n%s",EncCrop17.c_str());
-        printf("\n%s",EncCrop18.c_str());
-        printf("\n%s",EncCrop19.c_str());
-        printf("\n%s",EncCrop20.c_str());
-        printf("\n%s",EncCrop21.c_str());
-        printf("\n%s",EncCrop22.c_str());
-        printf("\n%s",EncCrop23.c_str());
-        printf("\n%s",EncCrop24.c_str());
-        printf("\n%s",EncCrop25.c_str());
-        printf("\n%s",EncCrop26.c_str());
-        printf("\n%s",EncCrop27.c_str());
-        printf("\n%s",EncCrop28.c_str());
-        printf("\n%s",EncCrop29.c_str());
-        printf("\n%s",EncCrop30.c_str());
-        printf("\n%s",EncCrop31.c_str());
-        printf("\n%s",EncCrop32.c_str());
-        printf("\n%s",EncCrop33.c_str());
-        printf("\n%s",EncCrop34.c_str());
-        printf("\n%s",EncCrop35.c_str());
-        printf("\n%s",EncCrop36.c_str());
-        printf("\n%s",EncCrop37.c_str());
-        printf("\n%s",EncCrop38.c_str());
-        printf("\n%s",EncCrop39.c_str());
-        printf("\n%s",EncCrop40.c_str());
-        printf("\n%s",EncCrop41.c_str());
-        printf("\n%s",EncCrop42.c_str());
-        printf("\n%s",EncCrop43.c_str());
-        printf("\n%s",EncCrop44.c_str());
-        printf("\n%s",EncCrop45.c_str());
-        printf("\n%s",EncCrop46.c_str());*/
-
-        /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
         TextfileString.append(slashCharStr);
         TextfileString.append(MyDir);
@@ -13682,7 +12825,7 @@ int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], 
             {
                 printf("\nCroping to %i %i", StartingWidth, StartingHeight - x);
                 fprintf(stderr, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
-                CropRawIVF(input, (char *)RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
+                CropRawIVF(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
                 x++;
                 RawCropNum++;
                 //return 0;
@@ -13694,7 +12837,7 @@ int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], 
             {
                 printf("\nCroping to %i %i", StartingWidth - x, StartingHeight);
                 fprintf(stderr, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
-                CropRawIVF(input, (char *)RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
+                CropRawIVF(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
                 x++;
                 RawCropNum++;
             }
@@ -13705,7 +12848,7 @@ int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], 
             {
                 printf("\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
                 fprintf(stderr, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
-                CropRawIVF(input, (char *)RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
+                CropRawIVF(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
                 x++;
                 RawCropNum++;
             }
@@ -13748,7 +12891,7 @@ int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 printf("\nCompressing %s", FileNameChar2);
                 fprintf(stderr, "\nCompressing %s", FileNameChar2);
 
-                if (CompressIVFtoIVF((char *)RawCrop[RawCropNum].c_str(), (char *)EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVF(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -13776,7 +12919,7 @@ int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], 
 
         while (RawCropNum < 47)
         {
-            PSNRAr[RawCropNum-1] = IVFPSNR((char *)RawCrop[RawCropNum].c_str(), (char *)EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+            PSNRAr[RawCropNum-1] = IVFPSNR(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
             RawCropNum++;
         }
 
@@ -13903,7 +13046,7 @@ int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "Allow DF";
@@ -14009,39 +13152,39 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
         }
 
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir4b = WorkingDirString;
-        string WorkingDir5b = WorkingDirString;
-        string WorkingDir4c = WorkingDirString;
-        string WorkingDir5c = WorkingDirString;
+        string GvBgOutFile1 = WorkingDirString;
+        string GvBbOutFile1 = WorkingDirString;
+        string GvBgOutFile2 = WorkingDirString;
+        string GvBbOutFile2 = WorkingDirString;
+        string GvBgOutFile3 = WorkingDirString;
+        string GvBbOutFile3 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("GoodVsBestGood1.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("GoodVsBestBest1.ivf");
-        WorkingDir4b.append(slashCharStr);
-        WorkingDir4b.append("GoodVsBestGood2.ivf");
-        WorkingDir5b.append(slashCharStr);
-        WorkingDir5b.append("GoodVsBestBest2.ivf");
-        WorkingDir4c.append(slashCharStr);
-        WorkingDir4c.append("GoodVsBestGood3.ivf");
-        WorkingDir5c.append(slashCharStr);
-        WorkingDir5c.append("GoodVsBestBest3.ivf");
+        GvBgOutFile1.append(slashCharStr);
+        GvBgOutFile1.append("GoodVsBestGood1.ivf");
+        GvBbOutFile1.append(slashCharStr);
+        GvBbOutFile1.append("GoodVsBestBest1.ivf");
+        GvBgOutFile2.append(slashCharStr);
+        GvBgOutFile2.append("GoodVsBestGood2.ivf");
+        GvBbOutFile2.append(slashCharStr);
+        GvBbOutFile2.append("GoodVsBestBest2.ivf");
+        GvBgOutFile3.append(slashCharStr);
+        GvBgOutFile3.append("GoodVsBestGood3.ivf");
+        GvBbOutFile3.append(slashCharStr);
+        GvBbOutFile3.append("GoodVsBestBest3.ivf");
 
-        char GvBgOutFile1[255];
-        char GvBgOutFile2[255];
-        char GvBgOutFile3[255];
-        char GvBbOutFile1[255];
-        char GvBbOutFile2[255];
-        char GvBbOutFile3[255];
+        //char GvBgOutFile1[255];
+        //char GvBgOutFile2[255];
+        //char GvBgOutFile3[255];
+        //char GvBbOutFile1[255];
+        //char GvBbOutFile2[255];
+        //char GvBbOutFile3[255];
 
-        snprintf(GvBgOutFile1, 255, "%s", WorkingDir4.c_str());
-        snprintf(GvBbOutFile1, 255, "%s", WorkingDir5.c_str());
-        snprintf(GvBgOutFile2, 255, "%s", WorkingDir4b.c_str());
-        snprintf(GvBbOutFile2, 255, "%s", WorkingDir5b.c_str());
-        snprintf(GvBgOutFile3, 255, "%s", WorkingDir4c.c_str());
-        snprintf(GvBbOutFile3, 255, "%s", WorkingDir5c.c_str());
+        //snprintf(GvBgOutFile1, 255, "%s", WorkingDir4.c_str());
+        //snprintf(GvBbOutFile1, 255, "%s", WorkingDir5.c_str());
+        //snprintf(GvBgOutFile2, 255, "%s", WorkingDir4b.c_str());
+        //snprintf(GvBbOutFile2, 255, "%s", WorkingDir5b.c_str());
+        //snprintf(GvBgOutFile3, 255, "%s", WorkingDir4c.c_str());
+        //snprintf(GvBbOutFile3, 255, "%s", WorkingDir5c.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -14128,7 +13271,7 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
             opt.target_bandwidth = BitRate1;
             opt.Mode = MODE_GOODQUALITY;
 
-            if (CompressIVFtoIVF(input, GvBgOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, GvBgOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -14138,7 +13281,7 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
 
             opt.target_bandwidth = BitRate2;
 
-            if (CompressIVFtoIVF(input, GvBgOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, GvBgOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -14148,7 +13291,7 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
 
             opt.target_bandwidth = BitRate3;
 
-            if (CompressIVFtoIVF(input, GvBgOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, GvBgOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -14159,7 +13302,7 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
             opt.target_bandwidth = BitRate1;
             opt.Mode = MODE_BESTQUALITY;
 
-            if (CompressIVFtoIVF(input, GvBbOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, GvBbOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -14169,7 +13312,7 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
 
             opt.target_bandwidth = BitRate2;
 
-            if (CompressIVFtoIVF(input, GvBbOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, GvBbOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -14179,7 +13322,7 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
 
             opt.target_bandwidth = BitRate3;
 
-            if (CompressIVFtoIVF(input, GvBbOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, GvBbOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -14200,12 +13343,12 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
         printf("\n");
         fprintf(stderr, "\n");
 
-        float GoodSize1 = IVFDataRate(GvBgOutFile1, 1);
-        float BestSize1 = IVFDataRate(GvBbOutFile1, 1);
-        float GoodSize2 = IVFDataRate(GvBgOutFile2, 1);
-        float BestSize2 = IVFDataRate(GvBbOutFile2, 1);
-        float GoodSize3 = IVFDataRate(GvBgOutFile3, 1);
-        float BestSize3 = IVFDataRate(GvBbOutFile3, 1);
+        float GoodSize1 = IVFDataRate(GvBgOutFile1.c_str(), 1);
+        float BestSize1 = IVFDataRate(GvBbOutFile1.c_str(), 1);
+        float GoodSize2 = IVFDataRate(GvBgOutFile2.c_str(), 1);
+        float BestSize2 = IVFDataRate(GvBbOutFile2.c_str(), 1);
+        float GoodSize3 = IVFDataRate(GvBgOutFile3.c_str(), 1);
+        float BestSize3 = IVFDataRate(GvBbOutFile3.c_str(), 1);
 
         double PSNRG1;
         double PSNRB1;
@@ -14214,12 +13357,12 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
         double PSNRG3;
         double PSNRB3;
 
-        PSNRG1 = IVFPSNR(input, GvBgOutFile1, 1, 0, 1, NULL);
-        PSNRB1 = IVFPSNR(input, GvBbOutFile1, 1, 0, 1, NULL);
-        PSNRG2 = IVFPSNR(input, GvBgOutFile2, 1, 0, 1, NULL);
-        PSNRB2 = IVFPSNR(input, GvBbOutFile2, 1, 0, 1, NULL);
-        PSNRG3 = IVFPSNR(input, GvBgOutFile3, 1, 0, 1, NULL);
-        PSNRB3 = IVFPSNR(input, GvBbOutFile3, 1, 0, 1, NULL);
+        PSNRG1 = IVFPSNR(input, GvBgOutFile1.c_str(), 1, 0, 1, NULL);
+        PSNRB1 = IVFPSNR(input, GvBbOutFile1.c_str(), 1, 0, 1, NULL);
+        PSNRG2 = IVFPSNR(input, GvBgOutFile2.c_str(), 1, 0, 1, NULL);
+        PSNRB2 = IVFPSNR(input, GvBbOutFile2.c_str(), 1, 0, 1, NULL);
+        PSNRG3 = IVFPSNR(input, GvBgOutFile3.c_str(), 1, 0, 1, NULL);
+        PSNRB3 = IVFPSNR(input, GvBbOutFile3.c_str(), 1, 0, 1, NULL);
 
         float GoodA = 0;
         float GoodB = 0;
@@ -14253,23 +13396,8 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
         SolveQuadradic(GoodSize1, GoodSize2, GoodSize3, PSNRG1, PSNRG2, PSNRG3, GoodA, GoodB, GoodC);
         float GoodAreaVal = AreaUnderQuadradic(GoodA, GoodB, GoodC, minCommon, maxCommon);
 
-        //cout << "\n\nGoodAreaVal: " << GoodAreaVal << "\n\n";
-
         SolveQuadradic(BestSize1, BestSize2, BestSize3, PSNRB1, PSNRB2, PSNRB3, BestA, BestB, BestC);
         float BestAreaVal = AreaUnderQuadradic(BestA, BestB, BestC, minCommon, maxCommon);
-
-        //cout << "\n\nBestAreaVal: " << BestAreaVal << "\n\n";
-
-        /*cout << GoodA << "\n";
-        cout << GoodB << "\n";
-        cout << GoodC << "\n";
-
-        cout << BestA << "\n";
-        cout << BestB << "\n";;
-        cout << BestC << "\n";*/
-
-        //float PSRNPerc = absFloat((PSNRB1 - PSNRG1) / PSNRG1) * 100.00;
-        //float BRPerc = (absFloat(BestSize1 - GoodSize1) / GoodSize1) * 100.00;
 
         printf("\n\n"
                "Data Points:\n"
@@ -14388,7 +13516,7 @@ int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], in
             return 0;
         }
     }
-int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Lag In Frames";
 
@@ -14506,25 +13634,16 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
             FileStream.close();
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir6 = WorkingDirString;
+        string LagInFrames0 = WorkingDirString;
+        string LagInFrames1 = WorkingDirString;
+        string LagInFrames2 = WorkingDirString;
 
-
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("LagInFrames1Output.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("LagInFrames2Output.ivf");
-        WorkingDir6.append(slashCharStr);
-        WorkingDir6.append("LagInFrames0Output.ivf");
-
-        char LagInFrames0[255];
-        char LagInFrames1[255];
-        char LagInFrames2[255];
-
-        snprintf(LagInFrames0, 255, "%s", WorkingDir6.c_str());
-        snprintf(LagInFrames1, 255, "%s", WorkingDir4.c_str());
-        snprintf(LagInFrames2, 255, "%s", WorkingDir5.c_str());
+        LagInFrames0.append(slashCharStr);
+        LagInFrames0.append("LagInFrames0Output.ivf");
+        LagInFrames1.append(slashCharStr);
+        LagInFrames1.append("LagInFrames1Output.ivf");
+        LagInFrames2.append(slashCharStr);
+        LagInFrames2.append("LagInFrames2Output.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -14630,7 +13749,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 0;
                 opt.lag_in_frames = LagInFrames1Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14642,7 +13761,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 1;
                 opt.lag_in_frames = LagInFrames1Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14654,7 +13773,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 1;
                 opt.lag_in_frames = LagInFrames2Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14669,7 +13788,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 0;
                 opt.lag_in_frames = LagInFrames1Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14682,7 +13801,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 1;
                 opt.lag_in_frames = LagInFrames1Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14694,7 +13813,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 1;
                 opt.lag_in_frames = LagInFrames2Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14709,7 +13828,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 0;
                 opt.lag_in_frames = LagInFrames1Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14721,7 +13840,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 1;
                 opt.lag_in_frames = LagInFrames1Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14733,7 +13852,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.allow_lag = 1;
                 opt.lag_in_frames = LagInFrames2Val;
 
-                if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14752,7 +13871,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14764,7 +13883,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14776,7 +13895,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.lag_in_frames = LagInFrames2Val;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14791,7 +13910,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, LagInFrames0, speed, BitRate, opt, CompressString, 0, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14803,7 +13922,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.lag_in_frames = LagInFrames1Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, LagInFrames1, speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14815,7 +13934,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 opt.lag_in_frames = LagInFrames2Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, LagInFrames2, speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -14833,37 +13952,31 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
             return 10;
         }
 
-        double LagInFrames0PSNR = IVFPSNR(input, LagInFrames0, 0, 0, 1, NULL);
-        double LagInFrames1PSNR = IVFPSNR(input, LagInFrames1, 0, 0, 1, NULL);
-        double LagInFrames2PSNR = IVFPSNR(input, LagInFrames2, 0, 0, 1, NULL);
+        double LagInFrames0PSNR = IVFPSNR(input, LagInFrames0.c_str(), 0, 0, 1, NULL);
+        double LagInFrames1PSNR = IVFPSNR(input, LagInFrames1.c_str(), 0, 0, 1, NULL);
+        double LagInFrames2PSNR = IVFPSNR(input, LagInFrames2.c_str(), 0, 0, 1, NULL);
 
         double TenPer0 = LagInFrames0PSNR / 10;
         double TenPer1 = LagInFrames1PSNR / 10;
         double TenPer2 = LagInFrames2PSNR / 10;
 
-        int lngRC1 = CompIVF(LagInFrames0, LagInFrames1);
-        int lngRC2 = CompIVF(LagInFrames1, LagInFrames2);
+        int lngRC1 = CompIVF(LagInFrames0.c_str(), LagInFrames1.c_str());
+        int lngRC2 = CompIVF(LagInFrames1.c_str(), LagInFrames2.c_str());
 
         string QuantInStr0 = LagInFrames0;
         QuantInStr0.erase(QuantInStr0.length() - 4, 4);
         QuantInStr0.append("_Quantizers.txt");
-        char QuantInChar0[255] = "";
-        snprintf(QuantInChar0, 255, "%s", QuantInStr0.c_str());
-        int LagInFramesFound0 = IVFLagInFramesCheck(QuantInChar0);
+        int LagInFramesFound0 = IVFLagInFramesCheck(QuantInStr0.c_str());
 
         string QuantInStr1 = LagInFrames1;
         QuantInStr1.erase(QuantInStr1.length() - 4, 4);
         QuantInStr1.append("_Quantizers.txt");
-        char QuantInChar1[255] = "";
-        snprintf(QuantInChar1, 255, "%s", QuantInStr1.c_str());
-        int LagInFramesFound1 = IVFLagInFramesCheck(QuantInChar1);
+        int LagInFramesFound1 = IVFLagInFramesCheck(QuantInStr1.c_str());
 
         string QuantInStr2 = LagInFrames2;
         QuantInStr2.erase(QuantInStr2.length() - 4, 4);
         QuantInStr2.append("_Quantizers.txt");
-        char QuantInChar2[255] = "";
-        snprintf(QuantInChar2, 255, "%s", QuantInStr2.c_str());
-        int LagInFramesFound2 = IVFLagInFramesCheck(QuantInChar2);
+        int LagInFramesFound2 = IVFLagInFramesCheck(QuantInStr2.c_str());
 
         int PSNRTally = 0;
         int fail = 0;
@@ -14872,9 +13985,9 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
         char LagInFrames1FileName[255] = "";
         char LagInFrames2FileName[255] = "";
 
-        FileName(LagInFrames0, LagInFrames0FileName, 0);
-        FileName(LagInFrames1, LagInFrames1FileName, 0);
-        FileName(LagInFrames2, LagInFrames2FileName, 0);
+        FileName(LagInFrames0.c_str(), LagInFrames0FileName, 0);
+        FileName(LagInFrames1.c_str(), LagInFrames1FileName, 0);
+        FileName(LagInFrames2.c_str(), LagInFrames2FileName, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -15063,7 +14176,7 @@ int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[]
             return 0;
         }
     }
-int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "QuantizerMax";
@@ -15177,18 +14290,10 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir6 = WorkingDirString;
+        string QuantOutBase = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("QuantOutput");
-        WorkingDir6.append(slashCharStr);
-        WorkingDir6.append("QuantOutput.ivf");
-
-        char QuantOutFile2[255];
-
-        snprintf(QuantOutFile2, 255, "%s", WorkingDir6.c_str());
+        QuantOutBase.append(slashCharStr);
+        QuantOutBase.append("QuantOutput");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -15274,30 +14379,24 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
         {
             while (n < 63)
             {
-                opt.worst_allowed_q = n;
-
                 char num[20];
                 itoa_custom(n, num, 10);
 
-                string WorkingDir5 = WorkingDir4;
-                WorkingDir5.append(num);
-                WorkingDir5.append(".ivf");
-
-                char QuantOutFile[255];
-                snprintf(QuantOutFile, 255, "%s", WorkingDir5.c_str());
+                string QuantOutFile = QuantOutBase;
+                QuantOutFile.append(num);
+                QuantOutFile.append(".ivf");
 
                 printf("\n");
                 fprintf(stderr, "\n");
 
                 if (TestType != 2)
                 {
-                    PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, NULL);
+                    PSNRArr[i] = IVFPSNR(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
                     printf("\n");
                     fprintf(stderr, "\n");
-                    MaxQArr[i] = CheckMaxQ(QuantOutFile, n);
+                    MaxQArr[i] = CheckMaxQ(QuantOutFile.c_str(), n);
                     printf("\n");
                     fprintf(stderr, "\n");
-                    //PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, NULL);
                 }
 
                 n = n + 8;
@@ -15314,18 +14413,15 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
                 char num[20];
                 itoa_custom(n, num, 10);
 
-                string WorkingDir5 = WorkingDir4;
-                WorkingDir5.append(num);
-                WorkingDir5.append(".ivf");
-
-                char QuantOutFile[255];
-                snprintf(QuantOutFile, 255, "%s", WorkingDir5.c_str());
+                string QuantOutFile = QuantOutBase;
+                QuantOutFile.append(num);
+                QuantOutFile.append(".ivf");
 
                 if (Mode == 0)
                 {
                     opt.Mode = MODE_REALTIME;
 
-                    if (CompressIVFtoIVF(input, QuantOutFile, speed, BitRate, opt, CompressString, n, 1) == -1)
+                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -15338,7 +14434,7 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
                 {
                     opt.Mode = MODE_GOODQUALITY;
 
-                    if (CompressIVFtoIVF(input, QuantOutFile, speed, BitRate, opt, CompressString, n, 1) == -1)
+                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -15351,7 +14447,7 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
                 {
                     opt.Mode = MODE_BESTQUALITY;
 
-                    if (CompressIVFtoIVF(input, QuantOutFile, speed, BitRate, opt, CompressString, n, 1) == -1)
+                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -15368,7 +14464,7 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
                 {
                     opt.Mode = MODE_SECONDPASS;
 
-                    if (CompressIVFtoIVF(input, QuantOutFile, speed, BitRate, opt, CompressString, n, 1) == -1)
+                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -15381,7 +14477,7 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
                 {
                     opt.Mode = MODE_SECONDPASS_BEST;
 
-                    if (CompressIVFtoIVF(input, QuantOutFile, speed, BitRate, opt, CompressString, n, 1) == -1)
+                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -15395,15 +14491,13 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
 
                 if (TestType != 2)
                 {
-                    PSNRArr[i] = IVFPSNR(input, QuantOutFile, PSNRToggle, 0, 1, NULL);
+                    PSNRArr[i] = IVFPSNR(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
                     printf("\n");
                     fprintf(stderr, "\n");
-                    MaxQArr[i] = CheckMaxQ(QuantOutFile, n);
+                    MaxQArr[i] = CheckMaxQ(QuantOutFile.c_str(), n);
                     printf("\n");
                     fprintf(stderr, "\n");
                 }
-
-
 
                 n = n + 8;
                 i++;
@@ -15507,7 +14601,7 @@ int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
             return 0;
         }
     }
-int MemLeakCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int MemLeakCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         // So long as Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
 
@@ -16053,7 +15147,7 @@ int MemLeakCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], i
         return 0;
 
     }
-int MemLeakCheck2(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int MemLeakCheck2(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         // So long as Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
 
@@ -16600,7 +15694,7 @@ int MemLeakCheck2(int argc, char * argv[], string WorkingDir, string FilesAr[], 
 
 
     }
-int MinQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int MinQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "BestAllowedQ";
@@ -17053,7 +16147,7 @@ int MinQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int T
         }
     }
 
-int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "MultiThreaded";
 
@@ -17162,19 +16256,19 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
         }
 
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string MultiThreadedOnOutFile = WorkingDirString;
+        string MultiThreadedOffOutFile = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("MultiThreadedOnOutput.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("MultiThreadedOffOutput.ivf");
+        MultiThreadedOnOutFile.append(slashCharStr);
+        MultiThreadedOnOutFile.append("MultiThreadedOnOutput.ivf");
+        MultiThreadedOffOutFile.append(slashCharStr);
+        MultiThreadedOffOutFile.append("MultiThreadedOffOutput.ivf");
 
-        char MultiThreaded14OutFile[255];
-        char MultiThreaded00OutFile[255];
+        //char MultiThreadedOnOutFile[255];
+        //char MultiThreadedOffOutFile[255];
 
-        snprintf(MultiThreaded14OutFile, 255, "%s", WorkingDir4.c_str());
-        snprintf(MultiThreaded00OutFile, 255, "%s", WorkingDir5.c_str());
+        //snprintf(MultiThreaded14OutFile, 255, "%s", WorkingDir4.c_str());
+        //snprintf(MultiThreaded00OutFile, 255, "%s", WorkingDir5.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -17278,8 +16372,8 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            Time1 = TimeReturn(MultiThreaded14OutFile, 0);
-            Time2 = TimeReturn(MultiThreaded00OutFile, 0);
+            Time1 = TimeReturn(MultiThreadedOnOutFile.c_str(), 0);
+            Time2 = TimeReturn(MultiThreadedOffOutFile.c_str(), 0);
         }
         else
         {
@@ -17288,7 +16382,7 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
                 opt.Mode = MODE_REALTIME;
                 opt.multi_threaded = CoreCount;
                 opt.cpu_used = -1;
-                Time1 = TimeCompressIVFtoIVF(input, MultiThreaded14OutFile, MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
+                Time1 = TimeCompressIVFtoIVF(input, MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
 
                 if (Time1 == -1)
                 {
@@ -17300,7 +16394,7 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
 
                 opt.Mode = MODE_REALTIME;
                 opt.multi_threaded = 0;
-                Time2 = TimeCompressIVFtoIVF(input, MultiThreaded00OutFile, MultiThreaded, BitRate, opt, CompressString, 0, 0);
+                Time2 = TimeCompressIVFtoIVF(input, MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, 0, 0);
 
                 if (Time2 == -1)
                 {
@@ -17315,7 +16409,7 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
             {
                 opt.Mode = MODE_GOODQUALITY;
                 opt.multi_threaded = CoreCount;
-                Time1 = TimeCompressIVFtoIVF(input, MultiThreaded14OutFile, MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
+                Time1 = TimeCompressIVFtoIVF(input, MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
 
                 if (Time1 == -1)
                 {
@@ -17327,7 +16421,7 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
 
                 opt.Mode = MODE_GOODQUALITY;
                 opt.multi_threaded = 0;
-                Time2 = TimeCompressIVFtoIVF(input, MultiThreaded00OutFile, MultiThreaded, BitRate, opt, CompressString, 0, 0);
+                Time2 = TimeCompressIVFtoIVF(input, MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, 0, 0);
 
                 if (Time2 == -1)
                 {
@@ -17352,8 +16446,8 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
         char Time1FileName[255] = "";
         char Time2FileName[255] = "";
 
-        FileName(MultiThreaded14OutFile, Time1FileName, 0);
-        FileName(MultiThreaded00OutFile, Time2FileName, 0);
+        FileName(MultiThreadedOnOutFile.c_str(), Time1FileName, 0);
+        FileName(MultiThreadedOffOutFile.c_str(), Time2FileName, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -17412,7 +16506,7 @@ int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr
             return 0;
         }
     }
-int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         if (!(argc == 7 || argc == 8))
@@ -17443,26 +16537,26 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
         int ParFileNum = atoi(argv[6]);
         char ExeInput[255];
 
-#if defined(_WIN32)
-        {
-            snprintf(ExeInput, 255, "%s", argv[5]);
-        }
-#elif defined(linux)
-        {
-            string ExeInputStr = argv[5];
-            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-        }
-#elif defined(__APPLE__)
-        {
-            string ExeInputStr = argv[5];
-            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-        }
-#elif defined(__POWERPC__)
-        {
-            string ExeInputStr = argv[5];
-            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-        }
-#endif
+//#if defined(_WIN32)
+//        {
+        snprintf(ExeInput, 255, "%s", argv[5]);
+//        }
+//#elif defined(linux)
+//        {
+//            string ExeInputStr = argv[5];
+//            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
+//        }
+//#elif defined(__APPLE__)
+//        {
+//            string ExeInputStr = argv[5];
+//            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
+//        }
+//#elif defined(__POWERPC__)
+//        {
+//            string ExeInputStr = argv[5];
+//            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
+//        }
+//#endif
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";
         string Mode3TestMatch = "";
@@ -17578,100 +16672,52 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
         }
 
         //////////////////////////////////////////////
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir6 = WorkingDirString;
-        string WorkingDir7 = WorkingDirString;
-        string WorkingDir8 = ExeString;
-        string WorkingDir9 = "";
+        string NewEncFile = WorkingDirString;
+        string OldEncFile = WorkingDirString;
+        string ParFile = WorkingDirString;
+        string Program = ExeString;
+        string FPF_Program = "";
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("outputVP8New.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("outputVP8Old.ivf");
-        WorkingDir6.append(slashCharStr);
-        WorkingDir6.append("outputVP8Old.ivf");
-        WorkingDir7.append(slashCharStr);
-        WorkingDir7.append("ParFile.txt");
+        NewEncFile.append(slashCharStr);
+        NewEncFile.append("outputVP8New.ivf");
+        OldEncFile.append(slashCharStr);
+        OldEncFile.append("outputVP8Old.ivf");
+        ParFile.append(slashCharStr);
+        ParFile.append("ParFile.txt");
 
 #if defined(_WIN32)
         {
-            WorkingDir8.append(ExeInput);
-            WorkingDir8.append("\" \"");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\" \"");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\" 8");
-            WorkingDir8.append(" \"");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\"");
-            WorkingDir9 = WorkingDir8;
-            WorkingDir9.append(" 0");
-            WorkingDir9.append("\"");
-            WorkingDir8.append(" 3");
-            WorkingDir8.append("\"");
+            Program.append(ExeInput);
+            Program.append("\" \"");
+            Program.append(input);
+            Program.append("\" \"");
+            Program.append(OldEncFile);
+            Program.append("\" 8");
+            Program.append(" \"");
+            Program.append(ParFile);
+            Program.append("\"");
+            FPF_Program = Program;
+            FPF_Program.append(" 0");
+            FPF_Program.append("\"");
+            Program.append(" 3");
+            Program.append("\"");
         }
-
-#elif defined(linux)
+#else
         {
-            WorkingDir8.append(ExeInput);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\' 8");
-            WorkingDir8.append(" \'");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\'");
-            WorkingDir9 = WorkingDir8;
-            WorkingDir9.append(" 0");
-            WorkingDir8.append(" 3");
-        }
-#elif defined(__APPLE__)
-        {
-            WorkingDir8.append(ExeInput);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\' 8");
-            WorkingDir8.append(" \'");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\'");
-            WorkingDir9 = WorkingDir8;
-            WorkingDir9.append(" 0");
-            WorkingDir8.append(" 3");
-        }
-#elif defined(__POWERPC__)
-        {
-            WorkingDir8.append(ExeInput);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\' 8");
-            WorkingDir8.append(" \'");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\'");
-            WorkingDir9 = WorkingDir8;
-            WorkingDir9.append(" 0");
-            WorkingDir8.append(" 3");
+            Program.append(ExeInput);
+            Program.append("\' \'");
+            Program.append(input);
+            Program.append("\' \'");
+            Program.append(OldEncFile);
+            Program.append("\' 8");
+            Program.append(" \'");
+            Program.append(ParFile);
+            Program.append("\'");
+            FPF_Program = Program;
+            FPF_Program.append(" 0");
+            Program.append(" 3");
         }
 #endif
-
-        char outputVP7New[255];
-        char outputVP7Old[255];
-        char outputVP7Old2[255];
-        char ParFile[255];
-        char Program[1024];
-        char Program2[1024];
-
-        snprintf(outputVP7New, 255, "%s", WorkingDir4.c_str());
-        snprintf(outputVP7Old, 255, "%s", WorkingDir5.c_str());
-        snprintf(outputVP7Old2, 255, "%s", WorkingDir6.c_str());
-        snprintf(ParFile, 255, "%s", WorkingDir7.c_str());
-        snprintf(Program, 1024, "%s", WorkingDir8.c_str());
-        snprintf(Program2, 1024, "%s", WorkingDir9.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -17756,7 +16802,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
             {
                 opt.Mode = MODE_REALTIME;
 
-                if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
+                if (CompressIVFtoIVF(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -17764,7 +16810,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     return 2;
                 }
 
-                OutPutCompatSettings(ParFile, opt, ParFileNum);
+                OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                 fclose(fp);
 
@@ -17783,7 +16829,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
             {
                 opt.Mode = MODE_GOODQUALITY;
 
-                if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
+                if (CompressIVFtoIVF(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -17791,7 +16837,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     return 2;
                 }
 
-                OutPutCompatSettings(ParFile, opt, ParFileNum);
+                OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                 fclose(fp);
 
@@ -17812,7 +16858,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
             {
                 opt.Mode = MODE_BESTQUALITY;
 
-                if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
+                if (CompressIVFtoIVF(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -17820,7 +16866,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     return 2;
                 }
 
-                OutPutCompatSettings(ParFile, opt, ParFileNum);
+                OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
                 RunExe(Program);
             }
 
@@ -17835,7 +16881,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     opt.Mode = MODE_SECONDPASS;
                     opt.lag_in_frames = 10;
 
-                    if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
+                    if (CompressIVFtoIVF(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -17844,7 +16890,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     }
 
                     opt.Mode = MODE_FIRSTPASS;
-                    OutPutCompatSettings(ParFile, opt, ParFileNum);
+                    OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                     fclose(fp);
 
@@ -17856,10 +16902,10 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
 
                     fprintf(stderr, " ");
 
-                    RunExe(Program2);
+                    RunExe(FPF_Program);//this needs to be run to make this test compatable with old versions of vp8 that required the first pass to be called diffrently
 
                     opt.Mode = MODE_SECONDPASS;
-                    OutPutCompatSettings(ParFile, opt, ParFileNum);
+                    OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                     fclose(fp);
 
@@ -17877,7 +16923,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                 {
                     opt.Mode = MODE_SECONDPASS;
 
-                    if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
+                    if (CompressIVFtoIVF(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -17886,7 +16932,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     }
 
                     opt.Mode = MODE_SECONDPASS;
-                    OutPutCompatSettings(ParFile, opt, ParFileNum);
+                    OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                     fclose(fp);
 
@@ -17909,7 +16955,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     opt.Mode = MODE_SECONDPASS_BEST;
                     opt.lag_in_frames = 10;
 
-                    if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
+                    if (CompressIVFtoIVF(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -17918,7 +16964,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     }
 
                     opt.Mode = 3;
-                    OutPutCompatSettings(ParFile, opt, ParFileNum);
+                    OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                     fclose(fp);
 
@@ -17930,10 +16976,10 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
 
                     fprintf(stderr, " ");
 
-                    RunExe(Program2);
+                    RunExe(FPF_Program);//this needs to be run to make this test compatable with old versions of vp8 that required the first pass to be called diffrently
 
                     opt.Mode = MODE_SECONDPASS_BEST;
-                    OutPutCompatSettings(ParFile, opt, ParFileNum);
+                    OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                     fclose(fp);
 
@@ -17951,7 +16997,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                 {
                     opt.Mode = MODE_SECONDPASS_BEST;
 
-                    if (CompressIVFtoIVF(input, outputVP7New, speed, BitRate, opt, "VP8", 0, 0) == -1)
+                    if (CompressIVFtoIVF(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -17960,7 +17006,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
                     }
 
                     opt.Mode = MODE_SECONDPASS_BEST;
-                    OutPutCompatSettings(ParFile, opt, ParFileNum);
+                    OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
 
                     fclose(fp);
 
@@ -17987,7 +17033,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
             return 10;
         }
 
-        if (FileSize2(outputVP7Old2) == 0)
+        if (FileSize2(OldEncFile.c_str()) == 0)
         {
             printf("\nError - Old File Incorrect\n");
             fprintf(stderr, "\nError - Old File Incorrect\n");
@@ -17999,7 +17045,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
         //////////////////////////////////////////////Input OLD PSNR//////////////////////////////////////////////
         char TimeTextFile[256];
 
-        FolderName(outputVP7New, TimeTextFile);
+        FolderName(NewEncFile.c_str(), TimeTextFile);
         string TimeTextFileStr = TimeTextFile;
 
         TimeTextFileStr.append("outputVP8Old_OLD_PSNR.txt");
@@ -18012,16 +17058,16 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
 
         double PSNRArr[2];
 
-        PSNRArr[0] = IVFPSNR(input, outputVP7New, 0, 0, 1, NULL);
+        PSNRArr[0] = IVFPSNR(input, NewEncFile.c_str(), 0, 0, 1, NULL);
         PSNRArr[1] = PSNROLD;
 
         printf("\nNew DataRate");
         fprintf(stderr, "\nNew DataRate\n");
-        IVFDataRate(outputVP7New, 1);
+        IVFDataRate(NewEncFile.c_str(), 1);
 
         printf("\nOld DataRate");
         fprintf(stderr, "\nOld DataRate\n");
-        IVFDataRate(outputVP7Old2, 1);
+        IVFDataRate(OldEncFile.c_str(), 1);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -18082,7 +17128,7 @@ int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], i
             return 0;
         }
     }
-int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         if (!(argc == 7 || argc == 6))
         {
@@ -18104,27 +17150,6 @@ int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string Fil
 
         char ExeInput[255];
         snprintf(ExeInput, 255, "%s", argv[4]);
-
-        //#if defined(_WIN32)
-        //  {
-        //      snprintf(ExeInput,255,"%s",argv[4]);
-        //  }
-        //#elif defined(linux)
-        //  {
-        //      string ExeInputStr = argv[4];
-        //      snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-        //  }
-        //#elif defined(__APPLE__)
-        //  {
-        //      string ExeInputStr = argv[4];
-        //      snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-        //  }
-        //#elif defined(__POWERPC__)
-        //  {
-        //      string ExeInputStr = argv[4];
-        //      snprintf(ExeInput,255,"%s",ExeInputStr.c_str());
-        //  }
-        //#endif
 
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";
@@ -18220,96 +17245,63 @@ int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string Fil
             WorkingDirString = WorkingDir2;
         }
 
+        string outputVP8New = WorkingDirString;
+        string outputVP8Old = WorkingDirString;
+        string outputVP8Old2 = WorkingDirString;
+        string ParFile = WorkingDirString;
+        string Program = ExeString;
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir6 = WorkingDirString;
-        string WorkingDir7 = WorkingDirString;
-        string WorkingDir8 = ExeString;
-
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("outputVP8New.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("outputVP8Old.ivf");
-        WorkingDir6.append(slashCharStr);
-        WorkingDir6.append("outputVP8Old.ivf");
-        WorkingDir7.append(slashCharStr);
-        WorkingDir7.append("ParFile.txt");
-        WorkingDir8.append(ExeInput);
+        outputVP8New.append(slashCharStr);
+        outputVP8New.append("outputVP8New.ivf");
+        outputVP8Old.append(slashCharStr);
+        outputVP8Old.append("outputVP8Old.ivf");
+        outputVP8Old2.append(slashCharStr);
+        outputVP8Old2.append("outputVP8Old.ivf");
+        ParFile.append(slashCharStr);
+        ParFile.append("ParFile.txt");
+        Program.append(ExeInput);
 
 #if defined(_WIN32)
         {
-            WorkingDir8.insert(0, "\"");
-            WorkingDir8.insert(0, "\"");
-            WorkingDir8.append("\" \"");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\" \"");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\" 8");
-            WorkingDir8.append(" \"");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\"");
-            WorkingDir8.append(" 2");
-            WorkingDir8.append("\"");
+            Program.insert(0, "\"");
+            Program.insert(0, "\"");
+            Program.append("\" \"");
+            Program.append(input);
+            Program.append("\" \"");
+            Program.append(outputVP8Old);
+            Program.append("\" 8");
+            Program.append(" \"");
+            Program.append(ParFile);
+            Program.append("\"");
+            Program.append(" 2");
+            Program.append("\"");
         }
-#elif defined(linux)
+#else
         {
-            //WorkingDir8.insert(0,"\"");
-            WorkingDir8.insert(0, "\'");
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\' 8");
-            WorkingDir8.append(" \'");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\'");
-            WorkingDir8.append(" 2");
-            //WorkingDir8.append("\"");
-        }
-#elif defined(__APPLE__)
-        {
-            //WorkingDir8.insert(0,"\"");
-            WorkingDir8.insert(0, "\'");
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\' 8");
-            WorkingDir8.append(" \'");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\'");
-            WorkingDir8.append(" 2");
-            //WorkingDir8.append("\"");
-        }
-#elif defined(__POWERPC__)
-        {
-            //WorkingDir8.insert(0,"\"");
-            WorkingDir8.insert(0, "\'");
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(input);
-            WorkingDir8.append("\' \'");
-            WorkingDir8.append(WorkingDir5);
-            WorkingDir8.append("\' 8");
-            WorkingDir8.append(" \'");
-            WorkingDir8.append(WorkingDir7);
-            WorkingDir8.append("\'");
-            WorkingDir8.append(" 2");
-            //WorkingDir8.append("\"");
+            Program.insert(0, "\'");
+            Program.append("\' \'");
+            Program.append(input);
+            Program.append("\' \'");
+            Program.append(outputVP8Old);
+            Program.append("\' 8");
+            Program.append(" \'");
+            Program.append(ParFile);
+            Program.append("\'");
+            Program.append(" 2");
         }
 #endif
 
-        char outputVP8New[255];
-        char outputVP8Old[255];
-        char outputVP8Old2[255];
-        char ParFile[255];
-        char Program[1024];
+        //char outputVP8New[255];
+        //char outputVP8Old[255];
+        //char outputVP8Old2[255];
+        //char ParFile[255];
+        //char Program[1024];
 
-        snprintf(outputVP8New, 255, "%s", WorkingDir4.c_str());
-        snprintf(outputVP8Old, 255, "%s", WorkingDir5.c_str());
-        snprintf(outputVP8Old2, 255, "%s", WorkingDir6.c_str());
-        snprintf(ParFile, 255, "%s", WorkingDir7.c_str());
-        snprintf(Program, 1024, "%s", WorkingDir8.c_str());
+        //snprintf(outputVP8New, 255, "%s", WorkingDir4.c_str());
+        //snprintf(outputVP8Old, 255, "%s", WorkingDir5.c_str());
+        //snprintf(outputVP8Old2, 255, "%s", WorkingDir6.c_str());
+        //snprintf(ParFile, 255, "%s", WorkingDir7.c_str());
+        //snprintf(Program, 1024, "%s", WorkingDir8.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -18350,7 +17342,7 @@ int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string Fil
         int speed = 0;
 
 
-        unsigned int Time1;
+        unsigned int Time1 = 0;
         unsigned int Time2 = 0;
         unsigned int Time3 = 0;
 
@@ -18389,17 +17381,19 @@ int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string Fil
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            Time1 = TimeReturn(outputVP8New, 0);
-            Time2 = TimeReturn(outputVP8Old2, 0);
+            Time1 = TimeReturn(outputVP8New.c_str(), 0);
+            Time2 = TimeReturn(outputVP8Old2.c_str(), 0);
 
-            cout << "\nTime1: " << Time1 << "\n";
-            cout << "\nTime2: " << Time2 << "\n";
+            printf("\nTime1: %i\n", Time1);
+            printf("\nTime2: %i\n", Time2);
+            fprintf(stderr, "\nTime1: %i\n", Time1);
+            fprintf(stderr, "\nTime2: %i\n", Time2);
         }
         else
         {
 
             opt.Mode = MODE_REALTIME;
-            Time1 = TimeCompressIVFtoIVF(input, outputVP8New, speed, BitRate, opt, "VP8", 0, 0);
+            Time1 = TimeCompressIVFtoIVF(input, outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0);
 
             if (Time1 == -1)
             {
@@ -18409,7 +17403,7 @@ int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string Fil
                 return 2;
             }
 
-            OutPutCompatSettings(ParFile, opt, ParFileNum);
+            OutPutCompatSettings(ParFile.c_str(), opt, ParFileNum);
             printf("\nCompressing Old File\n");
 
             fclose(fp);
@@ -18422,8 +17416,8 @@ int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string Fil
 
             fprintf(stderr, " ");
 
-            system(Program);
-            Time2 = TimeReturn(outputVP8Old2, 0);
+            RunExe(Program);
+            Time2 = TimeReturn(outputVP8Old2.c_str(), 0);
 
             printf("\n\nFile completed: Time in Microseconds: %i", Time2);
             fprintf(stderr, "\n\nFile completed: Time in Microseconds: %i", Time2);
@@ -18495,7 +17489,7 @@ int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string Fil
             return 2;
         }
     }
-int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         //This test looks a lot like NoiseSensitivityWorks but has a different purpose.  This test ensures
         //That different noise sensitivities have an effect for each possible noise sensitivity value and
@@ -18615,12 +17609,9 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
             WorkingDirString = WorkingDir2;
         }
 
-
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("NoiseSenseOut");
+        string NoiseSenseBase = WorkingDirString;
+        NoiseSenseBase.append(slashCharStr);
+        NoiseSenseBase.append("NoiseSenseOut");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -18702,12 +17693,12 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                 char num[20];
                 itoa_custom(Noise, num, 10);
 
-                string WorkingDir5 = WorkingDir4;
-                WorkingDir5.append(num);
-                WorkingDir5.append(".ivf");
+                string NoiseSenseOut = NoiseSenseBase;
+                NoiseSenseOut.append(num);
+                NoiseSenseOut.append(".ivf");
 
-                char NoiseSenseOut[255];
-                snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
+                //char NoiseSenseOut[255];
+                //snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
 
                 if (doOnce == 1)
                 {
@@ -18717,10 +17708,10 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                 printf("\n");
                 fprintf(stderr, "\n");
 
-                PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, 0, 0, 1, NULL);
+                PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut.c_str(), 0, 0, 1, NULL);
                 printf("\n");
                 fprintf(stderr, "\n");
-                File2bytes[Noise] = FileSize(NoiseSenseOut);
+                File2bytes[Noise] = FileSize(NoiseSenseOut.c_str());
                 printf("\n");
                 fprintf(stderr, "\n");
 
@@ -18735,19 +17726,19 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                 char num[20];
                 itoa_custom(Noise, num, 10);
 
-                string WorkingDir5 = WorkingDir4;
-                WorkingDir5.append(num);
-                WorkingDir5.append(".ivf");
+                string NoiseSenseOut = NoiseSenseBase;
+                NoiseSenseOut.append(num);
+                NoiseSenseOut.append(".ivf");
 
-                char NoiseSenseOut[255];
-                snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
+                //char NoiseSenseOut[255];
+                //snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
 
                 if (Mode == 0)
                 {
                     opt.Mode = MODE_REALTIME;
                     opt.noise_sensitivity = Noise;
 
-                    if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
+                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -18761,7 +17752,7 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                     opt.Mode = MODE_GOODQUALITY;
                     opt.noise_sensitivity = Noise;
 
-                    if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
+                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -18776,7 +17767,7 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                     opt.Mode = MODE_BESTQUALITY;
                     opt.noise_sensitivity = Noise;
 
-                    if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
+                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -18794,7 +17785,7 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                     opt.noise_sensitivity = Noise;
                     opt.Mode = MODE_SECONDPASS;
 
-                    if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
+                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -18808,7 +17799,7 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                     opt.noise_sensitivity = Noise;
                     opt.Mode = MODE_SECONDPASS_BEST;
 
-                    if (CompressIVFtoIVF(input, NoiseSenseOut, speed, BitRate, opt, CompressString, Noise, 0) == -1)
+                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
                     {
                         fclose(fp);
                         string File1Str = File1;
@@ -18823,10 +17814,10 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
                     printf("\n");
                     fprintf(stderr, "\n");
 
-                    PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut, 0, 0, 1, NULL);
+                    PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut.c_str(), 0, 0, 1, NULL);
                     printf("\n");
                     fprintf(stderr, "\n");
-                    File2bytes[Noise] = FileSize(NoiseSenseOut);
+                    File2bytes[Noise] = FileSize(NoiseSenseOut.c_str());
                     printf("\n");
                     fprintf(stderr, "\n");
                 }
@@ -18920,7 +17911,7 @@ int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string Fil
             return 0;
         }
     }
-int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "AllowDF";
 
@@ -19022,39 +18013,25 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
         }
 
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir4b = WorkingDirString;
-        string WorkingDir5b = WorkingDirString;
-        string WorkingDir4c = WorkingDirString;
-        string WorkingDir5c = WorkingDirString;
+        string TwoPassOutFile1 = WorkingDirString;
+        string OnePassOutFile1 = WorkingDirString;
+        string TwoPassOutFile2 = WorkingDirString;
+        string OnePassOutFile2 = WorkingDirString;
+        string TwoPassOutFile3 = WorkingDirString;
+        string OnePassOutFile3 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("TwoPassOutput1.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("OnePassOutput1.ivf");
-        WorkingDir4b.append(slashCharStr);
-        WorkingDir4b.append("TwoPassOutput2.ivf");
-        WorkingDir5b.append(slashCharStr);
-        WorkingDir5b.append("OnePassOutput2.ivf");
-        WorkingDir4c.append(slashCharStr);
-        WorkingDir4c.append("TwoPassOutput3.ivf");
-        WorkingDir5c.append(slashCharStr);
-        WorkingDir5c.append("OnePassOutput3.ivf");
-
-        char TwoPassOutFile1[255];
-        char OnePassOutFile1[255];
-        char TwoPassOutFile2[255];
-        char OnePassOutFile2[255];
-        char TwoPassOutFile3[255];
-        char OnePassOutFile3[255];
-
-        snprintf(TwoPassOutFile1, 255, "%s", WorkingDir4.c_str());
-        snprintf(OnePassOutFile1, 255, "%s", WorkingDir5.c_str());
-        snprintf(TwoPassOutFile2, 255, "%s", WorkingDir4b.c_str());
-        snprintf(OnePassOutFile2, 255, "%s", WorkingDir5b.c_str());
-        snprintf(TwoPassOutFile3, 255, "%s", WorkingDir4c.c_str());
-        snprintf(OnePassOutFile3, 255, "%s", WorkingDir5c.c_str());
+        TwoPassOutFile1.append(slashCharStr);
+        TwoPassOutFile1.append("TwoPassOutput1.ivf");
+        OnePassOutFile1.append(slashCharStr);
+        OnePassOutFile1.append("OnePassOutput1.ivf");
+        TwoPassOutFile2.append(slashCharStr);
+        TwoPassOutFile2.append("TwoPassOutput2.ivf");
+        OnePassOutFile2.append(slashCharStr);
+        OnePassOutFile2.append("OnePassOutput2.ivf");
+        TwoPassOutFile3.append(slashCharStr);
+        TwoPassOutFile3.append("TwoPassOutput3.ivf");
+        OnePassOutFile3.append(slashCharStr);
+        OnePassOutFile3.append("OnePassOutput3.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -19141,7 +18118,7 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
             opt.Mode = 5;
             opt.target_bandwidth = BitRate1;
 
-            if (CompressIVFtoIVF(input, TwoPassOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -19151,7 +18128,7 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
 
             opt.target_bandwidth = BitRate2;
 
-            if (CompressIVFtoIVF(input, TwoPassOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -19161,7 +18138,7 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
 
             opt.target_bandwidth = BitRate3;
 
-            if (CompressIVFtoIVF(input, TwoPassOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -19172,7 +18149,7 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
             opt.Mode = 2;
             opt.target_bandwidth = BitRate1;
 
-            if (CompressIVFtoIVF(input, OnePassOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, OnePassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -19182,7 +18159,7 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
 
             opt.target_bandwidth = BitRate2;
 
-            if (CompressIVFtoIVF(input, OnePassOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, OnePassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -19192,7 +18169,7 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
 
             opt.target_bandwidth = BitRate3;
 
-            if (CompressIVFtoIVF(input, OnePassOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, OnePassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -19213,12 +18190,12 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
 
         cout << "\n";
 
-        float SizeTwoPass1 = IVFDataRate(TwoPassOutFile1, 1);
-        float SizeOnePass1 = IVFDataRate(OnePassOutFile1, 1);
-        float SizeTwoPass2 = IVFDataRate(TwoPassOutFile2, 1);
-        float SizeOnePass2 = IVFDataRate(OnePassOutFile2, 1);
-        float SizeTwoPass3 = IVFDataRate(TwoPassOutFile3, 1);
-        float SizeOnePass3 = IVFDataRate(OnePassOutFile3, 1);
+        float SizeTwoPass1 = IVFDataRate(TwoPassOutFile1.c_str(), 1);
+        float SizeOnePass1 = IVFDataRate(OnePassOutFile1.c_str(), 1);
+        float SizeTwoPass2 = IVFDataRate(TwoPassOutFile2.c_str(), 1);
+        float SizeOnePass2 = IVFDataRate(OnePassOutFile2.c_str(), 1);
+        float SizeTwoPass3 = IVFDataRate(TwoPassOutFile3.c_str(), 1);
+        float SizeOnePass3 = IVFDataRate(OnePassOutFile3.c_str(), 1);
 
         double PSNRTwoPass1;
         double PSNRTwoPass2;
@@ -19228,12 +18205,12 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
         double PSNROnePass2;
         double PSNROnePass3;
 
-        PSNRTwoPass1 = IVFPSNR(input, TwoPassOutFile1, 1, 0, 1, NULL);
-        PSNRTwoPass2 = IVFPSNR(input, TwoPassOutFile2, 1, 0, 1, NULL);
-        PSNRTwoPass3 = IVFPSNR(input, TwoPassOutFile3, 1, 0, 1, NULL);
-        PSNROnePass1 = IVFPSNR(input, OnePassOutFile1, 1, 0, 1, NULL);
-        PSNROnePass2 = IVFPSNR(input, OnePassOutFile2, 1, 0, 1, NULL);
-        PSNROnePass3 = IVFPSNR(input, OnePassOutFile3, 1, 0, 1, NULL);
+        PSNRTwoPass1 = IVFPSNR(input, TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
+        PSNRTwoPass2 = IVFPSNR(input, TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
+        PSNRTwoPass3 = IVFPSNR(input, TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
+        PSNROnePass1 = IVFPSNR(input, OnePassOutFile1.c_str(), 1, 0, 1, NULL);
+        PSNROnePass2 = IVFPSNR(input, OnePassOutFile2.c_str(), 1, 0, 1, NULL);
+        PSNROnePass3 = IVFPSNR(input, OnePassOutFile3.c_str(), 1, 0, 1, NULL);
 
         //    double PSRNPerc = absDouble(((PSNR2 - PSNR1) / PSNR1) * 100.00);
         //    double BRPerc = absDouble(((Size2 - Size1) / Size1) * 100.00);
@@ -19406,7 +18383,7 @@ int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[
     }
 
 
-int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "PlayAlternate";
 
@@ -19521,19 +18498,13 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
             FileStream.close();
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string PlayAlternate1 = WorkingDirString;
+        string PlayAlternate2 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("PlayAlternate1Output.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("PlayAlternate2Output.ivf");
-
-        char PlayAlternate1[255];
-        char PlayAlternate2[255];
-
-        snprintf(PlayAlternate1, 255, "%s", WorkingDir4.c_str());
-        snprintf(PlayAlternate2, 255, "%s", WorkingDir5.c_str());
+        PlayAlternate1.append(slashCharStr);
+        PlayAlternate1.append("PlayAlternate1Output.ivf");
+        PlayAlternate2.append(slashCharStr);
+        PlayAlternate2.append("PlayAlternate2Output.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -19629,7 +18600,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.Mode = MODE_REALTIME;
                 opt.play_alternate = PlayAlternate1Val;
 
-                if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19640,7 +18611,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.Mode = MODE_REALTIME;
                 opt.play_alternate = PlayAlternate2Val;
 
-                if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19654,7 +18625,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.Mode = MODE_GOODQUALITY;
                 opt.play_alternate = PlayAlternate1Val;
 
-                if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19665,7 +18636,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.Mode = MODE_GOODQUALITY;
                 opt.play_alternate = PlayAlternate2Val;
 
-                if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19679,7 +18650,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.Mode = MODE_BESTQUALITY;
                 opt.play_alternate = PlayAlternate1Val;
 
-                if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19690,7 +18661,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.Mode = MODE_BESTQUALITY;
                 opt.play_alternate = PlayAlternate2Val;
 
-                if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19708,7 +18679,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.play_alternate = PlayAlternate1Val;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19719,7 +18690,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.play_alternate = PlayAlternate2Val;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19733,7 +18704,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.play_alternate = PlayAlternate1Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, PlayAlternate1, speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19744,7 +18715,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
                 opt.play_alternate = PlayAlternate2Val;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, PlayAlternate2, speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
+                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -19762,19 +18733,19 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        int lngRC = CompIVF(PlayAlternate2, PlayAlternate1);
+        int lngRC = CompIVF(PlayAlternate2.c_str(), PlayAlternate1.c_str());
 
         int fail = 0;
 
-        int PlayAlternateOnAltRefCount = IVFDisplayAltRefFrames(PlayAlternate2, 1);
-        int PlayAlternateOffAltRefCount = IVFDisplayAltRefFrames(PlayAlternate1, 1);
-        int VisibleFrameONCount = IVFDisplayVisibleFrames(PlayAlternate2, 1);
-        int VisibleFrameOFFCount = IVFDisplayVisibleFrames(PlayAlternate1, 1);
+        int PlayAlternateOnAltRefCount = IVFDisplayAltRefFrames(PlayAlternate2.c_str(), 1);
+        int PlayAlternateOffAltRefCount = IVFDisplayAltRefFrames(PlayAlternate1.c_str(), 1);
+        int VisibleFrameONCount = IVFDisplayVisibleFrames(PlayAlternate2.c_str(), 1);
+        int VisibleFrameOFFCount = IVFDisplayVisibleFrames(PlayAlternate1.c_str(), 1);
 
         char PlayAlternateOnFilename[255];
-        FileName(PlayAlternate2, PlayAlternateOnFilename, 0);
+        FileName(PlayAlternate2.c_str(), PlayAlternateOnFilename, 0);
         char PlayAlternateOffFilename[255];
-        FileName(PlayAlternate1, PlayAlternateOffFilename, 0);
+        FileName(PlayAlternate1.c_str(), PlayAlternateOffFilename, 0);
 
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
@@ -19882,7 +18853,7 @@ int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], 
         }
     }
 
-int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "AllowDF";
         char *input = argv[2];
@@ -19995,15 +18966,10 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string PostProcOutFile = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("PostProcOutput.ivf");
-
-        char PostProcOutFile[255];
-
-        snprintf(PostProcOutFile, 255, "%s", WorkingDir4.c_str());
+        PostProcOutFile.append(slashCharStr);
+        PostProcOutFile.append("PostProcOutput.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -20090,7 +19056,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
             {
                 opt.Mode = MODE_REALTIME;
 
-                if (CompressIVFtoIVF(input, PostProcOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20103,7 +19069,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
             {
                 opt.Mode = MODE_GOODQUALITY;
 
-                if (CompressIVFtoIVF(input, PostProcOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20116,7 +19082,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
             {
                 opt.Mode = MODE_BESTQUALITY;
 
-                if (CompressIVFtoIVF(input, PostProcOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20133,7 +19099,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
             {
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, PostProcOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20146,7 +19112,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
             {
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, PostProcOutFile, speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20175,13 +19141,13 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
 
         printf("\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         fprintf(stderr, "\nCaculating PSNR: ONYXD_NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, 0, flags, &ssim);
+        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
         countme++;
 
         flags++;
         printf("\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         fprintf(stderr, "\nCaculating PSNR: ONYXD_DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+        PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
         countme++;
         flags++;
 
@@ -20189,7 +19155,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
         {
             printf("\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             fprintf(stderr, "\nCaculating PSNR: ONYXD_DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, 0, flags, &ssim);
+            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
             countme++;
             deblock_level++;
         }
@@ -20202,7 +19168,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
         {
             printf("\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             fprintf(stderr, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile, 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+            PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
             countme++;
 
             noise_level++;
@@ -20466,7 +19432,7 @@ int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesA
             return 0;
         }
     }
-int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "Allow Drop Frames";
@@ -20581,19 +19547,11 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string ReconBuffer = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("ReconBuffer.ivf");
-        //WorkingDir5.append(slashCharStr);
-        //WorkingDir5.append("AllowDFOffOutput.ivf");
+        ReconBuffer.append(slashCharStr);
+        ReconBuffer.append("ReconBuffer.ivf");
 
-        char ReconBuffer[255];
-        //char AllowDFoff[255];
-
-        snprintf(ReconBuffer, 255, "%s", WorkingDir4.c_str());
-        //snprintf(AllowDFoff, 255, "%s", WorkingDir5.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -20668,9 +19626,6 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
         opt.target_bandwidth = BitRate;
         opt.lag_in_frames = 0;
         opt.play_alternate = 0;
-        //opt.lag_in_frames = 18; //Test works when lag in frames = 0 but does not work if lag in
-        //frames greater than 0 so for temp fix we just use lag in frames
-        // = 0.
 
         //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
         //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
@@ -20687,7 +19642,7 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
             {
                 opt.Mode = MODE_REALTIME;
 
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20701,7 +19656,7 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
                 opt.Mode = MODE_GOODQUALITY;
                 opt.allow_df = 0;
 
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20715,7 +19670,7 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
                 opt.Mode = MODE_BESTQUALITY;
                 opt.allow_df = 0;
 
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20729,7 +19684,7 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
                 opt.allow_df = 0;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20743,7 +19698,7 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
                 opt.allow_df = 0;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -20761,39 +19716,17 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
             return 10;
         }
 
-        //int AllowDFonFrames = IVFDisplayVisibleFrames(AllowDFon, 1);
-        //int AllowDFoffFrames = IVFDisplayVisibleFrames(AllowDFoff, 1);
-
-        /*printf("\n\n");
-        fprintf(stderr, "\n\n");
-        long File1bytes = FileSize(AllowDFon);
-        printf("\n");
-        fprintf(stderr, "\n");
-        long File2bytes = FileSize(AllowDFoff);
-        printf("\n");
-        fprintf(stderr, "\n");*/
-
-        /*char OutputChar1[255];
-        snprintf(OutputChar1, 255, "",);
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");fprintf(stderr, "\n");*/
-
         printf("\n\nResults:\n\n");
         fprintf(stderr, "\n\nResults:\n\n");
 
         int fail = 0;
 
-        //int NumberofFramesInFile = GetNumberofFrames(ReconBuffer);
-
         ifstream ReconOutFile;
         string ReconOutStr = ReconBuffer;
         ReconOutStr.erase(ReconOutStr.length() - 4, 4);
         ReconOutStr.append("_ReconFrameState.txt");
-        char ReconOutChar[255];
-        snprintf(ReconOutChar, 255, "%s", ReconOutStr.c_str());
 
-        ReconOutFile.open(ReconOutChar);
+        ReconOutFile.open(ReconOutStr.c_str());
 
         int Frame;
         char BufferLetter;
@@ -20848,7 +19781,7 @@ int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], in
             return 0;
         }
     }
-int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "ResampleDownWaterMark";
 
@@ -20958,19 +19891,13 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string DownWaterSamp90OutFile = WorkingDirString;
+        string DownWaterSamp10OutFile = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("DownWaterSamp90Output.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("DownWaterSamp10Output.ivf");
-
-        char DownWaterSamp90OutFile[255];
-        char DownWaterSamp10OutFile[255];
-
-        snprintf(DownWaterSamp90OutFile, 255, "%s", WorkingDir4.c_str());
-        snprintf(DownWaterSamp10OutFile, 255, "%s", WorkingDir5.c_str());
+        DownWaterSamp90OutFile.append(slashCharStr);
+        DownWaterSamp90OutFile.append("DownWaterSamp90Output.ivf");
+        DownWaterSamp10OutFile.append(slashCharStr);
+        DownWaterSamp10OutFile.append("DownWaterSamp10Output.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -21041,7 +19968,6 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
         }
 
         /////////////////////////////////////////////////////////
-        //opt.auto_key = 0;
         opt.allow_lag = 0;
         opt.allow_spatial_resampling = 1;
         opt.end_usage = 0;
@@ -21067,7 +19993,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.Mode = MODE_REALTIME;
                 opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21078,7 +20004,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.Mode = MODE_REALTIME;
                 opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21092,7 +20018,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.Mode = MODE_GOODQUALITY;
                 opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21103,7 +20029,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.Mode = MODE_GOODQUALITY;
                 opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21117,7 +20043,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.Mode = MODE_BESTQUALITY;
                 opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21128,7 +20054,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.Mode = MODE_BESTQUALITY;
                 opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21146,7 +20072,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21157,7 +20083,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.resample_down_water_mark = ResampleDownWaterMarkLow;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21171,7 +20097,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21182,7 +20108,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
                 opt.resample_down_water_mark = ResampleDownWaterMarkLow;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile, speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -21203,34 +20129,34 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
         }
 
         char DownWaterSamp10Filename[255];
-        FileName(DownWaterSamp10OutFile, DownWaterSamp10Filename, 0);
+        FileName(DownWaterSamp10OutFile.c_str(), DownWaterSamp10Filename, 0);
         char DownWaterSamp90Filename[255];
-        FileName(DownWaterSamp90OutFile, DownWaterSamp90Filename, 0);
+        FileName(DownWaterSamp90OutFile.c_str(), DownWaterSamp90Filename, 0);
 
-        int DispKeyFrames10int = IVFDisplayKeyFrames(DownWaterSamp10OutFile, 1);
-        int DispResized10int = IVFDisplayResizedFrames(DownWaterSamp10OutFile, 1);
-        int DispCheckPBMThr10int = IVFCheckPBMThreshold(DownWaterSamp10OutFile, opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkLow);
+        int DispKeyFrames10int = IVFDisplayKeyFrames(DownWaterSamp10OutFile.c_str(), 1);
+        int DispResized10int = IVFDisplayResizedFrames(DownWaterSamp10OutFile.c_str(), 1);
+        int DispCheckPBMThr10int = IVFCheckPBMThreshold(DownWaterSamp10OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkLow);
         int RDWMCheck10int = 0;
 
         if (DispResized10int > 0)
         {
             printf("\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp10Filename);
-            RDWMCheck10int = IVFDFWMCheck(DownWaterSamp10OutFile, 1);
+            RDWMCheck10int = IVFDFWMCheck(DownWaterSamp10OutFile.c_str(), 1);
         }
         else
         {
             RDWMCheck10int = -2;
         }
 
-        int DispKeyFrames90int = IVFDisplayKeyFrames(DownWaterSamp90OutFile, 1);
-        int DispResized90int = IVFDisplayResizedFrames(DownWaterSamp90OutFile, 1);
-        int DispCheckPBMThr90int = IVFCheckPBMThreshold(DownWaterSamp90OutFile, opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkHigh);
+        int DispKeyFrames90int = IVFDisplayKeyFrames(DownWaterSamp90OutFile.c_str(), 1);
+        int DispResized90int = IVFDisplayResizedFrames(DownWaterSamp90OutFile.c_str(), 1);
+        int DispCheckPBMThr90int = IVFCheckPBMThreshold(DownWaterSamp90OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkHigh);
         int RDWMCheck90int = -3;
 
         if (DispResized90int > 0)
         {
             printf("\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp90Filename);
-            RDWMCheck90int = IVFDFWMCheck(DownWaterSamp90OutFile, 1);
+            RDWMCheck90int = IVFDFWMCheck(DownWaterSamp90OutFile.c_str(), 1);
         }
         else
         {
@@ -21452,7 +20378,7 @@ int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string Fil
             return 0;
         }
     }
-int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "CpuUsed";
 
@@ -21565,13 +20491,13 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string SpeedTestGoodQBase = WorkingDirString;
+        string SpeedTestRealTimeBase = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("SpeedTestGoodQ_CpuUsed");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("SpeedTestRealTime_CpuUsed");
+        SpeedTestGoodQBase.append(slashCharStr);
+        SpeedTestGoodQBase.append("SpeedTestGoodQ_CpuUsed");
+        SpeedTestRealTimeBase.append(slashCharStr);
+        SpeedTestRealTimeBase.append("SpeedTestRealTime_CpuUsed");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -21625,6 +20551,7 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
         int Fail2 = 0;
         int Failb = 0;
         int Fail2b = 0;
+
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
 
@@ -21677,15 +20604,15 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
                     char CounterChar[4];
                     itoa_custom(counter, CounterChar, 10);
 
-                    string OutPutFile1 = WorkingDir4;
-                    OutPutFile1.append(CounterChar);
-                    OutPutFile1.append(".ivf");
+                    string SpeedTestGoodQ = SpeedTestGoodQBase;
+                    SpeedTestGoodQ.append(CounterChar);
+                    SpeedTestGoodQ.append(".ivf");
 
-                    char SpeedTestGoodQ[255];
-                    snprintf(SpeedTestGoodQ, 255, "%s", OutPutFile1.c_str());
+                    //char SpeedTestGoodQ[255];
+                    //snprintf(SpeedTestGoodQ, 255, "%s", OutPutFile1.c_str());
 
-                    GoodTotalms[counter] = TimeReturn(SpeedTestGoodQ, 0);
-                    GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ, 1, 0, 1, NULL);
+                    GoodTotalms[counter] = TimeReturn(SpeedTestGoodQ.c_str(), 0);
+                    GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
                     counter++;
                 }
             }
@@ -21700,15 +20627,15 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
                     char CounterChar[4];
                     itoa_custom(counter, CounterChar, 10);
 
-                    string OutPutFile2 = WorkingDir5;
-                    OutPutFile2.append(CounterChar);
-                    OutPutFile2.append(".ivf");
+                    string SpeedTestRealTime = SpeedTestRealTimeBase;
+                    SpeedTestRealTime.append(CounterChar);
+                    SpeedTestRealTime.append(".ivf");
 
-                    char SpeedTestRealTime[255];
-                    snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
+                    //char SpeedTestRealTime[255];
+                    //snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
-                    RealTotalms[counter2] = TimeReturn(SpeedTestRealTime, 0);
-                    RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
+                    RealTotalms[counter2] = TimeReturn(SpeedTestRealTime.c_str(), 0);
+                    RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                     counter--;
                     counter2++;
                 }
@@ -21720,15 +20647,15 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
                     char CounterChar[4];
                     itoa_custom(counter, CounterChar, 10);
 
-                    string OutPutFile2 = WorkingDir5;
-                    OutPutFile2.append(CounterChar);
-                    OutPutFile2.append(".ivf");
+                    string SpeedTestRealTime = SpeedTestRealTimeBase;
+                    SpeedTestRealTime.append(CounterChar);
+                    SpeedTestRealTime.append(".ivf");
 
-                    char SpeedTestRealTime[255];
-                    snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
+                    //char SpeedTestRealTime[255];
+                    //snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
-                    RealTotalmsPos[counter] = TimeReturn(SpeedTestRealTime, 0);
-                    RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
+                    RealTotalmsPos[counter] = TimeReturn(SpeedTestRealTime.c_str(), 0);
+                    RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                     counter++;
                 }
             }
@@ -21745,17 +20672,17 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
                     char CounterChar[4];
                     itoa_custom(counter, CounterChar, 10);
 
-                    string OutPutFile1 = WorkingDir4;
-                    OutPutFile1.append(CounterChar);
-                    OutPutFile1.append(".ivf");
+                    string SpeedTestGoodQ = SpeedTestGoodQBase;
+                    SpeedTestGoodQ.append(CounterChar);
+                    SpeedTestGoodQ.append(".ivf");
 
-                    char SpeedTestGoodQ[255];
-                    snprintf(SpeedTestGoodQ, 255, "%s", OutPutFile1.c_str());
+                    //char SpeedTestGoodQ[255];
+                    //snprintf(SpeedTestGoodQ, 255, "%s", OutPutFile1.c_str());
 
                     opt.cpu_used = counter;
                     CompressInt = opt.cpu_used;
                     opt.Mode = MODE_GOODQUALITY;
-                    GoodTotalms[counter] = TimeCompressIVFtoIVF(input, SpeedTestGoodQ, speed, BitRate, opt, CompressString, CompressInt, 0);
+                    GoodTotalms[counter] = TimeCompressIVFtoIVF(input, SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                     if (GoodTotalms[counter] == -1)
                     {
@@ -21767,7 +20694,7 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
 
                     if (TestType != 2 && TestType != 3)
                     {
-                        GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ, 1, 0, 1, NULL);
+                        GoodPSNRArr[counter] = IVFPSNR(input, SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
                     }
 
                     counter++;
@@ -21784,21 +20711,21 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
                     char CounterChar[4];
                     itoa_custom(counter, CounterChar, 10);
 
-                    string OutPutFile2 = WorkingDir5;
-                    OutPutFile2.append(CounterChar);
-                    OutPutFile2.append(".ivf");
+                    string SpeedTestRealTime = SpeedTestRealTimeBase;
+                    SpeedTestRealTime.append(CounterChar);
+                    SpeedTestRealTime.append(".ivf");
 
-                    char SpeedTestRealTime[255];
-                    snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
+                    //char SpeedTestRealTime[255];
+                    //snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
                     opt.cpu_used = counter;
                     CompressInt = opt.cpu_used;
                     opt.Mode = MODE_REALTIME;
-                    RealTotalms[counter2] = TimeCompressIVFtoIVF(input, SpeedTestRealTime, speed, BitRate, opt, CompressString, CompressInt, 0);
+                    RealTotalms[counter2] = TimeCompressIVFtoIVF(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                     if (TestType != 2 && TestType != 3)
                     {
-                        RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
+                        RealPSNRArr[counter2] = IVFPSNR(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                     }
 
                     counter--;
@@ -21812,17 +20739,17 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
                     char CounterChar[4];
                     itoa_custom(counter, CounterChar, 10);
 
-                    string OutPutFile2 = WorkingDir5;
-                    OutPutFile2.append(CounterChar);
-                    OutPutFile2.append(".ivf");
+                    string SpeedTestRealTime = SpeedTestRealTimeBase;
+                    SpeedTestRealTime.append(CounterChar);
+                    SpeedTestRealTime.append(".ivf");
 
-                    char SpeedTestRealTime[255];
-                    snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
+                    //char SpeedTestRealTime[255];
+                    //snprintf(SpeedTestRealTime, 255, "%s", OutPutFile2.c_str());
 
                     opt.cpu_used = counter;
                     CompressInt = opt.cpu_used;
                     opt.Mode = MODE_REALTIME;
-                    RealTotalmsPos[counter] = TimeCompressIVFtoIVF(input, SpeedTestRealTime, speed, BitRate, opt, CompressString, CompressInt, 0);
+                    RealTotalmsPos[counter] = TimeCompressIVFtoIVF(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
 
                     if (RealTotalmsPos[counter] == -1)
                     {
@@ -21834,7 +20761,7 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
 
                     if (TestType != 2 && TestType != 3)
                     {
-                        RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime, 1, 0, 1, NULL);
+                        RealPSNRArrPos[counter] = IVFPSNR(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                     }
 
                     counter++;
@@ -21944,8 +20871,8 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
                 counter++;
             }
 
-            cout << "\n\n";
-            cerr << "\n\n";
+            printf("\n\n");
+            fprintf(stderr, "\n\n");
 
             counter = 1;
 
@@ -22176,7 +21103,7 @@ int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int 
 
 
     }
-int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Test Vector Check";
         int CurTestVector = 1;
@@ -22288,320 +21215,23 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
         string TestVectorOutFolder = WorkingDirString.c_str();
         //TestVectorOutFolder.erase(TestVectorOutFolder.end() - 1);
 
+        int TestVectorNum = 0;
         string TestVector[102];
 
-        TestVector[0] = TestVectorFolder;
-        TestVector[1] = TestVectorFolder;
-        TestVector[2] = TestVectorFolder;
-        TestVector[3] = TestVectorFolder;
-        TestVector[4] = TestVectorFolder;
-        TestVector[5] = TestVectorFolder;
-        TestVector[6] = TestVectorFolder;
-        TestVector[7] = TestVectorFolder;
-        TestVector[8] = TestVectorFolder;
-        TestVector[9] = TestVectorFolder;
-        TestVector[10] = TestVectorFolder;
-        TestVector[11] = TestVectorFolder;
-        TestVector[12] = TestVectorFolder;
-        TestVector[13] = TestVectorFolder;
-        TestVector[14] = TestVectorFolder;
-        TestVector[15] = TestVectorFolder;
-        TestVector[16] = TestVectorFolder;
-        TestVector[17] = TestVectorFolder;
-        TestVector[18] = TestVectorFolder;
-        TestVector[19] = TestVectorFolder;
-        TestVector[20] = TestVectorFolder;
-        TestVector[21] = TestVectorFolder;
-        TestVector[22] = TestVectorFolder;
-        TestVector[23] = TestVectorFolder;
-        TestVector[24] = TestVectorFolder;
-        TestVector[25] = TestVectorFolder;
-        TestVector[26] = TestVectorFolder;
-        TestVector[27] = TestVectorFolder;
-        TestVector[28] = TestVectorFolder;
-        TestVector[29] = TestVectorFolder;
-        TestVector[30] = TestVectorFolder;
-        TestVector[31] = TestVectorFolder;
-        TestVector[32] = TestVectorFolder;
-        TestVector[33] = TestVectorFolder;
-        TestVector[34] = TestVectorFolder;
-        TestVector[35] = TestVectorFolder;
-        TestVector[36] = TestVectorFolder;
-        TestVector[37] = TestVectorFolder;
-        TestVector[38] = TestVectorFolder;
-        TestVector[39] = TestVectorFolder;
-        TestVector[40] = TestVectorFolder;
-        TestVector[41] = TestVectorFolder;
-        TestVector[42] = TestVectorFolder;
-        TestVector[43] = TestVectorFolder;
-        TestVector[44] = TestVectorFolder;
-        TestVector[45] = TestVectorFolder;
-        TestVector[46] = TestVectorFolder;
-        TestVector[47] = TestVectorFolder;
-        TestVector[48] = TestVectorFolder;
-        TestVector[49] = TestVectorFolder;
-        TestVector[50] = TestVectorFolder;
-        TestVector[51] = TestVectorFolder;
-        TestVector[52] = TestVectorFolder;
-        TestVector[53] = TestVectorFolder;
-        TestVector[54] = TestVectorFolder;
-        TestVector[55] = TestVectorFolder;
-        TestVector[56] = TestVectorFolder;
-        TestVector[57] = TestVectorFolder;
-        TestVector[58] = TestVectorFolder;
-        TestVector[59] = TestVectorFolder;
-        TestVector[60] = TestVectorFolder;
-        TestVector[61] = TestVectorFolder;
-        TestVector[62] = TestVectorFolder;
-        TestVector[63] = TestVectorFolder;
-        TestVector[64] = TestVectorFolder;
-        TestVector[65] = TestVectorFolder;
-        TestVector[66] = TestVectorFolder;
-        TestVector[67] = TestVectorFolder;
-        TestVector[68] = TestVectorFolder;
-        TestVector[69] = TestVectorFolder;
-        TestVector[70] = TestVectorFolder;
-        TestVector[71] = TestVectorFolder;
-        TestVector[72] = TestVectorFolder;
-        TestVector[73] = TestVectorFolder;
-        TestVector[74] = TestVectorFolder;
-        TestVector[75] = TestVectorFolder;
-        TestVector[76] = TestVectorFolder;
-        TestVector[77] = TestVectorFolder;
-        TestVector[78] = TestVectorFolder;
-        TestVector[79] = TestVectorFolder;
-        TestVector[80] = TestVectorFolder;
-        TestVector[81] = TestVectorFolder;
-        TestVector[82] = TestVectorFolder;
-        TestVector[83] = TestVectorFolder;
-        TestVector[84] = TestVectorFolder;
-        TestVector[85] = TestVectorFolder;
-        TestVector[86] = TestVectorFolder;
-        TestVector[87] = TestVectorFolder;
-        TestVector[88] = TestVectorFolder;
-        TestVector[89] = TestVectorFolder;
-        TestVector[90] = TestVectorFolder;
-        TestVector[91] = TestVectorFolder;
-        TestVector[92] = TestVectorFolder;
-        TestVector[93] = TestVectorFolder;
-        TestVector[94] = TestVectorFolder;
-        TestVector[95] = TestVectorFolder;
-        TestVector[96] = TestVectorFolder;
-        TestVector[97] = TestVectorFolder;
-        TestVector[98] = TestVectorFolder;
-        TestVector[99] = TestVectorFolder;
-        TestVector[100] = TestVectorFolder;
-        TestVector[101] = TestVectorFolder;
+        while (TestVectorNum < 102)
+        {
+            TestVector[TestVectorNum] = TestVectorFolder;
+            TestVectorNum++;
+        }
 
-        string TestVector_Text[102];
-
-        TestVector_Text[0] = (TestVectorOutFolder.c_str());
-        TestVector_Text[1] = (TestVectorOutFolder.c_str());
-        TestVector_Text[2] = (TestVectorOutFolder.c_str());
-        TestVector_Text[3] = (TestVectorOutFolder.c_str());
-        TestVector_Text[4] = (TestVectorOutFolder.c_str());
-        TestVector_Text[5] = (TestVectorOutFolder.c_str());
-        TestVector_Text[6] = (TestVectorOutFolder.c_str());
-        TestVector_Text[7] = (TestVectorOutFolder.c_str());
-        TestVector_Text[8] = (TestVectorOutFolder.c_str());
-        TestVector_Text[9] = (TestVectorOutFolder.c_str());
-        TestVector_Text[10] = (TestVectorOutFolder.c_str());
-        TestVector_Text[11] = (TestVectorOutFolder.c_str());
-        TestVector_Text[12] = (TestVectorOutFolder.c_str());
-        TestVector_Text[13] = (TestVectorOutFolder.c_str());
-        TestVector_Text[14] = (TestVectorOutFolder.c_str());
-        TestVector_Text[15] = (TestVectorOutFolder.c_str());
-        TestVector_Text[16] = (TestVectorOutFolder.c_str());
-        TestVector_Text[17] = (TestVectorOutFolder.c_str());
-        TestVector_Text[18] = (TestVectorOutFolder.c_str());
-        TestVector_Text[19] = (TestVectorOutFolder.c_str());
-        TestVector_Text[20] = (TestVectorOutFolder.c_str());
-        TestVector_Text[21] = (TestVectorOutFolder.c_str());
-        TestVector_Text[22] = (TestVectorOutFolder.c_str());
-        TestVector_Text[23] = (TestVectorOutFolder.c_str());
-        TestVector_Text[24] = (TestVectorOutFolder.c_str());
-        TestVector_Text[25] = (TestVectorOutFolder.c_str());
-        TestVector_Text[26] = (TestVectorOutFolder.c_str());
-        TestVector_Text[27] = (TestVectorOutFolder.c_str());
-        TestVector_Text[28] = (TestVectorOutFolder.c_str());
-        TestVector_Text[29] = (TestVectorOutFolder.c_str());
-        TestVector_Text[30] = (TestVectorOutFolder.c_str());
-        TestVector_Text[31] = (TestVectorOutFolder.c_str());
-        TestVector_Text[32] = (TestVectorOutFolder.c_str());
-        TestVector_Text[33] = (TestVectorOutFolder.c_str());
-        TestVector_Text[34] = (TestVectorOutFolder.c_str());
-        TestVector_Text[35] = (TestVectorOutFolder.c_str());
-        TestVector_Text[36] = (TestVectorOutFolder.c_str());
-        TestVector_Text[37] = (TestVectorOutFolder.c_str());
-        TestVector_Text[38] = (TestVectorOutFolder.c_str());
-        TestVector_Text[39] = (TestVectorOutFolder.c_str());
-        TestVector_Text[40] = (TestVectorOutFolder.c_str());
-        TestVector_Text[41] = (TestVectorOutFolder.c_str());
-        TestVector_Text[42] = (TestVectorOutFolder.c_str());
-        TestVector_Text[43] = (TestVectorOutFolder.c_str());
-        TestVector_Text[44] = (TestVectorOutFolder.c_str());
-        TestVector_Text[45] = (TestVectorOutFolder.c_str());
-        TestVector_Text[46] = (TestVectorOutFolder.c_str());
-        TestVector_Text[47] = (TestVectorOutFolder.c_str());
-        TestVector_Text[48] = (TestVectorOutFolder.c_str());
-        TestVector_Text[49] = (TestVectorOutFolder.c_str());
-        TestVector_Text[50] = (TestVectorOutFolder.c_str());
-        TestVector_Text[51] = (TestVectorOutFolder.c_str());
-        TestVector_Text[52] = (TestVectorOutFolder.c_str());
-        TestVector_Text[53] = (TestVectorOutFolder.c_str());
-        TestVector_Text[54] = (TestVectorOutFolder.c_str());
-        TestVector_Text[55] = (TestVectorOutFolder.c_str());
-        TestVector_Text[56] = (TestVectorOutFolder.c_str());
-        TestVector_Text[57] = (TestVectorOutFolder.c_str());
-        TestVector_Text[58] = (TestVectorOutFolder.c_str());
-        TestVector_Text[59] = (TestVectorOutFolder.c_str());
-        TestVector_Text[60] = (TestVectorOutFolder.c_str());
-        TestVector_Text[61] = (TestVectorOutFolder.c_str());
-        TestVector_Text[62] = (TestVectorOutFolder.c_str());
-        TestVector_Text[63] = (TestVectorOutFolder.c_str());
-        TestVector_Text[64] = (TestVectorOutFolder.c_str());
-        TestVector_Text[65] = (TestVectorOutFolder.c_str());
-        TestVector_Text[66] = (TestVectorOutFolder.c_str());
-        TestVector_Text[67] = (TestVectorOutFolder.c_str());
-        TestVector_Text[68] = (TestVectorOutFolder.c_str());
-        TestVector_Text[69] = (TestVectorOutFolder.c_str());
-        TestVector_Text[70] = (TestVectorOutFolder.c_str());
-        TestVector_Text[71] = (TestVectorOutFolder.c_str());
-        TestVector_Text[72] = (TestVectorOutFolder.c_str());
-        TestVector_Text[73] = (TestVectorOutFolder.c_str());
-        TestVector_Text[74] = (TestVectorOutFolder.c_str());
-        TestVector_Text[75] = (TestVectorOutFolder.c_str());
-        TestVector_Text[76] = (TestVectorOutFolder.c_str());
-        TestVector_Text[77] = (TestVectorOutFolder.c_str());
-        TestVector_Text[78] = (TestVectorOutFolder.c_str());
-        TestVector_Text[79] = (TestVectorOutFolder.c_str());
-        TestVector_Text[80] = (TestVectorOutFolder.c_str());
-        TestVector_Text[81] = (TestVectorOutFolder.c_str());
-        TestVector_Text[82] = (TestVectorOutFolder.c_str());
-        TestVector_Text[83] = (TestVectorOutFolder.c_str());
-        TestVector_Text[84] = (TestVectorOutFolder.c_str());
-        TestVector_Text[85] = (TestVectorOutFolder.c_str());
-        TestVector_Text[86] = (TestVectorOutFolder.c_str());
-        TestVector_Text[87] = (TestVectorOutFolder.c_str());
-        TestVector_Text[88] = (TestVectorOutFolder.c_str());
-        TestVector_Text[89] = (TestVectorOutFolder.c_str());
-        TestVector_Text[90] = (TestVectorOutFolder.c_str());
-        TestVector_Text[91] = (TestVectorOutFolder.c_str());
-        TestVector_Text[92] = (TestVectorOutFolder.c_str());
-        TestVector_Text[93] = (TestVectorOutFolder.c_str());
-        TestVector_Text[94] = (TestVectorOutFolder.c_str());
-        TestVector_Text[95] = (TestVectorOutFolder.c_str());
-        TestVector_Text[96] = (TestVectorOutFolder.c_str());
-        TestVector_Text[97] = (TestVectorOutFolder.c_str());
-        TestVector_Text[98] = (TestVectorOutFolder.c_str());
-        TestVector_Text[99] = (TestVectorOutFolder.c_str());
-        TestVector_Text[100] = (TestVectorOutFolder.c_str());
-        TestVector_Text[101] = (TestVectorOutFolder.c_str());
-
+        TestVectorNum = 0;
         string TestVector_Raw[102];
 
-        TestVector_Raw[0] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[1] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[2] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[3] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[4] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[5] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[6] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[7] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[8] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[9] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[10] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[11] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[12] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[13] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[14] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[15] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[16] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[17] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[18] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[19] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[20] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[21] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[22] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[23] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[24] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[25] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[26] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[27] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[28] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[29] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[30] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[31] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[32] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[33] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[34] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[35] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[36] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[37] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[38] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[39] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[40] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[41] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[42] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[43] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[44] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[45] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[46] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[47] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[48] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[49] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[50] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[51] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[52] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[53] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[54] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[55] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[56] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[57] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[58] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[59] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[60] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[61] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[62] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[63] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[64] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[65] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[66] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[67] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[68] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[69] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[70] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[71] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[72] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[73] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[74] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[75] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[76] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[77] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[78] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[79] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[80] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[81] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[82] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[83] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[84] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[85] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[86] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[87] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[88] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[89] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[90] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[91] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[92] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[93] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[94] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[95] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[96] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[97] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[98] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[99] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[100] = (TestVectorOutFolder.c_str());
-        TestVector_Raw[101] = (TestVectorOutFolder.c_str());
+        while (TestVectorNum < 102)
+        {
+            TestVector_Raw[TestVectorNum] = (TestVectorOutFolder.c_str());
+            TestVectorNum++;
+        }
 
         TestVector[1].append(slashCharStr);
         TestVector[1].append("vp80-00-comprehensive-001.ivf");
@@ -22806,7 +21436,6 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
         TestVector[101].append(slashCharStr);
         TestVector[101].append("vp80-06-cropping-045.ivf");
 
-
         TestVector_Raw[1].append(slashCharStr);
         TestVector_Raw[1].append("vp80-00-comprehensive-001.raw");
         TestVector_Raw[2].append(slashCharStr);
@@ -23010,209 +21639,16 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
         TestVector_Raw[101].append(slashCharStr);
         TestVector_Raw[101].append("vp80-06-cropping-045.raw");
 
+        TestVectorNum = 0;
+        string TestVector_Text[102];
 
-        TestVector_Text[1].append(slashCharStr);
-        TestVector_Text[1].append("vp80-00-comprehensive-001_MD5.txt");
-        TestVector_Text[2].append(slashCharStr);
-        TestVector_Text[2].append("vp80-00-comprehensive-002_MD5.txt");
-        TestVector_Text[3].append(slashCharStr);
-        TestVector_Text[3].append("vp80-00-comprehensive-003_MD5.txt");
-        TestVector_Text[4].append(slashCharStr);
-        TestVector_Text[4].append("vp80-00-comprehensive-004_MD5.txt");
-        TestVector_Text[5].append(slashCharStr);
-        TestVector_Text[5].append("vp80-00-comprehensive-005_MD5.txt");
-        TestVector_Text[6].append(slashCharStr);
-        TestVector_Text[6].append("vp80-00-comprehensive-006_MD5.txt");
-        TestVector_Text[7].append(slashCharStr);
-        TestVector_Text[7].append("vp80-00-comprehensive-007_MD5.txt");
-        TestVector_Text[8].append(slashCharStr);
-        TestVector_Text[8].append("vp80-00-comprehensive-008_MD5.txt");
-        TestVector_Text[9].append(slashCharStr);
-        TestVector_Text[9].append("vp80-00-comprehensive-009_MD5.txt");
-        TestVector_Text[10].append(slashCharStr);
-        TestVector_Text[10].append("vp80-00-comprehensive-010_MD5.txt");
-        TestVector_Text[11].append(slashCharStr);
-        TestVector_Text[11].append("vp80-00-comprehensive-011_MD5.txt");
-        TestVector_Text[12].append(slashCharStr);
-        TestVector_Text[12].append("vp80-00-comprehensive-012_MD5.txt");
-        TestVector_Text[13].append(slashCharStr);
-        TestVector_Text[13].append("vp80-00-comprehensive-013_MD5.txt");
-        TestVector_Text[14].append(slashCharStr);
-        TestVector_Text[14].append("vp80-00-comprehensive-014_MD5.txt");
-        TestVector_Text[15].append(slashCharStr);
-        TestVector_Text[15].append("vp80-00-comprehensive-015_MD5.txt");
-        TestVector_Text[16].append(slashCharStr);
-        TestVector_Text[16].append("vp80-00-comprehensive-016_MD5.txt");
-        TestVector_Text[17].append(slashCharStr);
-        TestVector_Text[17].append("vp80-00-comprehensive-017_MD5.txt");
-        TestVector_Text[18].append(slashCharStr);
-        TestVector_Text[18].append("vp80-01-intra-1400_MD5.txt");
-        TestVector_Text[19].append(slashCharStr);
-        TestVector_Text[19].append("vp80-01-intra-1411_MD5.txt");
-        TestVector_Text[20].append(slashCharStr);
-        TestVector_Text[20].append("vp80-01-intra-1416_MD5.txt");
-        TestVector_Text[21].append(slashCharStr);
-        TestVector_Text[21].append("vp80-01-intra-1417_MD5.txt");
-        TestVector_Text[22].append(slashCharStr);
-        TestVector_Text[22].append("vp80-02-inter-1402_MD5.txt");
-        TestVector_Text[23].append(slashCharStr);
-        TestVector_Text[23].append("vp80-02-inter-1412_MD5.txt");
-        TestVector_Text[24].append(slashCharStr);
-        TestVector_Text[24].append("vp80-02-inter-1418_MD5.txt");
-        TestVector_Text[25].append(slashCharStr);
-        TestVector_Text[25].append("vp80-02-inter-1424_MD5.txt");
-        TestVector_Text[26].append(slashCharStr);
-        TestVector_Text[26].append("vp80-03-segmentation-1401_MD5.txt");
-        TestVector_Text[27].append(slashCharStr);
-        TestVector_Text[27].append("vp80-03-segmentation-1403_MD5.txt");
-        TestVector_Text[28].append(slashCharStr);
-        TestVector_Text[28].append("vp80-03-segmentation-1407_MD5.txt");
-        TestVector_Text[29].append(slashCharStr);
-        TestVector_Text[29].append("vp80-03-segmentation-1408_MD5.txt");
-        TestVector_Text[30].append(slashCharStr);
-        TestVector_Text[30].append("vp80-03-segmentation-1409_MD5.txt");
-        TestVector_Text[31].append(slashCharStr);
-        TestVector_Text[31].append("vp80-03-segmentation-1410_MD5.txt");
-        TestVector_Text[32].append(slashCharStr);
-        TestVector_Text[32].append("vp80-03-segmentation-1413_MD5.txt");
-        TestVector_Text[33].append(slashCharStr);
-        TestVector_Text[33].append("vp80-03-segmentation-1414_MD5.txt");
-        TestVector_Text[34].append(slashCharStr);
-        TestVector_Text[34].append("vp80-03-segmentation-1415_MD5.txt");
-        TestVector_Text[35].append(slashCharStr);
-        TestVector_Text[35].append("vp80-03-segmentation-1425_MD5.txt");
-        TestVector_Text[36].append(slashCharStr);
-        TestVector_Text[36].append("vp80-03-segmentation-1426_MD5.txt");
-        TestVector_Text[37].append(slashCharStr);
-        TestVector_Text[37].append("vp80-03-segmentation-1427_MD5.txt");
-        TestVector_Text[38].append(slashCharStr);
-        TestVector_Text[38].append("vp80-03-segmentation-1432_MD5.txt");
-        TestVector_Text[39].append(slashCharStr);
-        TestVector_Text[39].append("vp80-03-segmentation-1435_MD5.txt");
-        TestVector_Text[40].append(slashCharStr);
-        TestVector_Text[40].append("vp80-03-segmentation-1436_MD5.txt");
-        TestVector_Text[41].append(slashCharStr);
-        TestVector_Text[41].append("vp80-03-segmentation-1437_MD5.txt");
-        TestVector_Text[42].append(slashCharStr);
-        TestVector_Text[42].append("vp80-03-segmentation-1441_MD5.txt");
-        TestVector_Text[43].append(slashCharStr);
-        TestVector_Text[43].append("vp80-03-segmentation-1442_MD5.txt");
-        TestVector_Text[44].append(slashCharStr);
-        TestVector_Text[44].append("vp80-04-partitions-1404_MD5.txt");
-        TestVector_Text[45].append(slashCharStr);
-        TestVector_Text[45].append("vp80-04-partitions-1405_MD5.txt");
-        TestVector_Text[46].append(slashCharStr);
-        TestVector_Text[46].append("vp80-04-partitions-1406_MD5.txt");
-        TestVector_Text[47].append(slashCharStr);
-        TestVector_Text[47].append("vp80-05-sharpness-1428_MD5.txt");
-        TestVector_Text[48].append(slashCharStr);
-        TestVector_Text[48].append("vp80-05-sharpness-1429_MD5.txt");
-        TestVector_Text[49].append(slashCharStr);
-        TestVector_Text[49].append("vp80-05-sharpness-1430_MD5.txt");
-        TestVector_Text[50].append(slashCharStr);
-        TestVector_Text[50].append("vp80-05-sharpness-1431_MD5.txt");
-        TestVector_Text[51].append(slashCharStr);
-        TestVector_Text[51].append("vp80-05-sharpness-1433_MD5.txt");
-        TestVector_Text[52].append(slashCharStr);
-        TestVector_Text[52].append("vp80-05-sharpness-1434_MD5.txt");
-        TestVector_Text[53].append(slashCharStr);
-        TestVector_Text[53].append("vp80-05-sharpness-1438_MD5.txt");
-        TestVector_Text[54].append(slashCharStr);
-        TestVector_Text[54].append("vp80-05-sharpness-1439_MD5.txt");
-        TestVector_Text[55].append(slashCharStr);
-        TestVector_Text[55].append("vp80-05-sharpness-1440_MD5.txt");
-        TestVector_Text[56].append(slashCharStr);
-        TestVector_Text[56].append("vp80-05-sharpness-1443_MD5.txt");
-        TestVector_Text[57].append(slashCharStr);
-        TestVector_Text[57].append("vp80-06-cropping-001_MD5.txt");
-        TestVector_Text[58].append(slashCharStr);
-        TestVector_Text[58].append("vp80-06-cropping-002_MD5.txt");
-        TestVector_Text[59].append(slashCharStr);
-        TestVector_Text[59].append("vp80-06-cropping-003_MD5.txt");
-        TestVector_Text[60].append(slashCharStr);
-        TestVector_Text[60].append("vp80-06-cropping-004_MD5.txt");
-        TestVector_Text[61].append(slashCharStr);
-        TestVector_Text[61].append("vp80-06-cropping-005_MD5.txt");
-        TestVector_Text[62].append(slashCharStr);
-        TestVector_Text[62].append("vp80-06-cropping-006_MD5.txt");
-        TestVector_Text[63].append(slashCharStr);
-        TestVector_Text[63].append("vp80-06-cropping-007_MD5.txt");
-        TestVector_Text[64].append(slashCharStr);
-        TestVector_Text[64].append("vp80-06-cropping-008_MD5.txt");
-        TestVector_Text[65].append(slashCharStr);
-        TestVector_Text[65].append("vp80-06-cropping-009_MD5.txt");
-        TestVector_Text[66].append(slashCharStr);
-        TestVector_Text[66].append("vp80-06-cropping-010_MD5.txt");
-        TestVector_Text[67].append(slashCharStr);
-        TestVector_Text[67].append("vp80-06-cropping-011_MD5.txt");
-        TestVector_Text[68].append(slashCharStr);
-        TestVector_Text[68].append("vp80-06-cropping-012_MD5.txt");
-        TestVector_Text[69].append(slashCharStr);
-        TestVector_Text[69].append("vp80-06-cropping-013_MD5.txt");
-        TestVector_Text[70].append(slashCharStr);
-        TestVector_Text[70].append("vp80-06-cropping-014_MD5.txt");
-        TestVector_Text[71].append(slashCharStr);
-        TestVector_Text[71].append("vp80-06-cropping-015_MD5.txt");
-        TestVector_Text[72].append(slashCharStr);
-        TestVector_Text[72].append("vp80-06-cropping-016_MD5.txt");
-        TestVector_Text[73].append(slashCharStr);
-        TestVector_Text[73].append("vp80-06-cropping-017_MD5.txt");
-        TestVector_Text[74].append(slashCharStr);
-        TestVector_Text[74].append("vp80-06-cropping-018_MD5.txt");
-        TestVector_Text[75].append(slashCharStr);
-        TestVector_Text[75].append("vp80-06-cropping-019_MD5.txt");
-        TestVector_Text[76].append(slashCharStr);
-        TestVector_Text[76].append("vp80-06-cropping-020_MD5.txt");
-        TestVector_Text[77].append(slashCharStr);
-        TestVector_Text[77].append("vp80-06-cropping-021_MD5.txt");
-        TestVector_Text[78].append(slashCharStr);
-        TestVector_Text[78].append("vp80-06-cropping-022_MD5.txt");
-        TestVector_Text[79].append(slashCharStr);
-        TestVector_Text[79].append("vp80-06-cropping-023_MD5.txt");
-        TestVector_Text[80].append(slashCharStr);
-        TestVector_Text[80].append("vp80-06-cropping-024_MD5.txt");
-        TestVector_Text[81].append(slashCharStr);
-        TestVector_Text[81].append("vp80-06-cropping-025_MD5.txt");
-        TestVector_Text[82].append(slashCharStr);
-        TestVector_Text[82].append("vp80-06-cropping-026_MD5.txt");
-        TestVector_Text[83].append(slashCharStr);
-        TestVector_Text[83].append("vp80-06-cropping-027_MD5.txt");
-        TestVector_Text[84].append(slashCharStr);
-        TestVector_Text[84].append("vp80-06-cropping-028_MD5.txt");
-        TestVector_Text[85].append(slashCharStr);
-        TestVector_Text[85].append("vp80-06-cropping-029_MD5.txt");
-        TestVector_Text[86].append(slashCharStr);
-        TestVector_Text[86].append("vp80-06-cropping-030_MD5.txt");
-        TestVector_Text[87].append(slashCharStr);
-        TestVector_Text[87].append("vp80-06-cropping-031_MD5.txt");
-        TestVector_Text[88].append(slashCharStr);
-        TestVector_Text[88].append("vp80-06-cropping-032_MD5.txt");
-        TestVector_Text[89].append(slashCharStr);
-        TestVector_Text[89].append("vp80-06-cropping-033_MD5.txt");
-        TestVector_Text[90].append(slashCharStr);
-        TestVector_Text[90].append("vp80-06-cropping-034_MD5.txt");
-        TestVector_Text[91].append(slashCharStr);
-        TestVector_Text[91].append("vp80-06-cropping-035_MD5.txt");
-        TestVector_Text[92].append(slashCharStr);
-        TestVector_Text[92].append("vp80-06-cropping-036_MD5.txt");
-        TestVector_Text[93].append(slashCharStr);
-        TestVector_Text[93].append("vp80-06-cropping-037_MD5.txt");
-        TestVector_Text[94].append(slashCharStr);
-        TestVector_Text[94].append("vp80-06-cropping-038_MD5.txt");
-        TestVector_Text[95].append(slashCharStr);
-        TestVector_Text[95].append("vp80-06-cropping-039_MD5.txt");
-        TestVector_Text[96].append(slashCharStr);
-        TestVector_Text[96].append("vp80-06-cropping-040_MD5.txt");
-        TestVector_Text[97].append(slashCharStr);
-        TestVector_Text[97].append("vp80-06-cropping-041_MD5.txt");
-        TestVector_Text[98].append(slashCharStr);
-        TestVector_Text[98].append("vp80-06-cropping-042_MD5.txt");
-        TestVector_Text[99].append(slashCharStr);
-        TestVector_Text[99].append("vp80-06-cropping-043_MD5.txt");
-        TestVector_Text[100].append(slashCharStr);
-        TestVector_Text[100].append("vp80-06-cropping-044_MD5.txt");
-        TestVector_Text[101].append(slashCharStr);
-        TestVector_Text[101].append("vp80-06-cropping-045_MD5.txt");
+        while (TestVectorNum < 102)
+        {
+            TestVector_Text[TestVectorNum] = TestVector_Raw[TestVectorNum];
+            TestVector_Text[TestVectorNum].erase(TestVector_Text[TestVectorNum].end() - 4, TestVector_Text[TestVectorNum].end());
+            TestVector_Text[TestVectorNum].append("_MD5.txt");
+            TestVectorNum++;
+        }
 
         ////print out the names above
         //CurTestVector = 1;
@@ -23239,23 +21675,23 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
         string MD5Key[101];
 
         //New Test Vectors 2.0.0 MD5 Checksums
-        MD5Key[0].assign("fad126074e1bd5363d43b9d1cadddb71");
-        MD5Key[1].assign("182f03dd264ebac04e24c7c9499d7cdb");
-        MD5Key[2].assign("e5fe668b033900022c3eb0ba76a44bd1");
-        MD5Key[3].assign("95097ce9808c1d47e03f99c48ad111ec");
-        MD5Key[4].assign("0f469e4fd1dea533e5580688b2d242ff");
-        MD5Key[5].assign("2d5fa3ec2f88404ae7b305c1074036f4");
-        MD5Key[6].assign("92526913d89b6a9b00f2d602def08bce");
-        MD5Key[7].assign("bd4d46a9d14fe5a7fc9cfc8deac2d34c");
-        MD5Key[8].assign("19201a2d535bd82f41c1a5658def5379");
-        MD5Key[9].assign("61d05919a9883d9f215eb3f2db63eb13");
-        MD5Key[10].assign("1a0afe5e70512a03323a8f1176bcf022");
-        MD5Key[11].assign("4ea997c80dc2087e6deec81f1ecf6668");
-        MD5Key[12].assign("93169305d3054327be3cc074f0773a75");
-        MD5Key[13].assign("7280a64c51dfa557c1b9552dc1e1fbed");
-        MD5Key[14].assign("23b9cc582e344726e76cda092b416bcf");
-        MD5Key[15].assign("55e889d22f99718cf6936d55f8ade12b");
-        MD5Key[16].assign("95a68ffb228d1d8c6ee54f16a10fb9eb");
+        MD5Key[0].assign("fad126074e1bd5363d43b9d1cadddb71");   /*vp80-00-comprehensive-001.raw*/
+        MD5Key[1].assign("182f03dd264ebac04e24c7c9499d7cdb");   /*vp80-00-comprehensive-002.raw*/
+        MD5Key[2].assign("e5fe668b033900022c3eb0ba76a44bd1");   /*vp80-00-comprehensive-003.raw*/
+        MD5Key[3].assign("95097ce9808c1d47e03f99c48ad111ec");   /*vp80-00-comprehensive-004.raw*/
+        MD5Key[4].assign("0f469e4fd1dea533e5580688b2d242ff");   /*vp80-00-comprehensive-005.raw*/
+        MD5Key[5].assign("2d5fa3ec2f88404ae7b305c1074036f4");   /*vp80-00-comprehensive-006.raw*/
+        MD5Key[6].assign("92526913d89b6a9b00f2d602def08bce");   /*vp80-00-comprehensive-007.raw*/
+        MD5Key[7].assign("bd4d46a9d14fe5a7fc9cfc8deac2d34c");   /*vp80-00-comprehensive-008.raw*/
+        MD5Key[8].assign("19201a2d535bd82f41c1a5658def5379");   /*vp80-00-comprehensive-009.raw*/
+        MD5Key[9].assign("61d05919a9883d9f215eb3f2db63eb13");   /*vp80-00-comprehensive-010.raw*/
+        MD5Key[10].assign("1a0afe5e70512a03323a8f1176bcf022");  /*vp80-00-comprehensive-011.raw*/
+        MD5Key[11].assign("4ea997c80dc2087e6deec81f1ecf6668");  /*vp80-00-comprehensive-012.raw*/
+        MD5Key[12].assign("93169305d3054327be3cc074f0773a75");  /*vp80-00-comprehensive-013.raw*/
+        MD5Key[13].assign("7280a64c51dfa557c1b9552dc1e1fbed");  /*vp80-00-comprehensive-014.raw*/
+        MD5Key[14].assign("23b9cc582e344726e76cda092b416bcf");  /*vp80-00-comprehensive-015.raw*/
+        MD5Key[15].assign("55e889d22f99718cf6936d55f8ade12b");  /*vp80-00-comprehensive-016.raw*/
+        MD5Key[16].assign("95a68ffb228d1d8c6ee54f16a10fb9eb");  /*vp80-00-comprehensive-017.raw*/
         MD5Key[17].assign("53b08ac91398a5dd948434e41b31b47e");  /*vp80-01-intra-1400.raw*/
         MD5Key[18].assign("8fa1762329e65c97245393a933cd0f00");  /*vp80-01-intra-1411.raw*/
         MD5Key[19].assign("cffd1299fa7a0330264cb411d9482bb0");  /*vp80-01-intra-1416.raw*/
@@ -23397,7 +21833,7 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 printf("\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
                 fprintf(stderr, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
-                DecompressIVFtoRaw((char *)TestVector[CurTestVector].c_str(), (char *)TestVector_Raw[CurTestVector].c_str());
+                DecompressIVFtoRaw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str());
                 CurTestVector++;
             }
         }
@@ -23420,7 +21856,7 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
             printf("\n\nComputing MD5 for TestVector %i", CurTestVector);
             fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", CurTestVector);
 
-            DecComputeMD5((char *)TestVector[CurTestVector].c_str(), (char *)TestVector_Text[CurTestVector].c_str());
+            DecComputeMD5(TestVector[CurTestVector].c_str(), TestVector_Text[CurTestVector].c_str());
             CurTestVector++;
         }
 
@@ -23430,19 +21866,18 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
 
             while (CurTestVector < LastTestVector)
             {
-                if (remove((char *)TestVector_Raw[CurTestVector].c_str()) == 0)
+                if (remove(TestVector_Raw[CurTestVector].c_str()) == 0)
                 {
                     /*printf("%s Successfully Deleted\n\n", outputString.c_str());*/
                 }
                 else
                 {
-                    printf("Error: %s Not Deleted\n\n", (char *)TestVector_Raw[CurTestVector].c_str());
+                    printf("Error: %s Not Deleted\n\n", TestVector_Raw[CurTestVector].c_str());
                 }
 
                 CurTestVector++;
             }
         }
-
 
         int x = 0;
         int Fail = 0;
@@ -23454,7 +21889,7 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
             char TextInput[255];
             char TestVectFileName[255];
             snprintf(TextInput, 255, "%s", TestVector_Text[CurTestVector].c_str());
-            FileName((char *)TestVector[CurTestVector].c_str(), TestVectFileName, 1);
+            FileName(TestVector[CurTestVector].c_str(), TestVectFileName, 1);
 
             char buffer[1024];
             fstream infile;
@@ -23513,9 +21948,6 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
             printf("\n");
             fprintf(stderr, "\n");
 
-            //printf("\n\n All Decoded Test Vector Check Sums Match Expected Check Sums: Passed \n\n");
-            //fprintf(stderr, "\n\n  All Decoded Test Vector Check Sums Match Expected Check Sums: Passed \n\n");
-
             printf("\nPassed\n");
             fprintf(stderr, "\nPassed\n");
 
@@ -23527,9 +21959,6 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
         else
         {
             string FailStr = "Not all decoded test vectors match expected MD5 checksum's.";
-
-            //printf("\n   Test Vectors that FAIL: ");
-            //fprintf(stderr, "\n   Test Vectors that FAIL: ");
 
             int q = 0;
 
@@ -23551,8 +21980,6 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
                     if (q + 1 != FailVector.size())
                     {
                         FailStr.append(", ");
-                        //printf(", ");
-                        //fprintf(stderr, ", ");
                     }
                     else
                     {
@@ -23563,8 +21990,6 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
                 char TVFailNumChar[32] = "";
                 itoa_custom(FailVector[q], TVFailNumChar, 10);
                 FailStr.append(TVFailNumChar);
-                //printf("%i", FailVector[q]);
-                //fprintf(stderr, "%i", FailVector[q]);
                 q++;
             }
 
@@ -23578,8 +22003,6 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
             }
 
             FailStr.append(" - Failed");
-            //printf("\n");
-            //fprintf(stderr, "\n");
 
             char OutputChar1[255];
             snprintf(OutputChar1, 255, FailStr.c_str());
@@ -23597,7 +22020,7 @@ int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[]
             return 0;
         }
     }
-int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "AllowDF";
         char *input = argv[2];
@@ -23700,39 +22123,39 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir4b = WorkingDirString;
-        string WorkingDir5b = WorkingDirString;
-        string WorkingDir4c = WorkingDirString;
-        string WorkingDir5c = WorkingDirString;
+        string TwoPassOutFile1 = WorkingDirString;
+        string TwoPassBestOutFile1 = WorkingDirString;
+        string TwoPassOutFile2 = WorkingDirString;
+        string TwoPassBestOutFile2 = WorkingDirString;
+        string TwoPassOutFile3 = WorkingDirString;
+        string TwoPassBestOutFile3 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("TwoPassOutput1.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("TwoPassBestOutput1.ivf");
-        WorkingDir4b.append(slashCharStr);
-        WorkingDir4b.append("TwoPassOutput2.ivf");
-        WorkingDir5b.append(slashCharStr);
-        WorkingDir5b.append("TwoPassBestOutput2.ivf");
-        WorkingDir4c.append(slashCharStr);
-        WorkingDir4c.append("TwoPassOutput3.ivf");
-        WorkingDir5c.append(slashCharStr);
-        WorkingDir5c.append("TwoPassBestOutput3.ivf");
+        TwoPassOutFile1.append(slashCharStr);
+        TwoPassOutFile1.append("TwoPassOutput1.ivf");
+        TwoPassBestOutFile1.append(slashCharStr);
+        TwoPassBestOutFile1.append("TwoPassBestOutput1.ivf");
+        TwoPassOutFile2.append(slashCharStr);
+        TwoPassOutFile2.append("TwoPassOutput2.ivf");
+        TwoPassBestOutFile2.append(slashCharStr);
+        TwoPassBestOutFile2.append("TwoPassBestOutput2.ivf");
+        TwoPassOutFile3.append(slashCharStr);
+        TwoPassOutFile3.append("TwoPassOutput3.ivf");
+        TwoPassBestOutFile3.append(slashCharStr);
+        TwoPassBestOutFile3.append("TwoPassBestOutput3.ivf");
 
-        char TwoPassOutFile1[255];
-        char TwoPassBestOutFile1[255];
-        char TwoPassOutFile2[255];
-        char TwoPassBestOutFile2[255];
-        char TwoPassOutFile3[255];
-        char TwoPassBestOutFile3[255];
+        ////char TwoPassOutFile1[255];
+        //char TwoPassBestOutFile1[255];
+        //char TwoPassOutFile2[255];
+        //char TwoPassBestOutFile2[255];
+        //char TwoPassOutFile3[255];
+        //char TwoPassBestOutFile3[255];
 
-        snprintf(TwoPassOutFile1, 255, "%s", WorkingDir4.c_str());
-        snprintf(TwoPassBestOutFile1, 255, "%s", WorkingDir5.c_str());
-        snprintf(TwoPassOutFile2, 255, "%s", WorkingDir4b.c_str());
-        snprintf(TwoPassBestOutFile2, 255, "%s", WorkingDir5b.c_str());
-        snprintf(TwoPassOutFile3, 255, "%s", WorkingDir4c.c_str());
-        snprintf(TwoPassBestOutFile3, 255, "%s", WorkingDir5c.c_str());
+        //snprintf(TwoPassOutFile1, 255, "%s", WorkingDir4.c_str());
+        //snprintf(TwoPassBestOutFile1, 255, "%s", WorkingDir5.c_str());
+        //snprintf(TwoPassOutFile2, 255, "%s", WorkingDir4b.c_str());
+        //snprintf(TwoPassBestOutFile2, 255, "%s", WorkingDir5b.c_str());
+        //snprintf(TwoPassOutFile3, 255, "%s", WorkingDir4c.c_str());
+        //snprintf(TwoPassBestOutFile3, 255, "%s", WorkingDir5c.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -23818,7 +22241,7 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
             opt.Mode = MODE_SECONDPASS;
             opt.target_bandwidth = BitRate1;
 
-            if (CompressIVFtoIVF(input, TwoPassOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -23828,7 +22251,7 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
 
             opt.target_bandwidth = BitRate2;
 
-            if (CompressIVFtoIVF(input, TwoPassOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -23838,7 +22261,7 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
 
             opt.target_bandwidth = BitRate3;
 
-            if (CompressIVFtoIVF(input, TwoPassOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -23849,7 +22272,7 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
             opt.Mode = MODE_SECONDPASS_BEST;
             opt.target_bandwidth = BitRate1;
 
-            if (CompressIVFtoIVF(input, TwoPassBestOutFile1, speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassBestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -23859,7 +22282,7 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
 
             opt.target_bandwidth = BitRate2;
 
-            if (CompressIVFtoIVF(input, TwoPassBestOutFile2, speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassBestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -23869,7 +22292,7 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
 
             opt.target_bandwidth = BitRate3;
 
-            if (CompressIVFtoIVF(input, TwoPassBestOutFile3, speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+            if (CompressIVFtoIVF(input, TwoPassBestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
             {
                 fclose(fp);
                 string File1Str = File1;
@@ -23890,12 +22313,12 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
 
         cout << "\n";
 
-        float GoodSize1 = IVFDataRate(TwoPassOutFile1, 1);
-        float BestSize1 = IVFDataRate(TwoPassBestOutFile1, 1);
-        float GoodSize2 = IVFDataRate(TwoPassOutFile2, 1);
-        float BestSize2 = IVFDataRate(TwoPassBestOutFile2, 1);
-        float GoodSize3 = IVFDataRate(TwoPassOutFile3, 1);
-        float BestSize3 = IVFDataRate(TwoPassBestOutFile3, 1);
+        float GoodSize1 = IVFDataRate(TwoPassOutFile1.c_str(), 1);
+        float BestSize1 = IVFDataRate(TwoPassBestOutFile1.c_str(), 1);
+        float GoodSize2 = IVFDataRate(TwoPassOutFile2.c_str(), 1);
+        float BestSize2 = IVFDataRate(TwoPassBestOutFile2.c_str(), 1);
+        float GoodSize3 = IVFDataRate(TwoPassOutFile3.c_str(), 1);
+        float BestSize3 = IVFDataRate(TwoPassBestOutFile3.c_str(), 1);
 
         double PSNRG1;
         double PSNRB1;
@@ -23904,12 +22327,12 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
         double PSNRG3;
         double PSNRB3;
 
-        PSNRG1 = IVFPSNR(input, TwoPassOutFile1, 1, 0, 1, NULL);
-        PSNRB1 = IVFPSNR(input, TwoPassBestOutFile1, 1, 0, 1, NULL);
-        PSNRG2 = IVFPSNR(input, TwoPassOutFile2, 1, 0, 1, NULL);
-        PSNRB2 = IVFPSNR(input, TwoPassBestOutFile2, 1, 0, 1, NULL);
-        PSNRG3 = IVFPSNR(input, TwoPassOutFile3, 1, 0, 1, NULL);
-        PSNRB3 = IVFPSNR(input, TwoPassBestOutFile3, 1, 0, 1, NULL);
+        PSNRG1 = IVFPSNR(input, TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
+        PSNRB1 = IVFPSNR(input, TwoPassBestOutFile1.c_str(), 1, 0, 1, NULL);
+        PSNRG2 = IVFPSNR(input, TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
+        PSNRB2 = IVFPSNR(input, TwoPassBestOutFile2.c_str(), 1, 0, 1, NULL);
+        PSNRG3 = IVFPSNR(input, TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
+        PSNRB3 = IVFPSNR(input, TwoPassBestOutFile3.c_str(), 1, 0, 1, NULL);
 
         float GoodA = 0;
         float GoodB = 0;
@@ -24068,7 +22491,7 @@ int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string File
         }
     }
 
-int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
         char *CompressString = "UnderShootPct";
@@ -24179,19 +22602,19 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
             WorkingDirString = WorkingDir2;
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
+        string UnderShoot10 = WorkingDirString;
+        string UnderShoot100 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("UnderShoot10Output.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("UnderShoot100Output.ivf");
+        UnderShoot10.append(slashCharStr);
+        UnderShoot10.append("UnderShoot10Output.ivf");
+        UnderShoot100.append(slashCharStr);
+        UnderShoot100.append("UnderShoot100Output.ivf");
 
-        char UnderShoot10[255];
-        char UnderShoot100[255];
+        //char UnderShoot10[255];
+        //char UnderShoot100[255];
 
-        snprintf(UnderShoot10, 255, "%s", WorkingDir4.c_str());
-        snprintf(UnderShoot100, 255, "%s", WorkingDir5.c_str());
+        //snprintf(UnderShoot10, 255, "%s", WorkingDir4.c_str());
+        //snprintf(UnderShoot100, 255, "%s", WorkingDir5.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -24276,7 +22699,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.Mode = MODE_REALTIME;
                 opt.under_shoot_pct = 10;
 
-                if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24287,7 +22710,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.Mode = MODE_REALTIME;
                 opt.under_shoot_pct = 100;
 
-                if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24301,7 +22724,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.Mode = MODE_GOODQUALITY;
                 opt.under_shoot_pct = 10;
 
-                if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24312,7 +22735,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.Mode = MODE_GOODQUALITY;
                 opt.under_shoot_pct = 100;
 
-                if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24326,7 +22749,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.Mode = MODE_BESTQUALITY;
                 opt.under_shoot_pct = 10;
 
-                if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24337,7 +22760,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.Mode = MODE_BESTQUALITY;
                 opt.under_shoot_pct = 100;
 
-                if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24355,7 +22778,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.under_shoot_pct = 10;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24366,7 +22789,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.under_shoot_pct = 100;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24380,7 +22803,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.under_shoot_pct = 10;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, UnderShoot10, speed, BitRate, opt, CompressString, 10, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24391,7 +22814,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
                 opt.under_shoot_pct = 100;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, UnderShoot100, speed, BitRate, opt, CompressString, 100, 0) == -1)
+                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24416,10 +22839,10 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
 
         printf("\n");
         fprintf(stderr, "\n");
-        long File1bytes = FileSize(UnderShoot10);
+        long File1bytes = FileSize(UnderShoot10.c_str());
         printf("\n");
         fprintf(stderr, "\n");
-        long File2bytes = FileSize(UnderShoot100);
+        long File2bytes = FileSize(UnderShoot100.c_str());
         printf("\n");
         fprintf(stderr, "\n");
 
@@ -24489,7 +22912,7 @@ int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int
         }
     }
 
-int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Version";
 
@@ -24605,77 +23028,47 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
             FileStream.close();
         }
 
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir6 = WorkingDirString;
-        string WorkingDir7 = WorkingDirString;
+        string Version0 = WorkingDirString;
+        string Version1 = WorkingDirString;
+        string Version2 = WorkingDirString;
+        string Version3 = WorkingDirString;
 
-        string WorkingDir8 = WorkingDirString;
-        string WorkingDir9 = WorkingDirString;
-        string WorkingDir10 = WorkingDirString;
-        string WorkingDir11 = WorkingDirString;
+        string Version0_Dec = WorkingDirString;
+        string Version1_Dec = WorkingDirString;
+        string Version2_Dec = WorkingDirString;
+        string Version3_Dec = WorkingDirString;
 
-        string WorkingDir12 = WorkingDirString;
-        string WorkingDir13 = WorkingDirString;
-        string WorkingDir14 = WorkingDirString;
-        string WorkingDir15 = WorkingDirString;
+        string Version0_Dectime = WorkingDirString;
+        string Version1_Dectime = WorkingDirString;
+        string Version2_Dectime = WorkingDirString;
+        string Version3_Dectime = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("Version0.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("Version1.ivf");
-        WorkingDir6.append(slashCharStr);
-        WorkingDir6.append("Version2.ivf");
-        WorkingDir7.append(slashCharStr);
-        WorkingDir7.append("Version3.ivf");
+        Version0.append(slashCharStr);
+        Version0.append("Version0.ivf");
+        Version1.append(slashCharStr);
+        Version1.append("Version1.ivf");
+        Version2.append(slashCharStr);
+        Version2.append("Version2.ivf");
+        Version3.append(slashCharStr);
+        Version3.append("Version3.ivf");
 
-        WorkingDir8.append(slashCharStr);
-        WorkingDir8.append("Version0_Dec.ivf");
-        WorkingDir9.append(slashCharStr);
-        WorkingDir9.append("Version1_Dec.ivf");
-        WorkingDir10.append(slashCharStr);
-        WorkingDir10.append("Version2_Dec.ivf");
-        WorkingDir11.append(slashCharStr);
-        WorkingDir11.append("Version3_Dec.ivf");
+        Version0_Dec.append(slashCharStr);
+        Version0_Dec.append("Version0_Dec.ivf");
+        Version1_Dec.append(slashCharStr);
+        Version1_Dec.append("Version1_Dec.ivf");
+        Version2_Dec.append(slashCharStr);
+        Version2_Dec.append("Version2_Dec.ivf");
+        Version3_Dec.append(slashCharStr);
+        Version3_Dec.append("Version3_Dec.ivf");
 
-        WorkingDir12.append(slashCharStr);
-        WorkingDir12.append("Version0_Dec_CompressionTime.txt");
-        WorkingDir13.append(slashCharStr);
-        WorkingDir13.append("Version1_Dec_CompressionTime.txt");
-        WorkingDir14.append(slashCharStr);
-        WorkingDir14.append("Version2_Dec_CompressionTime.txt");
-        WorkingDir15.append(slashCharStr);
-        WorkingDir15.append("Version3_Dec_CompressionTime.txt");
-
-        char Version0[255];
-        char Version1[255];
-        char Version2[255];
-        char Version3[255];
-
-        char Version0_Dec[255];
-        char Version1_Dec[255];
-        char Version2_Dec[255];
-        char Version3_Dec[255];
-
-        char Version0_Dectime[255];
-        char Version1_Dectime[255];
-        char Version2_Dectime[255];
-        char Version3_Dectime[255];
-
-        snprintf(Version0, 255, "%s", WorkingDir4.c_str());
-        snprintf(Version1, 255, "%s", WorkingDir5.c_str());
-        snprintf(Version2, 255, "%s", WorkingDir6.c_str());
-        snprintf(Version3, 255, "%s", WorkingDir7.c_str());
-
-        snprintf(Version0_Dec, 255, "%s", WorkingDir8.c_str());
-        snprintf(Version1_Dec, 255, "%s", WorkingDir9.c_str());
-        snprintf(Version2_Dec, 255, "%s", WorkingDir10.c_str());
-        snprintf(Version3_Dec, 255, "%s", WorkingDir11.c_str());
-
-        snprintf(Version0_Dectime, 255, "%s", WorkingDir12.c_str());
-        snprintf(Version1_Dectime, 255, "%s", WorkingDir13.c_str());
-        snprintf(Version2_Dectime, 255, "%s", WorkingDir14.c_str());
-        snprintf(Version3_Dectime, 255, "%s", WorkingDir15.c_str());
+        Version0_Dectime.append(slashCharStr);
+        Version0_Dectime.append("Version0_Dec_CompressionTime.txt");
+        Version1_Dectime.append(slashCharStr);
+        Version1_Dectime.append("Version1_Dec_CompressionTime.txt");
+        Version2_Dectime.append(slashCharStr);
+        Version2_Dectime.append("Version2_Dec_CompressionTime.txt");
+        Version3_Dectime.append(slashCharStr);
+        Version3_Dectime.append("Version3_Dec_CompressionTime.txt");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -24760,10 +23153,10 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            DecTime[0] = TimeReturn(Version0_Dec, 1);
-            DecTime[1] = TimeReturn(Version1_Dec, 1);
-            DecTime[2] = TimeReturn(Version2_Dec, 1);
-            DecTime[3] = TimeReturn(Version3_Dec, 1);
+            DecTime[0] = TimeReturn(Version0_Dec.c_str(), 1);
+            DecTime[1] = TimeReturn(Version1_Dec.c_str(), 1);
+            DecTime[2] = TimeReturn(Version2_Dec.c_str(), 1);
+            DecTime[3] = TimeReturn(Version3_Dec.c_str(), 1);
         }
         else
         {
@@ -24772,7 +23165,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_REALTIME;
                 opt.Version = 0;
 
-                if (CompressIVFtoIVF(input, Version0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24783,7 +23176,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_REALTIME;
                 opt.Version = 1;
 
-                if (CompressIVFtoIVF(input, Version1, speed, BitRate, opt, CompressString, 1, 0) == -1)
+                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24794,7 +23187,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_REALTIME;
                 opt.Version = 2;
 
-                if (CompressIVFtoIVF(input, Version2, speed, BitRate, opt, CompressString, 2, 0) == -1)
+                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24805,7 +23198,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_REALTIME;
                 opt.Version = 3;
 
-                if (CompressIVFtoIVF(input, Version3, speed, BitRate, opt, CompressString, 3, 0) == -1)
+                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24819,7 +23212,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_GOODQUALITY;
                 opt.Version = 0;
 
-                if (CompressIVFtoIVF(input, Version0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24830,7 +23223,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_GOODQUALITY;
                 opt.Version = 1;
 
-                if (CompressIVFtoIVF(input, Version1, speed, BitRate, opt, CompressString, 1, 0) == -1)
+                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24841,7 +23234,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_GOODQUALITY;
                 opt.Version = 2;
 
-                if (CompressIVFtoIVF(input, Version2, speed, BitRate, opt, CompressString, 2, 0) == -1)
+                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24852,7 +23245,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_GOODQUALITY;
                 opt.Version = 3;
 
-                if (CompressIVFtoIVF(input, Version3, speed, BitRate, opt, CompressString, 3, 0) == -1)
+                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24866,7 +23259,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_BESTQUALITY;
                 opt.Version = 0;
 
-                if (CompressIVFtoIVF(input, Version0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24877,7 +23270,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_BESTQUALITY;
                 opt.Version = 1;
 
-                if (CompressIVFtoIVF(input, Version1, speed, BitRate, opt, CompressString, 1, 0) == -1)
+                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24888,7 +23281,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_BESTQUALITY;
                 opt.Version = 2;
 
-                if (CompressIVFtoIVF(input, Version2, speed, BitRate, opt, CompressString, 2, 0) == -1)
+                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24899,7 +23292,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Mode = MODE_BESTQUALITY;
                 opt.Version = 3;
 
-                if (CompressIVFtoIVF(input, Version3, speed, BitRate, opt, CompressString, 3, 0) == -1)
+                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24917,7 +23310,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 0;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, Version0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24928,7 +23321,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 1;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, Version1, speed, BitRate, opt, CompressString, 1, 0) == -1)
+                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24939,7 +23332,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 2;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, Version2, speed, BitRate, opt, CompressString, 2, 0) == -1)
+                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24950,7 +23343,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 3;
                 opt.Mode = MODE_SECONDPASS;
 
-                if (CompressIVFtoIVF(input, Version3, speed, BitRate, opt, CompressString, 3, 0) == -1)
+                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24964,7 +23357,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 0;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, Version0, speed, BitRate, opt, CompressString, 0, 0) == -1)
+                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24975,7 +23368,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 1;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, Version1, speed, BitRate, opt, CompressString, 1, 0) == -1)
+                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24986,7 +23379,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 2;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, Version2, speed, BitRate, opt, CompressString, 2, 0) == -1)
+                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -24997,7 +23390,7 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
                 opt.Version = 3;
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (CompressIVFtoIVF(input, Version3, speed, BitRate, opt, CompressString, 3, 0) == -1)
+                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
                 {
                     fclose(fp);
                     string File1Str = File1;
@@ -25008,16 +23401,16 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
 
             printf("\n\n");
             fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
-            DecTime[0] = TimeDecompressIVFtoIVF(Version0, Version0_Dec);
+            DecTime[0] = TimeDecompressIVFtoIVF(Version0.c_str(), Version0_Dec.c_str());
             printf("\n");
             fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-            DecTime[1] = TimeDecompressIVFtoIVF(Version1, Version1_Dec);
+            DecTime[1] = TimeDecompressIVFtoIVF(Version1.c_str(), Version1_Dec.c_str());
             printf("\n");
             fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-            DecTime[2] = TimeDecompressIVFtoIVF(Version2, Version2_Dec);
+            DecTime[2] = TimeDecompressIVFtoIVF(Version2.c_str(), Version2_Dec.c_str());
             printf("\n");
             fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-            DecTime[3] = TimeDecompressIVFtoIVF(Version3, Version3_Dec);
+            DecTime[3] = TimeDecompressIVFtoIVF(Version3.c_str(), Version3_Dec.c_str());
 
         }
 
@@ -25030,13 +23423,13 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
             return 10;
         }
 
-        PSNRArr[0] = IVFPSNR(input, Version0, 0, 0, 1, NULL);
-        PSNRArr[1] = IVFPSNR(input, Version1, 0, 0, 1, NULL);
-        PSNRArr[2] = IVFPSNR(input, Version2, 0, 0, 1, NULL);
-        PSNRArr[3] = IVFPSNR(input, Version3, 0, 0, 1, NULL);
+        PSNRArr[0] = IVFPSNR(input, Version0.c_str(), 0, 0, 1, NULL);
+        PSNRArr[1] = IVFPSNR(input, Version1.c_str(), 0, 0, 1, NULL);
+        PSNRArr[2] = IVFPSNR(input, Version2.c_str(), 0, 0, 1, NULL);
+        PSNRArr[3] = IVFPSNR(input, Version3.c_str(), 0, 0, 1, NULL);
 
-        cout << "\n";
-        cerr << "\n";
+        printf("\n");
+        fprintf(stderr, "\n");
 
         int PSNRFail = 0;
         int TIMEFail = 0;
@@ -25169,8 +23562,8 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
 
         if (fail == 2)
         {
-            printf("\nIndeterminate\n");
-            fprintf(stderr, "\nIndeterminate\n");
+            printf("\nMin Passed\n");
+            fprintf(stderr, "\nMin Passed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -25199,35 +23592,13 @@ int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int Te
             return 1;
         }
     }
-int WindowsMatchesLinux(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int WindowsMatchesLinux(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "WindowsMatchesLinux";
         char *input = argv[2];
 
         if (!(argc == 9 || argc == 10))
         {
-#if defined(linux)
-            printf(
-                "  WindowsMatchesLinux \n\n"
-                "    <inputfile>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n "
-                "    <Test Mode>\n"
-                "          (0)Create Test Files\n"
-                "          (1)Preform Test\n"
-                "    <Win Input Folder - enter N/A if none>\n"
-                "    <Mac Input Folder - enter N/A if none>\n"
-                "    <PPC Input Folder - enter N/A if none>\n"
-                "    <Optional Settings File>\n"
-            );
-            return 0;
-#elif defined(_WIN32)
             printf(
                 "  WindowsMatchesLinux \n\n"
                 "    <inputfile>\n"
@@ -25248,49 +23619,6 @@ int WindowsMatchesLinux(int argc, char * argv[], string WorkingDir, string Files
                 "    <Optional Settings File>\n"
             );
             return 0;
-#elif defined(__POWERPC__)
-            printf(
-                "  WindowsMatchesLinux \n\n"
-                "    <inputfile>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n "
-                "    <Test Mode>\n"
-                "          (0)Create Test Files\n"
-                "          (1)Preform Test\n"
-                "    <Lin Input Folder - enter N/A if none>\n"
-                "    <Win Input Folder - enter N/A if none>\n"
-                "    <Mac Input Folder - enter N/A if none>\n"
-                "    <Optional Settings File>\n"
-            );
-            return 0;
-#elif defined(__APPLE__)
-            printf(
-                "  WindowsMatchesLinux \n\n"
-                "    <inputfile>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n "
-                "    <Test Mode>\n"
-                "          (0)Create Test Files\n"
-                "          (1)Preform Test\n"
-                "    <Lin Input Folder - enter N/A if none>\n"
-                "    <Win Input Folder - enter N/A if none>\n"
-                "    <PPC Input Folder - enter N/A if none>\n"
-                "    <Optional Settings File>\n"
-            );
-            return 0;
-#endif
         }
 
 
@@ -26174,7 +24502,7 @@ int WindowsMatchesLinux(int argc, char * argv[], string WorkingDir, string Files
         return 0;
     }
 //----------------------------------------Code Coverage----------------------------------------------------------------
-int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])
+    int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])
     {
 
         //DATA COVERED AS OF 05-23-2010

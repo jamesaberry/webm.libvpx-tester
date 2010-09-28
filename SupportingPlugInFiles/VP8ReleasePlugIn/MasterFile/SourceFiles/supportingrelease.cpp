@@ -21,10 +21,10 @@ using namespace std;
 char TesterExePath[256];
 
 extern unsigned int GetTime();
-extern void FolderName2(char *DirIn, char *DirOut);
+extern void FolderName2(const char *DirIn, char *DirOut);
 
-extern double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
-extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
+extern double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
+extern unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
 
 extern int CompressIVFtoIVF_TimeOuput(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt);
 extern int DecompressIVFtoIVF(char *inputFile, char *outputFile2);

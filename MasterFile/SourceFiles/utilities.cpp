@@ -43,8 +43,8 @@ typedef unsigned int  DWORD;
 #include <unistd.h>
 #endif
 #ifdef DSHOW
-	extern int IVF2Raw(char *inputFile, char *outputDir);
-	extern char TesterExePath[256];
+extern int IVF2Raw(char *inputFile, char *outputDir);
+extern char TesterExePath[256];
 #endif
 #if CONFIG_MD5
 #include "md5_utils.h"
@@ -89,7 +89,7 @@ extern string slashCharStr;
 /////////////////////////////////////////////////////////////////////////////////////////////
 const int PSNR_MAX = 999.;
 const int sizBuff = 512;
-extern void FileName(char *input, char *FileName, int removeExt);
+extern void FileName(const char *input, char *FileName, int removeExt);
 
 extern int FormatIVFHeaderRead(IVF_HEADER *ivf);
 extern unsigned int GetHighResTimerTick();
@@ -111,7 +111,7 @@ extern "C"
 struct vp8_extracfg
 {
     struct on2_codec__pkt_list *pkt_list;
-    vp8e_encoding_mode			EncodingMode;               /** best, good, realtime            */
+    vp8e_encoding_mode          EncodingMode;               /** best, good, realtime            */
     int                         CpuUsed;                    /** available cpu percentage in 1/16*/
     unsigned int                EnableAutoAltRef;           /** if encoder decides to uses alternate reference frame */
     unsigned int                NoiseSensitivity;
@@ -1354,7 +1354,7 @@ VP8_CONFIG InPutSettings(char *inputFile)
 
     return opt;
 }
-int OutPutSettings(char *outputFile, VP8_CONFIG opt)
+int OutPutSettings(const char *outputFile, VP8_CONFIG opt)
 {
     //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
 
@@ -1403,7 +1403,7 @@ int OutPutSettings(char *outputFile, VP8_CONFIG opt)
     outfile.close();
     return 0;
 }
-int OutPutCompatSettings(char *outputFile, VP8_CONFIG opt, int ParVersionNum)
+int OutPutCompatSettings(const char *outputFile, VP8_CONFIG opt, int ParVersionNum)
 {
     //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
     //Tester Uses prebuilt executables from prior builds
@@ -1599,7 +1599,7 @@ int FormatFrameHeaderWrite(IVF_FRAME_HEADER &ivf_fh)
     return 0;
 }
 //---------------------------------------------------File Management------------------------------------------------------------------
-long FileSize(char *inFile)
+long FileSize(const char *inFile)
 {
     //finds and returns the size of a file with output.
     char FileNameinFile[256];
@@ -1626,7 +1626,7 @@ long FileSize(char *inFile)
 
     return end - pos;
 }
-long FileSize2(char *inFile)
+long FileSize2(const char *inFile)
 {
     //finds and returns the size of a file without output.
     long pos;
@@ -1644,7 +1644,7 @@ long FileSize2(char *inFile)
 
     return end - pos;
 }
-void FileName(char *input, char *FileName, int removeExt)
+void FileName(const char *input, char *FileName, int removeExt)
 {
     //Extracts only the files name from its full path.
 
@@ -1690,14 +1690,14 @@ void FileName(char *input, char *FileName, int removeExt)
 }
 
 
-void FolderName(char *input, char *output)
+void FolderName(const char *input, char *output)
 {
     //Gets the full name of the folder a file is in and returns it.
 
     int parser = 0;
     int slashcount = 0;
     int slashcount2 = 0;
-    char *Dir = input;
+    const char *Dir = input;
 
     while (Dir[parser] != '\0')
     {
@@ -1727,7 +1727,7 @@ void FolderName(char *input, char *output)
     return;
 }
 
-void FolderName2(char *DirIn, char *DirOut)
+void FolderName2(const char *DirIn, char *DirOut)
 {
     //Takes in the full name of a file and writes the directory and file name (without its extention) to the second input.
     int ArraySize = 0;
@@ -3106,7 +3106,7 @@ int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
     //  yv12->clrtype = (/*img->fmt == IMG_FMT_ON2I420 || img->fmt == */IMG_FMT_ON2YV12); //REG_YUV = 0
     return 0;
 }
-double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
+double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
 {
     if (frameStats != 3)
     {
@@ -3309,7 +3309,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+            vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
 
             return 0;
         }
@@ -3330,7 +3330,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
             delete timeStamp2;
             delete timeEndStamp2;
             delete [] CompBuff;
-			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+            vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3374,7 +3374,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
                 fclose(CompFile);
                 delete timeStamp2;
                 delete timeEndStamp2;
-				vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+                vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
                 return 0;
             }
 
@@ -3547,7 +3547,7 @@ double IVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameSta
 
     return totalPsnr;
 }
-double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut)
+double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut)
 {
     if (frameStats != 3)
     {
@@ -3771,7 +3771,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             fclose(CompFile);
             delete timeStamp2;
             delete timeEndStamp2;
-			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+            vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3791,7 +3791,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
             delete timeStamp2;
             delete timeEndStamp2;
             delete [] CompBuff;
-			vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+            vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
             return 0;
         }
 
@@ -3835,7 +3835,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
                 fclose(CompFile);
                 delete timeStamp2;
                 delete timeEndStamp2;
-				vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+                vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
                 return 0;
             }
 
@@ -4008,7 +4008,7 @@ double PostProcIVFPSNR(char *inputFile1, char *inputFile2, int forceUVswap, int 
 
     return totalPsnr;
 }
-double IVFDataRate(char *inputFile, int DROuputSel)
+double IVFDataRate(const char *inputFile, int DROuputSel)
 {
     if (DROuputSel != 2)
     {
@@ -4138,7 +4138,7 @@ double IVFDataRate(char *inputFile, int DROuputSel)
     return Avg;
 }
 
-int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer)
+int IVFCheckPBM(const char *inputFile, int bitRate, int maxBuffer, int preBuffer)
 {
     FILE *in = fopen(inputFile, "rb");
 
@@ -4214,7 +4214,7 @@ int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer)
     return -11;
 }
 
-int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold)
+int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold)
 {
     string ResizeInStr = inputFile;
     ResizeInStr.erase(ResizeInStr.length() - 4, 4);
@@ -5375,7 +5375,7 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputFile, char *outputFile2)
 #endif
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
-int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
+int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -5403,7 +5403,7 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
-    char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
+    const char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
     FILE                  *infile, *outfile;
     vpx_codec_enc_cfg_t    cfg;
     vpx_codec_err_t        res;
@@ -6095,7 +6095,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     vpx_img_free(&raw);
     return 0;
 }
-unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
+unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
@@ -6106,7 +6106,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
-    char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
+    const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
     FILE                  *infile, *outfile;
     vpx_codec_enc_cfg_t    cfg;
     vpx_codec_err_t        res;
@@ -6452,7 +6452,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
 
     return cx_time;
 }
-int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame)
+int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -6480,7 +6480,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed,
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
-    char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
+    const char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
     FILE                  *infile, *outfile;
     vpx_codec_enc_cfg_t    cfg;
     vpx_codec_err_t        res;
@@ -6853,7 +6853,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, char *outputFile2, int speed,
 
     return 0;
 }
-int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
+int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -6882,7 +6882,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
 
     //vpx_codec_ctx_t       decoder;
     vpx_codec_ctx_t       encoder;
-    char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
+    const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
     FILE                  *infile, *outfile, *outfile3;
     vpx_codec_enc_cfg_t    cfg;
     vpx_codec_err_t        res;
@@ -7544,10 +7544,10 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, char *outputFile2, int spe
 
     return 0;
 }
-int DecompressIVFtoIVF(char *inputchar, char *outputchar)
+int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
 {
     vpx_codec_ctx_t       decoder;
-    char                   *fn = inputchar;
+    const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
     uint32_t               buf_sz = 0, buf_alloc_sz = 0;
@@ -7557,7 +7557,7 @@ int DecompressIVFtoIVF(char *inputchar, char *outputchar)
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
     unsigned long          dx_time = 0;
-    char                   *fn2 = outputchar;
+    const char                   *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
 
@@ -7717,10 +7717,10 @@ fail:
 
     return 0;
 }
-int DecompressIVFtoRaw(char *inputchar, char *outputchar)
+int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
 {
     vpx_codec_ctx_t       decoder;
-    char                  *fn = inputchar;
+    const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
     uint32_t               buf_sz = 0, buf_alloc_sz = 0;
@@ -7730,7 +7730,7 @@ int DecompressIVFtoRaw(char *inputchar, char *outputchar)
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
     unsigned long          dx_time = 0;
-    char                   *fn2 = outputchar;
+    const char             *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
     vp8_postproc_cfg_t      vp8_pp_cfg = {0};
@@ -8240,12 +8240,12 @@ fail:
 
     return 0;
 }
-unsigned int TimeDecompressIVFtoIVF(char *inputchar, char *outputchar)
+unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputchar)
 {
     //Time Decompress is not supposed to save output that is the only difference between it and
     //DecompressIVFtoIVFTimeAndOutput
     vpx_codec_ctx_t       decoder;
-    char                  *fn = inputchar;
+    const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
     uint32_t               buf_sz = 0, buf_alloc_sz = 0;
@@ -8255,7 +8255,7 @@ unsigned int TimeDecompressIVFtoIVF(char *inputchar, char *outputchar)
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
     unsigned long          dx_time = 0;
-    char                   *fn2 = outputchar;
+    const char             *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
 
@@ -8426,10 +8426,10 @@ fail:
 
     return dx_time;
 }
-unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputchar, char *outputchar)
+unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *outputchar)
 {
     vpx_codec_ctx_t       decoder;
-    char                   *fn = inputchar;
+    const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
     uint32_t               buf_sz = 0, buf_alloc_sz = 0;
@@ -8439,7 +8439,7 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputchar, char *outputchar)
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
     unsigned long          dx_time = 0;
-    char                   *fn2 = outputchar;
+    const char                   *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
 
@@ -8615,10 +8615,10 @@ fail:
 
     return dx_time;
 }
-int DecComputeMD5(char *inputchar, char *outputchar)
+int DecComputeMD5(const char *inputchar, const char *outputchar)
 {
     vpx_codec_ctx_t       decoder;
-    char                  *fn = inputchar;
+    const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
     uint32_t               buf_sz = 0, buf_alloc_sz = 0;
@@ -8628,7 +8628,7 @@ int DecComputeMD5(char *inputchar, char *outputchar)
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
     unsigned long          dx_time = 0;
-    char                   *fn2 = outputchar;
+    const char             *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
     vp8_postproc_cfg_t      vp8_pp_cfg = {0};
@@ -9004,7 +9004,7 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
 
     return(0);
 }
-int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile)
+int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile)
 {
     bool verbose = 1;
 
@@ -10240,7 +10240,7 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
     fclose(in2);
     return 0;
 }
-int CompIVF(char *inputFile1, char *inputFile2)
+int CompIVF(const char *inputFile1, const char *inputFile2)
 {
     ////Returns:
     //-1 if files are identical
@@ -10641,7 +10641,7 @@ double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch)
 
     return dropedframecount;
 }
-double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch)
+double IVFDisplayResizedFrames(const char *inputchar, int PrintSwitch)
 {
     //PrintSwitch == 0 -> Print to screen
     //PrintSwitch == 1 -> Print to file
@@ -10660,7 +10660,7 @@ double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch)
     }
 
     vpx_codec_ctx_t       decoder;
-    char                  *fn = inputchar;
+    const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
     uint32_t               buf_sz = 0, buf_alloc_sz = 0;
@@ -10817,7 +10817,7 @@ fail:
 
     return resizedIMGCount;
 }
-double IVFDisplayVisibleFrames(char *inputFile, int Selector)
+double IVFDisplayVisibleFrames(const char *inputFile, int Selector)
 {
     // 0 = just display
     // 1 = write to file
@@ -11048,7 +11048,7 @@ double IVFDisplayVisibleFrames(char *inputFile, int Selector)
     return VisableCount;
 
 }
-double IVFDisplayAltRefFrames(char *inputFile, int Selector)
+double IVFDisplayAltRefFrames(const char *inputFile, int Selector)
 {
     // 0 = just display
     // 1 = write to file
@@ -11280,7 +11280,7 @@ double IVFDisplayAltRefFrames(char *inputFile, int Selector)
     return AltRefCount;
 
 }
-double IVFDisplayKeyFrames(char *inputFile, int Selector)
+double IVFDisplayKeyFrames(const char *inputFile, int Selector)
 {
     int keyframecount = 0;
 
@@ -11507,7 +11507,7 @@ double IVFDisplayKeyFrames(char *inputFile, int Selector)
 
     return keyframecount;
 }
-int IVFLagInFramesCheck(char *QuantInChar)
+int IVFLagInFramesCheck(const char *QuantInChar)
 {
     ifstream Quantinfile(QuantInChar);
 
@@ -11546,7 +11546,7 @@ int IVFLagInFramesCheck(char *QuantInChar)
     return LagInFramesFound;
     ////////////////////////////////////////////////////////
 }
-int IVFDFWMCheck(char *InputFile, int printselect)
+int IVFDFWMCheck(const char *InputFile, int printselect)
 {
     //return 0 = pass
     //return 1 = fail
@@ -11754,7 +11754,7 @@ int CheckMinQ(char *inputFile, int MinQuantizer)
 
     return -1;//result > -1 -> fail | result = -1 pass
 }
-int CheckMaxQ(char *inputFile, int MaxQuantizer)
+int CheckMaxQ(const char *inputFile, int MaxQuantizer)
 {
     char QuantDispNameChar[255] = "";
     FileName(inputFile, QuantDispNameChar, 0);
@@ -11813,7 +11813,7 @@ int CheckMaxQ(char *inputFile, int MaxQuantizer)
 
     return -1;//result > -1 -> fail | result = -1 pass
 }
-int CheckFixedQ(char *inputFile, int FixedQuantizer)
+int CheckFixedQ(const char *inputFile, int FixedQuantizer)
 {
     char QuantDispNameChar[255] = "";
     FileName(inputFile, QuantDispNameChar, 0);
@@ -11873,7 +11873,7 @@ int CheckFixedQ(char *inputFile, int FixedQuantizer)
 
     return -1;//result > -1 -> fail | result = -1 pass
 }
-int TimeReturn(char *infile, int FileType)
+int TimeReturn(const char *infile, int FileType)
 {
     int speed;
 
@@ -11907,7 +11907,7 @@ int TimeReturn(char *infile, int FileType)
 
     return speed;
 }
-int GetNumberofFrames(char *inputFile)
+int GetNumberofFrames(const char *inputFile)
 {
     FILE *in = fopen(inputFile, "rb");
 

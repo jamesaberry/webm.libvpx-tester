@@ -52,16 +52,16 @@ char TesterExePath[256];
 #endif
 
 //Utilities
-extern void FolderName(char *DirIn, char *DirOut);
+extern void FolderName(const char *input, char *output);
 extern int Test0InputTextCheck(char *input, int MoreInfo);
-extern int IVFCheckPBMThreshold(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
+extern int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
 extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
 extern int CompareIVFHeaderInfo(int argc, char *argv[]);
 extern double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch);
-extern double IVFDisplayResizedFrames(char *inputchar, int PrintSwitch);
-extern double IVFDisplayVisibleFrames(char *inputchar, int PrintSwitch);
-extern double IVFDisplayAltRefFrames(char *inputFile, int Selector);
-extern double IVFDisplayKeyFrames(char *inputFile, int Selector);
+extern double IVFDisplayResizedFrames(const char *inputchar, int PrintSwitch);
+extern double IVFDisplayVisibleFrames(const char *inputchar, int PrintSwitch);
+extern double IVFDisplayAltRefFrames(const char *inputFile, int Selector);
+extern double IVFDisplayKeyFrames(const char *inputFile, int Selector);
 
 //Tools
 extern int ComprIVF2IVF(int argc, char *argv[], string WorkingDir);

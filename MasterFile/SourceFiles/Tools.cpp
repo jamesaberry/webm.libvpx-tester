@@ -61,7 +61,7 @@ extern string DateString();
 extern void VP8DefaultParms(VP8_CONFIG &opt);
 extern VP8_CONFIG VP8RandomParms(VP8_CONFIG &opt, char *inputfile, int display);
 extern VP8_CONFIG InPutSettings(char *inputFile);
-extern int OutPutSettings(char *outputFile, VP8_CONFIG opt);
+extern int OutPutSettings(const char *outputFile, VP8_CONFIG opt);
 extern int OutPutSettingsIVFEnc(char *outputFile, VP8_CONFIG opt);
 
 extern int FormatIVFHeaderRead(IVF_HEADER *ivf);
@@ -69,9 +69,9 @@ extern int FormatIVFHeaderWrite(IVF_HEADER &ivf);
 extern int FormatFrameHeaderRead(IVF_FRAME_HEADER &ivf_fh);
 extern int FormatFrameHeaderWrite(IVF_FRAME_HEADER &ivf_fh);
 
-extern long FileSize2(char *inFile);
-extern void FileName(char *input, char *FileName, int removeExt);
-extern void FolderName(char *input, char *output);
+extern long FileSize2(const char *inFile);
+extern void FileName(const char *input, char *FileName, int removeExt);
+extern void FolderName(const char *input, char *output);
 extern int FileExistsCheck(string input);
 
 extern int DecimalPlaces(int InputNumber);
@@ -79,25 +79,25 @@ extern char *itoa_custom(int value, char *result, int base);
 
 extern int MakeDirVPX(string CreateDir2);
 
-extern double IVFPSNR(char *inputFile, char *outputFile, int forceUVswap, int frameStats, int printvar, double *SsimOut);
-extern double IVFDataRate(char *inputFile, int DROuputSel);
-extern int IVFCheckPBM(char *inputFile, int bitRate, int maxBuffer, int preBuffer);
+extern double IVFPSNR(const char *inputFile, const char *outputFile, int forceUVswap, int frameStats, int printvar, double *SsimOut);
+extern double IVFDataRate(const char *inputFile, int DROuputSel);
+extern int IVFCheckPBM(const char *inputFile, int bitRate, int maxBuffer, int preBuffer);
 
-extern int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
+extern int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
 extern int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
-extern unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
-extern int DecompressIVFtoIVF(char *inputFile, char *outputFile2);
-extern int DecompressIVFtoRaw(char *inputFile, char *outputFile2);
+extern unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &opt, char *CompressString, int CompressInt, int RunQCheck);
+extern int DecompressIVFtoIVF(const char *inputFile, const char *outputFile2);
+extern int DecompressIVFtoRaw(const char *inputFile, const char *outputFile2);
 extern int DecompressIVFtoRawNoErrorOutput(char *inputFile, char *outputFile2);
 extern int DecompressIVFtoIVFNoOutput(char *inputFile, char *outputFile2);
-extern unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2);
-extern unsigned int DecompressIVFtoIVFTimeAndOutput(char *inputFile, char *outputFile2);
+extern unsigned int TimeDecompressIVFtoIVF(const char *inputFile, const char *outputFile2);
+extern unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputFile, const char *outputFile2);
 
 extern int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame);
-extern int CropRawIVF(char *inputFile, char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
+extern int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
 extern int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingFrame);
 extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
-extern int CompIVF(char *inputFile1, char *inputFile2);
+extern int CompIVF(const char *inputFile1, const char *inputFile2);
 
 extern int API20Encoder(long width, long height, char *infilechar, char *outfilechar);
 extern int API20Decoder(char *inputchar, char *outputchar);

@@ -5752,9 +5752,9 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             char CounterChar[10];
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
-			
-			char CPUChar[255];
-			snprintf(CPUChar,255,CPUIDSTRING.c_str());
+
+            char CPUChar[255];
+            snprintf(CPUChar, 255, CPUIDSTRING.c_str());
             putenv(CPUChar);
 
             printf("CPU:%i", counter);
@@ -6132,8 +6132,8 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
 
-			char CPUChar[255];
-			snprintf(CPUChar,255,CPUIDSTRING.c_str());
+            char CPUChar[255];
+            snprintf(CPUChar, 255, CPUIDSTRING.c_str());
             putenv(CPUChar);
 
             ///////Compresion and Time ///////
@@ -6201,12 +6201,12 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             char CounterChar[10];
             itoa_custom(counter, CounterChar, 10);
             CPUIDSTRING.append(CounterChar);
-            
-			char CPUChar[255];
-			snprintf(CPUChar,255,CPUIDSTRING.c_str());
-			putenv(CPUChar);
-           
-			printf("\n\nCPU:%i", counter);
+
+            char CPUChar[255];
+            snprintf(CPUChar, 255, CPUIDSTRING.c_str());
+            putenv(CPUChar);
+
+            printf("\n\nCPU:%i", counter);
             fprintf(stderr, "\n\nCPU:%i", counter);
 
             ///////Compresion and Time ///////

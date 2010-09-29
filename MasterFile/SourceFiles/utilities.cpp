@@ -1890,6 +1890,13 @@ int Test0InputTextCheck(char *input, int MoreInfo)
     infile2.close();
     ////////////////////////////////////////////////////////////////////////////////////////////
 
+    if (numberoftests > 990)
+    {
+        printf("\nNumber of test exceeds current capacity please limit external tests to 990\n");
+        fprintf(stderr, "\nNumber of test exceeds current capacity please limit external tests to 990\n");
+        return -1;
+    }
+
     int linesskippedtracker = 0;
 
     char buffer[1024];
@@ -1899,13 +1906,13 @@ int Test0InputTextCheck(char *input, int MoreInfo)
     int DummyArgvVar = 1;
     int CommentBool = 0;
 
-    int *PassFail = new int[numberoftests+2];
+    int PassFail[999]; //= new int[numberoftests+2];
     int PassFailInt = 0;
     int TestsRun = 0;
 
-    string *StringAr = new string[numberoftests+2];
-    string *SelectorAr = new string[numberoftests+2];
-    string *SelectorAr2 = new string[numberoftests+2];
+    string StringAr[999];// = new string[numberoftests+2];
+    string SelectorAr[999];// = new string[numberoftests+2];
+    string SelectorAr2[999];// = new string[numberoftests+2];
 
 
     int SelectorArInt = 0;
@@ -1922,9 +1929,9 @@ int Test0InputTextCheck(char *input, int MoreInfo)
         printf("\nInput File does not exist\n");
         infile.close();
         delete [] PassFail;
-        delete [] StringAr;
-        delete [] SelectorAr;
-        delete [] SelectorAr2;
+        //delete [] StringAr;
+        //delete [] SelectorAr;
+        //delete [] SelectorAr2;
         return 0;
     }
 
@@ -2668,10 +2675,10 @@ int Test0InputTextCheck(char *input, int MoreInfo)
         {
 
             infile.close();
-            delete [] PassFail;
-            delete [] StringAr;
-            delete [] SelectorAr;
-            delete [] SelectorAr2;
+            //delete [] PassFail;
+            //delete [] StringAr;
+            //delete [] SelectorAr;
+            //delete [] SelectorAr2;
             //return 0;
             return -1;
 
@@ -2681,10 +2688,10 @@ int Test0InputTextCheck(char *input, int MoreInfo)
             if (PassFailInt == 0)
             {
                 printf("Test File Specified is empty.");
-                delete [] PassFail;
-                delete [] StringAr;
-                delete [] SelectorAr;
-                delete [] SelectorAr2;
+                //delete [] PassFail;
+                //delete [] StringAr;
+                //delete [] SelectorAr;
+                //delete [] SelectorAr2;
                 return 0;
             }
             else
@@ -2693,10 +2700,10 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                 printf("\nAll %i Tests in text file: %s - are properly Formatted\n\n", y, input);
 
                 //return 1;
-                delete [] PassFail;
-                delete [] StringAr;   //will cause error
+                //delete [] PassFail;
+                //delete [] StringAr;   //will cause error
                 //delete [] SelectorAr; //will cause error
-                delete [] SelectorAr2;
+                //delete [] SelectorAr2;
                 infile.close();
                 return SelectorArInt;
             }
@@ -2710,10 +2717,10 @@ int Test0InputTextCheck(char *input, int MoreInfo)
             printf("\nFile Contains %i Tests\n", SelectorArInt);
             printf("\nFile Contains %i Lines\n", trackthis1);
             infile.close();
-            delete [] PassFail;
-            delete [] StringAr;
-            delete [] SelectorAr;
-            delete [] SelectorAr2;
+            //delete [] PassFail;
+            //delete [] StringAr;
+            //delete [] SelectorAr;
+            //delete [] SelectorAr2;
             //return 0;
             return -1;
         }
@@ -2724,20 +2731,20 @@ int Test0InputTextCheck(char *input, int MoreInfo)
             printf("\nFile Contains %i Lines\n", trackthis1);
             infile.close();
             //return 1;
-            delete [] PassFail;
-            delete [] StringAr;
-            delete [] SelectorAr;
-            delete [] SelectorAr2;
+            //delete [] PassFail;
+            //delete [] StringAr;
+            //delete [] SelectorAr;
+            //delete [] SelectorAr2;
             return SelectorArInt;
         }
     }
 
     infile.close();
     //return 3;
-    delete [] PassFail;
-    delete [] StringAr;
-    delete [] SelectorAr;
-    delete [] SelectorAr2;
+    //delete [] PassFail;
+    //delete [] StringAr;
+    //delete [] SelectorAr;
+    //delete [] SelectorAr2;
     return -3;
 }
 int FileExistsCheck(string input)

@@ -88,6 +88,7 @@ extern char *itoa_custom(int value, char *result, int base);
 extern unsigned int GetTimeInMicroSec(unsigned int startTick, unsigned int stopTick);
 extern unsigned int VPX_GetProcCoreCount();
 extern unsigned int GetTime();
+extern int MakeDir(string CreateDir);
 extern int MakeDirVPX(string CreateDir2);
 extern void RunExe(string RunExe);
 
@@ -161,7 +162,7 @@ extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string Fil
 extern int TwoPassVsTwoPassBest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int UnderShoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int Version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int WinLinMacMatch(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 
 ///////////////////////////////External Arrays to Test/////////////////////////////
 //#define DATA_COV /* If DataCov Definition is commented out Array Code Coverage Tests are not inclued if it is not they are */
@@ -360,24 +361,60 @@ void PrintHeader1(int argc, char *argv[], string WorkingDir3)
 
     string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
 #if defined(_WIN32)
-    TestMachineInfo = "                      ";
+    TestMachineInfo = "";
+    string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-    TestMachineInfo.append("\n                     Test Machine is Running: Windows\n\n");
+    TestMachineInfo.append("\n                        Test Machine is Running: Windows\n\n");
 #endif
 #if defined(linux)
-    TestMachineInfo = "                      ";
+    TestMachineInfo = "";
+    string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                       Test Machine is Running: Linux\n\n");
 #endif
 #if defined(__APPLE__)
-    TestMachineInfo = "                      ";
+    TestMachineInfo = "";
+    string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                       Test Machine is Running: Mac\n\n");
 #endif
 #if defined(__POWERPC__)
-    TestMachineInfo = "                      ";
+    TestMachineInfo = "";
+    string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
     TestMachineInfo.append("\n                      Test Machine is Running: PowerPC\n\n");
@@ -2181,7 +2218,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == WMLMMNUM)
                 {
-                    SelectorAr[SelectorArInt] = "WindowsMatchesLinux";
+                    SelectorAr[SelectorArInt] = "WinLinMacMatch";
                     CheckTimeStamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -2190,7 +2227,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                         RunTime1 = GetTime();
                     }
 
-                    PassFail[PassFailInt] = WindowsMatchesLinux(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = WinLinMacMatch(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
 
                     if (RecordRunTimes == 1)
                     {
@@ -3356,129 +3393,26 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        opt.allow_df = 0;
+
+        if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-            opt.allow_df = 0;
-
-            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-            opt.allow_df = 1;
-
-            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 1)
+        opt.allow_df = 1;
+
+        if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
-            opt.Mode = MODE_GOODQUALITY;
-            opt.allow_df = 0;
-
-            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-            opt.allow_df = 1;
-
-            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-            opt.allow_df = 0;
-
-            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-            opt.allow_df = 1;
-
-            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 4)
-        {
-            opt.allow_df = 0;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.allow_df = 1;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.allow_df = 0;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.allow_df = 1;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
     }
 
@@ -3775,133 +3709,26 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        opt.allow_lag = 0;
+
+        if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-            opt.allow_lag = 0;
-
-            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-            opt.allow_lag = 1;
-
-            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 1)
+        opt.allow_lag = 1;
+
+        if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
         {
-            opt.Mode = MODE_GOODQUALITY;
-            opt.allow_lag = 0;
-
-            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-            opt.allow_lag = 1;
-
-            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-            opt.allow_lag = 0;
-
-            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-            opt.allow_lag = 1;
-
-            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.allow_lag = 0;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.allow_lag = 1;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.allow_lag = 0;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.allow_lag = 1;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
     }
 
@@ -4241,133 +4068,26 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        opt.allow_spatial_resampling = 0;
+
+        if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-            opt.allow_spatial_resampling = 0;
-
-            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-            opt.allow_spatial_resampling = 1;
-
-            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 1)
+        opt.allow_spatial_resampling = 1;
+
+        if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
-            opt.Mode = MODE_GOODQUALITY;
-            opt.allow_spatial_resampling = 0;
-
-            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-            opt.allow_spatial_resampling = 1;
-
-            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-            opt.allow_spatial_resampling = 0;
-
-            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-            opt.allow_spatial_resampling = 1;
-
-            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.allow_spatial_resampling = 0;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.allow_spatial_resampling = 1;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.allow_spatial_resampling = 0;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.allow_spatial_resampling = 1;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
     }
 
@@ -4691,124 +4411,22 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 1)
+        if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
         {
-            opt.Mode = MODE_GOODQUALITY;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
     }
 
@@ -5223,74 +4841,14 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-        }
-
-        if (Mode == 1)
-        {
-            opt.Mode = MODE_GOODQUALITY;
-
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
     }
 
@@ -5660,73 +5218,14 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 1)
-        {
-            opt.Mode = MODE_GOODQUALITY;
-
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
         putenv("ON2_SIMD_CAPS=0");
@@ -6223,78 +5722,15 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             ChangedCPUDecNOutLast.append(count);
             ChangedCPUDecNOutLast.append(".ivf");
 
-            if (Mode == 0)
+            opt.Mode = Mode;
+            Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+
+            if (Time2 == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-
-                if (Time2 == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 1)
-            {
-                opt.Mode = MODE_GOODQUALITY;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-
-                if (Time2 == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-
-                if (Time2 == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.Mode = MODE_SECONDPASS;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-
-                if (Time2 == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.Mode = MODE_SECONDPASS_BEST;
-                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-
-                if (Time2 == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
             if (TestType != 2 && counter != 0)
@@ -6656,73 +6092,14 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             DFWMOutFile.append(num);
             DFWMOutFile.append(".ivf");
 
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-
-                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 1)
-            {
-                opt.Mode = MODE_GOODQUALITY;
-
-                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-
-                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
             if (TestType != 2)
@@ -7054,76 +6431,14 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-
-            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-        }
-
-        if (Mode == 1)
-        {
-            opt.Mode = MODE_GOODQUALITY;
-
-            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-
-            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
     }
 
@@ -7790,7 +7105,6 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
 }
 int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-
     char *CompressString = "EncoderBreakOut";
 
     char *input = argv[2];
@@ -8016,243 +7330,46 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        opt.encode_breakout = 0;
+
+        if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-            opt.encode_breakout = 0;
-
-            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-            opt.encode_breakout = 100;
-
-            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-            opt.encode_breakout = 500;
-
-            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-            opt.encode_breakout = 1000;
-
-            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 1)
+        opt.encode_breakout = 100;
+
+        if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
         {
-            opt.Mode = MODE_GOODQUALITY;
-            opt.encode_breakout = 0;
-
-            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-            opt.encode_breakout = 100;
-
-            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-            opt.encode_breakout = 500;
-
-            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-            opt.encode_breakout = 1000;
-
-            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 2)
+        opt.encode_breakout = 500;
+
+        if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
         {
-            opt.Mode = MODE_BESTQUALITY;
-            opt.encode_breakout = 0;
-
-            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-            opt.encode_breakout = 100;
-
-            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-            opt.encode_breakout = 500;
-
-            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-            opt.encode_breakout = 1000;
-
-            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 3)
+        opt.encode_breakout = 1000;
+
+        if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
         {
-        }
-
-        if (Mode == 4)
-        {
-            opt.encode_breakout = 0;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.encode_breakout = 100;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.encode_breakout = 500;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.encode_breakout = 1000;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.encode_breakout = 0;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.encode_breakout = 100;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.encode_breakout = 500;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.encode_breakout = 1000;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
         printf("\nDecoding EncBreakOut0");
@@ -8722,133 +7839,26 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        opt.error_resilient_mode = 1;
+
+        if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
-            opt.Mode = MODE_REALTIME;
-            opt.error_resilient_mode = 1;
-
-            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_REALTIME;
-            opt.error_resilient_mode = 0;
-
-            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
-        if (Mode == 1)
+        opt.error_resilient_mode = 0;
+
+        if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
-            opt.Mode = MODE_GOODQUALITY;
-            opt.error_resilient_mode = 1;
-
-            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_GOODQUALITY;
-            opt.error_resilient_mode = 0;
-
-            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-            opt.error_resilient_mode = 1;
-
-            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.Mode = MODE_BESTQUALITY;
-            opt.error_resilient_mode = 0;
-
-            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.error_resilient_mode = 1;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.error_resilient_mode = 0;
-            opt.Mode = MODE_SECONDPASS;
-
-            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-        }
-
-        if (Mode == 5)
-        {
-            opt.error_resilient_mode = 1;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            opt.error_resilient_mode = 0;
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            if (CompressIVFtoIVF(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
     }
 
@@ -8909,9 +7919,6 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         return 0;
     }
 }
-
-
-
 int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
 #if defined(linux)
@@ -11806,133 +10813,26 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            opt.fixed_q = FixedQ1Int;
+
+            if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.fixed_q = FixedQ1Int;
-
-                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.fixed_q = FixedQ2Int;
-
-                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 1)
+            opt.fixed_q = FixedQ2Int;
+
+            if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
             {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.fixed_q = FixedQ1Int;
-
-                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.fixed_q = FixedQ2Int;
-
-                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.fixed_q = FixedQ1Int;
-
-                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.fixed_q = FixedQ2Int;
-
-                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.fixed_q = FixedQ1Int;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.fixed_q = FixedQ2Int;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.fixed_q = FixedQ1Int;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.fixed_q = FixedQ2Int;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -12297,78 +11197,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+            opt.key_freq = 0;//ForceKeyFrameInt;
+
+            if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.key_freq = 0;//ForceKeyFrameInt;
-
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 1)
-            {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.key_freq = 0;//ForceKeyFrameInt;
-
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.key_freq = 0;//ForceKeyFrameInt;
-
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.key_freq = 0;//ForceKeyFrameInt;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.key_freq = 0;//ForceKeyFrameInt;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVFForceKeyFrame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -12853,30 +11690,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 RawCropNum++;
             }
 
-            if (Mode == 0)
-            {
-                opt.Mode = MODE_REALTIME;
-            }
-
-            if (Mode == 1)
-            {
-                opt.Mode = MODE_GOODQUALITY;
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-            }
-
-            if (Mode == 4)
-            {
-                opt.Mode = MODE_SECONDPASS;
-            }
-
-            if (Mode == 5)
-            {
-                opt.Mode = MODE_SECONDPASS_BEST;
-            }
+            opt.Mode = Mode;
 
             //Create Compressions
             RawCropNum = 1;
@@ -13743,204 +12557,39 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            opt.allow_lag = 0;
+            opt.lag_in_frames = LagInFrames1Val;
+
+            if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.allow_lag = 0;
-                opt.lag_in_frames = LagInFrames1Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames1Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames2Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 1)
+            opt.allow_lag = 1;
+            opt.lag_in_frames = LagInFrames1Val;
+
+            if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
             {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.allow_lag = 0;
-                opt.lag_in_frames = LagInFrames1Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames1Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames2Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 2)
+            opt.allow_lag = 1;
+            opt.lag_in_frames = LagInFrames2Val;
+
+            if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
             {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.allow_lag = 0;
-                opt.lag_in_frames = LagInFrames1Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames1Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames2Val;
-
-                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.allow_lag = 0;
-                opt.lag_in_frames = LagInFrames1Val;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames1Val;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames2Val;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.allow_lag = 0;
-                opt.lag_in_frames = LagInFrames1Val;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames1Val;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames1Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.allow_lag = 1;
-                opt.lag_in_frames = LagInFrames2Val;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -14417,73 +13066,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 QuantOutFile.append(num);
                 QuantOutFile.append(".ivf");
 
-                if (Mode == 0)
+                opt.Mode = Mode;
+
+                if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
                 {
-                    opt.Mode = MODE_REALTIME;
-
-                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-                }
-
-                if (Mode == 1)
-                {
-                    opt.Mode = MODE_GOODQUALITY;
-
-                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-                }
-
-                if (Mode == 2)
-                {
-                    opt.Mode = MODE_BESTQUALITY;
-
-                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-                }
-
-                if (Mode == 3)
-                {
-                }
-
-                if (Mode == 4)
-                {
-                    opt.Mode = MODE_SECONDPASS;
-
-                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-                }
-
-                if (Mode == 5)
-                {
-                    opt.Mode = MODE_SECONDPASS_BEST;
-
-                    if (CompressIVFtoIVF(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
+                    fclose(fp);
+                    string File1Str = File1;
+                    RecordTestComplete(MainDirString, File1Str, TestType);
+                    return 2;
                 }
 
                 printf("\n");
@@ -15902,133 +14492,26 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            opt.best_allowed_q = 10;
+
+            if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.best_allowed_q = 10;
-
-                if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.best_allowed_q = 60;
-
-                if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 1)
+            opt.best_allowed_q = 60;
+
+            if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
             {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.best_allowed_q = 10;
-
-                if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.best_allowed_q = 60;
-
-                if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.best_allowed_q = 10;
-
-                if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.best_allowed_q = 60;
-
-                if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.best_allowed_q = 10;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.best_allowed_q = 60;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.best_allowed_q = 10;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.best_allowed_q = 60;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -17733,79 +16216,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 //char NoiseSenseOut[255];
                 //snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
 
-                if (Mode == 0)
+                opt.Mode = Mode;
+
+                opt.noise_sensitivity = Noise;
+
+                if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
                 {
-                    opt.Mode = MODE_REALTIME;
-                    opt.noise_sensitivity = Noise;
-
-                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-                }
-
-                if (Mode == 1)
-                {
-                    opt.Mode = MODE_GOODQUALITY;
-                    opt.noise_sensitivity = Noise;
-
-                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-
-                }
-
-                if (Mode == 2)
-                {
-                    opt.Mode = MODE_BESTQUALITY;
-                    opt.noise_sensitivity = Noise;
-
-                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-                }
-
-                if (Mode == 3)
-                {
-                }
-
-                if (Mode == 4)
-                {
-                    opt.noise_sensitivity = Noise;
-                    opt.Mode = MODE_SECONDPASS;
-
-                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
-                }
-
-                if (Mode == 5)
-                {
-                    opt.noise_sensitivity = Noise;
-                    opt.Mode = MODE_SECONDPASS_BEST;
-
-                    if (CompressIVFtoIVF(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
-                    {
-                        fclose(fp);
-                        string File1Str = File1;
-                        RecordTestComplete(MainDirString, File1Str, TestType);
-                        return 2;
-                    }
+                    fclose(fp);
+                    string File1Str = File1;
+                    RecordTestComplete(MainDirString, File1Str, TestType);
+                    return 2;
                 }
 
                 if (TestType != 2)
@@ -18595,133 +17015,26 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            opt.play_alternate = PlayAlternate1Val;
+
+            if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.play_alternate = PlayAlternate1Val;
-
-                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.play_alternate = PlayAlternate2Val;
-
-                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 1)
+            opt.play_alternate = PlayAlternate2Val;
+
+            if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
             {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.play_alternate = PlayAlternate1Val;
-
-                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.play_alternate = PlayAlternate2Val;
-
-                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.play_alternate = PlayAlternate1Val;
-
-                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.play_alternate = PlayAlternate2Val;
-
-                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.play_alternate = PlayAlternate1Val;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.play_alternate = PlayAlternate2Val;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.play_alternate = PlayAlternate1Val;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.play_alternate = PlayAlternate2Val;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -19052,73 +17365,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-
-                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 1)
-            {
-                opt.Mode = MODE_GOODQUALITY;
-
-                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-
-                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
         }
@@ -19638,73 +17892,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 1)
-            {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.allow_df = 0;
-
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.allow_df = 0;
-
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 4)
-            {
-                opt.allow_df = 0;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.allow_df = 0;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVFReconBufferCheck(input, ReconBuffer.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -19988,133 +18183,26 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
+
+            if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 1)
+            opt.resample_down_water_mark = ResampleDownWaterMarkLow;
+
+            if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
             {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.resample_down_water_mark = ResampleDownWaterMarkLow;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -22694,133 +20782,26 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            opt.under_shoot_pct = 10;
+
+            if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.under_shoot_pct = 10;
-
-                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.under_shoot_pct = 100;
-
-                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 1)
+            opt.under_shoot_pct = 100;
+
+            if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
             {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.under_shoot_pct = 10;
-
-                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.under_shoot_pct = 100;
-
-                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.under_shoot_pct = 10;
-
-                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.under_shoot_pct = 100;
-
-                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.under_shoot_pct = 10;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.under_shoot_pct = 100;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.under_shoot_pct = 10;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.under_shoot_pct = 100;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
         }
 
@@ -23160,243 +21141,46 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            opt.Version = 0;
+
+            if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-                opt.Version = 0;
-
-                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.Version = 1;
-
-                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.Version = 2;
-
-                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_REALTIME;
-                opt.Version = 3;
-
-                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 1)
+            opt.Version = 1;
+
+            if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
             {
-                opt.Mode = MODE_GOODQUALITY;
-                opt.Version = 0;
-
-                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.Version = 1;
-
-                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.Version = 2;
-
-                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_GOODQUALITY;
-                opt.Version = 3;
-
-                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 2)
+            opt.Version = 2;
+
+            if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
             {
-                opt.Mode = MODE_BESTQUALITY;
-                opt.Version = 0;
-
-                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.Version = 1;
-
-                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.Version = 2;
-
-                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Mode = MODE_BESTQUALITY;
-                opt.Version = 3;
-
-                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
-            if (Mode == 3)
+            opt.Version = 3;
+
+            if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
             {
-            }
-
-            if (Mode == 4)
-            {
-                opt.Version = 0;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Version = 1;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Version = 2;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Version = 3;
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.Version = 0;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Version = 1;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Version = 2;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-                opt.Version = 3;
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
             printf("\n\n");
@@ -23592,15 +21376,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 1;
         }
     }
-    int WindowsMatchesLinux(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
+    int WinLinMacMatch(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
-        char *CompressString = "WindowsMatchesLinux";
-        char *input = argv[2];
+        char *CompressString = "WinLinMacMatch";
 
-        if (!(argc == 9 || argc == 10))
+
+        if (!(argc == 7 || argc == 6))
         {
             printf(
-                "  WindowsMatchesLinux \n\n"
+                "  WinLinMacMatch \n\n"
                 "    <inputfile>\n"
                 "    <Mode>\n"
                 "          (0)Realtime/Live Encoding\n"
@@ -23609,25 +21393,30 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (3)Two Pass - First Pass\n"
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n "
-                "    <Test Mode>\n"
-                "          (0)Create Test Files\n"
-                "          (1)Preform Test\n"
-                "    <Lin Input Folder - enter N/A if none>\n"
-                "    <Mac Input Folder - enter N/A if none>\n"
-                "    <PPC Input Folder - enter N/A if none>\n"
+                "    <Target Bit Rate>\n"
+                "    <Base Folder>\n"
                 "    <Optional Settings File>\n"
             );
             return 0;
         }
 
+        char *input = argv[2];
+        string basefolder = argv[5];
+        basefolder.append(slashCharStr.c_str());
+        string versionstring = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+        size_t versionPos = versionstring.find("v");
+        versionstring.substr(versionPos);
+        basefolder.append(versionstring.substr(versionPos));
+        basefolder.append(slashCharStr.c_str());
+        MakeDir(basefolder);
+        int TestMode = 0;
 
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";
         string Mode3TestMatch = "";
         char WorkingDir2[255] = "";
         char WorkingDir3[255] = "";
-        char *MyDir = "WindowsMatchesLinux";
+        char *MyDir = "WinLinMacMatch";
         string MainDirString = "";
         char File1[255] = "";
 
@@ -23710,156 +21499,56 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDirString = WorkingDir2;
         }
 
-        string WinBase;
-        string LinBase;
-        string MacBase;
-        string PPCBase;
+        string FiletoEnc = "";
+        string FiletoDec = "";
+
+        string WinEnc = basefolder;
+        string LinEnc = basefolder;
+        string MacEnc = basefolder;
+
+        string WinDec = basefolder;
+        string LinDec = basefolder;
+        string MacDec = basefolder;
+
+        string ParameterFile = argv[6];
+
+        WinEnc.append("WinEnc.ivf");
+        LinEnc.append("LinEnc.ivf");
+        MacEnc.append("MacEnc.ivf");
+
+        WinDec.append("WinDec.ivf");
+        LinDec.append("LinDec.ivf");
+        MacDec.append("MacDec.ivf");
+
 
 #if defined(linux)
-        LinBase = "N/A";
-        WinBase = argv[6];
-        MacBase = argv[7];
-        PPCBase = argv[8];
+        FiletoEnc = LinEnc;
+        FiletoDec = LinDec;
+
+        if (FileExistsCheck(WinEnc) && FileExistsCheck(WinDec) && FileExistsCheck(MacEnc) && FileExistsCheck(MacDec))
+        {
+            TestMode = 1;
+        }
+
 #elif defined(_WIN32)
-        LinBase = argv[6];
-        WinBase = "N/A";
-        MacBase = argv[7];
-        PPCBase = argv[8];
+        FiletoEnc = WinEnc;
+        FiletoDec = WinDec;
+
+        if (FileExistsCheck(LinEnc) && FileExistsCheck(LinDec) && FileExistsCheck(MacEnc) && FileExistsCheck(MacDec))
+        {
+            TestMode = 1;
+        }
+
 #elif defined(__APPLE__)
-        LinBase = argv[6];
-        WinBase = argv[7];
-        MacBase = "N/A";
-        PPCBase = argv[8];
-#elif defined(__POWERPC__)
-        LinBase = argv[6];
-        WinBase = argv[7];
-        MacBase = argv[8];
-        PPCBase = "N/A";
+        FiletoEnc = MacEnc;
+        FiletoDec = MacDec;
+
+        if (FileExistsCheck(WinEnc) && FileExistsCheck(WinDec) && FileExistsCheck(LinEnc) && FileExistsCheck(LinDec))
+        {
+            TestMode = 1;
+        }
+
 #endif
-
-        string WorkingDir4 = WorkingDirString;
-        string WorkingDir5 = WorkingDirString;
-        string WorkingDir6 = WorkingDirString;
-        string WorkingDir7 = WorkingDirString;
-        string WorkingDir4b = WorkingDirString;
-        string WorkingDir5b = WorkingDirString;
-        string WorkingDir6b = WorkingDirString;
-        string WorkingDir7b = WorkingDirString;
-
-        string WorkingDir8 = WinBase;
-        string WorkingDir9 = LinBase;
-        string WorkingDir10 = WinBase;
-        string WorkingDir11 = WinBase;
-        string WorkingDir12 = LinBase;
-        string WorkingDir13 = LinBase;
-
-        string WorkingDir8b = MacBase;
-        string WorkingDir9b = PPCBase;
-        string WorkingDir10b = MacBase;
-        string WorkingDir11b = MacBase;
-        string WorkingDir12b = PPCBase;
-        string WorkingDir13b = PPCBase;
-
-        WorkingDir4.append(slashCharStr);
-        WorkingDir4.append("Lin_Enc.ivf");
-        WorkingDir5.append(slashCharStr);
-        WorkingDir5.append("Lin_Dec.ivf");
-
-        WorkingDir6.append(slashCharStr);
-        WorkingDir6.append("Win_Enc.ivf");
-        WorkingDir7.append(slashCharStr);
-        WorkingDir7.append("Win_Dec.ivf");
-
-        WorkingDir4b.append(slashCharStr);
-        WorkingDir4b.append("Mac_Enc.ivf");
-        WorkingDir5b.append(slashCharStr);
-        WorkingDir5b.append("Mac_Dec.ivf");
-
-        WorkingDir6b.append(slashCharStr);
-        WorkingDir6b.append("PPC_Enc.ivf");
-        WorkingDir7b.append(slashCharStr);
-        WorkingDir7b.append("PPC_Dec.ivf");
-
-
-        WorkingDir8.append(slashCharStr);
-        WorkingDir8.append("Win_Enc_Paramaters.txt");
-        WorkingDir9.append(slashCharStr);
-        WorkingDir9.append("Lin_Enc_Paramaters.txt");
-
-        WorkingDir8b.append(slashCharStr);
-        WorkingDir8b.append("Mac_Enc_Paramaters.txt");
-        WorkingDir9b.append(slashCharStr);
-        WorkingDir9b.append("PPC_Enc_Paramaters.txt");
-
-        WorkingDir10.append(slashCharStr);
-        WorkingDir10.append("Win_Enc.ivf");
-        WorkingDir11.append(slashCharStr);
-        WorkingDir11.append("Win_Dec.ivf");
-
-        WorkingDir12.append(slashCharStr);
-        WorkingDir12.append("Lin_Enc.ivf");
-        WorkingDir13.append(slashCharStr);
-        WorkingDir13.append("Lin_Dec.ivf");
-
-        WorkingDir10b.append(slashCharStr);
-        WorkingDir10b.append("Mac_Enc.ivf");
-        WorkingDir11b.append(slashCharStr);
-        WorkingDir11b.append("Mac_Dec.ivf");
-
-        WorkingDir12b.append(slashCharStr);
-        WorkingDir12b.append("PPC_Enc.ivf");
-        WorkingDir13b.append(slashCharStr);
-        WorkingDir13b.append("PPC_Dec.ivf");
-
-
-        char LinEnc[255];
-        char LinDec[255];
-        char WinEnc[255];
-        char WinDec[255];
-        char MacEnc[255];
-        char MacDec[255];
-        char PPCEnc[255];
-        char PPCDec[255];
-
-        char LinEncParm[255];
-        char WinEncParm[255];
-        char MacEncParm[255];
-        char PPCEncParm[255];
-
-        char WinPrevEnc[255];
-        char WinPrevDec[255];
-        char LinPrevEnc[255];
-        char LinPrevDec[255];
-        char MacPrevEnc[255];
-        char MacPrevDec[255];
-        char PPCPrevEnc[255];
-        char PPCPrevDec[255];
-
-        snprintf(LinEnc, 255, "%s", WorkingDir4.c_str());
-        snprintf(LinDec, 255, "%s", WorkingDir5.c_str());
-        snprintf(WinEnc, 255, "%s", WorkingDir6.c_str());
-        snprintf(WinDec, 255, "%s", WorkingDir7.c_str());
-
-        snprintf(WinEncParm, 255, "%s", WorkingDir8.c_str());
-        snprintf(LinEncParm, 255, "%s", WorkingDir9.c_str());
-
-        snprintf(WinPrevEnc, 255, "%s", WorkingDir10.c_str());
-        snprintf(WinPrevDec, 255, "%s", WorkingDir11.c_str());
-        snprintf(LinPrevEnc, 255, "%s", WorkingDir12.c_str());
-        snprintf(LinPrevDec, 255, "%s", WorkingDir13.c_str());
-
-        snprintf(MacEnc, 255, "%s", WorkingDir4b.c_str());
-        snprintf(MacDec, 255, "%s", WorkingDir5b.c_str());
-        snprintf(PPCEnc, 255, "%s", WorkingDir6b.c_str());
-        snprintf(PPCDec, 255, "%s", WorkingDir7b.c_str());
-
-        snprintf(MacEncParm, 255, "%s", WorkingDir8b.c_str());
-        snprintf(PPCEncParm, 255, "%s", WorkingDir9b.c_str());
-
-        snprintf(MacPrevEnc, 255, "%s", WorkingDir10b.c_str());
-        snprintf(MacPrevDec, 255, "%s", WorkingDir11b.c_str());
-        snprintf(PPCPrevEnc, 255, "%s", WorkingDir12b.c_str());
-        snprintf(PPCPrevDec, 255, "%s", WorkingDir13b.c_str());
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
@@ -23900,11 +21589,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int speed = 0;
         int Mode = atoi(argv[3]);
         int BitRate = atoi(argv[4]);
-        int TestMode = atoi(argv[5]);
-        char *InputFolder = argv[6];
 
-        printf("Linux Matches Windows");
-        fprintf(stderr, "Linux Matches Windows");
+        printf("Win Lin Mac Match");
+        fprintf(stderr, "Win Lin Mac Match");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -23912,219 +21599,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //If Mode == 0 (Create Files) Then if input settings is listed use it
         //If Mode == 1 (run Test) Then input settings from test file
 
-        char ParmFile[255];
-        char EncOutput[255];
-        char DecOutput[255];
-        char PrevEncOutput[255];
-        char PrevDecOutput[255];
-
-        char PrevEncOutput2[255];
-        char PrevDecOutput2[255];
-        char PrevEncOutput3[255];
-        char PrevDecOutput3[255];
-
-        string CopyEncBaseStr;
-        string CopyDecBaseStr;
-        string CopyCMD;
-
-#if defined(linux)
-        snprintf(ParmFile, 255, "%s", WorkingDir8.c_str());
-        snprintf(DecOutput, 255, "%s", LinDec);
-
-        snprintf(PrevEncOutput2, 255, "%s", WorkingDir10b.c_str());
-        snprintf(PrevDecOutput2, 255, "%s", WorkingDir11b.c_str());
-
-        snprintf(PrevEncOutput3, 255, "%s", WorkingDir12b.c_str());
-        snprintf(PrevDecOutput3, 255, "%s", WorkingDir13b.c_str());
-
-        CopyEncBaseStr = "Lin_Enc.ivf";
-        CopyDecBaseStr = "Lin_Dec.ivf";
-        CopyCMD = "cp ";
-#elif defined(__POWERPC__)
-        cout << "\n\nPPC DEFINED\n\n";
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        snprintf(EncOutput, 255, "%s", PPCEnc);
-        snprintf(DecOutput, 255, "%s", PPCDec);
-
-        snprintf(PrevEncOutput, 255, "%s", WorkingDir12.c_str());
-        snprintf(PrevDecOutput, 255, "%s", WorkingDir13.c_str());
-
-        snprintf(PrevEncOutput2, 255, "%s", WorkingDir10.c_str());
-        snprintf(PrevDecOutput2, 255, "%s", WorkingDir11.c_str());
-
-        snprintf(PrevEncOutput3, 255, "%s", WorkingDir10b.c_str());
-        snprintf(PrevDecOutput3, 255, "%s", WorkingDir11b.c_str());
-
-        CopyEncBaseStr = "PPC_Enc.ivf";
-        CopyDecBaseStr = "PPC_Dec.ivf";
-        CopyCMD = "cp ";
-#elif defined(__APPLE__)
-
-        cout << "\n\nAPPLE DEFINED\n\n";
-        snprintf(ParmFile, 255, "%s", WorkingDir8b.c_str());
-
-        snprintf(EncOutput, 255, "%s", MacEnc);
-        snprintf(DecOutput, 255, "%s", MacDec);
-
-        snprintf(PrevEncOutput, 255, "%s", WorkingDir12.c_str());
-        snprintf(PrevDecOutput, 255, "%s", WorkingDir13.c_str());
-
-        snprintf(PrevEncOutput2, 255, "%s", WorkingDir10.c_str());
-        snprintf(PrevDecOutput2, 255, "%s", WorkingDir11.c_str());
-
-        snprintf(PrevEncOutput3, 255, "%s", WorkingDir12b.c_str());
-        snprintf(PrevDecOutput3, 255, "%s", WorkingDir13b.c_str());
-
-        CopyEncBaseStr = "Mac_Enc.ivf";
-        CopyDecBaseStr = "Mac_Dec.ivf";
-        CopyCMD = "cp ";
-#elif defined(_WIN32)
-        snprintf(ParmFile, 255, "%s", WorkingDir9.c_str());
-
-        snprintf(EncOutput, 255, "%s", WinEnc);
-        snprintf(DecOutput, 255, "%s", WinDec);
-
-        snprintf(PrevEncOutput, 255, "%s", WorkingDir12.c_str());
-        snprintf(PrevDecOutput, 255, "%s", WorkingDir13.c_str());
-
-        snprintf(PrevEncOutput2, 255, "%s", WorkingDir10b.c_str());
-        snprintf(PrevDecOutput2, 255, "%s", WorkingDir11b.c_str());
-
-        snprintf(PrevEncOutput3, 255, "%s", WorkingDir12b.c_str());
-        snprintf(PrevDecOutput3, 255, "%s", WorkingDir13b.c_str());
-
-        CopyEncBaseStr = "Win_Enc.ivf";
-        CopyDecBaseStr = "Win_Dec.ivf";
-        CopyCMD = "copy ";
-#endif
-
-        if (TestMode == 0)
-        {
-            if (argc == 10)
-            {
-                FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-                if (InputCheck == NULL)
-                {
-                    printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                    fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 0;
-                }
-
-                fclose(InputCheck);
-                opt = InPutSettings(argv[argc-1]);
-                BitRate = opt.target_bandwidth;
-            }
-        }
-
-        if (TestMode == 1)
-        {
-            FILE *InputCheckb = fopen(PrevEncOutput, "rb");
-
-            if (InputCheckb == NULL)
-            {
-                printf("\nEncoded file %s does not exist\n", PrevEncOutput);
-                fprintf(stderr, "\nEncoded file %s does not exist\n", PrevEncOutput);
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
-            }
-
-            fclose(InputCheckb);
-            FILE *InputCheckc = fopen(PrevDecOutput, "rb");
-
-            if (InputCheckc == NULL)
-            {
-                printf("\nDecoded file %s does not exist\n", PrevDecOutput);
-                fprintf(stderr, "\nDecoded file %s does not exist\n", PrevDecOutput);
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
-            }
-
-            fclose(InputCheckc);
-
-            FILE *InputCheckd = fopen(PrevEncOutput2, "rb");
-
-            if (InputCheckd == NULL)
-            {
-                printf("\nEncoded file %s does not exist\n", PrevEncOutput2);
-                fprintf(stderr, "\nEncoded file %s does not exist\n", PrevEncOutput2);
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
-            }
-
-            fclose(InputCheckd);
-            FILE *InputChecke = fopen(PrevDecOutput2, "rb");
-
-            if (InputChecke == NULL)
-            {
-                printf("\nDecoded file %s does not exist\n", PrevDecOutput2);
-                fprintf(stderr, "\nDecoded file %s does not exist\n", PrevDecOutput2);
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
-            }
-
-            fclose(InputChecke);
-
-            FILE *InputCheckf = fopen(PrevEncOutput3, "rb");
-
-            if (InputCheckf == NULL)
-            {
-                printf("\nEncoded file %s does not exist\n", PrevEncOutput3);
-                fprintf(stderr, "\nEncoded file %s does not exist\n", PrevEncOutput3);
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
-            }
-
-            fclose(InputCheckf);
-            FILE *InputCheckg = fopen(PrevDecOutput3, "rb");
-
-            if (InputCheckg == NULL)
-            {
-                printf("\nDecoded file %s does not exist\n", PrevDecOutput3);
-                fprintf(stderr, "\nDecoded file %s does not exist\n", PrevDecOutput3);
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
-            }
-
-            fclose(InputCheckg);
-
-
-            FILE *InputCheck = fopen(ParmFile, "rb");
-
-            if (InputCheck == NULL)
-            {
-                printf("\nInput Settings file %s does not exist\n", ParmFile);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", ParmFile);
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
-            }
-
-            fclose(InputCheck);
-            opt = InPutSettings(ParmFile);
-            BitRate = opt.target_bandwidth;
-        }
-
-        /////////////////////////////////////////////////////////
         BitRate = opt.target_bandwidth;
-
 
         if (TestType == 3)
         {
@@ -24132,127 +21607,20 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            if (Mode == 0)
+            opt.Mode = Mode;
+
+            if (CompressIVFtoIVF(input, FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0) == -1)
             {
-                opt.Mode = MODE_REALTIME;
-
-                if (CompressIVFtoIVF(input, EncOutput, speed, BitRate, opt, "Mode", Mode, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 1)
-            {
-                opt.Mode = MODE_GOODQUALITY;
-
-                if (CompressIVFtoIVF(input, EncOutput, speed, BitRate, opt, "Mode", Mode, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 2)
-            {
-                opt.Mode = MODE_BESTQUALITY;
-
-                if (CompressIVFtoIVF(input, EncOutput, speed, BitRate, opt, "Mode", Mode, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
-            }
-
-            if (Mode == 3)
-            {
-            }
-
-            if (Mode == 4)
-            {
-                opt.Mode = MODE_SECONDPASS;
-
-                if (CompressIVFtoIVF(input, EncOutput, speed, BitRate, opt, "Mode", Mode, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-            }
-
-            if (Mode == 5)
-            {
-                opt.Mode = MODE_SECONDPASS_BEST;
-
-                if (CompressIVFtoIVF(input, EncOutput, speed, BitRate, opt, "Mode", Mode, 0) == -1)
-                {
-                    fclose(fp);
-                    string File1Str = File1;
-                    RecordTestComplete(MainDirString, File1Str, TestType);
-                    return 2;
-                }
-
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
             }
 
             printf("\n");
             fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
-            DecompressIVFtoIVF(EncOutput, DecOutput);
-
-            ////////////////////////Copy Resulting files over to same directory exe is located in////////////////////////
-            printf("\n\n");
-            fprintf(stderr, "\n\n");
-
-
-
-            char CopyEnc[255];
-            char CopyEnc2[255];
-
-            FolderName(argv[0], CopyEnc);
-            snprintf(CopyEnc2, 255, "%s", CopyEnc);
-            string CopyEncStr = CopyEnc2;
-            string CopyDecStr = CopyEnc2;
-            string CopyParmStr = CopyEnc2;
-
-            CopyEncStr.append(CopyEncBaseStr);
-            CopyDecStr.append(CopyDecBaseStr);
-
-            string FullCopyString1 = CopyCMD;
-            FullCopyString1.append(EncOutput);
-            FullCopyString1.append(" ");
-            FullCopyString1.append(CopyEncStr);
-
-            string FullCopyString2 = CopyCMD;
-            FullCopyString2.append(DecOutput);
-            FullCopyString2.append(" ");
-            FullCopyString2.append(CopyDecStr);
-
-            string OutputsettingsFile = EncOutput;
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_Paramaters.txt");
-
-            string OutputsettingsFile2 = CopyEncStr;
-            OutputsettingsFile2.erase(OutputsettingsFile2.length() - 4, 4);
-            OutputsettingsFile2.append("_Paramaters.txt");
-
-            string FullCopyString3 = CopyCMD;
-            FullCopyString3.append(OutputsettingsFile);
-            FullCopyString3.append(" ");
-            FullCopyString3.append(OutputsettingsFile2);
-
-            system(FullCopyString1.c_str());
-            system(FullCopyString2.c_str());
-            system(FullCopyString3.c_str());
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            DecompressIVFtoIVF(FiletoEnc.c_str(), FiletoDec.c_str());
 
         }
 
@@ -24268,8 +21636,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (TestMode == 0)
         {
-            printf("\n\nTest files created.\n");
-            fprintf(stderr, "\n\nTest files created.\n");
+            printf("\n\nResults:\n\n");
+            fprintf(stderr, "\n\nResults:\n\n");
+
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "Test files created.");
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+
+            printf("\nIndeterminate\n");
+            fprintf(stderr, "\nIndeterminate\n");
+
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -24278,228 +21657,259 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int ENCFAIL = 0;
         int DECFAIL = 0;
-        printf("\n\nComparing %s and %s", EncOutput, PrevEncOutput);
-        fprintf(stderr, "\n\nComparing %s and %s", EncOutput, PrevEncOutput);
-        int EncResult = CompIVF(EncOutput, PrevEncOutput);
 
-        if (EncResult == -1)
+        printf("\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
+        fprintf(stderr, "\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
+        int WinEncVsLinEnc = CompIVF(WinEnc.c_str(), LinEnc.c_str());
+
+        if (WinEncVsLinEnc == -1)
         {
             printf("\n\nFiles are Identical\n");
             fprintf(stderr, "\n\nFiles are Identical\n");
         }
 
-        if (EncResult >= 0)
+        if (WinEncVsLinEnc >= 0)
         {
-            printf("\n\nFail: Encoded files differ at frame: %i", EncResult);
-            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", EncResult);
+            printf("\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
+            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
             ENCFAIL++;
         }
 
-        if (EncResult == -2)
+        if (WinEncVsLinEnc == -2)
         {
             printf("\n\nFail: File 2 ends before File 1.\n");
             fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
             ENCFAIL++;
         }
 
-        if (EncResult == -3)
+        if (WinEncVsLinEnc == -3)
         {
             printf("\n\nFail: File 1 ends before File 2.\n");
             fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
             ENCFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", EncOutput, PrevEncOutput2);
-        fprintf(stderr, "\n\nComparing %s and %s", EncOutput, PrevEncOutput2);
-        int EncResult2 = CompIVF(EncOutput, PrevEncOutput2);
+        printf("\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
+        fprintf(stderr, "\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
+        int LinEncVsMacEnc = CompIVF(LinEnc.c_str(), MacEnc.c_str());
 
-        if (EncResult2 == -1)
+        if (LinEncVsMacEnc == -1)
         {
             printf("\n\nFiles are Identical\n");
             fprintf(stderr, "\n\nFiles are Identical\n");
         }
 
-        if (EncResult2 >= 0)
+        if (LinEncVsMacEnc >= 0)
         {
-            printf("\n\nFail: Encoded files differ at frame: %i", EncResult);
-            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", EncResult);
+            printf("\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
+            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
             ENCFAIL++;
         }
 
-        if (EncResult2 == -2)
+        if (LinEncVsMacEnc == -2)
         {
             printf("\n\nFail: File 2 ends before File 1.\n");
             fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
             ENCFAIL++;
         }
 
-        if (EncResult2 == -3)
+        if (LinEncVsMacEnc == -3)
         {
             printf("\n\nFail: File 1 ends before File 2.\n");
             fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
             ENCFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", EncOutput, PrevEncOutput3);
-        fprintf(stderr, "\n\nComparing %s and %s", EncOutput, PrevEncOutput3);
-        int EncResult3 = CompIVF(EncOutput, PrevEncOutput3);
+        printf("\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
+        fprintf(stderr, "\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
+        int WinEncVsMacEnc = CompIVF(WinEnc.c_str(), MacEnc.c_str());
 
-        if (EncResult3 == -1)
+        if (WinEncVsMacEnc == -1)
         {
             printf("\n\nFiles are Identical\n");
             fprintf(stderr, "\n\nFiles are Identical\n");
         }
 
-        if (EncResult3 >= 0)
+        if (WinEncVsMacEnc >= 0)
         {
-            printf("\n\nFail: Encoded files differ at frame: %i", EncResult);
-            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", EncResult);
+            printf("\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
+            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
             ENCFAIL++;
         }
 
-        if (EncResult3 == -2)
+        if (WinEncVsMacEnc == -2)
         {
             printf("\n\nFail: File 2 ends before File 1.\n");
             fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
             ENCFAIL++;
         }
 
-        if (EncResult3 == -3)
+        if (WinEncVsMacEnc == -3)
         {
             printf("\n\nFail: File 1 ends before File 2.\n");
             fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
             ENCFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", DecOutput, PrevDecOutput);
-        fprintf(stderr, "\n\nComparing %s and %s", DecOutput, PrevDecOutput);
-        int DecResult = CompIVF(DecOutput, PrevDecOutput);
+        printf("\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
+        fprintf(stderr, "\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
+        int WinDecVsLinDec = CompIVF(WinDec.c_str(), LinDec.c_str());
 
-        if (DecResult == -1)
+        if (WinDecVsLinDec == -1)
         {
             printf("\n\nFiles are Identical\n");
             fprintf(stderr, "\n\nFiles are Identical\n");
         }
 
-        if (DecResult >= 0)
+        if (WinDecVsLinDec >= 0)
         {
-            printf("\n\nFail: Decoded files differ at frame: %i", DecResult);
-            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", DecResult);
+            printf("\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
+            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
             DECFAIL++;
         }
 
-        if (DecResult == -2)
+        if (WinDecVsLinDec == -2)
         {
             printf("\n\nFail: File 2 ends before File 1.\n");
             fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
             DECFAIL++;
         }
 
-        if (DecResult == -3)
+        if (WinDecVsLinDec == -3)
         {
             printf("\n\nFail: File 1 ends before File 2.\n");
             fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
             DECFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", DecOutput, PrevDecOutput2);
-        fprintf(stderr, "\n\nComparing %s and %s", DecOutput, PrevDecOutput2);
-        int DecResult2 = CompIVF(DecOutput, PrevDecOutput2);
+        printf("\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
+        fprintf(stderr, "\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
+        int LinDecVsMacDec = CompIVF(LinDec.c_str(), MacDec.c_str());
 
-        if (DecResult2 == -1)
+        if (LinDecVsMacDec == -1)
         {
             printf("\n\nFiles are Identical\n");
             fprintf(stderr, "\n\nFiles are Identical\n");
         }
 
-        if (DecResult2 >= 0)
+        if (LinDecVsMacDec >= 0)
         {
-            printf("\n\nFail: Decoded files differ at frame: %i", DecResult);
-            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", DecResult);
+            printf("\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
+            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
             DECFAIL++;
         }
 
-        if (DecResult2 == -2)
+        if (LinDecVsMacDec == -2)
         {
             printf("\n\nFail: File 2 ends before File 1.\n");
             fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
             DECFAIL++;
         }
 
-        if (DecResult2 == -3)
+        if (LinDecVsMacDec == -3)
         {
             printf("\n\nFail: File 1 ends before File 2.\n");
             fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
             DECFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", DecOutput, PrevDecOutput3);
-        fprintf(stderr, "\n\nComparing %s and %s", DecOutput, PrevDecOutput3);
-        int DecResult3 = CompIVF(DecOutput, PrevDecOutput3);
+        printf("\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
+        fprintf(stderr, "\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
+        int WinDecVsMacDec = CompIVF(WinDec.c_str(), MacDec.c_str());
 
-        if (DecResult3 == -1)
+        if (WinDecVsMacDec == -1)
         {
             printf("\n\nFiles are Identical\n");
             fprintf(stderr, "\n\nFiles are Identical\n");
         }
 
-        if (DecResult3 >= 0)
+        if (WinDecVsMacDec >= 0)
         {
-            printf("\n\nFail: Decoded files differ at frame: %i", DecResult);
-            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", DecResult);
+            printf("\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
+            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
             DECFAIL++;
         }
 
-        if (DecResult3 == -2)
+        if (WinDecVsMacDec == -2)
         {
             printf("\n\nFail: File 2 ends before File 1.\n");
             fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
             DECFAIL++;
         }
 
-        if (DecResult3 == -3)
+        if (WinDecVsMacDec == -3)
         {
             printf("\n\nFail: File 1 ends before File 2.\n");
             fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
             DECFAIL++;
         }
 
-        if (DECFAIL == 0 && ENCFAIL == 0)
+        printf("\n\nResults:\n\n");
+        fprintf(stderr, "\n\nResults:\n\n");
+        int fail = 0;
+
+        if (ENCFAIL == 0)
         {
-            printf("\n\nAll Encoded and Decoded files are identical: Pass\n\n");
-            fprintf(stderr, "\n\nAll Encoded and Decoded files are identical: Pass\n\n");
-            fclose(fp);
-            string File1Str = File1;
-            RecordTestComplete(MainDirString, File1Str, TestType);
-            return 1;
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "All encoded files are identical - Passed");
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
         }
 
-        if (DECFAIL > 0 && ENCFAIL > 0)
+        if (ENCFAIL > 0)
         {
-            printf("\n\nNot All Encoded and Decoded files are identical: Fail\n\n");
-            fprintf(stderr, "\n\nNot All Encoded and Decoded files are identical: Fail\n\n");
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "Not all encoded files are identical - Failed");
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+            fail = 1;
+        }
+
+        if (DECFAIL == 0)
+        {
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "All decoded files are identical - Passed");
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+        }
+
+        if (DECFAIL > 0)
+        {
+            char OutputChar1[255];
+            snprintf(OutputChar1, 255, "Not all decoded files are identical - Failed");
+            string OutputChar1str = OutputChar1;
+            FormatedPrint(OutputChar1str, 5);
+            printf("\n");
+            fprintf(stderr, "\n");
+            fail = 1;
+        }
+
+        if (fail == 1)
+        {
+            printf("\nFailed\n");
+            fprintf(stderr, "\nFailed\n");
+
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
-
-        if (DECFAIL > 0)
+        else
         {
-            printf("\n\nAll Encoded Files are Identical But Not All Decoded files are identical: Fail\n\n");
-            fprintf(stderr, "\n\nAll Encoded Files are Identical But Not All Decoded files are identical: Fail\n\n");
-        }
+            printf("\nPassed\n");
+            fprintf(stderr, "\nPassed\n");
 
-        if (ENCFAIL > 0)
-        {
-            printf("\n\nAll Decoded Files are Identical But Not All Encoded files are identical: Fail\n\n");
-            fprintf(stderr, "\n\nAll Decoded Files are Identical But Not All Encoded files are identical: Fail\n\n");
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 1;
         }
-
-        fclose(fp);
-        string File1Str = File1;
-        RecordTestComplete(MainDirString, File1Str, TestType);
-        return 0;
     }
 //----------------------------------------Code Coverage----------------------------------------------------------------
     int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])

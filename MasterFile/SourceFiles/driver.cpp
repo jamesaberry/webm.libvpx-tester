@@ -142,7 +142,7 @@ extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string Fil
 extern int TwoPassVsTwoPassBest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int UnderShoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int Version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int WindowsMatchesLinux(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int WinLinMacMatch(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 
 //CodeCoverage
 extern int CodeCoverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
@@ -275,7 +275,7 @@ void OnErrorOutPut()
            "  (34)TwoPassVsTwoPassBest                 RandParFile\n"
            "  (35)UnderShoot                           RandIVFComp\n"
            "  (36)Version                              GraphPSNR\n"
-           "  (37)WindowsMatchesLinux                  Help\n"
+           "  (37)WinLinMacMatch                       Help\n"
            "                                           \n"
           );
 }
@@ -880,7 +880,7 @@ void Print1(string WorkingDir)
            );
 
     fprintf(stderr, "\n\n\n"
-            "49  WindowsMatchesLinux \n\n"
+            "49  WinLinMacMatch \n\n"
             "    <inputfile>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
@@ -2591,7 +2591,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
     if (selector == WMLMMNUM)
     {
         printf("\nUse:\n\n"
-               "%2i WindowsMatchesLinux \n\n"
+               "%2i WinLinMacMatch \n\n"
                "    <inputfile>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
@@ -3199,7 +3199,7 @@ void FormatSummaryByTest(char *InputFileNameCharAr, int DeleteOldFile)
             TestTrackerName = "Version";
 
         if (TestTracker == WMLMMNUM)
-            TestTrackerName = "WindowsMatchesLinux";
+            TestTrackerName = "WinLinMacMatch";
 
 
         fstream FormatSummaryByTestFile;
@@ -3434,7 +3434,7 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
             TestTrackerName = "Version";
 
         if (TestTracker == WMLMMNUM)
-            TestTrackerName = "WindowsMatchesLinux";
+            TestTrackerName = "WinLinMacMatch";
 
 
         int PassedTrack = 0;
@@ -4774,7 +4774,7 @@ int  main(int argc, char *argv[])
 
     if (selector == WMLMMNUM)
     {
-        WindowsMatchesLinux(argc, argv, WorkingDir, EmptyAr, 1);
+        WinLinMacMatch(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 

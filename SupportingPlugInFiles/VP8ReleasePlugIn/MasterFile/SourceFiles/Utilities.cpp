@@ -2620,7 +2620,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
                     if (!(DummyArgvVar == 9 || DummyArgvVar == 10))
                     {
                         SelectorAr[SelectorArInt].append(buffer);
-                        SelectorAr2[SelectorArInt] = "WindowsMatchesLinux";
+                        SelectorAr2[SelectorArInt] = "WinLinMacMatch";
                         PassFail[PassFailInt] = trackthis1;
                         //cout << "\n\n\n\n\n" << DummyArgvVar << "\n\n\n\n\n";
                     }
@@ -2756,9 +2756,11 @@ int FileExistsCheck(string input)
 
     if (infile)
     {
+        infile.close();
         return 1;
     }
 
+    infile.close();
     return 0;
 }
 void SubFolderName(char *input, char *FileName)
@@ -3039,6 +3041,29 @@ unsigned int GetTime()
     unsigned int Time = 0;
     Time = GetHighResTimerTick();
     return Time;
+}
+int MakeDir(string CreateDir)
+{
+#if defined(_WIN32)
+    /////////////////////////////////////
+    CreateDir.insert(0, "mkdir \"");
+    CreateDir.append("\"");
+    system(CreateDir.c_str());
+    /////////////////////////////////////
+#elif defined(linux)
+    CreateDir.insert(0, "mkdir -p \"");
+    CreateDir.append("\"");
+    system(CreateDir.c_str());
+#elif defined(__APPLE__)
+    CreateDir.insert(0, "mkdir -p \"");
+    CreateDir.append("\"");
+    system(CreateDir.c_str());
+#elif defined(__POWERPC__)
+    CreateDir.insert(0, "mkdir -p \"");
+    CreateDir.append("\"");
+    system(CreateDir.c_str());
+#endif
+    return 0;
 }
 int MakeDirVPX(string CreateDir2)
 {

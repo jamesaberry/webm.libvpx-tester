@@ -1437,8 +1437,8 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", TV2BTNUM, slashChar, slashChar);
     fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", WMLMMNUM, slashChar, slashChar);
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", MULTTNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2\n", MULTTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@10\n", SPEEDNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@10\n", SPEEDNUM, slashChar, slashChar);
     fprintf(fp5, "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n");
@@ -1627,8 +1627,8 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", TV2BTNUM, slashChar, slashChar);
     fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", WMLMMNUM, slashChar, slashChar);
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", MULTTNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2\n", MULTTNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2\n", MULTTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@10\n", SPEEDNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@10\n", SPEEDNUM, slashChar, slashChar);
     fprintf(fp5, "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n");
@@ -2244,9 +2244,9 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <Starting Width-must be a mult of 16>\n"
                "    <Starting Height-must be a mult of 16>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
               );
-        FormatedPrint("The test creates fourty-six cropped raw ivf files from a user input file, starting height and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs within three percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.", 1);
+        FormatedPrint("The test creates fourty-six cropped raw ivf files from a user input file, starting height and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs within five percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.", 1);
     }
 
     if (selector == GQVBQNUM)
@@ -2361,7 +2361,8 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "    <Number of Cores to Use>\n"
+               "     <Optional Settings File>\n"
                , MULTTNUM);
 
         FormatedPrint("The test creates two compressions the first using a MultiThreaded equal to 2 the second using a MultiThreaded equal to 0. The test then compares the times to compress each.  If MultiThreaded 2 is faster than 0; the test passes.", 1);

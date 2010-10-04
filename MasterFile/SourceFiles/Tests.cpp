@@ -2363,7 +2363,6 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         }
     }
 
-
     WorkingTextFile.close();
     //outputs a summary of the test results
 
@@ -11738,7 +11737,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         RawCropNum = 1;
-        double ThreePercentPSNR = (3 * PSNRAr[0]) / 100;
+        double FivePercentPSNR = (5 * PSNRAr[0]) / 100;
 
         while (RawCropNum < 47)
         {
@@ -11751,15 +11750,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             {
                 printf("\n\n PSNR %s: %.2f", FileNameChar2, PSNRAr[RawCropNum-1]);
             }
-            else if (PSNRAr[RawCropNum-1] <  PSNRAr[0] + ThreePercentPSNR && PSNRAr[RawCropNum-1] >  PSNRAr[0] - ThreePercentPSNR)
+            else if (PSNRAr[RawCropNum-1] <  PSNRAr[0] + FivePercentPSNR && PSNRAr[RawCropNum-1] >  PSNRAr[0] - FivePercentPSNR)
             {
-                printf("\n PSNR %s: %.2f within 3%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
-                fprintf(stderr, "\n PSNR %s: %.2f within 3%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                printf("\n PSNR %s: %.2f within 5%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                fprintf(stderr, "\n PSNR %s: %.2f within 5%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
             }
             else
             {
-                printf("\n PSNR %s: %.2f not within 3%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
-                fprintf(stderr, "\n PSNR %s: %.2f not within 3%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                printf("\n PSNR %s: %.2f not within 5%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                fprintf(stderr, "\n PSNR %s: %.2f not within 5%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
                 PercentFail = 1;
             }
 
@@ -14634,7 +14633,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     {
         char *CompressString = "MultiThreaded";
 
-        if (!(argc == 6 || argc == 5))
+        if (!(argc == 7 || argc == 6))
         {
             printf(
                 "  MultiThreadedTest \n\n"
@@ -14642,8 +14641,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "    <Mode>\n"
                 "          (0)Realtime/Live Encoding\n"
                 "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n"
+                "    <Target Bit Rate>\n"
+                "    <Number of Cores to Use>\n"
+                "     <Optional Settings File>\n"
             );
             return 0;
         }
@@ -14791,15 +14791,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int MultiThreaded = 0;
         int BitRate = atoi(argv[4]);
+        unsigned int CoreCount = atoi(argv[5]);//VPX_GetProcCoreCount();
 
         unsigned int Time1;
         unsigned int Time2;
 
-        unsigned int CoreCount = VPX_GetProcCoreCount();
-
         if (!(CoreCount > 1))
         {
-            printf("\nMulti Core not found: Test Aborted: %i\n", VPX_GetProcCoreCount());
+            printf("\nMultiple Cores not used Test aborted: %i\n", CoreCount);
             fclose(fp);
             return 0;
         }
@@ -14814,8 +14813,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "    <Mode>\n"
                 "          (0)Realtime/Live Encoding\n"
                 "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n"
+                "    <Target Bit Rate>\n"
+                "    <Number of Cores to Use>\n"
+                "     <Optional Settings File>\n"
             );
             fclose(fp);
             return 0;
@@ -14828,7 +14828,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         VP8DefaultParms(opt);
 
         ///////////////////Use Custom Settings///////////////////
-        if (argc == 6)
+        if (argc == 7)
         {
             FILE *InputCheck = fopen(argv[argc-1], "rb");
 
@@ -14865,7 +14865,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 opt.Mode = MODE_REALTIME;
                 opt.multi_threaded = CoreCount;
                 opt.cpu_used = -1;
-                Time1 = TimeCompressIVFtoIVF(input, MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
+                Time1 = TimeCompressIVFtoIVF(input, MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0);
 
                 if (Time1 == -1)
                 {
@@ -14877,7 +14877,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 opt.Mode = MODE_REALTIME;
                 opt.multi_threaded = 0;
-                Time2 = TimeCompressIVFtoIVF(input, MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, 0, 0);
+                Time2 = TimeCompressIVFtoIVF(input, MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0);
 
                 if (Time2 == -1)
                 {
@@ -14892,7 +14892,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             {
                 opt.Mode = MODE_GOODQUALITY;
                 opt.multi_threaded = CoreCount;
-                Time1 = TimeCompressIVFtoIVF(input, MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, CoreCount, 0);
+                Time1 = TimeCompressIVFtoIVF(input, MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0);
 
                 if (Time1 == -1)
                 {
@@ -14904,7 +14904,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 opt.Mode = MODE_GOODQUALITY;
                 opt.multi_threaded = 0;
-                Time2 = TimeCompressIVFtoIVF(input, MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, 0, 0);
+                Time2 = TimeCompressIVFtoIVF(input, MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0);
 
                 if (Time2 == -1)
                 {

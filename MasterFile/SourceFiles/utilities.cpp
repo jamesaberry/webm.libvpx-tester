@@ -2392,7 +2392,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
 
                 if (selector == MULTTNUM)
                 {
-                    if (!(DummyArgvVar == 6 || DummyArgvVar == 5))
+                    if (!(DummyArgvVar == 7 || DummyArgvVar == 6))
                     {
                         SelectorAr[SelectorArInt].append(buffer);
                         SelectorAr2[SelectorArInt] = "MultiThreadedTest";

@@ -26,79 +26,79 @@ double VP8_CalcPSNR_Tester(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest,
     double FramePsnr;
     double Total;
     double GrandTotal;
-    unsigned char *src = source->YBuffer;
-    unsigned char *dst = dest->YBuffer;
+    unsigned char *src = source->y_buffer;
+    unsigned char *dst = dest->y_buffer;
 
     Total = 0.0;
     GrandTotal = 0.0;
 
     // Loop throught the Y plane raw and reconstruction data summing (square differences)
-    for (i = 0; i < source->YHeight; i++)
+    for (i = 0; i < source->y_height; i++)
     {
 
-        for (j = 0; j < source->YWidth; j++)
+        for (j = 0; j < source->y_width; j++)
         {
             Diff        = (int)(src[j]) - (int)(dst[j]);
             Total      += Diff * Diff;
         }
 
-        src += source->YStride;
-        dst += dest->YStride;
+        src += source->y_stride;
+        dst += dest->y_stride;
     }
 
     // Work out Y PSNR
-    *YPsnr = VP8_Mse2Psnr_Tester(source->YHeight * source->YWidth, 255.0, Total);
+    *YPsnr = VP8_Mse2Psnr_Tester(source->y_height * source->y_width, 255.0, Total);
     GrandTotal += Total;
     Total = 0;
 
 
     // Loop through the U plane
-    src = source->UBuffer;
-    dst = dest->UBuffer;
+    src = source->u_buffer;
+    dst = dest->u_buffer;
 
-    for (i = 0; i < source->UVHeight; i++)
+    for (i = 0; i < source->uv_height; i++)
     {
 
-        for (j = 0; j < source->UVWidth; j++)
+        for (j = 0; j < source->uv_width; j++)
         {
             Diff        = (int)(src[j]) - (int)(dst[j]);
             Total      += Diff * Diff;
         }
 
-        src += source->UVStride;
-        dst += dest->UVStride;
+        src += source->uv_stride;
+        dst += dest->uv_stride;
     }
 
     // Work out U PSNR
-    *UPsnr = VP8_Mse2Psnr_Tester(source->UVHeight * source->UVWidth, 255.0, Total);
+    *UPsnr = VP8_Mse2Psnr_Tester(source->uv_height * source->uv_width, 255.0, Total);
     GrandTotal += Total;
     Total = 0;
 
 
     // V PSNR
-    src = source->VBuffer;
-    dst = dest->VBuffer;
+    src = source->v_buffer;
+    dst = dest->v_buffer;
 
-    for (i = 0; i < source->UVHeight; i++)
+    for (i = 0; i < source->uv_height; i++)
     {
 
-        for (j = 0; j < source->UVWidth; j++)
+        for (j = 0; j < source->uv_width; j++)
         {
             Diff        = (int)(src[j]) - (int)(dst[j]);
             Total      += Diff * Diff;
         }
 
-        src += source->UVStride;
-        dst += dest->UVStride;
+        src += source->uv_stride;
+        dst += dest->uv_stride;
     }
 
     // Work out UV PSNR
-    *VPsnr = VP8_Mse2Psnr_Tester(source->UVHeight * source->UVWidth, 255.0, Total);
+    *VPsnr = VP8_Mse2Psnr_Tester(source->uv_height * source->uv_width, 255.0, Total);
     GrandTotal += Total;
     Total = 0;
 
     // Work out total PSNR
-    FramePsnr = VP8_Mse2Psnr_Tester(source->YHeight * source->YWidth * 3 / 2 , 255.0, GrandTotal);
+    FramePsnr = VP8_Mse2Psnr_Tester(source->y_height * source->y_width * 3 / 2 , 255.0, GrandTotal);
 
     *SqError = 1.0 * GrandTotal;
 

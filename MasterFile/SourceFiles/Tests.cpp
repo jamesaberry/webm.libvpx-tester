@@ -325,40 +325,8 @@ int PrintVersion()
     printf("\n%s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
     return 0;
 }
-void PrintHeader1(int argc, char *argv[], string WorkingDir3)
+void PrintHeaderInfo()
 {
-    //Full Test Header Output
-    //Formats workingDir3 string to fit in text box
-    //records settings from argv to be written to text file
-    string PrintWorkingDir3 = WorkingDir3;
-    string PrintInput = "Input:";
-    PrintWorkingDir3.insert(0, "Output: ");
-
-    int y = 0;
-
-    while (y < argc)
-    {
-        PrintInput.append(" ");
-        PrintInput.append(argv[y]);
-        y++;
-    }
-
-    y = 75;
-
-    while (y < PrintInput.length())
-    {
-        PrintInput.insert(y, "\n");
-        y = y + 75;
-    }
-
-    y = 75;
-
-    while (y < PrintWorkingDir3.length())
-    {
-        PrintWorkingDir3.insert(y, "\n");
-        y = y + 75;
-    }
-
     string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
 #if defined(_WIN32)
     TestMachineInfo = "";
@@ -421,9 +389,46 @@ void PrintHeader1(int argc, char *argv[], string WorkingDir3)
 #endif
 
     printf("%s", TestMachineInfo.c_str());
+    fprintf(stderr, "%s", TestMachineInfo.c_str());
+}
+void PrintHeader1(int argc, char *argv[], string WorkingDir3)
+{
+    //Full Test Header Output
+    //Formats workingDir3 string to fit in text box
+    //records settings from argv to be written to text file
+    string PrintWorkingDir3 = WorkingDir3;
+    string PrintInput = "Input:";
+    PrintWorkingDir3.insert(0, "Output: ");
+
+    int y = 0;
+
+    while (y < argc)
+    {
+        PrintInput.append(" ");
+        PrintInput.append(argv[y]);
+        y++;
+    }
+
+    y = 75;
+
+    while (y < PrintInput.length())
+    {
+        PrintInput.insert(y, "\n");
+        y = y + 75;
+    }
+
+    y = 75;
+
+    while (y < PrintWorkingDir3.length())
+    {
+        PrintWorkingDir3.insert(y, "\n");
+        y = y + 75;
+    }
+
+    PrintHeaderInfo();
+
     printf("\n/////////////////////////////////Full Test/////////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
     printf("\n///////////////////////////////////////////////////////////////////////////\n\n");
-    fprintf(stderr, "%s", TestMachineInfo.c_str());
     fprintf(stderr, "\n/////////////////////////////////Full Test/////////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
     fprintf(stderr, "\n///////////////////////////////////////////////////////////////////////////\n\n");
 }
@@ -462,45 +467,11 @@ void PrintHeader2(int argc, char *argv[], string WorkingDir3)
         y = y + 75;
     }
 
-    string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
+    PrintHeaderInfo();
 
-#if defined(_WIN32)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                      Test Machine is Running: Windows\n\n");
-#endif
-#if defined(linux)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                       Test Machine is Running: Linux\n\n");
-#endif
-#if defined(__APPLE__)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                        Test Machine is Running: Mac\n\n");
-#endif
-#if defined(__POWERPC__)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                      Test Machine is Running: PowerPC\n\n");
-#endif
-
-    cout << TestMachineInfo;
-    printf("\n///////////////////////////////Compress Only///////////////////////////////\n");
-    cout << PrintInput;
-    cout << "\n\n";
-    cout << PrintWorkingDir3;
+    printf("\n///////////////////////////////Compress Only///////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
     printf("\n///////////////////////////////////////////////////////////////////////////\n\n");
-
-    cerr << TestMachineInfo;
-    fprintf(stderr, "\n///////////////////////////////Compress Only///////////////////////////////\n");
-    cerr << PrintInput;
-    cerr << "\n\n";
-    cerr << PrintWorkingDir3;
+    fprintf(stderr, "\n///////////////////////////////Compress Only///////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
     fprintf(stderr, "\n///////////////////////////////////////////////////////////////////////////\n\n");
 }
 void PrintHeader3(int argc, char *argv[], string  WorkingDir3)
@@ -540,45 +511,11 @@ void PrintHeader3(int argc, char *argv[], string  WorkingDir3)
         y = y + 75;
     }
 
-    string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
+    PrintHeaderInfo();
 
-#if defined(_WIN32)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                     Test Machine is Running: Windows\n\n");
-#endif
-#if defined(linux)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                       Test Machine is Running: Linux\n\n");
-#endif
-#if defined(__APPLE__)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                        Test Machine is Running: Mac\n\n");
-#endif
-#if defined(__POWERPC__)
-    TestMachineInfo = "                      ";
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n                      Test Machine is Running: PowerPC\n\n");
-#endif
-
-    cout << TestMachineInfo;
-    printf("\n/////////////////////////Existing Compression Test/////////////////////////\n");
-    cout << PrintWorkingDir4;
-    cout << "\n\n";
-    cout << PrintWorkingDir3;
+    printf("\n/////////////////////////Existing Compression Test/////////////////////////\n%s\n\n%s", PrintWorkingDir4.c_str(), PrintWorkingDir3.c_str());
     printf("\n///////////////////////////////////////////////////////////////////////////\n\n");
-
-    cerr << TestMachineInfo;
-    fprintf(stderr, "\n/////////////////////////Existing Compression Test/////////////////////////\n");
-    cerr << PrintWorkingDir4;
-    cerr << "\n\n";
-    cerr << PrintWorkingDir3;
+    fprintf(stderr, "\n/////////////////////////Existing Compression Test/////////////////////////\n%s\n\n%s", PrintWorkingDir4.c_str(), PrintWorkingDir3.c_str());
     fprintf(stderr, "\n///////////////////////////////////////////////////////////////////////////\n\n");
 }
 void CheckTimeStamp(int SelectorArInt, string *SelectorAr, string *SelectorAr2, string TimeStampPrevious, int &identicalFileVar, string *TimeStampAr2)
@@ -2250,6 +2187,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (PrintMe == 1)
                 {
+
                     if (TestType == 1)
                     {
                         fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
@@ -2405,6 +2343,9 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         delete [] PassFail;
         return 0;
     }
+
+    printf("\n\n\n");
+    PrintHeaderInfo();
 
     if (TestType == 1)
     {
@@ -7939,7 +7880,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     string WorkingDirString = "";
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
-    char *MyDir = "Extra File Check Test";
+    char *MyDir = "ExtraFileCheckTest";
     string MainDirString = "";
     char File1[255] = "";
 
@@ -8617,7 +8558,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     string WorkingDirString = "";
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
-    char *MyDir = "Extra File Check Test";
+    char *MyDir = "ExtraFileCheckTest";
     string MainDirString = "";
     char File1[255] = "";
 
@@ -9295,7 +9236,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDirString = "";
         char WorkingDir2[255] = "";
         char WorkingDir3[255] = "";
-        char *MyDir = "Extra File Check Test";
+        char *MyDir = "ExtraFileCheckTest";
         string MainDirString = "";
         char File1[255] = "";
 
@@ -9972,7 +9913,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDirString = "";
         char WorkingDir2[255] = "";
         char WorkingDir3[255] = "";
-        char *MyDir = "Extra File Check Test";
+        char *MyDir = "ExtraFileCheckTest";
         string MainDirString = "";
         char File1[255] = "";
 

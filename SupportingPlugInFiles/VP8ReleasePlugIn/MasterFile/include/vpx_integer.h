@@ -1,10 +1,11 @@
 /*
- *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
+ *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
  *
- *  Use of this source code is governed by a BSD-style license and patent
- *  grant that can be found in the LICENSE file in the root of the source
- *  tree. All contributing project authors may be found in the AUTHORS
- *  file in the root of the source tree.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 
@@ -14,13 +15,7 @@
 /* get ptrdiff_t, size_t, wchar_t, NULL */
 #include <stddef.h>
 
-#if defined(HAVE_STDINT_H) && HAVE_STDINT_H
-#if defined(__cplusplus) && !defined(__STDC_FORMAT_MACROS)
-#define __STDC_FORMAT_MACROS
-#endif
-#include <stdint.h>
-#include <inttypes.h>
-#else
+#if defined(_MSC_VER) || defined(VPX_EMULATE_INTTYPES)
 typedef signed char  int8_t;
 typedef signed short int16_t;
 typedef signed int   int32_t;
@@ -46,6 +41,16 @@ typedef unsigned char uint_fast8_t;
 #ifndef _UINTPTR_T_DEFINED
 typedef unsigned int   uintptr_t;
 #endif
+
+#else
+
+/* Most platforms have the C99 standard integer types. */
+
+#if defined(__cplusplus) && !defined(__STDC_FORMAT_MACROS)
+#define __STDC_FORMAT_MACROS
+#endif
+#include <stdint.h>
+#include <inttypes.h>
 
 #endif
 

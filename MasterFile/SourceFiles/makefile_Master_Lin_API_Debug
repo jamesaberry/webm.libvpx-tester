@@ -1,51 +1,63 @@
 # source files
-SRC = driver.cpp ivf.c psnr.c ssim2.cpp Tests.cpp  Tools.cpp Arguments.cpp FourCC.cpp md5_utils.c utilities.cpp
+SRC = driver.cpp ivf.c psnr.c ssim2.cpp Tests.cpp Tools.cpp Arguments.cpp FourCC.cpp md5_utils.cpp utilities.cpp args.cpp ivfdec.cpp ivfenc.cpp y4minput.cpp
 
 # source object files
-SRCOBJ = driver.o ivf.o psnr.o ssim2.o Tests.o Tools.o Arguments.o FourCC.o md5_utils.o utilities.o
+SRCOBJ = driver.o ivf.o psnr.o ssim2.o Tests.o Tools.o Arguments.o FourCC.o md5_utils.o utilities.o args.o ivfdec.o ivfenc.o y4minput.o
 
 # compiler
-CCC = g++
-GCC = gcc
+GPP = g++ -m32 -g
+GCC = gcc -m32 -g
 
 # Libraries
-LFLAGS= -L../lib -lvpx_Lin -lpthread -DINLINE=
+LFLAGS= -L ../lib -lvpx_Lin32 -lpthread -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -D API -DHAVE_STDINT_H
- 
-VP8_Tester_API: $(SRCOBJ) 
-	$(CCC) -g $(INCLUDE) -o "VP8_Tester_API.exe" $(SRCOBJ) $(LFLAGS)
+INCLUDE = -I ../include -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
+
+VP8_Tester_API_32Bit: $(SRCOBJ)
+	$(GPP)  $(INCLUDE) -o "VP8_Tester_API_32Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
-	$(CCC) -c -g ivf.c $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c ivf.c $(INCLUDE)  $(LFLAGS)
 
 psnr.o: psnr.c
-	$(GCC) -c -g psnr.c $(INCLUDE)  $(LFLAGS)
+	$(GCC) -c psnr.c $(INCLUDE)  $(LFLAGS)
 
 ssim2.o: ssim2.cpp
-	$(CCC) -c -g ssim2.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)
 
 Tests.o: Tests.cpp
-	$(CCC) -c -g Tests.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c Tests.cpp $(INCLUDE)  $(LFLAGS)
 
 Tools.o: Tools.cpp
-	$(CCC) -c -g Tools.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c Tools.cpp $(INCLUDE)  $(LFLAGS)
 
 utilities.o: utilities.cpp
-	$(CCC) -c  -g utilities.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c  utilities.cpp $(INCLUDE)  $(LFLAGS)
 
 Arguments.o: Arguments.cpp
-	$(CCC) -c -g Arguments.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c Arguments.cpp $(INCLUDE)  $(LFLAGS)
 
 FourCC.o: FourCC.cpp
-	$(CCC) -c -g FourCC.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c FourCC.cpp $(INCLUDE)  $(LFLAGS)
 
 driver.o: driver.cpp
-	$(CCC) -c -g driver.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c driver.cpp $(INCLUDE)  $(LFLAGS)
 
-md5_utils.o: md5_utils.c
-	$(GCC) -c md5_utils.c $(INCLUDE) $(LFLAGS)
+md5_utils.o: md5_utils.cpp
+	$(GPP) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
 
-clean: 
-	rm -f $(SRCOBJ) VP8_Tester_API.exe
+args.o: args.cpp
+	$(GPP) -c args.cpp $(INCLUDE) $(LFLAGS)
+
+y4minput.o: y4minput.cpp
+	$(GPP) -c y4minput.cpp $(INCLUDE) $(LFLAGS)
+
+ivfdec.o: ivfdec.cpp
+	$(GPP) -c ivfdec.cpp $(INCLUDE) $(LFLAGS)
+
+ivfenc.o: ivfenc.cpp
+	$(GPP) -c ivfenc.cpp $(INCLUDE) $(LFLAGS)
+
+clean:
+	rm -f $(SRCOBJ) VP8_Tester_API_32Bit.exe

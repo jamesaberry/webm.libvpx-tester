@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceFiles\md5_utils.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceFiles\psnr.c"
 				>
 			</File>

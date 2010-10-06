@@ -1,3 +1,14 @@
+/*
+ *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+
 #ifndef ARGS_H
 #define ARGS_H
 #include <stdio.h>
@@ -29,5 +40,5 @@ char **argv_dup(int argc, const char **argv);
 
 unsigned int arg_parse_uint(const struct arg *arg);
 int arg_parse_int(const struct arg *arg);
-struct on2_rational arg_parse_rational(const struct arg *arg);
+struct vpx_rational arg_parse_rational(const struct arg *arg);
 #endif

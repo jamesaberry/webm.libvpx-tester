@@ -1,10 +1,11 @@
 /*
- *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
+ *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
  *
- *  Use of this source code is governed by a BSD-style license and patent
- *  grant that can be found in the LICENSE file in the root of the source
- *  tree. All contributing project authors may be found in the AUTHORS
- *  file in the root of the source tree.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 
@@ -30,39 +31,72 @@ extern "C" {
 #define VPX_IMAGE_ABI_VERSION (1) /**<\hideinitializer*/
 
 
-#define IMG_FMT_PLANAR     0x100  /**< Image is a planar format */
-#define IMG_FMT_UV_FLIP    0x200  /**< V plane precedes U plane in memory */
-#define IMG_FMT_HAS_ALPHA  0x400  /**< Image has an alpha channel componnent */
+#define VPX_IMG_FMT_PLANAR     0x100  /**< Image is a planar format */
+#define VPX_IMG_FMT_UV_FLIP    0x200  /**< V plane precedes U plane in memory */
+#define VPX_IMG_FMT_HAS_ALPHA  0x400  /**< Image has an alpha channel componnent */
 
 
     /*!\brief List of supported image formats */
-    typedef enum img_fmt {
-        IMG_FMT_NONE,
-        IMG_FMT_RGB24,   /**< 24 bit per pixel packed RGB */
-        IMG_FMT_RGB32,   /**< 32 bit per pixel packed 0RGB */
-        IMG_FMT_RGB565,  /**< 16 bit per pixel, 565 */
-        IMG_FMT_RGB555,  /**< 16 bit per pixel, 555 */
-        IMG_FMT_UYVY,    /**< UYVY packed YUV */
-        IMG_FMT_YUY2,    /**< YUYV packed YUV */
-        IMG_FMT_YVYU,    /**< YVYU packed YUV */
-        IMG_FMT_BGR24,   /**< 24 bit per pixel packed BGR */
-        IMG_FMT_RGB32_LE, /**< 32 bit packed BGR0 */
-        IMG_FMT_ARGB,     /**< 32 bit packed ARGB, alpha=255 */
-        IMG_FMT_ARGB_LE,  /**< 32 bit packed BGRA, alpha=255 */
-        IMG_FMT_RGB565_LE,  /**< 16 bit per pixel, gggbbbbb rrrrrggg */
-        IMG_FMT_RGB555_LE,  /**< 16 bit per pixel, gggbbbbb 0rrrrrgg */
-        IMG_FMT_YV12    = IMG_FMT_PLANAR | IMG_FMT_UV_FLIP | 1, /**< planar YVU */
-        IMG_FMT_I420    = IMG_FMT_PLANAR | 2,
-        IMG_FMT_VPXYV12 = IMG_FMT_PLANAR | IMG_FMT_UV_FLIP | 3, /** < planar 4:2:0 format with vpx color space */
-        IMG_FMT_VPXI420 = IMG_FMT_PLANAR | 4,  /** < planar 4:2:0 format with vpx color space */
+    typedef enum vpx_img_fmt {
+        VPX_IMG_FMT_NONE,
+        VPX_IMG_FMT_RGB24,   /**< 24 bit per pixel packed RGB */
+        VPX_IMG_FMT_RGB32,   /**< 32 bit per pixel packed 0RGB */
+        VPX_IMG_FMT_RGB565,  /**< 16 bit per pixel, 565 */
+        VPX_IMG_FMT_RGB555,  /**< 16 bit per pixel, 555 */
+        VPX_IMG_FMT_UYVY,    /**< UYVY packed YUV */
+        VPX_IMG_FMT_YUY2,    /**< YUYV packed YUV */
+        VPX_IMG_FMT_YVYU,    /**< YVYU packed YUV */
+        VPX_IMG_FMT_BGR24,   /**< 24 bit per pixel packed BGR */
+        VPX_IMG_FMT_RGB32_LE, /**< 32 bit packed BGR0 */
+        VPX_IMG_FMT_ARGB,     /**< 32 bit packed ARGB, alpha=255 */
+        VPX_IMG_FMT_ARGB_LE,  /**< 32 bit packed BGRA, alpha=255 */
+        VPX_IMG_FMT_RGB565_LE,  /**< 16 bit per pixel, gggbbbbb rrrrrggg */
+        VPX_IMG_FMT_RGB555_LE,  /**< 16 bit per pixel, gggbbbbb 0rrrrrgg */
+        VPX_IMG_FMT_YV12    = VPX_IMG_FMT_PLANAR | VPX_IMG_FMT_UV_FLIP | 1, /**< planar YVU */
+        VPX_IMG_FMT_I420    = VPX_IMG_FMT_PLANAR | 2,
+        VPX_IMG_FMT_VPXYV12 = VPX_IMG_FMT_PLANAR | VPX_IMG_FMT_UV_FLIP | 3, /** < planar 4:2:0 format with vpx color space */
+        VPX_IMG_FMT_VPXI420 = VPX_IMG_FMT_PLANAR | 4,  /** < planar 4:2:0 format with vpx color space */
     }
-    img_fmt_t; /**< alias for enum img_fmt */
+    vpx_img_fmt_t; /**< alias for enum vpx_img_fmt */
 
+#if !defined(VPX_CODEC_DISABLE_COMPAT) || !VPX_CODEC_DISABLE_COMPAT
+#define IMG_FMT_PLANAR         VPX_IMG_FMT_PLANAR     /**< \deprecated Use #VPX_IMG_FMT_PLANAR */
+#define IMG_FMT_UV_FLIP        VPX_IMG_FMT_UV_FLIP    /**< \deprecated Use #VPX_IMG_FMT_UV_FLIP */
+#define IMG_FMT_HAS_ALPHA      VPX_IMG_FMT_HAS_ALPHA  /**< \deprecated Use #VPX_IMG_FMT_HAS_ALPHA */
+
+    /*!\brief Deprecated list of supported image formats
+     * \deprecated New code should use #vpx_img_fmt
+     */
+#define img_fmt   vpx_img_fmt
+    /*!\brief alias for enum img_fmt.
+     * \deprecated New code should use #vpx_img_fmt_t
+     */
+#define img_fmt_t vpx_img_fmt_t
+
+#define IMG_FMT_NONE       VPX_IMG_FMT_NONE       /**< \deprecated Use #VPX_IMG_FMT_NONE */
+#define IMG_FMT_RGB24      VPX_IMG_FMT_RGB24      /**< \deprecated Use #VPX_IMG_FMT_RGB24 */
+#define IMG_FMT_RGB32      VPX_IMG_FMT_RGB32      /**< \deprecated Use #VPX_IMG_FMT_RGB32 */
+#define IMG_FMT_RGB565     VPX_IMG_FMT_RGB565     /**< \deprecated Use #VPX_IMG_FMT_RGB565 */
+#define IMG_FMT_RGB555     VPX_IMG_FMT_RGB555     /**< \deprecated Use #VPX_IMG_FMT_RGB555 */
+#define IMG_FMT_UYVY       VPX_IMG_FMT_UYVY       /**< \deprecated Use #VPX_IMG_FMT_UYVY */
+#define IMG_FMT_YUY2       VPX_IMG_FMT_YUY2       /**< \deprecated Use #VPX_IMG_FMT_YUY2 */
+#define IMG_FMT_YVYU       VPX_IMG_FMT_YVYU       /**< \deprecated Use #VPX_IMG_FMT_YVYU */
+#define IMG_FMT_BGR24      VPX_IMG_FMT_BGR24      /**< \deprecated Use #VPX_IMG_FMT_BGR24 */
+#define IMG_FMT_RGB32_LE   VPX_IMG_FMT_RGB32_LE   /**< \deprecated Use #VPX_IMG_FMT_RGB32_LE */
+#define IMG_FMT_ARGB       VPX_IMG_FMT_ARGB       /**< \deprecated Use #VPX_IMG_FMT_ARGB */
+#define IMG_FMT_ARGB_LE    VPX_IMG_FMT_ARGB_LE    /**< \deprecated Use #VPX_IMG_FMT_ARGB_LE */
+#define IMG_FMT_RGB565_LE  VPX_IMG_FMT_RGB565_LE  /**< \deprecated Use #VPX_IMG_FMT_RGB565_LE */
+#define IMG_FMT_RGB555_LE  VPX_IMG_FMT_RGB555_LE  /**< \deprecated Use #VPX_IMG_FMT_RGB555_LE */
+#define IMG_FMT_YV12       VPX_IMG_FMT_YV12       /**< \deprecated Use #VPX_IMG_FMT_YV12 */
+#define IMG_FMT_I420       VPX_IMG_FMT_I420       /**< \deprecated Use #VPX_IMG_FMT_I420 */
+#define IMG_FMT_VPXYV12    VPX_IMG_FMT_VPXYV12    /**< \deprecated Use #VPX_IMG_FMT_VPXYV12 */
+#define IMG_FMT_VPXI420    VPX_IMG_FMT_VPXI420    /**< \deprecated Use #VPX_IMG_FMT_VPXI420 */
+#endif /* VPX_CODEC_DISABLE_COMPAT */
 
     /**\brief Image Descriptor */
-    typedef struct
+    typedef struct vpx_image
     {
-        img_fmt_t     fmt; /**< Image Format */
+        vpx_img_fmt_t fmt; /**< Image Format */
 
         /* Image storage dimensions */
         unsigned int  w;   /**< Stored image width */
@@ -77,11 +111,18 @@ extern "C" {
         unsigned int  y_chroma_shift;   /**< subsampling order, Y */
 
         /* Image data pointers. */
-#define PLANE_PACKED 0   /**< To be used for all packed formats */
-#define PLANE_Y   0      /**< Y (Luminance) plane */
-#define PLANE_U   1      /**< U (Chroma) plane */
-#define PLANE_V   2      /**< V (Chroma) plane */
-#define PLANE_ALPHA 3    /**< A (Transparancy) plane */
+#define VPX_PLANE_PACKED 0   /**< To be used for all packed formats */
+#define VPX_PLANE_Y      0   /**< Y (Luminance) plane */
+#define VPX_PLANE_U      1   /**< U (Chroma) plane */
+#define VPX_PLANE_V      2   /**< V (Chroma) plane */
+#define VPX_PLANE_ALPHA  3   /**< A (Transparancy) plane */
+#if !defined(VPX_CODEC_DISABLE_COMPAT) || !VPX_CODEC_DISABLE_COMPAT
+#define PLANE_PACKED     VPX_PLANE_PACKED
+#define PLANE_Y          VPX_PLANE_Y
+#define PLANE_U          VPX_PLANE_U
+#define PLANE_V          VPX_PLANE_V
+#define PLANE_ALPHA      VPX_PLANE_ALPHA
+#endif
         unsigned char *planes[4];  /**< pointer to the top left pixel for each plane */
         int      stride[4];  /**< stride between rows for each plane */
 
@@ -126,7 +167,7 @@ extern "C" {
      *         returned.
      */
     vpx_image_t *vpx_img_alloc(vpx_image_t  *img,
-                               img_fmt_t fmt,
+                               vpx_img_fmt_t fmt,
                                unsigned int d_w,
                                unsigned int d_h,
                                unsigned int align);
@@ -151,7 +192,7 @@ extern "C" {
      *         returned.
      */
     vpx_image_t *vpx_img_wrap(vpx_image_t  *img,
-                              img_fmt_t fmt,
+                              vpx_img_fmt_t fmt,
                               unsigned int d_w,
                               unsigned int d_h,
                               unsigned int align,

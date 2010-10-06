@@ -1,9 +1,10 @@
-/* This file uses some preprocessor magic to expand the value of HAVE_CONFIG_H,
- * as defined by the build system, so that different projects can use the file
- * name for config.h that suits them.
+/*
+ *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
-#define QUOTE_(x) #x
-#define QUOTE(x) QUOTE_(x)
-//#include QUOTE(HAVE_CONFIG_H)
-#undef QUOTE
-#undef QUOTE_
+#include "vpx_config.h"

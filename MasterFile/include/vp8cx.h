@@ -1,14 +1,15 @@
 /*
- *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
+ *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
  *
- *  Use of this source code is governed by a BSD-style license and patent
- *  grant that can be found in the LICENSE file in the root of the source
- *  tree. All contributing project authors may be found in the AUTHORS
- *  file in the root of the source tree.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 
-/*!\defgroup vp8_encoder vpx VP8 Encoder
+/*!\defgroup vp8_encoder WebM VP8 Encoder
  * \ingroup vp8
  *
  * @{
@@ -28,7 +29,8 @@
  * This interface provides the capability to encode raw VP8 streams, as would
  * be found in AVI files.
  */
-extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
+extern vpx_codec_iface_t  vpx_codec_vp8_cx_algo;
+extern vpx_codec_iface_t *vpx_codec_vp8_cx(void);
 
 
 /*
@@ -161,12 +163,12 @@ typedef enum vpx_scaling_mode_1d
 
 typedef struct vpx_roi_map
 {
-    char    *roi_map;           /**< specify an id between 0 and 3 for each 16x16 region within a frame */
-    int     rows;               /**< number of rows */
-    int     cols;               /**< number of cols */
+    unsigned char *roi_map;      /**< specify an id between 0 and 3 for each 16x16 region within a frame */
+    unsigned int   rows;         /**< number of rows */
+    unsigned int   cols;         /**< number of cols */
     int     delta_q[4];          /**< quantizer delta [-64, 64] off baseline for regions with id between 0 and 3*/
     int     delta_lf[4];         /**< loop filter strength delta [-32, 32] for regions with id between 0 and 3 */
-    int     static_threshold[4];/**< threshold for region to be treated as static */
+    unsigned int   static_threshold[4];/**< threshold for region to be treated as static */
 } vpx_roi_map_t;
 
 /*!\brief  vpx active region map
@@ -178,9 +180,9 @@ typedef struct vpx_roi_map
 
 typedef struct vpx_active_map
 {
-    char    *active_map;        /**< specify an on (1) or off (0) each 16x16 region within a frame */
-    int     rows;               /**< number of rows */
-    int     cols;               /**< number of cols */
+    unsigned char  *active_map; /**< specify an on (1) or off (0) each 16x16 region within a frame */
+    unsigned int    rows;       /**< number of rows */
+    unsigned int    cols;       /**< number of cols */
 } vpx_active_map_t;
 
 /*!\brief  vpx image scaling mode
@@ -233,9 +235,9 @@ typedef enum
 /* These controls have been deprecated in favor of the flags parameter to
  * vpx_codec_encode(). See the definition of VP8_EFLAG_* above.
  */
-VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_UPD_ENTROPY,            intptr_t)
-VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_UPD_REFERENCE,          intptr_t)
-VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_USE_REFERENCE,          intptr_t)
+VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_UPD_ENTROPY,            int)
+VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_UPD_REFERENCE,          int)
+VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_USE_REFERENCE,          int)
 
 VPX_CTRL_USE_TYPE(VP8E_SET_ROI_MAP,            vpx_roi_map_t *)
 VPX_CTRL_USE_TYPE(VP8E_SET_ACTIVEMAP,          vpx_active_map_t *)

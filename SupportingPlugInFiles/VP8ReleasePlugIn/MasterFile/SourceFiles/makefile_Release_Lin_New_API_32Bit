@@ -1,36 +1,39 @@
 # source files
-SRC = supportingrelease.cpp psnr.c ssim2.cpp Utilities.cpp ivf.c
+SRC = supportingrelease.cpp psnr.c ssim2.cpp Utilities.cpp ivf.c md5_utils.cpp
 
 # source object files
-SRCOBJ = supportingrelease.o ivf.o psnr.o ssim2.o Utilities.o
- 
+SRCOBJ = supportingrelease.o ivf.o psnr.o ssim2.o Utilities.o md5_utils.o
+
 # compiler
-CPP = g++ -m32
-CCC = gcc -m32
+GPP = g++ -m32
+GCC = gcc -m32
 
 # Libraries
 LFLAGS= -L../newlib -lpthread -lvpx_NewLin32 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -D API -D HAVE_STDINT_H 
- 
-VP8vNewest_PlugIn_RLib_RMode_32Bit.exe: $(SRCOBJ) 
-	$(CPP) $(INCLUDE) -o "VP8vNewest_PlugIn_RLib_RMode_32Bit.exe" $(SRCOBJ) $(LFLAGS)
+INCLUDE = -I ../include -D API -D HAVE_STDINT_H
+
+VP8vNewest_PlugIn_RLib_RMode_32Bit.exe: $(SRCOBJ)
+	$(GPP) $(INCLUDE) -o "VP8vNewest_PlugIn_RLib_RMode_32Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
-	$(CCC) -c ivf.c $(INCLUDE)  $(LFLAGS)
+	$(GCC) -c ivf.c $(INCLUDE)  $(LFLAGS)
 
 psnr.o: psnr.c
-	$(CCC) -c psnr.c $(INCLUDE)  $(LFLAGS)
+	$(GCC) -c psnr.c $(INCLUDE)  $(LFLAGS)
 
 ssim2.o: ssim2.cpp
-	$(CPP) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)
 
 Utilities.o: Utilities.cpp
-	$(CPP) -c Utilities.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c Utilities.cpp $(INCLUDE)  $(LFLAGS)
 
 supportingrelease.o: supportingrelease.cpp
-	$(CPP) -c supportingrelease.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c supportingrelease.cpp $(INCLUDE)  $(LFLAGS)
 
-clean: 
+md5_utils.o: md5_utils.cpp
+	$(GPP) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
+
+clean:
 	rm -f $(SRCOBJ) VP8vNewest_PlugIn_RLib_RMode_32Bit.exe

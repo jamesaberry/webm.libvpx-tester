@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
+#include "vpx_config.h"
 #include "vpx_mem.h"
 #include "vp8cx.h"
 #include <cstdio>

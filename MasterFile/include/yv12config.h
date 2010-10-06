@@ -1,12 +1,14 @@
-/****************************************************************************
+/*
+ *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
  *
- *   Module Title : yv12config.h
- *
- *   Description  : definition of a yv12 frame
- *
- *   Copyright (c) 1999 - 2005  On2 Technologies Inc. All Rights Reserved.
- *
- ***************************************************************************/
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+
 #ifndef YV12_CONFIG_H
 #define YV12_CONFIG_H
 #ifdef __cplusplus
@@ -37,29 +39,29 @@ extern "C"
 
     typedef struct
     {
-        int   YWidth;
-        int   YHeight;
-        int   YStride;
-//    int   YInternalWidth;
+        int   y_width;
+        int   y_height;
+        int   y_stride;
+//    int   yinternal_width;
 
-        int   UVWidth;
-        int   UVHeight;
-        int   UVStride;
-//    int   UVInternalWidth;
+        int   uv_width;
+        int   uv_height;
+        int   uv_stride;
+//    int   uvinternal_width;
 
-        unsigned char *YBuffer;
-        unsigned char *UBuffer;
-        unsigned char *VBuffer;
+        unsigned char *y_buffer;
+        unsigned char *u_buffer;
+        unsigned char *v_buffer;
 
-        unsigned char *BufferAlloc;
+        unsigned char *buffer_alloc;
         int border;
-        int frameSize;
+        int frame_size;
         YUV_TYPE clrtype;
     } YV12_BUFFER_CONFIG;
 
-    int vp8_On2YV12_AllocFrameBuffer(YV12_BUFFER_CONFIG *ybf, int width, int height, int border);
-    int vp8_On2YV12_DeAllocFrameBuffer(YV12_BUFFER_CONFIG *ybf);
-    int vp8_On2YV12_BlackFrameBuffer(YV12_BUFFER_CONFIG *ybf);
+    int vp8_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height, int border);
+    int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf);
+    int vp8_yv12_black_frame_buffer(YV12_BUFFER_CONFIG *ybf);
 
 #ifdef __cplusplus
 }
@@ -67,4 +69,3 @@ extern "C"
 
 
 #endif //YV12_CONFIG_H
-

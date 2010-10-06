@@ -269,18 +269,18 @@ double VP8_CalcSSIM_Tester
     double frame_weight;
     double ssimv;
 
-    width_y = source->YWidth;
-    height_y = source->YHeight;
-    height_uv = source->UVHeight;
-    width_uv = source->UVWidth;
-    stride_uv = dest->UVStride;
-    stride = dest->YStride;
+    width_y = source->y_width;
+    height_y = source->y_height;
+    height_uv = source->uv_height;
+    width_uv = source->uv_width;
+    stride_uv = dest->uv_stride;
+    stride = dest->y_stride;
 
     lumimask = lumamask;
 
     luminance = 1;
-    a = vp8_ssim(source->YBuffer, dest->YBuffer,
-                 source->YStride, dest->YStride, source->YWidth, source->YHeight);
+    a = vp8_ssim(source->y_buffer, dest->y_buffer,
+                 source->y_stride, dest->y_stride, source->y_width, source->y_height);
     luminance = 0;
 
     frame_weight = plane_summed_weights / ((width_y - 7) * (height_y - 7));
@@ -289,11 +289,11 @@ double VP8_CalcSSIM_Tester
         a = b = c = 1.0f;
     else
     {
-        b = vp8_ssim(source->UBuffer, dest->UBuffer,
-                     source->UVStride, dest->UVStride, source->UVWidth, source->UVHeight);
+        b = vp8_ssim(source->u_buffer, dest->u_buffer,
+                     source->uv_stride, dest->uv_stride, source->uv_width, source->uv_height);
 
-        c = vp8_ssim(source->VBuffer, dest->VBuffer,
-                     source->UVStride, dest->UVStride, source->UVWidth, source->UVHeight);
+        c = vp8_ssim(source->v_buffer, dest->v_buffer,
+                     source->uv_stride, dest->uv_stride, source->uv_width, source->uv_height);
     }
 
     ssimv = a * .8 + .1 * (b + c);
@@ -497,22 +497,22 @@ double vp8_calc_ssimg
 )
 {
     double ssim_all = 0;
-    int ysize  = source->YWidth * source->YHeight;
+    int ysize  = source->y_width * source->y_height;
     int uvsize = ysize / 4;
 
-    *ssim_y = calc_ssimg(source->YBuffer, dest->YBuffer,
-                         source->YWidth, source->YHeight,
-                         source->YStride, dest->YStride);
+    *ssim_y = calc_ssimg(source->y_buffer, dest->y_buffer,
+                         source->y_width, source->y_height,
+                         source->y_stride, dest->y_stride);
 
 
-    *ssim_u = calc_ssimg(source->UBuffer, dest->UBuffer,
-                         source->UVWidth, source->UVHeight,
-                         source->UVStride, dest->UVStride);
+    *ssim_u = calc_ssimg(source->u_buffer, dest->u_buffer,
+                         source->uv_width, source->uv_height,
+                         source->uv_stride, dest->uv_stride);
 
 
-    *ssim_v = calc_ssimg(source->VBuffer, dest->VBuffer,
-                         source->UVWidth, source->UVHeight,
-                         source->UVStride, dest->UVStride);
+    *ssim_v = calc_ssimg(source->v_buffer, dest->v_buffer,
+                         source->uv_width, source->uv_height,
+                         source->uv_stride, dest->uv_stride);
 
     ssim_all = (*ssim_y + *ssim_u + *ssim_v) / (ysize + uvsize + uvsize);
     *ssim_y /= ysize;

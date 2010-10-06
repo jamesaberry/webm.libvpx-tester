@@ -1,10 +1,11 @@
 /*
- *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
+ *  Copyright (c) 2010 The WebM project authors. All Rights Reserved.
  *
- *  Use of this source code is governed by a BSD-style license and patent
- *  grant that can be found in the LICENSE file in the root of the source
- *  tree. All contributing project authors may be found in the AUTHORS
- *  file in the root of the source tree.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 
@@ -68,7 +69,7 @@ extern "C" {
      * stream. Algorithms may extend this structure with data specific
      * to their bitstream by setting the sz member appropriately.
      */
-    typedef struct
+    typedef struct vpx_codec_stream_info
     {
         unsigned int sz;     /**< Size of this structure */
         unsigned int w;      /**< Width (or 0 for unknown/default) */

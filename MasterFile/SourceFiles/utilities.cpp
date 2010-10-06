@@ -10,6 +10,7 @@
 #include <string.h>
 #include "ivf.h"
 #include "header.h"
+#include "vp8.h"
 #include <algorithm>
 
 using namespace std;
@@ -20,7 +21,6 @@ typedef unsigned char BYTE;
 
 #if defined(_WIN32)
 #include <windows.h>
-#include "stdafx.h"
 #include "on2vpplugin.h"
 #define snprintf _snprintf
 #else
@@ -575,7 +575,6 @@ static void usage_exit()
 #include <stdarg.h>
 #include <string.h>
 #define ON2_CODEC_DISABLE_COMPAT 1
-#include "on2_codecs_config.h"
 #include "vpx_decoder.h"
 #include "vpx_timer.h"
 
@@ -3116,18 +3115,18 @@ void RunExe(string RunExe)
 int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
 {
     //vpx_codec_err_t        res = ON2_CODEC_OK;
-    yv12->BufferAlloc = img->planes[PLANE_Y];
-    yv12->YBuffer = img->planes[PLANE_Y];
-    yv12->UBuffer = img->planes[PLANE_U];
-    yv12->VBuffer = img->planes[PLANE_V];
+    yv12->buffer_alloc = img->planes[PLANE_Y];
+    yv12->y_buffer = img->planes[PLANE_Y];
+    yv12->u_buffer = img->planes[PLANE_U];
+    yv12->v_buffer = img->planes[PLANE_V];
 
-    yv12->YWidth  = img->d_w;
-    yv12->YHeight = img->d_h;
-    yv12->UVWidth = (1 + yv12->YWidth) / 2;
-    yv12->UVHeight = (1 + yv12->YHeight) / 2;
+    yv12->y_width  = img->d_w;
+    yv12->y_height = img->d_h;
+    yv12->uv_width = (1 + yv12->y_width) / 2;
+    yv12->uv_height = (1 + yv12->y_height) / 2;
 
-    yv12->YStride = img->stride[PLANE_Y];
-    yv12->UVStride = img->stride[PLANE_U];
+    yv12->y_stride = img->stride[PLANE_Y];
+    yv12->uv_stride = img->stride[PLANE_U];
 
     yv12->border  = (img->stride[PLANE_Y] - img->w) / 2;
 
@@ -3187,16 +3186,16 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
     vpx_img_alloc(&raw_img, IMG_FMT_I420, ivfhRaw.width, ivfhRaw.height, 1);
 
     YV12_BUFFER_CONFIG Raw_YV12;
-    Raw_YV12.YWidth   = raw_img.d_w;
-    Raw_YV12.YHeight  = raw_img.d_h;
-    Raw_YV12.YStride  = raw_img.stride[PLANE_Y];
-    Raw_YV12.UVWidth  = (1 + Raw_YV12.YWidth) / 2;
-    Raw_YV12.UVHeight = (1 + Raw_YV12.YHeight) / 2;
-    Raw_YV12.UVStride = raw_img.stride[PLANE_U];
-    Raw_YV12.BufferAlloc        = raw_img.img_data;
-    Raw_YV12.YBuffer            = raw_img.img_data;
-    Raw_YV12.UBuffer = raw_img.planes[PLANE_U];
-    Raw_YV12.VBuffer = raw_img.planes[PLANE_V];
+    Raw_YV12.y_width   = raw_img.d_w;
+    Raw_YV12.y_height  = raw_img.d_h;
+    Raw_YV12.y_stride  = raw_img.stride[PLANE_Y];
+    Raw_YV12.uv_width  = (1 + Raw_YV12.y_width) / 2;
+    Raw_YV12.uv_height = (1 + Raw_YV12.y_height) / 2;
+    Raw_YV12.uv_stride = raw_img.stride[PLANE_U];
+    Raw_YV12.buffer_alloc        = raw_img.img_data;
+    Raw_YV12.y_buffer           = raw_img.img_data;
+    Raw_YV12.u_buffer = raw_img.planes[PLANE_U];
+    Raw_YV12.v_buffer = raw_img.planes[PLANE_V];
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -3215,9 +3214,9 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
     if (forceUVswap == 1)
     {
-        unsigned char *temp = Raw_YV12.UBuffer;
-        Raw_YV12.UBuffer = Raw_YV12.VBuffer;
-        Raw_YV12.VBuffer = temp;
+        unsigned char *temp = Raw_YV12.u_buffer;
+        Raw_YV12.u_buffer = Raw_YV12.v_buffer;
+        Raw_YV12.v_buffer = temp;
     }
 
     ////////////////////////Initilize Compressed File////////////////////////
@@ -3518,7 +3517,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
     vpx_codec_destroy(&decoder);
 
     //Over All PSNR Calc
-    double samples = 3.0 / 2 * frameCount * Raw_YV12.YWidth * Raw_YV12.YHeight;
+    double samples = 3.0 / 2 * frameCount * Raw_YV12.y_width * Raw_YV12.y_height;
     double avgPsnr = summedPsnr / frameCount;
     double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
 
@@ -3628,16 +3627,16 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
     vpx_img_alloc(&raw_img, IMG_FMT_I420, ivfhRaw.width, ivfhRaw.height, 1);
 
     YV12_BUFFER_CONFIG Raw_YV12;
-    Raw_YV12.YWidth   = raw_img.d_w;
-    Raw_YV12.YHeight  = raw_img.d_h;
-    Raw_YV12.YStride  = raw_img.stride[PLANE_Y];
-    Raw_YV12.UVWidth  = (1 + Raw_YV12.YWidth) / 2;
-    Raw_YV12.UVHeight = (1 + Raw_YV12.YHeight) / 2;
-    Raw_YV12.UVStride = raw_img.stride[PLANE_U];
-    Raw_YV12.BufferAlloc        = raw_img.img_data;
-    Raw_YV12.YBuffer            = raw_img.img_data;
-    Raw_YV12.UBuffer = raw_img.planes[PLANE_U];
-    Raw_YV12.VBuffer = raw_img.planes[PLANE_V];
+    Raw_YV12.y_width   = raw_img.d_w;
+    Raw_YV12.y_height  = raw_img.d_h;
+    Raw_YV12.y_stride  = raw_img.stride[PLANE_Y];
+    Raw_YV12.uv_width  = (1 + Raw_YV12.y_width) / 2;
+    Raw_YV12.uv_height = (1 + Raw_YV12.y_height) / 2;
+    Raw_YV12.uv_stride = raw_img.stride[PLANE_U];
+    Raw_YV12.buffer_alloc        = raw_img.img_data;
+    Raw_YV12.y_buffer           = raw_img.img_data;
+    Raw_YV12.u_buffer = raw_img.planes[PLANE_U];
+    Raw_YV12.v_buffer = raw_img.planes[PLANE_V];
 
     if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
     {
@@ -3656,9 +3655,9 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
     if (forceUVswap == 1)
     {
-        unsigned char *temp = Raw_YV12.UBuffer;
-        Raw_YV12.UBuffer = Raw_YV12.VBuffer;
-        Raw_YV12.VBuffer = temp;
+        unsigned char *temp = Raw_YV12.u_buffer;
+        Raw_YV12.u_buffer = Raw_YV12.v_buffer;
+        Raw_YV12.v_buffer = temp;
     }
 
     ////////////////////////Initilize Compressed File////////////////////////
@@ -3979,7 +3978,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
     vpx_codec_destroy(&decoder);
 
     //Over All PSNR Calc
-    double samples = 3.0 / 2 * frameCount * Raw_YV12.YWidth * Raw_YV12.YHeight;
+    double samples = 3.0 / 2 * frameCount * Raw_YV12.y_width * Raw_YV12.y_height;
     double avgPsnr = summedPsnr / frameCount;
     double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
 
@@ -10948,7 +10947,7 @@ double IVFDisplayVisibleFrames(const char *inputFile, int Selector)
 #endif
 
             unsigned int type = oz.type;
-            unsigned int showFrame = oz.showFrame;
+            unsigned int showFrame = oz.show_frame;
             unsigned int version = oz.version;
 
             if (showFrame == 1)
@@ -11055,7 +11054,7 @@ double IVFDisplayVisibleFrames(const char *inputFile, int Selector)
             memcpy(&oz, inbuff, 3); // copy 3 bytes;
 #endif
             unsigned int type = oz.type;
-            unsigned int showFrame = oz.showFrame;
+            unsigned int showFrame = oz.show_frame;
             unsigned int version = oz.version;
 
             if (showFrame == 1)
@@ -11180,7 +11179,7 @@ double IVFDisplayAltRefFrames(const char *inputFile, int Selector)
 #endif
 
             unsigned int type = oz.type;
-            unsigned int showFrame = oz.showFrame;
+            unsigned int showFrame = oz.show_frame;
             unsigned int version = oz.version;
 
             if (showFrame == 0)
@@ -11287,7 +11286,7 @@ double IVFDisplayAltRefFrames(const char *inputFile, int Selector)
             memcpy(&oz, inbuff, 3); // copy 3 bytes;
 #endif
             unsigned int type = oz.type;
-            unsigned int showFrame = oz.showFrame;
+            unsigned int showFrame = oz.show_frame;
             unsigned int version = oz.version;
 
             if (showFrame == 0)
@@ -11408,7 +11407,7 @@ double IVFDisplayKeyFrames(const char *inputFile, int Selector)
 #endif
 
             unsigned int type = oz.type;
-            unsigned int showFrame = oz.showFrame;
+            unsigned int showFrame = oz.show_frame;
             unsigned int version = oz.version;
 
             if (type == 0)
@@ -11515,7 +11514,7 @@ double IVFDisplayKeyFrames(const char *inputFile, int Selector)
             memcpy(&oz, inbuff, 3); // copy 3 bytes;
 #endif
             unsigned int type = oz.type;
-            unsigned int showFrame = oz.showFrame;
+            unsigned int showFrame = oz.show_frame;
             unsigned int version = oz.version;
 
             if (type == 0)

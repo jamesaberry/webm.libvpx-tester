@@ -16,7 +16,6 @@
 
 using namespace std;
 
-#include "version.hpp"
 #include "Arguments.hpp"
 
 using namespace datarate;
@@ -33,7 +32,6 @@ bool Arguments::bDetails = false;
 //------------------------------------------------------------------------------
 void Arguments::usage(const char *szProgram)
 {
-    cout << VERSION_STRING << endl;
     cout << "Calculates the data rate for the given stream and the file as a whole." << endl;
     cout << "If no stream is specified, data rates for all streams in the file will be displayed." << endl;
     cout << "Data rates are calculated with respect to the length, rate, and scale of the selected or current stream." << endl;

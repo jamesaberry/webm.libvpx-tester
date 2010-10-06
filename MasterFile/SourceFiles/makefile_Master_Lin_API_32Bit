@@ -5,7 +5,7 @@ SRC = driver.cpp ivf.c psnr.c ssim2.cpp Tests.cpp Tools.cpp Arguments.cpp FourCC
 SRCOBJ = driver.o ivf.o psnr.o ssim2.o Tests.o Tools.o Arguments.o FourCC.o md5_utils.o utilities.o args.o ivfdec.o ivfenc.o y4minput.o
 
 # compiler
-CCC = g++ -m32
+GPP = g++ -m32
 GCC = gcc -m32
 
 # Libraries
@@ -13,51 +13,51 @@ LFLAGS= -L ../lib -lvpx_Lin32 -lpthread -DINLINE=
 
 #Includes
 INCLUDE = -I ../include -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
- 
-VP8_Tester_API_32Bit: $(SRCOBJ) 
-	$(CCC)  $(INCLUDE) -o "VP8_Tester_API_32Bit.exe" $(SRCOBJ) $(LFLAGS)
+
+VP8_Tester_API_32Bit: $(SRCOBJ)
+	$(GPP)  $(INCLUDE) -o "VP8_Tester_API_32Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
-	$(CCC) -c ivf.c $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c ivf.c $(INCLUDE)  $(LFLAGS)
 
 psnr.o: psnr.c
 	$(GCC) -c psnr.c $(INCLUDE)  $(LFLAGS)
 
 ssim2.o: ssim2.cpp
-	$(CCC) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)
 
 Tests.o: Tests.cpp
-	$(CCC) -c Tests.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c Tests.cpp $(INCLUDE)  $(LFLAGS)
 
 Tools.o: Tools.cpp
-	$(CCC) -c Tools.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c Tools.cpp $(INCLUDE)  $(LFLAGS)
 
 utilities.o: utilities.cpp
-	$(CCC) -c  utilities.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c  utilities.cpp $(INCLUDE)  $(LFLAGS)
 
 Arguments.o: Arguments.cpp
-	$(CCC) -c Arguments.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c Arguments.cpp $(INCLUDE)  $(LFLAGS)
 
 FourCC.o: FourCC.cpp
-	$(CCC) -c FourCC.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c FourCC.cpp $(INCLUDE)  $(LFLAGS)
 
 driver.o: driver.cpp
-	$(CCC) -c driver.cpp $(INCLUDE)  $(LFLAGS)
+	$(GPP) -c driver.cpp $(INCLUDE)  $(LFLAGS)
 
 md5_utils.o: md5_utils.cpp
-	$(CCC) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
+	$(GPP) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
 
 args.o: args.cpp
-	$(CCC) -c args.cpp $(INCLUDE) $(LFLAGS)
+	$(GPP) -c args.cpp $(INCLUDE) $(LFLAGS)
 
 y4minput.o: y4minput.cpp
-	$(CCC) -c y4minput.cpp $(INCLUDE) $(LFLAGS)
+	$(GPP) -c y4minput.cpp $(INCLUDE) $(LFLAGS)
 
 ivfdec.o: ivfdec.cpp
-	$(CCC) -c ivfdec.cpp $(INCLUDE) $(LFLAGS)
+	$(GPP) -c ivfdec.cpp $(INCLUDE) $(LFLAGS)
 
 ivfenc.o: ivfenc.cpp
-	$(CCC) -c ivfenc.cpp $(INCLUDE) $(LFLAGS)
+	$(GPP) -c ivfenc.cpp $(INCLUDE) $(LFLAGS)
 
-clean: 
+clean:
 	rm -f $(SRCOBJ) VP8_Tester_API_32Bit.exe

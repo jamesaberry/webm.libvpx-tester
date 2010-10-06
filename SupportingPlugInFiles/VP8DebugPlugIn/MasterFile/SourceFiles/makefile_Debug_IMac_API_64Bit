@@ -1,12 +1,12 @@
 # source files
-SRC =  psnr.c ssim2.cpp Utilities.cpp ivf.c supportingdebug.cpp
+SRC = psnr.c ssim2.cpp Utilities.cpp ivf.c supportingdebug.cpp md5_utils.cpp
 
 # source object files
-SRCOBJ = psnr.o ssim2.o Utilities.o ivf.o supportingdebug.o 
+SRCOBJ = psnr.o ssim2.o Utilities.o ivf.o supportingdebug.o md5_utils.o
 
 # compiler
-CPP = g++ -m64
-ICC = gcc -m64
+GPP = g++ -m64
+GCC = gcc -m64
 DEBUG = -g
 
 # Libraries
@@ -14,24 +14,27 @@ LFLAGS= -L../lib -lvpx_MemIMac64 -D CONFIG_MEM_TRACKER=1 -DINLINE=
 
 #Includes
 INCLUDE = -I ../include -I "../HeaderFiles" -D API -D API -DHAVE_STDINT_H
- 
-VP8vNewest_PlugIn_DLib_DMode_64Bit.exe: $(SRCOBJ) 
-	$(CPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode_64Bit.exe" $(SRCOBJ) $(LFLAGS) $(DEBUG)
+
+VP8vNewest_PlugIn_DLib_DMode_64Bit.exe: $(SRCOBJ)
+	$(GPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode_64Bit.exe" $(SRCOBJ) $(LFLAGS) $(DEBUG)
 
 ivf.o: ivf.c
-	$(ICC) -c ivf.c $(INCLUDE) $(LFLAGS) $(DEBUG)
+	$(GCC) -c ivf.c $(INCLUDE) $(LFLAGS) $(DEBUG)
 
 psnr.o: psnr.c
-	$(ICC) -c psnr.c $(INCLUDE) $(LFLAGS) $(DEBUG)
+	$(GCC) -c psnr.c $(INCLUDE) $(LFLAGS) $(DEBUG)
 
 ssim2.o: ssim2.cpp
-	$(CPP) -c ssim2.cpp $(INCLUDE) $(LFLAGS) $(DEBUG)
+	$(GPP) -c ssim2.cpp $(INCLUDE) $(LFLAGS) $(DEBUG)
 
 Utilities.o: Utilities.cpp
-	$(CPP) -c Utilities.cpp $(INCLUDE) $(LFLAGS) $(DEBUG)
+	$(GPP) -c Utilities.cpp $(INCLUDE) $(LFLAGS) $(DEBUG)
 
 supportingdebug.o: supportingdebug.cpp
-	$(CPP) -c supportingdebug.cpp $(INCLUDE) $(LFLAGS) $(DEBUG)
+	$(GPP) -c supportingdebug.cpp $(INCLUDE) $(LFLAGS) $(DEBUG)
 
-clean: 
+md5_utils.o: md5_utils.cpp
+	$(GPP) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
+
+clean:
 	rm -f $(SRCOBJ) VP8vNewest_PlugIn_DLib_DMode_64Bit.exe

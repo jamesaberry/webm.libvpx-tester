@@ -17,6 +17,7 @@
 #include <fstream>
 #include <string>
 #include <string.h>
+#include "vpx_image.h"
 using namespace std;
 ////////////////////////
 #include <stdio.h>

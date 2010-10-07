@@ -12,7 +12,7 @@ GCC = gcc -m32
 LFLAGS= -L../lib -lpthread -lvpx_MemLin32  -D CONFIG_MEM_TRACKER=1 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -I "../Header Files" -D API -DHAVE_STDINT_H
+INCLUDE = -I ../include -I ../include/debug-32 -D API -DHAVE_STDINT_H
 
 VP8vNewest_PlugIn_DLib_DMode_32Bit.exe: $(SRCOBJ)
 	$(GPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe" $(SRCOBJ) $(LFLAGS)

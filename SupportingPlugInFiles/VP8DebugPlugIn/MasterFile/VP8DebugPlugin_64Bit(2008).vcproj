@@ -133,7 +133,7 @@
 				AdditionalOptions="/QIfist "
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="include"
+				AdditionalIncludeDirectories="include;&quot;include\debug-64&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;VP7_ONLY=1;ON2_TRACK_MEM_USAGE=1;CONFIG_MEM_TRACKER=1;API"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"

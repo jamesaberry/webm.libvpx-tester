@@ -328,6 +328,13 @@ int PrintVersion()
 void PrintHeaderInfo()
 {
     string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
+    string arch = "Unknown";
+#if ARCH_X86
+    arch = "32 bit";
+#else if ARCH_X86_64
+    arch = "64 bit";
+#endif
+
 #if defined(_WIN32)
     TestMachineInfo = "";
     string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
@@ -340,7 +347,24 @@ void PrintHeaderInfo()
     }
 
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-    TestMachineInfo.append("\n                        Test Machine is Running: Windows\n\n");
+
+    TestMachineInfo.append("\n");
+    string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" Windows");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
+
 #endif
 #if defined(linux)
     TestMachineInfo = "";
@@ -355,7 +379,22 @@ void PrintHeaderInfo()
 
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
-    TestMachineInfo.append("\n                       Test Machine is Running: Linux\n\n");
+    TestMachineInfo.append("\n");
+    string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" Linux");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
 #endif
 #if defined(__APPLE__)
     TestMachineInfo = "";
@@ -370,7 +409,22 @@ void PrintHeaderInfo()
 
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
-    TestMachineInfo.append("\n                       Test Machine is Running: Mac\n\n");
+    TestMachineInfo.append("\n");
+    string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" Intel Mac");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
 #endif
 #if defined(__POWERPC__)
     TestMachineInfo = "";
@@ -385,7 +439,22 @@ void PrintHeaderInfo()
 
     TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
-    TestMachineInfo.append("\n                      Test Machine is Running: PowerPC\n\n");
+    TestMachineInfo.append("\n");
+    string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" PowerPC");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
 #endif
 
     printf("%s", TestMachineInfo.c_str());

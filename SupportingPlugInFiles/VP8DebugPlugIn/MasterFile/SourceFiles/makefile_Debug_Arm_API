@@ -12,7 +12,7 @@ GCC = arm-none-linux-gnueabi-gcc
 LFLAGS= -L../lib -lpthread -lvpx_MemArm  -D CONFIG_MEM_TRACKER=1 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -I "../Header Files" -D API -D ARM -DHAVE_STDINT_H
+INCLUDE = -I ../include -I ../include/debug-arm -D API -D ARM -DHAVE_STDINT_H
 
 VP8vNewest_PlugIn_DLib_DMode.exe: $(SRCOBJ)
 	$(GPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode.exe" $(SRCOBJ) $(LFLAGS)

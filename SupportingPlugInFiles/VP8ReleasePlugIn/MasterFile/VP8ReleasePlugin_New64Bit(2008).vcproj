@@ -312,7 +312,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="include"
+				AdditionalIncludeDirectories="include;&quot;include\release-new-64&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ON2_TRACK_MEM_USAGE=1;API"
 				StringPooling="false"
 				RuntimeLibrary="0"

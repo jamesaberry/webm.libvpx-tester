@@ -12,7 +12,7 @@ GCC = gcc -m64
 LFLAGS= -L ../lib -lvpx_Lin64 -lpthread -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
+INCLUDE = -I ../include -I ../include/release-64 -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
 
 VP8_Tester_API_64Bit: $(SRCOBJ)
 	$(GPP)  $(INCLUDE) -o "VP8_Tester_API_64Bit.exe" $(SRCOBJ) $(LFLAGS)

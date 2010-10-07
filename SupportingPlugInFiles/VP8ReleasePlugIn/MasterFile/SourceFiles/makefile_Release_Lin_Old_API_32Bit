@@ -12,7 +12,7 @@ GCC = gcc -m32
 LFLAGS= -L../oldlib -lpthread -lvpx_OldLin32 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -D API -D HAVE_STDINT_H
+INCLUDE = -I ../include -I ../include/release-old-32 -D API -D HAVE_STDINT_H
 
 VP8vOldest_PlugIn_RLib_RMode_32Bit.exe: $(SRCOBJ)
 	$(GPP) $(INCLUDE) -o "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe" $(SRCOBJ) $(LFLAGS)

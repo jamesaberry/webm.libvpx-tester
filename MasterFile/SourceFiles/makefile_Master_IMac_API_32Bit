@@ -12,7 +12,7 @@ GCC = gcc -m32
 LFLAGS= -L../lib -lvpx_IMac32 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
+INCLUDE = -I ../include -I ../include/release-32 -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
 
 VP8_Tester_API_32Bit.exe: $(SRCOBJ)
 	$(GPP)  $(INCLUDE) -o "VP8_Tester_API_32Bit.exe" $(SRCOBJ) $(LFLAGS)

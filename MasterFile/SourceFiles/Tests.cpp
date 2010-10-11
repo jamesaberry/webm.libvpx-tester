@@ -21453,9 +21453,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         basefolder.append(versionstring.substr(versionPos));
         basefolder.append(arch.c_str());
         basefolder.append(slashCharStr.c_str());
-		basefolder.append("Mode");
-		basefolder.append(argv[3]);
-		basefolder.append(slashCharStr.c_str());
+        basefolder.append("Mode");
+        basefolder.append(argv[3]);
+        basefolder.append(slashCharStr.c_str());
         MakeDir(basefolder);
         int TestMode = 0;
 

@@ -9,13 +9,13 @@ GPP = arm-none-linux-gnueabi-g++
 GCC = arm-none-linux-gnueabi-gcc
 
 # Libraries
-LFLAGS= -L../newlib -lpthread -lvpx_NewArm -DINLINE=
+LFLAGS= -L../oldlib -lpthread -lvpx_OldArm6 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -I ../include/release-new-arm -D API -D ARM -D HAVE_STDINT_H
+INCLUDE = -I ../include -I ../include/release-new-arm6 -D API -D ARM -D HAVE_STDINT_H
 
-VP8vNewest_PlugIn_RLib_RMode.exe: $(SRCOBJ)
-	$(GPP) $(INCLUDE) -o "VP8vNewest_PlugIn_RLib_RMode.exe" $(SRCOBJ) $(LFLAGS)
+VP8vOldest_PlugIn_RLib_RMode_Arm6.exe: $(SRCOBJ)
+	$(GPP) $(INCLUDE) -o "VP8vOldest_PlugIn_RLib_RMode_Arm6.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
 	$(GCC) -c ivf.c $(INCLUDE)  $(LFLAGS)
@@ -36,4 +36,4 @@ md5_utils.o: md5_utils.cpp
 	$(GPP) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
 
 clean:
-	rm -f $(SRCOBJ) VP8vNewest_PlugIn_RLib_RMode.exe
+	rm -f $(SRCOBJ) VP8vOldest_PlugIn_RLib_RMode_Arm6.exe

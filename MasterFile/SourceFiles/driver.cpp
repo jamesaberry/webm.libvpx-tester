@@ -1446,7 +1446,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%%%%Mode0%%%%\n");
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ENCBONUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar, slashChar);
@@ -1474,7 +1474,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", CHGWRNUM, slashChar, slashChar, slashChar, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
@@ -1502,7 +1502,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CPUDENUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CHGWRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ENCBONUM, slashChar, slashChar);
@@ -1530,7 +1530,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CPUDENUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CHGWRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ENCBONUM, slashChar, slashChar);
@@ -1560,7 +1560,7 @@ void Print5(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CPUDENUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CHGWRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ENCBONUM, slashChar, slashChar);
@@ -1636,7 +1636,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%%%%Mode0%%%%\n");
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ENCBONUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar, slashChar);
@@ -1664,7 +1664,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", CHGWRNUM, slashChar, slashChar, slashChar, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
@@ -1692,7 +1692,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CPUDENUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CHGWRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ENCBONUM, slashChar, slashChar);
@@ -1720,7 +1720,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CPUDENUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CHGWRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ENCBONUM, slashChar, slashChar);
@@ -1750,7 +1750,7 @@ void Print6(string WorkingDir)
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CPUDENUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CHGWRNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CHGWRNUM, slashChar, slashChar);
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DFWMWNUM, slashChar, slashChar);
+    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@288\n", DFWMWNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DTARTNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar, slashChar);
     fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ENCBONUM, slashChar, slashChar);

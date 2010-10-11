@@ -9,13 +9,13 @@ GPP = arm-none-linux-gnueabi-g++
 GCC = arm-none-linux-gnueabi-gcc
 
 # Libraries
-LFLAGS= -L../lib -lpthread -lvpx_MemArm  -D CONFIG_MEM_TRACKER=1 -DINLINE=
+LFLAGS= -L../lib -lpthread -lvpx_MemArm6  -D CONFIG_MEM_TRACKER=1 -DINLINE=
 
 #Includes
-INCLUDE = -I ../include -I ../include/debug-arm -D API -D ARM -DHAVE_STDINT_H
+INCLUDE = -I ../include -I ../include/debug-arm6 -D API -D ARM -DHAVE_STDINT_H
 
-VP8vNewest_PlugIn_DLib_DMode.exe: $(SRCOBJ)
-	$(GPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode.exe" $(SRCOBJ) $(LFLAGS)
+VP8vNewest_PlugIn_DLib_DMode_Arm6.exe: $(SRCOBJ)
+	$(GPP) $(INCLUDE) -o "VP8vNewest_PlugIn_DLib_DMode_Arm6.exe" $(SRCOBJ) $(LFLAGS)
 
 ivf.o: ivf.c
 	$(GCC) -c ivf.c $(INCLUDE)  $(LFLAGS)
@@ -36,4 +36,4 @@ md5_utils.o: md5_utils.cpp
 	$(GPP) -c md5_utils.cpp $(INCLUDE) $(LFLAGS)
 
 clean:
-	rm -f $(SRCOBJ) VP8vNewest_PlugIn_DLib_DMode.exe
+	rm -f $(SRCOBJ) VP8vNewest_PlugIn_DLib_DMode_Arm6.exe

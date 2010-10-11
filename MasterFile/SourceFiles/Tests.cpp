@@ -322,7 +322,30 @@ void RecordTestComplete(string MainDirString, string File1String, int TestType)
 }
 int PrintVersion()
 {
-    printf("\n%s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+    string arch = "Unknown";
+    string Platform = "Unknown";
+
+#if ARCH_X86
+    arch = "32 bit";
+#elif ARCH_X86_64
+    arch = "64 bit";
+#elif HAVE_ARMV6
+    arch = "Arm 6";
+#elif HAVE_ARMV7
+    arch = "Arm 7";
+#endif
+
+#if defined(_WIN32)
+    Platform = "Windows";
+#elif defined(linux)
+    Platform = "Linux";
+#elif defined(__APPLE__)
+    Platform = "Intel Mac";
+#elif defined(__POWERPC__)
+    Platform = "PowerPC";
+#endif
+
+    printf("\n %s - %s %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo), arch.c_str(), Platform.c_str());
     return 0;
 }
 void PrintHeaderInfo()
@@ -6115,7 +6138,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             {
                 printf("\n");
                 fprintf(stderr, "\n");
-                DMFW[i] = FileSize(DFWMOutFile.c_str());
+                DMFW[i] = IVFDisplayVisibleFrames(DFWMOutFile.c_str(), 1);
                 printf("\n");
                 fprintf(stderr, "\n");
             }
@@ -6146,8 +6169,8 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
 
     while (i < 6)
     {
-        printf("DFWM%4i Size: %8i bytes\n", n, DMFW[i]);//cout << "DFWM" << n << " Size " << DMFW[i] << "\n";
-        fprintf(stderr, "DFWM%4i Size: %8i bytes\n", n, DMFW[i]);//cerr << "DFWM" << n << " Size " << DMFW[i] << "\n";
+        printf("DFWM%4i Visible Frames: %4i\n", n, DMFW[i]);//cout << "DFWM" << n << " Size " << DMFW[i] << "\n";
+        fprintf(stderr, "DFWM%4i Visible Frames: %4i\n", n, DMFW[i]);//cerr << "DFWM" << n << " Size " << DMFW[i] << "\n";
         i++;
         n = n - 20;
     }
@@ -6165,7 +6188,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             EqualBool++;
 
             char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %i = DFWM%4i: %i - Indeterminate", n - 20, DMFW[i+1], n, DMFW[i]);
+            snprintf(OutputChar1, 255, "DFWM%4i: %4i = DFWM%4i: %4i - Indeterminate", n - 20, DMFW[i+1], n, DMFW[i]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
             printf("\n");
@@ -6175,7 +6198,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
         if (DMFW[i+1] > DMFW[i])
         {
             char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %i > DFWM%4i: %i - Passed", n - 20, DMFW[i+1], n, DMFW[i]);
+            snprintf(OutputChar1, 255, "DFWM%4i: %4i > DFWM%4i: %4i - Passed", n - 20, DMFW[i+1], n, DMFW[i]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
             printf("\n");
@@ -6187,7 +6210,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             testBool = 0;
 
             char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %i < DFWM%4i: %i - Failed", n - 20, DMFW[i+1], n, DMFW[i]);
+            snprintf(OutputChar1, 255, "DFWM%4i: %4i < DFWM%4i: %4i - Failed", n - 20, DMFW[i+1], n, DMFW[i]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
             printf("\n");
@@ -21391,7 +21414,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char *CompressString = "WinLinMacMatch";
 
 
-        if (!(argc == 7 || argc == 6))
+        if (!(argc == 8 || argc == 7))
         {
             printf(
                 "  WinLinMacMatch \n\n"
@@ -21404,12 +21427,23 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
-                "    <Base Folder>\n"
-                "    <Optional Settings File>\n"
+                "    <Common Base Folder>\n"
+                "    <Common Settings File>\n"
             );
             return 0;
         }
 
+        string arch = "Unknown";
+
+#if ARCH_X86
+        arch = "-32Bit";
+#elif ARCH_X86_64
+        arch = "-64Bit";
+#elif HAVE_ARMV6
+        arch = "-Arm6";
+#elif HAVE_ARMV7
+        arch = "-Arm7";
+#endif
         char *input = argv[2];
         string basefolder = argv[5];
         basefolder.append(slashCharStr.c_str());
@@ -21417,6 +21451,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         size_t versionPos = versionstring.find("v");
         versionstring.substr(versionPos);
         basefolder.append(versionstring.substr(versionPos));
+        basefolder.append(arch.c_str());
         basefolder.append(slashCharStr.c_str());
         MakeDir(basefolder);
         int TestMode = 0;

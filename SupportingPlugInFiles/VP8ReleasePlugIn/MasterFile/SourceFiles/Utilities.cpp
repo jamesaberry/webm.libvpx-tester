@@ -6911,7 +6911,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //vpx_codec_ctx_t       decoder;
     vpx_codec_ctx_t       encoder;
     const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
     FILE                  *infile, *outfile, *outfile3;
@@ -6935,9 +6934,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     void *out2;//all raw decoded frames
     void *out3;//individual raw preview frames
     void *out4;//individual decoded preview frames
-    //FILE* ReconOutFile;//text file output.
-
-
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -7061,9 +7057,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     char ReconOutChar[255];
     snprintf(ReconOutChar, 255, "%s", ReconOutStr.c_str());
 
-    //FILE* ReconOutFile;//text file output.
-    //ReconOutFile = fopen(ReconOutChar, "wb");
-
     ReconOutFile.open(ReconOutChar);
 
     for (pass = 0; pass < arg_passes; pass++)
@@ -7136,7 +7129,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         {
             printf("Failed to open output file: %s", out_fn);
             fprintf(stderr, "Failed to open output file: %s", out_fn);
-            //ReconOutFile.close();
+            ReconOutFile.close();
             return EXIT_FAILURE;
         }
 
@@ -7145,7 +7138,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             if (!stats_open_file(&stats, stats_fn, pass))
             {
                 printf("Failed to open statistics store\n");
-                //ReconOutFile.close();
+                ReconOutFile.close();
                 return EXIT_FAILURE;
             }
         }
@@ -7154,7 +7147,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             if (!stats_open_mem(&stats, pass))
             {
                 printf("Failed to open statistics store\n");
-                //ReconOutFile.close();
+                ReconOutFile.close();
                 return EXIT_FAILURE;
             }
         }
@@ -7224,7 +7217,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                                postproc ? VPX_CODEC_USE_POSTPROC : 0))
         {
             printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-            //ReconOutFile.close();
+            ReconOutFile.close();
             return EXIT_FAILURE;
         }
 
@@ -7232,7 +7225,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             && vpx_codec_control(&decoder, VP8_SET_POSTPROC, &vp8_pp_cfg))
         {
             fprintf(stderr, "Failed to configure postproc: %s\n", vpx_codec_error(&decoder));
-            //ReconOutFile.close();
+            ReconOutFile.close();
             return EXIT_FAILURE;
         }
 
@@ -7301,9 +7294,9 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                 got_data = 1;
                 nbytes += pkt->data.raw.sz;
                 vpx_codec_iter_t  iterdec = NULL;
-                int MemCheck1 = 1;
-                int MemCheck2 = 1;
-                int MemCheck3 = 1;
+                int MemCheckY = 0;
+                int MemCheckU = 0;
+                int MemCheckV = 0;
 
                 switch (pkt->kind)
                 {
@@ -7321,118 +7314,77 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
                     if (imgPreview && imgDecode)
                     {
-                        if (1)
+                        string out_fn3STR = out_fn;
+                        out_fn3STR.erase(out_fn3STR.length() - 4, 4);
+                        out_fn3STR.append("_PreviewFrame");
+                        out_fn3STR.append(slashCharStr.c_str());
+
+                        char intchar[56];
+                        itoa_custom(frames_out, intchar, 10);
+                        out_fn3STR.append(intchar);
+                        out_fn3STR.append(".raw");
+                        out3 = out_open(out_fn3STR.c_str(), 0);
+
+                        string out_fn4STR = out_fn;
+                        out_fn4STR.erase(out_fn4STR.length() - 4, 4);
+                        out_fn4STR.append("_DecodeFrame");
+                        out_fn4STR.append(slashCharStr.c_str());
+
+                        char intchar2[56];
+                        itoa_custom(frames_out, intchar2, 10);
+                        out_fn4STR.append(intchar2);
+                        out_fn4STR.append(".raw");
+                        out4 = out_open(out_fn4STR.c_str(), 0);
+
+                        unsigned int y;
+                        char out_fn[128+24];
+                        uint8_t *bufPreview;
+                        uint8_t *bufDecode;
+
+                        bufPreview = imgPreview->planes[PLANE_Y];
+                        bufDecode = imgDecode->planes[PLANE_Y];
+
+                        for (y = 0; y < imgPreview->d_h; y++)
                         {
-                            string out_fn3STR = out_fn;
-                            out_fn3STR.erase(out_fn3STR.length() - 4, 4);
-                            out_fn3STR.append("_PreviewFrame");
-                            out_fn3STR.append(slashCharStr.c_str());
+                            out_put(out3, bufPreview, imgPreview->d_w, 0);
+                            bufPreview += imgPreview->stride[PLANE_Y];
 
-                            //string CreateDir2 = out_fn3STR;
-                            //CreateDir2.insert(0, "mkdir \"");
-                            //CreateDir2.append("\"");
-                            //system(CreateDir2.c_str());
+                            out_put(out4, bufDecode, imgDecode->d_w, 0);
+                            bufDecode += imgDecode->stride[PLANE_Y];
 
-                            //MakeDirVPX(out_fn3STR);
-                            char intchar[56];
-                            itoa_custom(frames_out, intchar, 10);
-                            out_fn3STR.append(intchar);
-                            out_fn3STR.append(".raw");
-                            out3 = out_open(out_fn3STR.c_str(), 0);
-
-                            if (imgPreview)
-                            {
-                                unsigned int y;
-                                char out_fn[128+24];
-                                uint8_t *buf;
-
-                                //void *out, const uint8_t *buf, unsigned int len, int do_md5
-                                //fwrite(buf, 1, len, (FILE *)out);
-
-                                buf = imgPreview->planes[PLANE_Y];
-
-                                for (y = 0; y < imgPreview->d_h; y++)
-                                {
-                                    out_put(out3, buf, imgPreview->d_w, 0);
-                                    buf += imgPreview->stride[PLANE_Y];
-                                }
-
-                                buf = imgPreview->planes[PLANE_U];
-
-                                for (y = 0; y < imgPreview->d_h / 2; y++)
-                                {
-                                    out_put(out3, buf, imgPreview->d_w / 2, 0);
-                                    buf += imgPreview->stride[PLANE_U];
-                                }
-
-                                buf = imgPreview->planes[PLANE_V];
-
-                                for (y = 0; y < imgPreview->d_h / 2; y++)
-                                {
-                                    out_put(out3, buf, imgPreview->d_w / 2, 0);
-                                    buf += imgPreview->stride[PLANE_V];
-                                }
-                            }
-
-
-                            string out_fn4STR = out_fn;
-                            out_fn4STR.erase(out_fn4STR.length() - 4, 4);
-                            out_fn4STR.append("_DecodeFrame");
-                            out_fn4STR.append(slashCharStr.c_str());
-
-                            //string CreateDir3 = out_fn4STR;
-                            //CreateDir3.insert(0, "mkdir \"");
-                            //CreateDir3.append("\"");
-                            //system(CreateDir3.c_str());
-
-                            //MakeDirVPX(out_fn4STR);
-                            char intchar2[56];
-                            itoa_custom(frames_out, intchar2, 10);
-                            out_fn4STR.append(intchar2);
-                            out_fn4STR.append(".raw");
-                            out4 = out_open(out_fn4STR.c_str(), 0);
-
-                            if (imgDecode)
-                            {
-                                unsigned int y;
-                                char out_fn[128+24];
-                                uint8_t *buf;
-
-                                buf = imgDecode->planes[PLANE_Y];
-
-                                for (y = 0; y < imgDecode->d_h; y++)
-                                {
-                                    out_put(out4, buf, imgDecode->d_w, 0);
-                                    buf += imgDecode->stride[PLANE_Y];
-                                }
-
-                                buf = imgDecode->planes[PLANE_U];
-
-                                for (y = 0; y < imgDecode->d_h / 2; y++)
-                                {
-                                    out_put(out4, buf, imgDecode->d_w / 2, 0);
-                                    buf += imgDecode->stride[PLANE_U];
-                                }
-
-                                buf = imgDecode->planes[PLANE_V];
-
-                                for (y = 0; y < imgDecode->d_h / 2; y++)
-                                {
-                                    out_put(out4, buf, imgDecode->d_w / 2, 0);
-                                    buf += imgDecode->stride[PLANE_V];
-                                }
-                            }
-
-                            out_close(out3, out_fn3STR.c_str(), 0);
-                            out_close(out4, out_fn4STR.c_str(), 0);
-
-                            //printf("\nMEMORY 1 NOT SAME size: %i For frame: %i\n",imgPreview->d_h*imgPreview->d_w,frames_out, frames_out);
-                            //printf("\nFrame: %i",frames_out);
+                            MemCheckY |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_Y]);
                         }
 
-                        MemCheck1 = memcmp(imgPreview->planes[PLANE_Y], imgDecode->planes[PLANE_Y], imgPreview->d_h * imgPreview->d_w);
+                        bufPreview = imgPreview->planes[PLANE_U];
+                        bufDecode = imgDecode->planes[PLANE_U];
 
-                        if (MemCheck1 != 0)
+                        for (y = 0; y < imgPreview->d_h / 2; y++)
+                        {
+                            out_put(out3, bufPreview, imgPreview->d_w / 2, 0);
+                            bufPreview += imgPreview->stride[PLANE_U];
+
+                            out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+                            bufDecode += imgDecode->stride[PLANE_U];
+
+                            MemCheckU |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_U]);
+                        }
+
+                        bufPreview = imgPreview->planes[PLANE_V];
+                        bufDecode = imgDecode->planes[PLANE_V];
+
+                        for (y = 0; y < imgPreview->d_h / 2; y++)
+                        {
+                            out_put(out3, bufPreview, imgPreview->d_w / 2, 0);
+                            bufPreview += imgPreview->stride[PLANE_V];
+
+                            out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+                            bufDecode += imgDecode->stride[PLANE_V];
+
+                            MemCheckV |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_V]);
+                        }
+
+
+                        if (MemCheckY != 0)
                         {
                             ReconOutFile << frames_out << " Y " << 0 << "\n";
                         }
@@ -7441,9 +7393,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                             ReconOutFile << frames_out << " Y " << 1 << "\n";
                         }
 
-                        MemCheck2 = memcmp(imgPreview->planes[PLANE_U], imgDecode->planes[PLANE_U], (imgPreview->d_w / 2 * imgPreview->d_h / 2));
-
-                        if (MemCheck2 != 0)
+                        if (MemCheckU != 0)
                         {
                             ReconOutFile << frames_out << " U " << 0 << "\n";
                         }
@@ -7452,9 +7402,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                             ReconOutFile << frames_out << " U " << 1 << "\n";
                         }
 
-                        MemCheck3 = memcmp(imgPreview->planes[PLANE_V], imgDecode->planes[PLANE_V], (imgPreview->d_w / 2 * imgPreview->d_h / 2));
-
-                        if (MemCheck3 != 0)
+                        if (MemCheckV != 0)
                         {
                             ReconOutFile << frames_out << " V " << 0 << "\n";
                         }
@@ -7462,6 +7410,9 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                         {
                             ReconOutFile << frames_out << " V " << 1 << "\n";
                         }
+
+                        out_close(out3, out_fn3STR.c_str(), 0);
+                        out_close(out4, out_fn4STR.c_str(), 0);
                     }
 
                     if (imgPreview)
@@ -7469,9 +7420,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                         unsigned int y;
                         char out_fn[128+24];
                         uint8_t *buf;
-
-                        //void *out, const uint8_t *buf, unsigned int len, int do_md5
-                        //fwrite(buf, 1, len, (FILE *)out);
 
                         buf = imgPreview->planes[PLANE_Y];
 
@@ -7543,29 +7491,24 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             fflush(stdout);
         }
 
-        /* this bitrate calc is simplified and relies on the fact that this
-        * application uses 1/timebase for framerate.
-        */
-        {
-            //uint64_t temp= (uint64_t)frames_in * 1000000;
-        }
-        vpx_codec_destroy(&encoder);
-
-        fclose(infile);
-        out_close(out, out_fn2STR.c_str(), 0);
-
         if (!fseek(outfile, 0, SEEK_SET))
             write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
 
+        vpx_codec_destroy(&encoder);
+        vpx_codec_destroy(&decoder);
+
+        fclose(infile);
         fclose(outfile);
-        //fclose(outfile3);//deleteme
         stats_close(&stats);
+
+        out_close(out, out_fn2STR.c_str(), 0);
+        out_close(out2, out_fn2STR.c_str(), 0);
+
         printf("\n");
         fprintf(stderr, "\n");
     }
 
     vpx_img_free(&raw);
-    //fclose(ReconOutFile);
     ReconOutFile.close();
 
     if (RunQCheck == 1)

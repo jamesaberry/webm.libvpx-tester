@@ -158,7 +158,7 @@ void die(const char *fmt, ...)
     usage_exit();
 }
 
-static void ctx_exit_on_error(vpx_codec_ctx_t *ctx, const char *s)
+int ctx_exit_on_error_tester(vpx_codec_ctx_t *ctx, const char *s)
 {
     if (ctx->err)
     {
@@ -169,8 +169,27 @@ static void ctx_exit_on_error(vpx_codec_ctx_t *ctx, const char *s)
         if (detail)
             printf("    %s\n", detail);
 
-        exit(EXIT_FAILURE);
+        return -1;
     }
+
+    return 0;
+}
+int ctx_exit_on_error(vpx_codec_ctx_t *ctx, const char *s)
+{
+    if (ctx->err)
+    {
+        const char *detail = vpx_codec_error_detail(ctx);
+
+        printf("%s: %s\n", s, vpx_codec_error(ctx));
+
+        if (detail)
+            printf("    %s\n", detail);
+
+        //exit(EXIT_FAILURE);
+        return -1;
+    }
+
+    return 0;
 }
 
 /* This structure is used to abstract the different ways of handling
@@ -918,46 +937,6 @@ void VP8DefaultParms(VP8_CONFIG &opt)
 
 
 }
-int OutPutSettingsAPI(char *outputFile, vpx_codec_enc_cfg_t cfg)
-{
-    //Saves all vpx_codec_enc_cfg_t settings to a settings file
-
-    ofstream outfile(outputFile);
-
-    outfile << cfg.g_usage << "\tg_usage\n";
-    outfile << cfg.g_threads << "\tg_threads\n";
-    outfile << cfg.g_profile << "\tg_profile\n";
-    outfile << cfg.g_w << "\tg_w\n";
-    outfile << cfg.g_h << "\tg_h\n";
-    outfile << cfg.g_timebase.num << "\tcfg.g_timebase.num\n";
-    outfile << cfg.g_timebase.den << "\tcfg.g_timebase.den\n";
-    outfile << cfg.g_error_resilient << "\tg_error_resilient\n";
-    outfile << cfg.g_pass << "\tg_pass\n";
-    outfile << cfg.g_lag_in_frames << "\tg_lag_in_frames\n";
-    outfile << cfg.rc_dropframe_thresh << "\trc_dropframe_thresh\n";
-    outfile << cfg.rc_resize_allowed  << "\trc_resize_allowed\n";
-    outfile << cfg.rc_resize_up_thresh << "\trc_resize_up_thresh\n";
-    outfile << cfg.rc_resize_down_thresh << "\trc_resize_down_thresh\n";
-    outfile << cfg.rc_end_usage << "\trc_end_usage\n";
-    outfile << cfg.rc_target_bitrate << "\trc_target_bitrate\n";
-    outfile << cfg.rc_min_quantizer << "\trc_min_quantizer\n";
-    outfile << cfg.rc_max_quantizer << "\trc_max_quantizer\n";
-    outfile << cfg.rc_undershoot_pct  << "\trc_undershoot_pct\n";
-    outfile << cfg.rc_overshoot_pct  << "\trc_overshoot_pct\n";
-    outfile << cfg.rc_buf_sz << "\trc_buf_sz\n";
-    outfile << cfg.rc_buf_initial_sz  << "\trc_buf_initial_sz \n";
-    outfile << cfg.rc_buf_optimal_sz << "\trc_buf_optimal_sz\n";
-    outfile << cfg.rc_2pass_vbr_bias_pct << "\trc_2pass_vbr_bias_pct\n";
-    outfile << cfg.rc_2pass_vbr_minsection_pct << "\trc_2pass_vbr_minsection_pct\n";
-    outfile << cfg.rc_2pass_vbr_maxsection_pct << "\trc_2pass_vbr_maxsection_pct\n";
-    outfile << cfg.kf_mode << "\tkf_mode\n";
-    outfile << cfg.kf_min_dist << "\tkf_min_dist\n";
-    outfile << cfg.kf_max_dist << "\tkf_max_dist\n";
-
-    outfile.close();
-    return 0;
-}
-
 int VP8CoreConfigToAPIcfg(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
 {
     //Converts a core configuration to api configuration
@@ -1467,6 +1446,46 @@ int OutPutCompatSettings(const char *outputFile, VP8_CONFIG opt, int ParVersionN
     outfile.close();
     return 0;
 }
+int OutPutSettingsAPI(char *outputFile, vpx_codec_enc_cfg_t cfg)
+{
+    //Saves all vpx_codec_enc_cfg_t settings to a settings file
+
+    ofstream outfile(outputFile);
+
+    outfile << cfg.g_usage << "\tg_usage\n";
+    outfile << cfg.g_threads << "\tg_threads\n";
+    outfile << cfg.g_profile << "\tg_profile\n";
+    outfile << cfg.g_w << "\tg_w\n";
+    outfile << cfg.g_h << "\tg_h\n";
+    outfile << cfg.g_timebase.num << "\tcfg.g_timebase.num\n";
+    outfile << cfg.g_timebase.den << "\tcfg.g_timebase.den\n";
+    outfile << cfg.g_error_resilient << "\tg_error_resilient\n";
+    outfile << cfg.g_pass << "\tg_pass\n";
+    outfile << cfg.g_lag_in_frames << "\tg_lag_in_frames\n";
+    outfile << cfg.rc_dropframe_thresh << "\trc_dropframe_thresh\n";
+    outfile << cfg.rc_resize_allowed  << "\trc_resize_allowed\n";
+    outfile << cfg.rc_resize_up_thresh << "\trc_resize_up_thresh\n";
+    outfile << cfg.rc_resize_down_thresh << "\trc_resize_down_thresh\n";
+    outfile << cfg.rc_end_usage << "\trc_end_usage\n";
+    outfile << cfg.rc_target_bitrate << "\trc_target_bitrate\n";
+    outfile << cfg.rc_min_quantizer << "\trc_min_quantizer\n";
+    outfile << cfg.rc_max_quantizer << "\trc_max_quantizer\n";
+    outfile << cfg.rc_undershoot_pct  << "\trc_undershoot_pct\n";
+    outfile << cfg.rc_overshoot_pct  << "\trc_overshoot_pct\n";
+    outfile << cfg.rc_buf_sz << "\trc_buf_sz\n";
+    outfile << cfg.rc_buf_initial_sz  << "\trc_buf_initial_sz \n";
+    outfile << cfg.rc_buf_optimal_sz << "\trc_buf_optimal_sz\n";
+    outfile << cfg.rc_2pass_vbr_bias_pct << "\trc_2pass_vbr_bias_pct\n";
+    outfile << cfg.rc_2pass_vbr_minsection_pct << "\trc_2pass_vbr_minsection_pct\n";
+    outfile << cfg.rc_2pass_vbr_maxsection_pct << "\trc_2pass_vbr_maxsection_pct\n";
+    outfile << cfg.kf_mode << "\tkf_mode\n";
+    outfile << cfg.kf_min_dist << "\tkf_min_dist\n";
+    outfile << cfg.kf_max_dist << "\tkf_max_dist\n";
+
+    outfile.close();
+    return 0;
+}
+
 int OutPutSettingsIVFEnc(char *outputFile, VP8_CONFIG opt)
 {
     //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
@@ -5428,6 +5447,11 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
     {
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
         return 0;
     }
 
@@ -5456,7 +5480,13 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
     if (res)
     {
         printf("Failed to get config: %s\n", vpx_codec_err_to_string(res));
-        return EXIT_FAILURE;
+
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
+        return -1;
     }
 
     //////////////////////Update CFG Settings Here////////////////////
@@ -5469,6 +5499,13 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
     {
         printf("Input File not found: %s\n", in_fn);
         fprintf(stderr, "Input File not found: %s\n", in_fn);
+        fclose(GetWHinfile);
+
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
         return -1;
     }
 
@@ -5594,7 +5631,14 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
         {
             printf("Failed to open input file: %s", in_fn);
             fprintf(stderr, "Failed to open input file: %s", in_fn);
-            return EXIT_FAILURE;
+            fclose(infile);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
         //////////////////////read in junk IVFData//////////////////////
@@ -5606,7 +5650,15 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
         {
             printf("Failed to open output file: %s", out_fn);
             fprintf(stderr, "Failed to open output file: %s", out_fn);
-            return EXIT_FAILURE;
+            fclose(infile);
+            fclose(outfile);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
         if (stats_fn)
@@ -5614,7 +5666,15 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
             if (!stats_open_file(&stats, stats_fn, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+
+                if (RunQCheck == 1)
+                {
+                    QuantOutFile.close();
+                }
+
+                return -1;
             }
         }
         else
@@ -5622,7 +5682,15 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
             if (!stats_open_mem(&stats, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+
+                if (RunQCheck == 1)
+                {
+                    QuantOutFile.close();
+                }
+
+                return -1;
             }
         }
 
@@ -5645,7 +5713,6 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
             cfg.kf_mode = VPX_KF_FIXED;
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ctx_exit_on_error(&encoder, "Failed to initialize encoder");
         ///////////Set Encoder Custom Settings/////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD, oxcf.encode_breakout);
@@ -5653,7 +5720,21 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
         vpx_codec_control(&encoder, VP8E_SET_NOISE_SENSITIVITY, oxcf.noise_sensitivity);
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
+
         ///////////////////////////////////////////////////////
+        if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
+        {
+            fclose(infile);
+            fclose(outfile);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
+        }
+
         frame_avail = 1;
         got_data = 0;
 
@@ -5667,7 +5748,6 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             OutPutSettings(OutputsettingsFileChar,  oxcf);
-            ///////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
             OutputsettingsFile.append("_APIParamaters.txt");
@@ -5713,7 +5793,7 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
-            ctx_exit_on_error(&encoder, "Failed to encode frame");
+            ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
             if (RunQCheck == 1)
@@ -5821,7 +5901,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     if (res)
     {
         printf("Failed to get config: %s\n", vpx_codec_err_to_string(res));
-        return EXIT_FAILURE;
+        return -1;
     }
 
     //////////////////////Update CFG Settings Here////////////////////
@@ -5834,6 +5914,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     {
         printf("Input File not found: %s\n", in_fn);
         fprintf(stderr, "Input File not found: %s\n", in_fn);
+        fclose(GetWHinfile);
         return -1;
     }
 
@@ -5951,7 +6032,8 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
         {
             printf("Failed to open input file: %s", in_fn);
             fprintf(stderr, "Failed to open input file: %s", in_fn);
-            return EXIT_FAILURE;
+            fclose(infile);
+            return -1;
         }
 
         //////////////////////read in junk IVFData//////////////////////
@@ -5963,7 +6045,9 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
         {
             printf("Failed to open output file: %s", out_fn);
             fprintf(stderr, "Failed to open output file: %s", out_fn);
-            return EXIT_FAILURE;
+            fclose(infile);
+            fclose(outfile);
+            return -1;
         }
 
         if (stats_fn)
@@ -5971,7 +6055,9 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
             if (!stats_open_file(&stats, stats_fn, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+                return -1;
             }
         }
         else
@@ -5979,7 +6065,9 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
             if (!stats_open_mem(&stats, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+                return -1;
             }
         }
 
@@ -6004,7 +6092,6 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
         vpx_codec_enc_config_set(&encoder, &cfg);
-        ctx_exit_on_error(&encoder, "Failed to initialize encoder");
         ///////////Set Encoder Custom Settings/////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD, oxcf.encode_breakout);
@@ -6012,7 +6099,14 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
         vpx_codec_control(&encoder, VP8E_SET_NOISE_SENSITIVITY, oxcf.noise_sensitivity);
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
+
         ///////////////////////////////////////////////////////
+        if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
+        {
+            fclose(infile);
+            fclose(outfile);
+            return -1;
+        }
 
         frame_avail = 1;
         got_data = 0;
@@ -6027,7 +6121,6 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             OutPutSettings(OutputsettingsFileChar,  oxcf);
-            ///////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
             OutputsettingsFile.append("_APIParamaters.txt");
@@ -6072,7 +6165,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
                              2, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
-            ctx_exit_on_error(&encoder, "Failed to encode frame");
+            ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
             //Print Quantizers
@@ -6162,7 +6255,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
     if (res)
     {
         printf("Failed to get config: %s\n", vpx_codec_err_to_string(res));
-        return EXIT_FAILURE;
+        return -1;
     }
 
     //////////////////////Update CFG Settings Here////////////////////
@@ -6175,6 +6268,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
     {
         printf("Input File not found: %s\n", in_fn);
         fprintf(stderr, "Input File not found: %s\n", in_fn);
+        fclose(GetWHinfile);
         return -1;
     }
 
@@ -6297,6 +6391,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
         if (!infile)
         {
             printf("Failed to open input file");
+            fclose(infile);
             return EXIT_FAILURE;
         }
 
@@ -6308,7 +6403,9 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
         if (!outfile)
         {
             printf("Failed to open output file");
-            return EXIT_FAILURE;
+            fclose(infile);
+            fclose(outfile);
+            return -1;
         }
 
         if (stats_fn)
@@ -6316,7 +6413,9 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
             if (!stats_open_file(&stats, stats_fn, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+                return -1;
             }
         }
         else
@@ -6324,7 +6423,9 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
             if (!stats_open_mem(&stats, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+                return -1;
             }
         }
 
@@ -6347,7 +6448,6 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
             cfg.kf_mode = VPX_KF_FIXED;
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ctx_exit_on_error(&encoder, "Failed to initialize encoder");
         ///////////Set Encoder Custom Settings/////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD, oxcf.encode_breakout);
@@ -6355,8 +6455,14 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
         vpx_codec_control(&encoder, VP8E_SET_NOISE_SENSITIVITY, oxcf.noise_sensitivity);
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
-        ///////////////////////////////////////////////////////
 
+        ///////////////////////////////////////////////////////
+        if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
+        {
+            fclose(infile);
+            fclose(outfile);
+            return -1;
+        }
 
         frame_avail = 1;
         got_data = 0;
@@ -6371,7 +6477,6 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             OutPutSettings(OutputsettingsFileChar,  oxcf);
-            ///////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
             OutputsettingsFile.append("_APIParamaters.txt");
@@ -6417,7 +6522,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
-            ctx_exit_on_error(&encoder, "Failed to encode frame");
+            ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
             while ((pkt = vpx_codec_get_cx_data(&encoder, &iter)))
@@ -6505,6 +6610,11 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
     {
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
         return 0;
     }
 
@@ -6535,7 +6645,13 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
     if (res)
     {
         printf("Failed to get config: %s\n", vpx_codec_err_to_string(res));
-        return EXIT_FAILURE;
+
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
+        return -1;
     }
 
     //////////////////////Update CFG Settings Here////////////////////
@@ -6548,6 +6664,13 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
     {
         printf("Input File not found: %s\n", in_fn);
         fprintf(stderr, "Input File not found: %s\n", in_fn);
+        fclose(GetWHinfile);
+
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
         return -1;
     }
 
@@ -6673,7 +6796,14 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
         {
             printf("Failed to open input file: %s", in_fn);
             fprintf(stderr, "Failed to open input file: %s", in_fn);
-            return EXIT_FAILURE;
+            fclose(infile);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
         //////////////////////read in junk IVFData//////////////////////
@@ -6685,7 +6815,15 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
         {
             printf("Failed to open output file: %s", out_fn);
             fprintf(stderr, "Failed to open output file: %s", out_fn);
-            return EXIT_FAILURE;
+            fclose(infile);
+            fclose(outfile);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
         if (stats_fn)
@@ -6693,7 +6831,15 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
             if (!stats_open_file(&stats, stats_fn, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+
+                if (RunQCheck == 1)
+                {
+                    QuantOutFile.close();
+                }
+
+                return -1;
             }
         }
         else
@@ -6701,7 +6847,15 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
             if (!stats_open_mem(&stats, pass))
             {
                 printf("Failed to open statistics store\n");
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+
+                if (RunQCheck == 1)
+                {
+                    QuantOutFile.close();
+                }
+
+                return -1;
             }
         }
 
@@ -6724,7 +6878,6 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
             cfg.kf_mode = VPX_KF_FIXED;
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ctx_exit_on_error(&encoder, "Failed to initialize encoder");
         ///////////Set Encoder Custom Settings/////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD, oxcf.encode_breakout);
@@ -6732,7 +6885,21 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
         vpx_codec_control(&encoder, VP8E_SET_NOISE_SENSITIVITY, oxcf.noise_sensitivity);
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
+
         ///////////////////////////////////////////////////////
+        if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
+        {
+            fclose(infile);
+            fclose(outfile);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
+        }
+
         frame_avail = 1;
         got_data = 0;
 
@@ -6746,7 +6913,6 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             OutPutSettings(OutputsettingsFileChar,  oxcf);
-            ///////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
             OutputsettingsFile.append("_APIParamaters.txt");
@@ -6809,7 +6975,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
             //vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, VPX_EFLAG_FORCE_KF, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
-            ctx_exit_on_error(&encoder, "Failed to encode frame");
+            ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
             if (RunQCheck == 1)
@@ -6906,6 +7072,11 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
     {
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
         return 0;
     }
 
@@ -6941,7 +7112,13 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     if (res)
     {
         printf("Failed to get config: %s\n", vpx_codec_err_to_string(res));
-        return EXIT_FAILURE;
+
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
+        return -1;
     }
 
     //////////////////////Update CFG Settings Here////////////////////
@@ -6954,6 +7131,13 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     {
         printf("Input File not found: %s\n", in_fn);
         fprintf(stderr, "Input File not found: %s\n", in_fn);
+        fclose(GetWHinfile);
+
+        if (RunQCheck == 1)
+        {
+            QuantOutFile.close();
+        }
+
         return -1;
     }
 
@@ -7108,7 +7292,15 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         {
             printf("Failed to open input file: %s", in_fn);
             fprintf(stderr, "Failed to open input file: %s", in_fn);
-            return EXIT_FAILURE;
+            ReconOutFile.close();
+            fclose(infile);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
         //////////////////////read in junk IVFData//////////////////////
@@ -7130,7 +7322,17 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             printf("Failed to open output file: %s", out_fn);
             fprintf(stderr, "Failed to open output file: %s", out_fn);
             ReconOutFile.close();
-            return EXIT_FAILURE;
+            fclose(infile);
+            fclose(outfile);
+            out_close(out, out_fn2STR.c_str(), 0);
+            out_close(out2, out_fn2STR.c_str(), 0);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
         if (stats_fn)
@@ -7139,7 +7341,17 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             {
                 printf("Failed to open statistics store\n");
                 ReconOutFile.close();
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+                out_close(out, out_fn2STR.c_str(), 0);
+                out_close(out2, out_fn2STR.c_str(), 0);
+
+                if (RunQCheck == 1)
+                {
+                    QuantOutFile.close();
+                }
+
+                return -1;
             }
         }
         else
@@ -7148,7 +7360,17 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             {
                 printf("Failed to open statistics store\n");
                 ReconOutFile.close();
-                return EXIT_FAILURE;
+                fclose(infile);
+                fclose(outfile);
+                out_close(out, out_fn2STR.c_str(), 0);
+                out_close(out2, out_fn2STR.c_str(), 0);
+
+                if (RunQCheck == 1)
+                {
+                    QuantOutFile.close();
+                }
+
+                return -1;
             }
         }
 
@@ -7172,7 +7394,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
         //vpx_codec_enc_config_set(&encoder,&cfg);
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ctx_exit_on_error(&encoder, "Failed to initialize encoder");
         ///////////Set Encoder Custom Settings/////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD, oxcf.encode_breakout);
@@ -7180,7 +7401,23 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         vpx_codec_control(&encoder, VP8E_SET_NOISE_SENSITIVITY, oxcf.noise_sensitivity);
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
+
         ///////////////////////////////////////////////////////
+        if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
+        {
+            fclose(infile);
+            fclose(outfile);
+            ReconOutFile.close();
+            out_close(out, out_fn2STR.c_str(), 0);
+            out_close(out2, out_fn2STR.c_str(), 0);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
+        }
 
         frame_avail = 1;
         got_data = 0;
@@ -7195,7 +7432,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             OutPutSettings(OutputsettingsFileChar,  oxcf);
-            ///////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
             OutputsettingsFile.append("_APIParamaters.txt");
@@ -7218,7 +7454,17 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         {
             printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
             ReconOutFile.close();
-            return EXIT_FAILURE;
+            fclose(infile);
+            fclose(outfile);
+            out_close(out, out_fn2STR.c_str(), 0);
+            out_close(out2, out_fn2STR.c_str(), 0);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
         if (vp8_pp_cfg.post_proc_flag
@@ -7226,7 +7472,17 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         {
             fprintf(stderr, "Failed to configure postproc: %s\n", vpx_codec_error(&decoder));
             ReconOutFile.close();
-            return EXIT_FAILURE;
+            fclose(infile);
+            fclose(outfile);
+            out_close(out, out_fn2STR.c_str(), 0);
+            out_close(out2, out_fn2STR.c_str(), 0);
+
+            if (RunQCheck == 1)
+            {
+                QuantOutFile.close();
+            }
+
+            return -1;
         }
 
 
@@ -7267,7 +7523,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                              2, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
-            ctx_exit_on_error(&encoder, "Failed to encode frame");
+            ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
             if (RunQCheck == 1)
@@ -7537,9 +7793,6 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
 
     int CharCount = 0;
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-
     /* Open file */
     infile = fopen(fn, "rb");
 
@@ -7547,8 +7800,12 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
     {
         printf("Failed to open input file: %s", fn);
         fprintf(stderr, "Failed to open input file: %s", fn);
-        return EXIT_FAILURE;
+        fclose(infile);
+        return -1;
     }
+
+    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
 
     if (fn2)
         out = out_open(fn2, do_md5);
@@ -7581,7 +7838,12 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     /* Decode file */
@@ -7680,7 +7942,12 @@ fail:
     if (vpx_codec_destroy(&decoder))
     {
         printf("Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (fn2)
@@ -7716,14 +7983,14 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
 
     if (!infile)
     {
-        printf("Failed to open file");
-        return EXIT_FAILURE;
+        printf("Failed to open input file: %s", fn);
+        fprintf(stderr, "Failed to open input file: %s", fn);
+        fclose(infile);
+        return -1;
     }
 
     if (fn2)
         out = out_open(fn2, do_md5);
-
-
 
     is_ivf = file_is_ivf(infile, &fourcc);
 
@@ -7749,14 +8016,24 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
                            postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (vp8_pp_cfg.post_proc_flag
         && vpx_codec_control(&decoder, VP8_SET_POSTPROC, &vp8_pp_cfg))
     {
         fprintf(stderr, "Failed to configure postproc: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     /* Decode file */
@@ -7863,7 +8140,12 @@ fail:
     if (vpx_codec_destroy(&decoder))
     {
         printf("Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (fn2)
@@ -7898,8 +8180,9 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
 
     if (!infile)
     {
-        printf("Failed to open file");
-        return EXIT_FAILURE;
+        printf("Failed to open input file: %s", fn);
+        fclose(infile);
+        return -1;
     }
 
     if (fn2)
@@ -7931,7 +8214,12 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
                            postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     /* Decode file */
@@ -8033,7 +8321,12 @@ fail:
     if (vpx_codec_destroy(&decoder))
     {
         printf("Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (fn2)
@@ -8063,16 +8356,17 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
 
     int CharCount = 0;
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-
     /* Open file */
     infile = fopen(fn, "rb");
 
     if (!infile)
     {
-        printf("Failed to open file");
-        return EXIT_FAILURE;
+        printf("Failed to open input file: %s", fn);
+        fclose(infile);
+        return -1;
     }
+
+    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
 
     if (fn2)
         out = out_open(fn2, do_md5);
@@ -8105,7 +8399,12 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     /* Decode file */
@@ -8203,7 +8502,12 @@ fail:
     if (vpx_codec_destroy(&decoder))
     {
         printf("Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (fn2)
@@ -8235,17 +8539,19 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
 
     int CharCount = 0;
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-
     /* Open file */
     infile = fopen(fn, "rb");
 
     if (!infile)
     {
-        printf("Failed to open file");
-        return EXIT_FAILURE;
+        printf("Failed to open input file: %s", fn);
+        fprintf(stderr, "Failed to open input file: %s", fn);
+        fclose(infile);
+        return -1;
     }
+
+    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
 
     if (fn2)
         out = out_open(fn2, do_md5);
@@ -8278,7 +8584,12 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     /* Decode file */
@@ -8379,7 +8690,12 @@ fail:
     if (vpx_codec_destroy(&decoder))
     {
         printf("Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (fn2)
@@ -8419,17 +8735,18 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
 
     int CharCount = 0;
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-
     /* Open file */
     infile = fopen(fn, "rb");
 
     if (!infile)
     {
-        printf("Failed to open file");
-        return EXIT_FAILURE;
+        printf("Failed to open input file: %s", fn);
+        fprintf(stderr, "Failed to open input file: %s", fn);
+        return -1;
     }
+
+    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
 
     if (fn2)
         out = out_open(fn2, do_md5);
@@ -8617,7 +8934,8 @@ int DecComputeMD5(const char *inputchar, const char *outputchar)
     if (!infile)
     {
         printf("Failed to open file");
-        return EXIT_FAILURE;
+        fclose(infile);
+        return -1;
     }
 
     if (fn2)
@@ -8649,14 +8967,24 @@ int DecComputeMD5(const char *inputchar, const char *outputchar)
                            postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         printf("Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (vp8_pp_cfg.post_proc_flag
         && vpx_codec_control(&decoder, VP8_SET_POSTPROC, &vp8_pp_cfg))
     {
         fprintf(stderr, "Failed to configure postproc: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     /* Decode file */
@@ -8757,7 +9085,12 @@ fail:
     if (vpx_codec_destroy(&decoder))
     {
         printf("Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
-        return EXIT_FAILURE;
+        fclose(infile);
+
+        if (fn2)
+            out_close(out, fn2, do_md5);
+
+        return -1;
     }
 
     if (fn2)

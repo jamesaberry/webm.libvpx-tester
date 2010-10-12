@@ -2949,6 +2949,14 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
 
         DecTimeArr[x] = TimeDecompressIVFtoIVF(outputChar, outputChar2);
 
+        if (DecTimeArr[x] == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
         double ssimnumber = 0;
         PSNRArr[x] = IVFPSNR(input, outputChar, 0, 2, 1, &ssimnumber);
         SSIMArr[x] = ssimnumber;
@@ -3393,19 +3401,16 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     ///////////////////Use Custom Settings///////////////////
     if (argc == 6)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -3708,19 +3713,16 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     ///////////////////Use Custom Settings///////////////////
     if (argc == 6)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -4069,19 +4071,16 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     ///////////////////Use Custom Settings///////////////////
     if (argc == 6)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -4413,19 +4412,16 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     ///////////////////Use Custom Settings///////////////////
     if (argc == 7)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -4841,19 +4837,16 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
     ///////////////////Use Custom Settings///////////////////
     if (argc == 6)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -5115,19 +5108,16 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     ///////////////////Use Custom Settings///////////////////
     if (argc == 7)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -5270,6 +5260,14 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         totalms = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str());
 
+        if (totalms == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
         printf("\n\n");
         fprintf(stderr, "\n\n");
 
@@ -5306,6 +5304,14 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             fprintf(stderr, "\n");
 
             totalms2 = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), ChangedCPUDecOutFileStr1.c_str());
+
+            if (totalms2 == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
 
             int countOld = (counter - 1);
             itoa_custom(countOld, count, 10);
@@ -5620,19 +5626,16 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     ///////////////////Use Custom Settings///////////////////
     if (argc == 7)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -6054,19 +6057,16 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
     ///////////////////Use Custom Settings///////////////////
     if (argc == 6)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -6425,19 +6425,16 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     ///////////////////Use Custom Settings///////////////////
     if (argc == 6)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -6868,49 +6865,41 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     ///////////////////Use Custom Settings///////////////////
     if (argc == 8)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
 
-    FILE *ReleaseFileCheck = fopen(ReleaseExeLoc.c_str(), "rb");
-
-    if (ReleaseFileCheck == NULL)
+    /////////////////Make Sure Exe File Exists///////////////
+    if (!FileExistsCheck(argv[6]))
     {
-        printf("\nRelease EXE %s not Found\n", ReleaseExeLoc.c_str());
-        fprintf(stderr, "\nRelease EXE %s not Found\n", ReleaseExeLoc.c_str());
+        printf("\nInput executable %s does not exist\n", argv[6]);
+        fprintf(stderr, "\nInput executable %s does not exist\n", argv[6]);
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 2;
     }
 
-    fclose(ReleaseFileCheck);
-    FILE *DebugFileCheck = fopen(DebugExeLoc.c_str(), "rb");
-
-    if (DebugFileCheck == NULL)
+    /////////////////Make Sure Exe File Exists///////////////
+    if (!FileExistsCheck(argv[5]))
     {
-        printf("\nDebug EXE %s not Found\n", DebugExeLoc.c_str());
-        fprintf(stderr, "\nDebug EXE %s not Found\n", DebugExeLoc.c_str());
+        printf("\nInput executable %s does not exist\n", argv[5]);
+        fprintf(stderr, "\nInput executable %s does not exist\n", argv[5]);
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 2;
     }
-
-    fclose(ReleaseFileCheck);
 
     /////////////////////////////////////////////////////////
 
@@ -7330,19 +7319,16 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     ///////////////////Use Custom Settings///////////////////
     if (argc == 6)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
         BitRate = opt.target_bandwidth;
     }
@@ -7406,19 +7392,47 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         printf("\nDecoding EncBreakOut0");
         fprintf(stderr, "\nDecoding EncBreakOut0");
-        DecompressIVFtoIVF(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str());
+
+        if (DecompressIVFtoIVF(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str()) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
 
         printf("\n\nDecoding EncBreakOut100");
         fprintf(stderr, "\n\nDecoding EncBreakOut100");
-        DecompressIVFtoIVF(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str());
+
+        if (DecompressIVFtoIVF(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str()) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
 
         printf("\n\nDecoding EncBreakOut500");
         fprintf(stderr, "\n\nDecoding EncBreakOut500");
-        DecompressIVFtoIVF(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str());
+
+        if (DecompressIVFtoIVF(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str()) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
 
         printf("\n\nDecoding EncBreakOut1000");
         fprintf(stderr, "\n\nDecoding EncBreakOut1000");
-        DecompressIVFtoIVF(EncBreakOut1000.c_str(), EncBreakOut1000_Dec.c_str());
+
+        if (DecompressIVFtoIVF(EncBreakOut1000.c_str(), EncBreakOut1000_Dec.c_str()) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
     }
 
     if (TestType == 2)
@@ -8185,19 +8199,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     ///////////////////Use Custom Settings///////////////////
     if (argc == 4)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
     }
 
@@ -8863,19 +8874,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     ///////////////////Use Custom Settings///////////////////
     if (argc == 4)
     {
-        FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-        if (InputCheck == NULL)
+        if (!FileExistsCheck(argv[argc-1]))
         {
             printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
-            return 0;
+            return 2;
         }
 
-        fclose(InputCheck);
         opt = InPutSettings(argv[argc-1]);
     }
 
@@ -9541,19 +9549,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 4)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
         }
 
@@ -10226,19 +10231,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 4)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
         }
 
@@ -10802,19 +10804,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 8)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -11200,19 +11199,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 7)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -11653,19 +11649,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 8)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -12081,19 +12074,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 5)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -12545,19 +12535,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 8)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -13028,19 +13015,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -13580,21 +13564,29 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 7)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
+        }
+
+        /////////////////Make Sure Exe File Exists///////////////
+        if (!FileExistsCheck(argv[5]))
+        {
+            printf("\nInput executable %s does not exist\n", argv[5]);
+            fprintf(stderr, "\nInput executable %s does not exist\n", argv[5]);
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
         /////////////////////////////////////////////////////////
@@ -14133,21 +14125,40 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
+        }
+
+        /////////////////Make Sure Exe File Exists///////////////
+        if (!FileExistsCheck(argv[2]))
+        {
+            printf("\nInput executable %s does not exist\n", argv[2]);
+            fprintf(stderr, "\nInput executable %s does not exist\n", argv[2]);
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        /////////////////Make Sure ivf File Exists///////////////
+        if (!FileExistsCheck(argv[3]))
+        {
+            printf("\nInput decode file %s does not exist\n", argv[3]);
+            fprintf(stderr, "\nInput decode file %s does not exist\n", argv[3]);
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
         /////////////////////////////////////////////////////////
@@ -14493,19 +14504,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -14863,19 +14871,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 7)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -15053,26 +15058,26 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int ParFileNum = atoi(argv[6]);
         char ExeInput[255];
 
-//#if defined(_WIN32)
-//        {
+        //#if defined(_WIN32)
+        //        {
         snprintf(ExeInput, 255, "%s", argv[5]);
-//        }
-//#elif defined(linux)
-//        {
-//            string ExeInputStr = argv[5];
-//            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-//        }
-//#elif defined(__APPLE__)
-//        {
-//            string ExeInputStr = argv[5];
-//            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-//        }
-//#elif defined(__POWERPC__)
-//        {
-//            string ExeInputStr = argv[5];
-//            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-//        }
-//#endif
+        //        }
+        //#elif defined(linux)
+        //        {
+        //            string ExeInputStr = argv[5];
+        //            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
+        //        }
+        //#elif defined(__APPLE__)
+        //        {
+        //            string ExeInputStr = argv[5];
+        //            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
+        //        }
+        //#elif defined(__POWERPC__)
+        //        {
+        //            string ExeInputStr = argv[5];
+        //            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
+        //        }
+        //#endif
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";
         string Mode3TestMatch = "";
@@ -15285,21 +15290,29 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 8)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
+        }
+
+        /////////////////Make Sure Exe File Exists///////////////
+        if (!FileExistsCheck(argv[5]))
+        {
+            printf("\nInput executable %s does not exist\n", argv[5]);
+            fprintf(stderr, "\nInput executable %s does not exist\n", argv[5]);
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
         /////////////////////////////////////////////////////////
@@ -15667,6 +15680,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char ExeInput[255];
         snprintf(ExeInput, 255, "%s", argv[4]);
 
+
+
         ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
         string WorkingDirString = "";
         string Mode3TestMatch = "";
@@ -15871,28 +15886,37 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 7)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
+        }
+
+        /////////////////Make Sure Exe File Exists///////////////
+        if (!FileExistsCheck(argv[4]))
+        {
+            printf("\nInput executable %s does not exist\n", argv[4]);
+            fprintf(stderr, "\nInput executable %s does not exist\n", argv[4]);
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
         }
 
         /////////////////////////////////////////////////////////
 
         opt.target_bandwidth = BitRate;
         opt.auto_key = 1;
-        opt.cpu_used = -1;
+        //opt.cpu_used = -1;
+        opt.cpu_used = -4;
 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
@@ -16174,19 +16198,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -16536,19 +16557,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 5)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -17013,19 +17031,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -17365,19 +17380,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -17891,19 +17903,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -18178,19 +18187,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -18679,19 +18685,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 7)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -18843,6 +18846,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     CompressInt = opt.cpu_used;
                     opt.Mode = MODE_REALTIME;
                     RealTotalms[counter2] = TimeCompressIVFtoIVF(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+
+                    if (RealTotalms[counter] == -1)
+                    {
+                        fclose(fp);
+                        string File1Str = File1;
+                        RecordTestComplete(MainDirString, File1Str, TestType);
+                        return 2;
+                    }
 
                     if (TestType != 2 && TestType != 3)
                     {
@@ -19954,7 +19965,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 printf("\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
                 fprintf(stderr, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
-                DecompressIVFtoRaw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str());
+                if (DecompressIVFtoRaw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str()) == -1)
+                {
+                    fclose(fp);
+                    string File1Str = File1;
+                    RecordTestComplete(MainDirString, File1Str, TestType);
+                    return 2;
+                }
+
                 CurTestVector++;
             }
         }
@@ -20326,19 +20344,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 5)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -20787,19 +20802,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -21136,19 +21148,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ///////////////////Use Custom Settings///////////////////
         if (argc == 6)
         {
-            FILE *InputCheck = fopen(argv[argc-1], "rb");
-
-            if (InputCheck == NULL)
+            if (!FileExistsCheck(argv[argc-1]))
             {
                 printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
-                return 0;
+                return 2;
             }
 
-            fclose(InputCheck);
             opt = InPutSettings(argv[argc-1]);
             BitRate = opt.target_bandwidth;
         }
@@ -21219,15 +21228,50 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             printf("\n\n");
             fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
             DecTime[0] = TimeDecompressIVFtoIVF(Version0.c_str(), Version0_Dec.c_str());
+
+            if (DecTime[0] == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
             printf("\n");
             fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
             DecTime[1] = TimeDecompressIVFtoIVF(Version1.c_str(), Version1_Dec.c_str());
+
+            if (DecTime[1] == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
             printf("\n");
             fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
             DecTime[2] = TimeDecompressIVFtoIVF(Version2.c_str(), Version2_Dec.c_str());
+
+            if (DecTime[2] == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
+
             printf("\n");
             fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
             DecTime[3] = TimeDecompressIVFtoIVF(Version3.c_str(), Version3_Dec.c_str());
+
+            if (DecTime[3] == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
 
         }
 
@@ -21668,7 +21712,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             printf("\n");
             fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
-            DecompressIVFtoIVF(FiletoEnc.c_str(), FiletoDec.c_str());
+            if (DecompressIVFtoIVF(FiletoEnc.c_str(), FiletoDec.c_str()) == -1)
+            {
+                fclose(fp);
+                string File1Str = File1;
+                RecordTestComplete(MainDirString, File1Str, TestType);
+                return 2;
+            }
 
         }
 
@@ -21959,7 +22009,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 1;
         }
     }
-//----------------------------------------Code Coverage----------------------------------------------------------------
+    //----------------------------------------Code Coverage----------------------------------------------------------------
     int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])
     {
 

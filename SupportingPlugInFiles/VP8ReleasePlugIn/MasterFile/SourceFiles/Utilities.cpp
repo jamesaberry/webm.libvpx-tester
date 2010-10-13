@@ -12,7 +12,8 @@
 #include "header.h"
 #include "vp8.h"
 #include <algorithm>
-
+#include <stdio.h>
+#include <stdarg.h>
 using namespace std;
 
 typedef unsigned char BYTE;
@@ -90,6 +91,7 @@ extern string slashCharStr;
 const int PSNR_MAX = 999.;
 const int sizBuff = 512;
 extern void FileName(const char *input, char *FileName, int removeExt);
+extern void tprintf(const char *fmt, ...);
 
 extern int FormatIVFHeaderRead(IVF_HEADER *ivf);
 extern unsigned int GetHighResTimerTick();
@@ -745,8 +747,7 @@ void *out_open(const char *out_fn, int do_md5)
 
         if (!outfile)
         {
-            printf("Failed to open output file: %s", out_fn);
-            fprintf(stderr, "Failed to open output file: %s", out_fn);
+            tprintf("Failed to open output file: %s", out_fn);
             exit(EXIT_FAILURE);
         }
     }
@@ -779,16 +780,13 @@ void out_close(void *out, const char *out_fn, int do_md5)
         free(out);
 
         printf("\n");
-        //fprintf(stderr, "\n");
 
         for (i = 0; i < 16; i++)
         {
-            printf("%02x", md5[i]);
-            fprintf(stderr, "%02x", md5[i]);
+            tprintf("%02x", md5[i]);
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         FILE *outfile;
         outfile = fopen(out_fn, "w");
@@ -1396,8 +1394,7 @@ int OutPutCompatSettings(const char *outputFile, VP8_CONFIG opt, int ParVersionN
 
     if (ParVersionNum == 1)
     {
-        printf("\nRunning in 1.0.4 and earlier Parameter Compatability Mode\n");
-        fprintf(stderr, "\nRunning in 1.0.4 and earlier Parameter Compatability Mode\n");
+        tprintf("\nRunning in 1.0.4 and earlier Parameter Compatability Mode\n");
         outfile <<  1 << " DeleteFirstPassFile\n";
     }
 
@@ -1623,8 +1620,7 @@ long FileSize(const char *inFile)
     char FileNameinFile[256];
     FileName(inFile, FileNameinFile, 0);
 
-    printf("Size of %s: ", FileNameinFile);
-    fprintf(stderr, "Size of %s: ", FileNameinFile);
+    tprintf("Size of %s: ", FileNameinFile);
 
     long pos;
     long end;
@@ -1637,8 +1633,7 @@ long FileSize(const char *inFile)
     end = ftell(f);
     fseek(f, pos, SEEK_SET);
 
-    printf("%i bytes", end - pos);
-    fprintf(stderr, "%i bytes", end - pos);
+    tprintf("%i bytes", end - pos);
 
     fclose(f);
 
@@ -1910,8 +1905,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
 
     if (numberoftests > 990)
     {
-        printf("\nNumber of test exceeds current capacity please limit external tests to 990\n");
-        fprintf(stderr, "\nNumber of test exceeds current capacity please limit external tests to 990\n");
+        tprintf("\nNumber of test exceeds current capacity please limit external tests to 990\n");
         return -1;
     }
 
@@ -2866,6 +2860,51 @@ void TestName(char *input, char *FileName)
 
     return;
 }
+void tprintf(const char *fmt, ...)
+{
+    char buffer[2048];
+    va_list ap;
+    va_start(ap, fmt);
+
+    int charswritten = vsnprintf(buffer, sizeof(buffer) - 1, fmt, ap);
+
+    if (charswritten < 2048)
+    {
+        string bufferStr = buffer;
+        int curPos = 0;
+        int lastNewLine = 0;
+
+        if (bufferStr.size() > 79)
+        {
+            while (curPos < bufferStr.size())
+            {
+                if (bufferStr.substr(curPos, 1).compare("\n") == 0)
+                {
+                    lastNewLine = curPos;
+                }
+
+                if (curPos - lastNewLine > 79)
+                {
+                    bufferStr.insert(curPos, "\n");
+                    lastNewLine = curPos;
+                    curPos++;
+                }
+
+                curPos++;
+            }
+        }
+
+        printf("%s", bufferStr.c_str());
+        fprintf(stderr, "%s", bufferStr.c_str());
+    }
+    else
+    {
+        vprintf(fmt, ap);
+        vfprintf(stderr, fmt, ap);
+    }
+
+    va_end(ap);
+}
 //--------------------------------------------------------Math------------------------------------------------------------------------
 int DecimalPlaces(int InputNumber)
 {
@@ -3186,8 +3225,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
     if (RawFile == NULL)
     {
-        printf("\nError Opening Raw File: %s\n", inputFile1);
-        fprintf(stderr, "\nError Opening Raw File: %s\n", inputFile1);
+        tprintf("\nError Opening Raw File: %s\n", inputFile1);
         fclose(RawFile);
         return 0;
     }
@@ -3243,8 +3281,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
     if (CompFile == NULL)
     {
-        printf("\nError Opening Compressed File: %s\n", inputFile2);
-        fprintf(stderr, "\nError Opening Compressed File: %s\n", inputFile2);
+        tprintf("\nError Opening Compressed File: %s\n", inputFile2);
         fclose(RawFile);
         fclose(CompFile);
 
@@ -3268,8 +3305,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
     ////////Printing////////
     if (printvar != 0)
     {
-        printf("\n\n                        ---------Computing PSNR---------");
-        fprintf(stderr, "\n\n                        ---------Computing PSNR---------");
+        tprintf("\n\n                        ---------Computing PSNR---------");
     }
 
     if (printvar == 0)
@@ -3279,14 +3315,12 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
     if (printvar == 1)
     {
-        printf("\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
-        fprintf(stderr, "\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
+        tprintf("\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
     }
 
     if (printvar == 5)
     {
-        printf("\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
-        fprintf(stderr, "\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
+        tprintf("\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
     }
 
     if (printvar == 1 || printvar == 5 || printvar == 0)
@@ -3297,8 +3331,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
         }
         else
         {
-            printf("File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
-            fprintf(stderr, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
+            tprintf("File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
         }
     }
 
@@ -3353,8 +3386,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
         if (!fread(&ivf_fhComp, 1, sizeof(ivf_fhComp), CompFile))
         {
-            printf("\nError Computing PSNR\n");
-            fprintf(stderr, "\nError Computing PSNR\n");
+            tprintf("\nError Computing PSNR\n");
             fclose(RawFile);
             fclose(CompFile);
             delete timeStamp2;
@@ -3373,8 +3405,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
         if (!fread(CompBuff, 1, ivf_fhComp.frameSize, CompFile))
         {
-            printf("\nError Computing PSNR\n");
-            fprintf(stderr, "\nError Computing PSNR\n");
+            tprintf("\nError Computing PSNR\n");
             fclose(RawFile);
             fclose(CompFile);
             delete timeStamp2;
@@ -3418,8 +3449,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
             if (!fread(&ivf_fhRaw, 1, sizeof(ivf_fhRaw), RawFile))
             {
-                printf("\nError Computing PSNR\n");
-                fprintf(stderr, "\nError Computing PSNR\n");
+                tprintf("\nError Computing PSNR\n");
                 fclose(RawFile);
                 fclose(CompFile);
                 delete timeStamp2;
@@ -3477,15 +3507,7 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
 
                 if (frameStats == 1)
                 {
-                    printf("F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                           currentVideo1Frame,
-                           bytes1 * 8.0,
-                           bytes2 * 8.0,
-                           thisPsnr, 1.0 * YPsnr ,
-                           1.0 * UPsnr ,
-                           1.0 * VPsnr);
-
-                    fprintf(stderr, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
+                    tprintf("F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
                             currentVideo1Frame,
                             bytes1 * 8.0,
                             bytes2 * 8.0,
@@ -3561,28 +3583,19 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
         }
         else
         {
-            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
-                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
-                   avgPsnr, 1.0 * summedYPsnr / frameCount,
-                   1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                   totalPsnr);
-            printf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
-
-            fprintf(stderr, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+            tprintf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
                     sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
                     sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
                     avgPsnr, 1.0 * summedYPsnr / frameCount,
                     1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
                     totalPsnr);
-            fprintf(stderr, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
+            tprintf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
         }
     }
 
     if (printvar != 0)
     {
-        printf("\n                        --------------------------------\n");
-        fprintf(stderr, "\n                        --------------------------------\n");
+        tprintf("\n                        --------------------------------\n");
     }
 
     if (SsimOut)
@@ -3627,8 +3640,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
     if (RawFile == NULL)
     {
-        printf("\nError Opening Raw File: %s\n", inputFile1);
-        fprintf(stderr, "\nError Opening Raw File: %s\n", inputFile1);
+        tprintf("\nError Opening Raw File: %s\n", inputFile1);
         fclose(RawFile);
         return 0;
     }
@@ -3684,8 +3696,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
     if (CompFile == NULL)
     {
-        printf("\nError Opening Compressed File: %s\n", inputFile2);
-        fprintf(stderr, "\nError Opening Compressed File: %s\n", inputFile2);
+        tprintf("\nError Opening Compressed File: %s\n", inputFile2);
         fclose(RawFile);
         fclose(CompFile);
 
@@ -3720,14 +3731,12 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
     if (printvar == 1)
     {
-        printf("\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
-        fprintf(stderr, "\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
+        tprintf("\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
     }
 
     if (printvar == 5)
     {
-        printf("\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
-        fprintf(stderr, "\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
+        tprintf("\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
     }
 
     if (printvar == 1 || printvar == 5 || printvar == 0)
@@ -3738,8 +3747,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
         }
         else
         {
-            printf("File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
-            fprintf(stderr, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
+            tprintf("File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
         }
     }
 
@@ -3815,8 +3823,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
         if (!fread(&ivf_fhComp, 1, sizeof(ivf_fhComp), CompFile))
         {
-            printf("\nError Computing PSNR\n");
-            fprintf(stderr, "\nError Computing PSNR\n");
+            tprintf("\nError Computing PSNR\n");
             fclose(RawFile);
             fclose(CompFile);
             delete timeStamp2;
@@ -3834,8 +3841,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
         if (!fread(CompBuff, 1, ivf_fhComp.frameSize, CompFile))
         {
-            printf("\nError Computing PSNR\n");
-            fprintf(stderr, "\nError Computing PSNR\n");
+            tprintf("\nError Computing PSNR\n");
             fclose(RawFile);
             fclose(CompFile);
             delete timeStamp2;
@@ -3879,8 +3885,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
             if (!fread(&ivf_fhRaw, 1, sizeof(ivf_fhRaw), RawFile))
             {
-                printf("\nError Computing PSNR\n");
-                fprintf(stderr, "\nError Computing PSNR\n");
+                tprintf("\nError Computing PSNR\n");
                 fclose(RawFile);
                 fclose(CompFile);
                 delete timeStamp2;
@@ -3938,15 +3943,7 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
 
                 if (frameStats == 1)
                 {
-                    printf("F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                           currentVideo1Frame,
-                           bytes1 * 8.0,
-                           bytes2 * 8.0,
-                           thisPsnr, 1.0 * YPsnr ,
-                           1.0 * UPsnr ,
-                           1.0 * VPsnr);
-
-                    fprintf(stderr, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
+                    tprintf("F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
                             currentVideo1Frame,
                             bytes1 * 8.0,
                             bytes2 * 8.0,
@@ -4022,28 +4019,19 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
         }
         else
         {
-            printf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-                   sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
-                   sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
-                   avgPsnr, 1.0 * summedYPsnr / frameCount,
-                   1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
-                   totalPsnr);
-            printf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
-
-            fprintf(stderr, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+            tprintf("\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
                     sumBytes * 8.0 / ivfhRaw.length*(ivfhRaw.rate / 2) / ivfhRaw.scale / 1000,           //divided by two added when rate doubled to handle doubling of timestamp
                     sumBytes2 * 8.0 / ivfhComp.length*(ivfhComp.rate / 2) / ivfhComp.scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
                     avgPsnr, 1.0 * summedYPsnr / frameCount,
                     1.0 * summedUPsnr / frameCount, 1.0 * summedVPsnr / frameCount,
                     totalPsnr);
-            fprintf(stderr, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
+            tprintf(SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
         }
     }
 
     if (printvar != 0)
     {
-        printf("\n                        --------------------------------\n");
-        fprintf(stderr, "\n                        --------------------------------\n");
+        tprintf("\n                        --------------------------------\n");
     }
 
     if (SsimOut)
@@ -4062,14 +4050,12 @@ double IVFDataRate(const char *inputFile, int DROuputSel)
 {
     if (DROuputSel != 2)
     {
-        printf("\n--------Data Rate-------\n");
-        fprintf(stderr, "\n--------Data Rate-------\n");
+        tprintf("\n--------Data Rate-------\n");
 
         char FileNameOnly[256];
 
         FileName(inputFile, FileNameOnly, 0);
-        printf("Data Rate for: %s", FileNameOnly);
-        fprintf(stderr, "Data Rate for: %s", FileNameOnly);
+        tprintf("Data Rate for: %s", FileNameOnly);
     }
 
     ///////////////////////////////////
@@ -4078,8 +4064,7 @@ double IVFDataRate(const char *inputFile, int DROuputSel)
 
     if (in == NULL)
     {
-        printf("\nCan not open Data Rate Input file");
-        fprintf(stderr, "\nCan not open Data Rate Input file");
+        tprintf("\nCan not open Data Rate Input file");
         fclose(in);
         return 0;
     }
@@ -4179,8 +4164,7 @@ double IVFDataRate(const char *inputFile, int DROuputSel)
 
     if (DROuputSel != 2)
     {
-        printf("\n------------------------\n");
-        fprintf(stderr, "\n------------------------\n");
+        tprintf("\n------------------------\n");
     }
 
     delete [] outputVideoBuffer;
@@ -4194,8 +4178,7 @@ int IVFCheckPBM(const char *inputFile, int bitRate, int maxBuffer, int preBuffer
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -4285,8 +4268,7 @@ int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, i
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -4409,8 +4391,7 @@ int IVFCheckPBMThreshold_orig(char *inputFile, double bitRate, int maxBuffer, in
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -4565,12 +4546,11 @@ int FauxDecompress(char *inputChar)
 
     return 1;
 }
-//---------------------------------------------------------IVF DShow------------------------------------------------------------------------
+//--------------------------------------------------------IVF DShow------------------------------------------------------------------------
 #ifdef DSHOW
 int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
-    printf("\nDSHOW - Compressing IVF File to VPX IVF File: \n");
-    fprintf(stderr, "\nDSHOW - Compressing IVF File to VPX IVF File: \n");
+    tprintf("\nDSHOW - Compressing IVF File to VPX IVF File: \n");
 
     char TesterExePathout[255];
     CopyCharArray(TesterExePath, TesterExePathout);
@@ -4620,15 +4600,10 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     system(SystemOn2VP8DecoderStr.c_str());
     system(SystemOn2VP8Encoder.c_str());
 
-    printf("%s\n", SystemIVFMuxerStr.c_str());
-    printf("%s\n", SystemIVFSourceStr.c_str());
-    printf("%s\n", SystemOn2VP8DecoderStr.c_str());
-    printf("%s\n", SystemOn2VP8Encoder.c_str());
-
-    //fprintf(stderr, "%s\n",SystemIVFMuxerStr.c_str());
-    //fprintf(stderr, "%s\n",SystemIVFSourceStr.c_str());
-    //fprintf(stderr, "%s\n",SystemOn2VP8DecoderStr.c_str());
-    //fprintf(stderr, "%s\n",SystemOn2VP8Encoder.c_str());
+    tprintf("%s\n", SystemIVFMuxerStr.c_str());
+    tprintf("%s\n", SystemIVFSourceStr.c_str());
+    tprintf("%s\n", SystemOn2VP8DecoderStr.c_str());
+    tprintf("%s\n", SystemOn2VP8Encoder.c_str());
 
     //////////////////////////////////////Set Fpf File/////////////////////////////////////////
     string UniqueFirstPassFile = outputFile2;
@@ -4643,8 +4618,7 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
 
     if (in == NULL)
     {
-        printf("\nCan not open Compression Source file");
-        fprintf(stderr, "\nCan not open Compression Source file");
+        tprintf("\nCan not open Compression Source file");
         fclose(in);
         return 0;
     }
@@ -4661,43 +4635,36 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     oxcf.FrameRate  = (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
     fclose(in);
 
-    printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
-    fprintf(stderr, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+    tprintf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
 
     if (oxcf.Mode == MODE_REALTIME)
     {
-        printf(" RealTime\n\n");
-        fprintf(stderr, " RealTime\n\n");
+        tprintf(" RealTime\n\n");
     }
 
     if (oxcf.Mode == MODE_GOODQUALITY)
     {
-        printf(" GoodQuality\n\n");
-        fprintf(stderr, " GoodQuality\n\n");
+        tprintf(" GoodQuality\n\n");
     }
 
     if (oxcf.Mode == MODE_BESTQUALITY)
     {
-        printf(" BestQuality\n\n");
-        fprintf(stderr, " BestQuality\n\n");
+        tprintf(" BestQuality\n\n");
     }
 
     if (oxcf.Mode == MODE_FIRSTPASS)
     {
-        printf(" FirstPass\n\n");
-        fprintf(stderr, " FirstPass\n\n");
+        tprintf(" FirstPass\n\n");
     }
 
     if (oxcf.Mode == MODE_SECONDPASS)
     {
-        printf(" SecondPass\n\n");
-        fprintf(stderr, " SecondPass\n\n");
+        tprintf(" SecondPass\n\n");
     }
 
     if (oxcf.Mode == MODE_SECONDPASS_BEST)
     {
-        printf(" SecondPassBestQuality\n\n");
-        fprintf(stderr, " SecondPassBestQuality\n\n");
+        tprintf(" SecondPassBestQuality\n\n");
     }
 
     /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
@@ -4729,8 +4696,7 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     system(exeFileStr.c_str());
 
     //printf("\n\nFOLDER NAME2: %s\n\n\n",TesterExePath);
-    printf("\n\nSystem Command: %s\n\n\n", exeFileStr.c_str());
-    fprintf(stderr, "\n\nSystem Command: %s\n\n\n", exeFileStr.c_str());
+    tprintf("\n\nSystem Command: %s\n\n\n", exeFileStr.c_str());
 
     return 0;
 }
@@ -4811,8 +4777,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
 
     if (in == NULL)
     {
-        printf("\nCan not open Compression Source file");
-        fprintf(stderr, "\nCan not open Compression Source file");
+        tprintf("\nCan not open Compression Source file");
         fclose(in);
         return 0;
     }
@@ -4902,8 +4867,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
 }
 unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
-    printf("\nDSHOW - Compressing IVF File to VPX IVF File: \n");
-    fprintf(stderr, "\nDSHOW - Compressing IVF File to VPX IVF File: \n");
+    tprintf("\nDSHOW - Compressing IVF File to VPX IVF File: \n");
 
     char TesterExePathout[255];
     CopyCharArray(TesterExePath, TesterExePathout);
@@ -4953,15 +4917,10 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
     system(SystemOn2VP8DecoderStr.c_str());
     system(SystemOn2VP8Encoder.c_str());
 
-    printf("%s\n", SystemIVFMuxerStr.c_str());
-    printf("%s\n", SystemIVFSourceStr.c_str());
-    printf("%s\n", SystemOn2VP8DecoderStr.c_str());
-    printf("%s\n", SystemOn2VP8Encoder.c_str());
-
-    fprintf(stderr, "%s\n", SystemIVFMuxerStr.c_str());
-    fprintf(stderr, "%s\n", SystemIVFSourceStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8DecoderStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8Encoder.c_str());
+    tprintf("%s\n", SystemIVFMuxerStr.c_str());
+    tprintf("%s\n", SystemIVFSourceStr.c_str());
+    tprintf("%s\n", SystemOn2VP8DecoderStr.c_str());
+    tprintf("%s\n", SystemOn2VP8Encoder.c_str());
 
     //////////////////////////////////////Set Fpf File/////////////////////////////////////////
     string UniqueFirstPassFile = outputFile2;
@@ -4976,8 +4935,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
 
     if (in == NULL)
     {
-        printf("\nCan not open Compression Source file");
-        fprintf(stderr, "\nCan not open Compression Source file");
+        tprintf("\nCan not open Compression Source file");
         fclose(in);
         return 0;
     }
@@ -4994,43 +4952,36 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
     oxcf.FrameRate  = (double)((double)ivfhRaw.rate / (double)ivfhRaw.scale);
     fclose(in);
 
-    printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
-    fprintf(stderr, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+    tprintf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
 
     if (oxcf.Mode == MODE_REALTIME)
     {
-        printf(" RealTime\n\n");
-        fprintf(stderr, " RealTime\n\n");
+        tprintf(" RealTime\n\n");
     }
 
     if (oxcf.Mode == MODE_GOODQUALITY)
     {
-        printf(" GoodQuality\n\n");
-        fprintf(stderr, " GoodQuality\n\n");
+        tprintf(" GoodQuality\n\n");
     }
 
     if (oxcf.Mode == MODE_BESTQUALITY)
     {
-        printf(" BestQuality\n\n");
-        fprintf(stderr, " BestQuality\n\n");
+        tprintf(" BestQuality\n\n");
     }
 
     if (oxcf.Mode == MODE_FIRSTPASS)
     {
-        printf(" FirstPass\n\n");
-        fprintf(stderr, " FirstPass\n\n");
+        tprintf(" FirstPass\n\n");
     }
 
     if (oxcf.Mode == MODE_SECONDPASS)
     {
-        printf(" SecondPass\n\n");
-        fprintf(stderr, " SecondPass\n\n");
+        tprintf(" SecondPass\n\n");
     }
 
     if (oxcf.Mode == MODE_SECONDPASS_BEST)
     {
-        printf(" SecondPassBestQuality\n\n");
-        fprintf(stderr, " SecondPassBestQuality\n\n");
+        tprintf(" SecondPassBestQuality\n\n");
     }
 
     /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
@@ -5061,8 +5012,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
 
     system(exeFileStr.c_str());
 
-    printf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
-    fprintf(stderr, "\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
+    tprintf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
 
     int totalms = 1;
     return(totalms);
@@ -5071,8 +5021,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
 
 int DecompressIVFtoIVF(char *inputFile, char *outputFile2)
 {
-    printf("\nDSHOW - Decompressing IVF File to VPX IVF File: \n");
-    fprintf(stderr, "\nDSHOW - Decompressing IVF File to VPX IVF File: \n");
+    tprintf("\nDSHOW - Decompressing IVF File to VPX IVF File: \n");
 
     char TesterExePathout[255];
     CopyCharArray(TesterExePath, TesterExePathout);
@@ -5122,15 +5071,10 @@ int DecompressIVFtoIVF(char *inputFile, char *outputFile2)
     system(SystemOn2VP8DecoderStr.c_str());
     system(SystemOn2VP8Encoder.c_str());
 
-    printf("%s\n", SystemIVFMuxerStr.c_str());
-    printf("%s\n", SystemIVFSourceStr.c_str());
-    printf("%s\n", SystemOn2VP8DecoderStr.c_str());
-    printf("%s\n", SystemOn2VP8Encoder.c_str());
-
-    fprintf(stderr, "%s\n", SystemIVFMuxerStr.c_str());
-    fprintf(stderr, "%s\n", SystemIVFSourceStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8DecoderStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8Encoder.c_str());
+    tprintf("%s\n", SystemIVFMuxerStr.c_str());
+    tprintf("%s\n", SystemIVFSourceStr.c_str());
+    tprintf("%s\n", SystemOn2VP8DecoderStr.c_str());
+    tprintf("%s\n", SystemOn2VP8Encoder.c_str());
 
     char exeFile[256];
     FolderName(TesterExePath, exeFile);
@@ -5145,8 +5089,7 @@ int DecompressIVFtoIVF(char *inputFile, char *outputFile2)
 
     system(exeFileStr.c_str());
 
-    printf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
-    fprintf(stderr, "\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
+    tprintf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
     return 0;
 }
 
@@ -5162,8 +5105,7 @@ int DecompressIVFtoRaw(char *inputFile, char *outputFile2)
     outputFile3.append("_ivf.ivf");
     //cout << "\n\noutputFile3: " << outputFile3.c_str() << "\n";
 
-    printf("\nDSHOW - Decompressing IVF File to VPX IVF File: \n");
-    fprintf(stderr, "\nDSHOW - Decompressing IVF File to VPX IVF File: \n");
+    tprintf("\nDSHOW - Decompressing IVF File to VPX IVF File: \n");
 
     char TesterExePathout[255];
     CopyCharArray(TesterExePath, TesterExePathout);
@@ -5213,15 +5155,10 @@ int DecompressIVFtoRaw(char *inputFile, char *outputFile2)
     system(SystemOn2VP8DecoderStr.c_str());
     system(SystemOn2VP8Encoder.c_str());
 
-    printf("%s\n", SystemIVFMuxerStr.c_str());
-    printf("%s\n", SystemIVFSourceStr.c_str());
-    printf("%s\n", SystemOn2VP8DecoderStr.c_str());
-    printf("%s\n", SystemOn2VP8Encoder.c_str());
-
-    fprintf(stderr, "%s\n", SystemIVFMuxerStr.c_str());
-    fprintf(stderr, "%s\n", SystemIVFSourceStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8DecoderStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8Encoder.c_str());
+    tprintf("%s\n", SystemIVFMuxerStr.c_str());
+    tprintf("%s\n", SystemIVFSourceStr.c_str());
+    tprintf("%s\n", SystemOn2VP8DecoderStr.c_str());
+    tprintf("%s\n", SystemOn2VP8Encoder.c_str());
 
     char exeFile[256];
     FolderName(TesterExePath, exeFile);
@@ -5246,8 +5183,7 @@ int DecompressIVFtoRaw(char *inputFile, char *outputFile2)
         cerr << "\nError deleting file: " << output4 << "\n";
     }
 
-    printf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
-    fprintf(stderr, "\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
+    tprintf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
 
     return 0;
 }
@@ -5383,15 +5319,10 @@ unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2)
     system(SystemOn2VP8DecoderStr.c_str());
     system(SystemOn2VP8Encoder.c_str());
 
-    printf("%s\n", SystemIVFMuxerStr.c_str());
-    printf("%s\n", SystemIVFSourceStr.c_str());
-    printf("%s\n", SystemOn2VP8DecoderStr.c_str());
-    printf("%s\n", SystemOn2VP8Encoder.c_str());
-
-    fprintf(stderr, "%s\n\n", SystemIVFMuxerStr.c_str());
-    fprintf(stderr, "%s\n", SystemIVFSourceStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8DecoderStr.c_str());
-    fprintf(stderr, "%s\n", SystemOn2VP8Encoder.c_str());
+    tprintf("%s\n", SystemIVFMuxerStr.c_str());
+    tprintf("%s\n", SystemIVFSourceStr.c_str());
+    tprintf("%s\n", SystemOn2VP8DecoderStr.c_str());
+    tprintf("%s\n", SystemOn2VP8Encoder.c_str());
 
     //fprintf(stderr, "DSHOW - Decompressing IVF File to VPX IVF File: \n");
 
@@ -5408,8 +5339,7 @@ unsigned int TimeDecompressIVFtoIVF(char *inputFile, char *outputFile2)
 
     system(exeFileStr.c_str());
 
-    printf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
-    fprintf(stderr, "\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
+    tprintf("\n\nSysCommand: %s\n\n\n", exeFileStr.c_str());
 
     return 1;
     //return(totalms);
@@ -5497,8 +5427,7 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
 
     if (GetWHinfile == NULL)
     {
-        printf("Input File not found: %s\n", in_fn);
-        fprintf(stderr, "Input File not found: %s\n", in_fn);
+        tprintf("Input File not found: %s\n", in_fn);
         fclose(GetWHinfile);
 
         if (RunQCheck == 1)
@@ -5584,43 +5513,36 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
 
     for (pass = 0; pass < arg_passes; pass++)
     {
-        printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
-        fprintf(stderr, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+        tprintf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
 
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
         {
-            printf("\nFirst Pass - ");
-            fprintf(stderr, "\nFirst Pass - ");
+            tprintf("\nFirst Pass - ");
         }
 
         if (pass == 1 && arg_passes == 2)
         {
-            printf("\nSecond Pass - ");
-            fprintf(stderr, "\nSecond Pass - ");
+            tprintf("\nSecond Pass - ");
         }
 
         if (oxcf.Mode == 0) //Real Time Mode
         {
-            printf(" RealTime\n\n");
-            fprintf(stderr, " RealTime\n\n");
+            tprintf(" RealTime\n\n");
         }
 
         if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
         {
-            printf(" GoodQuality\n\n");
-            fprintf(stderr, " GoodQuality\n\n");
+            tprintf(" GoodQuality\n\n");
         }
 
         if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
         {
-            printf(" BestQuality\n\n");
-            fprintf(stderr, " BestQuality\n\n");
+            tprintf(" BestQuality\n\n");
         }
 
-        printf("API - Compressing Raw IVF File to VP8 IVF File: \n");
-        fprintf(stderr, "API - Compressing Raw IVF File to VP8 IVF File: \n");
+        tprintf("API - Compressing Raw IVF File to VP8 IVF File: \n");
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -5629,8 +5551,7 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
 
         if (!infile)
         {
-            printf("Failed to open input file: %s", in_fn);
-            fprintf(stderr, "Failed to open input file: %s", in_fn);
+            tprintf("Failed to open input file: %s", in_fn);
             fclose(infile);
 
             if (RunQCheck == 1)
@@ -5648,8 +5569,7 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
 
         if (!outfile)
         {
-            printf("Failed to open output file: %s", out_fn);
-            fprintf(stderr, "Failed to open output file: %s", out_fn);
+            tprintf("Failed to open output file: %s", out_fn);
             fclose(infile);
             fclose(outfile);
 
@@ -5777,14 +5697,12 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
             }
             else
                 frame_avail = 0;
@@ -5855,8 +5773,7 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
 
         fclose(outfile);
         stats_close(&stats);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     vpx_img_free(&raw);
@@ -5912,8 +5829,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
 
     if (GetWHinfile == NULL)
     {
-        printf("Input File not found: %s\n", in_fn);
-        fprintf(stderr, "Input File not found: %s\n", in_fn);
+        tprintf("Input File not found: %s\n", in_fn);
         fclose(GetWHinfile);
         return -1;
     }
@@ -6030,8 +5946,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
 
         if (!infile)
         {
-            printf("Failed to open input file: %s", in_fn);
-            fprintf(stderr, "Failed to open input file: %s", in_fn);
+            tprintf("Failed to open input file: %s", in_fn);
             fclose(infile);
             return -1;
         }
@@ -6043,8 +5958,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
 
         if (!outfile)
         {
-            printf("Failed to open output file: %s", out_fn);
-            fprintf(stderr, "Failed to open output file: %s", out_fn);
+            tprintf("Failed to open output file: %s", out_fn);
             fclose(infile);
             fclose(outfile);
             return -1;
@@ -6266,8 +6180,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
 
     if (GetWHinfile == NULL)
     {
-        printf("Input File not found: %s\n", in_fn);
-        fprintf(stderr, "Input File not found: %s\n", in_fn);
+        tprintf("Input File not found: %s\n", in_fn);
         fclose(GetWHinfile);
         return -1;
     }
@@ -6345,43 +6258,36 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
 
     for (pass = 0; pass < arg_passes; pass++)
     {
-        printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
-        fprintf(stderr, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+        tprintf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
 
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
         {
-            printf("\nFirst Pass - ");
-            fprintf(stderr, "\nFirst Pass - ");
+            tprintf("\nFirst Pass - ");
         }
 
         if (pass == 1 && arg_passes == 2)
         {
-            printf("\nSecond Pass - ");
-            fprintf(stderr, "\nSecond Pass - ");
+            tprintf("\nSecond Pass - ");
         }
 
         if (oxcf.Mode == 0) //Real Time Mode
         {
-            printf(" RealTime\n\n");
-            fprintf(stderr, " RealTime\n\n");
+            tprintf(" RealTime\n\n");
         }
 
         if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
         {
-            printf(" GoodQuality\n\n");
-            fprintf(stderr, " GoodQuality\n\n");
+            tprintf(" GoodQuality\n\n");
         }
 
         if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
         {
-            printf(" BestQuality\n\n");
-            fprintf(stderr, " BestQuality\n\n");
+            tprintf(" BestQuality\n\n");
         }
 
-        printf("API - Compressing Raw IVF File to VP8 IVF File: \n");
-        fprintf(stderr, "API - Compressing Raw IVF File to VP8 IVF File: \n");
+        tprintf("API - Compressing Raw IVF File to VP8 IVF File: \n");
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -6506,14 +6412,12 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
             }
             else
                 frame_avail = 0;
@@ -6571,9 +6475,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
 
     vpx_img_free(&raw);
 
-    printf("\n File completed: Time in Microseconds: %u, Fps: %d \n",
-           cx_time, 1000 * framesoutrec / (cx_time / 1000));
-    fprintf(stderr, "\n File completed: Time in Microseconds: %u, Fps: %d \n",
+    tprintf("\n File completed: Time in Microseconds: %u, Fps: %d \n",
             cx_time, 1000 * framesoutrec / (cx_time / 1000));
 
     char TextFilechar1[255];
@@ -6662,8 +6564,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
 
     if (GetWHinfile == NULL)
     {
-        printf("Input File not found: %s\n", in_fn);
-        fprintf(stderr, "Input File not found: %s\n", in_fn);
+        tprintf("Input File not found: %s\n", in_fn);
         fclose(GetWHinfile);
 
         if (RunQCheck == 1)
@@ -6749,43 +6650,36 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
 
     for (pass = 0; pass < arg_passes; pass++)
     {
-        printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
-        fprintf(stderr, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+        tprintf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
 
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
         {
-            printf("\nFirst Pass - ");
-            fprintf(stderr, "\nFirst Pass - ");
+            tprintf("\nFirst Pass - ");
         }
 
         if (pass == 1 && arg_passes == 2)
         {
-            printf("\nSecond Pass - ");
-            fprintf(stderr, "\nSecond Pass - ");
+            tprintf("\nSecond Pass - ");
         }
 
         if (oxcf.Mode == 0) //Real Time Mode
         {
-            printf(" RealTime\n\n");
-            fprintf(stderr, " RealTime\n\n");
+            tprintf(" RealTime\n\n");
         }
 
         if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
         {
-            printf(" GoodQuality\n\n");
-            fprintf(stderr, " GoodQuality\n\n");
+            tprintf(" GoodQuality\n\n");
         }
 
         if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
         {
-            printf(" BestQuality\n\n");
-            fprintf(stderr, " BestQuality\n\n");
+            tprintf(" BestQuality\n\n");
         }
 
-        printf("API - Compressing Raw IVF File to VP8 IVF File: \n");
-        fprintf(stderr, "API - Compressing Raw IVF File to VP8 IVF File: \n");
+        tprintf("API - Compressing Raw IVF File to VP8 IVF File: \n");
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -6794,8 +6688,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
 
         if (!infile)
         {
-            printf("Failed to open input file: %s", in_fn);
-            fprintf(stderr, "Failed to open input file: %s", in_fn);
+            tprintf("Failed to open input file: %s", in_fn);
             fclose(infile);
 
             if (RunQCheck == 1)
@@ -6813,8 +6706,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
 
         if (!outfile)
         {
-            printf("Failed to open output file: %s", out_fn);
-            fprintf(stderr, "Failed to open output file: %s", out_fn);
+            tprintf("Failed to open output file: %s", out_fn);
             fclose(infile);
             fclose(outfile);
 
@@ -6944,14 +6836,12 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
             }
             else
                 frame_avail = 0;
@@ -7037,8 +6927,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
 
         fclose(outfile);
         stats_close(&stats);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     vpx_img_free(&raw);
@@ -7129,8 +7018,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
     if (GetWHinfile == NULL)
     {
-        printf("Input File not found: %s\n", in_fn);
-        fprintf(stderr, "Input File not found: %s\n", in_fn);
+        tprintf("Input File not found: %s\n", in_fn);
         fclose(GetWHinfile);
 
         if (RunQCheck == 1)
@@ -7245,43 +7133,36 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
     for (pass = 0; pass < arg_passes; pass++)
     {
-        printf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
-        fprintf(stderr, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+        tprintf("\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
 
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
         {
-            printf("\nFirst Pass - ");
-            fprintf(stderr, "\nFirst Pass - ");
+            tprintf("\nFirst Pass - ");
         }
 
         if (pass == 1 && arg_passes == 2)
         {
-            printf("\nSecond Pass - ");
-            fprintf(stderr, "\nSecond Pass - ");
+            tprintf("\nSecond Pass - ");
         }
 
         if (oxcf.Mode == 0) //Real Time Mode
         {
-            printf(" RealTime\n\n");
-            fprintf(stderr, " RealTime\n\n");
+            tprintf(" RealTime\n\n");
         }
 
         if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
         {
-            printf(" GoodQuality\n\n");
-            fprintf(stderr, " GoodQuality\n\n");
+            tprintf(" GoodQuality\n\n");
         }
 
         if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
         {
-            printf(" BestQuality\n\n");
-            fprintf(stderr, " BestQuality\n\n");
+            tprintf(" BestQuality\n\n");
         }
 
-        printf("API - Compressing Raw IVF File to VP8 IVF File: \n");
-        fprintf(stderr, "API - Compressing Raw IVF File to VP8 IVF File: \n");
+        tprintf("API - Compressing Raw IVF File to VP8 IVF File: \n");
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -7290,8 +7171,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
         if (!infile)
         {
-            printf("Failed to open input file: %s", in_fn);
-            fprintf(stderr, "Failed to open input file: %s", in_fn);
+            tprintf("Failed to open input file: %s", in_fn);
             ReconOutFile.close();
             fclose(infile);
 
@@ -7319,8 +7199,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
         if (!outfile)
         {
-            printf("Failed to open output file: %s", out_fn);
-            fprintf(stderr, "Failed to open output file: %s", out_fn);
+            tprintf("Failed to open output file: %s", out_fn);
             ReconOutFile.close();
             fclose(infile);
             fclose(outfile);
@@ -7506,14 +7385,12 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
             }
             else
                 frame_avail = 0;
@@ -7760,8 +7637,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         out_close(out, out_fn2STR.c_str(), 0);
         out_close(out2, out_fn2STR.c_str(), 0);
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     vpx_img_free(&raw);
@@ -7798,14 +7674,12 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
 
     if (!infile)
     {
-        printf("Failed to open input file: %s", fn);
-        fprintf(stderr, "Failed to open input file: %s", fn);
+        tprintf("Failed to open input file: %s", fn);
         fclose(infile);
         return -1;
     }
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    tprintf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
 
     if (fn2)
         out = out_open(fn2, do_md5);
@@ -7895,14 +7769,12 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
 
                 buf = img->planes[PLANE_Y];
 
@@ -7983,8 +7855,7 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
 
     if (!infile)
     {
-        printf("Failed to open input file: %s", fn);
-        fprintf(stderr, "Failed to open input file: %s", fn);
+        tprintf("Failed to open input file: %s", fn);
         fclose(infile);
         return -1;
     }
@@ -8082,14 +7953,12 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
 
                 buf = img->planes[PLANE_Y];
 
@@ -8269,13 +8138,11 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
                 if (CharCount == 79)
                 {
                     printf("\n");
-                    //fprintf(stderr, "\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
                 printf(".");
-                //fprintf(stderr, ".");
 
                 buf = img->planes[PLANE_Y];
 
@@ -8544,14 +8411,12 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
 
     if (!infile)
     {
-        printf("Failed to open input file: %s", fn);
-        fprintf(stderr, "Failed to open input file: %s", fn);
+        tprintf("Failed to open input file: %s", fn);
         fclose(infile);
         return -1;
     }
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    tprintf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
 
     if (fn2)
         out = out_open(fn2, do_md5);
@@ -8637,14 +8502,12 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
 
                 buf = img->planes[PLANE_Y];
 
@@ -8681,8 +8544,7 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
 
     if (summary)
     {
-        printf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
-        fprintf(stderr, "\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
     }
 
 fail:
@@ -8740,13 +8602,11 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
 
     if (!infile)
     {
-        printf("Failed to open input file: %s", fn);
-        fprintf(stderr, "Failed to open input file: %s", fn);
+        tprintf("Failed to open input file: %s", fn);
         return -1;
     }
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
-    fprintf(stderr, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    tprintf("\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
 
     if (fn2)
         out = out_open(fn2, do_md5);
@@ -8832,14 +8692,12 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
 
                 if (CharCount == 79)
                 {
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     CharCount = 0;
                 }
 
                 CharCount++;
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(".");
 
                 buf = img->planes[PLANE_Y];
 
@@ -8876,8 +8734,7 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
 
     if (summary)
     {
-        printf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
-        fprintf(stderr, "\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
     }
 
 fail:
@@ -9030,16 +8887,6 @@ int DecComputeMD5(const char *inputchar, const char *outputchar)
                 {
                     out = out_open(out_fn, do_md5);
                 }
-
-                /*if(CharCount == 79)
-                {
-                printf("\n");
-                fprintf(stderr, "\n");
-                CharCount=0;
-                }
-                CharCount++;
-                printf(".");
-                fprintf(stderr, ".");*/
 
                 buf = img->planes[PLANE_Y];
 
@@ -9899,8 +9746,7 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -9911,24 +9757,8 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
         fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
         FormatIVFHeaderRead(&ivfhRaw);
 
-        printf("\n"
-               "FILE HEADER \n\n"
-               "File Header            - %c%c%c%c \n"
-               "File Format Version    - %i \n"
-               "File Header Size       - %i \n"
-               "Video Data FourCC      - %i \n"
-               "Video Image Width      - %i \n"
-               "Video Image Height     - %i \n"
-               "Frame Rate Rate        - %i \n"
-               "Frame Rate Scale       - %i \n"
-               "Video Length in Frames - %i \n"
-               "Unused                 - %c \n"
-               "\n\n"
-               , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
-               , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
-               , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
-
-        fprintf(stderr, "FILE HEADER \n\n"
+        tprintf("\n"
+                "FILE HEADER \n\n"
                 "File Header            - %c%c%c%c \n"
                 "File Format Version    - %i \n"
                 "File Header Size       - %i \n"
@@ -9944,7 +9774,6 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
                 , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
                 , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
 
-
         IVF_FRAME_HEADER ivf_fhRaw;
 
         fread(&ivf_fhRaw, 1, sizeof(ivf_fhRaw), in);
@@ -9952,20 +9781,12 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
 
         fseek(in, ivf_fhRaw.frameSize, SEEK_CUR);
 
-        printf("FRAME HEADER 0\n"
-               "Frame Size            - %i \n"
-               "Time Stamp            - %i \n"
-               "\n"
-
-               , ivf_fhRaw.frameSize, (int)ivf_fhRaw.timeStamp);
-
-
-        fprintf(stderr, "FRAME HEADER 0\n"
+        tprintf("FRAME HEADER 0\n"
                 "Frame Size            - %i \n"
                 "Time Stamp            - %i \n"
                 "\n"
 
-                , ivf_fhRaw.frameSize, ivf_fhRaw.timeStamp);
+                , ivf_fhRaw.frameSize, (int)ivf_fhRaw.timeStamp);
 
         if (extrafileinfo != 1)
         {
@@ -9993,20 +9814,12 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
 
             if (feof(in))break;
 
-            printf("FRAME HEADER %i\n"
-                   "Frame Size            - %i \n"
-                   "Time Stamp            - %i \n"
-                   "\n"
-
-                   , currentVideoFrame, ivf_fhRaw.frameSize, (int)ivf_fhRaw.timeStamp);
-
-
-            fprintf(stderr, "FRAME HEADER %i\n"
+            tprintf("FRAME HEADER %i\n"
                     "Frame Size            - %i \n"
                     "Time Stamp            - %i \n"
                     "\n"
 
-                    , currentVideoFrame, ivf_fhRaw.frameSize, ivf_fhRaw.timeStamp);
+                    , currentVideoFrame, ivf_fhRaw.frameSize, (int)ivf_fhRaw.timeStamp);
 
             currentVideoFrame++;
         }
@@ -10021,8 +9834,7 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -10143,8 +9955,7 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
 
     if (in == NULL)
     {
-        printf("\nInput file 1 does not exist");
-        fprintf(stderr, "\nInput file 1 does not exist");
+        tprintf("\nInput file 1 does not exist");
         fclose(in);
         fclose(in2);
         return 0;
@@ -10152,8 +9963,7 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
 
     if (in2 == NULL)
     {
-        printf("\nInput file 2 does not exist");
-        fprintf(stderr, "\nInput file 2 does not exist");
+        tprintf("\nInput file 2 does not exist");
         fclose(in);
         fclose(in2);
         return 0;
@@ -10409,24 +10219,14 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
 
         cerr << "\n Time 2 Stamp: " << ivf_fhRaw2.timeStamp << "\n";
 
-        printf("FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
-               "Frame Size            - %-*iFrame Size            - %i\n"
-               "Time Stamp            - %-*iTime Stamp            - %-*i\n"
-               "\n"
-
-               , 22, currentVideoFrame, currentVideoFrame
-               , 12, ivf_fhRaw.frameSize, ivf_fhRaw2.frameSize
-               , 12, (int)ivf_fhRaw.timeStamp, (int)ivf_fhRaw2.timeStamp);
-
-        fprintf(stderr, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
+        tprintf("FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
                 "Frame Size            - %-*iFrame Size            - %i\n"
                 "Time Stamp            - %-*iTime Stamp            - %-*i\n"
                 "\n"
 
                 , 22, currentVideoFrame, currentVideoFrame
                 , 12, ivf_fhRaw.frameSize, ivf_fhRaw2.frameSize
-                , 12, ivf_fhRaw.timeStamp, ivf_fhRaw2.timeStamp);
-
+                , 12, (int)ivf_fhRaw.timeStamp, (int)ivf_fhRaw2.timeStamp);
 
         int frameCount = 0;
         int frameCount1 = ivfhRaw.length;
@@ -10470,16 +10270,7 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
 
             if (currentVideoFrame <= frameCount1 && currentVideoFrame <= frameCount2)
             {
-                printf("FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
-                       "Frame Size            - %-*iFrame Size            - %i\n"
-                       "Time Stamp            - %-*iTime Stamp            - %i\n"
-                       "\n"
-
-                       , 22, currentVideoFrame, currentVideoFrame
-                       , 12, ivf_fhRaw.frameSize, ivf_fhRaw2.frameSize
-                       , 12, (int)ivf_fhRaw.timeStamp, (int)ivf_fhRaw2.timeStamp);
-
-                fprintf(stderr, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
+                tprintf("FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
                         "Frame Size            - %-*iFrame Size            - %i\n"
                         "Time Stamp            - %-*iTime Stamp            - %i\n"
                         "\n"
@@ -10514,7 +10305,7 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
                 }
                 else
                 {
-                    printf(
+                    tprintf(
                         "FRAME HEADER1 %-*i\n"
                         "Frame Size            - %-*i\n"
                         "Time Stamp            - %-*i\n"
@@ -10523,16 +10314,6 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
                         , 22, currentVideoFrame
                         , 12, ivf_fhRaw.frameSize
                         , 12, (int)ivf_fhRaw.timeStamp);
-
-                    fprintf(stderr,
-                            "FRAME HEADER1 %-*i\n"
-                            "Frame Size            - %-*i\n"
-                            "Time Stamp            - %-*i\n"
-                            "\n"
-
-                            , 22, currentVideoFrame
-                            , 12, ivf_fhRaw.frameSize
-                            , 12, (int)ivf_fhRaw.timeStamp);
                 }
             }
 
@@ -10562,8 +10343,7 @@ int CompIVF(const char *inputFile1, const char *inputFile2)
 
     if (in == NULL)
     {
-        printf("\nFile 1 does not exist");
-        fprintf(stderr, "\nFile 1 does not exist");
+        tprintf("\nFile 1 does not exist");
         fclose(in);
         fclose(in2);
         return 0;
@@ -10571,8 +10351,7 @@ int CompIVF(const char *inputFile1, const char *inputFile2)
 
     if (in2 == NULL)
     {
-        printf("\nFile 2 does not exist");
-        fprintf(stderr, "\nFile 2 does not exist");
+        tprintf("\nFile 2 does not exist");
         fclose(in);
         fclose(in2);
         return 0;
@@ -10852,8 +10631,7 @@ double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch)
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -11144,8 +10922,7 @@ double IVFDisplayVisibleFrames(const char *inputFile, int Selector)
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -11253,8 +11030,7 @@ double IVFDisplayVisibleFrames(const char *inputFile, int Selector)
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -11376,8 +11152,7 @@ double IVFDisplayAltRefFrames(const char *inputFile, int Selector)
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -11485,8 +11260,7 @@ double IVFDisplayAltRefFrames(const char *inputFile, int Selector)
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -11605,8 +11379,7 @@ double IVFDisplayKeyFrames(const char *inputFile, int Selector)
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -11713,8 +11486,7 @@ double IVFDisplayKeyFrames(const char *inputFile, int Selector)
 
         if (in == NULL)
         {
-            printf("\nInput file does not exist");
-            fprintf(stderr, "\nInput file does not exist");
+            tprintf("\nInput file does not exist");
             fclose(in);
             return 0;
         }
@@ -11820,8 +11592,7 @@ int IVFLagInFramesCheck(const char *QuantInChar)
 
     if (!Quantinfile.good())
     {
-        printf("\nError: Cannot open file: %s\n", QuantInChar);
-        fprintf(stderr, "\nError: Cannot open file: %s\n", QuantInChar);
+        tprintf("\nError: Cannot open file: %s\n", QuantInChar);
         return -1;
     }
 
@@ -11883,8 +11654,7 @@ int IVFDFWMCheck(const char *InputFile, int printselect)
 
     if (!CheckPBMFile.good())
     {
-        printf("\nError: Cannot open file: %s\n", CheckPBMThreshChar);
-        fprintf(stderr, "\nError: Cannot open file: %s\n", CheckPBMThreshChar);
+        tprintf("\nError: Cannot open file: %s\n", CheckPBMThreshChar);
         CheckPBMFile.close();
         return -1;
     }
@@ -11893,8 +11663,7 @@ int IVFDFWMCheck(const char *InputFile, int printselect)
 
     if (!ResizeFramesFile.good())
     {
-        printf("\nError: Cannot open file: %s\n", ResizeFramesChar);
-        fprintf(stderr, "\nError: Cannot open file: %s\n", ResizeFramesChar);
+        tprintf("\nError: Cannot open file: %s\n", ResizeFramesChar);
         ResizeFramesFile.close();
         CheckPBMFile.close();
         return -1;
@@ -11904,8 +11673,7 @@ int IVFDFWMCheck(const char *InputFile, int printselect)
 
     if (!KeyFramesFile.good())
     {
-        printf("\nError: Cannot open file: %s\n", KeyFramesChar);
-        fprintf(stderr, "\nError: Cannot open file: %s\n", KeyFramesChar);
+        tprintf("\nError: Cannot open file: %s\n", KeyFramesChar);
         KeyFramesFile.close();
         ResizeFramesFile.close();
         CheckPBMFile.close();
@@ -12006,8 +11774,7 @@ int CheckMinQ(char *inputFile, int MinQuantizer)
     char QuantDispNameChar[255] = "";
     FileName(inputFile, QuantDispNameChar, 0);
 
-    printf("Checking %s min quantizer:\n", QuantDispNameChar);
-    fprintf(stderr, "Checking %s min quantizer:\n", QuantDispNameChar);
+    tprintf("Checking %s min quantizer:\n", QuantDispNameChar);
 
     string QuantInStr = inputFile;
     QuantInStr.erase(QuantInStr.length() - 4, 4);
@@ -12019,8 +11786,7 @@ int CheckMinQ(char *inputFile, int MinQuantizer)
 
     if (!infile.good())
     {
-        printf("\nError: Cannot open file: %s\n", QuantInChar);
-        fprintf(stderr, "\nError: Cannot open file: %s\n", QuantInChar);
+        tprintf("\nError: Cannot open file: %s\n", QuantInChar);
         return 0;
     }
 
@@ -12037,8 +11803,7 @@ int CheckMinQ(char *inputFile, int MinQuantizer)
         {
             if (quantizer != 0 && quantizer < MinQuantizer)
             {
-                printf("     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
-                fprintf(stderr, "     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
+                tprintf("     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
                 return frame;
             }
         }
@@ -12046,8 +11811,7 @@ int CheckMinQ(char *inputFile, int MinQuantizer)
         {
             if (quantizer < MinQuantizer)
             {
-                printf("     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
-                fprintf(stderr, "     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
+                tprintf("     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
                 return frame;
             }
         }
@@ -12066,8 +11830,7 @@ int CheckMaxQ(const char *inputFile, int MaxQuantizer)
     char QuantDispNameChar[255] = "";
     FileName(inputFile, QuantDispNameChar, 0);
 
-    printf("Checking %s max quantizer:\n", QuantDispNameChar);
-    fprintf(stderr, "Checking %s max quantizer:\n", QuantDispNameChar);
+    tprintf("Checking %s max quantizer:\n", QuantDispNameChar);
 
     string QuantInStr = inputFile;
     QuantInStr.erase(QuantInStr.length() - 4, 4);
@@ -12079,8 +11842,7 @@ int CheckMaxQ(const char *inputFile, int MaxQuantizer)
 
     if (!infile.good())
     {
-        printf("\nError: Cannot open file: %s\n", QuantInChar);
-        fprintf(stderr, "\nError: Cannot open file: %s\n", QuantInChar);
+        tprintf("\nError: Cannot open file: %s\n", QuantInChar);
         return 0;
     }
 
@@ -12097,8 +11859,7 @@ int CheckMaxQ(const char *inputFile, int MaxQuantizer)
         {
             if (quantizer != 0 && quantizer > MaxQuantizer)
             {
-                printf("     Quantizer not <= max for frame %i q=%i - Failed", frame, quantizer);
-                fprintf(stderr, "     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
+                tprintf("     Quantizer not <= max for frame %i q=%i - Failed", frame, quantizer);
                 return frame;
             }
         }
@@ -12106,8 +11867,7 @@ int CheckMaxQ(const char *inputFile, int MaxQuantizer)
         {
             if (quantizer > MaxQuantizer)
             {
-                printf("     Quantizer not <= max for frame %i q=%i - Failed", frame, quantizer);
-                fprintf(stderr, "     Quantizer not <= max for frame %i q=%i - Failed", frame, quantizer);
+                tprintf("     Quantizer not <= max for frame %i q=%i - Failed", frame, quantizer);
                 return frame;
             }
         }
@@ -12115,8 +11875,7 @@ int CheckMaxQ(const char *inputFile, int MaxQuantizer)
         //cout << "FRAME: " << frame << " Quantizer: " << quantizer << "\n";
     }
 
-    printf(" All quantizers <= max for all frames");
-    fprintf(stderr, " All quantizers <= max for all frames");
+    tprintf(" All quantizers <= max for all frames");
 
     return -1;//result > -1 -> fail | result = -1 pass
 }
@@ -12125,8 +11884,7 @@ int CheckFixedQ(const char *inputFile, int FixedQuantizer)
     char QuantDispNameChar[255] = "";
     FileName(inputFile, QuantDispNameChar, 0);
 
-    printf("Checking %s fixed quantizer:", QuantDispNameChar);
-    fprintf(stderr, "Checking %s fixed quantizer:", QuantDispNameChar);
+    tprintf("Checking %s fixed quantizer:", QuantDispNameChar);
 
     string QuantInStr = inputFile;
     QuantInStr.erase(QuantInStr.length() - 4, 4);
@@ -12138,8 +11896,7 @@ int CheckFixedQ(const char *inputFile, int FixedQuantizer)
 
     if (!infile.good())
     {
-        printf("\nError: Cannot open file: %s\n", QuantInChar);
-        fprintf(stderr, "\nError: Cannot open file: %s\n", QuantInChar);
+        tprintf("\nError: Cannot open file: %s\n", QuantInChar);
         return 0;
     }
 
@@ -12156,8 +11913,7 @@ int CheckFixedQ(const char *inputFile, int FixedQuantizer)
         {
             if (quantizer != 0 && quantizer != FixedQuantizer)
             {
-                printf(" not fixed for frame %i q=%i - Failed", frame, quantizer);
-                fprintf(stderr, " not fixed for frame %i q=%i - Failed", frame, quantizer);
+                tprintf(" not fixed for frame %i q=%i - Failed", frame, quantizer);
                 return frame;
             }
         }
@@ -12165,8 +11921,7 @@ int CheckFixedQ(const char *inputFile, int FixedQuantizer)
         {
             if (quantizer != FixedQuantizer)
             {
-                printf(" not fixed for frame %i q=%i", frame, quantizer);
-                fprintf(stderr, " not fixed for frame %i q=%i", frame, quantizer);
+                tprintf(" not fixed for frame %i q=%i", frame, quantizer);
                 return frame;
             }
         }
@@ -12175,8 +11930,7 @@ int CheckFixedQ(const char *inputFile, int FixedQuantizer)
 
     }
 
-    printf(" fixed for all frames");
-    fprintf(stderr, " fixed for all frames");
+    tprintf(" fixed for all frames");
 
     return -1;//result > -1 -> fail | result = -1 pass
 }
@@ -12204,8 +11958,7 @@ int TimeReturn(const char *infile, int FileType)
 
     if (!infile2.is_open())
     {
-        printf("File: %s not opened", FullName);
-        fprintf(stderr, "File: %s not opened", FullName);
+        tprintf("File: %s not opened", FullName);
         return 0;
     }
 
@@ -12220,8 +11973,7 @@ int GetNumberofFrames(const char *inputFile)
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }

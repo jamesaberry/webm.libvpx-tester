@@ -62,6 +62,7 @@ extern double IVFDisplayResizedFrames(const char *inputchar, int PrintSwitch);
 extern double IVFDisplayVisibleFrames(const char *inputchar, int PrintSwitch);
 extern double IVFDisplayAltRefFrames(const char *inputFile, int Selector);
 extern double IVFDisplayKeyFrames(const char *inputFile, int Selector);
+extern void tprintf(const char *fmt, ...);
 
 //Tools
 extern int ComprIVF2IVF(int argc, char *argv[], string WorkingDir);
@@ -1909,8 +1910,7 @@ void FormatedPrint(string SummaryStr, int selector)
 
     if (selector == 5)
     {
-        printf("%s", SummaryStrOutput.c_str());
-        fprintf(stderr, "%s", SummaryStrOutput.c_str());
+        tprintf("%s", SummaryStrOutput.c_str());
     }
 
     return;
@@ -3594,8 +3594,7 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
                         TestsRunFile.close();
                         FormatSummaryByTestFile.close();
                         fclose(fp);
-                        printf("\nFile creation Canceled: Cannot find %s\n", TestsRun.c_str());
-                        fprintf(stderr, "\nFile creation Canceled: Cannot find %s\n", TestsRun.c_str());
+                        tprintf("\nFile creation Canceled: Cannot find %s\n", TestsRun.c_str());
                         return;
                     }
 
@@ -3895,8 +3894,7 @@ int  main(int argc, char *argv[])
     {
         if (WorkingDir.length() > 175)
         {
-            printf("\nError: Folder Path Length too long.\n");
-            fprintf(stderr, "\nError: Folder Path Length too long.\n");
+            tprintf("\nError: Folder Path Length too long.\n");
             return 0;
         }
     }

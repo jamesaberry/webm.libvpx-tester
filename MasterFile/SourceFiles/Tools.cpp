@@ -73,6 +73,7 @@ extern long FileSize2(const char *inFile);
 extern void FileName(const char *input, char *FileName, int removeExt);
 extern void FolderName(const char *input, char *output);
 extern int FileExistsCheck(string input);
+extern void tprintf(const char *fmt, ...);
 
 extern int DecimalPlaces(int InputNumber);
 extern char *itoa_custom(int value, char *result, int base);
@@ -443,15 +444,13 @@ int RawDataIVF(char *input, char *output)
 
     if (in == NULL)
     {
-        printf("\nInput file: - does not exist");
-        fprintf(stderr, "\nInput file: - does not exist");
+        tprintf("\nInput file: - does not exist");
         return 0;
     }
 
     if (out == NULL)
     {
-        printf("\nOutput file: - does not exist");
-        fprintf(stderr, "\nOutput file: - does not exist");
+        tprintf("\nOutput file: - does not exist");
         return 0;
     }
 
@@ -517,8 +516,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -700,8 +698,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -858,8 +855,7 @@ int Raw2IVF(int argc, char *argv[])
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -1238,8 +1234,7 @@ int PlayCompIVF(int argc, char *argv[])
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -1418,8 +1413,7 @@ int PlayDecIVF(int argc, char *argv[])
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf("\nInput file does not exist");
         fclose(in);
         return 0;
     }

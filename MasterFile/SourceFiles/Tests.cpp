@@ -77,6 +77,7 @@ extern int Test0InputTextCheck(char *input, int MoreInfo);
 extern int FileExistsCheck(string input);
 extern void SubFolderName(char *input, char *FileName);
 extern void TestName(char *input, char *TestName);
+extern void tprintf(const char *fmt, ...);
 
 extern int absInt(int input);
 extern float absFloat(float input);
@@ -480,8 +481,7 @@ void PrintHeaderInfo()
     TestMachineInfo.append("\n\n");
 #endif
 
-    printf("%s", TestMachineInfo.c_str());
-    fprintf(stderr, "%s", TestMachineInfo.c_str());
+    tprintf("%s", TestMachineInfo.c_str());
 }
 void PrintHeader1(int argc, char *argv[], string WorkingDir3)
 {
@@ -519,10 +519,8 @@ void PrintHeader1(int argc, char *argv[], string WorkingDir3)
 
     PrintHeaderInfo();
 
-    printf("\n/////////////////////////////////Full Test/////////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
-    printf("\n///////////////////////////////////////////////////////////////////////////\n\n");
-    fprintf(stderr, "\n/////////////////////////////////Full Test/////////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
-    fprintf(stderr, "\n///////////////////////////////////////////////////////////////////////////\n\n");
+    tprintf("\n/////////////////////////////////Full Test/////////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
+    tprintf("\n///////////////////////////////////////////////////////////////////////////\n\n");
 }
 void PrintHeader2(int argc, char *argv[], string WorkingDir3)
 {
@@ -561,10 +559,8 @@ void PrintHeader2(int argc, char *argv[], string WorkingDir3)
 
     PrintHeaderInfo();
 
-    printf("\n///////////////////////////////Compress Only///////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
-    printf("\n///////////////////////////////////////////////////////////////////////////\n\n");
-    fprintf(stderr, "\n///////////////////////////////Compress Only///////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
-    fprintf(stderr, "\n///////////////////////////////////////////////////////////////////////////\n\n");
+    tprintf("\n///////////////////////////////Compress Only///////////////////////////////\n%s\n\n%s", PrintInput.c_str(), PrintWorkingDir3.c_str());
+    tprintf("\n///////////////////////////////////////////////////////////////////////////\n\n");
 }
 void PrintHeader3(int argc, char *argv[], string  WorkingDir3)
 {
@@ -605,10 +601,8 @@ void PrintHeader3(int argc, char *argv[], string  WorkingDir3)
 
     PrintHeaderInfo();
 
-    printf("\n/////////////////////////Existing Compression Test/////////////////////////\n%s\n\n%s", PrintWorkingDir4.c_str(), PrintWorkingDir3.c_str());
-    printf("\n///////////////////////////////////////////////////////////////////////////\n\n");
-    fprintf(stderr, "\n/////////////////////////Existing Compression Test/////////////////////////\n%s\n\n%s", PrintWorkingDir4.c_str(), PrintWorkingDir3.c_str());
-    fprintf(stderr, "\n///////////////////////////////////////////////////////////////////////////\n\n");
+    tprintf("\n/////////////////////////Existing Compression Test/////////////////////////\n%s\n\n%s", PrintWorkingDir4.c_str(), PrintWorkingDir3.c_str());
+    tprintf("\n///////////////////////////////////////////////////////////////////////////\n\n");
 }
 void CheckTimeStamp(int SelectorArInt, string *SelectorAr, string *SelectorAr2, string TimeStampPrevious, int &identicalFileVar, string *TimeStampAr2)
 {
@@ -660,8 +654,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if (WorkingDir.length() > 175)
     {
-        printf("\nError: Folder Path Length too long.\n");
-        fprintf(stderr, "\nError: Folder Path Length too long.\n");
+        tprintf("\nError: Folder Path Length too long.\n");
         return 0;
     }
 
@@ -685,7 +678,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     unsigned long RunTimeRecAr[999];
     /////////////////////////////Record Time it took to run test/////////////////////////////
-    int RecordRunTimes = 0; //If set to one will record run times of tests
+    int RecordRunTimes = 1; //If set to one will record run times of tests
     unsigned int RunTime1 = 0;
     unsigned int RunTime2 = 0;
 
@@ -2282,20 +2275,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                     if (TestType == 1)
                     {
-                        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+                        fprintf(stderr, "\n-------------------------------------------------------------------------------\n\n"
                                 "                                  Test Results \n");
                     }
 
                     if (TestType == 2)
                     {
-                        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+                        fprintf(stderr, "\n-------------------------------------------------------------------------------\n\n"
                                 "                                Test Compressions \n");
                     }
 
                     if (TestType == 3)
                     {
 
-                        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+                        fprintf(stderr, "\n-------------------------------------------------------------------------------\n\n"
                                 "                                Test Only Results \n");
                     }
 
@@ -2441,101 +2434,79 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if (TestType == 1)
     {
-        printf("\n--------------------------------------------------------------------------------\n"
-               "                                  Test Results \n");
-
-        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+        tprintf("\n-------------------------------------------------------------------------------\n\n"
                 "                                  Test Results \n");
     }
 
     if (TestType == 2)
     {
-        printf("\n--------------------------------------------------------------------------------\n"
-               "                                Test Compressions \n");
-
-        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+        tprintf("\n-------------------------------------------------------------------------------\n\n"
                 "                                Test Compressions \n");
     }
 
     if (TestType == 3)
     {
-        printf("\n--------------------------------------------------------------------------------\n"
-               "                                Test Only Results \n");
-
-        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+        tprintf("\n-------------------------------------------------------------------------------\n\n"
                 "                                Test Only Results \n");
     }
 
     y = 0;
 
-    printf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
-    fprintf(stderr, "\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
-
+    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
 
     while (y < TestsRun)
     {
         SelectorAr2[y].erase(SelectorAr2[y].end() - 1);
-        printf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-        fprintf(stderr, "%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+        tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
 
         if (PassFail[y] == 1)
         {
-            printf("Passed\n");
-            fprintf(stderr, "Passed\n");
+            tprintf("Passed\n");
         }
 
         if (PassFail[y] == 0)
         {
-            printf("Failed\n");
-            fprintf(stderr, "Failed\n");
+            tprintf("Failed\n");
         }
 
         if (PassFail[y] == 2)
         {
-            printf("Indeterminate\n");
-            fprintf(stderr, "Indeterminate\n");
+            tprintf("Indeterminate\n");
         }
 
         if (PassFail[y] == 3)
         {
-            printf("SeeComboRunLog\n");
-            fprintf(stderr, "SeeComboRunLog\n");
+            tprintf("SeeComboRunLog\n");
         }
 
         if (PassFail[y] == 4)
         {
-            printf("SeePSNRLog\n");
-            fprintf(stderr, "SeePSNRLog\n");
+            tprintf("SeePSNRLog\n");
         }
 
         if (PassFail[y] == 5)
         {
-            printf("RandomTestCompleted\n");
-            fprintf(stderr, "RandomTestCompleted.\n");
+            tprintf("RandomTestCompleted\n");
         }
 
         if (PassFail[y] == 8)
         {
-            printf("MinTestPassed\n");
-            fprintf(stderr, "MinTestPassed\n");
+            tprintf("MinTestPassed\n");
         }
 
         if (PassFail[y] == 10)
         {
-            printf("CompressionMade\n");
-            fprintf(stderr, "Compression Made\n");
+            tprintf("CompressionMade\n");
         }
 
         if (PassFail[y] == 11)
         {
-            printf("ErrorFileMismatch\n");
-            fprintf(stderr, "ErrorFileMismatch\n");
+            tprintf("ErrorFileMismatch\n");
         }
 
         if (PassFail[y] == 12)
         {
-            printf("TestNotSupported\n");
-            fprintf(stderr, "TestNotSupported\n");
+            tprintf("TestNotSupported\n");
         }
 
         y++;
@@ -2543,24 +2514,18 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if (TestType == 1)
     {
-        printf("\n--------------------------------------------------------------------------------\n"
-               "                                  Test Results - Passed \n");
-
-        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+        tprintf("\n-------------------------------------------------------------------------------\n\n"
                 "                                  Test Results - Passed \n");
     }
 
     if (TestType == 3)
     {
-        printf("\n--------------------------------------------------------------------------------\n"
-               "                                Test Only Results - Passed \n");
-
-        fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+        tprintf("\n-------------------------------------------------------------------------------\n\n"
                 "                                Test Only Results - Passed \n");
     }
 
-    printf("\n\n");
-    fprintf(stderr, "\n\n");
+    tprintf("\n\n");
+
     int TestIndicator = 0;
 
     if (TestType == 3 || TestType == 1)
@@ -2574,15 +2539,12 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    printf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
-                    fprintf(stderr, "\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
                 }
 
                 TestIndicator = 1;
-                printf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                fprintf(stderr, "%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                printf("Passed\n");
-                fprintf(stderr, "Passed\n");
+                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("Passed\n");
             }
 
             y++;
@@ -2590,25 +2552,18 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            printf("NONE\n\n");
-            fprintf(stderr, "NONE\n\n");
+            tprintf("NONE\n\n");
         }
 
         if (TestType == 1)
         {
-            printf("\n--------------------------------------------------------------------------------\n"
-                   "                                  Test Results - Failed \n");
-
-            fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
                     "                                  Test Results - Failed \n");
         }
 
         if (TestType == 3)
         {
-            printf("\n--------------------------------------------------------------------------------\n"
-                   "                                Test Only Results - Failed \n");
-
-            fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
                     "                                Test Only Results - Failed \n");
         }
 
@@ -2621,15 +2576,12 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    printf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
-                    fprintf(stderr, "\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
                 }
 
                 TestIndicator = 1;
-                printf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                fprintf(stderr, "%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                printf("Failed\n");
-                fprintf(stderr, "Failed\n");
+                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("Failed\n");
             }
 
             y++;
@@ -2637,25 +2589,18 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            printf("NONE\n\n");
-            fprintf(stderr, "NONE\n\n");
+            tprintf("NONE\n\n");
         }
 
         if (TestType == 1)
         {
-            printf("\n--------------------------------------------------------------------------------\n"
-                   "                                  Test Results - Other \n");
-
-            fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
                     "                                  Test Results - Other \n");
         }
 
         if (TestType == 3)
         {
-            printf("\n--------------------------------------------------------------------------------\n"
-                   "                                Test Only Results - Other \n");
-
-            fprintf(stderr, "\n--------------------------------------------------------------------------------\n"
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
                     "                                Test Only Results - Other \n");
         }
 
@@ -2668,60 +2613,50 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    printf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
-                    fprintf(stderr, "\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
                 }
 
                 TestIndicator = 1;
-                printf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                fprintf(stderr, "%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
 
                 if (PassFail[y] == 2)
                 {
-                    printf("Indeterminate\n");
-                    fprintf(stderr, "Indeterminate\n");
+                    tprintf("Indeterminate\n");
                 }
 
                 if (PassFail[y] == 3)
                 {
-                    printf("SeeComboRunLog\n");
-                    fprintf(stderr, "SeeComboRunLog\n");
+                    tprintf("SeeComboRunLog\n");
                 }
 
                 if (PassFail[y] == 4)
                 {
-                    printf("SeePSNRLog\n");
-                    fprintf(stderr, "SeePSNRLog\n");
+                    tprintf("SeePSNRLog\n");
                 }
 
                 if (PassFail[y] == 5)
                 {
-                    printf("RandomTestCompleted\n");
-                    fprintf(stderr, "RandomTestCompleted\n");
+                    tprintf("RandomTestCompleted\n");
                 }
 
                 if (PassFail[y] == 8)
                 {
-                    printf("MinTestPassed\n");
-                    fprintf(stderr, "MinTestPassed\n");
+                    tprintf("MinTestPassed\n");
                 }
 
                 if (PassFail[y] == 10)
                 {
-                    printf("CompressionMade.\n");
-                    fprintf(stderr, "CompressionMade\n");
+                    tprintf("CompressionMade.\n");
                 }
 
                 if (PassFail[y] == 11)
                 {
-                    printf("ErrorFileMismatch\n");
-                    fprintf(stderr, "ErrorFileMismatch\n");
+                    tprintf("ErrorFileMismatch\n");
                 }
 
                 if (PassFail[y] == 12)
                 {
-                    printf("TestNotSupported\n");
-                    fprintf(stderr, "TestNotSupported\n");
+                    tprintf("TestNotSupported\n");
                 }
 
             }
@@ -2731,8 +2666,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            printf("NONE\n\n");
-            fprintf(stderr, "NONE\n\n");
+            tprintf("NONE\n\n");
         }
 
         /////////////////////////////Output Time it took to run test/////////////////////////////
@@ -2745,11 +2679,10 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             FILE *outputTime;
             outputTime = fopen(TimeoutputStr.c_str() , "w");
 
-            printf("\n--------------------------------------------------------------------------------\n"
+            printf("\n-------------------------------------------------------------------------------\n\n"
                    "                       Time to Run Tests\n");
-
-            fprintf(outputTime, "\n--------------------------------------------------------------------------------\n"
-                    "                      Time to Run Tests\n");
+            fprintf(outputTime, "\n-------------------------------------------------------------------------------\n\n"
+                    "                       Time to Run Tests\n");
 
             printf("\n\n%4s %-28s%s\n\n", "", " Test Name", "            Time");
             fprintf(outputTime, "\n\n%4s %-28s%s\n\n", "", " Test Name", "            Time");
@@ -2760,6 +2693,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 printf("   %s", SelectorAr[y].c_str());
                 fprintf(outputTime, "   %s", SelectorAr[y].c_str());
+
                 int z = SelectorAr[y].size();
 
                 while (z <= 25)
@@ -2776,8 +2710,6 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
-
-
     }
 
     fclose(fp);
@@ -2866,9 +2798,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         PrintHeader3(argc, argv, WorkingDirString);
     }
 
-
-    printf("Graph PSNR\n");
-    fprintf(stderr, "Graph PSNR\n");
+    tprintf("Graph PSNR\n");
 
     char *input = argv[2];
     int FirstBitRate = atoi(argv[3]);
@@ -2978,73 +2908,61 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
     int ArrSize = x;
     x = 0;
 
-    printf("\n\n");
-    fprintf(stderr, "\n\n");
+    tprintf("\n\n");
 
     while (x < ArrSize)
     {
-        printf(" DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: %i \n DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x], EncTimeArr[x], DecTimeArr[x]);
-        fprintf(stderr, " DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: %i DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x], EncTimeArr[x], DecTimeArr[x]);
+        tprintf(" DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: %i \n DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x], EncTimeArr[x], DecTimeArr[x]);
         x++;
     }
 
     x = 0;
 
-    printf("\n\nDataRate\n\n");
-    fprintf(stderr, "\n\nDataRate\n\n");
+    tprintf("\n\nDataRate\n\n");
 
     while (x < ArrSize)
     {
-        printf("%.2f\n", DataRateArr[x]);
-        fprintf(stderr, " %.2f\n", DataRateArr[x]);
+        tprintf("%.2f\n", DataRateArr[x]);
         x++;
     }
 
     x = 0;
 
-    printf("\nPSNR\n\n");
-    fprintf(stderr, "\nPSNR\n\n");
+    tprintf("\nPSNR\n\n");
 
     while (x < ArrSize)
     {
-        printf("%.2f\n", PSNRArr[x]);
-        fprintf(stderr, " %.2f\n", PSNRArr[x]);
+        tprintf("%.2f\n", PSNRArr[x]);
         x++;
     }
 
     x = 0;
 
-    printf("\nSSIM\n\n");
-    fprintf(stderr, "\nSSIM\n\n");
+    tprintf("\nSSIM\n\n");
 
     while (x < ArrSize)
     {
-        printf("%.2f\n", SSIMArr[x]);
-        fprintf(stderr, " %.2f\n", SSIMArr[x]);
+        tprintf("%.2f\n", SSIMArr[x]);
         x++;
     }
 
     x = 0;
 
-    printf("\nEncodeTime\n\n");
-    fprintf(stderr, "\nEncodeTime\n\n");
+    tprintf("\nEncodeTime\n\n");
 
     while (x < ArrSize)
     {
-        printf("%i\n", EncTimeArr[x]);
-        fprintf(stderr, " %i\n", EncTimeArr[x]);
+        tprintf("%i\n", EncTimeArr[x]);
         x++;
     }
 
     x = 0;
 
-    printf("\nDecodeTime\n\n");
-    fprintf(stderr, "\nDecodeTime\n\n");
+    tprintf("\nDecodeTime\n\n");
 
     while (x < ArrSize)
     {
-        printf("%i\n", DecTimeArr[x]);
-        fprintf(stderr, " %i\n", DecTimeArr[x]);
+        tprintf("%i\n", DecTimeArr[x]);
         x++;
     }
 
@@ -3392,8 +3310,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
 
     int Mode = atoi(argv[3]);
 
-    printf("Allow Drop Frames Test");
-    fprintf(stderr, "Allow Drop Frames Test");
+    tprintf("Allow Drop Frames Test");
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
@@ -3403,8 +3320,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -3464,23 +3380,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     int AllowDFonFrames = IVFDisplayVisibleFrames(AllowDFon.c_str(), 1);
     int AllowDFoffFrames = IVFDisplayVisibleFrames(AllowDFoff.c_str(), 1);
 
-    /*printf("\n\n");
-    fprintf(stderr, "\n\n");
-    long File1bytes = FileSize(AllowDFon);
-    printf("\n");
-    fprintf(stderr, "\n");
-    long File2bytes = FileSize(AllowDFoff);
-    printf("\n");
-    fprintf(stderr, "\n");*/
-
-    /*char OutputChar1[255];
-    snprintf(OutputChar1, 255, "",);
-    string OutputChar1str = OutputChar1;
-    FormatedPrint(OutputChar1str, 5);
-    printf("\n");fprintf(stderr, "\n");*/
-
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
+    tprintf("\n\nResults:\n\n");
 
     int fail = 0;
 
@@ -3490,8 +3390,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         snprintf(OutputChar1, 255, "DF on frames = %i < DF off frames = %i - Passed", AllowDFonFrames, AllowDFoffFrames);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (AllowDFoffFrames == AllowDFonFrames)
@@ -3500,8 +3399,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         snprintf(OutputChar1, 255, "DF on frames = %i == DF off frames = %i No effect - Failed", AllowDFonFrames, AllowDFoffFrames);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
@@ -3511,15 +3409,13 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         snprintf(OutputChar1, 255, "DF on frames = %i > DF off frames = %i - Failed", AllowDFonFrames, AllowDFoffFrames);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
     if (fail == 0)
     {
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -3527,8 +3423,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     }
     else
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -3704,8 +3599,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     char *input2 = argv[5];
 
-    printf("Allow Lag Test");
-    fprintf(stderr, "Allow Lag Test");
+    tprintf("Allow Lag Test");
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
@@ -3715,8 +3609,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -3796,8 +3689,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     int lngRC = CompIVF(AllowLagoff.c_str(), AllowLagon.c_str());
 
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
+    tprintf("\n\nResults:\n\n");
 
     int fail = 0;
 
@@ -3807,8 +3699,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "Correct number of LagInFrames (%i) detected in compression for %s - Passed", opt.lag_in_frames, AllowLagonFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
     else
     {
@@ -3816,8 +3707,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "Correct number of LagInFrames (%i) not detected in compression for %s - Failed", opt.lag_in_frames, AllowLagonFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
@@ -3827,8 +3717,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "Alternate reference frames exist for %s - Passed", AllowLagonFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
     else
     {
@@ -3836,8 +3725,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "Alternate reference frames do not exist for %s - Failed", AllowLagonFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
@@ -3847,8 +3735,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "Visible Frames for %s = %i == Visible Frames for %s = %i - Passed", AllowLagonFilename, VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
     else
     {
@@ -3856,8 +3743,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "Visible Frames for %s = %i != Visible Frames for %s = %i - Failed", AllowLagonFilename, VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
@@ -3867,8 +3753,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "%s is not identical to %s - Passed", AllowLagonFilename, AllowLagoffFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (lngRC == -1)
@@ -3877,15 +3762,13 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         snprintf(OutputChar1, 255, "%s is identical to %s - Failed", AllowLagonFilename, AllowLagoffFilename);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
     if (fail == 0)
     {
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("1, \nPassed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -3893,8 +3776,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     }
     else
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4062,8 +3944,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     int BitRate = atoi(argv[4]);
     int Mode = atoi(argv[3]);
 
-    printf("Allow Spatial Resampling Test");
-    fprintf(stderr, "Allow Spatial Resampling Test");
+    tprintf("Allow Spatial Resampling Test");
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
@@ -4073,8 +3954,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4138,17 +4018,14 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     char SpatialoffFileName[255];
     FileName(Spatialoff.c_str(), SpatialoffFileName, 0);
 
-    printf("\nChecking: %s for resized frames\n", SpatialonFileName);
-    fprintf(stderr, "\nChecking: %s for resized frames\n", SpatialonFileName);
+    tprintf("\nChecking: %s for resized frames\n", SpatialonFileName);
     int AllowSpatResampleONFramesResized = IVFDisplayResizedFrames(Spatialon.c_str(), 1);
 
-    printf("Checking: %s for resized frames\n", SpatialoffFileName);
-    fprintf(stderr, "Checking: %s for resized frames\n", SpatialoffFileName);
+    tprintf("Checking: %s for resized frames\n", SpatialoffFileName);
     int AllowSpatResampleOFFFramesResized = IVFDisplayResizedFrames(Spatialoff.c_str(), 1);
 
     int fail = 0;
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
+    tprintf("\n\nResults:\n\n");
 
     if (AllowSpatResampleONFramesResized > 0)
     {
@@ -4156,8 +4033,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         snprintf(OutputChar1, 255, "AllowSpatialResampleOn Frames Resized %i > 0 - Passed", AllowSpatResampleONFramesResized);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
     else
     {
@@ -4165,8 +4041,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         snprintf(OutputChar1, 255, "AllowSpatialResampleOn Frames Resized %i <= 0 - Failed", AllowSpatResampleONFramesResized);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
@@ -4176,8 +4051,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         snprintf(OutputChar1, 255, "AllowSpatialResampleOff Frames Resized %i == 0 - Passed", AllowSpatResampleOFFFramesResized);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
     else
     {
@@ -4185,8 +4059,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         snprintf(OutputChar1, 255, "AllowSpatialResampleOff Frames Resized %i != 0 - Failed", AllowSpatResampleOFFFramesResized);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
@@ -4196,8 +4069,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         snprintf(OutputChar1, 255, "AllowSpatialResample PSNR: %f > 15.00 - Passed", SpatialResampPSNR);;
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
     else
     {
@@ -4205,15 +4077,13 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         snprintf(OutputChar1, 255, "AllowSpatialResample On PSNR: %f < 15.00 - Failed", SpatialResampPSNR);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
     if (fail == 0)
     {
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4221,8 +4091,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     }
     else
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4403,8 +4272,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         PrintHeader3(argc, argv, WorkingDirString);
     }
 
-    printf("Auto Key Framing Works Test");
-    fprintf(stderr, "Auto Key Framing Works Test");
+    tprintf("Auto Key Framing Works Test");
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
@@ -4414,8 +4282,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4475,8 +4342,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (!infile1.good())
     {
-        printf("\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
-        fprintf(stderr, "\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
+        tprintf("\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4485,8 +4351,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (!infile2.good())
     {
-        printf("\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
-        fprintf(stderr, "\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
+        tprintf("\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4527,8 +4392,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     char AutoKeyFramingWorks2FileName[255];
     FileName(AutoKeyFramingWorks2.c_str(), AutoKeyFramingWorks2FileName, 0);
 
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
+    tprintf("\n\nResults:\n\n");
 
     //////////////////////////////////////////////////////////////////////////////////
     int fail2 = 0;
@@ -4536,8 +4400,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (!infile.good())
     {
-        printf("\nKey Frame File Not Present - Failed");
-        fprintf(stderr, "\nKey Frame File Not Present - Failed");
+        tprintf("\nKey Frame File Not Present - Failed");
         fclose(fp);
         return 0;
     }
@@ -4574,8 +4437,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
             snprintf(OutputChar1, 255, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, x2, y2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail2 = 1;
         }
     }
@@ -4599,8 +4461,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         snprintf(OutputChar1, 255, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, maxKeyFrame, NumberofFrames - 1);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
@@ -4611,8 +4472,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         snprintf(OutputChar1, 255, "Key Frames occur at least as frequently as Auto Key Frame dictates: %i - Passed", AutoKeyFramingInt);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (fail == 0)
@@ -4621,11 +4481,9 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         snprintf(OutputChar1, 255, "Key Frames occur at the same locations for %s and %s - Passed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -4638,11 +4496,10 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         snprintf(OutputChar1, 255, "Key Frames do not occur at the same locations for %s and %s - Failed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
+
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4807,8 +4664,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         PrintHeader3(argc, argv, WorkingDirString);
     }
 
-    printf("Buffer Level Works Test");
-    fprintf(stderr, "Buffer Level Works Test");
+    tprintf("Buffer Level Works Test");
 
     char *input = argv[2];
     int Mode = atoi(argv[3]);
@@ -4839,8 +4695,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -4887,8 +4742,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
     int PassFail = IVFCheckPBM(BufferLevelWorksOut.c_str(), BitRate, MaximumBufferLevel * 1000, StartingBufferLvl * 1000);
 
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
+    tprintf("\n\nResults:\n\n");
 
     if (PassFail == -11)
     {
@@ -4896,11 +4750,9 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         snprintf(OutputChar1, 255, "No buffer under run detected - Passed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -4913,11 +4765,9 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         snprintf(OutputChar1, 255, "Buffer under run at frame: %i - Failed", PassFail);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -5088,8 +4938,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         PrintHeader3(argc, argv, WorkingDirString);
     }
 
-    printf("CPU Dec Only Works Test");
-    fprintf(stderr, "CPU Dec Only Works Test");
+    tprintf("CPU Dec Only Works Test");
 
     char *input = argv[2];
     int Mode = atoi(argv[3]);
@@ -5110,8 +4959,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -5166,8 +5014,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             char ChangedCPUDecOutFileChar[255];
             snprintf(ChangedCPUDecOutFileChar, 255, "%s", Output.c_str());
 
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
             int countOld = (counter - 1);
             itoa_custom(countOld, count, 10);
@@ -5192,49 +5039,35 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
             Output3.append(".ivf");
 
-
-            char Comp1[255];
-            char Comp2[255];
-
-            snprintf(Comp1, 255, "%s", Output.c_str());
-            snprintf(Comp2, 255, "%s", Output3.c_str());
-
-            cout << "\ncomparing " << Comp1 << " \n\nto\n\n " << Comp2 << "\n\n";
-            fprintf(stderr, "\ncomparing CPU:%i to CPU:%i", counter - 1, counter);
-
-            int lngRC = CompIVF(Comp1, Comp2);
+            tprintf("\ncomparing CPU:%i to CPU:%i", counter - 1, counter);
+            int lngRC = CompIVF(Output.c_str(), Output3.c_str());
 
             if (lngRC >= 0)
             {
-                printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
+                tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
                 Fail = 1;
             }
 
             if (lngRC == -1)
             {
-                printf("\nFiles are identical");
-                fprintf(stderr, "\nFiles are identical");
+                tprintf("\nFiles are identical");
             }
 
             if (lngRC == -2)
             {
-                printf("\n\nFail: File 2 ends before File 1.\n"/*, lngRC*/);
-                fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n"/*, lngRC*/);
+                tprintf("\n\nFail: File 2 ends before File 1.\n"/*, lngRC*/);
                 Fail = 1;
             }
 
             if (lngRC == -3)
             {
-                printf("\n\nFail: File 1 ends before File 2.\n"/*, lngRC*/);
-                fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n"/*, lngRC*/);
+                tprintf("\n\nFail: File 1 ends before File 2.\n"/*, lngRC*/);
                 Fail = 1;
             }
 
             counter = counter + 1;
-            printf("\n\n");
+            tprintf("\n\n");
             i++;
-            fprintf(stderr, "\n\n");
         }
 
     }
@@ -5255,8 +5088,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         string Output2Str = CPUDecOnlyWorksOut_CPU;
         Output2Str.append("0.ivf");
 
-        printf("\n\nCPU:%i\n", 0);
-        fprintf(stderr, "\n\nCPU:%i\n", 0);
+        tprintf("\n\nCPU:%i\n", 0);
 
         totalms = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str());
 
@@ -5268,8 +5100,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             return 2;
         }
 
-        printf("\n\n");
-        fprintf(stderr, "\n\n");
+        tprintf("\n\n");
 
         int counterMax = 12;
         counter++;
@@ -5286,8 +5117,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             snprintf(CPUChar, 255, CPUIDSTRING.c_str());
             putenv(CPUChar);
 
-            printf("CPU:%i", counter);
-            fprintf(stderr, "CPU:%i", counter);
+            tprintf("CPU:%i", counter);
 
             //////////////////////////////////
             ///////Compresion and Time ///////
@@ -5300,8 +5130,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             ChangedCPUDecOutFileStr1.append(count);
             ChangedCPUDecOutFileStr1.append(".ivf");
 
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
             totalms2 = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), ChangedCPUDecOutFileStr1.c_str());
 
@@ -5320,43 +5149,37 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
             if (TestType != 2)
             {
-                printf("comparing CPU:%i to CPU:%i", counter - 1, counter);
-                fprintf(stderr, "\ncomparing CPU:%i to CPU:%i", counter - 1, counter);
+                tprintf("comparing CPU:%i to CPU:%i", counter - 1, counter);
 
                 int lngRC = CompIVF(ChangedCPUDecOutFileStr1.c_str(), ChangedCPUDecOutFileStr2.c_str());
 
                 if (lngRC >= 0)
                 {
-                    printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                    fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
+                    tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
                     Fail = 1;
                 }
 
                 if (lngRC == -1)
                 {
-                    printf("\nFiles are identical");
-                    fprintf(stderr, "\nFiles are identical");
+                    tprintf("\nFiles are identical");
                 }
 
                 if (lngRC == -2)
                 {
-                    printf("\n\nFail: File 2 ends before File 1.\n");
-                    fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+                    tprintf("\n\nFail: File 2 ends before File 1.\n");
                     Fail = 1;
                 }
 
                 if (lngRC == -3)
                 {
-                    printf("\n\nFail: File 1 ends before File 2.\n");
-                    fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+                    tprintf("\n\nFail: File 1 ends before File 2.\n");
                     Fail = 1;
                 }
             }
 
             counter = counter + 1;
-            printf("\n\n");
+            tprintf("\n\n");
             i++;
-            fprintf(stderr, "\n\n");
         }
     }
 
@@ -5372,9 +5195,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
 
     int overallfail = 0;
-    printf("\nResults:\n\n");
-    fprintf(stderr, "\nResults:\n\n");
-
+    tprintf("\nResults:\n\n");
 
     if (Fail == 0)
     {
@@ -5382,8 +5203,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "All Files Identical - Passed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (Fail == 1)
@@ -5392,8 +5212,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "All Files not Identical - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         overallfail = 1;
     }
 
@@ -5403,8 +5222,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Decompress times are not equal - Passed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (totalms == totalms2)
@@ -5413,15 +5231,13 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "CPU changes are not effecting the runtime - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         overallfail = 1;
     }
 
     if (overallfail == 0)
     {
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         string File1Str = File1;
@@ -5430,8 +5246,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
     else
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         string File1Str = File1;
@@ -5598,8 +5413,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         PrintHeader3(argc, argv, WorkingDirString);
     }
 
-    printf("Change CPU Works Test");
-    fprintf(stderr, "Change CPU Works Test");
+    tprintf("Change CPU Works Test");
 
     char *input = argv[2];
     int Mode = atoi(argv[3]);
@@ -5628,8 +5442,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -5684,35 +5497,30 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             ChangedCPUDecNOutLast.append(count);
             ChangedCPUDecNOutLast.append(".ivf");
 
-            printf("\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
-            fprintf(stderr, "\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
+            tprintf("\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
 
             int lngRC = CompIVF(ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
 
             if (lngRC >= 0)
             {
-                printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
-                fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
+                tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
                 Fail = 1;
             }
 
             if (lngRC == -1)
             {
-                printf("\nFiles are identical");
-                fprintf(stderr, "\nFiles are identical");
+                tprintf("\nFiles are identical");
             }
 
             if (lngRC == -2)
             {
-                printf("\n\nFail: File 2 ends before File 1.\n");
-                fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+                tprintf("\n\nFail: File 2 ends before File 1.\n");
                 Fail = 1;
             }
 
             if (lngRC == -3)
             {
-                printf("\n\nFail: File 1 ends before File 2.\n");
-                fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+                tprintf("\n\nFail: File 1 ends before File 2.\n");
                 Fail = 1;
             }
 
@@ -5740,8 +5548,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(CPUChar, 255, CPUIDSTRING.c_str());
             putenv(CPUChar);
 
-            printf("\n\nCPU:%i", counter);
-            fprintf(stderr, "\n\nCPU:%i", counter);
+            tprintf("\n\nCPU:%i", counter);
 
             ///////Compresion and Time ///////
             string ChangedCPUDecNOutCurrent = ChangedCPUDecNOutBase;
@@ -5770,35 +5577,30 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (TestType != 2 && counter != 0)
             {
-                printf("\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
-                fprintf(stderr, "\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
+                tprintf("\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
 
                 int lngRC = CompIVF(ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
 
                 if (lngRC >= 0)
                 {
-                    printf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
-                    fprintf(stderr, "\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
+                    tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
                     Fail = 1;
                 }
 
                 if (lngRC == -1)
                 {
-                    printf("\nFiles are identical");
-                    fprintf(stderr, "\nFiles are identical");
+                    tprintf("\nFiles are identical");
                 }
 
                 if (lngRC == -2)
                 {
-                    printf("\n\nFail: File 2 ends before File 1.\n");
-                    fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+                    tprintf("\n\nFail: File 2 ends before File 1.\n");
                     Fail = 1;
                 }
 
                 if (lngRC == -3)
                 {
-                    printf("\n\nFail: File 1 ends before File 2.\n");
-                    fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+                    tprintf("\n\nFail: File 1 ends before File 2.\n");
                     Fail = 1;
                 }
             }
@@ -5821,8 +5623,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     Time1 = TimeReturn(ChangedCPUDec0OutFile.c_str(), 0);
     int overallfail = 0;
 
-    printf("\n\n\nResults:\n\n");
-    fprintf(stderr, "\n\n\nResults:\n\n");
+    tprintf("\n\n\nResults:\n\n");
 
     if (Fail != 1)
     {
@@ -5830,8 +5631,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         snprintf(OutputChar1, 255, "All Files are identical - Passed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (Fail == 1)
@@ -5840,8 +5640,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         snprintf(OutputChar1, 255, "All Files are not identical - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         overallfail = 1;
     }
 
@@ -5851,8 +5650,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         snprintf(OutputChar1, 255, "Time1: %u == Time2: %u - Failed", Time1, Time2);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         overallfail = 1;
     }
 
@@ -5862,14 +5660,12 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         snprintf(OutputChar1, 255, "Time 1: %u != Time 2: %u - Passed", Time1, Time2);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (overallfail == 0)
     {
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
 
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
@@ -5879,8 +5675,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
     else
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
 
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
@@ -6854,8 +6649,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         exit(1);
     }
 
-    printf("Debug Matches Release Test");
-    fprintf(stderr, "Debug Matches Release Test");
+    tprintf("Debug Matches Release Test");
 
     int speed = 0;
 
@@ -6867,8 +6661,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -6882,8 +6675,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     /////////////////Make Sure Exe File Exists///////////////
     if (!FileExistsCheck(argv[6]))
     {
-        printf("\nInput executable %s does not exist\n", argv[6]);
-        fprintf(stderr, "\nInput executable %s does not exist\n", argv[6]);
+        tprintf("\nInput executable %s does not exist\n", argv[6]);
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -6893,8 +6685,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     /////////////////Make Sure Exe File Exists///////////////
     if (!FileExistsCheck(argv[5]))
     {
-        printf("\nInput executable %s does not exist\n", argv[5]);
-        fprintf(stderr, "\nInput executable %s does not exist\n", argv[5]);
+        tprintf("\nInput executable %s does not exist\n", argv[5]);
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -7031,8 +6822,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         return 10;
     }
 
-    printf("\n\nComparing Files: ");
-    fprintf(stderr, "\n\nComparing Files: ");
+    tprintf("\n\nComparing Files: ");
 
     int lngRC = CompIVF(ReleaseOutput.c_str(), DebugOutput.c_str());
 
@@ -7040,75 +6830,58 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (lngRC >= 0)
     {
-        printf("Files differ at frame: %i\n", lngRC);
-        fprintf(stderr, "Files differ at frame: %i\n", lngRC);
-
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("Files differ at frame: %i\n", lngRC);
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "Debug Compression not identical to Release Compression - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
     if (lngRC == -1)
     {
-        printf("Files are identical\n");
-        fprintf(stderr, "Files are identical\n");
-
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("Files are identical\n");
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "Debug Compression identical to Release Compression - Passed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (lngRC == -2)
     {
-        printf("File 2 ends before File 1\n");
-        fprintf(stderr, "File 2 ends before File 1\n");
-
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("File 2 ends before File 1\n");
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "Debug Compression not identical to Release Compression - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
     if (lngRC == -3)
     {
-        printf("File 1 ends before File 2\n");
-        fprintf(stderr, "File 1 ends before File 2\n");
-
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("File 1 ends before File 2\n");
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "Debug Compression not identical to Release Compression - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         fail = 1;
     }
 
     if (fail == 0)
     {
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -7116,8 +6889,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     }
     else
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -7310,8 +7082,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     int Mode = atoi(argv[3]);
 
 
-    printf("Encoder Break Out Test");
-    fprintf(stderr, "Encoder Break Out Test");
+    tprintf("Encoder Break Out Test");
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
@@ -7321,8 +7092,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -7390,8 +7160,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             return 2;
         }
 
-        printf("\nDecoding EncBreakOut0");
-        fprintf(stderr, "\nDecoding EncBreakOut0");
+        tprintf("\nDecoding EncBreakOut0");
 
         if (DecompressIVFtoIVF(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str()) == -1)
         {
@@ -7401,8 +7170,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             return 2;
         }
 
-        printf("\n\nDecoding EncBreakOut100");
-        fprintf(stderr, "\n\nDecoding EncBreakOut100");
+        tprintf("\n\nDecoding EncBreakOut100");
 
         if (DecompressIVFtoIVF(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str()) == -1)
         {
@@ -7412,8 +7180,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             return 2;
         }
 
-        printf("\n\nDecoding EncBreakOut500");
-        fprintf(stderr, "\n\nDecoding EncBreakOut500");
+        tprintf("\n\nDecoding EncBreakOut500");
 
         if (DecompressIVFtoIVF(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str()) == -1)
         {
@@ -7423,8 +7190,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             return 2;
         }
 
-        printf("\n\nDecoding EncBreakOut1000");
-        fprintf(stderr, "\n\nDecoding EncBreakOut1000");
+        tprintf("\n\nDecoding EncBreakOut1000");
 
         if (DecompressIVFtoIVF(EncBreakOut1000.c_str(), EncBreakOut1000_Dec.c_str()) == -1)
         {
@@ -7450,28 +7216,17 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     long EncBreakOut500_Dec_FileSize = 0;
     long EncBreakOut1000_Dec_FileSize = 0;
 
-    printf("\n\n");
-    fprintf(stderr, "\n\n");
+    tprintf("\n\n");
     SourceFileSize = FileSize(input);
-
-    printf("\n");
-    fprintf(stderr, "\n");
+    tprintf("\n");
     EncBreakOut0_Dec_FileSize = FileSize(EncBreakOut0_Dec.c_str());
-
-    printf("\n");
-    fprintf(stderr, "\n");
+    tprintf("\n");
     EncBreakOut100_Dec_FileSize = FileSize(EncBreakOut100_Dec.c_str());
-
-    printf("\n");
-    fprintf(stderr, "\n");
+    tprintf("\n");
     EncBreakOut500_Dec_FileSize = FileSize(EncBreakOut500_Dec.c_str());
-
-    printf("\n");
-    fprintf(stderr, "\n");
+    tprintf("\n");
     EncBreakOut1000_Dec_FileSize = FileSize(EncBreakOut1000_Dec.c_str());
-
-    printf("\n");
-    fprintf(stderr, "\n");
+    tprintf("\n");
 
     double PSNR0;
     double PSNR100;
@@ -7487,17 +7242,10 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     double dB2 = absDouble(10 * log(PSNR100 / PSNR500));
     double dB3 = absDouble(10 * log(PSNR500 / PSNR1000));
 
-    printf("\ndB1: %f \n", dB1);
-    fprintf(stderr, "\ndB1: %f \n", dB1);
-
-    printf("dB2: %f \n", dB1);
-    fprintf(stderr, "dB2: %f \n", dB1);
-
-    printf("dB3: %f \n", dB1);
-    fprintf(stderr, "dB3: %f \n", dB1);
-
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
+    tprintf("\ndB1: %f \n", dB1);
+    tprintf("dB2: %f \n", dB1);
+    tprintf("dB3: %f \n", dB1);
+    tprintf("\n\nResults:\n\n");
 
     int Pass = 1;
     int IndCount = 0;
@@ -7508,8 +7256,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut0 was not properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         Pass = 0;
     }
     else
@@ -7518,8 +7265,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut0 was properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (SourceFileSize != EncBreakOut100_Dec_FileSize)
@@ -7528,8 +7274,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut100 was not properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         Pass = 0;
     }
     else
@@ -7538,8 +7283,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut100 was properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (SourceFileSize != EncBreakOut500_Dec_FileSize)
@@ -7548,8 +7292,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut500 was not properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         Pass = 0;
     }
     else
@@ -7558,8 +7301,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut500 was properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (SourceFileSize != EncBreakOut1000_Dec_FileSize)
@@ -7568,8 +7310,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut1000 was not properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         Pass = 0;
     }
     else
@@ -7578,8 +7319,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "EncBreakOut1000 was properly decoded.");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (dB1 <= 2)
@@ -7588,8 +7328,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 0 PSNR and 100 PSNR are within 2 dB: %4f dB - Passed", dB1);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (dB1 >= 5)
@@ -7598,8 +7337,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 0 PSNR and 100 PSNR not within 5 dB: %4f dB - Failed", dB1);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         Pass = 0;
     }
 
@@ -7609,8 +7347,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 0 PSNR and 100 PSNR greater than 2 dB but less than 5 dB: %4f dB - Indeterminate", dB1);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         IndCount++;
     }
 
@@ -7620,8 +7357,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 100 PSNR and 500 PSNR are within 2 dB: %4f dB - Passed", dB2);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (dB2 >= 5)
@@ -7630,8 +7366,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 100 PSNR and 500 PSNR not within 5 dB: %4f dB - Failed", dB2);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         Pass = 0;
     }
 
@@ -7641,8 +7376,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 100 PSNR and 500 PSNR greater than 2 dB but less than 5 dB: %4f dB - Indeterminate", dB2);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         IndCount++;
     }
 
@@ -7652,8 +7386,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 500 PSNR and 1000 PSNR are within 2 dB: %4f dB - Passed", dB3);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
     }
 
     if (dB3 >= 5)
@@ -7662,8 +7395,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 500 PSNR and 1000 PSNR not within 5 dB: %4f dB - Failed", dB3);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         Pass = 0;
     }
 
@@ -7673,8 +7405,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         snprintf(OutputChar1, 255, "Encoder Breakout 500 PSNR and 1000 PSNR greater than 2 dB but less than 5 dB: %4f dB - Indeterminate", dB3);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         IndCount++;
     }
 
@@ -7682,8 +7413,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         if (IndCount == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -7691,8 +7421,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         }
         else
         {
-            printf("\nIndeterminate\n");
-            fprintf(stderr, "\nIndeterminate\n");
+            tprintf("\nIndeterminate\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -7701,8 +7430,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
     else
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -7871,8 +7599,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     int Mode = atoi(argv[3]);
 
 
-    printf("Error Ressiliancy Test\n");
-    fprintf(stderr, "Error Ressiliancy Test\n");
+    tprintf("Error Ressiliancy Test\n");
 
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
@@ -7916,8 +7643,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         return 10;
     }
 
-    printf("\n");
-    fprintf(stderr, "\n");
+    tprintf("\n");
 
     double PSNRon;
     double PSNRoff;
@@ -7927,8 +7653,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 
     float PSRNPerc = 100 * absFloat((PSNRon - PSNRoff) / PSNRoff);
 
-    printf("\n\nResults:\n\n");
-    fprintf(stderr, "\n\nResults:\n\n");
+    tprintf("\n\nResults:\n\n");
 
     if (PSRNPerc < 10.00)
     {
@@ -7936,11 +7661,9 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         snprintf(OutputChar1, 255, "ErrorRes on PSNR is within 10%% of Error Res off PSNR: %.2f%% - Passed", PSRNPerc);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -7953,11 +7676,9 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         snprintf(OutputChar1, 255, "ErrorRes on PSNR is not within 10%% of Error Res off PSNR: %.2f%% - Failed", PSRNPerc);
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -8130,11 +7851,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         PrintHeader3(argc, argv, WorkingDirString);
     }
 
-    printf("Extra File Check\n");
-    fprintf(stderr, "Extra File Check\n");
-
-    printf("---------------------------Checking for OPSNR Files----------------------------\n");
-    fprintf(stderr, "---------------------------Checking for OPSNR Files----------------------------\n");
+    tprintf("Extra File Check\n");
+    tprintf("---------------------------Checking for OPSNR Files----------------------------\n");
 
     /////////////////////////////////////////////////Delete opsnr.stt////////////////////////////////////////////
     char CurrentPath[260];
@@ -8187,8 +7905,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         cerr << "opsnr.stt File found and deleted. \n";
     }
 
-    printf("-------------------------------------------------------------------------------\n");
-    fprintf(stderr, "-------------------------------------------------------------------------------\n");
+    tprintf("------------------------------------------------------------------------------\n");
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     char *input = argv[2];
@@ -8201,8 +7918,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -8269,15 +7985,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        printf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
-        fprintf(stderr, "\nExtraFileCheck Test Run Previously Retreiveing Result\n");
+        tprintf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
 
         ifstream infile(ExtraFileCheckResult);
 
         if (!infile.is_open())
         {
-            printf("File: %s not opened", ExtraFileCheckResult);
-            fprintf(stderr, "File: %s not opened", ExtraFileCheckResult);
+            tprintf("File: %s not opened", ExtraFileCheckResult);
             return 0;
         }
 
@@ -8326,8 +8040,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         return 10;
     }
 
-    printf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
-    fprintf(stderr, "\n\n---------------------------Checking for Extra Files----------------------------\n\n");
+    tprintf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
 
     cout << "\n\nChecking:\n\n " << EF_DestString << "\n\n" << EF_SourString1 << " for extra files.\n";
     cerr << "\n\nChecking:\n\n " << EF_DestString << "\n\n" << EF_SourString1 << " for extra files.\n";
@@ -8563,8 +8276,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     if (Fail == 1)
     {
-        printf("\n-------------------------------------------------------------------------------\n");
-        fprintf(stderr, "\n-------------------------------------------------------------------------------\n");
+        tprintf("\n------------------------------------------------------------------------------\n");
 
         if (TestType == 2)
         {
@@ -8582,18 +8294,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "Extra Files Found - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -8603,8 +8312,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     if (Fail == 0)
     {
-        printf("-------------------------------------------------------------------------------\n");
-        fprintf(stderr, "-------------------------------------------------------------------------------\n");
+        tprintf("------------------------------------------------------------------------------\n");
 
         if (TestType == 2)
         {
@@ -8622,18 +8330,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "No extra files found - Passed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -8805,11 +8510,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         PrintHeader3(argc, argv, WorkingDirString);
     }
 
-    printf("Extra File Check\n");
-    fprintf(stderr, "Extra File Check\n");
-
-    printf("---------------------------Checking for OPSNR Files----------------------------\n");
-    fprintf(stderr, "---------------------------Checking for OPSNR Files----------------------------\n");
+    tprintf("Extra File Check\n");
+    tprintf("---------------------------Checking for OPSNR Files----------------------------\n");
 
     /////////////////////////////////////////////////Delete opsnr.stt////////////////////////////////////////////
     char CurrentPath[260];
@@ -8862,8 +8564,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         cerr << "opsnr.stt File found and deleted. \n";
     }
 
-    printf("-------------------------------------------------------------------------------\n");
-    fprintf(stderr, "-------------------------------------------------------------------------------\n");
+    tprintf("------------------------------------------------------------------------------\n");
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     char *input = argv[2];
@@ -8876,8 +8577,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     {
         if (!FileExistsCheck(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -8944,15 +8644,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        printf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
-        fprintf(stderr, "\nExtraFileCheck Test Run Previously Retreiveing Result\n");
+        tprintf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
 
         ifstream infile(ExtraFileCheckResult);
 
         if (!infile.is_open())
         {
-            printf("File: %s not opened", ExtraFileCheckResult);
-            fprintf(stderr, "File: %s not opened", ExtraFileCheckResult);
+            tprintf("File: %s not opened", ExtraFileCheckResult);
             return 0;
         }
 
@@ -9001,8 +8699,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         return 10;
     }
 
-    printf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
-    fprintf(stderr, "\n\n---------------------------Checking for Extra Files----------------------------\n\n");
+    tprintf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
 
     cout << "\n\nChecking:\n\n " << EF_DestString << "\n\n" << EF_SourString1 << " for extra files.\n";
     cerr << "\n\nChecking:\n\n " << EF_DestString << "\n\n" << EF_SourString1 << " for extra files.\n";
@@ -9238,8 +8935,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     if (Fail == 1)
     {
-        printf("\n-------------------------------------------------------------------------------\n");
-        fprintf(stderr, "\n-------------------------------------------------------------------------------\n");
+        tprintf("\n------------------------------------------------------------------------------\n");
 
         if (TestType == 2)
         {
@@ -9257,18 +8953,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "Extra Files Found - Failed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -9278,8 +8971,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     if (Fail == 0)
     {
-        printf("-------------------------------------------------------------------------------\n");
-        fprintf(stderr, "-------------------------------------------------------------------------------\n");
+        tprintf("------------------------------------------------------------------------------\n");
 
         if (TestType == 2)
         {
@@ -9297,18 +8989,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         char OutputChar1[255];
         snprintf(OutputChar1, 255, "No extra files found - Passed");
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\nPassed\n");
-        fprintf(stderr, "\nPassed\n");
+        tprintf("\nPassed\n");
 
         fclose(fp);
         string File1Str = File1;
@@ -9480,11 +9169,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Extra File Check\n");
-        fprintf(stderr, "Extra File Check\n");
+        tprintf("Extra File Check\n");
 
-        printf("---------------------------Checking for OPSNR Files----------------------------\n");
-        fprintf(stderr, "---------------------------Checking for OPSNR Files----------------------------\n");
+        tprintf("---------------------------Checking for OPSNR Files----------------------------\n");
 
         /////////////////////////////////////////////////Delete opsnr.stt////////////////////////////////////////////
         char CurrentPath[260];
@@ -9537,8 +9224,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             cerr << "opsnr.stt File found and deleted. \n";
         }
 
-        printf("-------------------------------------------------------------------------------\n");
-        fprintf(stderr, "-------------------------------------------------------------------------------\n");
+        tprintf("------------------------------------------------------------------------------\n");
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         char *input = argv[2];
@@ -9551,8 +9237,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -9619,15 +9304,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            printf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
-            fprintf(stderr, "\nExtraFileCheck Test Run Previously Retreiveing Result\n");
+            tprintf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
 
             ifstream infile(ExtraFileCheckResult);
 
             if (!infile.is_open())
             {
-                printf("File: %s not opened", ExtraFileCheckResult);
-                fprintf(stderr, "File: %s not opened", ExtraFileCheckResult);
+                tprintf("File: %s not opened", ExtraFileCheckResult);
                 return 0;
             }
 
@@ -9676,8 +9359,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
-        fprintf(stderr, "\n\n---------------------------Checking for Extra Files----------------------------\n\n");
+        tprintf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
 
         cout << "\n\nChecking:\n\n " << EF_DestString << "\n\n" << EF_SourString1 << " for extra files.\n";
         cerr << "\n\nChecking:\n\n " << EF_DestString << "\n\n" << EF_SourString1 << " for extra files.\n";
@@ -9913,8 +9595,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (Fail == 1)
         {
-            printf("\n-------------------------------------------------------------------------------\n");
-            fprintf(stderr, "\n-------------------------------------------------------------------------------\n");
+            tprintf("\n------------------------------------------------------------------------------\n");
 
             if (TestType == 2)
             {
@@ -9932,18 +9613,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 10;
             }
 
-            printf("\n\nResults:\n\n");
-            fprintf(stderr, "\n\nResults:\n\n");
+            tprintf("\n\nResults:\n\n");
 
             char OutputChar1[255];
             snprintf(OutputChar1, 255, "Extra Files Found - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -9953,8 +9631,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (Fail == 0)
         {
-            printf("-------------------------------------------------------------------------------\n");
-            fprintf(stderr, "-------------------------------------------------------------------------------\n");
+            tprintf("------------------------------------------------------------------------------\n");
 
             if (TestType == 2)
             {
@@ -9972,18 +9649,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 10;
             }
 
-            printf("\n\nResults:\n\n");
-            fprintf(stderr, "\n\nResults:\n\n");
+            tprintf("\n\nResults:\n\n");
 
             char OutputChar1[255];
             snprintf(OutputChar1, 255, "No extra files found - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -10161,11 +9835,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Extra File Check\n\n");
-        fprintf(stderr, "Extra File Check\n\n");
-
-        printf("---------------------------Checking for OPSNR Files----------------------------\n");
-        fprintf(stderr, "---------------------------Checking for OPSNR Files----------------------------\n");
+        tprintf("Extra File Check\n\n");
+        tprintf("---------------------------Checking for OPSNR Files----------------------------\n");
 
         /////////////////////////////////////////////////Delete opsnr.stt////////////////////////////////////////////
         char CurrentPath[260];
@@ -10218,8 +9889,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             cerr << "opsnr.stt File found and deleted. \n";
         }
 
-        printf("-------------------------------------------------------------------------------\n");
-        fprintf(stderr, "-------------------------------------------------------------------------------\n");
+        tprintf("------------------------------------------------------------------------------\n");
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -10233,8 +9903,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -10283,15 +9952,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
-            printf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
-            fprintf(stderr, "\nExtraFileCheck Test Run Previously Retreiveing Result\n");
+            tprintf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
 
             ifstream infile(ExtraFileCheckResult);
 
             if (!infile.is_open())
             {
-                printf("File: %s not opened", ExtraFileCheckResult);
-                fprintf(stderr, "File: %s not opened", ExtraFileCheckResult);
+                tprintf("File: %s not opened", ExtraFileCheckResult);
                 return 0;
             }
 
@@ -10331,8 +9998,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             }
         }
 
-        printf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
-        fprintf(stderr, "\n\n---------------------------Checking for Extra Files----------------------------\n\n");
+        tprintf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
 
         cout << "Checking: " << EF_DestString << "\n\nChecking: " << EF_SourString1;
         cerr << "Checking: " << EF_DestString << "\n\nChecking: " << EF_SourString1;
@@ -10535,8 +10201,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (Fail == 1)
         {
-            printf("\n-------------------------------------------------------------------------------\n");
-            fprintf(stderr, "\n-------------------------------------------------------------------------------\n");
+            tprintf("\n------------------------------------------------------------------------------\n");
 
             if (TestType == 2)
             {
@@ -10554,18 +10219,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 10;
             }
 
-            printf("\n\nResults:\n\n");
-            fprintf(stderr, "\n\nResults:\n\n");
+            tprintf("\n\nResults:\n\n");
 
             char OutputChar1[255];
             snprintf(OutputChar1, 255, "Extra Files Found - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -10575,8 +10237,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (Fail == 0)
         {
-            printf("-------------------------------------------------------------------------------\n");
-            fprintf(stderr, "-------------------------------------------------------------------------------\n");
+            tprintf("------------------------------------------------------------------------------\n");
 
             if (TestType == 2)
             {
@@ -10594,18 +10255,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 return 10;
             }
 
-            printf("\n\nResults:\n\n");
-            fprintf(stderr, "\n\nResults:\n\n");
+            tprintf("\n\nResults:\n\n");
 
             char OutputChar1[255];
             snprintf(OutputChar1, 255, "No extra files found - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -10795,8 +10453,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int FixedQ1Int = atoi(argv[5]);
         int FixedQ2Int = atoi(argv[6]);
 
-        printf("Fixed Q Test");
-        fprintf(stderr, "Fixed Q Test");
+        tprintf("Fixed Q Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -10806,8 +10463,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -10826,8 +10482,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (FixedQ1Int < 0 || FixedQ1Int > 63 || FixedQ2Int < 0 || FixedQ2Int > 63)
         {
-            printf("\n\nInvaild Qunatizer Range, Vaild range = 0-63 - Indeterminate\n");
-            fprintf(stderr, "\n\nInvaild Qunatizer Range, Vaild range = 0-63 - Indeterminate\n");
+            tprintf("\n\nInvaild Qunatizer Range, Vaild range = 0-63 - Indeterminate\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -10877,28 +10532,21 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         int fail = 0;
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         int FixedQCheckVal1 = CheckFixedQ(FixedQ1.c_str(), FixedQ1Int);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         int FixedQCheckVal2 = CheckFixedQ(FixedQ2.c_str(), FixedQ2Int);
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         int FixedQSize1 = FileSize(FixedQ1.c_str());
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         int FixedQSize2 = FileSize(FixedQ2.c_str());
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         char FixedQ1FileName[255] = "";
         char FixedQ2FileName[255] = "";
@@ -10906,8 +10554,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         FileName(FixedQ1.c_str(), FixedQ1FileName, 0);
         FileName(FixedQ2.c_str(), FixedQ2FileName, 0);
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (FixedQCheckVal1 != -1)
         {
@@ -10915,8 +10562,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Quantizer not fixed for %s for frame %i - Failed", FixedQ1FileName, FixedQCheckVal1);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -10925,8 +10571,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Quantizer fixed at %i for all frames for %s - Passed", FixedQ1Int, FixedQ1FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (FixedQCheckVal2 != -1)
@@ -10935,8 +10580,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Quantizer not fixed for %s for frame %i - Failed", FixedQ2FileName, FixedQCheckVal2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -10945,8 +10589,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Quantizer fixed at %i for all frames for %s - Passed", FixedQ2Int, FixedQ2FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (FixedQ1Int < FixedQ2Int) //make sure that lower fixed q has higher datarate
@@ -10958,8 +10601,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "%s file size: %i >= %s file size: %i - Failed", FixedQ2FileName, FixedQSize2, FixedQ1FileName, FixedQSize1);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
             else
@@ -10968,8 +10610,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "%s file size: %i > %s file size: %i - Passed", FixedQ1FileName, FixedQSize1, FixedQ2FileName, FixedQSize2);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
         }
         else
@@ -10980,8 +10621,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "%s file size: %i >= %s file size: %i - Failed", FixedQ1FileName, FixedQSize1, FixedQ2FileName, FixedQSize2);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
             else
@@ -10990,15 +10630,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "%s file size: %i > %s file size: %i - Failed", FixedQ2FileName, FixedQSize2, FixedQ1FileName, FixedQSize1);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
         }
 
         if (fail == 1)
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -11007,8 +10645,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -11190,8 +10827,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Force Key Frame Works Test");
-        fprintf(stderr, "Force Key Frame Works Test");
+        tprintf("Force Key Frame Works Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -11201,8 +10837,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -11252,14 +10887,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (!infile.good())
         {
-            printf("\nKey Frame File Not Present\n");
-            fprintf(stderr, "\nKey Frame File Not Present\n");
+            tprintf("\nKey Frame File Not Present\n");
             fclose(fp);
             return 0;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         int fail = 0;
         int selector2 = 0;
@@ -11295,8 +10928,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Key Frames do not occur only when Force Key Frame dictates: %i - Failed", ForceKeyFrameInt);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
         }
@@ -11320,8 +10952,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Key Frames do not occur only when Force Key Frame dictates: %i - Failed", ForceKeyFrameInt);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
@@ -11329,8 +10960,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (fail == 1)
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -11343,11 +10973,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Key Frames occur only when Force Key Frame dictates: %i - Passed", ForceKeyFrameInt);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -11598,11 +11226,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Make sure starting width and height are mults of 16
         if ((StartingWidth % 16 != 0) && (StartingHeight % 16 != 0))
         {
-            printf("\nError: Starting width and height are not multiples of 16\n");
-            fprintf(stderr, "\nError: Starting width and height are not multiples of 16\n");
+            tprintf("\nError: Starting width and height are not multiples of 16\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -11611,11 +11237,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (StartingHeight % 16 != 0)
         {
-            printf("\nError: Starting height is not a multiple of 16\n");
-            fprintf(stderr, "\nError: Starting height is not a multiple of 16\n");
+            tprintf("\nError: Starting height is not a multiple of 16\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -11624,11 +11248,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (StartingWidth % 16 != 0)
         {
-            printf("\nError: Starting width is not a multiple of 16\n");
-            fprintf(stderr, "\nError: Starting width is not a multiple of 16\n");
+            tprintf("\nError: Starting width is not a multiple of 16\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -11640,8 +11262,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int Mode = atoi(argv[3]);
 
-        printf("Frame Size Test");
-        fprintf(stderr, "Frame Size Test");
+        tprintf("Frame Size Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -11651,8 +11272,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -11685,8 +11305,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             while (x < 16)
             {
-                printf("\nCroping to %i %i", StartingWidth, StartingHeight - x);
-                fprintf(stderr, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
+                tprintf("\nCroping to %i %i", StartingWidth, StartingHeight - x);
                 CropRawIVF(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
                 x++;
                 RawCropNum++;
@@ -11697,8 +11316,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             while (x < 16)
             {
-                printf("\nCroping to %i %i", StartingWidth - x, StartingHeight);
-                fprintf(stderr, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
+                tprintf("\nCroping to %i %i", StartingWidth - x, StartingHeight);
                 CropRawIVF(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
                 x++;
                 RawCropNum++;
@@ -11708,8 +11326,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             while (x < 16)
             {
-                printf("\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
-                fprintf(stderr, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
+                tprintf("\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
                 CropRawIVF(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
                 x++;
                 RawCropNum++;
@@ -11727,8 +11344,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(FileNameChar, 256, RawCrop[RawCropNum].c_str());
                 FileName(FileNameChar, FileNameChar2, 1);
 
-                printf("\nCompressing %s", FileNameChar2);
-                fprintf(stderr, "\nCompressing %s", FileNameChar2);
+                tprintf("\nCompressing %s", FileNameChar2);
 
                 if (CompressIVFtoIVF(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
                 {
@@ -11778,21 +11394,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             }
             else if (PSNRAr[RawCropNum-1] <  PSNRAr[0] + FivePercentPSNR && PSNRAr[RawCropNum-1] >  PSNRAr[0] - FivePercentPSNR)
             {
-                printf("\n PSNR %s: %.2f within 5%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
-                fprintf(stderr, "\n PSNR %s: %.2f within 5%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                tprintf("\n PSNR %s: %.2f within 5%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
             }
             else
             {
-                printf("\n PSNR %s: %.2f not within 5%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
-                fprintf(stderr, "\n PSNR %s: %.2f not within 5%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                tprintf("\n PSNR %s: %.2f not within 5%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
                 PercentFail = 1;
             }
 
             RawCropNum++;
         }
 
-        printf("\n\n");
-        fprintf(stderr, "\n\n");
+        tprintf("\n\n");
 
         RawCropNum = 1;
 
@@ -11805,13 +11418,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             if (PSNRAr[RawCropNum-1] > 25.0)
             {
-                printf("\n PSNR %s: %.2f > %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
-                fprintf(stderr, "\n PSNR %s: %.2f > %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+                tprintf("\n PSNR %s: %.2f > %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
             }
             else
             {
-                printf("\n PSNR %s: %.2f < %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
-                fprintf(stderr, "\n PSNR %s: %.2f <%.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+                tprintf("\n PSNR %s: %.2f < %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
                 MinPSNRFail = 1;
             }
 
@@ -11820,9 +11431,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
         printf("\n");
-
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         int fail = 0;
 
@@ -11832,8 +11441,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All PSNRs are within 3%% of %.2f - Passed", PSNRAr[0]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -11841,8 +11449,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all PSNRs are within 3%% of %.2f - Failed", PSNRAr[0]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
@@ -11852,8 +11459,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All PSNRs are greater than 25.0 - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -11861,15 +11467,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all PSNRs are greater than 25.0 - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -11877,8 +11481,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -12065,8 +11668,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int speed = 0;
         int BitRate = atoi(argv[3]);
 
-        printf("Good Quality vs Best Quality Test");
-        fprintf(stderr, "Good Quality vs Best Quality Test");
+        tprintf("Good Quality vs Best Quality Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -12076,8 +11678,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -12176,8 +11777,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         float GoodSize1 = IVFDataRate(GvBgOutFile1.c_str(), 1);
         float BestSize1 = IVFDataRate(GvBbOutFile1.c_str(), 1);
@@ -12235,31 +11835,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         SolveQuadradic(BestSize1, BestSize2, BestSize3, PSNRB1, PSNRB2, PSNRB3, BestA, BestB, BestC);
         float BestAreaVal = AreaUnderQuadradic(BestA, BestB, BestC, minCommon, maxCommon);
 
-        printf("\n\n"
-               "Data Points:\n"
-               "\n"
-               " Good Q\n"
-               "\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "\n"
-               " Best Q\n"
-               "\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "\n"
-               "\n"
-               , GoodSize1, PSNRG1
-               , GoodSize2, PSNRG2
-               , GoodSize3, PSNRG3
-               , BestSize1, PSNRB1
-               , BestSize2, PSNRB2
-               , BestSize3, PSNRB3
-              );
-
-        fprintf(stderr, "\n\n"
+        tprintf("\n\n"
                 "Data Points:\n"
                 "\n"
                 " Good Q\n"
@@ -12283,22 +11859,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 , BestSize3, PSNRB3
                );
 
-        printf("Good Quality Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
-        printf("Best Quality Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
-
-        fprintf(stderr, "Good Quality Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
-        fprintf(stderr, "Best Quality Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
-
-        printf("\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
-        printf("Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
-
-        fprintf(stderr, "\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
-        fprintf(stderr, "Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
+        tprintf("Good Quality Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
+        tprintf("Best Quality Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
+        tprintf("\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
+        tprintf("Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
 
         int Pass = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (GoodAreaVal == BestAreaVal)
         {
@@ -12306,8 +11874,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Best Quality area under curve: %.2f == Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (BestAreaVal > GoodAreaVal)
@@ -12316,8 +11883,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Best Quality area under curve: %.2f > Good Quality area under curve: %.2f - Passed", BestAreaVal, GoodAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             Pass = 1;
         }
 
@@ -12327,14 +11893,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Best Quality area under curve: %.2f < Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (Pass == 1)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -12343,8 +11907,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -12526,8 +12089,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int LagInFrames1Val = atoi(argv[5]);
         int LagInFrames2Val = atoi(argv[6]);
 
-        printf("Lag In Frames Test");
-        fprintf(stderr, "Lag In Frames Test");
+        tprintf("Lag In Frames Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -12537,8 +12099,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -12555,9 +12116,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (LagInFrames1Val > 25 || LagInFrames2Val > 25 || LagInFrames2Val < 0 || LagInFrames1Val < 0)
         {
-            printf("\nLag in Frames settings must be between 0 and 25.\n");
-            fprintf(stderr, "\nLag in Frames settings must be between 0 and 25.\n");
-
+            tprintf("\nLag in Frames settings must be between 0 and 25.\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -12657,8 +12216,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         FileName(LagInFrames1.c_str(), LagInFrames1FileName, 0);
         FileName(LagInFrames2.c_str(), LagInFrames2FileName, 0);
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (LagInFramesFound0 == 0)
         {
@@ -12666,8 +12224,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s properly lagged %i frames - Passed", LagInFrames0FileName, LagInFramesFound0);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -12675,8 +12232,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s improperly lagged frames %i - Failed", LagInFrames0FileName, LagInFramesFound0);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (LagInFramesFound1 == LagInFrames1Val)
@@ -12685,8 +12241,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s properly lagged %i frames - Passed", LagInFrames1FileName, LagInFramesFound1);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -12694,8 +12249,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s improperly lagged %i frames - Failed", LagInFrames1FileName, LagInFramesFound1);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (LagInFramesFound2 == LagInFrames2Val)
@@ -12704,8 +12258,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s properly lagged %i frames - Passed", LagInFrames2FileName, LagInFramesFound2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -12713,8 +12266,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s improperly lagged %i frames - Failed", LagInFrames2FileName, LagInFramesFound2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (lngRC1 == -1)
@@ -12723,8 +12275,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s identical to %s - Failed", LagInFrames0FileName, LagInFrames1FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -12733,8 +12284,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s not identical to %s - Passed", LagInFrames0FileName, LagInFrames1FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (lngRC2 == -1)
@@ -12743,8 +12293,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s identical to %s - Failed", LagInFrames1FileName, LagInFrames2FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -12753,8 +12302,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s not identical to %s - Passed", LagInFrames1FileName, LagInFrames2FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0) && LagInFrames1PSNR >= (LagInFrames0PSNR - TenPer0))
@@ -12763,8 +12311,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "PSNR for %s is within 10%% of PSNR for %s - %.2f < %.2f < %.2f - Passed", LagInFrames0FileName, LagInFrames1FileName, (LagInFrames0PSNR - TenPer0), LagInFrames1PSNR, (LagInFrames0PSNR + TenPer0));
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -12774,8 +12321,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName, LagInFrames1FileName, (LagInFrames0PSNR + TenPer0), LagInFrames1PSNR);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
             else
@@ -12784,8 +12330,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName, LagInFrames1FileName, LagInFrames1PSNR, (LagInFrames0PSNR - TenPer0));
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
         }
@@ -12796,8 +12341,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "PSNR for %s is within 10%% of PSNR for %s - %.2f < %.2f < %.2f - Passed", LagInFrames1FileName, LagInFrames2FileName, (LagInFrames1PSNR - TenPer1), LagInFrames2PSNR, (LagInFrames1PSNR + TenPer1));
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -12807,8 +12351,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName, LagInFrames2FileName, (LagInFrames1PSNR + TenPer1), LagInFrames2PSNR);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
             else
@@ -12817,16 +12360,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName, LagInFrames2FileName, LagInFrames2PSNR, (LagInFrames1PSNR - TenPer1));
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
         }
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -12835,8 +12376,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -13006,8 +12546,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int Mode = atoi(argv[3]);
 
 
-        printf("Max Quantizer Test");
-        fprintf(stderr, "Max Quantizer Test");
+        tprintf("Max Quantizer Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -13017,8 +12556,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -13051,17 +12589,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 QuantOutFile.append(num);
                 QuantOutFile.append(".ivf");
 
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
                 if (TestType != 2)
                 {
                     PSNRArr[i] = IVFPSNR(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     MaxQArr[i] = CheckMaxQ(QuantOutFile.c_str(), n);
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                 }
 
                 n = n + 8;
@@ -13092,17 +12627,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     return 2;
                 }
 
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
                 if (TestType != 2)
                 {
                     PSNRArr[i] = IVFPSNR(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     MaxQArr[i] = CheckMaxQ(QuantOutFile.c_str(), n);
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                 }
 
                 n = n + 8;
@@ -13121,15 +12653,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         i = 0;
         int MaxQDisplayValue = 3;
         int fail = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         while (i < 7)
         {
@@ -13139,8 +12669,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "MaxQ %2i %.2f > %.2f MaxQ %2i - Failed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
             else
@@ -13149,8 +12678,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "MaxQ %2i %.2f <= %.2f MaxQ %2i - Passed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
 
             i++;
@@ -13168,8 +12696,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "MaxQ value exceded for MaxQ %2i - frame %i - Failed", MaxQDisplayValue, MaxQArr[i]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
             else
@@ -13178,8 +12705,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "MaxQ value not exceded for MaxQ %2i - Passed", MaxQDisplayValue, MaxQArr[i]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
 
             MaxQDisplayValue = MaxQDisplayValue + 8;
@@ -13188,8 +12714,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -13198,8 +12723,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -13555,8 +13079,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int speed = 0;
 
 
-        printf("Mem Leak Check Test");
-        fprintf(stderr, "Mem Leak Check Test");
+        tprintf("Mem Leak Check Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -13566,8 +13089,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -13581,8 +13103,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         /////////////////Make Sure Exe File Exists///////////////
         if (!FileExistsCheck(argv[5]))
         {
-            printf("\nInput executable %s does not exist\n", argv[5]);
-            fprintf(stderr, "\nInput executable %s does not exist\n", argv[5]);
+            tprintf("\nInput executable %s does not exist\n", argv[5]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -13683,8 +13204,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int fail = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         ifstream infile4(MemLeakCheckTXT);
 
@@ -13694,11 +13214,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "MemLeakCheckOutput.txt not found - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -13720,8 +13238,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Memory Currently Allocated == 0 - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -13729,15 +13246,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Memory Currently Allocated != 0 - %s - Failed", bufferString4.c_str());
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -13745,8 +13260,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14116,8 +13630,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int speed = 0;
 
 
-        printf("Mem Leak Check 2 Test");
-        fprintf(stderr, "Mem Leak Check 2 Test");
+        tprintf("Mem Leak Check 2 Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -14127,8 +13640,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14142,8 +13654,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         /////////////////Make Sure Exe File Exists///////////////
         if (!FileExistsCheck(argv[2]))
         {
-            printf("\nInput executable %s does not exist\n", argv[2]);
-            fprintf(stderr, "\nInput executable %s does not exist\n", argv[2]);
+            tprintf("\nInput executable %s does not exist\n", argv[2]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14153,8 +13664,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         /////////////////Make Sure ivf File Exists///////////////
         if (!FileExistsCheck(argv[3]))
         {
-            printf("\nInput decode file %s does not exist\n", argv[3]);
-            fprintf(stderr, "\nInput decode file %s does not exist\n", argv[3]);
+            tprintf("\nInput decode file %s does not exist\n", argv[3]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14200,8 +13710,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int fail = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         FILE *infile4 = fopen(MemLeakCheckTXT1, "rb");
 
@@ -14213,8 +13722,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "File not found: %s - Failed", MemLeakCheckTXTFileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -14234,8 +13742,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Encode Memory Currently Allocated == 0 - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
             else
             {
@@ -14243,8 +13750,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Encode Memory Currently Allocated != 0 - %s - Failed", bufferString4.c_str());
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
         }
@@ -14259,8 +13765,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "File not found: %s - Failed", MemLeakCheckTXTFileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -14281,8 +13786,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Decode Memory Currently Allocated == 0 - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
             else
             {
@@ -14290,8 +13794,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Decode Memory Currently Allocated != 0 - %s - Failed", bufferString5.c_str());
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
         }
@@ -14302,8 +13805,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14312,8 +13814,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14495,8 +13996,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int Mode = atoi(argv[3]);
 
 
-        printf("Min Quantizer Test");
-        fprintf(stderr, "Min Quantizer Test");
+        tprintf("Min Quantizer Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -14506,8 +14006,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14568,14 +14067,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         PSNRArr[0] = IVFPSNR(input, Min10QuantOutFile, 0, 0, 1, NULL);
         PSNRArr[1] = IVFPSNR(input, Min60QuantOutFile, 0, 0, 1, NULL);
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         int Min10Q = CheckMinQ(Min10QuantOutFile, 10);
-        printf("\n\n");
-        fprintf(stderr, "\n\n");
+        tprintf("\n\n");
         int Min60Q = CheckMinQ(Min60QuantOutFile, 60);
-        printf("\n\n");
-        fprintf(stderr, "\n\n");
+        tprintf("\n\n");
 
         char Min10FileName[255] = "";
         char Min60FileName[255] = "";
@@ -14585,8 +14081,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int fail = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (Min10Q != -1)
         {
@@ -14594,8 +14089,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all %s quantizers above MinQ - Failed", Min10FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -14604,8 +14098,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All %s quantizers above MinQ - Passed", Min10FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (Min60Q != -1)
@@ -14614,8 +14107,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all %s quantizers above MinQ - Failed", Min60FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -14624,8 +14116,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All %s quantizers above MinQ - Passed", Min60FileName);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (PSNRArr[0] <= PSNRArr[1])
@@ -14634,8 +14125,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "MinQ 10 PSNR: %2.2f <= MinQ 60 PSNR: %2.2f - Failed", PSNRArr[0], PSNRArr[1]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -14644,14 +14134,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "MinQ 10 PSNR: %2.2f > MinQ 60 PSNR: %2.2f - Passed", PSNRArr[0], PSNRArr[1]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (fail == 1)
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -14660,8 +14148,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -14862,8 +14349,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
 
-        printf("MultiThreaded Test");
-        fprintf(stderr, "MultiThreaded Test");
+        tprintf("MultiThreaded Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -14873,8 +14359,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -14970,8 +14455,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         FileName(MultiThreadedOnOutFile.c_str(), Time1FileName, 0);
         FileName(MultiThreadedOffOutFile.c_str(), Time2FileName, 0);
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (Time1 < Time2)
         {
@@ -14979,11 +14463,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s time: %i < %s time2: %i - Passed", Time1FileName, Time1, Time2FileName, Time2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -14997,11 +14479,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s time: %i == %s time: %i - Indeterminate", Time1FileName, Time1, Time2FileName, Time2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nIndeterminate\n");
-            fprintf(stderr, "\nIndeterminate\n");
+            tprintf("\nIndeterminate\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -15015,11 +14495,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "%s time: %i > %s time: %i - Failed", Time1FileName, Time1, Time2FileName, Time2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -15281,8 +14759,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int speed = 0;
 
 
-        printf("New Vs Old PSNR Test");
-        fprintf(stderr, "New Vs Old PSNR Test");
+        tprintf("New Vs Old PSNR Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -15292,8 +14769,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -15307,8 +14783,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         /////////////////Make Sure Exe File Exists///////////////
         if (!FileExistsCheck(argv[5]))
         {
-            printf("\nInput executable %s does not exist\n", argv[5]);
-            fprintf(stderr, "\nInput executable %s does not exist\n", argv[5]);
+            tprintf("\nInput executable %s does not exist\n", argv[5]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -15378,7 +14853,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 fprintf(stderr, " ");
 
-                cout << "\n\n" << Program << "\n\n";
+                //cout << "\n\n" << Program << "\n\n";
 
                 RunExe(Program);
             }
@@ -15564,8 +15039,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (FileSize2(OldEncFile.c_str()) == 0)
         {
-            printf("\nError - Old File Incorrect\n");
-            fprintf(stderr, "\nError - Old File Incorrect\n");
+            tprintf("\nError - Old File Incorrect\n");
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
@@ -15590,16 +15064,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         PSNRArr[0] = IVFPSNR(input, NewEncFile.c_str(), 0, 0, 1, NULL);
         PSNRArr[1] = PSNROLD;
 
-        printf("\nNew DataRate");
-        fprintf(stderr, "\nNew DataRate\n");
+        tprintf("\nNew DataRate");
         IVFDataRate(NewEncFile.c_str(), 1);
 
-        printf("\nOld DataRate");
-        fprintf(stderr, "\nOld DataRate\n");
+        tprintf("\nOld DataRate");
         IVFDataRate(OldEncFile.c_str(), 1);
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (PSNRArr[0] > PSNRArr[1])
         {
@@ -15607,11 +15078,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "New PSNR: %.2f > Old PSNR: %.2f - Passed", PSNRArr[0], PSNRArr[1]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -15625,11 +15094,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "New PSNR: %.2f is with in 1/2%% of old: %.2f - Min Passed", PSNRArr[0], PSNRArr[1]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nMin Passed\n");
-            fprintf(stderr, "\nMin Passed\n");
+            tprintf("\n");
+            tprintf("\nMin Passed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -15642,14 +15109,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "New PSNR: %.2f < Old PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[1]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\n New PSNR: %.2f lower than Old PSNR: %.2f - Failed\n", PSNRArr[0], PSNRArr[1]);
-            fprintf(stderr, "\n New PSNR: %.2f lower than Old PSNR: %.2f - Failed\n", PSNRArr[0], PSNRArr[1]);
-
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\n");
+            tprintf("\n New PSNR: %.2f lower than Old PSNR: %.2f - Failed\n", PSNRArr[0], PSNRArr[1]);
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -15877,8 +15340,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         unsigned int Time2 = 0;
         unsigned int Time3 = 0;
 
-        printf("New Vs Old Real Time Speed Test");
-        fprintf(stderr, "New Vs Old Real Time Speed Test");
+        tprintf("New Vs Old Real Time Speed Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -15888,8 +15350,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -15903,8 +15364,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         /////////////////Make Sure Exe File Exists///////////////
         if (!FileExistsCheck(argv[4]))
         {
-            printf("\nInput executable %s does not exist\n", argv[4]);
-            fprintf(stderr, "\nInput executable %s does not exist\n", argv[4]);
+            tprintf("\nInput executable %s does not exist\n", argv[4]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -15924,10 +15384,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             Time1 = TimeReturn(outputVP8New.c_str(), 0);
             Time2 = TimeReturn(outputVP8Old2.c_str(), 0);
 
-            printf("\nTime1: %i\n", Time1);
-            printf("\nTime2: %i\n", Time2);
-            fprintf(stderr, "\nTime1: %i\n", Time1);
-            fprintf(stderr, "\nTime2: %i\n", Time2);
+            tprintf("\nTime1: %i\n", Time1);
+            tprintf("\nTime2: %i\n", Time2);
         }
         else
         {
@@ -15959,8 +15417,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RunExe(Program);
             Time2 = TimeReturn(outputVP8Old2.c_str(), 0);
 
-            printf("\n\nFile completed: Time in Microseconds: %i", Time2);
-            fprintf(stderr, "\n\nFile completed: Time in Microseconds: %i", Time2);
+            tprintf("\n\nFile completed: Time in Microseconds: %i", Time2);
         }
 
         //Create Compression only stop test short.
@@ -15973,8 +15430,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n\n\nResults:\n\n");
-        fprintf(stderr, "\n\n\nResults:\n\n");
+        tprintf("\n\n\nResults:\n\n");
 
         if (Time1 > Time2)
         {
@@ -15982,11 +15438,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Old: %i is Faster than New: %i - Failed", Time2, Time1);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -16000,11 +15454,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "New: %i is Faster than Old: %i - Passed", Time1, Time2);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -16017,11 +15469,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Files Took the same amount of time - Indeterminate");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nIndeterminate\n");
-            fprintf(stderr, "\nIndeterminate\n");
+            tprintf("\n");
+            tprintf("\nIndeterminate\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -16189,8 +15639,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Noise Sensitivity Works Test");
-        fprintf(stderr, "Noise Sensitivity Works Test");
+        tprintf("Noise Sensitivity Works Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -16200,8 +15649,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -16242,15 +15690,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     doOnce = 0;
                 }
 
-                printf("\n");
-                fprintf(stderr, "\n");
-
+                tprintf("\n");
                 PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut.c_str(), 0, 0, 1, NULL);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 File2bytes[Noise] = FileSize(NoiseSenseOut.c_str());
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
                 Noise++;
             }
@@ -16285,15 +15729,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 if (TestType != 2)
                 {
 
-                    printf("\n");
-                    fprintf(stderr, "\n");
-
+                    tprintf("\n");
                     PSNRArr[Noise] = IVFPSNR(input, NoiseSenseOut.c_str(), 0, 0, 1, NULL);
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                     File2bytes[Noise] = FileSize(NoiseSenseOut.c_str());
-                    printf("\n");
-                    fprintf(stderr, "\n");
+                    tprintf("\n");
                 }
 
                 Noise++;
@@ -16315,8 +15755,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int n = 0;
         int fail = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         while (n != 6)
         {
@@ -16326,8 +15765,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Noise %i PSNR %.2f == Noise %i PSNR %.2f - Failed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
 
             }
@@ -16337,8 +15775,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Noise %i PSNR %.2f != Noise %i PSNR %.2f - Passed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
 
             n++;
@@ -16350,8 +15787,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Noise 0 PSNR: %.2f <= Noise 6 PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[6]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -16360,14 +15796,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Noise 0 PSNR: %.2f > Noise 6 PSNR: %.2f - Passed", PSNRArr[0], PSNRArr[6]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -16376,8 +15810,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -16543,8 +15976,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("One Pass Vs Two Pass Test");
-        fprintf(stderr, "One Pass Vs Two Pass Test");
+        tprintf("One Pass Vs Two Pass Test");
 
         char *input = argv[2];
         int BitRate = atoi(argv[3]);
@@ -16559,8 +15991,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -16737,31 +16168,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //float PSRNPerc = absFloat((PSNRB1 - PSNRG1) / PSNRG1) * 100.00;
         //float BRPerc = (absFloat(BestSize1 - GoodSize1) / GoodSize1) * 100.00;
 
-        printf("\n\n"
-               "Data Points:\n"
-               "\n"
-               " Two Pass\n"
-               "\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "\n"
-               " One Pass\n"
-               "\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "\n"
-               "\n"
-               , SizeTwoPass1, PSNRTwoPass1
-               , SizeTwoPass2, PSNRTwoPass2
-               , SizeTwoPass3, PSNRTwoPass3
-               , SizeOnePass1, PSNROnePass1
-               , SizeOnePass2, PSNROnePass2
-               , SizeOnePass3, PSNROnePass3
-              );
-
-        fprintf(stderr, "\n\n"
+        tprintf("\n\n"
                 "Data Points:\n"
                 "\n"
                 " Two Pass\n"
@@ -16785,20 +16192,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 , SizeOnePass3, PSNROnePass3
                );
 
-        printf("Two Pass Curve: y = %fx^2 + %fx + %f\n", TwoPassA, TwoPassB, TwoPassC);
-        printf("One Pass Curve: y = %fx^2 + %fx + %f\n", OnePassA, OnePassB, OnePassC);
+        tprintf("Two Pass Curve: y = %fx^2 + %fx + %f\n", TwoPassA, TwoPassB, TwoPassC);
+        tprintf("One Pass Curve: y = %fx^2 + %fx + %f\n", OnePassA, OnePassB, OnePassC);
+        tprintf("\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
+        tprintf("Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
 
-        fprintf(stderr, "Good Quality Curve: y = %fx^2 + %fx + %f\n", TwoPassA, TwoPassB, TwoPassC);
-        fprintf(stderr, "Best Quality Curve: y = %fx^2 + %fx + %f\n", OnePassA, OnePassB, OnePassC);
-
-        printf("\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
-        printf("Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
-
-        fprintf(stderr, "\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
-        fprintf(stderr, "Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
-
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (TwoPassAreaVal == OnePassAreaVal)
         {
@@ -16806,8 +16205,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Two Pass area under curve: %.2f == One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (OnePassAreaVal < TwoPassAreaVal)
@@ -16816,8 +16214,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Two Pass area under curve: %.2f > One Pass area under curve: %.2f - Passed", TwoPassAreaVal, OnePassAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             Pass = 1;
         }
 
@@ -16827,14 +16224,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Two Pass  area under curve: %.2f < One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (Pass == 1)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -16843,8 +16238,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -17022,8 +16416,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int PlayAlternate1Val = 0;
         int PlayAlternate2Val = 1;
 
-        printf("Play Alternate Test");
-        fprintf(stderr, "Play Alternate Test");
+        tprintf("Play Alternate Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -17033,8 +16426,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -17108,8 +16500,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char PlayAlternateOffFilename[255];
         FileName(PlayAlternate1.c_str(), PlayAlternateOffFilename, 0);
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (PlayAlternateOnAltRefCount > 0)
         {
@@ -17117,8 +16508,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Alternate reference frames exist for %s - Passed", PlayAlternateOnFilename);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -17126,8 +16516,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Alternate reference frames do not exist for %s - Failed", PlayAlternateOnFilename);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
@@ -17137,8 +16526,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Alternate reference frames exist for %s - Failed", PlayAlternateOffFilename);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
         else
@@ -17147,8 +16535,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Alternate reference frames do not exist for %s - Passed", PlayAlternateOffFilename);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (VisibleFrameONCount == VisibleFrameOFFCount)
@@ -17157,8 +16544,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Visible Frames for %s = %i == Visible Frames for %s = %i - Passed", PlayAlternateOnFilename, VisibleFrameONCount, PlayAlternateOffFilename, VisibleFrameOFFCount);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
         else
         {
@@ -17166,8 +16552,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Visible Frames for %s = %i != Visible Frames for %s = %i - Failed", PlayAlternateOnFilename, VisibleFrameONCount, PlayAlternateOffFilename, VisibleFrameOFFCount);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
@@ -17177,8 +16562,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Files are not identical - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (lngRC == -1)
@@ -17187,15 +16571,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Files are identical - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -17204,8 +16586,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -17368,11 +16749,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Post Processor Works Test");
-        fprintf(stderr, "Post Processor Works Test");
-
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("Post Processor Works Test");
+        tprintf("\n");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -17382,8 +16760,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -17438,22 +16815,19 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int countme = 0;
         double ssim = 0;
 
-        printf("\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        fprintf(stderr, "\nCaculating PSNR: ONYXD_NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+        tprintf("\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
         countme++;
 
         flags++;
-        printf("\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        fprintf(stderr, "\nCaculating PSNR: ONYXD_DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+        tprintf("\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
         countme++;
         flags++;
 
         while (deblock_level != 16)
         {
-            printf("\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-            fprintf(stderr, "\nCaculating PSNR: ONYXD_DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+            tprintf("\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
             countme++;
             deblock_level++;
@@ -17465,8 +16839,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         while (noise_level != 8)
         {
-            printf("\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-            fprintf(stderr, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+            tprintf("\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
             PSNRArr[countme] = PostProcIVFPSNR(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
             countme++;
 
@@ -17479,8 +16852,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int TestFail = 0;
         int TenPercent = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (PSNRArr[0] != PSNRArr[1])
         {
@@ -17488,11 +16860,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DEBLOCK PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", PSNRArr[1], PSNRArr[0]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
-
-            //printf("DEBLOCK PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", PSNRArr[1], PSNRArr[0]);
-            //fprintf(stderr, "ONYXD_DEBLOCK PSNR: %f != NOFILTERING PSNR: %4.2f\n", PSNRArr[1], PSNRArr[0]);
+            tprintf("\n");
         }
         else
         {
@@ -17500,16 +16868,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DEBLOCK PSNR: %4.2f == NOFILTERING PSNR: %4.2f - Failed", PSNRArr[1], PSNRArr[0]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            //printf("DEBLOCK PSNR: %4.2f == NOFILTERING PSNR: %4.2f - Fail\n", PSNRArr[1], PSNRArr[0]);
-            //fprintf(stderr, "DEBLOCK PSNR: %4.2f  == NOFILTERING PSNR: %4.2f - Fail\n", PSNRArr[1], PSNRArr[0]);
             TestFail = 1;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         x = 2;
 
@@ -17521,12 +16885,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "DeblockLevel %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", 2, x - 2, PSNRArr[x], PSNRArr[0]);;
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("DEMACROBLOCK DeblockLevel %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "DEMACROBLOCK DeblockLevel %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-
+                tprintf("\n");
             }
             else
             {
@@ -17534,19 +16893,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "DeblockLevel %*i PSNR: %4.2f += NOFILTERING PSNR: %4.2f - Failed", 2, x - 2, PSNRArr[x], PSNRArr[0]);;
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
-                //printf("DEMACROBLOCK DeblockLevel %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "DEMACROBLOCK DeblockLevel %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
                 TestFail = 1;
             }
 
             x++;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         while (x < 26)
         {
@@ -17556,12 +16911,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("ADDNOISE noise_level %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-
+                tprintf("\n");
             }
             else
             {
@@ -17569,11 +16919,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f - Failed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
-                //printf("ADDNOISE noise_level %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 TestFail = 1;
             }
 
@@ -17582,8 +16929,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////////////////////
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         float PSNRPercent = absFloat(PSNRArr[1] - PSNRArr[0]) / PSNRArr[0];
 
@@ -17593,12 +16939,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DEBLOCK PSNR: %4.2f within 10%% of %4.2f - Passed", PSNRArr[1], PSNRArr[0]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
-
-            //printf("DEBLOCK PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", PSNRArr[1], PSNRArr[0]);
-            //fprintf(stderr, "DEBLOCK PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", PSNRArr[1], PSNRArr[0]);
-
+            tprintf("\n");
         }
         else
         {
@@ -17606,16 +16947,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DEBLOCK PSNR: %4.2f not within 10%% of %4.2f - Failed", PSNRArr[1], PSNRArr[0]);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
 
-            //printf("DEBLOCK PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f - Fail\n", PSNRArr[1], PSNRArr[0]);
-            //fprintf(stderr, "DEBLOCK PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f - Fail\n", PSNRArr[1], PSNRArr[0]);
             TenPercent = 1;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         x = 2;
 
@@ -17629,11 +16966,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "DeblockLevel %*i PSNR: %4.2f within 10%% of %4.2f - Passed", 2, x - 2, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("DEMACROBLOCK DeblockLevel %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "DEMACROBLOCK DeblockLevel %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
+                tprintf("\n");
             }
             else
             {
@@ -17641,19 +16974,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "DeblockLvl %*i PSNR: %4.2f not within 10%% of %4.2f - Failed", 2, x - 2, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
-                //printf("DEMACROBLOCK DeblockLvl %*i PSNR: %4.2f not within 10%% of NOFILTER PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "DEMACROBLOCK DeblockLvl %*i PSNR: %4.2f not within 10%% of NOFILTER PSNR: %4.2f\n", 2, x - 2, PSNRArr[x], PSNRArr[0]);
                 TenPercent = 1;
             }
 
             x++;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         while (x < 26)
         {
@@ -17665,12 +16994,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f within 10%% of %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("ADDNOISE noise_level %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-
+                tprintf("\n");
             }
             else
             {
@@ -17678,11 +17002,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "noise_level %*i PSNR: %4.2f not within 10%% of %4.2f - Indeterminate", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
-                //printf("ADDNOISE noise_level %*i PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-                //fprintf(stderr, "ADDNOISE noise_level %*i PSNR: %4.2f not within 10%% of NOFILTERING PSNR: %4.2f\n", 2, x - 18, PSNRArr[x], PSNRArr[0]);
                 TenPercent = 1;
             }
 
@@ -17693,11 +17014,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (TenPercent == 0)
             {
-                //printf("\n All Post Processing Values Return Different PSNRs and are within 10%% of original PSNR - Passed\n");
-                //fprintf(stderr, "\n All Post Processing Values Return Different PSNRs and are within 10%% of original PSNR - Passed\n");
-
-                printf("\nPassed\n");
-                fprintf(stderr, "\nPassed\n");
+                tprintf("\nPassed\n");
 
                 fclose(fp);
                 string File1Str = File1;
@@ -17706,24 +17023,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             }
             else
             {
-                //printf("\n All Post Processing Values Return Different PSNRs but are not all within 10%% of original PSNR - Passed\n");
-                //fprintf(stderr, "\n All Post Processing Values Return Different PSNRs but are not all within 10%% of original PSNR - Passed\n");
-
-                printf("\nMin Passed\n");
-                fprintf(stderr, "\nMin Passed\n");
+                tprintf("\nMin Passed\n");
 
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
                 return 8;
             }
-
-
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -17894,8 +17204,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int Mode = atoi(argv[3]);
 
-        printf("Recon Buffer Test");
-        fprintf(stderr, "Recon Buffer Test");
+        tprintf("Recon Buffer Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -17905,8 +17214,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -17953,8 +17261,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         int fail = 0;
 
@@ -17981,8 +17288,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Frame: %i Buffer: %c - Preview not identical to Decoded - Failed", Frame, BufferLetter);
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 1;
             }
         }
@@ -17995,14 +17301,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All preview frames are identical to decoded frames - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -18010,8 +17314,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);
@@ -18172,8 +17475,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Resample Down WaterMark Test");
-        fprintf(stderr, "Resample Down WaterMark Test");
+        tprintf("Resample Down WaterMark Test");
 
         char *input = argv[2];
         int Mode = atoi(argv[3]);
@@ -18189,8 +17491,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -18302,8 +17603,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         cout << "RDWMCheck90int: " << RDWMCheck90int << "\n";*/
 
         int fail = 0; //1 = failed // 2 = indt // 3 = track resize for 10 // track resize for 90
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (DispResized10int > 0 && DispResized90int > 0)
         {
@@ -18311,8 +17611,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Both DWMS 10 and 90 returned resized frames - Indeterminate");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (DispResized10int == 0 && DispResized90int > 0)
@@ -18321,8 +17620,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DWMS 10 returned no resized frames; DWMS 90 returned resized frames - Indeterminate");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 4;
             //indt
         }
@@ -18333,8 +17631,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DWMS 90 returned no resized frames; DWMS 10 returned resized frames - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
             //fail
         }
@@ -18345,8 +17642,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Both DWMS 10 and 90 returned  no resized frames - Indeterminate");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 2;
         }
 
@@ -18356,8 +17652,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DWMS 10 resizes first frame at correct buffer location - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             //fail
         }
 
@@ -18367,8 +17662,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DWMS 10 does not resize first frame at correct buffer location - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
             //fail
         }
@@ -18379,8 +17673,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DWMS 10 buffer threshold never reached - Indeterminate");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 2;
             //fail
         }
@@ -18393,8 +17686,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "DWMS 90 resizes first frame at correct buffer location - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 fail = 3;
                 //fail
             }
@@ -18404,8 +17696,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "DWMS 90 resizes first frame at correct buffer location - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 //fail
             }
         }
@@ -18416,8 +17707,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DWMS 90 does not resize first frame at correct buffer location - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 2;
             //fail
         }
@@ -18428,44 +17718,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "DWMS 90 buffer threshold never reached - Indeterminate");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 2;
             //fail
         }
 
-        /*if (PSNRArr[0] < PSNRArr[1])
-        {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Down Water Mark Sample 10 PSNR: %.2f > 90 PSNR: %.2f - Passed", PSNRArr[1], PSNRArr[0]);
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
-        }
-        if (PSNRArr[0] == PSNRArr[1])
-        {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Resample-Down-Watermark has no effect - Indeterminate");
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
-        }
-        if(PSNRArr[0] > PSNRArr[1])
-        {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Down Water Mark Sample 90 PSNR: %f > 10 PSNR : %f \n", PSNRArr[0], PSNRArr[1]);
-        string OutputChar1str = OutputChar1;
-        FormatedPrint(OutputChar1str, 5);
-        printf("\n");
-        fprintf(stderr, "\n");
-        fail = 1;
-        }*/
         if (fail == 0)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -18475,8 +17735,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (fail == 3)
         {
-            printf("\nMin Passed\n");
-            fprintf(stderr, "\nMin Passed\n");
+            tprintf("\nMin Passed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -18486,8 +17745,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (fail == 2)
         {
-            printf("\nIndeterminate\n");
-            fprintf(stderr, "\nIndeterminate\n");
+            tprintf("\nIndeterminate\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -18496,8 +17754,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -18662,8 +17919,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Speed Test");
-        fprintf(stderr, "Speed Test");
+        tprintf("Speed Test");
 
         if (Mode != 0 && Mode != 1)
         {
@@ -18687,8 +17943,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -18705,8 +17960,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         opt.Mode = MODE_GOODQUALITY;
         opt.lag_in_frames = LagInFramesInput;
 
-        printf("\nLagInFrames: %i\n", LagInFramesInput);
-        fprintf(stderr, "\nLagInFrames: %i\n", LagInFramesInput);
+        tprintf("\nLagInFrames: %i\n", LagInFramesInput);
 
         unsigned int GoodTotalms[7];
         unsigned int RealTotalms[17];
@@ -18923,13 +18177,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             {
                 if (GoodTotalms[counter] < GoodTotalms[counter-1])
                 {
-                    printf("      CpuUsed %*i Encode Time: %i < CpuUsed %*i Encode Time: %i\n", 2, counter, GoodTotalms[counter], 2, counter - 1, GoodTotalms[counter-1]);
-                    fprintf(stderr, "      CpuUsed %*i Encode Time: %i < CpuUsed %*i Encode Time: %i\n", 2, counter, GoodTotalms[counter], 2, counter - 1, GoodTotalms[counter-1]);
+                    tprintf("      CpuUsed %*i Encode Time: %i < CpuUsed %*i Encode Time: %i\n", 2, counter, GoodTotalms[counter], 2, counter - 1, GoodTotalms[counter-1]);
                 }
                 else
                 {
-                    printf("Fail: CpuUsed %*i Encode Time: %i > CpuUsed %*i Encode Time: %i\n", 2, counter, GoodTotalms[counter], 2, counter - 1, GoodTotalms[counter-1]);
-                    fprintf(stderr, "Fail: CpuUsed %*i Encode Time: %i > CpuUsed %*i Encode Time: %i\n", 2, counter, GoodTotalms[counter], 2, counter - 1, GoodTotalms[counter-1]);
+                    tprintf("Fail: CpuUsed %*i Encode Time: %i > CpuUsed %*i Encode Time: %i\n", 2, counter, GoodTotalms[counter], 2, counter - 1, GoodTotalms[counter-1]);
                     Fail = 1;
                 }
 
@@ -18938,13 +18190,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (PSNRPercent < 0.1)
                 {
-                    printf("      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
-                    fprintf(stderr, "      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
+                    tprintf("      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
                 }
                 else
                 {
-                    printf("Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
-                    fprintf(stderr, "Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
+                    tprintf("Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
                     Fail2 = 1;
                 }
 
@@ -18960,13 +18210,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             {
                 if (RealTotalms[counter] < RealTotalms[counter-1])
                 {
-                    printf("      CpuUsed -%*i Encode Time: %i < CpuUsed -%*i Encode Time: %i\n", 2, counter + 1, RealTotalms[counter], 2, counter, RealTotalms[counter-1]);
-                    fprintf(stderr, "      CpuUsed -%*i Encode Time: %i < CpuUsed -%*i Encode Time: %i\n", 2, counter + 1, RealTotalms[counter], 2, counter, RealTotalms[counter-1]);
+                    tprintf("      CpuUsed -%*i Encode Time: %i < CpuUsed -%*i Encode Time: %i\n", 2, counter + 1, RealTotalms[counter], 2, counter, RealTotalms[counter-1]);
                 }
                 else
                 {
-                    printf("Fail: CpuUsed -%*i Encode Time: %i > CpuUsed -%*i Encode Time: %i\n", 2, counter + 1, RealTotalms[counter], 2, counter, RealTotalms[counter-1]);
-                    fprintf(stderr, "Fail: CpuUsed -%*i Encode Time: %i > CpuUsed -%*i Encode Time: %i\n", 2, counter + 1, RealTotalms[counter], 2, counter, RealTotalms[counter-1]);
+                    tprintf("Fail: CpuUsed -%*i Encode Time: %i > CpuUsed -%*i Encode Time: %i\n", 2, counter + 1, RealTotalms[counter], 2, counter, RealTotalms[counter-1]);
                     Fail++;
 
                     float TimePercent = (RealTotalms[counter] - RealTotalms[counter-1]);
@@ -18990,21 +18238,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (PSNRPercent < 0.1)
                 {
-                    printf("      CpuUsed -%*i PSNR: %4.2f within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
-                    fprintf(stderr, "      CpuUsed -%*i PSNR: %4.2f within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
+                    tprintf("      CpuUsed -%*i PSNR: %4.2f within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
                 }
                 else
                 {
-                    printf("Fail: CpuUsed -%*i PSNR: %4.2f not within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
-                    fprintf(stderr, "Fail: CpuUsed -%*i PSNR: %4.2f not within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
+                    tprintf("Fail: CpuUsed -%*i PSNR: %4.2f not within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
                     Fail2++;
                 }
 
                 counter++;
             }
 
-            printf("\n\n");
-            fprintf(stderr, "\n\n");
+            tprintf("\n\n");
 
             counter = 1;
 
@@ -19012,14 +18257,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             {
                 if (RealTotalmsPos[counter] < RealTotalmsPos[counter-1])
                 {
-                    printf("      CpuUsed %*i Encode Time: %i < CpuUsed %*i Encode Time: %i\n", 2, counter, RealTotalmsPos[counter], 2, counter - 1, RealTotalmsPos[counter-1]);
-                    fprintf(stderr, "      CpuUsed %*i Encode Time: %i < CpuUsed %*i Encode Time: %i\n", 2, counter, RealTotalmsPos[counter], 2, counter - 1, RealTotalmsPos[counter-1]);
+                    tprintf("      CpuUsed %*i Encode Time: %i < CpuUsed %*i Encode Time: %i\n", 2, counter, RealTotalmsPos[counter], 2, counter - 1, RealTotalmsPos[counter-1]);
                 }
                 else
                 {
 
-                    printf("Fail: CpuUsed %*i Encode Time: %i > CpuUsed %*i Encode Time: %i\n", 2, counter, RealTotalmsPos[counter], 2, counter - 1, RealTotalmsPos[counter-1]);
-                    fprintf(stderr, "Fail: CpuUsed %*i Encode Time: %i > CpuUsed %*i Encode Time: %i\n", 2, counter, RealTotalmsPos[counter], 2, counter - 1, RealTotalmsPos[counter-1]);
+                    tprintf("Fail: CpuUsed %*i Encode Time: %i > CpuUsed %*i Encode Time: %i\n", 2, counter, RealTotalmsPos[counter], 2, counter - 1, RealTotalmsPos[counter-1]);
                     Fail++;
 
                     float TimePercent = (RealTotalmsPos[counter] - RealTotalmsPos[counter-1]);
@@ -19043,13 +18286,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (PSNRPercent < 0.1)
                 {
-                    printf("      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
-                    fprintf(stderr, "      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
+                    tprintf("      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
                 }
                 else
                 {
-                    printf("Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
-                    fprintf(stderr, "Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
+                    tprintf("Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
                     Fail2++;
                 }
 
@@ -19060,8 +18301,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (Mode == 0)
         {
-            printf("\n\nResults:\n\n");
-            fprintf(stderr, "\n\nResults:\n\n");
+            tprintf("\n\nResults:\n\n");
 
             if (Fail == 0)
             {
@@ -19069,8 +18309,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "All encode times decrease as CpuUsed increases - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
 
                 //printf("All encode times decrease as CpuUsed increases - Passed");
             }
@@ -19081,8 +18320,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Enough encode times decrease as CpuUsed increases - Min Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 pass = 2;
             }
 
@@ -19092,8 +18330,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Not enough encode times decrease as CpuUsed increases - Failed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 pass = 0;
             }
 
@@ -19103,8 +18340,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "All PSNRs are within 10%% - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
             }
 
             if (Fail2 < 2 && Fail2 != 0)
@@ -19113,8 +18349,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Enough PSNRs are within 10%% - Min Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 pass = 2;
             }
 
@@ -19124,8 +18359,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Not enough PSNRs are within 10%% - Failed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 pass = 0;
             }
 
@@ -19135,13 +18369,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Not all Encode speeds are within 10%% - Failed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
+                tprintf("\n");
                 pass = 0;
-
-                //printf("\nFail - Not all Encode speeds are within 10%%\n");
-                //fprintf(stderr, "\nFail - Not all Encode speeds are within 10%%\n");
-                //pass = 0;
             }
         }
 
@@ -19149,8 +18378,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (Mode == 1)
         {
-            printf("\n\nResults:\n\n");
-            fprintf(stderr, "\n\nResults:\n\n");
+            tprintf("\n\nResults:\n\n");
 
             if (Fail == 1)
             {
@@ -19158,10 +18386,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Not all encode times decrease as CpuUsed increases - Failed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("Not all encode times decrease as CpuUsed increases - Failed");
+                tprintf("\n");
                 pass = 0;
             }
             else
@@ -19170,10 +18395,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "All encode times decrease as CpuUsed increases - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("All encode times decrease as CpuUsed increases - Passed");
+                tprintf("\n");
             }
 
             if (Fail2 == 0)
@@ -19182,10 +18404,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "All PSNR values are within 10%% of eachother - Passed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("All PSNR values are within 10% of eachother - Passed");
+                tprintf("\n");
             }
             else
             {
@@ -19193,18 +18412,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 snprintf(OutputChar1, 255, "Not all PSNR values are within 10%% of eachother - Failed");
                 string OutputChar1str = OutputChar1;
                 FormatedPrint(OutputChar1str, 5);
-                printf("\n");
-                fprintf(stderr, "\n");
-
-                //printf("Not all PSNR values are within 10% of eachother - Failed");
+                tprintf("\n");
                 pass = 0;
             }
         }
 
         if (pass == 0)
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -19214,8 +18429,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (pass == 1)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -19224,8 +18438,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nMin Passed\n");
-            fprintf(stderr, "\nMin Passed\n");
+            tprintf("\nMin Passed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -19949,8 +19162,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             PrintHeader3(argc, argv, WorkingDirString);
         }
 
-        printf("Test Vector Check Test");
-        fprintf(stderr, "Test Vector Check Test");
+        tprintf("Test Vector Check Test");
 
         if (TestType == 3)
         {
@@ -19962,8 +19174,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             while (CurTestVector < LastTestVector)
             {
-                printf("\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
-                fprintf(stderr, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
+                tprintf("\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
                 if (DecompressIVFtoRaw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str()) == -1)
                 {
@@ -19992,9 +19203,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         while (CurTestVector < LastTestVector)
         {
-            printf("\n\nComputing MD5 for TestVector %i", CurTestVector);
-            fprintf(stderr, "\n\nComputing MD5 for TestVector %i\n", CurTestVector);
-
+            tprintf("\n\nComputing MD5 for TestVector %i", CurTestVector);
             DecComputeMD5(TestVector[CurTestVector].c_str(), TestVector_Text[CurTestVector].c_str());
             CurTestVector++;
         }
@@ -20036,18 +19245,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             infile.getline(buffer, 1024);
             infile.close();
 
-            printf("\n\n");
-            fprintf(stderr, "\n\n");
+            tprintf("\n\n");
 
             if (MD5Key[x].compare(buffer) == 0)
             {
-                printf(" VP8 Test Vector %i: %s \n"
-                       " Observed: %s \n"
-                       " Expected: %s \n"
-                       " -Pass \n\n"
-                       , x + 1, TestVectFileName, buffer, MD5Key[x].c_str());
-
-                fprintf(stderr, " VP8 Test Vector %i: %s \n"
+                tprintf(" VP8 Test Vector %i: %s \n"
                         " Observed: %s \n"
                         " Expected: %s \n"
                         " -Pass \n\n"
@@ -20055,13 +19257,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             }
             else
             {
-                printf(" VP8 Test Vector %i: %s \n"
-                       " Observed: %s \n"
-                       " Expected: %s \n"
-                       " -Fail \n\n"
-                       , x + 1, TestVectFileName, buffer, MD5Key[x].c_str());
-
-                fprintf(stderr, " VP8 Test Vector %i: %s \n"
+                tprintf(" VP8 Test Vector %i: %s \n"
                         " Observed: %s \n"
                         " Expected: %s \n"
                         " -Fail \n\n"
@@ -20075,8 +19271,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             x++;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (Fail == 0)
         {
@@ -20084,11 +19279,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All decoded test vector MD5 checksum's match expected checksum's - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -20147,11 +19340,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, FailStr.c_str());
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -20335,8 +19526,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int speed = 0;
         int BitRate = atoi(argv[3]);
 
-        printf("Two Pass Vs Two Pass Best Test");
-        fprintf(stderr, "TwoPassVsTwoPassBest Test");
+        tprintf("Two Pass Vs Two Pass Best Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -20346,8 +19536,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -20502,47 +19691,20 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         SolveQuadradic(GoodSize1, GoodSize2, GoodSize3, PSNRG1, PSNRG2, PSNRG3, GoodA, GoodB, GoodC);
         float GoodAreaVal = AreaUnderQuadradic(GoodA, GoodB, GoodC, minCommon, maxCommon);
 
-        //cout << "\n\nGoodAreaVal: " << GoodAreaVal << "\n\n";
-
         SolveQuadradic(BestSize1, BestSize2, BestSize3, PSNRB1, PSNRB2, PSNRB3, BestA, BestB, BestC);
         float BestAreaVal = AreaUnderQuadradic(BestA, BestB, BestC, minCommon, maxCommon);
 
-        //float PSRNPerc = absFloat((PSNRB - PSNRG) / PSNRG) * 100.00;
-        // float BRPerc = absFloat((GoodSize - BestSize) / BestSize) * 100.00;
-        printf("\n\n"
-               "Data Points:\n"
-               "\n"
-               " Good Q\n"
-               "\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "\n"
-               " Best Q\n"
-               "\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "(%.2f,%2.2f)\n"
-               "\n"
-               "\n"
-               , GoodSize1, PSNRG1
-               , GoodSize2, PSNRG2
-               , GoodSize3, PSNRG3
-               , BestSize1, PSNRB1
-               , BestSize2, PSNRB2
-               , BestSize3, PSNRB3
-              );
 
-        fprintf(stderr, "\n\n"
+        tprintf("\n\n"
                 "Data Points:\n"
                 "\n"
-                " Two Pass\n"
+                " Good Q\n"
                 "\n"
                 "(%.2f,%2.2f)\n"
                 "(%.2f,%2.2f)\n"
                 "(%.2f,%2.2f)\n"
                 "\n"
-                " Two Pass Best\n"
+                " Best Q\n"
                 "\n"
                 "(%.2f,%2.2f)\n"
                 "(%.2f,%2.2f)\n"
@@ -20557,22 +19719,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 , BestSize3, PSNRB3
                );
 
-        printf("Two Pass Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
-        printf("Two Pass Best Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
-
-        fprintf(stderr, "Two Pass Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
-        fprintf(stderr, "Two Pass Best Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
-
-        printf("\nTwo Pass area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
-        printf("Two Pass Best area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
-
-        fprintf(stderr, "\nTwo Pass area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
-        fprintf(stderr, "Two Pass Best area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
+        tprintf("Two Pass Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
+        tprintf("Two Pass Best Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
+        tprintf("\nTwo Pass area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
+        tprintf("Two Pass Best area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
 
         int Pass = 0;
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (GoodAreaVal == BestAreaVal)
         {
@@ -20580,8 +19734,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Two Pass Best area under curve: %.2f == Two Pass area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (BestAreaVal > GoodAreaVal)
@@ -20590,8 +19743,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Two Pass Best area under curve: %.2f > Two Pass area under curve: %.2f - Passed", BestAreaVal, GoodAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             Pass = 1;
         }
 
@@ -20601,14 +19753,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Two Pass Best area under curve: %.2f < Two Pass area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (Pass == 1)
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -20617,8 +19767,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -20793,8 +19942,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int Mode = atoi(argv[3]);
 
-        printf("Undershoot Test");
-        fprintf(stderr, "Undershoot Test");
+        tprintf("Undershoot Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -20804,8 +19952,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -20860,20 +20007,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 10;
         }
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         long File1bytes = FileSize(UnderShoot10.c_str());
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
         long File2bytes = FileSize(UnderShoot100.c_str());
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (File1bytes < File2bytes)
         {
@@ -20881,14 +20023,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "File size 1:%i < File size 2:%i - Passed", File1bytes , File2bytes);;
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            //printf("\n File size 1:%i < File size 2:%i : Passed \n", File1bytes , File2bytes);
-            //fprintf(stderr, "\n File size 1:%i < File size 2:%i : Passed \n", File1bytes , File2bytes);
+            tprintf("\n");
+            tprintf("\nPassed\n");
 
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -20902,14 +20040,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "No effect try different file - Indeterminate");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            //printf("No effect try different file \n");
-            //fprintf(stderr, "No effect try different file \n");
-
-            printf("\nIndeterminate\n");
-            fprintf(stderr, "\nIndeterminate\n");
+            tprintf("\n");
+            tprintf("\nIndeterminate\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -20922,14 +20055,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "File size 1:%i > File size 2:%i - Failed", File1bytes , File2bytes);
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
-
-            //printf("\n File size 1:%i > File size 2:%i : Failed\n", File1bytes , File2bytes);
-            //fprintf(stderr, "\n File size 1:%i > File size 2:%i : Failed \n", File1bytes , File2bytes);
+            tprintf("\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -21139,8 +20267,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         char *input2 = argv[5];
 
-        printf("Version Test");
-        fprintf(stderr, "Version Test");
+        tprintf("Version Test");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -21150,8 +20277,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         {
             if (!FileExistsCheck(argv[argc-1]))
             {
-                printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-                fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+                tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
                 fclose(fp);
                 string File1Str = File1;
                 RecordTestComplete(MainDirString, File1Str, TestType);
@@ -21289,8 +20415,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         PSNRArr[2] = IVFPSNR(input, Version2.c_str(), 0, 0, 1, NULL);
         PSNRArr[3] = IVFPSNR(input, Version3.c_str(), 0, 0, 1, NULL);
 
-        printf("\n");
-        fprintf(stderr, "\n");
+        tprintf("\n");
 
         int PSNRFail = 0;
         int TIMEFail = 0;
@@ -21309,18 +20434,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 {
                     if (DecTime[i] < DecTime[t])
                     {
-                        printf("\nFailed Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
-                               "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                        fprintf(stderr, "\nFailed Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
+                        tprintf("\nFailed Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
                                 "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
                         TIMEFail++;
                         PSNRFail++;
                     }
                     else
                     {
-                        printf("\n       Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
-                               "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                        fprintf(stderr, "\n       Version %i Decode Time: %d <= Version %d Decode Time: %i\n"
+                        tprintf("\n       Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
                                 "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
                         PSNRFail++;
                     }
@@ -21329,17 +20450,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 {
                     if (DecTime[i] < DecTime[t])
                     {
-                        printf("\nFailed Version %i Decode Time: %d <= Version %i Decode Time: %d\n"
-                               "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                        fprintf(stderr, "\nFailed Version%i Decode Time: %d <= Version%d Decode Time: %i\n"
+                        tprintf("\nFailed Version %i Decode Time: %d <= Version %i Decode Time: %d\n"
                                 "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
                         TIMEFail++;
                     }
                     else
                     {
-                        printf("\n       Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
-                               "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
-                        fprintf(stderr, "\n       Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
+                        tprintf("\n       Version %i Decode Time: %d >= Version %i Decode Time: %d\n"
                                 "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, DecTime[i], t, DecTime[t], i, PSNRArr[i], t, PSNRArr[t]);
                     }
                 }
@@ -21354,8 +20471,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //Fail2 tracks Time Fails
 
         int fail = 0;
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
 
         if (PSNRFail == 0)// && TIMEFail == 0)
         {
@@ -21363,8 +20479,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All PSNRs decrease as version numbers increase - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (PSNRFail < 2 && PSNRFail != 0)// && TIMEFail == 0)
@@ -21373,8 +20488,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All but one PSNR Decreases as version numbers increase - Min Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 2;
         }
 
@@ -21384,8 +20498,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all PSNRs decrease as version numbers increase - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
@@ -21395,8 +20508,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All decode times decrease as version numbers increase - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (TIMEFail < 2 && TIMEFail != 0)
@@ -21405,8 +20517,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All but one decode times decrease as version numbers increase - Min Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 2;
         }
 
@@ -21416,15 +20527,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all decode times increase as version numbers increase - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
         if (fail == 2)
         {
-            printf("\nMin Passed\n");
-            fprintf(stderr, "\nMin Passed\n");
+            tprintf("\nMin Passed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -21434,8 +20543,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (fail == 1)
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -21444,8 +20552,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -21682,8 +20789,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int Mode = atoi(argv[3]);
         int BitRate = atoi(argv[4]);
 
-        printf("Win Lin Mac Match");
-        fprintf(stderr, "Win Lin Mac Match");
+        tprintf("Win Lin Mac Match");
 
         VP8_CONFIG opt;
         VP8DefaultParms(opt);
@@ -21734,18 +20840,15 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if (TestMode == 0)
         {
-            printf("\n\nResults:\n\n");
-            fprintf(stderr, "\n\nResults:\n\n");
+            tprintf("\n\nResults:\n\n");
 
             char OutputChar1[255];
             snprintf(OutputChar1, 255, "Test files created.");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
 
-            printf("\nIndeterminate\n");
-            fprintf(stderr, "\nIndeterminate\n");
+            tprintf("\n");
+            tprintf("\nIndeterminate\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -21756,194 +20859,163 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int ENCFAIL = 0;
         int DECFAIL = 0;
 
-        printf("\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
-        fprintf(stderr, "\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
+        tprintf("\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
         int WinEncVsLinEnc = CompIVF(WinEnc.c_str(), LinEnc.c_str());
 
         if (WinEncVsLinEnc == -1)
         {
-            printf("\n\nFiles are Identical\n");
-            fprintf(stderr, "\n\nFiles are Identical\n");
+            tprintf("\n\nFiles are Identical\n");
         }
 
         if (WinEncVsLinEnc >= 0)
         {
-            printf("\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
-            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
+            tprintf("\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
             ENCFAIL++;
         }
 
         if (WinEncVsLinEnc == -2)
         {
-            printf("\n\nFail: File 2 ends before File 1.\n");
-            fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+            tprintf("\n\nFail: File 2 ends before File 1.\n");
             ENCFAIL++;
         }
 
         if (WinEncVsLinEnc == -3)
         {
-            printf("\n\nFail: File 1 ends before File 2.\n");
-            fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+            tprintf("\n\nFail: File 1 ends before File 2.\n");
             ENCFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
-        fprintf(stderr, "\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
+        tprintf("\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
         int LinEncVsMacEnc = CompIVF(LinEnc.c_str(), MacEnc.c_str());
 
         if (LinEncVsMacEnc == -1)
         {
-            printf("\n\nFiles are Identical\n");
-            fprintf(stderr, "\n\nFiles are Identical\n");
+            tprintf("\n\nFiles are Identical\n");
         }
 
         if (LinEncVsMacEnc >= 0)
         {
-            printf("\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
-            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
+            tprintf("\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
             ENCFAIL++;
         }
 
         if (LinEncVsMacEnc == -2)
         {
-            printf("\n\nFail: File 2 ends before File 1.\n");
-            fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+            tprintf("\n\nFail: File 2 ends before File 1.\n");
             ENCFAIL++;
         }
 
         if (LinEncVsMacEnc == -3)
         {
-            printf("\n\nFail: File 1 ends before File 2.\n");
-            fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+            tprintf("\n\nFail: File 1 ends before File 2.\n");
             ENCFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
-        fprintf(stderr, "\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
+        tprintf("\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
         int WinEncVsMacEnc = CompIVF(WinEnc.c_str(), MacEnc.c_str());
 
         if (WinEncVsMacEnc == -1)
         {
-            printf("\n\nFiles are Identical\n");
-            fprintf(stderr, "\n\nFiles are Identical\n");
+            tprintf("\n\nFiles are Identical\n");
         }
 
         if (WinEncVsMacEnc >= 0)
         {
-            printf("\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
-            fprintf(stderr, "\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
+            tprintf("\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
             ENCFAIL++;
         }
 
         if (WinEncVsMacEnc == -2)
         {
-            printf("\n\nFail: File 2 ends before File 1.\n");
-            fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+            tprintf("\n\nFail: File 2 ends before File 1.\n");
             ENCFAIL++;
         }
 
         if (WinEncVsMacEnc == -3)
         {
-            printf("\n\nFail: File 1 ends before File 2.\n");
-            fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+            tprintf("\n\nFail: File 1 ends before File 2.\n");
             ENCFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
-        fprintf(stderr, "\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
+        tprintf("\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
         int WinDecVsLinDec = CompIVF(WinDec.c_str(), LinDec.c_str());
 
         if (WinDecVsLinDec == -1)
         {
-            printf("\n\nFiles are Identical\n");
-            fprintf(stderr, "\n\nFiles are Identical\n");
+            tprintf("\n\nFiles are Identical\n");
         }
 
         if (WinDecVsLinDec >= 0)
         {
-            printf("\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
-            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
+            tprintf("\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
             DECFAIL++;
         }
 
         if (WinDecVsLinDec == -2)
         {
-            printf("\n\nFail: File 2 ends before File 1.\n");
-            fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+            tprintf("\n\nFail: File 2 ends before File 1.\n");
             DECFAIL++;
         }
 
         if (WinDecVsLinDec == -3)
         {
-            printf("\n\nFail: File 1 ends before File 2.\n");
-            fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+            tprintf("\n\nFail: File 1 ends before File 2.\n");
             DECFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
-        fprintf(stderr, "\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
+        tprintf("\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
         int LinDecVsMacDec = CompIVF(LinDec.c_str(), MacDec.c_str());
 
         if (LinDecVsMacDec == -1)
         {
-            printf("\n\nFiles are Identical\n");
-            fprintf(stderr, "\n\nFiles are Identical\n");
+            tprintf("\n\nFiles are Identical\n");
         }
 
         if (LinDecVsMacDec >= 0)
         {
-            printf("\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
-            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
+            tprintf("\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
             DECFAIL++;
         }
 
         if (LinDecVsMacDec == -2)
         {
-            printf("\n\nFail: File 2 ends before File 1.\n");
-            fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+            tprintf("\n\nFail: File 2 ends before File 1.\n");
             DECFAIL++;
         }
 
         if (LinDecVsMacDec == -3)
         {
-            printf("\n\nFail: File 1 ends before File 2.\n");
-            fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+            tprintf("\n\nFail: File 1 ends before File 2.\n");
             DECFAIL++;
         }
 
-        printf("\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
-        fprintf(stderr, "\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
+        tprintf("\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
         int WinDecVsMacDec = CompIVF(WinDec.c_str(), MacDec.c_str());
 
         if (WinDecVsMacDec == -1)
         {
-            printf("\n\nFiles are Identical\n");
-            fprintf(stderr, "\n\nFiles are Identical\n");
+            tprintf("\n\nFiles are Identical\n");
         }
 
         if (WinDecVsMacDec >= 0)
         {
-            printf("\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
-            fprintf(stderr, "\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
+            tprintf("\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
             DECFAIL++;
         }
 
         if (WinDecVsMacDec == -2)
         {
-            printf("\n\nFail: File 2 ends before File 1.\n");
-            fprintf(stderr, "\n\nFail: File 2 ends before File 1.\n");
+            tprintf("\n\nFail: File 2 ends before File 1.\n");
             DECFAIL++;
         }
 
         if (WinDecVsMacDec == -3)
         {
-            printf("\n\nFail: File 1 ends before File 2.\n");
-            fprintf(stderr, "\n\nFail: File 1 ends before File 2.\n");
+            tprintf("\n\nFail: File 1 ends before File 2.\n");
             DECFAIL++;
         }
 
-        printf("\n\nResults:\n\n");
-        fprintf(stderr, "\n\nResults:\n\n");
+        tprintf("\n\nResults:\n\n");
         int fail = 0;
 
         if (ENCFAIL == 0)
@@ -21952,8 +21024,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All encoded files are identical - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (ENCFAIL > 0)
@@ -21962,8 +21033,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all encoded files are identical - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
@@ -21973,8 +21043,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "All decoded files are identical - Passed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
         }
 
         if (DECFAIL > 0)
@@ -21983,15 +21052,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             snprintf(OutputChar1, 255, "Not all decoded files are identical - Failed");
             string OutputChar1str = OutputChar1;
             FormatedPrint(OutputChar1str, 5);
-            printf("\n");
-            fprintf(stderr, "\n");
+            tprintf("\n");
             fail = 1;
         }
 
         if (fail == 1)
         {
-            printf("\nFailed\n");
-            fprintf(stderr, "\nFailed\n");
+            tprintf("\nFailed\n");
 
             fclose(fp);
             string File1Str = File1;
@@ -22000,8 +21067,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
         else
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
 
             fclose(fp);
             string File1Str = File1;

@@ -7856,7 +7856,6 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
     if (!infile)
     {
         tprintf("Failed to open input file: %s", fn);
-        fclose(infile);
         return -1;
     }
 

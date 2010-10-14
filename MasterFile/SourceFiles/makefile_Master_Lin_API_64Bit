@@ -5,8 +5,8 @@ SRC = driver.cpp ivf.c psnr.c ssim2.cpp Tests.cpp  Tools.cpp Arguments.cpp FourC
 SRCOBJ = driver.o ivf.o psnr.o ssim2.o Tests.o Tools.o Arguments.o FourCC.o md5_utils.o utilities.o args.o ivfdec.o ivfenc.o y4minput.o
 
 # compiler
-GPP = g++ -m64
-GCC = gcc -m64
+GPP = g++ -g -m64
+GCC = gcc -g -m64
 
 # Libraries
 LFLAGS= -L ../lib -lvpx_Lin64 -lpthread -DINLINE=

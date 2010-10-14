@@ -5,8 +5,8 @@ SRC = psnr.c ssim2.cpp Utilities.cpp ivf.c supportingdebug.cpp md5_utils.cpp
 SRCOBJ = psnr.o ssim2.o Utilities.o ivf.o supportingdebug.o md5_utils.o
 
 # compiler
-GPP = g++ -m32
-GCC = gcc -m32
+GPP = g++ -g -m32
+GCC = gcc -g -m32
 DEBUG = -g
 
 # Libraries

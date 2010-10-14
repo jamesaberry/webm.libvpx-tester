@@ -5,8 +5,8 @@ SRC = supportingrelease.cpp psnr.c ssim2.cpp Utilities.cpp ivf.c md5_utils.cpp
 SRCOBJ = supportingrelease.o ivf.o psnr.o ssim2.o Utilities.o md5_utils.o
 
 # compiler
-GPP = g++ -m64
-GCC = gcc -m64
+GPP = g++ -g -m64
+GCC = gcc -g -m64
 
 # Libraries
 LFLAGS= -L../newlib -lpthread -lvpx_NewLin64 -DINLINE=

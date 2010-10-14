@@ -5,8 +5,8 @@ SRC = psnr.c ssim2.cpp Utilities.cpp ivf.c supportingrelease.cpp md5_utils.cpp
 SRCOBJ = psnr.o ssim2.o Utilities.o ivf.o supportingrelease.o md5_utils.o
 
 # compiler
-GPP = g++ -m32
-GCC = gcc -m32
+GPP = g++ -g -m32
+GCC = gcc -g -m32
 
 # Libraries
 LFLAGS= -L../newlib -lvpx_NewIMac32 -DINLINE=

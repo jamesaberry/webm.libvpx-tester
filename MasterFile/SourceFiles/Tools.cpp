@@ -517,7 +517,6 @@ int WriteIndividualFramesOut(int argc, char *argv[])
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
 
@@ -699,7 +698,6 @@ int IVF2Raw(char *inputFile, char *outputDir)
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
 
@@ -856,7 +854,6 @@ int Raw2IVF(int argc, char *argv[])
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
 
@@ -1088,7 +1085,6 @@ int CombineIndvFrames(int argc, char *argv[])
     if (out == NULL)
     {
         printf("\nOutput file does not exist");
-        fclose(out);
         return 0;
     }
 
@@ -1235,7 +1231,6 @@ int PlayCompIVF(int argc, char *argv[])
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
 
@@ -1414,7 +1409,6 @@ int PlayDecIVF(int argc, char *argv[])
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
 

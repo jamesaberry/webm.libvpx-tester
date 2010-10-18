@@ -1,8 +1,8 @@
 # source files
-SRC = supportingdebug.cpp psnr.c ssim2.cpp Utilities.cpp ivf.c md5_utils.cpp
+SRC = supportingdebug.cpp psnr.c ssim2.cpp utilities.cpp ivf.c md5_utils.cpp
 
 # source object files
-SRCOBJ = supportingdebug.o ivf.o psnr.o ssim2.o Utilities.o md5_utils.o
+SRCOBJ = supportingdebug.o ivf.o psnr.o ssim2.o utilities.o md5_utils.o
 
 # compiler
 GPP = g++ -g -m64
@@ -26,8 +26,8 @@ psnr.o: psnr.c
 ssim2.o: ssim2.cpp
 	$(GPP) -c ssim2.cpp $(INCLUDE)  $(LFLAGS)
 
-Utilities.o: Utilities.cpp
-	$(GPP) -c Utilities.cpp $(INCLUDE)  $(LFLAGS)
+utilities.o: utilities.cpp
+	$(GPP) -c utilities.cpp $(INCLUDE)  $(LFLAGS)
 
 supportingdebug.o: supportingdebug.cpp
 	$(GPP) -c supportingdebug.cpp $(INCLUDE)  $(LFLAGS)

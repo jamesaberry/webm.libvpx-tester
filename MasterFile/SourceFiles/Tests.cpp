@@ -678,7 +678,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     unsigned long RunTimeRecAr[999];
     /////////////////////////////Record Time it took to run test/////////////////////////////
-    int RecordRunTimes = 1; //If set to one will record run times of tests
+    int RecordRunTimes = 0; //If set to one will record run times of tests
     unsigned int RunTime1 = 0;
     unsigned int RunTime2 = 0;
 

@@ -3226,7 +3226,6 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
     if (RawFile == NULL)
     {
         tprintf("\nError Opening Raw File: %s\n", inputFile1);
-        fclose(RawFile);
         return 0;
     }
 
@@ -3283,8 +3282,6 @@ double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, 
     {
         tprintf("\nError Opening Compressed File: %s\n", inputFile2);
         fclose(RawFile);
-        fclose(CompFile);
-
         return 0;
     }
 
@@ -3641,7 +3638,6 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
     if (RawFile == NULL)
     {
         tprintf("\nError Opening Raw File: %s\n", inputFile1);
-        fclose(RawFile);
         return 0;
     }
 
@@ -3698,8 +3694,6 @@ double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap
     {
         tprintf("\nError Opening Compressed File: %s\n", inputFile2);
         fclose(RawFile);
-        fclose(CompFile);
-
         return 0;
     }
 
@@ -4065,7 +4059,6 @@ double IVFDataRate(const char *inputFile, int DROuputSel)
     if (in == NULL)
     {
         tprintf("\nCan not open Data Rate Input file");
-        fclose(in);
         return 0;
     }
 
@@ -4179,12 +4172,8 @@ int IVFCheckPBM(const char *inputFile, int bitRate, int maxBuffer, int preBuffer
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
-
-    ///////////////////////////////////
-    //long PosSize = FileSize2(inputFile);
 
     int currentVideoFrame = 0;
     int frameCount = 0;
@@ -4203,9 +4192,9 @@ int IVFCheckPBM(const char *inputFile, int bitRate, int maxBuffer, int preBuffer
 
     bool checkOverrun = false;
     double secondsperframe = ((double)ivfhRaw.scale / (double)ivfhRaw.rate) * 2;//(the *2 is due to scale being doubled for extra frame padding)
-    double bitsAddedPerFrame = ((bitRate * 1024 * secondsperframe));
-    double bitsInBuffer = preBuffer * 0.001 * bitRate * 1024;
-    double maxBitsInBuffer = maxBuffer * 0.001 * bitRate * 1024;
+    int bitsAddedPerFrame = ((bitRate * 1000 * secondsperframe)) - .5; //-.5 to cancel out rounding
+    int bitsInBuffer = preBuffer * bitRate;
+    int maxBitsInBuffer = maxBuffer * bitRate;
 
     fpos_t position;
     fgetpos(in, &position);
@@ -4269,12 +4258,8 @@ int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, i
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
-
-    ///////////////////////////////////
-    //long PosSize = FileSize2(inputFile);
 
     int currentVideoFrame = 0;
     int frameCount = 0;
@@ -4292,15 +4277,10 @@ int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, i
     int nFrameFail = 0;
 
     bool checkOverrun = false;
-    //double secondsperframe = ((double)ivfhRaw.scale / (double)ivfhRaw.rate) * 2;//(the *2 is due to scale being doubled for extra frame padding)
-    //double bitsAddedPerFrame = ((bitRate * 1024 * secondsperframe));
-    //double bitsInBuffer = (double)preBuffer * 0.001 * (double)bitRate * 1024.0;
-    //double maxBitsInBuffer = (double)maxBuffer * 0.001 * (double)bitRate * 1024.0;
-
     double secondsperframe = ((double)ivfhRaw.scale / (double)ivfhRaw.rate) * 2;//(the *2 is due to scale being doubled for extra frame padding)
-    double bitsAddedPerFrame = ((bitRate * 1024 * secondsperframe));
-    double bitsInBuffer = (double)preBuffer * 0.001 * (double)bitRate * 1024.0;
-    double maxBitsInBuffer = (double)maxBuffer * 0.001 * (double)bitRate * 1024.0;
+    int bitsAddedPerFrame = ((bitRate * 1000 * secondsperframe)) - .5; //-.5 to cancel out rounding
+    int bitsInBuffer = preBuffer * bitRate;
+    int maxBitsInBuffer = maxBuffer * bitRate;
 
     fpos_t position;
     fgetpos(in, &position);
@@ -4311,32 +4291,20 @@ int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, i
         fread(&ivf_fhRaw.timeStamp, 1, 8, in);
         FormatFrameHeaderRead(ivf_fhRaw);
 
+        //fprintf(out, "Frame: %4i Bits in Buffer %i = bitsAddedPerFrame %i - frame size %i     - ", currentVideoFrame, bitsInBuffer, bitsAddedPerFrame, ivf_fhRaw.frameSize * 8);
+
         bitsInBuffer += bitsAddedPerFrame;
         bitsInBuffer -= ivf_fhRaw.frameSize * 8;
 
-        //fprintf(out, "Frame: %4i Bits in Buffer: %f MaxBitsin Buffer %f ", currentVideoFrame, bitsInBuffer, maxBitsInBuffer);
+        int optimalbufferFloat = optimalbuffer;
+        double MaxPercentBuffer = (((Threshold * optimalbufferFloat) / 100) * bitRate);
 
-
-        if (bitsInBuffer < 0.)
-        {
-            //fclose(in);
-            //return currentVideoFrame;
-        }
-
-        double optimalbufferFloat = optimalbuffer / 1000.0;
-        //double MaxPercentBuffer = (maxBitsInBuffer*Threshold*.01);
-        double MaxPercentBuffer = (((double)Threshold * optimalbufferFloat) / 100.0) * (double)bitRate * 1024.0;
-
-        //printf("\n %f %f %i", bitsInBuffer, MaxPercentBuffer,currentVideoFrame);
         if (bitsInBuffer < MaxPercentBuffer)
         {
-            //printf(" 1");
             fprintf(out, "%i %i\n", currentVideoFrame, 1);
-            //fprintf(out, "- Threshold %i Reached ", Threshold);
         }
         else
         {
-            //printf(" 0");
             fprintf(out, "%i %i\n", currentVideoFrame, 0);
         }
 
@@ -4344,12 +4312,9 @@ int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, i
         {
             if (checkOverrun)
             {
-                //fclose(in);
-                //return currentVideoFrame;
             }
             else
             {
-                //fprintf(out, "Over Run", Threshold);
                 bitsInBuffer = maxBitsInBuffer;
             }
         }
@@ -4366,115 +4331,6 @@ int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, i
         fclose(out);
     }
 
-    //printf("\n NO UNDERRUN DETECTED \n");
-    return -11;
-}
-
-int IVFCheckPBMThreshold_orig(char *inputFile, double bitRate, int maxBuffer, int preBuffer, int Threshold)
-{
-    string ResizeInStr = inputFile;
-    ResizeInStr.erase(ResizeInStr.length() - 4, 4);
-    ResizeInStr.append("_CheckPBMThresh.txt");
-    char outputFile[255] = "";
-    snprintf(outputFile, 255, "%s", ResizeInStr.c_str());
-
-    FILE *out;
-
-    int PrintSwitch = 1;
-
-    if (PrintSwitch == 1)
-    {
-        out = fopen(outputFile, "w");
-    }
-
-    FILE *in = fopen(inputFile, "rb");
-
-    if (in == NULL)
-    {
-        tprintf("\nInput file does not exist");
-        fclose(in);
-        return 0;
-    }
-
-    ///////////////////////////////////
-    //long PosSize = FileSize2(inputFile);
-
-    int currentVideoFrame = 0;
-    int frameCount = 0;
-    int byteRec = 0;
-
-    IVF_HEADER ivfhRaw;
-
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-    FormatIVFHeaderRead(&ivfhRaw);
-
-    IVF_FRAME_HEADER ivf_fhRaw;
-
-    frameCount = ivfhRaw.length;
-    int nFrameFail = 0;
-
-    bool checkOverrun = false;
-    double secondsperframe = ((double)ivfhRaw.scale / (double)ivfhRaw.rate) * 2;//(the *2 is due to scale being doubled for extra frame padding)
-    double bitsAddedPerFrame = ((bitRate * 1024 * secondsperframe));
-    double bitsInBuffer = preBuffer * 0.001 * bitRate * 1024;
-    double maxBitsInBuffer = maxBuffer * 0.001 * bitRate * 1024;
-
-    fpos_t position;
-    fgetpos(in, &position);
-
-    while (currentVideoFrame < frameCount)
-    {
-        fread(&ivf_fhRaw.frameSize, 1, 4, in);
-        fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-        FormatFrameHeaderRead(ivf_fhRaw);
-
-        bitsInBuffer += bitsAddedPerFrame;
-        bitsInBuffer -= ivf_fhRaw.frameSize * 8;
-
-        fprintf(out, "Frame: %4i Bits in Buffer: %f MaxBitsin Buffer %f ", currentVideoFrame, bitsInBuffer, maxBitsInBuffer);
-
-        if (bitsInBuffer < 0.)
-        {
-            fclose(in);
-            return currentVideoFrame;
-        }
-
-        double MaxPercentBuffer = (maxBitsInBuffer * Threshold * .01);
-
-        if (bitsInBuffer <= MaxPercentBuffer)
-        {
-            fprintf(out, "- Threshold %i Reached ", Threshold);
-        }
-
-        if (bitsInBuffer > maxBitsInBuffer)
-        {
-            if (checkOverrun)
-            {
-                fclose(in);
-                return currentVideoFrame;
-            }
-            else
-            {
-                fprintf(out, "Over Run", Threshold);
-                bitsInBuffer = maxBitsInBuffer;
-            }
-        }
-
-        fprintf(out, "\n");
-        fseek(in , ivf_fhRaw.frameSize , SEEK_CUR);
-
-        currentVideoFrame ++;
-    }
-
-    fclose(in);
-
-    if (PrintSwitch == 1)
-    {
-        fclose(out);
-    }
-
-    printf("\n NO UNDERRUN DETECTED \n");
     return -11;
 }
 
@@ -4619,7 +4475,6 @@ int CompressIVFtoIVF(char *inputFile, char *outputFile2, int speed, int BitRate,
     if (in == NULL)
     {
         tprintf("\nCan not open Compression Source file");
-        fclose(in);
         return 0;
     }
 
@@ -4778,7 +4633,6 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     if (in == NULL)
     {
         tprintf("\nCan not open Compression Source file");
-        fclose(in);
         return 0;
     }
 
@@ -4936,7 +4790,6 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, char *outputFile2, int speed,
     if (in == NULL)
     {
         tprintf("\nCan not open Compression Source file");
-        fclose(in);
         return 0;
     }
 
@@ -5428,7 +5281,6 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
     if (GetWHinfile == NULL)
     {
         tprintf("Input File not found: %s\n", in_fn);
-        fclose(GetWHinfile);
 
         if (RunQCheck == 1)
         {
@@ -5552,7 +5404,6 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
         if (!infile)
         {
             tprintf("Failed to open input file: %s", in_fn);
-            fclose(infile);
 
             if (RunQCheck == 1)
             {
@@ -5571,7 +5422,6 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
         {
             tprintf("Failed to open output file: %s", out_fn);
             fclose(infile);
-            fclose(outfile);
 
             if (RunQCheck == 1)
             {
@@ -5830,7 +5680,6 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     if (GetWHinfile == NULL)
     {
         tprintf("Input File not found: %s\n", in_fn);
-        fclose(GetWHinfile);
         return -1;
     }
 
@@ -5947,7 +5796,6 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
         if (!infile)
         {
             tprintf("Failed to open input file: %s", in_fn);
-            fclose(infile);
             return -1;
         }
 
@@ -5960,7 +5808,6 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
         {
             tprintf("Failed to open output file: %s", out_fn);
             fclose(infile);
-            fclose(outfile);
             return -1;
         }
 
@@ -6181,7 +6028,6 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
     if (GetWHinfile == NULL)
     {
         tprintf("Input File not found: %s\n", in_fn);
-        fclose(GetWHinfile);
         return -1;
     }
 
@@ -6297,7 +6143,6 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
         if (!infile)
         {
             printf("Failed to open input file");
-            fclose(infile);
             return EXIT_FAILURE;
         }
 
@@ -6310,7 +6155,6 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
         {
             printf("Failed to open output file");
             fclose(infile);
-            fclose(outfile);
             return -1;
         }
 
@@ -6565,7 +6409,6 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
     if (GetWHinfile == NULL)
     {
         tprintf("Input File not found: %s\n", in_fn);
-        fclose(GetWHinfile);
 
         if (RunQCheck == 1)
         {
@@ -6689,7 +6532,6 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
         if (!infile)
         {
             tprintf("Failed to open input file: %s", in_fn);
-            fclose(infile);
 
             if (RunQCheck == 1)
             {
@@ -6708,7 +6550,6 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
         {
             tprintf("Failed to open output file: %s", out_fn);
             fclose(infile);
-            fclose(outfile);
 
             if (RunQCheck == 1)
             {
@@ -7019,7 +6860,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     if (GetWHinfile == NULL)
     {
         tprintf("Input File not found: %s\n", in_fn);
-        fclose(GetWHinfile);
 
         if (RunQCheck == 1)
         {
@@ -7173,7 +7013,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         {
             tprintf("Failed to open input file: %s", in_fn);
             ReconOutFile.close();
-            fclose(infile);
 
             if (RunQCheck == 1)
             {
@@ -7202,7 +7041,6 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             tprintf("Failed to open output file: %s", out_fn);
             ReconOutFile.close();
             fclose(infile);
-            fclose(outfile);
             out_close(out, out_fn2STR.c_str(), 0);
             out_close(out2, out_fn2STR.c_str(), 0);
 
@@ -7675,7 +7513,6 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
     if (!infile)
     {
         tprintf("Failed to open input file: %s", fn);
-        fclose(infile);
         return -1;
     }
 
@@ -8049,7 +7886,6 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
     if (!infile)
     {
         printf("Failed to open input file: %s", fn);
-        fclose(infile);
         return -1;
     }
 
@@ -8228,7 +8064,6 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
     if (!infile)
     {
         printf("Failed to open input file: %s", fn);
-        fclose(infile);
         return -1;
     }
 
@@ -8411,7 +8246,6 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
     if (!infile)
     {
         tprintf("Failed to open input file: %s", fn);
-        fclose(infile);
         return -1;
     }
 
@@ -8790,7 +8624,6 @@ int DecComputeMD5(const char *inputchar, const char *outputchar)
     if (!infile)
     {
         printf("Failed to open file");
-        fclose(infile);
         return -1;
     }
 
@@ -8953,22 +8786,20 @@ int CutIVF(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame
 {
     bool verbose = 1;
 
-    FILE *out = fopen(outputFile, "wb");
     FILE *in = fopen(inputFile, "rb");
 
     if (in == NULL)
     {
         printf("\nInput file does not exist");
-        fclose(in);
-        fclose(out);
         return 0;
     }
+
+    FILE *out = fopen(outputFile, "wb");
 
     if (out == NULL)
     {
         printf("\nOutput file does not exist");
         fclose(in);
-        fclose(out);
         return 0;
     }
 
@@ -9166,7 +8997,7 @@ int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset
         OutputToFile = 0;
     }
 
-    FILE *out = fopen(outputFile, "wb");
+
     FILE *in = fopen(inputFile, "rb");
 
     if (in == NULL)
@@ -9178,10 +9009,10 @@ int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset
             fprintf(stderr, "\nInput file does not exist");
         }
 
-        fclose(in);
-        fclose(out);
         return 0;
     }
+
+    FILE *out = fopen(outputFile, "wb");
 
     if (out == NULL)
     {
@@ -9193,7 +9024,6 @@ int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset
         }
 
         fclose(in);
-        fclose(out);
         return 0;
     }
 
@@ -9446,34 +9276,31 @@ int PasteIVF(char *inputFile1, char *inputFile2, char *outputFile, int StartingF
 {
     bool verbose = 1;
 
-    FILE *out = fopen(outputFile, "wb");
+
     FILE *in1 = fopen(inputFile1, "rb");
-    FILE *in2 = fopen(inputFile2, "rb");
 
     if (in1 == NULL)
     {
         printf("\nInput file 1 does not exist");
-        fclose(in1);
-        fclose(in2);
-        fclose(out);
         return 0;
     }
+
+    FILE *in2 = fopen(inputFile2, "rb");
 
     if (in2 == NULL)
     {
         printf("\nInput file 2 does not exist");
         fclose(in1);
-        fclose(in2);
-        fclose(out);
         return 0;
     }
+
+    FILE *out = fopen(outputFile, "wb");
 
     if (out == NULL)
     {
         printf("\nOutput file does not exist");
         fclose(in1);
         fclose(in2);
-        fclose(out);
         return 0;
     }
 
@@ -9733,20 +9560,19 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
     {
         char *outputFile = argv[4];
 
-        FILE *in = fopen(inputFile, "rb");
         FILE *fp;
 
         if ((fp = freopen(outputFile, "w", stderr)) == NULL)
         {
             printf("Cannot open out put file: %s\n", outputFile);
-            fclose(in);
             exit(1);
         }
+
+        FILE *in = fopen(inputFile, "rb");
 
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -9834,7 +9660,6 @@ int DisplayIVFHeaderInfo(int argc, char *argv[])
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -9950,21 +9775,20 @@ int CompareIVFHeaderInfo(int argc, char *argv[])
     string strinputFile2 = inputFile2;
 
     FILE *in = fopen(inputFile1, "rb");
-    FILE *in2 = fopen(inputFile2, "rb");
+
 
     if (in == NULL)
     {
         tprintf("\nInput file 1 does not exist");
-        fclose(in);
-        fclose(in2);
         return 0;
     }
+
+    FILE *in2 = fopen(inputFile2, "rb");
 
     if (in2 == NULL)
     {
         tprintf("\nInput file 2 does not exist");
         fclose(in);
-        fclose(in2);
         return 0;
     }
 
@@ -10336,23 +10160,22 @@ int CompIVF(const char *inputFile1, const char *inputFile2)
     //and >= 0 where the number the function returns is the frame that they differ first on.
 
     FILE *in = fopen(inputFile1, "rb");
-    FILE *in2 = fopen(inputFile2, "rb");
+
 
     int returnval = -1;
 
     if (in == NULL)
     {
         tprintf("\nFile 1 does not exist");
-        fclose(in);
-        fclose(in2);
         return 0;
     }
+
+    FILE *in2 = fopen(inputFile2, "rb");
 
     if (in2 == NULL)
     {
         tprintf("\nFile 2 does not exist");
         fclose(in);
-        fclose(in2);
         return 0;
     }
 
@@ -10631,13 +10454,20 @@ double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch)
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
 
     if (PrintSwitch == 1)
     {
         out = fopen(outputFile, "w");
+
+        if (out == NULL)
+        {
+            tprintf("\nOutput file does not exist");
+            fclose(in);
+            return 0;
+        }
+
         //ofstream outfile(outputFile);
     }
 
@@ -10922,7 +10752,6 @@ double IVFDisplayVisibleFrames(const char *inputFile, int Selector)
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -11030,7 +10859,6 @@ double IVFDisplayVisibleFrames(const char *inputFile, int Selector)
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -11152,7 +10980,6 @@ double IVFDisplayAltRefFrames(const char *inputFile, int Selector)
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -11260,7 +11087,6 @@ double IVFDisplayAltRefFrames(const char *inputFile, int Selector)
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -11379,7 +11205,6 @@ double IVFDisplayKeyFrames(const char *inputFile, int Selector)
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -11486,7 +11311,6 @@ double IVFDisplayKeyFrames(const char *inputFile, int Selector)
         if (in == NULL)
         {
             tprintf("\nInput file does not exist");
-            fclose(in);
             return 0;
         }
 
@@ -11973,7 +11797,6 @@ int GetNumberofFrames(const char *inputFile)
     if (in == NULL)
     {
         tprintf("\nInput file does not exist");
-        fclose(in);
         return 0;
     }
 

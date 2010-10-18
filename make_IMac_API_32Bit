@@ -1,6 +1,6 @@
 PrimaryWD=$PWD
 
-cd $PrimaryWD/MasterFile/SourceFiles
+cd $PrimaryWD/MasterFile/build
 
 make -f makefile_Master_IMac_API_32Bit clean
 make -f makefile_Master_IMac_API_32Bit
@@ -9,16 +9,16 @@ cd $PrimaryWD
 
 mkdir TestFolder_32Bit
 
-cp -f -p $PrimaryWD/MasterFile/SourceFiles/VP8_Tester_API_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8_Tester_API_32Bit.exe
-cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/SourceFiles
+cp -f -p $PrimaryWD/MasterFile/build/build-imac32/VP8_Tester_API_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8_Tester_API_32Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build
 
 make -f makefile_Debug_IMac_API_32Bit clean
 make -f makefile_Debug_IMac_API_32Bit
 
 cd $PrimaryWD
 
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/SourceFiles/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe
-cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-imac32/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build
 
 make -f makefile_Release_IMac_New_API_32Bit clean
 make -f makefile_Release_IMac_New_API_32Bit
@@ -27,5 +27,5 @@ make -f makefile_Release_IMac_Old_API_32Bit
 
 cd $PrimaryWD
 
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-imac32-new/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-imac32-old/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe

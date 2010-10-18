@@ -1,0 +1,59 @@
+# directory to build to
+OBJDIR = build-lin32-old
+# source directory
+SourceDir = ../SourceFiles
+# utilities source directory
+UtlSrcDir = ../../../../MasterFile/SourceFiles
+
+# source files
+SRC = \
+	$(SourceDir)/supportingrelease.cpp \
+	$(SourceDir)/psnr.c \
+	$(SourceDir)/ssim2.cpp \
+	$(UtlSrcDir)/utilities.cpp \
+	$(SourceDir)/ivf.c \
+	$(SourceDir)/md5_utils.cpp \
+
+# source object files
+SRCOBJ = \
+   $(OBJDIR)/supportingrelease.o \
+   $(OBJDIR)/ivf.o \
+   $(OBJDIR)/psnr.o \
+   $(OBJDIR)/ssim2.o \
+   $(OBJDIR)/utilities.o \
+   $(OBJDIR)/md5_utils.o\
+
+# compiler
+GPP = g++ -g -m32
+GCC = gcc -g -m32
+
+# Libraries
+LFLAGS= -L../oldlib -lpthread -lvpx_OldLin32 -DINLINE=
+
+#Includes
+INCLUDE = -I ../../../../MasterFile/include -I ../include/release-old-32 -D API -D HAVE_STDINT_H
+
+$(OBJDIR)/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe: $(SRCOBJ)
+	$(GPP) $(INCLUDE) -o "$(OBJDIR)/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe" $(SRCOBJ) $(LFLAGS)
+
+$(OBJDIR)/supportingrelease.o: $(SourceDir)/supportingrelease.cpp
+	-mkdir $(OBJDIR)
+	$(GPP) -c $(SourceDir)/supportingrelease.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/supportingrelease.o
+
+$(OBJDIR)/ivf.o: $(UtlSrcDir)/ivf.c
+	$(GCC) -c $(UtlSrcDir)/ivf.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
+
+$(OBJDIR)/psnr.o: $(UtlSrcDir)/psnr.c
+	$(GCC) -c $(UtlSrcDir)/psnr.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/psnr.o
+
+$(OBJDIR)/ssim2.o: $(UtlSrcDir)/ssim2.cpp
+	$(GPP) -c $(UtlSrcDir)/ssim2.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ssim2.o
+
+$(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
+	$(GPP) -c $(UtlSrcDir)/utilities.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/utilities.o
+
+$(OBJDIR)/md5_utils.o: $(UtlSrcDir)/md5_utils.cpp
+	$(GPP) -c $(UtlSrcDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+
+clean:
+	rm -f $(SRCOBJ) $(OBJDIR)/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe

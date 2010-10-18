@@ -1,0 +1,58 @@
+# directory to build to
+OBJDIR = build-arm6-new
+# source directory
+SourceDir = ../SourceFiles
+# utilities source directory
+UtlSrcDir = ../../../../MasterFile/SourceFiles
+
+# source files
+SRC = \
+	$(SourceDir)/supportingrelease.cpp \
+	$(SourceDir)/psnr.c \
+	$(SourceDir)/ssim2.cpp \
+	$(UtlSrcDir)/utilities.cpp \
+	$(SourceDir)/ivf.c \
+	$(SourceDir)/md5_utils.cpp \
+
+# source object files
+SRCOBJ = \
+   $(OBJDIR)/supportingrelease.o \
+   $(OBJDIR)/ivf.o \
+   $(OBJDIR)/psnr.o \
+   $(OBJDIR)/ssim2.o \
+   $(OBJDIR)/utilities.o \
+   $(OBJDIR)/md5_utils.o\
+
+# compiler
+GPP = arm-none-linux-gnueabi-g++
+GCC = arm-none-linux-gnueabi-gcc
+
+# Libraries
+LFLAGS= -L../newlib -lpthread -lvpx_NewArm6 -DINLINE=
+
+#Includes
+INCLUDE = -I ../../../../MasterFile/include -I ../include/release-new-arm6 -D API -D ARM -D HAVE_STDINT_H
+
+$(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe: $(SRCOBJ)
+	$(GPP) $(INCLUDE) -o "$(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe" $(SRCOBJ) $(LFLAGS)
+
+$(OBJDIR)/ivf.o: $(SourceDir)/ivf.c
+	$(GCC) -c $(SourceDir)/ivf.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
+
+$(OBJDIR)/psnr.o: $(SourceDir)/psnr.c
+	$(GCC) -c $(SourceDir)/psnr.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/psnr.o
+
+$(OBJDIR)/ssim2.o: $(SourceDir)/ssim2.cpp
+	$(GPP) -c $(SourceDir)/ssim2.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ssim2.o
+
+$(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
+	$(GPP) -c $(UtlSrcDir)/utilities.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/utilities.o
+
+$(OBJDIR)/supportingrelease.o: $(SourceDir)/supportingrelease.cpp
+	$(GPP) -c $(SourceDir)/supportingrelease.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/supportingrelease.o
+
+$(OBJDIR)/md5_utils.o: $(SourceDir)/md5_utils.cpp
+	$(GPP) -c $(SourceDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+
+clean:
+	rm -f $(SRCOBJ) $(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe

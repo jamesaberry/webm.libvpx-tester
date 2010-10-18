@@ -1,6 +1,6 @@
 PrimaryWD=$PWD
 
-cd $PrimaryWD/MasterFile/SourceFiles
+cd $PrimaryWD/MasterFile/build
 
 make -f makefile_Master_Arm6 clean
 make -f makefile_Master_Arm6
@@ -9,16 +9,16 @@ cd $PrimaryWD
 
 mkdir TestFolder_Arm6
 
-cp -f -p $PrimaryWD/MasterFile/SourceFiles/VP8_Tester_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8_Tester_Arm6.exe
-cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/SourceFiles
+cp -f -p $PrimaryWD/MasterFile/build/build-arm6/VP8_Tester_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8_Tester_Arm6.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build
 
 make -f makefile_Debug_Arm6 clean
 make -f makefile_Debug_Arm6
 
 cd $PrimaryWD
 
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/SourceFiles/VP8vNewest_PlugIn_DLib_DMode_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8vNewest_PlugIn_DLib_DMode_Arm6.exe
-cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-arm6/VP8vNewest_PlugIn_DLib_DMode_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8vNewest_PlugIn_DLib_DMode_Arm6.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build
 
 make -f makefile_Release_Arm6_New clean
 make -f makefile_Release_Arm6_New
@@ -27,5 +27,5 @@ make -f makefile_Release_Arm6_Old
 
 cd $PrimaryWD
 
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles/VP8vOldest_PlugIn_RLib_RMode_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8vOldest_PlugIn_RLib_RMode_Arm6.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-arm6-new/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-arm6-old/VP8vOldest_PlugIn_RLib_RMode_Arm6.exe $PrimaryWD/TestFolder_Arm6/VP8vOldest_PlugIn_RLib_RMode_Arm6.exe

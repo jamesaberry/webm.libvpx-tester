@@ -1,0 +1,97 @@
+# directory to build to
+OBJDIR = build-arm6
+# source directory
+SourceDir = ../SourceFiles
+
+# source files
+SRC = \
+   $(SourceDir)/driver.cpp \
+   $(SourceDir)/ivf.c \
+   $(SourceDir)/psnr.c \
+   $(SourceDir)/ssim2.cpp \
+   $(SourceDir)/Tests.cpp  \
+   $(SourceDir)/Tools.cpp \
+   $(SourceDir)/Arguments.cpp \
+   $(SourceDir)/FourCC.cpp \
+   $(SourceDir)/md5_utils.cpp \
+   $(SourceDir)/utilities.cpp \
+   $(SourceDir)/args.cpp \
+   $(SourceDir)/ivfdec.cpp \
+   $(SourceDir)/ivfenc.cpp \
+   $(SourceDir)/y4minput.cpp \
+
+# source object files
+SRCOBJ = \
+   $(OBJDIR)/driver.o \
+   $(OBJDIR)/ivf.o \
+   $(OBJDIR)/psnr.o \
+   $(OBJDIR)/ssim2.o \
+   $(OBJDIR)/Tests.o \
+   $(OBJDIR)/Tools.o \
+   $(OBJDIR)/Arguments.o \
+   $(OBJDIR)/FourCC.o \
+   $(OBJDIR)/md5_utils.o \
+   $(OBJDIR)/utilities.o \
+   $(OBJDIR)/args.o \
+   $(OBJDIR)/ivfdec.o \
+   $(OBJDIR)/ivfenc.o \
+   $(OBJDIR)/y4minput.o \
+
+# compiler
+GPP = arm-none-linux-gnueabi-g++
+GCC = arm-none-linux-gnueabi-gcc
+
+# Libraries
+LFLAGS= -L../lib -lvpx_Arm6 -DINLINE= -lpthread
+
+#Includes
+INCLUDE = -I ../include -I ../include/release-arm6 -D API -D ARM -DHAVE_STDINT_H -D CONFIG_MD5=1
+
+$(OBJDIR)/VP8_Tester_API_Arm6: $(SRCOBJ)
+	$(GPP)  $(INCLUDE) -o "$(OBJDIR)/VP8_Tester_API_Arm6.exe" $(SRCOBJ) $(LFLAGS)
+
+$(OBJDIR)/driver.o: $(SourceDir)/driver.cpp
+	-mkdir $(OBJDIR)
+	$(GPP) -c $(SourceDir)/driver.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/driver.o
+
+$(OBJDIR)/ivf.o: $(SourceDir)/ivf.c
+	$(GPP) -c $(SourceDir)/ivf.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ivf.o
+
+$(OBJDIR)/psnr.o: $(SourceDir)/psnr.c
+	$(GCC) -c $(SourceDir)/psnr.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/psnr.o
+
+$(OBJDIR)/ssim2.o: $(SourceDir)/ssim2.cpp
+	$(GPP) -c $(SourceDir)/ssim2.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ssim2.o
+
+$(OBJDIR)/Tests.o: $(SourceDir)/Tests.cpp
+	$(GPP) -c $(SourceDir)/Tests.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/Tests.o
+
+$(OBJDIR)/Tools.o: $(SourceDir)/Tools.cpp
+	$(GPP) -c $(SourceDir)/Tools.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/Tools.o
+
+$(OBJDIR)/Arguments.o: $(SourceDir)/Arguments.cpp
+	$(GPP) -c $(SourceDir)/Arguments.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/Arguments.o
+
+$(OBJDIR)/FourCC.o: $(SourceDir)/FourCC.cpp
+	$(GPP) -c $(SourceDir)/FourCC.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/FourCC.o
+
+$(OBJDIR)/md5_utils.o: $(SourceDir)/md5_utils.cpp
+	$(GPP) -c $(SourceDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+
+$(OBJDIR)/utilities.o: $(SourceDir)/utilities.cpp
+	$(GPP) -c  $(SourceDir)/utilities.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/utilities.o
+
+$(OBJDIR)/args.o: $(SourceDir)/args.cpp
+	$(GPP) -c $(SourceDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+
+$(OBJDIR)/ivfdec.o: $(SourceDir)/ivfdec.cpp
+	$(GPP) -c $(SourceDir)/ivfdec.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfdec.o
+
+$(OBJDIR)/ivfenc.o: $(SourceDir)/ivfenc.cpp
+	$(GPP) -c $(SourceDir)/ivfenc.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfenc.o
+
+$(OBJDIR)/y4minput.o: $(SourceDir)/y4minput.cpp
+	$(GPP) -c $(SourceDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o
+
+clean:
+	rm -f $(SRCOBJ) $(OBJDIR)/VP8_Tester_Arm6.exe

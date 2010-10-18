@@ -1,6 +1,6 @@
 PrimaryWD=$PWD
 
-cd $PrimaryWD/MasterFile/SourceFiles
+cd $PrimaryWD/MasterFile/build
 
 make -f makefile_Master_Arm7 clean
 make -f makefile_Master_Arm7
@@ -9,16 +9,16 @@ cd $PrimaryWD
 
 mkdir TestFolder_Arm7
 
-cp -f -p $PrimaryWD/MasterFile/SourceFiles/VP8_Tester_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8_Tester_Arm7.exe
-cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/SourceFiles
+cp -f -p $PrimaryWD/MasterFile/build/build-arm7/VP8_Tester_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8_Tester_Arm7.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build
 
 make -f makefile_Debug_Arm7 clean
 make -f makefile_Debug_Arm7
 
 cd $PrimaryWD
 
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/SourceFiles/VP8vNewest_PlugIn_DLib_DMode_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8vNewest_PlugIn_DLib_DMode_Arm7.exe
-cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-arm7/VP8vNewest_PlugIn_DLib_DMode_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8vNewest_PlugIn_DLib_DMode_Arm7.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build
 
 make -f makefile_Release_Arm7_New clean
 make -f makefile_Release_Arm7_New
@@ -27,5 +27,5 @@ make -f makefile_Release_Arm7_Old
 
 cd $PrimaryWD
 
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe
-cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/SourceFiles/VP8vOldest_PlugIn_RLib_RMode_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8vOldest_PlugIn_RLib_RMode_Arm7.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-arm7-new/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-arm7-old/VP8vOldest_PlugIn_RLib_RMode_Arm7.exe $PrimaryWD/TestFolder_Arm7/VP8vOldest_PlugIn_RLib_RMode_Arm7.exe

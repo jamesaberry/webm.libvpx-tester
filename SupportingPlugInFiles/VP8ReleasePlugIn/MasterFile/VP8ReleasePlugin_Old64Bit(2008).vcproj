@@ -157,7 +157,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib oldlib\vpxmt_64Bit.lib"
+				AdditionalDependencies="Vfw32.lib odbc32.lib odbccp32.lib Winmm.lib oldlib\vpxmt_OldWin64.lib"
 				OutputFile="$(OutDir)/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""

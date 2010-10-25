@@ -8064,7 +8064,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         FileName2 = hFind2->d_name;
 
         if (FileName2.find(".fpf") == string::npos && FileName2.compare("ExtraFileCheck.ivf") != 0 &&
-            FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("Extra File Check Test.txt")
+            FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("ExtraFileCheckTest.txt")
             && FileName2.compare("Extra File Check Test_TestOnly.txt") && FileName2.compare("ExtraFileCheck_Paramaters.txt")
             && FileName2.compare("ExtraFileCheck_APIParamaters.txt"))
         {
@@ -8723,7 +8723,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         FileName2 = hFind2->d_name;
 
         if (FileName2.find(".fpf") == string::npos && FileName2.compare("ExtraFileCheck.ivf") != 0 &&
-            FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("Extra File Check Test.txt")
+            FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("ExtraFileCheckTest.txt")
             && FileName2.compare("Extra File Check Test_TestOnly.txt") && FileName2.compare("ExtraFileCheck_Paramaters.txt")
             && FileName2.compare("ExtraFileCheck_APIParamaters.txt"))
         {
@@ -9383,7 +9383,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             FileName2 = hFind2->d_name;
 
             if (FileName2.find(".fpf") == string::npos && FileName2.compare("ExtraFileCheck.ivf") != 0 &&
-                FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("Extra File Check Test.txt")
+                FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("ExtraFileCheckTest.txt")
                 && FileName2.compare("Extra File Check Test_TestOnly.txt") && FileName2.compare("ExtraFileCheck_Paramaters.txt")
                 && FileName2.compare("ExtraFileCheck_APIParamaters.txt"))
             {
@@ -10021,7 +10021,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             //Add File names here that you want the file checker to ignore follow format in if
             if (FileName2.find(".fpf") == string::npos && FileName2.compare("ExtraFileCheck.ivf") != 0 &&
-                FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("Extra File Check Test.txt")
+                FileName2.compare(".") != 0 && FileName2.compare("..") != 0 && FileName2.compare("ExtraFileCheckTest.txt")
                 && FileName2.compare("Extra File Check Test_TestOnly.txt") && FileName2.compare("ExtraFileCheck_Paramaters.txt")
                 && FileName2.compare("ExtraFileCheck_APIParamaters.txt"))
             {

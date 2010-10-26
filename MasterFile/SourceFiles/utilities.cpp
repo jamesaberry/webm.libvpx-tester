@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
 using namespace std;
 
 typedef unsigned char BYTE;
@@ -354,9 +355,9 @@ static int read_frame_enc(FILE *f, vpx_image_t *img, int to_read)
         int r;
 
         /* Determine the correct plane based on the image format. The for-loop
-         * always counts in Y,U,V order, but this may not match the order of
-         * the data on disk.
-         */
+        * always counts in Y,U,V order, but this may not match the order of
+        * the data on disk.
+        */
         switch (plane)
         {
         case 1:
@@ -2091,17 +2092,17 @@ int Test0InputTextCheck(char *input, int MoreInfo)
 
                 /*if (selector == ALTFRNUM)
                 {
-                    if (!(DummyArgvVar == 7 || DummyArgvVar == 8))
-                    {
-                        SelectorAr[SelectorArInt].append(buffer);
-                        SelectorAr2[SelectorArInt] = "AltFreqTest";
-                        PassFail[PassFailInt] = trackthis1;
-                    }
-                    else
-                    {
+                if (!(DummyArgvVar == 7 || DummyArgvVar == 8))
+                {
+                SelectorAr[SelectorArInt].append(buffer);
+                SelectorAr2[SelectorArInt] = "AltFreqTest";
+                PassFail[PassFailInt] = trackthis1;
+                }
+                else
+                {
 
-                        PassFail[PassFailInt] = -1;
-                    }
+                PassFail[PassFailInt] = -1;
+                }
                 }*/
 
                 if (selector == AUTKFNUM)
@@ -5289,7 +5290,7 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
     static const arg_def_t **ctrl_args = no_args;
     int                      verbose = 0;
     int                      arg_use_i420 = 1;
-    unsigned long            cx_time = 0;
+    double total_cpu_time_used = 0;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -5566,7 +5567,8 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
         {
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
-            struct vpx_usec_timer timer;
+            clock_t start, end;
+            double cpu_time_used;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -5591,10 +5593,13 @@ int CompressIVFtoIVF(const char *inputFile, const char *outputFile2, int speed, 
             else
                 frame_avail = 0;
 
-            vpx_usec_timer_start(&timer);
+            start = clock() * 1000000;;
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, 0, arg_deadline);
-            vpx_usec_timer_mark(&timer);
-            cx_time += vpx_usec_timer_elapsed(&timer);
+            end = clock() * 1000000;;
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            total_cpu_time_used = total_cpu_time_used + cpu_time_used;
+
             ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
@@ -5694,7 +5699,7 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
     static const arg_def_t **ctrl_args = no_args;
     int                      verbose = 0;
     int                      arg_use_i420 = 1;
-    unsigned long            cx_time = 0;
+    double total_cpu_time_used = 0;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -5930,7 +5935,8 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
         {
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
-            struct vpx_usec_timer timer;
+            clock_t start, end;
+            double cpu_time_used;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -5955,11 +5961,14 @@ int CompressIVFtoIVFNoErrorOutput(char *inputFile, char *outputFile2, int speed,
             else
                 frame_avail = 0;
 
-            vpx_usec_timer_start(&timer);
+            start = clock() * 1000000;;
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2,
                              2, 0, arg_deadline);
-            vpx_usec_timer_mark(&timer);
-            cx_time += vpx_usec_timer_elapsed(&timer);
+            end = clock() * 1000000;;
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            total_cpu_time_used = total_cpu_time_used + cpu_time_used;
+
             ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
@@ -6040,8 +6049,9 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
     static const arg_def_t **ctrl_args = no_args;
     int                      verbose = 0;
     int                      arg_use_i420 = 1;
-    unsigned long            cx_time = 0;
 
+    double total_cpu_time_used = 0;
+    unsigned int total_cpu_time_used_ms = 0;
     int framesoutrec = 0;
 
     /* Populate encoder configuration */
@@ -6088,6 +6098,7 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
     cfg.g_timebase.num = 1000;
     cfg.g_timebase.den = fr * 1000;
     fclose(GetWHinfile);
+
     //Deal with Mode Pass and BitRate Here
     cfg.rc_target_bitrate = BitRate;
 
@@ -6275,7 +6286,8 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
         {
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
-            struct vpx_usec_timer timer;
+            clock_t start, end;
+            double cpu_time_used;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -6300,12 +6312,15 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
             else
                 frame_avail = 0;
 
-            vpx_usec_timer_start(&timer);
+            start = clock() * 1000000;
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, 0, arg_deadline);
-            vpx_usec_timer_mark(&timer);
-            cx_time += vpx_usec_timer_elapsed(&timer);
+            end = clock() * 1000000;
+
             ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            total_cpu_time_used = total_cpu_time_used + cpu_time_used;
 
             while ((pkt = vpx_codec_get_cx_data(&encoder, &iter)))
             {
@@ -6353,8 +6368,10 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
 
     vpx_img_free(&raw);
 
-    tprintf("\n File completed: Time in Microseconds: %u, Fps: %d \n",
-            cx_time, 1000 * framesoutrec / (cx_time / 1000));
+    total_cpu_time_used_ms = (unsigned int)(total_cpu_time_used);
+
+    tprintf("\n File completed: Time in Microseconds: %i,  Fps: %i\n",
+            total_cpu_time_used_ms, 1000 * framesoutrec / ((total_cpu_time_used_ms) / 1000));
 
     char TextFilechar1[255];
 
@@ -6363,10 +6380,10 @@ unsigned int TimeCompressIVFtoIVF(char *inputFile, const char *outputFile2, int 
     char *FullName = strcat(TextFilechar1, "CompressionTime.txt");
 
     ofstream outfile2(FullName);
-    outfile2 << cx_time;
+    outfile2 << total_cpu_time_used_ms;
     outfile2.close();
 
-    return cx_time;
+    return total_cpu_time_used_ms;
 }
 int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame)
 {
@@ -6415,7 +6432,7 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
     static const arg_def_t **ctrl_args = no_args;
     int                      verbose = 0;
     int                      arg_use_i420 = 1;
-    unsigned long            cx_time = 0;
+    double total_cpu_time_used = 0;
     int                  flags = 0;
 
 
@@ -6696,7 +6713,8 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
         {
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
-            struct vpx_usec_timer timer;
+            clock_t start, end;
+            double cpu_time_used;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -6735,11 +6753,13 @@ int CompressIVFtoIVFForceKeyFrame(char *inputFile, const char *outputFile2, int 
             }
 
 
-            vpx_usec_timer_start(&timer);
+            start = clock() * 1000000;;
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, flags, arg_deadline);
-            //vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, VPX_EFLAG_FORCE_KF, arg_deadline);
-            vpx_usec_timer_mark(&timer);
-            cx_time += vpx_usec_timer_elapsed(&timer);
+            end = clock() * 1000000;;
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            total_cpu_time_used = total_cpu_time_used + cpu_time_used;
+
             ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
@@ -6861,7 +6881,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     static const arg_def_t **ctrl_args = no_args;
     int                      verbose = 0;
     int                      arg_use_i420 = 1;
-    unsigned long            cx_time = 0;
+    double total_cpu_time_used = 0;
 
 
     //outfile = encoded ivf file
@@ -7242,7 +7262,8 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
         {
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
-            struct vpx_usec_timer timer;
+            clock_t start, end;
+            double cpu_time_used;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -7267,11 +7288,14 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
             else
                 frame_avail = 0;
 
-            vpx_usec_timer_start(&timer);
+            start = clock() * 1000000;;
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2,
                              2, 0, arg_deadline);
-            vpx_usec_timer_mark(&timer);
-            cx_time += vpx_usec_timer_elapsed(&timer);
+            end = clock() * 1000000;;
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            total_cpu_time_used = total_cpu_time_used + cpu_time_used;
+
             ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
@@ -7534,7 +7558,7 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
     int                    stop_after = 0, postproc = 0, summary = 1;
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
-    unsigned long          dx_time = 0;
+    double total_cpu_time_used = 0;
     const char                   *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
@@ -7596,9 +7620,10 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
-        struct vpx_usec_timer timer;
+        clock_t start, end;
+        double cpu_time_used;
 
-        vpx_usec_timer_start(&timer);
+        start = clock() * 1000000;;
 
         if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
         {
@@ -7611,8 +7636,9 @@ int DecompressIVFtoIVF(const char *inputchar, const char *outputchar)
             goto fail;
         }
 
-        vpx_usec_timer_mark(&timer);
-        dx_time += vpx_usec_timer_elapsed(&timer);
+        end = clock() * 1000000;;
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        total_cpu_time_used = total_cpu_time_used + cpu_time_used;
 
         ++frame;
 
@@ -7713,7 +7739,8 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
     int                    stop_after = 0, postproc = 0, summary = 0;
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
-    unsigned long          dx_time = 0;
+    double total_cpu_time_used = 0;
+    unsigned int total_cpu_time_used_ms = 0;
     const char             *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
@@ -7782,9 +7809,10 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
-        struct vpx_usec_timer timer;
+        clock_t start, end;
+        double cpu_time_used;
 
-        vpx_usec_timer_start(&timer);
+        start = clock() * 1000000;;
 
         if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
         {
@@ -7797,8 +7825,9 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
             goto fail;
         }
 
-        vpx_usec_timer_mark(&timer);
-        dx_time += vpx_usec_timer_elapsed(&timer);
+        end = clock() * 1000000;;
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        total_cpu_time_used = total_cpu_time_used + cpu_time_used;
 
         ++frame;
 
@@ -7868,10 +7897,11 @@ int DecompressIVFtoRaw(const char *inputchar, const char *outputchar)
             break;
     }
 
+    total_cpu_time_used_ms = (unsigned int)(total_cpu_time_used);
+
     if (summary)
     {
-        printf("Decoded %d frames in %lu us (%.2f fps)\n",
-               frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, total_cpu_time_used_ms, (float)frame * 1000000.0 / (float)total_cpu_time_used_ms);
     }
 
 fail:
@@ -7907,7 +7937,8 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
     int                    stop_after = 0, postproc = 0, summary = 0;
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
-    unsigned long          dx_time = 0;
+    double total_cpu_time_used = 0;
+    unsigned int total_cpu_time_used_ms = 0;
     char                   *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
@@ -7965,9 +7996,10 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
-        struct vpx_usec_timer timer;
+        clock_t start, end;
+        double cpu_time_used;
 
-        vpx_usec_timer_start(&timer);
+        start = clock() * 1000000;;
 
         if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
         {
@@ -7980,8 +8012,10 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
             goto fail;
         }
 
-        vpx_usec_timer_mark(&timer);
-        dx_time += vpx_usec_timer_elapsed(&timer);
+        end = clock() * 1000000;;
+
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        total_cpu_time_used = total_cpu_time_used + cpu_time_used;
 
         ++frame;
 
@@ -8046,10 +8080,11 @@ int DecompressIVFtoRawNoErrorOutput(char *inputchar, char *outputchar)
             break;
     }
 
+    total_cpu_time_used_ms = (unsigned int)(total_cpu_time_used);
+
     if (summary)
     {
-        printf("Decoded %d frames in %lu us (%.2f fps)\n",
-               frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, total_cpu_time_used_ms, (float)frame * 1000000.0 / (float)total_cpu_time_used_ms);
     }
 
 fail:
@@ -8085,7 +8120,8 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
     int                    stop_after = 0, postproc = 0, summary = 1;
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
-    unsigned long          dx_time = 0;
+    double total_cpu_time_used = 0;
+    unsigned int total_cpu_time_used_ms = 0;
     char                   *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
@@ -8147,9 +8183,10 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
-        struct vpx_usec_timer timer;
+        clock_t start, end;
+        double cpu_time_used;
 
-        vpx_usec_timer_start(&timer);
+        start = clock() * 1000000;;
 
         if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
         {
@@ -8162,8 +8199,10 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
             goto fail;
         }
 
-        vpx_usec_timer_mark(&timer);
-        dx_time += vpx_usec_timer_elapsed(&timer);
+        end = clock() * 1000000;;
+
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        total_cpu_time_used = total_cpu_time_used + cpu_time_used;
 
         ++frame;
 
@@ -8227,9 +8266,11 @@ int DecompressIVFtoIVFNoOutput(char *inputchar, char *outputchar)
             break;
     }
 
+    total_cpu_time_used_ms = (unsigned int)(total_cpu_time_used);
+
     if (summary)
     {
-        printf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, total_cpu_time_used_ms, (float)frame * 1000000.0 / (float)total_cpu_time_used_ms);
     }
 
 fail:
@@ -8267,10 +8308,12 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
     int                    stop_after = 0, postproc = 0, summary = 1;
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
-    unsigned long          dx_time = 0;
     const char             *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
+
+    double total_cpu_time_used = 0;
+    unsigned int total_cpu_time_used_ms = 0;
 
     int CharCount = 0;
 
@@ -8330,8 +8373,11 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
         struct vpx_usec_timer timer;
+        clock_t start, end;
+        double cpu_time_used;
 
-        vpx_usec_timer_start(&timer);
+        //vpx_usec_timer_start(&timer);
+        start = clock() * 1000000;;
 
         if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
         {
@@ -8344,8 +8390,12 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
             goto fail;
         }
 
-        vpx_usec_timer_mark(&timer);
-        dx_time += vpx_usec_timer_elapsed(&timer);
+        end = clock() * 1000000;;
+
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        total_cpu_time_used = total_cpu_time_used + cpu_time_used;
+        //vpx_usec_timer_mark(&timer);
+        //dx_time += vpx_usec_timer_elapsed(&timer);
 
         ++frame;
 
@@ -8409,9 +8459,11 @@ unsigned int TimeDecompressIVFtoIVF(const char *inputchar, const char *outputcha
             break;
     }
 
+    total_cpu_time_used_ms = (unsigned int)(total_cpu_time_used);
+
     if (summary)
     {
-        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, total_cpu_time_used_ms, (float)frame * 1000000.0 / (float)total_cpu_time_used_ms);
     }
 
 fail:
@@ -8440,10 +8492,10 @@ fail:
     char *FullName = strcat(TextFilechar1, "DecompressionTime.txt");
 
     ofstream outfile2(FullName);
-    outfile2 << dx_time;
+    outfile2 << total_cpu_time_used_ms;
     outfile2.close();
 
-    return dx_time;
+    return total_cpu_time_used_ms;
 }
 unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *outputchar)
 {
@@ -8457,7 +8509,8 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
     int                    stop_after = 0, postproc = 0, summary = 1;
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
-    unsigned long          dx_time = 0;
+    double total_cpu_time_used = 0;
+    unsigned int total_cpu_time_used_ms = 0;
     const char                   *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
@@ -8514,9 +8567,10 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
-        struct vpx_usec_timer timer;
+        clock_t start, end;
+        double cpu_time_used;
 
-        vpx_usec_timer_start(&timer);
+        start = clock() * 1000000;;
 
         if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
         {
@@ -8529,8 +8583,10 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
             goto fail;
         }
 
-        vpx_usec_timer_mark(&timer);
-        dx_time += vpx_usec_timer_elapsed(&timer);
+        end = clock() * 1000000;;
+
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        total_cpu_time_used = total_cpu_time_used + cpu_time_used;
 
         ++frame;
 
@@ -8599,9 +8655,11 @@ unsigned int DecompressIVFtoIVFTimeAndOutput(const char *inputchar, const char *
             break;
     }
 
+    total_cpu_time_used_ms = (unsigned int)(total_cpu_time_used);
+
     if (summary)
     {
-        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, total_cpu_time_used_ms, (float)frame * 1000000.0 / (float)total_cpu_time_used_ms);
     }
 
 fail:
@@ -8625,10 +8683,10 @@ fail:
     char *FullName = strcat(TextFilechar1, "DecompressionTime.txt");
 
     ofstream outfile2(FullName);
-    outfile2 << dx_time;
+    outfile2 << total_cpu_time_used_ms;
     outfile2.close();
 
-    return dx_time;
+    return total_cpu_time_used_ms;
 }
 int DecComputeMD5(const char *inputchar, const char *outputchar)
 {
@@ -9214,8 +9272,8 @@ int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset
         int offset = 0;
 
         /*    size = ftell(out);
-            offset = size;
-            printf("\nStart = %i\nPredicted Y: %i\nPredicted U: %i\nPredicted V: %i\n", size, newFrameWidth * newFrameHeight, ((newFrameWidth + 1) / 2)*((newFrameHeight + 1) / 2), ((newFrameWidth + 1) / 2)*((newFrameHeight + 1) / 2));*/
+        offset = size;
+        printf("\nStart = %i\nPredicted Y: %i\nPredicted U: %i\nPredicted V: %i\n", size, newFrameWidth * newFrameHeight, ((newFrameWidth + 1) / 2)*((newFrameHeight + 1) / 2), ((newFrameWidth + 1) / 2)*((newFrameHeight + 1) / 2));*/
 
         buf = img.planes[PLANE_Y];
 
@@ -9238,8 +9296,8 @@ int CropRawIVF(char *inputFile, const char *outputFile, int xoffset, int yoffset
         }
 
         /* size = ftell(out);
-         printf("UPlane = %i\n", size - offset);
-         offset = size;*/
+        printf("UPlane = %i\n", size - offset);
+        offset = size;*/
 
         buf = img.planes[flipuv?PLANE_U:PLANE_V];
 

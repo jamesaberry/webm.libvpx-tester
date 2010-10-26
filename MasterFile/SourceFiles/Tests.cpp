@@ -6693,9 +6693,9 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     }
 
     /////////////////Make Sure ivf File Exists///////////////
-    if (!FileExistsCheck(argv[6]))
+    if (!FileExistsCheck(argv[2]))
     {
-        tprintf("\nInput encode file %s does not exist\n", argv[6]);
+        tprintf("\nInput encode file %s does not exist\n", argv[2]);
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
@@ -13121,9 +13121,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         /////////////////Make Sure ivf File Exists///////////////
-        if (!FileExistsCheck(argv[6]))
+        if (!FileExistsCheck(argv[2]))
         {
-            tprintf("\nInput encode file %s does not exist\n", argv[6]);
+            tprintf("\nInput encode file %s does not exist\n", argv[2]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);

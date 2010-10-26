@@ -12,13 +12,10 @@ using namespace std;
 #if defined(_WIN32)
 char slashChar = '\\';
 string slashCharStr = "\\";
-
 #include <windows.h>
 #include <tchar.h>
 #include <direct.h>
 #define snprintf _snprintf
-
-
 #elif defined(linux)
 char slashChar = '/';
 string slashCharStr = "/";
@@ -63,6 +60,9 @@ extern double IVFDisplayVisibleFrames(const char *inputchar, int PrintSwitch);
 extern double IVFDisplayAltRefFrames(const char *inputFile, int Selector);
 extern double IVFDisplayKeyFrames(const char *inputFile, int Selector);
 extern void tprintf(const char *fmt, ...);
+extern int FolderExistCheck(string FolderName);
+extern char *itoa_custom(int value, char *result, int base);
+extern int MakeDir(string CreateDir2);
 
 //Tools
 extern int ComprIVF2IVF(int argc, char *argv[], string WorkingDir);
@@ -152,7 +152,6 @@ int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
 {
     ///////////////////////////////////////////Create Working Folder////////////////////////////////////
 
-
     //Get Date and time info and convert it to a string removing colons in time
     time_t rawtime;
     struct tm *timeinfo;
@@ -178,8 +177,7 @@ int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
         w++;
     }
 
-    DateAndTimeCharArray[w] = '\"';
-    DateAndTimeCharArray[w+1] = '\0';
+    DateAndTimeCharArray[w] = '\0';
     string DateAndTime3 = DateAndTimeCharArray;
 
     //Get Dir Folder
@@ -191,11 +189,36 @@ int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
     string Folder = Folder2;
 
     //add Date and Time
+    int number = 0;
+
     Folder.append(DateAndTime3);
+    string FolderCheck = Folder;
+
+    while (FolderExistCheck(FolderCheck)) //Make sure folder doesnt already exist
+    {
+        number++;
+        char numberChar[255];
+        itoa_custom(number, numberChar, 10);
+
+        FolderCheck = Folder;
+        FolderCheck.append("_");
+        FolderCheck.append(numberChar);
+    }
+
+    if (number != 0) //append sub number to end of folder name
+    {
+        char numberChar[255];
+        itoa_custom(number + 1, numberChar, 10);
+
+        Folder.append("_");
+        Folder.append(numberChar);
+    }
+
+    Folder.append("\"");
+    Folder.append("\0");
     snprintf(WorkingDirChar, 255, "%s", Folder.c_str());
 
     return 0;
-
 }
 string DateString()
 {
@@ -282,9 +305,9 @@ void OnErrorOutPut()
 }
 void Print1(string WorkingDir)
 {
-    string TextfileString = WorkingDir;
-    TextfileString.erase(TextfileString.end() - 25, TextfileString.end());
-    //TextfileString.append(slashCharStr);
+    char FolderNameChar[255];
+    FolderName(WorkingDir.c_str(), FolderNameChar);
+    string TextfileString = FolderNameChar;
     TextfileString.append("PrintTxtFiles.txt");
 
     FILE *fp;
@@ -930,9 +953,9 @@ void Print2(string WorkingDir)
 {
 
 
-    string TextfileString2 = WorkingDir;
-    TextfileString2.erase(TextfileString2.end() - 25, TextfileString2.end());
-    //TextfileString2.append(slashCharStr);
+    char FolderNameChar[255];
+    FolderName(WorkingDir.c_str(), FolderNameChar);
+    string TextfileString2 = FolderNameChar;
     TextfileString2.append("ComboTestSampleInput.txt");
 
     FILE *fp2;
@@ -1063,9 +1086,9 @@ void Print2(string WorkingDir)
 }
 void Print3(string WorkingDir)
 {
-    string TextfileString3 = WorkingDir;
-    TextfileString3.erase(TextfileString3.end() - 25, TextfileString3.end());
-    //TextfileString3.append(slashCharStr);
+    char FolderNameChar[255];
+    FolderName(WorkingDir.c_str(), FolderNameChar);
+    string TextfileString3 = FolderNameChar;
     TextfileString3.append("MultiRunSampleInput.txt");
     //cout << TextfileString3.c_str() << endl;
 
@@ -1139,9 +1162,9 @@ void Print3(string WorkingDir)
 }
 void Print4(string WorkingDir)
 {
-    string TextfileString4 = WorkingDir;
-    TextfileString4.erase(TextfileString4.end() - 25, TextfileString4.end());
-    //TextfileString4.append(slashCharStr);
+    char FolderNameChar[255];
+    FolderName(WorkingDir.c_str(), FolderNameChar);
+    string TextfileString4 = FolderNameChar;
     TextfileString4.append("FullModeMultiRunSampleInput.txt");
 
     FILE *fp4;
@@ -1400,8 +1423,9 @@ void Print4(string WorkingDir)
 }
 void Print5(string WorkingDir)
 {
-    string TextfileString5 = WorkingDir;
-    TextfileString5.erase(TextfileString5.end() - 25, TextfileString5.end());
+    char FolderNameChar[255];
+    FolderName(WorkingDir.c_str(), FolderNameChar);
+    string TextfileString5 = FolderNameChar;
     TextfileString5.append("QuickTest_32Bit.txt");
 
     FILE *fp5;
@@ -1590,8 +1614,9 @@ void Print5(string WorkingDir)
 }
 void Print6(string WorkingDir)
 {
-    string TextfileString5 = WorkingDir;
-    TextfileString5.erase(TextfileString5.end() - 25, TextfileString5.end());
+    char FolderNameChar[255];
+    FolderName(WorkingDir.c_str(), FolderNameChar);
+    string TextfileString5 = FolderNameChar;
     TextfileString5.append("QuickTest_64Bit.txt");
 
     FILE *fp5;

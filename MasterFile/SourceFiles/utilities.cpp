@@ -23,8 +23,11 @@ typedef unsigned char BYTE;
 #if defined(_WIN32)
 #include <windows.h>
 #include "on2vpplugin.h"
+#include <direct.h>
 #define snprintf _snprintf
 #else
+#include <sys/types.h>
+#include <dirent.h>
 typedef unsigned int  DWORD;
 #endif
 #ifdef _MSC_VER
@@ -2773,6 +2776,37 @@ int FileExistsCheck(string input)
     }
 
     infile.close();
+    return 0;
+}
+int FolderExistCheck(string FolderName)
+{
+#if defined(_WIN32)
+
+    if (GetFileAttributes(FolderName.c_str()) == INVALID_FILE_ATTRIBUTES)
+    {
+        //printf("\nFolder: %s Does not exist\n", FolderName.c_str());
+        return 0;
+    }
+    else
+    {
+        //printf("\nFolder: %s Does exist\n", FolderName.c_str());
+        return 1;
+    }
+
+#else
+
+    if (opendir(FolderName.c_str()) == NULL)
+    {
+        //printf("\nFolder: %s Does not exist\n", FolderName.c_str());
+        return 0;
+    }
+    else
+    {
+        //printf("\nFolder: %s Does exist\n", FolderName.c_str());
+        return 1;
+    }
+
+#endif
     return 0;
 }
 void SubFolderName(char *input, char *FileName)

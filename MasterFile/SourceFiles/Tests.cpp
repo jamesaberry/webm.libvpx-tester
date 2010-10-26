@@ -6692,6 +6692,16 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         return 2;
     }
 
+    /////////////////Make Sure ivf File Exists///////////////
+    if (!FileExistsCheck(argv[6]))
+    {
+        tprintf("\nInput encode file %s does not exist\n", argv[6]);
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 2;
+    }
+
     /////////////////////////////////////////////////////////
 
     opt.target_bandwidth = BitRate;
@@ -13104,6 +13114,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         if (!FileExistsCheck(argv[5]))
         {
             tprintf("\nInput executable %s does not exist\n", argv[5]);
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        /////////////////Make Sure ivf File Exists///////////////
+        if (!FileExistsCheck(argv[6]))
+        {
+            tprintf("\nInput encode file %s does not exist\n", argv[6]);
             fclose(fp);
             string File1Str = File1;
             RecordTestComplete(MainDirString, File1Str, TestType);

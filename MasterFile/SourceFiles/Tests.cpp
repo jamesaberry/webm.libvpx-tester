@@ -2515,16 +2515,16 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
     if (TestType == 1)
     {
         tprintf("\n-------------------------------------------------------------------------------\n\n"
-                "                                  Test Results - Passed \n");
+                "                              Test Results - Passed \n");
     }
 
     if (TestType == 3)
     {
         tprintf("\n-------------------------------------------------------------------------------\n\n"
-                "                                Test Only Results - Passed \n");
+                "                              Test Results - Passed \n");
     }
 
-    tprintf("\n\n");
+    //tprintf("\n\n");
 
     int TestIndicator = 0;
 
@@ -2558,13 +2558,87 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         if (TestType == 1)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                                  Test Results - Failed \n");
+                    "                             Test Results - MinPassed \n");
         }
 
         if (TestType == 3)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                                Test Only Results - Failed \n");
+                    "                             Test Results - MinPassed \n");
+        }
+
+        TestIndicator = 0;
+        y = 0;
+
+        while (y < TestsRun)
+        {
+            if (PassFail[y] == 8)
+            {
+                if (TestIndicator == 0)
+                {
+                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                }
+
+                TestIndicator = 1;
+                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("MinTestPassed\n");
+            }
+
+            y++;
+        }
+
+        if (TestIndicator == 0)
+        {
+            tprintf("NONE\n\n");
+        }
+
+        if (TestType == 1)
+        {
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
+                    "                           Test Results - Indeterminate \n");
+        }
+
+        if (TestType == 3)
+        {
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
+                    "                           Test Results - Indeterminate \n");
+        }
+
+        TestIndicator = 0;
+        y = 0;
+
+        while (y < TestsRun)
+        {
+            if (PassFail[y] == 2)
+            {
+                if (TestIndicator == 0)
+                {
+                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                }
+
+                TestIndicator = 1;
+                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("Indeterminate\n");
+            }
+
+            y++;
+        }
+
+        if (TestIndicator == 0)
+        {
+            tprintf("NONE\n\n");
+        }
+
+        if (TestType == 1)
+        {
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
+                    "                              Test Results - Failed \n");
+        }
+
+        if (TestType == 3)
+        {
+            tprintf("\n-------------------------------------------------------------------------------\n\n"
+                    "                              Test Results - Failed \n");
         }
 
         TestIndicator = 0;
@@ -2595,13 +2669,13 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         if (TestType == 1)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                                  Test Results - Other \n");
+                    "                               Test Results - Other \n");
         }
 
         if (TestType == 3)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                                Test Only Results - Other \n");
+                    "                               Test Results - Other \n");
         }
 
         TestIndicator = 0;
@@ -2609,7 +2683,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         while (y < TestsRun)
         {
-            if (PassFail[y] != 0 && PassFail[y] != 1)
+            if (PassFail[y] != 0 && PassFail[y] != 1 && PassFail[y] != 8 && PassFail[y] != 2)
             {
                 if (TestIndicator == 0)
                 {
@@ -2618,11 +2692,6 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 TestIndicator = 1;
                 tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-
-                if (PassFail[y] == 2)
-                {
-                    tprintf("Indeterminate\n");
-                }
 
                 if (PassFail[y] == 3)
                 {
@@ -2637,11 +2706,6 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
                 if (PassFail[y] == 5)
                 {
                     tprintf("RandomTestCompleted\n");
-                }
-
-                if (PassFail[y] == 8)
-                {
-                    tprintf("MinTestPassed\n");
                 }
 
                 if (PassFail[y] == 10)

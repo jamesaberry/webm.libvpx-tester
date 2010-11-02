@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include "x86.h"
 
 using namespace std;
 
@@ -7464,6 +7465,32 @@ int SolveQuad()
     cout << "\nC = " << C;
 
     printf("\n\ny = %.2fx^2 + %.2fx + %.2f\n\n", A, B, C);
+
+    return 0;
+}
+
+int PrintCPUInfo()
+{
+    int Simd_Caps = x86_simd_caps();
+
+    //printf("\nSimd_Caps = %i\n",Simd_Caps);
+
+    printf("\nDetected CPU capabilities:\n");
+
+    if ((Simd_Caps & HAS_MMX)    == HAS_MMX)    printf("\n     MMX    Detected");
+
+    if ((Simd_Caps & HAS_SSE)    == HAS_SSE)    printf("\n     SSE    Detected");
+
+    if ((Simd_Caps & HAS_SSE2)   == HAS_SSE2)   printf("\n     SSE2   Detected");
+
+    if ((Simd_Caps & HAS_SSE3)   == HAS_SSE3)   printf("\n     SSE3   Detected");
+
+    if ((Simd_Caps & HAS_SSSE3)  == HAS_SSSE3)  printf("\n     SSSE3  Detected");
+
+    if ((Simd_Caps & HAS_SSE4_1) == HAS_SSE4_1) printf("\n     SSE4_1 Detected");
+
+    printf("\n");
+
 
     return 0;
 }

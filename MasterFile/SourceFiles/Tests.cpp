@@ -18,6 +18,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
+#include "x86.h"
 
 using namespace std;
 
@@ -4862,8 +4863,6 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         return 0;
     }
 
-
-
     ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
     string WorkingDirString = "";
     string Mode3TestMatch = "";
@@ -4958,7 +4957,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     CPUDecOnlyWorksOutFile.append(slashCharStr);
     CPUDecOnlyWorksOutFile.append("CPUDecOnlyWorksOutput.ivf");
     CPUDecOnlyWorksOut_CPU.append(slashCharStr);
-    CPUDecOnlyWorksOut_CPU.append("CPUDecOnlyWorksOutput_CPU");
+    CPUDecOnlyWorksOut_CPU.append("CPUDecOnlyWorksOutput_");
 
     //char CPUDecOnlyWorksOutFile[255];
     //char CPUDecOnlyWorksOut_CPU[255];
@@ -5015,6 +5014,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     int speed = 0;
     int Fail = 0;
+    int ModesRun = 0;
     VP8_CONFIG opt;
     VP8DefaultParms(opt);
 
@@ -5047,96 +5047,93 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        string Output2 = CPUDecOnlyWorksOut_CPU;
-        Output2.append("0.ivf");
-        char Output2Char[1024];
-        snprintf(Output2Char, 1024, "%s", Output2.c_str());
+        vector<string> DecompressonVector;
 
-        int counterMax = 12;
-        counter++;
-        int i = 1;
+        string OutputStr0 = CPUDecOnlyWorksOut_CPU;
+        OutputStr0.append("None.ivf");
+        string OutputStr1 = CPUDecOnlyWorksOut_CPU;
+        OutputStr1.append("MMX.ivf");
+        string OutputStr2 = CPUDecOnlyWorksOut_CPU;
+        OutputStr2.append("SSE.ivf");
+        string OutputStr3 = CPUDecOnlyWorksOut_CPU;
+        OutputStr3.append("SSE2.ivf");
+        string OutputStr4 = CPUDecOnlyWorksOut_CPU;
+        OutputStr4.append("SSE3.ivf");
+        string OutputStr5 = CPUDecOnlyWorksOut_CPU;
+        OutputStr5.append("SSSE3.ivf");
+        string OutputStr6 = CPUDecOnlyWorksOut_CPU;
+        OutputStr6.append("SSE4_1.ivf");
 
-        while (counter < counterMax)
+        if (FileExistsCheck(OutputStr0))DecompressonVector.push_back(OutputStr0);
+
+        if (FileExistsCheck(OutputStr1))DecompressonVector.push_back(OutputStr1);
+
+        if (FileExistsCheck(OutputStr2))DecompressonVector.push_back(OutputStr2);
+
+        if (FileExistsCheck(OutputStr3))DecompressonVector.push_back(OutputStr3);
+
+        if (FileExistsCheck(OutputStr4))DecompressonVector.push_back(OutputStr4);
+
+        if (FileExistsCheck(OutputStr5))DecompressonVector.push_back(OutputStr5);
+
+        if (FileExistsCheck(OutputStr6))DecompressonVector.push_back(OutputStr6);
+
+        ModesRun = DecompressonVector.size();
+
+        totalms = TimeReturn(DecompressonVector[0].c_str(), 1);
+
+        int CurrentDecFile = 0;
+
+        while (CurrentDecFile < DecompressonVector.size())
         {
 
-            string CPUIDSTRING = "ON2_SIMD_CAPS=";
-            char CounterChar[10];
-            itoa_custom(counter, CounterChar, 10);
-            CPUIDSTRING.append(CounterChar);
+            totalms2 = TimeReturn(DecompressonVector[CurrentDecFile].c_str(), 1);
 
-            //////////////////////////////////
-            ///////Compresion and Time ///////
-
-            string Output = CPUDecOnlyWorksOut_CPU;
-            string Output3 = CPUDecOnlyWorksOut_CPU;
-            char count[20];
-            itoa_custom(counter, count, 10);
-
-            Output.append(count);
-            Output.append(".ivf");
-
-            char ChangedCPUDecOutFileChar[255];
-            snprintf(ChangedCPUDecOutFileChar, 255, "%s", Output.c_str());
-
-            tprintf("\n");
-
-            int countOld = (counter - 1);
-            itoa_custom(countOld, count, 10);
-
-            Output3.append(count);
-
-            if (DoOnceSpeedRead == 0)
+            if (CurrentDecFile >= 1)
             {
-                char GetTimeChar[255];
-                snprintf(GetTimeChar, 255, "%s", Output.c_str());
+                tprintf("\n");
 
-                totalms = TimeReturn(GetTimeChar, 1);
-                DoOnceSpeedRead = 1;
-            }
-            else
-            {
-                char GetTimeChar[255];
-                snprintf(GetTimeChar, 255, "%s", Output.c_str());
+                char CompFile1[255];
+                char CompFile2[255];
+                FileName(DecompressonVector[CurrentDecFile-1].c_str(), CompFile1, 0);
+                FileName(DecompressonVector[CurrentDecFile].c_str(), CompFile2, 0);
 
-                totalms2 = TimeReturn(GetTimeChar, 1);
+                tprintf("\nComparing %s to %s", CompFile1, CompFile2);
+
+                int lngRC = CompIVF(DecompressonVector[CurrentDecFile-1].c_str(), DecompressonVector[CurrentDecFile].c_str());
+
+                if (lngRC >= 0)
+                {
+                    tprintf("\n * Fail: Files differ at frame: %i", lngRC);
+                    Fail = 1;
+                }
+
+                if (lngRC == -1)
+                {
+                    tprintf("\n * Files are identical");
+                }
+
+                if (lngRC == -2)
+                {
+                    tprintf("\n * Fail: File 2 ends before File 1.\n");
+                    Fail = 1;
+                }
+
+                if (lngRC == -3)
+                {
+                    tprintf("\n * Fail: File 1 ends before File 2.\n");
+                    Fail = 1;
+                }
             }
 
-            Output3.append(".ivf");
-
-            tprintf("\ncomparing CPU:%i to CPU:%i", counter - 1, counter);
-            int lngRC = CompIVF(Output.c_str(), Output3.c_str());
-
-            if (lngRC >= 0)
-            {
-                tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                Fail = 1;
-            }
-
-            if (lngRC == -1)
-            {
-                tprintf("\nFiles are identical");
-            }
-
-            if (lngRC == -2)
-            {
-                tprintf("\n\nFail: File 2 ends before File 1.\n"/*, lngRC*/);
-                Fail = 1;
-            }
-
-            if (lngRC == -3)
-            {
-                tprintf("\n\nFail: File 1 ends before File 2.\n"/*, lngRC*/);
-                Fail = 1;
-            }
-
-            counter = counter + 1;
-            tprintf("\n\n");
-            i++;
+            CurrentDecFile++;
         }
 
+        tprintf("\n");
     }
     else
     {
+        vector<string> DecompressonVector;
         opt.Mode = Mode;
 
         if (CompressIVFtoIVF(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
@@ -5150,11 +5147,12 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         putenv("ON2_SIMD_CAPS=0");
 
         string Output2Str = CPUDecOnlyWorksOut_CPU;
-        Output2Str.append("0.ivf");
+        Output2Str.append("NONE.ivf");
 
-        tprintf("\n\nCPU:%i\n", 0);
+        tprintf("\n\nDetected CPU capability: NONE");
 
         totalms = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str());
+        DecompressonVector.push_back(Output2Str);
 
         if (totalms == -1)
         {
@@ -5164,87 +5162,146 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             return 2;
         }
 
-        tprintf("\n\n");
+        tprintf("\n");
 
-        int counterMax = 12;
+        int counterMax = 64;
         counter++;
         int i = 1;
 
+        int Simd_Caps = x86_simd_caps();
+
         while (counter < counterMax)
         {
-            string CPUIDSTRING = "ON2_SIMD_CAPS=";
-            char CounterChar[10];
-            itoa_custom(counter, CounterChar, 10);
-            CPUIDSTRING.append(CounterChar);
+            int CPUFound = 0;
+            int Curnum = (counter + 1) / 2;
 
-            char CPUChar[255];
-            snprintf(CPUChar, 255, CPUIDSTRING.c_str());
-            putenv(CPUChar);
+            if ((Simd_Caps & HAS_MMX)    == Curnum) CPUFound = 1;
 
-            tprintf("CPU:%i", counter);
+            if ((Simd_Caps & HAS_SSE)    == Curnum) CPUFound = 1;
 
-            //////////////////////////////////
-            ///////Compresion and Time ///////
+            if ((Simd_Caps & HAS_SSE2)   == Curnum) CPUFound = 1;
 
-            string ChangedCPUDecOutFileStr1 = CPUDecOnlyWorksOut_CPU;
-            string ChangedCPUDecOutFileStr2 = CPUDecOnlyWorksOut_CPU;
+            if ((Simd_Caps & HAS_SSE3)   == Curnum) CPUFound = 1;
 
-            char count[20];
-            itoa_custom(counter, count, 10);
-            ChangedCPUDecOutFileStr1.append(count);
-            ChangedCPUDecOutFileStr1.append(".ivf");
+            if ((Simd_Caps & HAS_SSSE3)  == Curnum) CPUFound = 1;
 
-            tprintf("\n");
+            if ((Simd_Caps & HAS_SSE4_1) == Curnum) CPUFound = 1;
 
-            totalms2 = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), ChangedCPUDecOutFileStr1.c_str());
-
-            if (totalms2 == -1)
+            if (CPUFound == 1)
             {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
+                string CPUStr = "";
+                tprintf("\nDetected CPU capability: ");
+
+                if ((Simd_Caps & HAS_MMX)    == Curnum)
+                {
+                    CPUStr = "MMX";
+                }
+
+                if ((Simd_Caps & HAS_SSE)    == Curnum)
+                {
+                    CPUStr = "SSE";
+                }
+
+                if ((Simd_Caps & HAS_SSE2)   == Curnum)
+                {
+                    CPUStr = "SSE2";
+                }
+
+                if ((Simd_Caps & HAS_SSE3)   == Curnum)
+                {
+                    CPUStr = "SSE3";
+                }
+
+                if ((Simd_Caps & HAS_SSSE3)  == Curnum)
+                {
+                    CPUStr = "SSSE3";
+                }
+
+                if ((Simd_Caps & HAS_SSE4_1) == Curnum)
+                {
+                    CPUStr = "SSE4_1";
+                }
+
+                tprintf("%s", CPUStr.c_str());
+
+                string CPUIDSTRING = "ON2_SIMD_CAPS=";
+                char CounterChar[10];
+                itoa_custom(counter, CounterChar, 10);
+                CPUIDSTRING.append(CounterChar);
+
+                char CPUChar[255];
+                snprintf(CPUChar, 255, CPUIDSTRING.c_str());
+                putenv(CPUChar);
+
+                //////////////////////////////////
+                ///////Compresion and Time ///////
+
+                string ChangedCPUDecOutFileStr1 = CPUDecOnlyWorksOut_CPU;
+                string ChangedCPUDecOutFileStr2 = CPUDecOnlyWorksOut_CPU;
+
+                char count[20];
+                itoa_custom(counter, count, 10);
+                ChangedCPUDecOutFileStr1.append(CPUStr.c_str());
+                ChangedCPUDecOutFileStr1.append(".ivf");
+
+                totalms2 = DecompressIVFtoIVFTimeAndOutput(CPUDecOnlyWorksOutFile.c_str(), ChangedCPUDecOutFileStr1.c_str());
+                DecompressonVector.push_back(ChangedCPUDecOutFileStr1);
+
+                if (totalms2 == -1)
+                {
+                    fclose(fp);
+                    string File1Str = File1;
+                    RecordTestComplete(MainDirString, File1Str, TestType);
+                    return 2;
+                }
+
+                int countOld = (counter - 1);
+                itoa_custom(countOld, count, 10);
+                ChangedCPUDecOutFileStr2.append(CPUStr.c_str());
+                ChangedCPUDecOutFileStr2.append(".ivf");
+
+                if (TestType != 2)
+                {
+                    char CompFile1[255];
+                    char CompFile2[255];
+                    FileName(DecompressonVector[DecompressonVector.size()-1].c_str(), CompFile1, 0);
+                    FileName(DecompressonVector[DecompressonVector.size()-2].c_str(), CompFile2, 0);
+
+                    tprintf("\nComparing %s to %s", CompFile1, CompFile2);
+
+                    int lngRC = CompIVF(DecompressonVector[DecompressonVector.size()-1].c_str(), DecompressonVector[DecompressonVector.size()-2].c_str());
+
+                    if (lngRC >= 0)
+                    {
+                        tprintf("\n * Fail: Files differ at frame: %i on file number %i", lngRC, i);
+                        Fail = 1;
+                    }
+
+                    if (lngRC == -1)
+                    {
+                        tprintf("\n * Files are identical");
+                    }
+
+                    if (lngRC == -2)
+                    {
+                        tprintf("\n * Fail: File 2 ends before File 1.\n");
+                        Fail = 1;
+                    }
+
+                    if (lngRC == -3)
+                    {
+                        tprintf("\n * Fail: File 1 ends before File 2.\n");
+                        Fail = 1;
+                    }
+                }
             }
 
-            int countOld = (counter - 1);
-            itoa_custom(countOld, count, 10);
-            ChangedCPUDecOutFileStr2.append(count);
-            ChangedCPUDecOutFileStr2.append(".ivf");
-
-            if (TestType != 2)
-            {
-                tprintf("comparing CPU:%i to CPU:%i", counter - 1, counter);
-
-                int lngRC = CompIVF(ChangedCPUDecOutFileStr1.c_str(), ChangedCPUDecOutFileStr2.c_str());
-
-                if (lngRC >= 0)
-                {
-                    tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, i);
-                    Fail = 1;
-                }
-
-                if (lngRC == -1)
-                {
-                    tprintf("\nFiles are identical");
-                }
-
-                if (lngRC == -2)
-                {
-                    tprintf("\n\nFail: File 2 ends before File 1.\n");
-                    Fail = 1;
-                }
-
-                if (lngRC == -3)
-                {
-                    tprintf("\n\nFail: File 1 ends before File 2.\n");
-                    Fail = 1;
-                }
-            }
-
-            counter = counter + 1;
+            counter = ((counter + 1) * 2) - 1;
             tprintf("\n\n");
             i++;
         }
+
+        ModesRun = DecompressonVector.size();
     }
 
     //Create Compression only stop test short.
@@ -5280,6 +5337,26 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         overallfail = 1;
     }
 
+    if (ModesRun == 7)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "All instruction sets run - Passed");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        tprintf("\n");
+    }
+
+    if (ModesRun != 7)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "Not all instruction sets run - MinPassed");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        tprintf("\n");
+
+        if (overallfail != 1) overallfail = 2;
+    }
+
     if (totalms != totalms2)
     {
         char OutputChar1[255];
@@ -5297,6 +5374,16 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         FormatedPrint(OutputChar1str, 5);
         tprintf("\n");
         overallfail = 1;
+    }
+
+    if (overallfail == 2)
+    {
+        tprintf("\nMinPassed\n");
+        fclose(fp);
+        putenv("ON2_SIMD_CAPS=");
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 2;
     }
 
     if (overallfail == 0)
@@ -5342,8 +5429,6 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         );
         return 0;
     }
-
-
 
     ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
     string WorkingDirString = "";
@@ -5437,9 +5522,9 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     string ChangedCPUDecNOutBase = WorkingDirString;
 
     ChangedCPUDec0OutFile.append(slashCharStr);
-    ChangedCPUDec0OutFile.append("ChangedCPUNOutputCPU0.ivf");
+    ChangedCPUDec0OutFile.append("ChangeCPUWorksOutput_NONE.ivf");
     ChangedCPUDecNOutBase.append(slashCharStr);
-    ChangedCPUDecNOutBase.append("ChangedCPUNOutputCPU");
+    ChangedCPUDecNOutBase.append("ChangeCPUWorksOutput_");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -5494,6 +5579,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     int speed = 0;
     int Fail = 0;
+    int ModesRun = 0;
 
     unsigned int Time1 = 0;
     unsigned int Time2 = 0;
@@ -5519,7 +5605,6 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     /////////////////////////////////////////////////////////
 
-
     opt.target_bandwidth = BitRate;
     opt.Version = VersionNum;
     int CompressInt = opt.Version;
@@ -5531,147 +5616,247 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
-        int counterMax = 16;
-        counter = 1;
-        int FileNumber = 1;
+        vector<string> CompressonVector;
 
-        while (counter < counterMax)
+        string OutputStr0 = ChangedCPUDecNOutBase;
+        OutputStr0.append("None.ivf");
+        string OutputStr1 = ChangedCPUDecNOutBase;
+        OutputStr1.append("MMX.ivf");
+        string OutputStr2 = ChangedCPUDecNOutBase;
+        OutputStr2.append("SSE.ivf");
+        string OutputStr3 = ChangedCPUDecNOutBase;
+        OutputStr3.append("SSE2.ivf");
+        string OutputStr4 = ChangedCPUDecNOutBase;
+        OutputStr4.append("SSE3.ivf");
+        string OutputStr5 = ChangedCPUDecNOutBase;
+        OutputStr5.append("SSSE3.ivf");
+        string OutputStr6 = ChangedCPUDecNOutBase;
+        OutputStr6.append("SSE4_1.ivf");
+
+        if (FileExistsCheck(OutputStr0))CompressonVector.push_back(OutputStr0);
+
+        if (FileExistsCheck(OutputStr1))CompressonVector.push_back(OutputStr1);
+
+        if (FileExistsCheck(OutputStr2))CompressonVector.push_back(OutputStr2);
+
+        if (FileExistsCheck(OutputStr3))CompressonVector.push_back(OutputStr3);
+
+        if (FileExistsCheck(OutputStr4))CompressonVector.push_back(OutputStr4);
+
+        if (FileExistsCheck(OutputStr5))CompressonVector.push_back(OutputStr5);
+
+        if (FileExistsCheck(OutputStr6))CompressonVector.push_back(OutputStr6);
+
+        ModesRun = CompressonVector.size();
+
+        Time1 = TimeReturn(CompressonVector[0].c_str(), 0);
+
+        int CurrentFile = 0;
+
+        while (CurrentFile < CompressonVector.size())
         {
-            ///////////Updating CPU///////////
-            string CPUIDSTRING = "ON2_SIMD_CAPS=";
-            char CounterChar[10];
-            itoa_custom(counter, CounterChar, 10);
-            CPUIDSTRING.append(CounterChar);
 
-            char CPUChar[255];
-            snprintf(CPUChar, 255, CPUIDSTRING.c_str());
-            putenv(CPUChar);
+            Time2 = TimeReturn(CompressonVector[CurrentFile].c_str(), 0);
 
-            ///////Compresion and Time ///////
-            string ChangedCPUDecNOutCurrent = ChangedCPUDecNOutBase;
-            string ChangedCPUDecNOutLast = ChangedCPUDecNOutBase;
-
-            char count[20];
-            itoa_custom(counter, count, 10);
-            ChangedCPUDecNOutCurrent.append(count);
-            ChangedCPUDecNOutCurrent.append(".ivf");
-
-            int countOld = (counter - 1) / 2;
-            itoa_custom(countOld, count, 10);
-            ChangedCPUDecNOutLast.append(count);
-            ChangedCPUDecNOutLast.append(".ivf");
-
-            tprintf("\n\ncomparing\n\n %s \n\n to \n\n%s\n\n", ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
-
-            int lngRC = CompIVF(ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
-
-            if (lngRC >= 0)
+            if (CurrentFile >= 1)
             {
-                tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
-                Fail = 1;
-            }
+                tprintf("\n");
 
-            if (lngRC == -1)
-            {
-                tprintf("\nFiles are identical");
-            }
+                char CompFile1[255];
+                char CompFile2[255];
+                FileName(CompressonVector[CurrentFile-1].c_str(), CompFile1, 0);
+                FileName(CompressonVector[CurrentFile].c_str(), CompFile2, 0);
 
-            if (lngRC == -2)
-            {
-                tprintf("\n\nFail: File 2 ends before File 1.\n");
-                Fail = 1;
-            }
+                tprintf("\nComparing %s to %s", CompFile1, CompFile2);
 
-            if (lngRC == -3)
-            {
-                tprintf("\n\nFail: File 1 ends before File 2.\n");
-                Fail = 1;
-            }
-
-            Time2 = TimeReturn(ChangedCPUDecNOutCurrent.c_str(), 0);
-
-            counter = (counter * 2) + 1;
-            FileNumber++;
-        }
-    }
-    else
-    {
-
-        int counterMax = 16;
-        int FileNumber = 1;
-
-        while (counter < counterMax)
-        {
-            ///////////Updating CPU///////////
-            string CPUIDSTRING = "ON2_SIMD_CAPS=";
-            char CounterChar[10];
-            itoa_custom(counter, CounterChar, 10);
-            CPUIDSTRING.append(CounterChar);
-
-            char CPUChar[255];
-            snprintf(CPUChar, 255, CPUIDSTRING.c_str());
-            putenv(CPUChar);
-
-            tprintf("\n\nCPU:%i", counter);
-
-            ///////Compresion and Time ///////
-            string ChangedCPUDecNOutCurrent = ChangedCPUDecNOutBase;
-            string ChangedCPUDecNOutLast = ChangedCPUDecNOutBase;
-
-            char count[20];
-            itoa_custom(counter, count, 10);
-            ChangedCPUDecNOutCurrent.append(count);
-            ChangedCPUDecNOutCurrent.append(".ivf");
-
-            int countOld = (counter - 1) / 2;
-            itoa_custom(countOld, count, 10);
-            ChangedCPUDecNOutLast.append(count);
-            ChangedCPUDecNOutLast.append(".ivf");
-
-            opt.Mode = Mode;
-            Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-
-            if (Time2 == -1)
-            {
-                fclose(fp);
-                string File1Str = File1;
-                RecordTestComplete(MainDirString, File1Str, TestType);
-                return 2;
-            }
-
-            if (TestType != 2 && counter != 0)
-            {
-                tprintf("\n\ncomparing CPU:%i to CPU:%i", (counter - 1) / 2, counter);
-
-                int lngRC = CompIVF(ChangedCPUDecNOutCurrent.c_str(), ChangedCPUDecNOutLast.c_str());
+                int lngRC = CompIVF(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str());
 
                 if (lngRC >= 0)
                 {
-                    tprintf("\n\nFail: Files differ at frame: %i on file number %i", lngRC, FileNumber);
+                    tprintf("\n * Fail: Files differ at frame: %i", lngRC);
                     Fail = 1;
                 }
 
                 if (lngRC == -1)
                 {
-                    tprintf("\nFiles are identical");
+                    tprintf("\n * Files are identical");
                 }
 
                 if (lngRC == -2)
                 {
-                    tprintf("\n\nFail: File 2 ends before File 1.\n");
+                    tprintf("\n * Fail: File 2 ends before File 1.\n");
                     Fail = 1;
                 }
 
                 if (lngRC == -3)
                 {
-                    tprintf("\n\nFail: File 1 ends before File 2.\n");
+                    tprintf("\n * Fail: File 1 ends before File 2.\n");
                     Fail = 1;
                 }
             }
 
-            counter = (counter * 2) + 1;
+            CurrentFile++;
+        }
+
+        tprintf("\n");
+    }
+    else
+    {
+        vector<string> CompressonVector;
+
+        putenv("ON2_SIMD_CAPS=0");
+        string OutputStr = ChangedCPUDecNOutBase;
+        OutputStr.append("NONE.ivf");
+
+        tprintf("\n\nDetected CPU capability: NONE");
+        Time1 = TimeCompressIVFtoIVF(input, OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        CompressonVector.push_back(OutputStr);
+
+        if (Time1 == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            RecordTestComplete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        tprintf("\n");
+
+        int counterMax = 64;
+        int FileNumber = 1;
+        counter++;
+
+        int Simd_Caps = x86_simd_caps();
+
+        while (counter < counterMax)
+        {
+            int CPUFound = 0;
+            int Curnum = (counter + 1) / 2;
+
+            if ((Simd_Caps & HAS_MMX)    == Curnum) CPUFound = 1;
+
+            if ((Simd_Caps & HAS_SSE)    == Curnum) CPUFound = 1;
+
+            if ((Simd_Caps & HAS_SSE2)   == Curnum) CPUFound = 1;
+
+            if ((Simd_Caps & HAS_SSE3)   == Curnum) CPUFound = 1;
+
+            if ((Simd_Caps & HAS_SSSE3)  == Curnum) CPUFound = 1;
+
+            if ((Simd_Caps & HAS_SSE4_1) == Curnum) CPUFound = 1;
+
+            if (CPUFound == 1)
+            {
+                string CPUStr = "";
+                tprintf("\nDetected CPU capability: ");
+
+                if ((Simd_Caps & HAS_MMX)    == Curnum)
+                {
+                    CPUStr = "MMX";
+                }
+
+                if ((Simd_Caps & HAS_SSE)    == Curnum)
+                {
+                    CPUStr = "SSE";
+                }
+
+                if ((Simd_Caps & HAS_SSE2)   == Curnum)
+                {
+                    CPUStr = "SSE2";
+                }
+
+                if ((Simd_Caps & HAS_SSE3)   == Curnum)
+                {
+                    CPUStr = "SSE3";
+                }
+
+                if ((Simd_Caps & HAS_SSSE3)  == Curnum)
+                {
+                    CPUStr = "SSSE3";
+                }
+
+                if ((Simd_Caps & HAS_SSE4_1) == Curnum)
+                {
+                    CPUStr = "SSE4_1";
+                }
+
+                tprintf("%s", CPUStr.c_str());
+
+                ///////////Updating CPU///////////
+                string CPUIDSTRING = "ON2_SIMD_CAPS=";
+                char CounterChar[10];
+                itoa_custom(counter, CounterChar, 10);
+                CPUIDSTRING.append(CounterChar);
+
+                char CPUChar[255];
+                snprintf(CPUChar, 255, CPUIDSTRING.c_str());
+                putenv(CPUChar);
+
+                //tprintf("\n\nCPU:%i", counter);
+
+                ///////Compresion and Time ///////
+                string ChangedCPUDecNOutCurrent = ChangedCPUDecNOutBase;
+                string ChangedCPUDecNOutLast = ChangedCPUDecNOutBase;
+
+                char count[20];
+                itoa_custom(counter, count, 10);
+                ChangedCPUDecNOutCurrent.append(CPUStr.c_str());
+                ChangedCPUDecNOutCurrent.append(".ivf");
+
+                opt.Mode = Mode;
+                Time2 = TimeCompressIVFtoIVF(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+                CompressonVector.push_back(ChangedCPUDecNOutCurrent);
+
+                if (Time2 == -1)
+                {
+                    fclose(fp);
+                    string File1Str = File1;
+                    RecordTestComplete(MainDirString, File1Str, TestType);
+                    return 2;
+                }
+
+                if (TestType != 2 && counter != 0)
+                {
+                    char CompFile1[255];
+                    char CompFile2[255];
+                    FileName(CompressonVector[CompressonVector.size()-1].c_str(), CompFile1, 0);
+                    FileName(CompressonVector[CompressonVector.size()-2].c_str(), CompFile2, 0);
+
+                    tprintf("\nComparing %s to %s", CompFile1, CompFile2);
+
+                    int lngRC = CompIVF(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str());
+
+                    if (lngRC >= 0)
+                    {
+                        tprintf("\n * Fail: Files differ at frame: %i on file number %i\n", lngRC, FileNumber);
+                        Fail = 1;
+                    }
+
+                    if (lngRC == -1)
+                    {
+                        tprintf("\n * Files are identical\n");
+                    }
+
+                    if (lngRC == -2)
+                    {
+                        tprintf("\n * Fail: File 2 ends before File 1.\n");
+                        Fail = 1;
+                    }
+
+                    if (lngRC == -3)
+                    {
+                        tprintf("\n * Fail: File 1 ends before File 2.\n");
+                        Fail = 1;
+                    }
+                }
+            }
+
+            counter = ((counter + 1) * 2) - 1;
+            tprintf("\n");
             FileNumber++;
         }
+
+        ModesRun = CompressonVector.size();
     }
 
     //Create Compression only stop test short.
@@ -5684,10 +5869,10 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         return 10;
     }
 
-    Time1 = TimeReturn(ChangedCPUDec0OutFile.c_str(), 0);
+    //Time1 = TimeReturn(ChangedCPUDec0OutFile.c_str(), 0);
     int overallfail = 0;
 
-    tprintf("\n\n\nResults:\n\n");
+    tprintf("\n\nResults:\n\n");
 
     if (Fail != 1)
     {
@@ -5708,6 +5893,26 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         overallfail = 1;
     }
 
+    if (ModesRun == 7)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "All instruction sets run - Passed");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        tprintf("\n");
+    }
+
+    if (ModesRun != 7)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "Not all instruction sets run - MinPassed");
+        string OutputChar1str = OutputChar1;
+        FormatedPrint(OutputChar1str, 5);
+        tprintf("\n");
+
+        if (overallfail != 1) overallfail = 2;
+    }
+
     if (Time1 == Time2)
     {
         char OutputChar1[255];
@@ -5725,6 +5930,17 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string OutputChar1str = OutputChar1;
         FormatedPrint(OutputChar1str, 5);
         tprintf("\n");
+    }
+
+    if (overallfail == 2)
+    {
+        tprintf("\nMinPassed\n");
+
+        fclose(fp);
+        putenv("ON2_SIMD_CAPS=");
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 2;
     }
 
     if (overallfail == 0)

@@ -1944,7 +1944,7 @@ int Test0InputTextCheck(char *input, int MoreInfo)
     {
         printf("\nInput File does not exist\n");
         infile.close();
-        delete [] PassFail;
+        //delete [] PassFail;
         //delete [] StringAr;
         //delete [] SelectorAr;
         //delete [] SelectorAr2;
@@ -2911,7 +2911,7 @@ void tprintf(const char *fmt, ...)
 
         if (bufferStr.size() > 79)
         {
-            while (curPos < bufferStr.size())
+            while ((unsigned int)curPos < bufferStr.size())
             {
                 if (bufferStr.substr(curPos, 1).compare("\n") == 0)
                 {
@@ -2949,7 +2949,7 @@ int DecimalPlaces(int InputNumber)
     //find out how many decimal places
     while (y >= 0)
     {
-        y = InputNumber - pow(10.0, totaltensplaces);
+        y = InputNumber - (int)pow(10.0, totaltensplaces);
         //printf("%i = %i - %f\n",y,total_number_of_frames,pow(10.0,totaltensplaces));
         totaltensplaces++;
     }

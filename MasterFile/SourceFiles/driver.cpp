@@ -101,6 +101,7 @@ extern int CreateRandParFile(int argc, char *argv[]);
 extern int RunIVFDec(int argc, char *argv[]);
 extern int RunIVFEnc(int argc, char *argv[]);
 extern int SolveQuad();
+extern int PrintCPUInfo();
 
 /////Tests
 extern int PrintVersion();
@@ -2073,10 +2074,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
                "    <Version>\n"
-               "	  <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , CPUDENUM);
 
-        FormatedPrint("The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 11. The test then compares them against one another.  If all compressions are identical and the times to decompress them are not; the test passes.", 1);
+        FormatedPrint("The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1). The test then compares the decompressions against one another.  If all decompressions are identical and the times to decompress them are not and all instruction sets are run; the test passes.", 1);
 
     }
 
@@ -2094,11 +2095,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
                "    <Version>\n"
-               "	  <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , CHGWRNUM);
 
-        FormatedPrint("The test creates compressions of the user input version (0-3) with ON2_SIMD_CAPS values 0 1 3 7 and 15.  If all compressions are identical and compression times are not the test passes.", 1);
-
+        FormatedPrint("The test creates compressions of the user input version (0-3) for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1).  If all compressions are identical, compression times are not, and all instruction sets are run; the test passes.", 1);
     }
 
     if (selector == DFWMWNUM)
@@ -4429,7 +4429,11 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-
+    if (TestInputString.compare("PrintCPUInfo") == 0)             //
+    {
+        PrintCPUInfo();
+        return 0;
+    }
 
 
     printf("\n");
@@ -4582,140 +4586,117 @@ int  main(int argc, char *argv[])
 
     if (selector == AlWDFNUM)
     {
-        AllowDF(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return AllowDF(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ALWLGNUM)
     {
-        AllowLagTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return AllowLagTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ALWSRNUM)
     {
-        AllowSpatialResamplingTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return AllowSpatialResamplingTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == AUTKFNUM)
     {
-        AutoKeyFramingWorks(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return AutoKeyFramingWorks(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == BUFLVNUM)
     {
-        BufferLevelWorks(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return BufferLevelWorks(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == CPUDENUM)
     {
-        CPUDecOnlyWorks(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return CPUDecOnlyWorks(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == CHGWRNUM)
     {
-        ChangeCPUWorks(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return ChangeCPUWorks(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == DFWMWNUM)
     {
-        DFWM(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return DFWM(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == DTARTNUM)
     {
-        DataRateTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return DataRateTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == DBMRLNUM)
     {
-        DebugMatchesRelease(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return DebugMatchesRelease(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ENCBONUM)
     {
-        EncoderBreakOut(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return EncoderBreakOut(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ERRMWNUM)
     {
-        ErrorRes(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return ErrorRes(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == EXTFINUM)
     {
-        ExtraFileCheck(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return ExtraFileCheck(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == FIXDQNUM)
     {
-        FixedQ(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return FixedQ(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == FKEFRNUM)
     {
-        ForceKeyFrameWorks(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return ForceKeyFrameWorks(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == FRSZTNUM)
     {
-        FrameSizeTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return FrameSizeTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == GQVBQNUM)
     {
-        GoodQvBestQ(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return GoodQvBestQ(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == LGIFRNUM)
     {
-        LagInFramesTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return LagInFramesTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MAXQUNUM)
     {
-        MaxQTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return MaxQTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MEML1NUM)
     {
-        MemLeakCheck(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return MemLeakCheck(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MEML2NUM)
     {
-        MemLeakCheck2(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return MemLeakCheck2(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MINQUNUM)
     {
-        MinQTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return MinQTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MULTTNUM)
     {
-        MultiThreadedTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return MultiThreadedTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == NVOPSNUM)
@@ -4726,80 +4707,67 @@ int  main(int argc, char *argv[])
 
     if (selector == NVORTNUM)
     {
-        NewVsOldRealTimeSpeed(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return NewVsOldRealTimeSpeed(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == NOISENUM)
     {
-        NoiseSensitivityWorks(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return NoiseSensitivityWorks(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == OV2PSNUM)
     {
-        OnePassVsTwoPass(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return OnePassVsTwoPass(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == PLYALNUM)
     {
-        PlayAlternate(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return PlayAlternate(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == POSTPNUM)
     {
-        PostProcessorWorks(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return PostProcessorWorks(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == RECONBUF)
     {
-        ReconBuffer(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return ReconBuffer(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == RSDWMNUM)
     {
-        ResampleDownWaterMark(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return ResampleDownWaterMark(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == SPEEDNUM)
     {
-        SpeedTest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return SpeedTest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == TVECTNUM)
     {
-        TestVectorCheck(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return TestVectorCheck(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == TV2BTNUM)
     {
-        TwoPassVsTwoPassBest(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return TwoPassVsTwoPassBest(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == UNDSHNUM)
     {
-        UnderShoot(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return UnderShoot(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == VERSINUM)
     {
-        Version(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return Version(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == WMLMMNUM)
     {
-        WinLinMacMatch(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
+        return WinLinMacMatch(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     OnErrorOutPut();

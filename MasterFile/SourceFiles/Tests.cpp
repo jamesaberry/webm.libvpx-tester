@@ -5098,7 +5098,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
                 FileName(DecompressonVector[CurrentDecFile-1].c_str(), CompFile1, 0);
                 FileName(DecompressonVector[CurrentDecFile].c_str(), CompFile2, 0);
 
-                tprintf("\nComparing %s to %s", CompFile1, CompFile2);
+                tprintf("\nComparing %s to %s\n", CompFile1, CompFile2);
 
                 int lngRC = CompIVF(DecompressonVector[CurrentDecFile-1].c_str(), DecompressonVector[CurrentDecFile].c_str());
 
@@ -5110,7 +5110,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
                 if (lngRC == -1)
                 {
-                    tprintf("\n * Files are identical");
+                    tprintf(" * Files are identical");
                 }
 
                 if (lngRC == -2)
@@ -5173,51 +5173,51 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         while (counter < counterMax)
         {
             int CPUFound = 0;
-            int Curnum = (counter + 1) / 2;
+            int Has_Check = (counter + 1) / 2;
 
-            if ((Simd_Caps & HAS_MMX)    == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_MMX)    == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE)    == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE)    == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE2)   == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE2)   == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE3)   == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE3)   == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSSE3)  == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSSE3)  == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE4_1) == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE4_1) == Has_Check) CPUFound = 1;
 
             if (CPUFound == 1)
             {
                 string CPUStr = "";
                 tprintf("\nDetected CPU capability: ");
 
-                if ((Simd_Caps & HAS_MMX)    == Curnum)
+                if ((Simd_Caps & HAS_MMX)    == Has_Check)
                 {
                     CPUStr = "MMX";
                 }
 
-                if ((Simd_Caps & HAS_SSE)    == Curnum)
+                if ((Simd_Caps & HAS_SSE)    == Has_Check)
                 {
                     CPUStr = "SSE";
                 }
 
-                if ((Simd_Caps & HAS_SSE2)   == Curnum)
+                if ((Simd_Caps & HAS_SSE2)   == Has_Check)
                 {
                     CPUStr = "SSE2";
                 }
 
-                if ((Simd_Caps & HAS_SSE3)   == Curnum)
+                if ((Simd_Caps & HAS_SSE3)   == Has_Check)
                 {
                     CPUStr = "SSE3";
                 }
 
-                if ((Simd_Caps & HAS_SSSE3)  == Curnum)
+                if ((Simd_Caps & HAS_SSSE3)  == Has_Check)
                 {
                     CPUStr = "SSSE3";
                 }
 
-                if ((Simd_Caps & HAS_SSE4_1) == Curnum)
+                if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
                 {
                     CPUStr = "SSE4_1";
                 }
@@ -5267,7 +5267,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
                     FileName(DecompressonVector[DecompressonVector.size()-1].c_str(), CompFile1, 0);
                     FileName(DecompressonVector[DecompressonVector.size()-2].c_str(), CompFile2, 0);
 
-                    tprintf("\nComparing %s to %s", CompFile1, CompFile2);
+                    tprintf("\nComparing %s to %s\n", CompFile1, CompFile2);
 
                     int lngRC = CompIVF(DecompressonVector[DecompressonVector.size()-1].c_str(), DecompressonVector[DecompressonVector.size()-2].c_str());
 
@@ -5279,7 +5279,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
                     if (lngRC == -1)
                     {
-                        tprintf("\n * Files are identical");
+                        tprintf(" * Files are identical");
                     }
 
                     if (lngRC == -2)
@@ -5608,7 +5608,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     opt.target_bandwidth = BitRate;
     opt.Version = VersionNum;
     int CompressInt = opt.Version;
-    opt.Mode = MODE_GOODQUALITY;
+    opt.Mode = Mode;
     int counter = 0;
 
     putenv("ON2_SIMD_CAPS=0");
@@ -5667,7 +5667,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 FileName(CompressonVector[CurrentFile-1].c_str(), CompFile1, 0);
                 FileName(CompressonVector[CurrentFile].c_str(), CompFile2, 0);
 
-                tprintf("\nComparing %s to %s", CompFile1, CompFile2);
+                tprintf("\nComparing %s to %s\n", CompFile1, CompFile2);
 
                 int lngRC = CompIVF(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str());
 
@@ -5679,7 +5679,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                 if (lngRC == -1)
                 {
-                    tprintf("\n * Files are identical");
+                    tprintf(" * Files are identical");
                 }
 
                 if (lngRC == -2)
@@ -5731,51 +5731,51 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         while (counter < counterMax)
         {
             int CPUFound = 0;
-            int Curnum = (counter + 1) / 2;
+            int Has_Check = (counter + 1) / 2;
 
-            if ((Simd_Caps & HAS_MMX)    == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_MMX)    == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE)    == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE)    == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE2)   == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE2)   == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE3)   == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE3)   == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSSE3)  == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSSE3)  == Has_Check) CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE4_1) == Curnum) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE4_1) == Has_Check) CPUFound = 1;
 
             if (CPUFound == 1)
             {
                 string CPUStr = "";
                 tprintf("\nDetected CPU capability: ");
 
-                if ((Simd_Caps & HAS_MMX)    == Curnum)
+                if ((Simd_Caps & HAS_MMX)    == Has_Check)
                 {
                     CPUStr = "MMX";
                 }
 
-                if ((Simd_Caps & HAS_SSE)    == Curnum)
+                if ((Simd_Caps & HAS_SSE)    == Has_Check)
                 {
                     CPUStr = "SSE";
                 }
 
-                if ((Simd_Caps & HAS_SSE2)   == Curnum)
+                if ((Simd_Caps & HAS_SSE2)   == Has_Check)
                 {
                     CPUStr = "SSE2";
                 }
 
-                if ((Simd_Caps & HAS_SSE3)   == Curnum)
+                if ((Simd_Caps & HAS_SSE3)   == Has_Check)
                 {
                     CPUStr = "SSE3";
                 }
 
-                if ((Simd_Caps & HAS_SSSE3)  == Curnum)
+                if ((Simd_Caps & HAS_SSSE3)  == Has_Check)
                 {
                     CPUStr = "SSSE3";
                 }
 
-                if ((Simd_Caps & HAS_SSE4_1) == Curnum)
+                if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
                 {
                     CPUStr = "SSE4_1";
                 }
@@ -5822,7 +5822,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                     FileName(CompressonVector[CompressonVector.size()-1].c_str(), CompFile1, 0);
                     FileName(CompressonVector[CompressonVector.size()-2].c_str(), CompFile2, 0);
 
-                    tprintf("\nComparing %s to %s", CompFile1, CompFile2);
+                    tprintf("\nComparing %s to %s\n", CompFile1, CompFile2);
 
                     int lngRC = CompIVF(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str());
 
@@ -5834,7 +5834,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
                     if (lngRC == -1)
                     {
-                        tprintf("\n * Files are identical\n");
+                        tprintf(" * Files are identical\n");
                     }
 
                     if (lngRC == -2)

@@ -88,10 +88,10 @@ extern char TesterExePath[256];
      ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
 # define swap4(d) d
 #endif
-////////////////////////Global Slash Character Definion for multiplat////////////////////////
+////////////////////////Slash Character Definion////////////////////////
 extern char slashChar;
 extern string slashCharStr;
-/////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 const int PSNR_MAX = 999.;
 const int sizBuff = 512;
 extern void FileName(const char *input, char *FileName, int removeExt);
@@ -1868,7 +1868,7 @@ int TimeStampCompare(string TimeStampNow, string TimeStampPrevious)
 
     return 1;
 }
-int Test0InputTextCheck(char *input, int MoreInfo)
+int Test0InputTextCheck(const char *input, int MoreInfo)
 {
     //function returns number of tests found if input is correct -1 if not correct and -3 if there is an error
 

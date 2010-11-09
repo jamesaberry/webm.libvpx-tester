@@ -45,10 +45,10 @@ using namespace std;
 #include <dirent.h>
 #endif
 
-////////////////////////Global Slash Character Definion for multiplat////////////////////////
+////////////////////////Slash Character Definion////////////////////////
 extern char slashChar;
 extern string slashCharStr;
-/////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 extern "C"
 {
@@ -74,7 +74,7 @@ extern void FolderName(const char *input, char *output);
 extern void FolderName2(const char *DirIn, char *DirOut);
 extern string ExtractDateTime(string InputStr);
 extern int TimeStampCompare(string TimeStampNow, string TimeStampPrevious);
-extern int Test0InputTextCheck(char *input, int MoreInfo);
+extern int Test0InputTextCheck(const char *input, int MoreInfo);
 extern int FileExistsCheck(string input);
 extern void SubFolderName(char *input, char *FileName);
 extern void TestName(char *input, char *TestName);
@@ -93,6 +93,7 @@ extern unsigned int GetTime();
 extern int MakeDir(string CreateDir);
 extern int MakeDirVPX(string CreateDir2);
 extern void RunExe(string RunExe);
+extern string RetslashChar;
 
 extern double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
 extern double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
@@ -303,6 +304,94 @@ extern "C" TOKENEXTRABITS vp8d_token_extra_bits2[12];
 /////////////////////////////////////////////////////////////////////////////////
 #endif
 
+int TestDirIni(int argc, char *argv[], int TestType, string WorkingDir, char *MyDir, string &WorkingDirString, string &MainDirString, char WorkingDir3[255], char File1[255], string FilesAr[])
+{
+    //Initilizes WorkingDirString, MainDirString, WorkingDir3, and File1 to proper values.
+
+    string Mode3TestMatch = "";
+    char WorkingDir2[255] = "";
+
+    if (TestType == 2 || TestType == 1)
+    {
+        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
+
+        int v = 0;
+
+        while (WorkingDir2[v] != '\"')
+        {
+            WorkingDir3[v] = WorkingDir2[v];
+            v++;
+        }
+
+        WorkingDir3[v] = slashChar;
+        WorkingDir3[v+1] = '\0';
+        WorkingDirString = WorkingDir3;
+        /////////////////////////////////////////////////////////////////////////////////
+        MainDirString = WorkingDir3;
+        MainDirString.append("FileIndex.txt");
+        /////////////////////////////////////////////////////////////////////////////////
+        WorkingDirString.append(MyDir);
+        WorkingDirString.append(slashCharStr);
+        WorkingDirString.append(FilesAr[0]);
+        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
+
+        string CreateDir2 = WorkingDirString;
+        CreateDir2.insert(0, "md \"");
+        MakeDirVPX(CreateDir2.c_str());
+
+        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
+        if (TestType == 2)
+        {
+            char WorkingDirString2[255];
+            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
+            SubFolderName(WorkingDirString2, File1);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+    }
+    else
+    {
+        //Use WorkingDir to get the main folder
+        //Use Index File to get the rest of the string
+        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
+        char buffer[255];
+
+        string WorkingDir2 = WorkingDir;
+
+        WorkingDir2.append(slashCharStr);
+        MainDirString = WorkingDir2;
+        MainDirString.append("FileIndex.txt");
+
+        fstream FileStream;
+        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
+
+        int n = 0;
+
+        while (n < atoi(argv[argc]))
+        {
+            FileStream.getline(buffer, 255);
+            n++;
+        }
+
+        FileStream.close();
+
+        char Mode3TestMatchChar[255];
+        TestName(buffer, Mode3TestMatchChar);
+        Mode3TestMatch = Mode3TestMatchChar;
+
+        if (Mode3TestMatch.compare(MyDir) != 0)
+        {
+            printf("ErrorFileMisMatch ");
+            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
+            return 11;
+        }
+
+        WorkingDir2.append(buffer);
+        WorkingDirString = WorkingDir2;
+    }
+
+    return 0;
+}
 void RecordTestComplete(string MainDirString, string File1String, int TestType)
 {
     if (TestType == 2)
@@ -1256,7 +1345,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         PriorResultInputFile2.close();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
     fstream WorkingTextFile;
     WorkingTextFile.open(WorkingTextFilestr.c_str());
 
@@ -2798,7 +2887,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *MyDir = "GraphPSNR";
@@ -2846,7 +2935,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -3050,7 +3139,7 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     }
 
     char *input = argv[2];
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *MyDir = "RandComp";
@@ -3118,7 +3207,7 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -3212,9 +3301,7 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 }
 int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-
     char *CompressString = "Allow Drop Frames";
-
     char *input = argv[2];
 
     if (!(argc == 6 || argc == 5))
@@ -3230,100 +3317,22 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
         );
 
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
 
-    string WorkingDirString = ""; // <- All Options need to set a value for this
-    string Mode3TestMatch = "";
+    string WorkingDirString = "";
     string MainDirString = "";
     char *MyDir = "AllowDF";
-    char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string AllowDFon = WorkingDirString;
     string AllowDFoff = WorkingDirString;
@@ -3353,26 +3362,19 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
-    {
         PrintHeader1(argc, argv, WorkingDir3);
-    }
 
     if (TestType == 2)
-    {
         PrintHeader2(argc, argv, WorkingDir3);
-    }
 
     if (TestType == 3)
-    {
         PrintHeader3(argc, argv, WorkingDirString);
-    }
 
     int speed = 0;
     int BitRate = atoi(argv[4]);;
-
     int Mode = atoi(argv[3]);
 
     tprintf("Allow Drop Frames Test");
@@ -3412,7 +3414,6 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     else
     {
         opt.Mode = Mode;
-
         opt.allow_df = 0;
 
         if (CompressIVFtoIVF(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -3497,9 +3498,7 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
 }
 int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-
     char *CompressString = "Allow Lag";
-
     char *input = argv[2];
 
     if (!(argc == 6 || argc == 5))
@@ -3515,102 +3514,22 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
         );
 
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
 
-    string WorkingDirString = ""; // <- All Options need to set a value for this
-    string Mode3TestMatch = "";
+    string WorkingDirString = "";
     string MainDirString = "";
     char *MyDir = "AllowLag";
-    char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-
-        FileStream.close();
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string AllowLagon = WorkingDirString;
     string AllowLagoff = WorkingDirString;
@@ -3640,7 +3559,7 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -3658,10 +3577,8 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     }
 
     int speed = 0;
-    int BitRate = atoi(argv[4]);;
-
     int Mode = atoi(argv[3]);
-
+    int BitRate = atoi(argv[4]);;
     char *input2 = argv[5];
 
     tprintf("Allow Lag Test");
@@ -3702,7 +3619,6 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     else
     {
         opt.Mode = Mode;
-
         opt.allow_lag = 0;
 
         if (CompressIVFtoIVF(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
@@ -3741,7 +3657,6 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
 
     int LagInFramesFound = IVFLagInFramesCheck(QuantInChar);
-
     int AllowLagONAltRefCount = IVFDisplayAltRefFrames(AllowLagon.c_str(), 1);
     int AllowLagOFFAltRefCount = IVFDisplayAltRefFrames(AllowLagoff.c_str(), 1);
     int VisibleFrameONCount = IVFDisplayVisibleFrames(AllowLagon.c_str(), 1);
@@ -3865,98 +3780,20 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n");
+            "    <Optional Settings File>\n");
 
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = ""; // <- All Options need to set a value for this
-    string Mode3TestMatch = "";
     char *MyDir = "AllowSpatialResampling";
-    char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string Spatialon = WorkingDirString;
     string Spatialoff = WorkingDirString;
@@ -3970,7 +3807,6 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     string TextfileString = WorkingDirString;
     TextfileString.append(slashCharStr);
     TextfileString.append(MyDir);
-
 
     if (TestType == 2 || TestType == 1)
         TextfileString.append(".txt");
@@ -3986,7 +3822,7 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -4045,7 +3881,6 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     else
     {
         opt.Mode = Mode;
-
         opt.allow_spatial_resampling = 0;
 
         if (CompressIVFtoIVF(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
@@ -4162,8 +3997,6 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
-
-    return 0;
 }
 
 int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
@@ -4184,7 +4017,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n"
             "    <Key Frame Frequency>\n"
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
             "\n");
         return 0;
     }
@@ -4195,95 +4028,15 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     int BitRate = atoi(argv[4]);
     int AutoKeyFramingInt = atoi(argv[5]);
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *MyDir = "AutoKeyFramingWorks";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        //
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
-
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string KeyFrameTxtOut1 = WorkingDirString;
     string KeyFrameTxtOut2 = WorkingDirString;
@@ -4299,12 +4052,10 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     AutoKeyFramingWorks2.append(slashCharStr);
     AutoKeyFramingWorks2.append("AutoKeyFramingWorksOutput2.ivf");
 
-
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
     TextfileString.append(slashCharStr);
     TextfileString.append(MyDir);
-
 
     if (TestType == 2 || TestType == 1)
         TextfileString.append(".txt");
@@ -4320,7 +4071,7 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -4570,8 +4321,6 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
-
-
 }
 int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -4590,98 +4339,23 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
         );
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+
+
     char WorkingDir3[255] = "";
     char *MyDir = "BufferLevelWorks";
     string MainDirString = "";
     char File1[255] = "";
 
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        //Makes sure log file and test txt file match up
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMismatch");
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
 
     string BufferLevelWorksOut = WorkingDirString;
@@ -4712,7 +4386,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -4839,6 +4513,11 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -4858,98 +4537,23 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n"
             "    <Version>\n "
-            "	  <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
         );
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+
+
     char WorkingDir3[255] = "";
     char *MyDir = "CPUDecOnlyWorks";
     string MainDirString = "";
     char File1[255] = "";
 
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        //Makes sure log file and test txt file match up
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMismatch");
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string CPUDecOnlyWorksOutFile = WorkingDirString;
     string CPUDecOnlyWorksOut_CPU = WorkingDirString;
@@ -4984,7 +4588,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -5405,7 +5009,6 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         return 0;
     }
 }
-
 int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
 
@@ -5425,98 +5028,23 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n"
             "    <Version>\n"
-            "	  <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
         );
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+
+
     char WorkingDir3[255] = "";
     char *MyDir = "ChangeCPUWorks";
     string MainDirString = "";
     char File1[255] = "";
 
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        //Makes sure log file and test txt file match up
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMismatch");
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string ChangedCPUDec0OutFile = WorkingDirString;
     string ChangedCPUDecNOutBase = WorkingDirString;
@@ -5545,7 +5073,7 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -5982,98 +5510,22 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n");
+            "    <Optional Settings File>\n");
 
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+
+
     char WorkingDir3[255] = "";
     char *MyDir = "DropFramesWaterMark";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string DFWMOutFileBase = WorkingDirString;
 
@@ -6099,7 +5551,7 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -6327,7 +5779,6 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
         }
     }
 }
-
 int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
 
@@ -6346,97 +5797,21 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n");
+            "    <Optional Settings File>\n");
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+
+
     char WorkingDir3[255] = "";
     char *MyDir = "DataRateTest";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string TargetBitRate1 = WorkingDirString;
     //string WorkingDir5 = WorkingDirString;
@@ -6467,7 +5842,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -6629,7 +6004,6 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         return 0;
     }
 }
-
 int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
     // So long as Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
@@ -6648,7 +6022,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
             "    <Target Bit Rate>\n"
             "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
             "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
             "\n");
         return 0;
     }
@@ -6661,93 +6035,17 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
 
     snprintf(ExeInputRelease, 255, "%s", argv[6]);
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+
+
     char WorkingDir3[255] = "";
     char *MyDir = "DebugMatchesRelease";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     char ExeCharDebugRelease[1024];
     FolderName(argv[0], ExeCharDebugRelease);
@@ -6800,90 +6098,37 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         ProgramRelease.append("\"");
         ProgramRelease.append(" 0");
         ProgramRelease.append("\"");
-    }
-#elif defined(linux)
-    {
-        ProgramDebug.append(ExeInputRelease);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(input);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(DebugOutput);
-        ProgramDebug.append("\' 8");
-        ProgramDebug.append(" \'");
-        ProgramDebug.append(ParFileDebug);
-        ProgramDebug.append("\'");
-        ProgramDebug.append(" 0");
-        ProgramRelease.append(ExeInputDebug);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(input);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(ReleaseOutput);
-        ProgramRelease.append("\' 8");
-        ProgramRelease.append(" \'");
-        ProgramRelease.append(ParFileRelease);
-        ProgramRelease.append("\'");
-        ProgramRelease.append(" 0");
 
-    }
-#elif defined(__APPLE__)
-    {
-        ProgramDebug.append(ExeInputRelease);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(input);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(DebugOutput);
-        ProgramDebug.append("\' 8");
-        ProgramDebug.append(" \'");
-        ProgramDebug.append(ParFileDebug);
-        ProgramDebug.append("\'");
-        ProgramDebug.append(" 0");
-        ProgramRelease.append(ExeInputDebug);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(input);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(ReleaseOutput);
-        ProgramRelease.append("\' 8");
-        ProgramRelease.append(" \'");
-        ProgramRelease.append(ParFileRelease);
-        ProgramRelease.append("\'");
-        ProgramRelease.append(" 0");
-    }
-#elif defined(__POWERPC__)
-    {
-        ProgramDebug.append(ExeInputRelease);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(input);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(DebugOutput);
-        ProgramDebug.append("\' 8");
-        ProgramDebug.append(" \'");
-        ProgramDebug.append(ParFileDebug);
-        ProgramDebug.append("\'");
-        ProgramDebug.append(" 0");
-        ProgramRelease.append(ExeInputDebug);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(input);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(ReleaseOutput);
-        ProgramRelease.append("\' 8");
-        ProgramRelease.append(" \'");
-        ProgramRelease.append(ParFileRelease);
-        ProgramRelease.append("\'");
-        ProgramRelease.append(" 0");
-    }
-#endif
-#if defined(_WIN32)
-    {
         ProgramDebug.insert(0, "\"\"");
         ProgramRelease.insert(0, "\"\"");
     }
 #else
     {
+        ProgramDebug.append(ExeInputRelease);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(input);
+        ProgramDebug.append("\' \'");
+        ProgramDebug.append(DebugOutput);
+        ProgramDebug.append("\' 8");
+        ProgramDebug.append(" \'");
+        ProgramDebug.append(ParFileDebug);
+        ProgramDebug.append("\'");
+        ProgramDebug.append(" 0");
+        ProgramRelease.append(ExeInputDebug);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(input);
+        ProgramRelease.append("\' \'");
+        ProgramRelease.append(ReleaseOutput);
+        ProgramRelease.append("\' 8");
+        ProgramRelease.append(" \'");
+        ProgramRelease.append(ParFileRelease);
+        ProgramRelease.append("\'");
+        ProgramRelease.append(" 0");
+
         ProgramDebug.insert(0, "\'");
         ProgramRelease.insert(0, "\'");
     }
 #endif
-
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
@@ -6904,7 +6149,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -7205,101 +6450,24 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
         );
 
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
 
     string WorkingDirString = ""; // <- All Options need to set a value for this
-    string Mode3TestMatch = "";
+
     string MainDirString = "";
     char *MyDir = "EncoderBreakOut";
-    char WorkingDir2[255] = "";
+
     char WorkingDir3[255] = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        //cout << "\n" << CreateDir2.c_str() << "\n";
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string EncBreakOut0 = WorkingDirString;
     string EncBreakOut100 = WorkingDirString;
@@ -7349,7 +6517,7 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
 
     ////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -7749,93 +6917,17 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+
+
     char WorkingDir3[255] = "";
     char *MyDir = "ErrorRes";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[5]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        char Mode3TestMatchChar[255];
-        TestName(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
-
-        if (Mode3TestMatch.compare(MyDir) != 0)
-        {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-            return 11;
-        }
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string ErrorOnOutFile = WorkingDirString;
     string ErrorOffOutFile = WorkingDirString;
@@ -7867,7 +6959,7 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 
     ////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -7987,86 +7079,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         printf(
             "  ExtraFileCheck \n\n"
             "    <inputfile>\n"
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
             "\n"
         );
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    char WorkingDir2[255] = "";
+
     char WorkingDir3[255] = "";
     char *MyDir = "ExtraFileCheckTest";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            //strcpy(WorkingDirString2, WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string ExtraFileDir = WorkingDirString;
     ////////////////////OutPut Directory location////////////////////
@@ -8124,7 +7152,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     ////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -8196,7 +7224,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
 
     tprintf("------------------------------------------------------------------------------\n");
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     char *input = argv[2];
 
@@ -8271,7 +7299,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     closedir(FindFileDataB);
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
@@ -8542,7 +7570,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
 
     closedir(FindFileData4);
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
 
     cout << "\n";
     cerr << "\n";
@@ -8646,86 +7674,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         printf(
             "  ExtraFileCheck \n\n"
             "    <inputfile>\n"
-            "	 <Optional Settings File>\n"
+            "    <Optional Settings File>\n"
             "\n"
         );
         return 0;
     }
 
-    ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+    ////////////Formatting Test Specific Directory////////////
     string WorkingDirString = "";
-    char WorkingDir2[255] = "";
+
     char WorkingDir3[255] = "";
     char *MyDir = "ExtraFileCheckTest";
     string MainDirString = "";
     char File1[255] = "";
 
-    if (TestType == 2 || TestType == 1)
-    {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-        int v = 0;
-
-        while (WorkingDir2[v] != '\"')
-        {
-            WorkingDir3[v] = WorkingDir2[v];
-            v++;
-        }
-
-        WorkingDir3[v] = slashChar;
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
-        /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
-        /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-        string CreateDir2 = WorkingDirString;
-        CreateDir2.insert(0, "md \"");
-        MakeDirVPX(CreateDir2.c_str());
-
-        ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
-        {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            //strcpy(WorkingDirString2, WorkingDirString.c_str());
-            SubFolderName(WorkingDirString2, File1);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-    }
-    else
-    {
-        //Use WorkingDir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-        char buffer[255];
-
-        string WorkingDir2 = WorkingDir;
-        WorkingDir2.append(slashCharStr);
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
-
-        fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-        int n = 0;
-
-        while (n < atoi(argv[argc]))
-        {
-            FileStream.getline(buffer, 255);
-            n++;
-        }
-
-        FileStream.close();
-
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
-    }
+    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
 
     string ExtraFileDir = WorkingDirString;
     ////////////////////OutPut Directory location////////////////////
@@ -8783,7 +7747,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     ////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     if (TestType == 1)
     {
@@ -8855,7 +7819,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
 
     tprintf("------------------------------------------------------------------------------\n");
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     char *input = argv[2];
 
@@ -8930,7 +7894,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     closedir(FindFileDataB);
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == 3)
     {
@@ -9201,7 +8165,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
 
     closedir(FindFileData4);
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
 
     cout << "\n";
     cerr << "\n";
@@ -9305,86 +8269,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             printf(
                 "  ExtraFileCheck \n\n"
                 "    <inputfile>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
                 "\n"
             );
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char *MyDir = "ExtraFileCheckTest";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                //strcpy(WorkingDirString2, WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string ExtraFileDir = WorkingDirString;
         ////////////////////OutPut Directory location////////////////////
@@ -9442,7 +8342,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         ////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -9515,7 +8415,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         tprintf("------------------------------------------------------------------------------\n");
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
 
         char *input = argv[2];
 
@@ -9590,7 +8490,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         closedir(FindFileDataB);
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
         //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
         if (TestType == 3)
         {
@@ -9861,7 +8761,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         closedir(FindFileData4);
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
 
         cout << "\n";
         cerr << "\n";
@@ -9964,86 +8864,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             printf(
                 "  ExtraFileCheck \n\n"
                 "    <inputfile>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
                 "\n"
             );
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char *MyDir = "ExtraFileCheckTest";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string ExtraFileDir = WorkingDirString;
         ExtraFileDir.push_back(slashChar);
@@ -10108,7 +8944,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         ////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -10180,7 +9016,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         tprintf("------------------------------------------------------------------------------\n");
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
 
 
         char *input = argv[2];
@@ -10562,9 +9398,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
 #endif
-
-        return 0;
-
     }
     int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -10587,99 +9420,23 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "    <Target Bit Rate>\n "
                 "    <FixedQ 1>\n "
                 "    <FixedQ 2>\n "
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
             return 0;
         }
 
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "FixedQ";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string FixedQ1 = WorkingDirString;
         string FixedQ2 = WorkingDirString;
@@ -10720,7 +9477,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -10963,7 +9720,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
                 "    <ForceKeyFrame>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
                 "\n"
             );
             return 0;
@@ -10977,93 +9734,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         int Mode = atoi(argv[3]);
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "ForceKeyFrameWorks";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string KeyFrameoutputfile = WorkingDirString;
         string ForceKeyFrame = WorkingDirString;
@@ -11100,7 +9781,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -11272,8 +9953,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 1;
         }
-
-
     }
     int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -11297,7 +9976,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "    <Target Bit Rate>\n"
                 "    <Starting Width-must be a mult of 16>\n"
                 "    <Starting Height-must be a mult of 16>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
 
             return 0;
@@ -11310,94 +9989,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         char *input = argv[2];
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
 
         string WorkingDirString = ""; // <- All Options need to set a value for this
-        string Mode3TestMatch = "";
+
         string MainDirString = "";
         char *MyDir = "FrameSizeTest";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         char InputFileName[256] = "";
         FileName(input, InputFileName, 1);
@@ -11496,7 +10099,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -11795,93 +10398,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         /////////////////Might want to see if you can make a function to do this so its a bit cleaner/////////////////
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "GoodQvBestQ";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
 
         string GvBgOutFile1 = WorkingDirString;
@@ -11938,7 +10465,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -12204,6 +10731,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int LagInFramesTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -12226,102 +10758,24 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "    <Target Bit Rate>\n"
                 "    <Lag in Frames 1>\n"
                 "    <Lag in Frames 2>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
 
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
 
         string WorkingDirString = ""; // <- All Options need to set a value for this
-        string Mode3TestMatch = "";
+
         string MainDirString = "";
         char *MyDir = "LagInFrames";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-
-            FileStream.close();
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string LagInFrames0 = WorkingDirString;
         string LagInFrames1 = WorkingDirString;
@@ -12354,7 +10808,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -12693,100 +11147,24 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n");
+                "    <Optional Settings File>\n");
 
             return 0;
         }
 
 
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "MaxQTest";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string QuantOutBase = WorkingDirString;
 
@@ -12814,7 +11192,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -13023,8 +11401,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
     int MemLeakCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
-        // So long as Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
-
         if (!(argc == 6 || argc == 7))
         {
             printf(
@@ -13038,8 +11414,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
-                "    <Mem Leak Check Exe>\n"
-                "	 <Optional Settings File>\n"
+                "    <Mem Leak Check Exe>\n" //Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
+                "    <Optional Settings File>\n"
                 "\n");
             return 0;
         }
@@ -13049,127 +11425,56 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int BitRate = atoi(argv[4]);
         char MemLeakExe[255];
 
-#if defined(_WIN32)
-        {
-            snprintf(MemLeakExe, 255, "%s", argv[5]);
-        }
-#elif defined(linux)
-        {
-            string MemLeakExeStr = argv[5];
-            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
-        }
-#elif defined(__APPLE__)
-        {
-            string MemLeakExeStr = argv[5];
-            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
-        }
-#elif defined(__POWERPC__)
-        {
-            string MemLeakExeStr = argv[5];
-            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
-        }
-#endif
+        string MemLeakExeStr = argv[5];
+        snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        //#if defined(_WIN32)
+        //        {
+        //            snprintf(MemLeakExe, 255, "%s", argv[5]);
+        //        }
+        //#elif defined(linux)
+        //        {
+        //            string MemLeakExeStr = argv[5];
+        //            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
+        //        }
+        //#elif defined(__APPLE__)
+        //        {
+        //            string MemLeakExeStr = argv[5];
+        //            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
+        //        }
+        //#elif defined(__POWERPC__)
+        //        {
+        //            string MemLeakExeStr = argv[5];
+        //            snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
+        //        }
+        //#endif
+
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char ExeCharMemLeak[1024] = "";
         char *MyDir = "MemLeakCheck";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         //Get the exe's parent folder From argv[0] Paths for both exes will be the same
         FolderName(argv[0], ExeCharMemLeak);
         string ExeCharMemLeakStr = ExeCharMemLeak;
-
 
         string WorkingDir4 = WorkingDirString;
         string WorkingDir5 = WorkingDirString;
         string WorkingDir6 = WorkingDirString;
         string WorkingDir7 = WorkingDirString;
         string WorkingDir8 = WorkingDirString;
-        string WorkingDir9;
+        string WorkingDir9 = "";
+        string WorkingDir10 = "";
+        string WorkingDir11 = "";
+
 
         WorkingDir4.append(slashCharStr);
         WorkingDir4.append("MemLeakCheck.ivf");
@@ -13194,64 +11499,8 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir9.append("\" 4 \"");
             WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"\"");
-        }
-
-#elif defined(linux)
-        {
-            WorkingDir9 = "\'";
-            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
-            WorkingDir9.append(MemLeakExe);         // Exe Name
-            WorkingDir9.append("\' \'");
-            WorkingDir9.append(input);              // Input
-            WorkingDir9.append("\' \'");
-            WorkingDir9.append(WorkingDir4);        // Output
-            WorkingDir9.append("\' 8 \'");
-            WorkingDir9.append(WorkingDir8);        // Par File
-            WorkingDir9.append("\' 4 \'");
-            WorkingDir9.append(WorkingDir7);        // Mem Output File
-            WorkingDir9.append("\'");
-        }
-#elif defined(__APPLE__)
-        {
-            WorkingDir9 = "\"";
-            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
-            WorkingDir9.append(MemLeakExe);         // Exe Name
-            WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);              // Input
-            WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);        // Output
-            WorkingDir9.append("\" 8 \"");
-            WorkingDir9.append(WorkingDir8);        // Par File
-            WorkingDir9.append("\" 4 \"");
-            WorkingDir9.append(WorkingDir7);        // Mem Output File
-            WorkingDir9.append("\"");
-        }
-#elif defined(__POWERPC__)
-        {
-            WorkingDir9 = "\"";
-            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
-            WorkingDir9.append(MemLeakExe);         // Exe Name
-            WorkingDir9.append("\" \"");
-            WorkingDir9.append(input);              // Input
-            WorkingDir9.append("\" \"");
-            WorkingDir9.append(WorkingDir4);        // Output
-            WorkingDir9.append("\" 8 \"");
-            WorkingDir9.append(WorkingDir8);        // Par File
-            WorkingDir9.append("\" 4 \"");
-            WorkingDir9.append(WorkingDir7);        // Mem Output File
-            WorkingDir9.append("\"");
-        }
-#endif
-
-
-        string WorkingDir10 = WorkingDirString;
-        string WorkingDir11;
-
-        WorkingDir10.append(slashCharStr);
-        WorkingDir10.append("MemLeakCheckOutput_FP.txt");
-
-#if defined(_WIN32)
-        {
+            WorkingDir10.append(slashCharStr);
+            WorkingDir10.append("MemLeakCheckOutput_FP.txt");
             WorkingDir11 = "\"\"";
             WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
             WorkingDir11.append(MemLeakExe);        // Exe Name
@@ -13265,38 +11514,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir11.append(WorkingDir10);      // Mem Output File
             WorkingDir11.append("\"\"");
         }
-#elif defined(linux)
+#else
         {
-            WorkingDir11 = "\'";
-            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
-            WorkingDir11.append(MemLeakExe);            // Exe Name
-            WorkingDir11.append("\' \'");
-            WorkingDir11.append(input);             // Input
-            WorkingDir11.append("\' \'");
-            WorkingDir11.append(WorkingDir4);       // Output
-            WorkingDir11.append("\' 8 \'");
-            WorkingDir11.append(WorkingDir8);       // Par File
-            WorkingDir11.append("\' 4 \'");
-            WorkingDir11.append(WorkingDir10);      // Mem Output File
-            WorkingDir11.append("\'");
-        }
-#elif defined(__APPLE__)
-        {
-            WorkingDir11 = "\"";
-            WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
-            WorkingDir11.append(MemLeakExe);            // Exe Name
-            WorkingDir11.append("\" \"");
-            WorkingDir11.append(input);             // Input
-            WorkingDir11.append("\" \"");
-            WorkingDir11.append(WorkingDir4);       // Output
-            WorkingDir11.append("\" 8 \"");
-            WorkingDir11.append(WorkingDir8);       // Par File
-            WorkingDir11.append("\" 4 \"");
-            WorkingDir11.append(WorkingDir10);      // Mem Output File
-            WorkingDir11.append("\"");
-        }
-#elif defined(__POWERPC__)
-        {
+            WorkingDir9 = "\"";
+            WorkingDir9.append(ExeCharMemLeakStr);  // Exe Path
+            WorkingDir9.append(MemLeakExe);         // Exe Name
+            WorkingDir9.append("\" \"");
+            WorkingDir9.append(input);              // Input
+            WorkingDir9.append("\" \"");
+            WorkingDir9.append(WorkingDir4);        // Output
+            WorkingDir9.append("\" 8 \"");
+            WorkingDir9.append(WorkingDir8);        // Par File
+            WorkingDir9.append("\" 4 \"");
+            WorkingDir9.append(WorkingDir7);        // Mem Output File
+            WorkingDir9.append("\"");
+            WorkingDir10.append(slashCharStr);
+            WorkingDir10.append("MemLeakCheckOutput_FP.txt");
             WorkingDir11 = "\"";
             WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
             WorkingDir11.append(MemLeakExe);            // Exe Name
@@ -13311,7 +11544,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir11.append("\"");
         }
 #endif
-
 
         char MemLeakCheckIVF[255];
         char MemLeakCheckTXT[255];
@@ -13349,7 +11581,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -13567,13 +11799,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
 
-
-
         fclose(fp);
         string File1Str = File1;
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
-
     }
     int MemLeakCheck2(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -13598,94 +11827,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         snprintf(MemLeakExe, 255, "%s", argv[2]);
         snprintf(DecInFile, 255, "%s", argv[3]);
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char ExeCharMemLeak[1024] = "";
         char *MyDir = "MemLeakCheck2";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         //Get the exe's parent folder From argv[0] Paths for both exes will be the same
         FolderName(argv[0], ExeCharMemLeak);
@@ -13910,7 +12063,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -14126,7 +12279,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
 
-
     }
     int MinQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -14147,99 +12299,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "MinQTest";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                //strcpy(WorkingDirString2, WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string WorkingDir4 = WorkingDirString;
         string WorkingDir5 = WorkingDirString;
@@ -14274,7 +12349,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -14456,7 +12531,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 1;
         }
     }
-
     int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "MultiThreaded";
@@ -14478,94 +12552,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         char *input = argv[2];
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "MultiThreadedTest";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
-
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string MultiThreadedOnOutFile = WorkingDirString;
         string MultiThreadedOffOutFile = WorkingDirString;
@@ -14600,7 +12597,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -14789,7 +12786,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 2;
         }
 
-        if (Time1 < Time2)
+        if (Time1 > Time2)
         {
             char OutputChar1[255];
             snprintf(OutputChar1, 255, "%s time: %i > %s time: %i - Failed", Time1FileName, Time1, Time2FileName, Time2);
@@ -14807,7 +12804,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
     int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
-
         if (!(argc == 7 || argc == 8))
         {
             printf(
@@ -14823,7 +12819,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "    <Target Bit Rate>\n"
                 "    <Exe File To Compare>\n"
                 "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
                 "\n"
 
             );
@@ -14856,11 +12852,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         //            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
         //        }
         //#endif
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
+
         string ExeString = "";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char *MyDir = "NewVsOldPSNR";
         string MainDirString = "";
@@ -14868,107 +12864,21 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
         //////////////////////////////////////////////////////////////////////
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
-            int v = 0;
+        char ExeChar[1024];
+        char ExeChar2[1024];
+        FolderName(argv[0], ExeChar2);
+        snprintf(ExeChar, 1024, "%s", ExeChar2);
 
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
+        ExeString = ExeChar;
 
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            char ExeChar[1024];
-            char ExeChar2[1024];
-            FolderName(argv[0], ExeChar2);
-            snprintf(ExeChar, 1024, "%s", ExeChar2);
-
-            ExeString = ExeChar;
 #if defined(_WIN32)
-            {
-                ExeString.insert(0, "\"\"");
-            }
-#elif defined(linux)
-            {
-                ExeString.insert(0, "\'");
-            }
-#elif defined(__POWERPC__)
-            {
-                ExeString.insert(0, "\'");
-            }
-#elif defined(__APPLE__)
-            {
-                ExeString.insert(0, "\'");
-            }
+        ExeString.insert(0, "\"\"");
+#else
+        ExeString.insert(0, "\'");
 #endif
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
 
         //////////////////////////////////////////////
         string NewEncFile = WorkingDirString;
@@ -15039,7 +12949,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -15357,7 +13267,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         ifstream infile(TimeTextFileStr.c_str());
         infile >> PSNROLD;
         infile.close();
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////
 
         double PSNRArr[2];
 
@@ -15430,7 +13340,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "    <Target Bit Rate>\n"
                 "    <Exe File To Compare>\n"
                 "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
                 "\n"
             );
             return 0;
@@ -15445,99 +13355,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
+
         string ExeString = "";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char *MyDir = "NewVsOldRealTimeSpeed";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            char ExeChar[1024];
-            char ExeChar2[1024];
-            FolderName(argv[0], ExeChar2);
-            snprintf(ExeChar, 1024, "%s", ExeChar2);
-            ExeString = ExeChar;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-
-            FileStream.close();
-
-            //Makes sure log file and test txt file match up
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMismatch");
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string outputVP8New = WorkingDirString;
         string outputVP8Old = WorkingDirString;
@@ -15616,7 +13445,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -15800,7 +13629,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n");
+                "    <Optional Settings File>\n");
             return 0;
         }
 
@@ -15810,94 +13639,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "NoiseSensitivityWorks";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                //strcpy(WorkingDirString2, WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string NoiseSenseBase = WorkingDirString;
         NoiseSenseBase.append(slashCharStr);
@@ -15922,7 +13674,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -16131,93 +13883,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "OnePassVsTwoPass";
         string MainDirString = "";
         char File1[255] = "";
 
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            //Makes sure log file and test txt file match up
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMismatch");
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
 
         string TwoPassOutFile1 = WorkingDirString;
@@ -16259,7 +13936,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -16546,8 +14223,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-
-
     int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "PlayAlternate";
@@ -16567,101 +14242,24 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
 
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
 
         string WorkingDirString = ""; // <- All Options need to set a value for this
-        string Mode3TestMatch = "";
+
         string MainDirString = "";
         char *MyDir = "PlayAlternate";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-
-            FileStream.close();
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string PlayAlternate1 = WorkingDirString;
         string PlayAlternate2 = WorkingDirString;
@@ -16691,7 +14289,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -16894,7 +14492,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-
     int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "AllowDF";
@@ -16913,100 +14510,24 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n");
+                "    <Optional Settings File>\n");
             return 0;
         }
 
         int speed = 0;
         int BitRate = atoi(argv[4]);
         int Mode = atoi(argv[3]);
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "PostProcessorWorks";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string PostProcOutFile = WorkingDirString;
 
@@ -17032,7 +14553,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -17361,100 +14882,24 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
 
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
 
         string WorkingDirString = ""; // <- All Options need to set a value for this
-        string Mode3TestMatch = "";
+
         string MainDirString = "";
         char *MyDir = "ReconBuffer";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string ReconBuffer = WorkingDirString;
 
@@ -17482,7 +14927,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -17638,98 +15083,23 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "ResampleDownWaterMark";
         string MainDirString = "";
         char File1[255] = "";
 
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            //Makes sure log file and test txt file match up
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMismatch");
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string DownWaterSamp90OutFile = WorkingDirString;
         string DownWaterSamp10OutFile = WorkingDirString;
@@ -17758,7 +15128,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -18076,7 +15446,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (1)Good Quality Fast Encoding\n"
                 "    <Target Bit Rate>\n"
                 "    <Lag In Frames>\n"
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
             return 0;
         }
@@ -18086,94 +15456,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         int BitRate = atoi(argv[4]);
         int LagInFramesInput = atoi(argv[5]);
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "SpeedTest";
         string MainDirString = "";
         char File1[255] = "";
 
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            //Makes sure log file and test txt file match up
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMismatch");
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string SpeedTestGoodQBase = WorkingDirString;
         string SpeedTestRealTimeBase = WorkingDirString;
@@ -18202,7 +15496,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -18745,8 +16039,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 8;
         }
-
-
     }
     int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -18767,94 +16059,18 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
 
         string WorkingDirString = ""; // <- All Options need to set a value for this
-        string Mode3TestMatch = "";
+
         string MainDirString = "";
         char *MyDir = "TestVectorCheck";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string TestVectorFolder = argv[2];
         string TestVectorOutFolder = WorkingDirString.c_str();
@@ -19445,7 +16661,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -19661,97 +16877,21 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "  TwoPassVsTwoPassBest \n\n"
                 "    <inputfile>\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n");
+                "    <Optional Settings File>\n");
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "TwoPassVsTwoPassBest";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string TwoPassOutFile1 = WorkingDirString;
         string TwoPassBestOutFile1 = WorkingDirString;
@@ -19806,7 +16946,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -20075,7 +17215,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-
     int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
 
@@ -20095,97 +17234,21 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n");
+                "    <Optional Settings File>\n");
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "UnderShoot";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string UnderShoot10 = WorkingDirString;
         string UnderShoot100 = WorkingDirString;
@@ -20220,7 +17283,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -20365,7 +17428,6 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
     }
-
     int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
         char *CompressString = "Version";
@@ -20385,102 +17447,24 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n "
-                "	 <Optional Settings File>\n"
+                "    <Optional Settings File>\n"
             );
 
             return 0;
         }
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
 
         string WorkingDirString = ""; // <- All Options need to set a value for this
-        string Mode3TestMatch = "";
+
         string MainDirString = "";
         char *MyDir = "Version";
-        char WorkingDir2[255] = "";
+
         char WorkingDir3[255] = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-
-            FileStream.close();
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string Version0 = WorkingDirString;
         string Version1 = WorkingDirString;
@@ -20543,7 +17527,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -20910,93 +17894,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         MakeDir(basefolder);
         int TestMode = 0;
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
         string WorkingDirString = "";
-        string Mode3TestMatch = "";
-        char WorkingDir2[255] = "";
+
+
         char WorkingDir3[255] = "";
         char *MyDir = "WinLinMacMatch";
         string MainDirString = "";
         char File1[255] = "";
 
-        if (TestType == 2 || TestType == 1)
-        {
-            snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-
-            int v = 0;
-
-            while (WorkingDir2[v] != '\"')
-            {
-                WorkingDir3[v] = WorkingDir2[v];
-                v++;
-            }
-
-            WorkingDir3[v] = slashChar;
-            WorkingDir3[v+1] = '\0';
-            WorkingDirString = WorkingDir3;
-            /////////////////////////////////////////////////////////////////////////////////
-            MainDirString = WorkingDir3;
-            MainDirString.append("FileIndex.txt");
-            /////////////////////////////////////////////////////////////////////////////////
-            WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
-            WorkingDirString.append(FilesAr[0]);
-            WorkingDirString.erase(WorkingDirString.length() - 1, 1);
-
-            string CreateDir2 = WorkingDirString;
-            CreateDir2.insert(0, "md \"");
-            MakeDirVPX(CreateDir2.c_str());
-
-            ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-            if (TestType == 2)
-            {
-                char WorkingDirString2[255];
-                snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-                SubFolderName(WorkingDirString2, File1);
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////
-        }
-        else
-        {
-            //Use WorkingDir to get the main folder
-            //Use Index File to get the rest of the string
-            //Put it all together Setting WorkingDirString to the location of the files we want to examine.
-            char buffer[255];
-
-            string WorkingDir2 = WorkingDir;
-
-            WorkingDir2.append(slashCharStr);
-            MainDirString = WorkingDir2;
-            MainDirString.append("FileIndex.txt");
-
-            fstream FileStream;
-            FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
-
-            int n = 0;
-
-            while (n < atoi(argv[argc]))
-            {
-                FileStream.getline(buffer, 255);
-                n++;
-            }
-
-            FileStream.close();
-
-            char Mode3TestMatchChar[255];
-            TestName(buffer, Mode3TestMatchChar);
-            Mode3TestMatch = Mode3TestMatchChar;
-
-            if (Mode3TestMatch.compare(MyDir) != 0)
-            {
-                printf("ErrorFileMisMatch ");
-                printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
-                return 11;
-            }
-
-            WorkingDir2.append(buffer);
-            WorkingDirString = WorkingDir2;
-        }
+        if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+            return 11;
 
         string FiletoEnc = "";
         string FiletoDec = "";
@@ -21068,7 +17976,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         ////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -21474,7 +18382,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
 
-        ///////////////////////////////////////////////Formatting Test Specific Directory////////////////////////////
+        ////////////Formatting Test Specific Directory////////////
 
         string WorkingDirString; // <- All Options need to set a value for this
         string Mode3TestMatch;
@@ -21606,7 +18514,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         ////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////
 
         if (TestType == 1)
         {
@@ -22863,10 +19771,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 0;
         }
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////
         //DecompressIVFtoIVF(CodeCoverageCompression, CodeCoverageDecCorrect);
         DecComputeMD5(CodeCoverageCompression, CodeCoverageDecCorrect);
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////
 
         if (arrayname.compare("vp8dx_bitreader_norm") == 0)
         {
@@ -23939,10 +20847,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
 
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////
         //DecompressIVFtoIVF(CodeCoverageCompression, CodeCoverageDecModified);
         DecComputeMD5(CodeCoverageCompression, CodeCoverageDecModified);
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////
 
         if (arrayname.compare("vp8dx_bitreader_norm") == 0)
         {

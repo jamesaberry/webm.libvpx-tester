@@ -41,7 +41,6 @@ string slashCharStr = "/";
 #include <sys/types.h>
 #include <dirent.h>
 #endif
-///////////////////////////////////////////////////////////////////////////////////////
 
 //This is temporary need better solution
 #ifdef DSHOW
@@ -50,7 +49,7 @@ char TesterExePath[256];
 
 //Utilities
 extern void FolderName(const char *input, char *output);
-extern int Test0InputTextCheck(char *input, int MoreInfo);
+extern int Test0InputTextCheck(const char *input, int MoreInfo);
 extern int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
 extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
 extern int CompareIVFHeaderInfo(int argc, char *argv[]);
@@ -4474,6 +4473,20 @@ int  main(int argc, char *argv[])
         if (atoi(argv[2]) != 4 && atoi(argv[2]) != 3)
         {
             VaildInput = Test0InputTextCheck(argv[3], 0);
+
+            if (VaildInput <= 0)
+            {
+                printf("\nExternal Test Runner Aborted\n\n");
+                return 0;
+            }
+        }
+        else
+        {
+            string inputCheck = "";
+            inputCheck.append(argv[3]);
+            inputCheck.append(slashCharStr.c_str());
+            inputCheck.append("TestsRun.txt");
+            VaildInput = Test0InputTextCheck(inputCheck.c_str(), 0);
 
             if (VaildInput <= 0)
             {

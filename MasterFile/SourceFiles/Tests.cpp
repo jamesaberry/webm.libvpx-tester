@@ -3495,6 +3495,11 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -3762,6 +3767,11 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -3997,6 +4007,11 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 
 int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
@@ -4321,6 +4336,11 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -5008,6 +5028,11 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -5491,6 +5516,11 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -5778,6 +5808,11 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
             return 1;
         }
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -6003,6 +6038,11 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -6430,6 +6470,11 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -6894,6 +6939,11 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -7067,6 +7117,11 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         RecordTestComplete(MainDirString, File1Str, TestType);
         return 0;
     }
+
+    fclose(fp);
+    string File1Str = File1;
+    RecordTestComplete(MainDirString, File1Str, TestType);
+    return 6;
 }
 int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
@@ -9398,6 +9453,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
 #endif
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
+
     }
     int FixedQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -9699,6 +9760,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 1;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int ForceKeyFrameWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -9953,6 +10019,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 1;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
+
     }
     int FrameSizeTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -10380,6 +10452,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
+
     }
     int GoodQvBestQ(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -11127,6 +11205,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int MaxQTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -11398,6 +11481,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int MemLeakCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -12530,6 +12618,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 1;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int MultiThreadedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -12801,6 +12894,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int NewVsOldPSNR(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -13329,6 +13427,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int NewVsOldRealTimeSpeed(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -13607,6 +13710,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 2;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int NoiseSensitivityWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -13869,6 +13977,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int OnePassVsTwoPass(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -14222,6 +14335,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int PlayAlternate(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -14491,6 +14609,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int PostProcessorWorks(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -14861,6 +14984,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int ReconBuffer(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -15065,6 +15193,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int ResampleDownWaterMark(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -15431,6 +15564,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int SpeedTest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -16039,6 +16177,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 8;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int TestVectorCheck(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -16865,6 +17008,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int TwoPassVsTwoPassBest(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -17214,6 +17362,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int UnderShoot(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -17427,6 +17580,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 0;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int Version(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -17843,6 +18001,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 1;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     int WinLinMacMatch(int argc, char * argv[], string WorkingDir, string FilesAr[], int TestType)
     {
@@ -18282,6 +18445,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             RecordTestComplete(MainDirString, File1Str, TestType);
             return 1;
         }
+
+        fclose(fp);
+        string File1Str = File1;
+        RecordTestComplete(MainDirString, File1Str, TestType);
+        return 6;
     }
     //----------------------------------------Code Coverage----------------------------------------------------------------
     int CodeCoverage(int argc, char * argv[], string WorkingDir, string FilesAr[])

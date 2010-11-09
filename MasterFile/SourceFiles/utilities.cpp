@@ -89,8 +89,8 @@ extern char TesterExePath[256];
 # define swap4(d) d
 #endif
 ////////////////////////Slash Character Definion////////////////////////
-extern char slashChar;
-extern string slashCharStr;
+extern char slashChar();
+extern string slashCharStr();
 ////////////////////////////////////////////////////////////////////////
 const int PSNR_MAX = 999.;
 const int sizBuff = 512;
@@ -1671,7 +1671,7 @@ void FileName(const char *input, char *FileName, int removeExt)
 
     while (input[parser] != '\0')
     {
-        if (input[parser] == slashChar)
+        if (input[parser] == slashChar())
         {
             slashcount++;
         }
@@ -1691,7 +1691,7 @@ void FileName(const char *input, char *FileName, int removeExt)
             parser2++;
         }
 
-        if (input[parser] == slashChar)
+        if (input[parser] == slashChar())
         {
             slashcount2++;
         }
@@ -1718,7 +1718,7 @@ void FolderName(const char *input, char *output)
 
     while (Dir[parser] != '\0')
     {
-        if (Dir[parser] == slashChar)
+        if (Dir[parser] == slashChar())
         {
             slashcount++;
         }
@@ -1730,7 +1730,7 @@ void FolderName(const char *input, char *output)
 
     while (slashcount2 < slashcount)
     {
-        if (Dir[parser] == slashChar)
+        if (Dir[parser] == slashChar())
         {
             slashcount2++;
         }
@@ -1814,7 +1814,7 @@ string ExtractDateTime(string InputStr)
 
     while (input[parser] != '\0')
     {
-        if (input[parser] == slashChar)
+        if (input[parser] == slashChar())
         {
             slashcount++;
         }
@@ -1834,7 +1834,7 @@ string ExtractDateTime(string InputStr)
             parser2++;
         }
 
-        if (input[parser] == slashChar)
+        if (input[parser] == slashChar())
         {
             slashcount2++;
         }
@@ -2819,7 +2819,7 @@ void SubFolderName(char *input, char *FileName)
 
     while (input[parser] != '\0')
     {
-        if (input[parser] == slashChar)
+        if (input[parser] == slashChar())
         {
             slashcount++;
         }
@@ -2839,7 +2839,7 @@ void SubFolderName(char *input, char *FileName)
             parser2++;
         }
 
-        if (input[parser] == slashChar)
+        if (input[parser] == slashChar())
         {
             slashcount2++;
         }
@@ -2860,12 +2860,12 @@ void TestName(char *input, char *FileName)
     char OpSlashChar;
 
     //find out what the default shash char is then define the oposite slash char
-    if (slashChar == '\\')
+    if (slashChar() == '\\')
     {
         OpSlashChar = '/';
     }
 
-    if (slashChar == '/')
+    if (slashChar() == '/')
     {
         OpSlashChar = '\\';
     }
@@ -2876,7 +2876,7 @@ void TestName(char *input, char *FileName)
     {
         if (input[parser] == OpSlashChar)
         {
-            input[parser] = slashChar;
+            input[parser] = slashChar();
         }
 
         parser++;
@@ -2885,7 +2885,7 @@ void TestName(char *input, char *FileName)
     //continue with the function after proper initialization.
     parser = 0;
 
-    while (input[parser] != '\0' && input[parser] != slashChar)
+    while (input[parser] != '\0' && input[parser] != slashChar())
     {
         FileName[parser] = input[parser];
         parser++;
@@ -3203,6 +3203,36 @@ void RunExe(string RunExe)
 #endif
 
     return;
+}
+string slashCharStr()
+{
+
+#if defined(_WIN32)
+    return "\\";
+#elif defined(linux)
+    return "/";
+#elif defined(__APPLE__)
+    return "/";
+#elif defined(__POWERPC__)
+    return "/";
+#endif
+
+    return "\\";
+}
+char slashChar()
+{
+
+#if defined(_WIN32)
+    return '\\';
+#elif defined(linux)
+    return '/';
+#elif defined(__APPLE__)
+    return '/';
+#elif defined(__POWERPC__)
+    return'/';
+#endif
+
+    return '\\';
 }
 //---------------------------------------------------------IVF------------------------------------------------------------------------
 int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
@@ -6998,7 +7028,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     string out_fn4STRb = out_fn;
     out_fn4STRb.erase(out_fn4STRb.length() - 4, 4);
     out_fn4STRb.append("_DecodeFrame");
-    out_fn4STRb.append(slashCharStr.c_str());
+    out_fn4STRb.append(slashCharStr().c_str());
 
     string CreateDir3b = out_fn4STRb;
     CreateDir3b.insert(0, "mkdir \"");
@@ -7008,7 +7038,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
     string out_fn3STRb = out_fn;
     out_fn3STRb.erase(out_fn3STRb.length() - 4, 4);
     out_fn3STRb.append("_PreviewFrame");
-    out_fn3STRb.append(slashCharStr.c_str());
+    out_fn3STRb.append(slashCharStr().c_str());
 
     string CreateDir2b = out_fn3STRb;
     CreateDir2b.insert(0, "mkdir \"");
@@ -7346,7 +7376,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                         string out_fn3STR = out_fn;
                         out_fn3STR.erase(out_fn3STR.length() - 4, 4);
                         out_fn3STR.append("_PreviewFrame");
-                        out_fn3STR.append(slashCharStr.c_str());
+                        out_fn3STR.append(slashCharStr().c_str());
 
                         char intchar[56];
                         itoa_custom(frames_out, intchar, 10);
@@ -7357,7 +7387,7 @@ int CompressIVFtoIVFReconBufferCheck(char *inputFile, const char *outputFile2, i
                         string out_fn4STR = out_fn;
                         out_fn4STR.erase(out_fn4STR.length() - 4, 4);
                         out_fn4STR.append("_DecodeFrame");
-                        out_fn4STR.append(slashCharStr.c_str());
+                        out_fn4STR.append(slashCharStr().c_str());
 
                         char intchar2[56];
                         itoa_custom(frames_out, intchar2, 10);

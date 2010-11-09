@@ -13,8 +13,8 @@
 using namespace std;
 
 ////////////////////////Slash Character Definion////////////////////////
-extern char slashChar;
-extern string slashCharStr;
+extern char slashChar();
+extern string slashCharStr();
 ////////////////////////////////////////////////////////////////////////
 
 #if defined(_WIN32)
@@ -586,7 +586,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
 
     if (WriteIndFrames != 5)
     {
-        outputDirStr2.append(slashCharStr);
+        outputDirStr2.append(slashCharStr());
 
         char InputFileName[255];
         FileName(inputFile, InputFileName, 0);
@@ -632,7 +632,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
         itoa_custom(ivfhRaw.width, widthchar, 10);
         itoa_custom(ivfhRaw.height, heightchar, 10);
 
-        outputDirStr.append(slashCharStr);
+        outputDirStr.append(slashCharStr());
         char InputFileName2[255];
         FileName(inputFile, InputFileName2, 0);
         string InputFileNameStr2 = InputFileName2;
@@ -768,7 +768,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     if (WriteIndFrames != 5)
     {
-        outputDirStr2.append(slashCharStr);
+        outputDirStr2.append(slashCharStr());
         outputDirStr2.append("AllFrames.raw");
         snprintf(outputDirChar2, 255, "%s", outputDirStr2.c_str());
     }
@@ -791,7 +791,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
         string outputDirStr = outputDir;
         char currentVideoFrameStr[10];
         itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
-        outputDirStr.append(slashCharStr);
+        outputDirStr.append(slashCharStr());
         outputDirStr.append("Frame_");
         outputDirStr.append(currentVideoFrameStr);
 
@@ -1095,7 +1095,7 @@ int CombineIndvFrames(int argc, char *argv[])
     {
         //printf("%i ",CurrentFrame);
         CurIndividualFrameFileName = inputDir;
-        CurIndividualFrameFileName.append(slashCharStr);
+        CurIndividualFrameFileName.append(slashCharStr());
         CurIndividualFrameFileName.append(namebase);
 
         int AddedStaticZeros = 0;

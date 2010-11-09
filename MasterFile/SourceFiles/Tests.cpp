@@ -46,8 +46,8 @@ using namespace std;
 #endif
 
 ////////////////////////Slash Character Definion////////////////////////
-extern char slashChar;
-extern string slashCharStr;
+extern char slashChar();
+extern string slashCharStr();
 ////////////////////////////////////////////////////////////////////////
 
 extern "C"
@@ -93,7 +93,7 @@ extern unsigned int GetTime();
 extern int MakeDir(string CreateDir);
 extern int MakeDirVPX(string CreateDir2);
 extern void RunExe(string RunExe);
-extern string RetslashChar;
+
 
 extern double IVFPSNR(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
 extern double PostProcIVFPSNR(char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
@@ -323,7 +323,7 @@ int TestDirIni(int argc, char *argv[], int TestType, string WorkingDir, char *My
             v++;
         }
 
-        WorkingDir3[v] = slashChar;
+        WorkingDir3[v] = slashChar();
         WorkingDir3[v+1] = '\0';
         WorkingDirString = WorkingDir3;
         /////////////////////////////////////////////////////////////////////////////////
@@ -331,7 +331,7 @@ int TestDirIni(int argc, char *argv[], int TestType, string WorkingDir, char *My
         MainDirString.append("FileIndex.txt");
         /////////////////////////////////////////////////////////////////////////////////
         WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr);
+        WorkingDirString.append(slashCharStr());
         WorkingDirString.append(FilesAr[0]);
         WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
@@ -358,7 +358,7 @@ int TestDirIni(int argc, char *argv[], int TestType, string WorkingDir, char *My
 
         string WorkingDir2 = WorkingDir;
 
-        WorkingDir2.append(slashCharStr);
+        WorkingDir2.append(slashCharStr());
         MainDirString = WorkingDir2;
         MainDirString.append("FileIndex.txt");
 
@@ -814,20 +814,20 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingDir = argv[3];                                           //location of main dir in as workingdir
 
         WorkingTextFilestr = WorkingDir;
-        WorkingTextFilestr.append(slashCharStr);
+        WorkingTextFilestr.append(slashCharStr());
         WorkingTextFilestr.append("TestsRun.txt");                      //TestsRun.txt original file ided
 
         //Determines which test is in the process of being run and sets the correct text file as input file
         SummCompAndTest = WorkingDir;
-        SummCompAndTest.append(slashCharStr);
+        SummCompAndTest.append(slashCharStr());
         SummCompAndTest.append("Mode1Results.txt");     // Mode 1
         //SummCompAndTest.append("Summary_CompressionsANDTests.txt");       // Mode 1
         SummComp = WorkingDir;
-        SummComp.append(slashCharStr);
+        SummComp.append(slashCharStr());
         SummComp.append("Mode2Results.txt");                // Mode 2
         //SummComp.append("Summary_CompressionsOnly.txt");              // Mode 2
         SummTest = WorkingDir;
-        SummTest.append(slashCharStr);
+        SummTest.append(slashCharStr());
         SummTest.append("Mode3Results.txt");                        // Mode 3
         //SummTest.append("Summary_TestsOnly.txt");                     // Mode 3
 
@@ -1140,7 +1140,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             v++;
         }
 
-        WorkingDir3[v] = slashChar;
+        WorkingDir3[v] = slashChar();
         WorkingDir3[v+1] = '\0';
 
         WorkDirFileStr = WorkingDir3;
@@ -1161,7 +1161,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             v++;
         }
 
-        WorkingDir3[v] = slashChar;
+        WorkingDir3[v] = slashChar();
         WorkingDir3[v+1] = '\0';
 
         WorkDirFileStr = WorkingDir3;
@@ -1173,7 +1173,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
     if (TestType == 3)
     {
         WorkDirFileStr = argv[3];
-        WorkDirFileStr.append(slashCharStr);
+        WorkDirFileStr.append(slashCharStr());
         //WorkDirFileStr.append(MyDir);
         //WorkDirFileStr.append("_TestsOnly.txt");
         WorkDirFileStr.append("Mode3Results.txt");
@@ -1192,7 +1192,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
             v++;
         }
 
-        WorkingDir3[v] = slashChar;
+        WorkingDir3[v] = slashChar();
         WorkingDir3[v+1] = '\0';
 
         WorkingTextFilestr = WorkingDir3;
@@ -1255,7 +1255,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingDir = argv[3];                               //location of main dir in as workingdir
 
         WorkingTextFilestr = WorkingDir;
-        WorkingTextFilestr.append(slashCharStr);
+        WorkingTextFilestr.append(slashCharStr());
         WorkingTextFilestr.append("TestsRun.txt");          //TestsRun.txt original file ided
 
         WorkingDir.append("\"");
@@ -1286,7 +1286,7 @@ int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingTextFilePrep.close();
 
         string SummComp = argv[3];
-        SummComp.append(slashCharStr);
+        SummComp.append(slashCharStr());
         SummComp.append("Mode2Results.txt");
         //SummComp.append("Summary_CompressionsOnly.txt");
 
@@ -2904,11 +2904,11 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         v++;
     }
 
-    WorkingDir3[v] = slashChar;
+    WorkingDir3[v] = slashChar();
     WorkingDir3[v+1] = '\0';
     string WorkingDirString = WorkingDir3;
     WorkingDirString.append(MyDir);
-    WorkingDirString.append(slashCharStr);
+    WorkingDirString.append(slashCharStr());
     WorkingDirString.append(FilesAr[0]);
     WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
@@ -2919,7 +2919,7 @@ int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
 
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
     string OutPutStr = TextfileString;
     TextfileString.append(".txt");
@@ -3156,11 +3156,11 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         v++;
     }
 
-    WorkingDir3[v] = slashChar;
+    WorkingDir3[v] = slashChar();
     WorkingDir3[v+1] = '\0';
     string WorkingDirString = WorkingDir3;
     WorkingDirString.append(MyDir);
-    WorkingDirString.append(slashCharStr);
+    WorkingDirString.append(slashCharStr());
     WorkingDirString.append(FilesAr[0]);
     WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
@@ -3171,7 +3171,7 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     string WorkingDir4 = WorkingDirString;
     string WorkingDir5 = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
+    WorkingDir4.append(slashCharStr());
 
     char InputFileName[255];
     FileName(input, InputFileName, 0);
@@ -3183,7 +3183,7 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
         WorkingDir4.append(InputFileName);
 
     WorkingDir4.append("-RandComp.ivf");
-    WorkingDir5.append(slashCharStr);
+    WorkingDir5.append(slashCharStr());
     WorkingDir5.append("RandCompOutPut.txt");
 
     char RandComp[255];
@@ -3194,7 +3194,7 @@ int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
     TextfileString.append(".txt");
 
@@ -3331,20 +3331,20 @@ int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int Tes
     char WorkingDir3[255] = "";
     char File1[255] = "";
 
-    if (TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if(TestDirIni(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
         return 11;
 
     string AllowDFon = WorkingDirString;
     string AllowDFoff = WorkingDirString;
 
-    AllowDFon.append(slashCharStr);
+    AllowDFon.append(slashCharStr());
     AllowDFon.append("AllowDFOnOutput.ivf");
-    AllowDFoff.append(slashCharStr);
+    AllowDFoff.append(slashCharStr());
     AllowDFoff.append("AllowDFOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -3539,14 +3539,14 @@ int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     string AllowLagon = WorkingDirString;
     string AllowLagoff = WorkingDirString;
 
-    AllowLagon.append(slashCharStr);
+    AllowLagon.append(slashCharStr());
     AllowLagon.append("AllowLagOnOutput.ivf");
-    AllowLagoff.append(slashCharStr);
+    AllowLagoff.append(slashCharStr());
     AllowLagoff.append("AllowLagOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -3808,14 +3808,14 @@ int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string
     string Spatialon = WorkingDirString;
     string Spatialoff = WorkingDirString;
 
-    Spatialon.append(slashCharStr);
+    Spatialon.append(slashCharStr());
     Spatialon.append("SpatialOnOutput.ivf");
-    Spatialoff.append(slashCharStr);
+    Spatialoff.append(slashCharStr());
     Spatialoff.append("SpatialOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -4058,18 +4058,18 @@ int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesA
     string AutoKeyFramingWorks1 = WorkingDirString;
     string AutoKeyFramingWorks2 = WorkingDirString;
 
-    KeyFrameTxtOut1.append(slashCharStr);
+    KeyFrameTxtOut1.append(slashCharStr());
     KeyFrameTxtOut1.append("AutoKeyFramingWorksOutput1_KeyFrames.txt");
-    AutoKeyFramingWorks1.append(slashCharStr);
+    AutoKeyFramingWorks1.append(slashCharStr());
     AutoKeyFramingWorks1.append("AutoKeyFramingWorksOutput1.ivf");
-    KeyFrameTxtOut2.append(slashCharStr);
+    KeyFrameTxtOut2.append(slashCharStr());
     KeyFrameTxtOut2.append("AutoKeyFramingWorksOutput2_KeyFrames.txt");
-    AutoKeyFramingWorks2.append(slashCharStr);
+    AutoKeyFramingWorks2.append(slashCharStr());
     AutoKeyFramingWorks2.append("AutoKeyFramingWorksOutput2.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -4381,7 +4381,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
     string BufferLevelWorksOut = WorkingDirString;
     //string WorkingDir5 = WorkingDirString;
 
-    BufferLevelWorksOut.append(slashCharStr);
+    BufferLevelWorksOut.append(slashCharStr());
     BufferLevelWorksOut.append("BufferLevelWorksOutput.ivf");
 
     //char BufferLevelWorksOut[255];
@@ -4389,7 +4389,7 @@ int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -4578,9 +4578,9 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
     string CPUDecOnlyWorksOutFile = WorkingDirString;
     string CPUDecOnlyWorksOut_CPU = WorkingDirString;
 
-    CPUDecOnlyWorksOutFile.append(slashCharStr);
+    CPUDecOnlyWorksOutFile.append(slashCharStr());
     CPUDecOnlyWorksOutFile.append("CPUDecOnlyWorksOutput.ivf");
-    CPUDecOnlyWorksOut_CPU.append(slashCharStr);
+    CPUDecOnlyWorksOut_CPU.append(slashCharStr());
     CPUDecOnlyWorksOut_CPU.append("CPUDecOnlyWorksOutput_");
 
     //char CPUDecOnlyWorksOutFile[255];
@@ -4591,7 +4591,7 @@ int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -5074,14 +5074,14 @@ int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     string ChangedCPUDec0OutFile = WorkingDirString;
     string ChangedCPUDecNOutBase = WorkingDirString;
 
-    ChangedCPUDec0OutFile.append(slashCharStr);
+    ChangedCPUDec0OutFile.append(slashCharStr());
     ChangedCPUDec0OutFile.append("ChangeCPUWorksOutput_NONE.ivf");
-    ChangedCPUDecNOutBase.append(slashCharStr);
+    ChangedCPUDecNOutBase.append(slashCharStr());
     ChangedCPUDecNOutBase.append("ChangeCPUWorksOutput_");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -5559,12 +5559,12 @@ int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestTy
 
     string DFWMOutFileBase = WorkingDirString;
 
-    DFWMOutFileBase.append(slashCharStr);
+    DFWMOutFileBase.append(slashCharStr());
     DFWMOutFileBase.append("DFWMOutput");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -5851,7 +5851,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     string TargetBitRate1 = WorkingDirString;
     //string WorkingDir5 = WorkingDirString;
 
-    TargetBitRate1.append(slashCharStr);
+    TargetBitRate1.append(slashCharStr());
     TargetBitRate1.append("TargetBitRateOutput.ivf");
 
     //char TargetBitRate1[255];
@@ -5859,7 +5859,7 @@ int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
 
@@ -6104,14 +6104,14 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
     string ReleaseExeLoc = ExeCharDebugReleaseString;
     ReleaseExeLoc.append(ExeInputRelease);
 
-    DebugOutput.append(slashCharStr);
+    DebugOutput.append(slashCharStr());
     DebugOutput.append("output_Debug.ivf");
-    ReleaseOutput.append(slashCharStr);
+    ReleaseOutput.append(slashCharStr());
     ReleaseOutput.append("output_Release.ivf");
 
-    ParFileDebug.append(slashCharStr);
+    ParFileDebug.append(slashCharStr());
     ParFileDebug.append("ParFileDebug.txt");
-    ParFileRelease.append(slashCharStr);
+    ParFileRelease.append(slashCharStr());
     ParFileRelease.append("ParFileRelease.txt");
 
 #if defined(_WIN32)
@@ -6172,7 +6172,7 @@ int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesA
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -6524,27 +6524,27 @@ int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[],
     string EncBreakOut500_Dec = WorkingDirString;
     string EncBreakOut1000_Dec = WorkingDirString;
 
-    EncBreakOut0.append(slashCharStr);
+    EncBreakOut0.append(slashCharStr());
     EncBreakOut0.append("EncBreakOut0.ivf");
-    EncBreakOut100.append(slashCharStr);
+    EncBreakOut100.append(slashCharStr());
     EncBreakOut100.append("EncBreakOut100.ivf");
-    EncBreakOut500.append(slashCharStr);
+    EncBreakOut500.append(slashCharStr());
     EncBreakOut500.append("EncBreakOut500.ivf");
-    EncBreakOut1000.append(slashCharStr);
+    EncBreakOut1000.append(slashCharStr());
     EncBreakOut1000.append("EncBreakOut1000.ivf");
 
-    EncBreakOut0_Dec.append(slashCharStr);
+    EncBreakOut0_Dec.append(slashCharStr());
     EncBreakOut0_Dec.append("EncBreakOut0_Dec.ivf");
-    EncBreakOut100_Dec.append(slashCharStr);
+    EncBreakOut100_Dec.append(slashCharStr());
     EncBreakOut100_Dec.append("EncBreakOut100_Dec.ivf");
-    EncBreakOut500_Dec.append(slashCharStr);
+    EncBreakOut500_Dec.append(slashCharStr());
     EncBreakOut500_Dec.append("EncBreakOut500_Dec.ivf");
-    EncBreakOut1000_Dec.append(slashCharStr);
+    EncBreakOut1000_Dec.append(slashCharStr());
     EncBreakOut1000_Dec.append("EncBreakOut1000_Dec.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -6982,14 +6982,14 @@ int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int Te
     string ErrorOnOutFile = WorkingDirString;
     string ErrorOffOutFile = WorkingDirString;
 
-    ErrorOnOutFile.append(slashCharStr);
+    ErrorOnOutFile.append(slashCharStr());
     ErrorOnOutFile.append("ErrorOnOutput.ivf");
-    ErrorOffOutFile.append(slashCharStr);
+    ErrorOffOutFile.append(slashCharStr());
     ErrorOffOutFile.append("ErrorOffOutput.ivf");
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
 
@@ -7175,10 +7175,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     string WorkingDir4 = WorkingDirString;
     string WorkingDir5 = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
+    WorkingDir4.append(slashCharStr());
     WorkingDir4.append("ExtraFileCheck.ivf");
 
-    WorkingDir5.append(slashCharStr);
+    WorkingDir5.append(slashCharStr());
     WorkingDir5.append("ExtraFileCheckResult.txt");
 
     char ExtraFileCheck[255];
@@ -7189,7 +7189,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -7236,7 +7236,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     cout << "\nChecking: " << CurrentPathStr.c_str() << " For opsnr.stt \n";
     cerr << "\nChecking: " << CurrentPathStr.c_str() << " For opsnr.stt \n";
 
-    CurrentPathStr.append(slashCharStr);
+    CurrentPathStr.append(slashCharStr());
     CurrentPathStr.append("opsnr.stt");
 
     FILE *opsnrExists = fopen(CurrentPathStr.c_str(), "rb");
@@ -7260,7 +7260,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     cout << "\nChecking: " << EF_DestString2.c_str() << " For opsnr.stt \n";
     cerr << "\nChecking: " << EF_DestString2.c_str() << " For opsnr.stt \n";
 
-    EF_DestString2.append(slashCharStr);
+    EF_DestString2.append(slashCharStr());
     EF_DestString2.append("opsnr.stt");
 
     FILE *opsnrExists2 = fopen(EF_DestString2.c_str(), "rb");
@@ -7770,10 +7770,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     string WorkingDir4 = WorkingDirString;
     string WorkingDir5 = WorkingDirString;
 
-    WorkingDir4.append(slashCharStr);
+    WorkingDir4.append(slashCharStr());
     WorkingDir4.append("ExtraFileCheck.ivf");
 
-    WorkingDir5.append(slashCharStr);
+    WorkingDir5.append(slashCharStr());
     WorkingDir5.append("ExtraFileCheckResult.txt");
 
     char ExtraFileCheck[255];
@@ -7784,7 +7784,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     /////////////OutPutfile////////////
     string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr);
+    TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
     if (TestType == 2 || TestType == 1)
@@ -7831,7 +7831,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     cout << "\nChecking: " << CurrentPathStr.c_str() << " For opsnr.stt \n";
     cerr << "\nChecking: " << CurrentPathStr.c_str() << " For opsnr.stt \n";
 
-    CurrentPathStr.append(slashCharStr);
+    CurrentPathStr.append(slashCharStr());
     CurrentPathStr.append("opsnr.stt");
 
     FILE *opsnrExists = fopen(CurrentPathStr.c_str(), "rb");
@@ -7855,7 +7855,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     cout << "\nChecking: " << EF_DestString2.c_str() << " For opsnr.stt \n";
     cerr << "\nChecking: " << EF_DestString2.c_str() << " For opsnr.stt \n";
 
-    EF_DestString2.append(slashCharStr);
+    EF_DestString2.append(slashCharStr());
     EF_DestString2.append("opsnr.stt");
 
     FILE *opsnrExists2 = fopen(EF_DestString2.c_str(), "rb");
@@ -8365,10 +8365,10 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDir4 = WorkingDirString;
         string WorkingDir5 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
+        WorkingDir4.append(slashCharStr());
         WorkingDir4.append("ExtraFileCheck.ivf");
 
-        WorkingDir5.append(slashCharStr);
+        WorkingDir5.append(slashCharStr());
         WorkingDir5.append("ExtraFileCheckResult.txt");
 
         char ExtraFileCheck[255];
@@ -8379,7 +8379,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -8427,7 +8427,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         cout << "\nChecking: " << CurrentPathStr.c_str() << " For opsnr.stt \n";
         cerr << "\nChecking: " << CurrentPathStr.c_str() << " For opsnr.stt \n";
 
-        CurrentPathStr.append(slashCharStr);
+        CurrentPathStr.append(slashCharStr());
         CurrentPathStr.append("opsnr.stt");
 
         FILE *opsnrExists = fopen(CurrentPathStr.c_str(), "rb");
@@ -8451,7 +8451,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         cout << "\nChecking: " << EF_DestString2.c_str() << " For opsnr.stt \n";
         cerr << "\nChecking: " << EF_DestString2.c_str() << " For opsnr.stt \n";
 
-        EF_DestString2.append(slashCharStr);
+        EF_DestString2.append(slashCharStr());
         EF_DestString2.append("opsnr.stt");
 
         FILE *opsnrExists2 = fopen(EF_DestString2.c_str(), "rb");
@@ -8937,7 +8937,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 11;
 
         string ExtraFileDir = WorkingDirString;
-        ExtraFileDir.push_back(slashChar);
+        ExtraFileDir.push_back(slashChar());
         ////////////////////OutPut Directory location////////////////////
         char EF_DestChar[255];
         snprintf(EF_DestChar, 255, "%s", ExtraFileDir.c_str());
@@ -8981,7 +8981,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -9028,7 +9028,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         cout << "Checking: " << CurrentPathStr.c_str() << " For opsnr.stt - ";
         cerr << "Checking: " << CurrentPathStr.c_str() << " For opsnr.stt - ";
 
-        CurrentPathStr.append(slashCharStr);
+        CurrentPathStr.append(slashCharStr());
         CurrentPathStr.append("opsnr.stt");
 
         FILE *opsnrExists = fopen(CurrentPathStr.c_str(), "rb");
@@ -9052,7 +9052,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         cout << "Checking: " << EF_DestString2.c_str() << " For opsnr.stt - ";
         cerr << "Checking: " << EF_DestString2.c_str() << " For opsnr.stt - ";
 
-        EF_DestString2.append(slashCharStr);
+        EF_DestString2.append(slashCharStr());
         EF_DestString2.append("opsnr.stt");
 
         FILE *opsnrExists2 = fopen(EF_DestString2.c_str(), "rb");
@@ -9502,9 +9502,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string FixedQ1 = WorkingDirString;
         string FixedQ2 = WorkingDirString;
 
-        FixedQ1.append(slashCharStr);
+        FixedQ1.append(slashCharStr());
         FixedQ1.append("FixedQ_");
-        FixedQ2.append(slashCharStr);
+        FixedQ2.append(slashCharStr());
         FixedQ2.append("FixedQ_");
 
         FixedQ1.append(argv[5]);
@@ -9521,7 +9521,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -9815,9 +9815,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string KeyFrameoutputfile = WorkingDirString;
         string ForceKeyFrame = WorkingDirString;
 
-        KeyFrameoutputfile.append(slashCharStr);
+        KeyFrameoutputfile.append(slashCharStr());
         KeyFrameoutputfile.append("ForceKeyFrameOutput_KeyFrames.txt");
-        ForceKeyFrame.append(slashCharStr);
+        ForceKeyFrame.append(slashCharStr());
         ForceKeyFrame.append("ForceKeyFrameOutput.ivf");
 
         //char KeyFrameoutputfile[255];
@@ -9828,7 +9828,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
 
@@ -10078,7 +10078,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         FileName(input, InputFileName, 1);
 
         string WorkingDir4 = WorkingDirString;
-        WorkingDir4.append(slashCharStr);
+        WorkingDir4.append(slashCharStr());
         WorkingDir4.append(InputFileName);
 
         char NewWidth[20];
@@ -10153,7 +10153,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         }
 
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -10496,17 +10496,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string GvBgOutFile3 = WorkingDirString;
         string GvBbOutFile3 = WorkingDirString;
 
-        GvBgOutFile1.append(slashCharStr);
+        GvBgOutFile1.append(slashCharStr());
         GvBgOutFile1.append("GoodVsBestGood1.ivf");
-        GvBbOutFile1.append(slashCharStr);
+        GvBbOutFile1.append(slashCharStr());
         GvBbOutFile1.append("GoodVsBestBest1.ivf");
-        GvBgOutFile2.append(slashCharStr);
+        GvBgOutFile2.append(slashCharStr());
         GvBgOutFile2.append("GoodVsBestGood2.ivf");
-        GvBbOutFile2.append(slashCharStr);
+        GvBbOutFile2.append(slashCharStr());
         GvBbOutFile2.append("GoodVsBestBest2.ivf");
-        GvBgOutFile3.append(slashCharStr);
+        GvBgOutFile3.append(slashCharStr());
         GvBgOutFile3.append("GoodVsBestGood3.ivf");
-        GvBbOutFile3.append(slashCharStr);
+        GvBbOutFile3.append(slashCharStr());
         GvBbOutFile3.append("GoodVsBestBest3.ivf");
 
         //char GvBgOutFile1[255];
@@ -10525,7 +10525,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -10859,16 +10859,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string LagInFrames1 = WorkingDirString;
         string LagInFrames2 = WorkingDirString;
 
-        LagInFrames0.append(slashCharStr);
+        LagInFrames0.append(slashCharStr());
         LagInFrames0.append("LagInFrames0Output.ivf");
-        LagInFrames1.append(slashCharStr);
+        LagInFrames1.append(slashCharStr());
         LagInFrames1.append("LagInFrames1Output.ivf");
-        LagInFrames2.append(slashCharStr);
+        LagInFrames2.append(slashCharStr());
         LagInFrames2.append("LagInFrames2Output.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -11251,12 +11251,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         string QuantOutBase = WorkingDirString;
 
-        QuantOutBase.append(slashCharStr);
+        QuantOutBase.append(slashCharStr());
         QuantOutBase.append("QuantOutput");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
 
@@ -11564,13 +11564,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDir11 = "";
 
 
-        WorkingDir4.append(slashCharStr);
+        WorkingDir4.append(slashCharStr());
         WorkingDir4.append("MemLeakCheck.ivf");
 
-        WorkingDir7.append(slashCharStr);
+        WorkingDir7.append(slashCharStr());
         WorkingDir7.append("MemLeakCheckOutput.txt");
 
-        WorkingDir8.append(slashCharStr);
+        WorkingDir8.append(slashCharStr());
         WorkingDir8.append("MemLeakCheckParFile.txt");
 
 #if defined(_WIN32)
@@ -11587,7 +11587,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir9.append("\" 4 \"");
             WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"\"");
-            WorkingDir10.append(slashCharStr);
+            WorkingDir10.append(slashCharStr());
             WorkingDir10.append("MemLeakCheckOutput_FP.txt");
             WorkingDir11 = "\"\"";
             WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
@@ -11616,7 +11616,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             WorkingDir9.append("\" 4 \"");
             WorkingDir9.append(WorkingDir7);        // Mem Output File
             WorkingDir9.append("\"");
-            WorkingDir10.append(slashCharStr);
+            WorkingDir10.append(slashCharStr());
             WorkingDir10.append("MemLeakCheckOutput_FP.txt");
             WorkingDir11 = "\"";
             WorkingDir11.append(ExeCharMemLeakStr); // Exe Path
@@ -11652,7 +11652,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -11940,13 +11940,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDir8 = WorkingDirString;
         string WorkingDir9;
 
-        WorkingDir4.append(slashCharStr);
+        WorkingDir4.append(slashCharStr());
         WorkingDir4.append("MemLeakCheck.ivf");
 
-        WorkingDir7.append(slashCharStr);
+        WorkingDir7.append(slashCharStr());
         WorkingDir7.append("MemLeakCheckOutput");
 
-        WorkingDir8.append(slashCharStr);
+        WorkingDir8.append(slashCharStr());
         WorkingDir8.append("MemLeakCheckParFile");
 
 #if defined(_WIN32)
@@ -12017,7 +12017,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDir11;
         string WorkingDir12;
 
-        WorkingDir10.append(slashCharStr);
+        WorkingDir10.append(slashCharStr());
         WorkingDir10.append("MemLeakCheckOutput");
 
         string MemLeakCheckResultfile1 = WorkingDir10;
@@ -12134,7 +12134,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -12407,9 +12407,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDir4 = WorkingDirString;
         string WorkingDir5 = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
+        WorkingDir4.append(slashCharStr());
         WorkingDir4.append("Min10QuantOutput.ivf");
-        WorkingDir5.append(slashCharStr);
+        WorkingDir5.append(slashCharStr());
         WorkingDir5.append("Min60QuantOutput.ivf");
 
         char Min10QuantOutFile[255];
@@ -12420,7 +12420,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -12660,9 +12660,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string MultiThreadedOnOutFile = WorkingDirString;
         string MultiThreadedOffOutFile = WorkingDirString;
 
-        MultiThreadedOnOutFile.append(slashCharStr);
+        MultiThreadedOnOutFile.append(slashCharStr());
         MultiThreadedOnOutFile.append("MultiThreadedOnOutput.ivf");
-        MultiThreadedOffOutFile.append(slashCharStr);
+        MultiThreadedOffOutFile.append(slashCharStr());
         MultiThreadedOffOutFile.append("MultiThreadedOffOutput.ivf");
 
         //char MultiThreadedOnOutFile[255];
@@ -12673,7 +12673,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -12985,11 +12985,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string Program = ExeString;
         string FPF_Program = "";
 
-        NewEncFile.append(slashCharStr);
+        NewEncFile.append(slashCharStr());
         NewEncFile.append("outputVP8New.ivf");
-        OldEncFile.append(slashCharStr);
+        OldEncFile.append(slashCharStr());
         OldEncFile.append("outputVP8Old.ivf");
-        ParFile.append(slashCharStr);
+        ParFile.append(slashCharStr());
         ParFile.append("ParFile.txt");
 
 #if defined(_WIN32)
@@ -13028,7 +13028,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -13477,13 +13477,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string ParFile = WorkingDirString;
         string Program = ExeString;
 
-        outputVP8New.append(slashCharStr);
+        outputVP8New.append(slashCharStr());
         outputVP8New.append("outputVP8New.ivf");
-        outputVP8Old.append(slashCharStr);
+        outputVP8Old.append(slashCharStr());
         outputVP8Old.append("outputVP8Old.ivf");
-        outputVP8Old2.append(slashCharStr);
+        outputVP8Old2.append(slashCharStr());
         outputVP8Old2.append("outputVP8Old.ivf");
-        ParFile.append(slashCharStr);
+        ParFile.append(slashCharStr());
         ParFile.append("ParFile.txt");
         Program.append(ExeInput);
 
@@ -13531,7 +13531,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -13760,12 +13760,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             return 11;
 
         string NoiseSenseBase = WorkingDirString;
-        NoiseSenseBase.append(slashCharStr);
+        NoiseSenseBase.append(slashCharStr());
         NoiseSenseBase.append("NoiseSenseOut");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -14017,22 +14017,22 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string TwoPassOutFile3 = WorkingDirString;
         string OnePassOutFile3 = WorkingDirString;
 
-        TwoPassOutFile1.append(slashCharStr);
+        TwoPassOutFile1.append(slashCharStr());
         TwoPassOutFile1.append("TwoPassOutput1.ivf");
-        OnePassOutFile1.append(slashCharStr);
+        OnePassOutFile1.append(slashCharStr());
         OnePassOutFile1.append("OnePassOutput1.ivf");
-        TwoPassOutFile2.append(slashCharStr);
+        TwoPassOutFile2.append(slashCharStr());
         TwoPassOutFile2.append("TwoPassOutput2.ivf");
-        OnePassOutFile2.append(slashCharStr);
+        OnePassOutFile2.append(slashCharStr());
         OnePassOutFile2.append("OnePassOutput2.ivf");
-        TwoPassOutFile3.append(slashCharStr);
+        TwoPassOutFile3.append(slashCharStr());
         TwoPassOutFile3.append("TwoPassOutput3.ivf");
-        OnePassOutFile3.append(slashCharStr);
+        OnePassOutFile3.append(slashCharStr());
         OnePassOutFile3.append("OnePassOutput3.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -14382,14 +14382,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string PlayAlternate1 = WorkingDirString;
         string PlayAlternate2 = WorkingDirString;
 
-        PlayAlternate1.append(slashCharStr);
+        PlayAlternate1.append(slashCharStr());
         PlayAlternate1.append("PlayAlternate1Output.ivf");
-        PlayAlternate2.append(slashCharStr);
+        PlayAlternate2.append(slashCharStr());
         PlayAlternate2.append("PlayAlternate2Output.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -14654,12 +14654,12 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         string PostProcOutFile = WorkingDirString;
 
-        PostProcOutFile.append(slashCharStr);
+        PostProcOutFile.append(slashCharStr());
         PostProcOutFile.append("PostProcOutput.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -15031,13 +15031,13 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         string ReconBuffer = WorkingDirString;
 
-        ReconBuffer.append(slashCharStr);
+        ReconBuffer.append(slashCharStr());
         ReconBuffer.append("ReconBuffer.ivf");
 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -15237,14 +15237,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string DownWaterSamp90OutFile = WorkingDirString;
         string DownWaterSamp10OutFile = WorkingDirString;
 
-        DownWaterSamp90OutFile.append(slashCharStr);
+        DownWaterSamp90OutFile.append(slashCharStr());
         DownWaterSamp90OutFile.append("DownWaterSamp90Output.ivf");
-        DownWaterSamp10OutFile.append(slashCharStr);
+        DownWaterSamp10OutFile.append(slashCharStr());
         DownWaterSamp10OutFile.append("DownWaterSamp10Output.ivf");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -15610,14 +15610,14 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string SpeedTestGoodQBase = WorkingDirString;
         string SpeedTestRealTimeBase = WorkingDirString;
 
-        SpeedTestGoodQBase.append(slashCharStr);
+        SpeedTestGoodQBase.append(slashCharStr());
         SpeedTestGoodQBase.append("SpeedTestGoodQ_CpuUsed");
-        SpeedTestRealTimeBase.append(slashCharStr);
+        SpeedTestRealTimeBase.append(slashCharStr());
         SpeedTestRealTimeBase.append("SpeedTestRealTime_CpuUsed");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -16237,410 +16237,410 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             TestVectorNum++;
         }
 
-        TestVector[1].append(slashCharStr);
+        TestVector[1].append(slashCharStr());
         TestVector[1].append("vp80-00-comprehensive-001.ivf");
-        TestVector[2].append(slashCharStr);
+        TestVector[2].append(slashCharStr());
         TestVector[2].append("vp80-00-comprehensive-002.ivf");
-        TestVector[3].append(slashCharStr);
+        TestVector[3].append(slashCharStr());
         TestVector[3].append("vp80-00-comprehensive-003.ivf");
-        TestVector[4].append(slashCharStr);
+        TestVector[4].append(slashCharStr());
         TestVector[4].append("vp80-00-comprehensive-004.ivf");
-        TestVector[5].append(slashCharStr);
+        TestVector[5].append(slashCharStr());
         TestVector[5].append("vp80-00-comprehensive-005.ivf");
-        TestVector[6].append(slashCharStr);
+        TestVector[6].append(slashCharStr());
         TestVector[6].append("vp80-00-comprehensive-006.ivf");
-        TestVector[7].append(slashCharStr);
+        TestVector[7].append(slashCharStr());
         TestVector[7].append("vp80-00-comprehensive-007.ivf");
-        TestVector[8].append(slashCharStr);
+        TestVector[8].append(slashCharStr());
         TestVector[8].append("vp80-00-comprehensive-008.ivf");
-        TestVector[9].append(slashCharStr);
+        TestVector[9].append(slashCharStr());
         TestVector[9].append("vp80-00-comprehensive-009.ivf");
-        TestVector[10].append(slashCharStr);
+        TestVector[10].append(slashCharStr());
         TestVector[10].append("vp80-00-comprehensive-010.ivf");
-        TestVector[11].append(slashCharStr);
+        TestVector[11].append(slashCharStr());
         TestVector[11].append("vp80-00-comprehensive-011.ivf");
-        TestVector[12].append(slashCharStr);
+        TestVector[12].append(slashCharStr());
         TestVector[12].append("vp80-00-comprehensive-012.ivf");
-        TestVector[13].append(slashCharStr);
+        TestVector[13].append(slashCharStr());
         TestVector[13].append("vp80-00-comprehensive-013.ivf");
-        TestVector[14].append(slashCharStr);
+        TestVector[14].append(slashCharStr());
         TestVector[14].append("vp80-00-comprehensive-014.ivf");
-        TestVector[15].append(slashCharStr);
+        TestVector[15].append(slashCharStr());
         TestVector[15].append("vp80-00-comprehensive-015.ivf");
-        TestVector[16].append(slashCharStr);
+        TestVector[16].append(slashCharStr());
         TestVector[16].append("vp80-00-comprehensive-016.ivf");
-        TestVector[17].append(slashCharStr);
+        TestVector[17].append(slashCharStr());
         TestVector[17].append("vp80-00-comprehensive-017.ivf");
-        TestVector[18].append(slashCharStr);
+        TestVector[18].append(slashCharStr());
         TestVector[18].append("vp80-01-intra-1400.ivf");
-        TestVector[19].append(slashCharStr);
+        TestVector[19].append(slashCharStr());
         TestVector[19].append("vp80-01-intra-1411.ivf");
-        TestVector[20].append(slashCharStr);
+        TestVector[20].append(slashCharStr());
         TestVector[20].append("vp80-01-intra-1416.ivf");
-        TestVector[21].append(slashCharStr);
+        TestVector[21].append(slashCharStr());
         TestVector[21].append("vp80-01-intra-1417.ivf");
-        TestVector[22].append(slashCharStr);
+        TestVector[22].append(slashCharStr());
         TestVector[22].append("vp80-02-inter-1402.ivf");
-        TestVector[23].append(slashCharStr);
+        TestVector[23].append(slashCharStr());
         TestVector[23].append("vp80-02-inter-1412.ivf");
-        TestVector[24].append(slashCharStr);
+        TestVector[24].append(slashCharStr());
         TestVector[24].append("vp80-02-inter-1418.ivf");
-        TestVector[25].append(slashCharStr);
+        TestVector[25].append(slashCharStr());
         TestVector[25].append("vp80-02-inter-1424.ivf");
-        TestVector[26].append(slashCharStr);
+        TestVector[26].append(slashCharStr());
         TestVector[26].append("vp80-03-segmentation-1401.ivf");
-        TestVector[27].append(slashCharStr);
+        TestVector[27].append(slashCharStr());
         TestVector[27].append("vp80-03-segmentation-1403.ivf");
-        TestVector[28].append(slashCharStr);
+        TestVector[28].append(slashCharStr());
         TestVector[28].append("vp80-03-segmentation-1407.ivf");
-        TestVector[29].append(slashCharStr);
+        TestVector[29].append(slashCharStr());
         TestVector[29].append("vp80-03-segmentation-1408.ivf");
-        TestVector[30].append(slashCharStr);
+        TestVector[30].append(slashCharStr());
         TestVector[30].append("vp80-03-segmentation-1409.ivf");
-        TestVector[31].append(slashCharStr);
+        TestVector[31].append(slashCharStr());
         TestVector[31].append("vp80-03-segmentation-1410.ivf");
-        TestVector[32].append(slashCharStr);
+        TestVector[32].append(slashCharStr());
         TestVector[32].append("vp80-03-segmentation-1413.ivf");
-        TestVector[33].append(slashCharStr);
+        TestVector[33].append(slashCharStr());
         TestVector[33].append("vp80-03-segmentation-1414.ivf");
-        TestVector[34].append(slashCharStr);
+        TestVector[34].append(slashCharStr());
         TestVector[34].append("vp80-03-segmentation-1415.ivf");
-        TestVector[35].append(slashCharStr);
+        TestVector[35].append(slashCharStr());
         TestVector[35].append("vp80-03-segmentation-1425.ivf");
-        TestVector[36].append(slashCharStr);
+        TestVector[36].append(slashCharStr());
         TestVector[36].append("vp80-03-segmentation-1426.ivf");
-        TestVector[37].append(slashCharStr);
+        TestVector[37].append(slashCharStr());
         TestVector[37].append("vp80-03-segmentation-1427.ivf");
-        TestVector[38].append(slashCharStr);
+        TestVector[38].append(slashCharStr());
         TestVector[38].append("vp80-03-segmentation-1432.ivf");
-        TestVector[39].append(slashCharStr);
+        TestVector[39].append(slashCharStr());
         TestVector[39].append("vp80-03-segmentation-1435.ivf");
-        TestVector[40].append(slashCharStr);
+        TestVector[40].append(slashCharStr());
         TestVector[40].append("vp80-03-segmentation-1436.ivf");
-        TestVector[41].append(slashCharStr);
+        TestVector[41].append(slashCharStr());
         TestVector[41].append("vp80-03-segmentation-1437.ivf");
-        TestVector[42].append(slashCharStr);
+        TestVector[42].append(slashCharStr());
         TestVector[42].append("vp80-03-segmentation-1441.ivf");
-        TestVector[43].append(slashCharStr);
+        TestVector[43].append(slashCharStr());
         TestVector[43].append("vp80-03-segmentation-1442.ivf");
-        TestVector[44].append(slashCharStr);
+        TestVector[44].append(slashCharStr());
         TestVector[44].append("vp80-04-partitions-1404.ivf");
-        TestVector[45].append(slashCharStr);
+        TestVector[45].append(slashCharStr());
         TestVector[45].append("vp80-04-partitions-1405.ivf");
-        TestVector[46].append(slashCharStr);
+        TestVector[46].append(slashCharStr());
         TestVector[46].append("vp80-04-partitions-1406.ivf");
-        TestVector[47].append(slashCharStr);
+        TestVector[47].append(slashCharStr());
         TestVector[47].append("vp80-05-sharpness-1428.ivf");
-        TestVector[48].append(slashCharStr);
+        TestVector[48].append(slashCharStr());
         TestVector[48].append("vp80-05-sharpness-1429.ivf");
-        TestVector[49].append(slashCharStr);
+        TestVector[49].append(slashCharStr());
         TestVector[49].append("vp80-05-sharpness-1430.ivf");
-        TestVector[50].append(slashCharStr);
+        TestVector[50].append(slashCharStr());
         TestVector[50].append("vp80-05-sharpness-1431.ivf");
-        TestVector[51].append(slashCharStr);
+        TestVector[51].append(slashCharStr());
         TestVector[51].append("vp80-05-sharpness-1433.ivf");
-        TestVector[52].append(slashCharStr);
+        TestVector[52].append(slashCharStr());
         TestVector[52].append("vp80-05-sharpness-1434.ivf");
-        TestVector[53].append(slashCharStr);
+        TestVector[53].append(slashCharStr());
         TestVector[53].append("vp80-05-sharpness-1438.ivf");
-        TestVector[54].append(slashCharStr);
+        TestVector[54].append(slashCharStr());
         TestVector[54].append("vp80-05-sharpness-1439.ivf");
-        TestVector[55].append(slashCharStr);
+        TestVector[55].append(slashCharStr());
         TestVector[55].append("vp80-05-sharpness-1440.ivf");
-        TestVector[56].append(slashCharStr);
+        TestVector[56].append(slashCharStr());
         TestVector[56].append("vp80-05-sharpness-1443.ivf");
-        TestVector[57].append(slashCharStr);
+        TestVector[57].append(slashCharStr());
         TestVector[57].append("vp80-06-cropping-001.ivf");
-        TestVector[58].append(slashCharStr);
+        TestVector[58].append(slashCharStr());
         TestVector[58].append("vp80-06-cropping-002.ivf");
-        TestVector[59].append(slashCharStr);
+        TestVector[59].append(slashCharStr());
         TestVector[59].append("vp80-06-cropping-003.ivf");
-        TestVector[60].append(slashCharStr);
+        TestVector[60].append(slashCharStr());
         TestVector[60].append("vp80-06-cropping-004.ivf");
-        TestVector[61].append(slashCharStr);
+        TestVector[61].append(slashCharStr());
         TestVector[61].append("vp80-06-cropping-005.ivf");
-        TestVector[62].append(slashCharStr);
+        TestVector[62].append(slashCharStr());
         TestVector[62].append("vp80-06-cropping-006.ivf");
-        TestVector[63].append(slashCharStr);
+        TestVector[63].append(slashCharStr());
         TestVector[63].append("vp80-06-cropping-007.ivf");
-        TestVector[64].append(slashCharStr);
+        TestVector[64].append(slashCharStr());
         TestVector[64].append("vp80-06-cropping-008.ivf");
-        TestVector[65].append(slashCharStr);
+        TestVector[65].append(slashCharStr());
         TestVector[65].append("vp80-06-cropping-009.ivf");
-        TestVector[66].append(slashCharStr);
+        TestVector[66].append(slashCharStr());
         TestVector[66].append("vp80-06-cropping-010.ivf");
-        TestVector[67].append(slashCharStr);
+        TestVector[67].append(slashCharStr());
         TestVector[67].append("vp80-06-cropping-011.ivf");
-        TestVector[68].append(slashCharStr);
+        TestVector[68].append(slashCharStr());
         TestVector[68].append("vp80-06-cropping-012.ivf");
-        TestVector[69].append(slashCharStr);
+        TestVector[69].append(slashCharStr());
         TestVector[69].append("vp80-06-cropping-013.ivf");
-        TestVector[70].append(slashCharStr);
+        TestVector[70].append(slashCharStr());
         TestVector[70].append("vp80-06-cropping-014.ivf");
-        TestVector[71].append(slashCharStr);
+        TestVector[71].append(slashCharStr());
         TestVector[71].append("vp80-06-cropping-015.ivf");
-        TestVector[72].append(slashCharStr);
+        TestVector[72].append(slashCharStr());
         TestVector[72].append("vp80-06-cropping-016.ivf");
-        TestVector[73].append(slashCharStr);
+        TestVector[73].append(slashCharStr());
         TestVector[73].append("vp80-06-cropping-017.ivf");
-        TestVector[74].append(slashCharStr);
+        TestVector[74].append(slashCharStr());
         TestVector[74].append("vp80-06-cropping-018.ivf");
-        TestVector[75].append(slashCharStr);
+        TestVector[75].append(slashCharStr());
         TestVector[75].append("vp80-06-cropping-019.ivf");
-        TestVector[76].append(slashCharStr);
+        TestVector[76].append(slashCharStr());
         TestVector[76].append("vp80-06-cropping-020.ivf");
-        TestVector[77].append(slashCharStr);
+        TestVector[77].append(slashCharStr());
         TestVector[77].append("vp80-06-cropping-021.ivf");
-        TestVector[78].append(slashCharStr);
+        TestVector[78].append(slashCharStr());
         TestVector[78].append("vp80-06-cropping-022.ivf");
-        TestVector[79].append(slashCharStr);
+        TestVector[79].append(slashCharStr());
         TestVector[79].append("vp80-06-cropping-023.ivf");
-        TestVector[80].append(slashCharStr);
+        TestVector[80].append(slashCharStr());
         TestVector[80].append("vp80-06-cropping-024.ivf");
-        TestVector[81].append(slashCharStr);
+        TestVector[81].append(slashCharStr());
         TestVector[81].append("vp80-06-cropping-025.ivf");
-        TestVector[82].append(slashCharStr);
+        TestVector[82].append(slashCharStr());
         TestVector[82].append("vp80-06-cropping-026.ivf");
-        TestVector[83].append(slashCharStr);
+        TestVector[83].append(slashCharStr());
         TestVector[83].append("vp80-06-cropping-027.ivf");
-        TestVector[84].append(slashCharStr);
+        TestVector[84].append(slashCharStr());
         TestVector[84].append("vp80-06-cropping-028.ivf");
-        TestVector[85].append(slashCharStr);
+        TestVector[85].append(slashCharStr());
         TestVector[85].append("vp80-06-cropping-029.ivf");
-        TestVector[86].append(slashCharStr);
+        TestVector[86].append(slashCharStr());
         TestVector[86].append("vp80-06-cropping-030.ivf");
-        TestVector[87].append(slashCharStr);
+        TestVector[87].append(slashCharStr());
         TestVector[87].append("vp80-06-cropping-031.ivf");
-        TestVector[88].append(slashCharStr);
+        TestVector[88].append(slashCharStr());
         TestVector[88].append("vp80-06-cropping-032.ivf");
-        TestVector[89].append(slashCharStr);
+        TestVector[89].append(slashCharStr());
         TestVector[89].append("vp80-06-cropping-033.ivf");
-        TestVector[90].append(slashCharStr);
+        TestVector[90].append(slashCharStr());
         TestVector[90].append("vp80-06-cropping-034.ivf");
-        TestVector[91].append(slashCharStr);
+        TestVector[91].append(slashCharStr());
         TestVector[91].append("vp80-06-cropping-035.ivf");
-        TestVector[92].append(slashCharStr);
+        TestVector[92].append(slashCharStr());
         TestVector[92].append("vp80-06-cropping-036.ivf");
-        TestVector[93].append(slashCharStr);
+        TestVector[93].append(slashCharStr());
         TestVector[93].append("vp80-06-cropping-037.ivf");
-        TestVector[94].append(slashCharStr);
+        TestVector[94].append(slashCharStr());
         TestVector[94].append("vp80-06-cropping-038.ivf");
-        TestVector[95].append(slashCharStr);
+        TestVector[95].append(slashCharStr());
         TestVector[95].append("vp80-06-cropping-039.ivf");
-        TestVector[96].append(slashCharStr);
+        TestVector[96].append(slashCharStr());
         TestVector[96].append("vp80-06-cropping-040.ivf");
-        TestVector[97].append(slashCharStr);
+        TestVector[97].append(slashCharStr());
         TestVector[97].append("vp80-06-cropping-041.ivf");
-        TestVector[98].append(slashCharStr);
+        TestVector[98].append(slashCharStr());
         TestVector[98].append("vp80-06-cropping-042.ivf");
-        TestVector[99].append(slashCharStr);
+        TestVector[99].append(slashCharStr());
         TestVector[99].append("vp80-06-cropping-043.ivf");
-        TestVector[100].append(slashCharStr);
+        TestVector[100].append(slashCharStr());
         TestVector[100].append("vp80-06-cropping-044.ivf");
-        TestVector[101].append(slashCharStr);
+        TestVector[101].append(slashCharStr());
         TestVector[101].append("vp80-06-cropping-045.ivf");
 
-        TestVector_Raw[1].append(slashCharStr);
+        TestVector_Raw[1].append(slashCharStr());
         TestVector_Raw[1].append("vp80-00-comprehensive-001.raw");
-        TestVector_Raw[2].append(slashCharStr);
+        TestVector_Raw[2].append(slashCharStr());
         TestVector_Raw[2].append("vp80-00-comprehensive-002.raw");
-        TestVector_Raw[3].append(slashCharStr);
+        TestVector_Raw[3].append(slashCharStr());
         TestVector_Raw[3].append("vp80-00-comprehensive-003.raw");
-        TestVector_Raw[4].append(slashCharStr);
+        TestVector_Raw[4].append(slashCharStr());
         TestVector_Raw[4].append("vp80-00-comprehensive-004.raw");
-        TestVector_Raw[5].append(slashCharStr);
+        TestVector_Raw[5].append(slashCharStr());
         TestVector_Raw[5].append("vp80-00-comprehensive-005.raw");
-        TestVector_Raw[6].append(slashCharStr);
+        TestVector_Raw[6].append(slashCharStr());
         TestVector_Raw[6].append("vp80-00-comprehensive-006.raw");
-        TestVector_Raw[7].append(slashCharStr);
+        TestVector_Raw[7].append(slashCharStr());
         TestVector_Raw[7].append("vp80-00-comprehensive-007.raw");
-        TestVector_Raw[8].append(slashCharStr);
+        TestVector_Raw[8].append(slashCharStr());
         TestVector_Raw[8].append("vp80-00-comprehensive-008.raw");
-        TestVector_Raw[9].append(slashCharStr);
+        TestVector_Raw[9].append(slashCharStr());
         TestVector_Raw[9].append("vp80-00-comprehensive-009.raw");
-        TestVector_Raw[10].append(slashCharStr);
+        TestVector_Raw[10].append(slashCharStr());
         TestVector_Raw[10].append("vp80-00-comprehensive-010.raw");
-        TestVector_Raw[11].append(slashCharStr);
+        TestVector_Raw[11].append(slashCharStr());
         TestVector_Raw[11].append("vp80-00-comprehensive-011.raw");
-        TestVector_Raw[12].append(slashCharStr);
+        TestVector_Raw[12].append(slashCharStr());
         TestVector_Raw[12].append("vp80-00-comprehensive-012.raw");
-        TestVector_Raw[13].append(slashCharStr);
+        TestVector_Raw[13].append(slashCharStr());
         TestVector_Raw[13].append("vp80-00-comprehensive-013.raw");
-        TestVector_Raw[14].append(slashCharStr);
+        TestVector_Raw[14].append(slashCharStr());
         TestVector_Raw[14].append("vp80-00-comprehensive-014.raw");
-        TestVector_Raw[15].append(slashCharStr);
+        TestVector_Raw[15].append(slashCharStr());
         TestVector_Raw[15].append("vp80-00-comprehensive-015.raw");
-        TestVector_Raw[16].append(slashCharStr);
+        TestVector_Raw[16].append(slashCharStr());
         TestVector_Raw[16].append("vp80-00-comprehensive-016.raw");
-        TestVector_Raw[17].append(slashCharStr);
+        TestVector_Raw[17].append(slashCharStr());
         TestVector_Raw[17].append("vp80-00-comprehensive-017.raw");
-        TestVector_Raw[18].append(slashCharStr);
+        TestVector_Raw[18].append(slashCharStr());
         TestVector_Raw[18].append("vp80-01-intra-1400.raw");
-        TestVector_Raw[19].append(slashCharStr);
+        TestVector_Raw[19].append(slashCharStr());
         TestVector_Raw[19].append("vp80-01-intra-1411.raw");
-        TestVector_Raw[20].append(slashCharStr);
+        TestVector_Raw[20].append(slashCharStr());
         TestVector_Raw[20].append("vp80-01-intra-1416.raw");
-        TestVector_Raw[21].append(slashCharStr);
+        TestVector_Raw[21].append(slashCharStr());
         TestVector_Raw[21].append("vp80-01-intra-1417.raw");
-        TestVector_Raw[22].append(slashCharStr);
+        TestVector_Raw[22].append(slashCharStr());
         TestVector_Raw[22].append("vp80-02-inter-1402.raw");
-        TestVector_Raw[23].append(slashCharStr);
+        TestVector_Raw[23].append(slashCharStr());
         TestVector_Raw[23].append("vp80-02-inter-1412.raw");
-        TestVector_Raw[24].append(slashCharStr);
+        TestVector_Raw[24].append(slashCharStr());
         TestVector_Raw[24].append("vp80-02-inter-1418.raw");
-        TestVector_Raw[25].append(slashCharStr);
+        TestVector_Raw[25].append(slashCharStr());
         TestVector_Raw[25].append("vp80-02-inter-1424.raw");
-        TestVector_Raw[26].append(slashCharStr);
+        TestVector_Raw[26].append(slashCharStr());
         TestVector_Raw[26].append("vp80-03-segmentation-1401.raw");
-        TestVector_Raw[27].append(slashCharStr);
+        TestVector_Raw[27].append(slashCharStr());
         TestVector_Raw[27].append("vp80-03-segmentation-1403.raw");
-        TestVector_Raw[28].append(slashCharStr);
+        TestVector_Raw[28].append(slashCharStr());
         TestVector_Raw[28].append("vp80-03-segmentation-1407.raw");
-        TestVector_Raw[29].append(slashCharStr);
+        TestVector_Raw[29].append(slashCharStr());
         TestVector_Raw[29].append("vp80-03-segmentation-1408.raw");
-        TestVector_Raw[30].append(slashCharStr);
+        TestVector_Raw[30].append(slashCharStr());
         TestVector_Raw[30].append("vp80-03-segmentation-1409.raw");
-        TestVector_Raw[31].append(slashCharStr);
+        TestVector_Raw[31].append(slashCharStr());
         TestVector_Raw[31].append("vp80-03-segmentation-1410.raw");
-        TestVector_Raw[32].append(slashCharStr);
+        TestVector_Raw[32].append(slashCharStr());
         TestVector_Raw[32].append("vp80-03-segmentation-1413.raw");
-        TestVector_Raw[33].append(slashCharStr);
+        TestVector_Raw[33].append(slashCharStr());
         TestVector_Raw[33].append("vp80-03-segmentation-1414.raw");
-        TestVector_Raw[34].append(slashCharStr);
+        TestVector_Raw[34].append(slashCharStr());
         TestVector_Raw[34].append("vp80-03-segmentation-1415.raw");
-        TestVector_Raw[35].append(slashCharStr);
+        TestVector_Raw[35].append(slashCharStr());
         TestVector_Raw[35].append("vp80-03-segmentation-1425.raw");
-        TestVector_Raw[36].append(slashCharStr);
+        TestVector_Raw[36].append(slashCharStr());
         TestVector_Raw[36].append("vp80-03-segmentation-1426.raw");
-        TestVector_Raw[37].append(slashCharStr);
+        TestVector_Raw[37].append(slashCharStr());
         TestVector_Raw[37].append("vp80-03-segmentation-1427.raw");
-        TestVector_Raw[38].append(slashCharStr);
+        TestVector_Raw[38].append(slashCharStr());
         TestVector_Raw[38].append("vp80-03-segmentation-1432.raw");
-        TestVector_Raw[39].append(slashCharStr);
+        TestVector_Raw[39].append(slashCharStr());
         TestVector_Raw[39].append("vp80-03-segmentation-1435.raw");
-        TestVector_Raw[40].append(slashCharStr);
+        TestVector_Raw[40].append(slashCharStr());
         TestVector_Raw[40].append("vp80-03-segmentation-1436.raw");
-        TestVector_Raw[41].append(slashCharStr);
+        TestVector_Raw[41].append(slashCharStr());
         TestVector_Raw[41].append("vp80-03-segmentation-1437.raw");
-        TestVector_Raw[42].append(slashCharStr);
+        TestVector_Raw[42].append(slashCharStr());
         TestVector_Raw[42].append("vp80-03-segmentation-1441.raw");
-        TestVector_Raw[43].append(slashCharStr);
+        TestVector_Raw[43].append(slashCharStr());
         TestVector_Raw[43].append("vp80-03-segmentation-1442.raw");
-        TestVector_Raw[44].append(slashCharStr);
+        TestVector_Raw[44].append(slashCharStr());
         TestVector_Raw[44].append("vp80-04-partitions-1404.raw");
-        TestVector_Raw[45].append(slashCharStr);
+        TestVector_Raw[45].append(slashCharStr());
         TestVector_Raw[45].append("vp80-04-partitions-1405.raw");
-        TestVector_Raw[46].append(slashCharStr);
+        TestVector_Raw[46].append(slashCharStr());
         TestVector_Raw[46].append("vp80-04-partitions-1406.raw");
-        TestVector_Raw[47].append(slashCharStr);
+        TestVector_Raw[47].append(slashCharStr());
         TestVector_Raw[47].append("vp80-05-sharpness-1428.raw");
-        TestVector_Raw[48].append(slashCharStr);
+        TestVector_Raw[48].append(slashCharStr());
         TestVector_Raw[48].append("vp80-05-sharpness-1429.raw");
-        TestVector_Raw[49].append(slashCharStr);
+        TestVector_Raw[49].append(slashCharStr());
         TestVector_Raw[49].append("vp80-05-sharpness-1430.raw");
-        TestVector_Raw[50].append(slashCharStr);
+        TestVector_Raw[50].append(slashCharStr());
         TestVector_Raw[50].append("vp80-05-sharpness-1431.raw");
-        TestVector_Raw[51].append(slashCharStr);
+        TestVector_Raw[51].append(slashCharStr());
         TestVector_Raw[51].append("vp80-05-sharpness-1433.raw");
-        TestVector_Raw[52].append(slashCharStr);
+        TestVector_Raw[52].append(slashCharStr());
         TestVector_Raw[52].append("vp80-05-sharpness-1434.raw");
-        TestVector_Raw[53].append(slashCharStr);
+        TestVector_Raw[53].append(slashCharStr());
         TestVector_Raw[53].append("vp80-05-sharpness-1438.raw");
-        TestVector_Raw[54].append(slashCharStr);
+        TestVector_Raw[54].append(slashCharStr());
         TestVector_Raw[54].append("vp80-05-sharpness-1439.raw");
-        TestVector_Raw[55].append(slashCharStr);
+        TestVector_Raw[55].append(slashCharStr());
         TestVector_Raw[55].append("vp80-05-sharpness-1440.raw");
-        TestVector_Raw[56].append(slashCharStr);
+        TestVector_Raw[56].append(slashCharStr());
         TestVector_Raw[56].append("vp80-05-sharpness-1443.raw");
-        TestVector_Raw[57].append(slashCharStr);
+        TestVector_Raw[57].append(slashCharStr());
         TestVector_Raw[57].append("vp80-06-cropping-001.raw");
-        TestVector_Raw[58].append(slashCharStr);
+        TestVector_Raw[58].append(slashCharStr());
         TestVector_Raw[58].append("vp80-06-cropping-002.raw");
-        TestVector_Raw[59].append(slashCharStr);
+        TestVector_Raw[59].append(slashCharStr());
         TestVector_Raw[59].append("vp80-06-cropping-003.raw");
-        TestVector_Raw[60].append(slashCharStr);
+        TestVector_Raw[60].append(slashCharStr());
         TestVector_Raw[60].append("vp80-06-cropping-004.raw");
-        TestVector_Raw[61].append(slashCharStr);
+        TestVector_Raw[61].append(slashCharStr());
         TestVector_Raw[61].append("vp80-06-cropping-005.raw");
-        TestVector_Raw[62].append(slashCharStr);
+        TestVector_Raw[62].append(slashCharStr());
         TestVector_Raw[62].append("vp80-06-cropping-006.raw");
-        TestVector_Raw[63].append(slashCharStr);
+        TestVector_Raw[63].append(slashCharStr());
         TestVector_Raw[63].append("vp80-06-cropping-007.raw");
-        TestVector_Raw[64].append(slashCharStr);
+        TestVector_Raw[64].append(slashCharStr());
         TestVector_Raw[64].append("vp80-06-cropping-008.raw");
-        TestVector_Raw[65].append(slashCharStr);
+        TestVector_Raw[65].append(slashCharStr());
         TestVector_Raw[65].append("vp80-06-cropping-009.raw");
-        TestVector_Raw[66].append(slashCharStr);
+        TestVector_Raw[66].append(slashCharStr());
         TestVector_Raw[66].append("vp80-06-cropping-010.raw");
-        TestVector_Raw[67].append(slashCharStr);
+        TestVector_Raw[67].append(slashCharStr());
         TestVector_Raw[67].append("vp80-06-cropping-011.raw");
-        TestVector_Raw[68].append(slashCharStr);
+        TestVector_Raw[68].append(slashCharStr());
         TestVector_Raw[68].append("vp80-06-cropping-012.raw");
-        TestVector_Raw[69].append(slashCharStr);
+        TestVector_Raw[69].append(slashCharStr());
         TestVector_Raw[69].append("vp80-06-cropping-013.raw");
-        TestVector_Raw[70].append(slashCharStr);
+        TestVector_Raw[70].append(slashCharStr());
         TestVector_Raw[70].append("vp80-06-cropping-014.raw");
-        TestVector_Raw[71].append(slashCharStr);
+        TestVector_Raw[71].append(slashCharStr());
         TestVector_Raw[71].append("vp80-06-cropping-015.raw");
-        TestVector_Raw[72].append(slashCharStr);
+        TestVector_Raw[72].append(slashCharStr());
         TestVector_Raw[72].append("vp80-06-cropping-016.raw");
-        TestVector_Raw[73].append(slashCharStr);
+        TestVector_Raw[73].append(slashCharStr());
         TestVector_Raw[73].append("vp80-06-cropping-017.raw");
-        TestVector_Raw[74].append(slashCharStr);
+        TestVector_Raw[74].append(slashCharStr());
         TestVector_Raw[74].append("vp80-06-cropping-018.raw");
-        TestVector_Raw[75].append(slashCharStr);
+        TestVector_Raw[75].append(slashCharStr());
         TestVector_Raw[75].append("vp80-06-cropping-019.raw");
-        TestVector_Raw[76].append(slashCharStr);
+        TestVector_Raw[76].append(slashCharStr());
         TestVector_Raw[76].append("vp80-06-cropping-020.raw");
-        TestVector_Raw[77].append(slashCharStr);
+        TestVector_Raw[77].append(slashCharStr());
         TestVector_Raw[77].append("vp80-06-cropping-021.raw");
-        TestVector_Raw[78].append(slashCharStr);
+        TestVector_Raw[78].append(slashCharStr());
         TestVector_Raw[78].append("vp80-06-cropping-022.raw");
-        TestVector_Raw[79].append(slashCharStr);
+        TestVector_Raw[79].append(slashCharStr());
         TestVector_Raw[79].append("vp80-06-cropping-023.raw");
-        TestVector_Raw[80].append(slashCharStr);
+        TestVector_Raw[80].append(slashCharStr());
         TestVector_Raw[80].append("vp80-06-cropping-024.raw");
-        TestVector_Raw[81].append(slashCharStr);
+        TestVector_Raw[81].append(slashCharStr());
         TestVector_Raw[81].append("vp80-06-cropping-025.raw");
-        TestVector_Raw[82].append(slashCharStr);
+        TestVector_Raw[82].append(slashCharStr());
         TestVector_Raw[82].append("vp80-06-cropping-026.raw");
-        TestVector_Raw[83].append(slashCharStr);
+        TestVector_Raw[83].append(slashCharStr());
         TestVector_Raw[83].append("vp80-06-cropping-027.raw");
-        TestVector_Raw[84].append(slashCharStr);
+        TestVector_Raw[84].append(slashCharStr());
         TestVector_Raw[84].append("vp80-06-cropping-028.raw");
-        TestVector_Raw[85].append(slashCharStr);
+        TestVector_Raw[85].append(slashCharStr());
         TestVector_Raw[85].append("vp80-06-cropping-029.raw");
-        TestVector_Raw[86].append(slashCharStr);
+        TestVector_Raw[86].append(slashCharStr());
         TestVector_Raw[86].append("vp80-06-cropping-030.raw");
-        TestVector_Raw[87].append(slashCharStr);
+        TestVector_Raw[87].append(slashCharStr());
         TestVector_Raw[87].append("vp80-06-cropping-031.raw");
-        TestVector_Raw[88].append(slashCharStr);
+        TestVector_Raw[88].append(slashCharStr());
         TestVector_Raw[88].append("vp80-06-cropping-032.raw");
-        TestVector_Raw[89].append(slashCharStr);
+        TestVector_Raw[89].append(slashCharStr());
         TestVector_Raw[89].append("vp80-06-cropping-033.raw");
-        TestVector_Raw[90].append(slashCharStr);
+        TestVector_Raw[90].append(slashCharStr());
         TestVector_Raw[90].append("vp80-06-cropping-034.raw");
-        TestVector_Raw[91].append(slashCharStr);
+        TestVector_Raw[91].append(slashCharStr());
         TestVector_Raw[91].append("vp80-06-cropping-035.raw");
-        TestVector_Raw[92].append(slashCharStr);
+        TestVector_Raw[92].append(slashCharStr());
         TestVector_Raw[92].append("vp80-06-cropping-036.raw");
-        TestVector_Raw[93].append(slashCharStr);
+        TestVector_Raw[93].append(slashCharStr());
         TestVector_Raw[93].append("vp80-06-cropping-037.raw");
-        TestVector_Raw[94].append(slashCharStr);
+        TestVector_Raw[94].append(slashCharStr());
         TestVector_Raw[94].append("vp80-06-cropping-038.raw");
-        TestVector_Raw[95].append(slashCharStr);
+        TestVector_Raw[95].append(slashCharStr());
         TestVector_Raw[95].append("vp80-06-cropping-039.raw");
-        TestVector_Raw[96].append(slashCharStr);
+        TestVector_Raw[96].append(slashCharStr());
         TestVector_Raw[96].append("vp80-06-cropping-040.raw");
-        TestVector_Raw[97].append(slashCharStr);
+        TestVector_Raw[97].append(slashCharStr());
         TestVector_Raw[97].append("vp80-06-cropping-041.raw");
-        TestVector_Raw[98].append(slashCharStr);
+        TestVector_Raw[98].append(slashCharStr());
         TestVector_Raw[98].append("vp80-06-cropping-042.raw");
-        TestVector_Raw[99].append(slashCharStr);
+        TestVector_Raw[99].append(slashCharStr());
         TestVector_Raw[99].append("vp80-06-cropping-043.raw");
-        TestVector_Raw[100].append(slashCharStr);
+        TestVector_Raw[100].append(slashCharStr());
         TestVector_Raw[100].append("vp80-06-cropping-044.raw");
-        TestVector_Raw[101].append(slashCharStr);
+        TestVector_Raw[101].append(slashCharStr());
         TestVector_Raw[101].append("vp80-06-cropping-045.raw");
 
         TestVectorNum = 0;
@@ -16786,7 +16786,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString(WorkingDirString.c_str());
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -17048,17 +17048,17 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string TwoPassOutFile3 = WorkingDirString;
         string TwoPassBestOutFile3 = WorkingDirString;
 
-        TwoPassOutFile1.append(slashCharStr);
+        TwoPassOutFile1.append(slashCharStr());
         TwoPassOutFile1.append("TwoPassOutput1.ivf");
-        TwoPassBestOutFile1.append(slashCharStr);
+        TwoPassBestOutFile1.append(slashCharStr());
         TwoPassBestOutFile1.append("TwoPassBestOutput1.ivf");
-        TwoPassOutFile2.append(slashCharStr);
+        TwoPassOutFile2.append(slashCharStr());
         TwoPassOutFile2.append("TwoPassOutput2.ivf");
-        TwoPassBestOutFile2.append(slashCharStr);
+        TwoPassBestOutFile2.append(slashCharStr());
         TwoPassBestOutFile2.append("TwoPassBestOutput2.ivf");
-        TwoPassOutFile3.append(slashCharStr);
+        TwoPassOutFile3.append(slashCharStr());
         TwoPassOutFile3.append("TwoPassOutput3.ivf");
-        TwoPassBestOutFile3.append(slashCharStr);
+        TwoPassBestOutFile3.append(slashCharStr());
         TwoPassBestOutFile3.append("TwoPassBestOutput3.ivf");
 
         ////char TwoPassOutFile1[255];
@@ -17077,7 +17077,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -17406,9 +17406,9 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string UnderShoot10 = WorkingDirString;
         string UnderShoot100 = WorkingDirString;
 
-        UnderShoot10.append(slashCharStr);
+        UnderShoot10.append(slashCharStr());
         UnderShoot10.append("UnderShoot10Output.ivf");
-        UnderShoot100.append(slashCharStr);
+        UnderShoot100.append(slashCharStr());
         UnderShoot100.append("UnderShoot100Output.ivf");
 
         //char UnderShoot10[255];
@@ -17419,7 +17419,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -17639,36 +17639,36 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string Version2_Dectime = WorkingDirString;
         string Version3_Dectime = WorkingDirString;
 
-        Version0.append(slashCharStr);
+        Version0.append(slashCharStr());
         Version0.append("Version0.ivf");
-        Version1.append(slashCharStr);
+        Version1.append(slashCharStr());
         Version1.append("Version1.ivf");
-        Version2.append(slashCharStr);
+        Version2.append(slashCharStr());
         Version2.append("Version2.ivf");
-        Version3.append(slashCharStr);
+        Version3.append(slashCharStr());
         Version3.append("Version3.ivf");
 
-        Version0_Dec.append(slashCharStr);
+        Version0_Dec.append(slashCharStr());
         Version0_Dec.append("Version0_Dec.ivf");
-        Version1_Dec.append(slashCharStr);
+        Version1_Dec.append(slashCharStr());
         Version1_Dec.append("Version1_Dec.ivf");
-        Version2_Dec.append(slashCharStr);
+        Version2_Dec.append(slashCharStr());
         Version2_Dec.append("Version2_Dec.ivf");
-        Version3_Dec.append(slashCharStr);
+        Version3_Dec.append(slashCharStr());
         Version3_Dec.append("Version3_Dec.ivf");
 
-        Version0_Dectime.append(slashCharStr);
+        Version0_Dectime.append(slashCharStr());
         Version0_Dectime.append("Version0_Dec_CompressionTime.txt");
-        Version1_Dectime.append(slashCharStr);
+        Version1_Dectime.append(slashCharStr());
         Version1_Dectime.append("Version1_Dec_CompressionTime.txt");
-        Version2_Dectime.append(slashCharStr);
+        Version2_Dectime.append(slashCharStr());
         Version2_Dectime.append("Version2_Dec_CompressionTime.txt");
-        Version3_Dectime.append(slashCharStr);
+        Version3_Dectime.append(slashCharStr());
         Version3_Dectime.append("Version3_Dec_CompressionTime.txt");
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -18044,16 +18044,16 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 #endif
         char *input = argv[2];
         string basefolder = argv[5];
-        basefolder.append(slashCharStr.c_str());
+        basefolder.append(slashCharStr().c_str());
         string versionstring = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
         size_t versionPos = versionstring.find("v");
         versionstring.substr(versionPos);
         basefolder.append(versionstring.substr(versionPos));
         basefolder.append(arch.c_str());
-        basefolder.append(slashCharStr.c_str());
+        basefolder.append(slashCharStr().c_str());
         basefolder.append("Mode");
         basefolder.append(argv[3]);
-        basefolder.append(slashCharStr.c_str());
+        basefolder.append(slashCharStr().c_str());
         MakeDir(basefolder);
         int TestMode = 0;
 
@@ -18122,7 +18122,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)
@@ -18582,7 +18582,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
             MainDirString.append("FileIndex.txt");
             /////////////////////////////////////////////////////////////////////////////////
             WorkingDirString.append(MyDir);
-            WorkingDirString.append(slashCharStr);
+            WorkingDirString.append(slashCharStr());
             WorkingDirString.append(FilesAr[0]);
             WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
@@ -18610,7 +18610,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
             string WorkingDir2 = WorkingDir;
 
-            WorkingDir2.append(slashCharStr);
+            WorkingDir2.append(slashCharStr());
             MainDirString = WorkingDir2;
             MainDirString.append("FileIndex.txt");
 
@@ -18646,11 +18646,11 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         string WorkingDir5 = WorkingDirString;
         string WorkingDir5b = WorkingDirString;
 
-        WorkingDir4.append(slashCharStr);
+        WorkingDir4.append(slashCharStr());
         WorkingDir4.append("CodeCoverageDecCorrectMD5.txt");
-        WorkingDir5.append(slashCharStr);
+        WorkingDir5.append(slashCharStr());
         WorkingDir5.append("CodeCoverageDecModifiedMD5.txt");
-        WorkingDir5b.append(slashCharStr);
+        WorkingDir5b.append(slashCharStr());
         WorkingDir5b.append("CodeCoverageCompression.ivf");
 
         char CodeCoverageDecCorrect[255];
@@ -18663,7 +18663,7 @@ int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         /////////////OutPutfile////////////
         string TextfileString = WorkingDirString;
-        TextfileString.append(slashCharStr);
+        TextfileString.append(slashCharStr());
         TextfileString.append(MyDir);
 
         if (TestType == 2 || TestType == 1)

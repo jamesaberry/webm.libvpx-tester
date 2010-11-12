@@ -1,35 +1,117 @@
 # directory to build to
 OBJDIR = build-lin32
-# source directory
-SourceDir = ../SourceFiles
+
+# source directories
+SrcDir = ../src
+UtlDir = ../src/util
+IvfDir = ../src/util/vpx
+PsnrDir = ../src/util/psnr
+ToolDir = ../src/tools
+TestsDir = ../src/tests
 
 # source files
 SRC = \
-   $(SourceDir)/driver.cpp \
-   $(SourceDir)/ivf.c \
-   $(SourceDir)/psnr.c \
-   $(SourceDir)/ssim2.cpp \
-   $(SourceDir)/Tests.cpp  \
-   $(SourceDir)/Tools.cpp \
-   $(SourceDir)/Arguments.cpp \
-   $(SourceDir)/FourCC.cpp \
-   $(SourceDir)/md5_utils.cpp \
-   $(SourceDir)/utilities.cpp \
-   $(SourceDir)/args.cpp \
-   $(SourceDir)/ivfdec.cpp \
-   $(SourceDir)/ivfenc.cpp \
-   $(SourceDir)/y4minput.cpp \
+   $(SrcDir)/driver.cpp \
+   $(IvfDir)/ivf.c \
+   $(PsnrDir)/psnr.c \
+   $(PsnrDir)/ssim.cpp \
+   $(TestsDir)/test_allow_drop_frames.cpp  \
+   $(TestsDir)/test_allow_lag.cpp  \
+   $(TestsDir)/test_allow_spatial_resampling.cpp  \
+   $(TestsDir)/test_auto_key_frame.cpp  \
+   $(TestsDir)/test_buffer_level.cpp  \
+   $(TestsDir)/test_change_cpu_dec.cpp  \
+   $(TestsDir)/test_change_cpu_enc.cpp  \
+   $(TestsDir)/test_data_rate.cpp  \
+   $(TestsDir)/test_debug_matches_release.cpp  \
+   $(TestsDir)/test_drop_frame_watermark.cpp  \
+   $(TestsDir)/test_encoder_break_out.cpp  \
+   $(TestsDir)/test_error_resolution.cpp  \
+   $(TestsDir)/test_extra_file.cpp  \
+   $(TestsDir)/test_fixed_quantizer.cpp  \
+   $(TestsDir)/test_force_key_frame.cpp  \
+   $(TestsDir)/test_frame_size.cpp  \
+   $(TestsDir)/test_good_vs_best.cpp  \
+   $(TestsDir)/test_lag_in_frames.cpp  \
+   $(TestsDir)/test_max_quantizer.cpp  \
+   $(TestsDir)/test_mem_leak.cpp  \
+   $(TestsDir)/test_mem_leak2.cpp  \
+   $(TestsDir)/test_min_quantizer.cpp  \
+   $(TestsDir)/test_multithreaded.cpp  \
+   $(TestsDir)/test_new_vs_old_psnr.cpp  \
+   $(TestsDir)/test_new_vs_old_real_time_speed.cpp  \
+   $(TestsDir)/test_noise_sensitivity.cpp  \
+   $(TestsDir)/test_one_pass_vs_two_pass.cpp  \
+   $(TestsDir)/test_play_alternate.cpp  \
+   $(TestsDir)/test_post_processor.cpp  \
+   $(TestsDir)/test_reconstruct_buffer.cpp  \
+   $(TestsDir)/test_resample_down_watermark.cpp  \
+   $(TestsDir)/test_speed.cpp  \
+   $(TestsDir)/test_test_vector.cpp  \
+   $(TestsDir)/test_two_pass_vs_two_pass_best.cpp  \
+   $(TestsDir)/test_undershoot.cpp  \
+   $(TestsDir)/test_version.cpp  \
+   $(TestsDir)/test_win_lin_mac_match.cpp  \
+   $(ToolDir)/run_multiple_tests.cpp \
+   $(ToolDir)/rand_comp.cpp \
+   $(ToolDir)/graph_psnr.cpp \
+   $(ToolDir)/code_coverage.cpp \
+   $(ToolDir)/tools.cpp \
+   $(IvfDir)/md5_utils.cpp \
+   $(UtlDir)/utilities.cpp \
+   $(IvfDir)/args.cpp \
+   $(IvfDir)/ivfdec.cpp \
+   $(IvfDir)/ivfenc.cpp \
+   $(IvfDir)/y4minput.cpp \
 
 # source object files
 SRCOBJ = \
    $(OBJDIR)/driver.o \
    $(OBJDIR)/ivf.o \
    $(OBJDIR)/psnr.o \
-   $(OBJDIR)/ssim2.o \
-   $(OBJDIR)/Tests.o \
-   $(OBJDIR)/Tools.o \
-   $(OBJDIR)/Arguments.o \
-   $(OBJDIR)/FourCC.o \
+   $(OBJDIR)/ssim.o \
+   $(OBJDIR)/test_allow_drop_frames.o  \
+   $(OBJDIR)/test_allow_lag.o  \
+   $(OBJDIR)/test_allow_spatial_resampling.o  \
+   $(OBJDIR)/test_auto_key_frame.o  \
+   $(OBJDIR)/test_buffer_level.o  \
+   $(OBJDIR)/test_change_cpu_dec.o  \
+   $(OBJDIR)/test_change_cpu_enc.o  \
+   $(OBJDIR)/test_data_rate.o  \
+   $(OBJDIR)/test_debug_matches_release.o  \
+   $(OBJDIR)/test_drop_frame_watermark.o  \
+   $(OBJDIR)/test_encoder_break_out.o  \
+   $(OBJDIR)/test_error_resolution.o  \
+   $(OBJDIR)/test_extra_file.o  \
+   $(OBJDIR)/test_fixed_quantizer.o  \
+   $(OBJDIR)/test_force_key_frame.o  \
+   $(OBJDIR)/test_frame_size.o  \
+   $(OBJDIR)/test_good_vs_best.o  \
+   $(OBJDIR)/test_lag_in_frames.o  \
+   $(OBJDIR)/test_max_quantizer.o  \
+   $(OBJDIR)/test_mem_leak.o  \
+   $(OBJDIR)/test_mem_leak2.o  \
+   $(OBJDIR)/test_min_quantizer.o  \
+   $(OBJDIR)/test_multithreaded.o  \
+   $(OBJDIR)/test_new_vs_old_psnr.o  \
+   $(OBJDIR)/test_new_vs_old_real_time_speed.o  \
+   $(OBJDIR)/test_noise_sensitivity.o  \
+   $(OBJDIR)/test_one_pass_vs_two_pass.o  \
+   $(OBJDIR)/test_play_alternate.o  \
+   $(OBJDIR)/test_post_processor.o  \
+   $(OBJDIR)/test_reconstruct_buffer.o  \
+   $(OBJDIR)/test_resample_down_watermark.o  \
+   $(OBJDIR)/test_speed.o  \
+   $(OBJDIR)/test_test_vector.o  \
+   $(OBJDIR)/test_two_pass_vs_two_pass_best.o  \
+   $(OBJDIR)/test_undershoot.o  \
+   $(OBJDIR)/test_version.o  \
+   $(OBJDIR)/test_win_lin_mac_match.o  \
+   $(OBJDIR)/run_multiple_tests.o \
+   $(OBJDIR)/rand_comp.o \
+   $(OBJDIR)/graph_psnr.o \
+   $(OBJDIR)/code_coverage.o \
+   $(OBJDIR)/tools.o \
    $(OBJDIR)/md5_utils.o \
    $(OBJDIR)/utilities.o \
    $(OBJDIR)/args.o \
@@ -50,48 +132,162 @@ INCLUDE = -I ../include -I ../include/release-32 -D API -DHAVE_STDINT_H -D CONFI
 $(OBJDIR)/VP8_Tester_API_32Bit: $(SRCOBJ)
 	$(GPP)  $(INCLUDE) -o "$(OBJDIR)/VP8_Tester_API_32Bit.exe" $(SRCOBJ) $(LFLAGS)
 
-$(OBJDIR)/driver.o: $(SourceDir)/driver.cpp
+$(OBJDIR)/driver.o: $(SrcDir)/driver.cpp
 	-mkdir $(OBJDIR)
-	$(GPP) -c $(SourceDir)/driver.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/driver.o
+	$(GPP) -c $(SrcDir)/driver.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/driver.o
 
-$(OBJDIR)/ivf.o: $(SourceDir)/ivf.c
-	$(GPP) -c $(SourceDir)/ivf.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ivf.o
+$(OBJDIR)/ivf.o: $(IvfDir)/ivf.c
+	$(GPP) -c $(IvfDir)/ivf.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ivf.o
 
-$(OBJDIR)/psnr.o: $(SourceDir)/psnr.c
-	$(GCC) -c $(SourceDir)/psnr.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/psnr.o
+$(OBJDIR)/psnr.o: $(PsnrDir)/psnr.c
+	$(GCC) -c $(PsnrDir)/psnr.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/psnr.o
 
-$(OBJDIR)/ssim2.o: $(SourceDir)/ssim2.cpp
-	$(GPP) -c $(SourceDir)/ssim2.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ssim2.o
+$(OBJDIR)/ssim.o: $(PsnrDir)/ssim.cpp
+	$(GPP) -c $(PsnrDir)/ssim.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ssim.o
 
-$(OBJDIR)/Tests.o: $(SourceDir)/Tests.cpp
-	$(GPP) -c $(SourceDir)/Tests.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/Tests.o
+$(OBJDIR)/test_allow_drop_frames.o: $(TestsDir)/test_allow_drop_frames.cpp
+	$(GPP) -c $(TestsDir)/test_allow_drop_frames.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_allow_drop_frames.o
 
-$(OBJDIR)/Tools.o: $(SourceDir)/Tools.cpp
-	$(GPP) -c $(SourceDir)/Tools.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/Tools.o
+$(OBJDIR)/test_allow_lag.o: $(TestsDir)/test_allow_lag.cpp
+	$(GPP) -c $(TestsDir)/test_allow_lag.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_allow_lag.o
 
-$(OBJDIR)/Arguments.o: $(SourceDir)/Arguments.cpp
-	$(GPP) -c $(SourceDir)/Arguments.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/Arguments.o
+$(OBJDIR)/test_allow_spatial_resampling.o: $(TestsDir)/test_allow_spatial_resampling.cpp
+	$(GPP) -c $(TestsDir)/test_allow_spatial_resampling.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_allow_spatial_resampling.o
 
-$(OBJDIR)/FourCC.o: $(SourceDir)/FourCC.cpp
-	$(GPP) -c $(SourceDir)/FourCC.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/FourCC.o
+$(OBJDIR)/test_auto_key_frame.o: $(TestsDir)/test_auto_key_frame.cpp
+	$(GPP) -c $(TestsDir)/test_auto_key_frame.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_auto_key_frame.o
 
-$(OBJDIR)/md5_utils.o: $(SourceDir)/md5_utils.cpp
-	$(GPP) -c $(SourceDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+$(OBJDIR)/test_buffer_level.o: $(TestsDir)/test_buffer_level.cpp
+	$(GPP) -c $(TestsDir)/test_buffer_level.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_buffer_level.o
 
-$(OBJDIR)/utilities.o: $(SourceDir)/utilities.cpp
-	$(GPP) -c  $(SourceDir)/utilities.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/utilities.o
+$(OBJDIR)/test_change_cpu_dec.o: $(TestsDir)/test_change_cpu_dec.cpp
+	$(GPP) -c $(TestsDir)/test_change_cpu_dec.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_change_cpu_dec.o
 
-$(OBJDIR)/args.o: $(SourceDir)/args.cpp
-	$(GPP) -c $(SourceDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+$(OBJDIR)/test_change_cpu_enc.o: $(TestsDir)/test_change_cpu_enc.cpp
+	$(GPP) -c $(TestsDir)/test_change_cpu_enc.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_change_cpu_enc.o
 
-$(OBJDIR)/ivfdec.o: $(SourceDir)/ivfdec.cpp
-	$(GPP) -c $(SourceDir)/ivfdec.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfdec.o
+$(OBJDIR)/test_data_rate.o: $(TestsDir)/test_data_rate.cpp
+	$(GPP) -c $(TestsDir)/test_data_rate.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_data_rate.o
 
-$(OBJDIR)/ivfenc.o: $(SourceDir)/ivfenc.cpp
-	$(GPP) -c $(SourceDir)/ivfenc.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfenc.o
+$(OBJDIR)/test_debug_matches_release.o: $(TestsDir)/test_debug_matches_release.cpp
+	$(GPP) -c $(TestsDir)/test_debug_matches_release.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_debug_matches_release.o
 
-$(OBJDIR)/y4minput.o: $(SourceDir)/y4minput.cpp
-	$(GPP) -c $(SourceDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o
+$(OBJDIR)/test_drop_frame_watermark.o: $(TestsDir)/test_drop_frame_watermark.cpp
+	$(GPP) -c $(TestsDir)/test_drop_frame_watermark.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_drop_frame_watermark.o
+
+$(OBJDIR)/test_encoder_break_out.o: $(TestsDir)/test_encoder_break_out.cpp
+	$(GPP) -c $(TestsDir)/test_encoder_break_out.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_encoder_break_out.o
+
+$(OBJDIR)/test_error_resolution.o: $(TestsDir)/test_error_resolution.cpp
+	$(GPP) -c $(TestsDir)/test_error_resolution.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_error_resolution.o
+
+$(OBJDIR)/test_extra_file.o: $(TestsDir)/test_extra_file.cpp
+	$(GPP) -c $(TestsDir)/test_extra_file.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_extra_file.o
+
+$(OBJDIR)/test_fixed_quantizer.o: $(TestsDir)/test_fixed_quantizer.cpp
+	$(GPP) -c $(TestsDir)/test_fixed_quantizer.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_fixed_quantizer.o
+
+$(OBJDIR)/test_force_key_frame.o: $(TestsDir)/test_force_key_frame.cpp
+	$(GPP) -c $(TestsDir)/test_force_key_frame.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_force_key_frame.o
+
+$(OBJDIR)/test_frame_size.o: $(TestsDir)/test_frame_size.cpp
+	$(GPP) -c $(TestsDir)/test_frame_size.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_frame_size.o
+
+$(OBJDIR)/test_good_vs_best.o: $(TestsDir)/test_good_vs_best.cpp
+	$(GPP) -c $(TestsDir)/test_good_vs_best.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_good_vs_best.o
+
+$(OBJDIR)/test_lag_in_frames.o: $(TestsDir)/test_lag_in_frames.cpp
+	$(GPP) -c $(TestsDir)/test_lag_in_frames.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_lag_in_frames.o
+
+$(OBJDIR)/test_max_quantizer.o: $(TestsDir)/test_max_quantizer.cpp
+	$(GPP) -c $(TestsDir)/test_max_quantizer.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_max_quantizer.o
+
+$(OBJDIR)/test_mem_leak.o: $(TestsDir)/test_mem_leak.cpp
+	$(GPP) -c $(TestsDir)/test_mem_leak.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_mem_leak.o
+
+$(OBJDIR)/test_mem_leak2.o: $(TestsDir)/test_mem_leak2.cpp
+	$(GPP) -c $(TestsDir)/test_mem_leak2.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_mem_leak2.o
+
+$(OBJDIR)/test_min_quantizer.o: $(TestsDir)/test_min_quantizer.cpp
+	$(GPP) -c $(TestsDir)/test_min_quantizer.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_min_quantizer.o
+
+$(OBJDIR)/test_multithreaded.o: $(TestsDir)/test_multithreaded.cpp
+	$(GPP) -c $(TestsDir)/test_multithreaded.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_multithreaded.o
+
+$(OBJDIR)/test_new_vs_old_psnr.o: $(TestsDir)/test_new_vs_old_psnr.cpp
+	$(GPP) -c $(TestsDir)/test_new_vs_old_psnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_psnr.o
+
+$(OBJDIR)/test_new_vs_old_real_time_speed.o: $(TestsDir)/test_new_vs_old_real_time_speed.cpp
+	$(GPP) -c $(TestsDir)/test_new_vs_old_real_time_speed.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_real_time_speed.o
+
+$(OBJDIR)/test_noise_sensitivity.o: $(TestsDir)/test_noise_sensitivity.cpp
+	$(GPP) -c $(TestsDir)/test_noise_sensitivity.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_noise_sensitivity.o
+
+$(OBJDIR)/test_one_pass_vs_two_pass.o: $(TestsDir)/test_one_pass_vs_two_pass.cpp
+	$(GPP) -c $(TestsDir)/test_one_pass_vs_two_pass.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_one_pass_vs_two_pass.o
+
+$(OBJDIR)/test_play_alternate.o: $(TestsDir)/test_play_alternate.cpp
+	$(GPP) -c $(TestsDir)/test_play_alternate.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_play_alternate.o
+
+$(OBJDIR)/test_post_processor.o: $(TestsDir)/test_post_processor.cpp
+	$(GPP) -c $(TestsDir)/test_post_processor.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_post_processor.o
+
+$(OBJDIR)/test_reconstruct_buffer.o: $(TestsDir)/test_reconstruct_buffer.cpp
+	$(GPP) -c $(TestsDir)/test_reconstruct_buffer.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_reconstruct_buffer.o
+
+$(OBJDIR)/test_resample_down_watermark.o: $(TestsDir)/test_resample_down_watermark.cpp
+	$(GPP) -c $(TestsDir)/test_resample_down_watermark.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_resample_down_watermark.o
+
+$(OBJDIR)/test_speed.o: $(TestsDir)/test_speed.cpp
+	$(GPP) -c $(TestsDir)/test_speed.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_speed.o
+
+$(OBJDIR)/test_test_vector.o: $(TestsDir)/test_test_vector.cpp
+	$(GPP) -c $(TestsDir)/test_test_vector.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_test_vector.o
+
+$(OBJDIR)/test_two_pass_vs_two_pass_best.o: $(TestsDir)/test_two_pass_vs_two_pass_best.cpp
+	$(GPP) -c $(TestsDir)/test_two_pass_vs_two_pass_best.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_two_pass_vs_two_pass_best.o
+
+$(OBJDIR)/test_undershoot.o: $(TestsDir)/test_undershoot.cpp
+	$(GPP) -c $(TestsDir)/test_undershoot.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_undershoot.o
+
+$(OBJDIR)/test_version.o: $(TestsDir)/test_version.cpp
+	$(GPP) -c $(TestsDir)/test_version.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_version.o
+
+$(OBJDIR)/test_win_lin_mac_match.o: $(TestsDir)/test_win_lin_mac_match.cpp
+	$(GPP) -c $(TestsDir)/test_win_lin_mac_match.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_win_lin_mac_match.o
+
+$(OBJDIR)/run_multiple_tests.o: $(ToolDir)/run_multiple_tests.cpp
+	$(GPP) -c $(ToolDir)/run_multiple_tests.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/run_multiple_tests.o
+
+$(OBJDIR)/rand_comp.o: $(ToolDir)/rand_comp.cpp
+	$(GPP) -c $(ToolDir)/rand_comp.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/rand_comp.o
+
+$(OBJDIR)/graph_psnr.o: $(ToolDir)/graph_psnr.cpp
+	$(GPP) -c $(ToolDir)/graph_psnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/graph_psnr.o
+
+$(OBJDIR)/code_coverage.o: $(ToolDir)/code_coverage.cpp
+	$(GPP) -c $(ToolDir)/code_coverage.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/code_coverage.o
+
+$(OBJDIR)/tools.o: $(ToolDir)/tools.cpp
+	$(GPP) -c $(ToolDir)/tools.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/tools.o
+
+$(OBJDIR)/md5_utils.o: $(IvfDir)/md5_utils.cpp
+	$(GPP) -c $(IvfDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+
+$(OBJDIR)/utilities.o: $(UtlDir)/utilities.cpp
+	$(GPP) -c  $(UtlDir)/utilities.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/utilities.o
+
+$(OBJDIR)/args.o: $(IvfDir)/args.cpp
+	$(GPP) -c $(IvfDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+
+$(OBJDIR)/ivfdec.o: $(IvfDir)/ivfdec.cpp
+	$(GPP) -c $(IvfDir)/ivfdec.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfdec.o
+
+$(OBJDIR)/ivfenc.o: $(IvfDir)/ivfenc.cpp
+	$(GPP) -c $(IvfDir)/ivfenc.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfenc.o
+
+$(OBJDIR)/y4minput.o: $(IvfDir)/y4minput.cpp
+	$(GPP) -c $(IvfDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o
 
 clean:
 	rm -f $(SRCOBJ) $(OBJDIR)/VP8_Tester_API_32Bit.exe

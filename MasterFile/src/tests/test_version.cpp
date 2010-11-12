@@ -1,0 +1,423 @@
+#include "vpxt_test_declarations.h"
+
+int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+{
+    char *CompressString = "Version";
+
+    char *input = argv[2];
+
+    if (!(argc == 6 || argc == 5))
+    {
+        printf(
+            "  Version \n\n"
+            "    <inputfile>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "          (2)One Pass Best Quality\n"
+            "          (3)Two Pass - First Pass\n"
+            "          (4)Two Pass\n"
+            "          (5)Two Pass Best Quality\n"
+            "    <Target Bit Rate>\n "
+            "    <Optional Settings File>\n"
+        );
+
+        return 0;
+    }
+
+    ////////////Formatting Test Specific Directory////////////
+
+    string WorkingDirString = ""; // <- All Options need to set a value for this
+
+    string MainDirString = "";
+    char *MyDir = "Version";
+
+    char WorkingDir3[255] = "";
+    char File1[255] = "";
+
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+        return 11;
+
+    string Version0 = WorkingDirString;
+    string Version1 = WorkingDirString;
+    string Version2 = WorkingDirString;
+    string Version3 = WorkingDirString;
+
+    string Version0_Dec = WorkingDirString;
+    string Version1_Dec = WorkingDirString;
+    string Version2_Dec = WorkingDirString;
+    string Version3_Dec = WorkingDirString;
+
+    string Version0_Deccpu_tick = WorkingDirString;
+    string Version1_Deccpu_tick = WorkingDirString;
+    string Version2_Deccpu_tick = WorkingDirString;
+    string Version3_Deccpu_tick = WorkingDirString;
+
+    Version0.append(slashCharStr());
+    Version0.append("Version0.ivf");
+    Version1.append(slashCharStr());
+    Version1.append("Version1.ivf");
+    Version2.append(slashCharStr());
+    Version2.append("Version2.ivf");
+    Version3.append(slashCharStr());
+    Version3.append("Version3.ivf");
+
+    Version0_Dec.append(slashCharStr());
+    Version0_Dec.append("Version0_Dec.ivf");
+    Version1_Dec.append(slashCharStr());
+    Version1_Dec.append("Version1_Dec.ivf");
+    Version2_Dec.append(slashCharStr());
+    Version2_Dec.append("Version2_Dec.ivf");
+    Version3_Dec.append(slashCharStr());
+    Version3_Dec.append("Version3_Dec.ivf");
+
+    Version0_Deccpu_tick.append(slashCharStr());
+    Version0_Deccpu_tick.append("Version0_Dec_CompressionTime.txt");
+    Version1_Deccpu_tick.append(slashCharStr());
+    Version1_Deccpu_tick.append("Version1_Dec_CompressionTime.txt");
+    Version2_Deccpu_tick.append(slashCharStr());
+    Version2_Deccpu_tick.append("Version2_Dec_CompressionTime.txt");
+    Version3_Deccpu_tick.append(slashCharStr());
+    Version3_Deccpu_tick.append("Version3_Dec_CompressionTime.txt");
+
+    /////////////OutPutfile////////////
+    string TextfileString = WorkingDirString;
+    TextfileString.append(slashCharStr());
+    TextfileString.append(MyDir);
+
+    if (TestType == 2 || TestType == 1)
+        TextfileString.append(".txt");
+    else
+        TextfileString.append("_TestOnly.txt");
+
+    FILE *fp;
+
+    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    {
+        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        exit(1);
+    }
+
+    ////////////////////////////////
+    //////////////////////////////////////////////////////////
+
+    if (TestType == 1)
+    {
+        print_header_full_test(argc, argv, WorkingDir3);
+    }
+
+    if (TestType == 2)
+    {
+        print_header_compression_only(argc, argv, WorkingDir3);
+    }
+
+    if (TestType == 3)
+    {
+        print_header_test_only(argc, argv, WorkingDirString);
+    }
+
+    int speed = 0;
+    int BitRate = atoi(argv[4]);;
+
+    int Mode = atoi(argv[3]);
+
+    char *input2 = argv[5];
+
+    tprintf("Version Test");
+
+    VP8_CONFIG opt;
+    vpxt_default_parameters(opt);
+
+    ///////////////////Use Custom Settings///////////////////
+    if (argc == 6)
+    {
+        if (!vpxt_file_exists_check(argv[argc-1]))
+        {
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        opt = vpxt_input_settings(argv[argc-1]);
+        BitRate = opt.target_bandwidth;
+    }
+
+    /////////////////////////////////////////////////////////
+
+    opt.target_bandwidth = BitRate;
+
+    float PSNRArr[4];
+    unsigned int Deccpu_tick[4];
+
+    //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
+    //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
+    //Test Type 3 = Mode 2 =Run Test Compressions
+
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    if (TestType == 3)
+    {
+        Deccpu_tick[0] = vpxt_cpu_tick_return(Version0_Dec.c_str(), 1);
+        Deccpu_tick[1] = vpxt_cpu_tick_return(Version1_Dec.c_str(), 1);
+        Deccpu_tick[2] = vpxt_cpu_tick_return(Version2_Dec.c_str(), 1);
+        Deccpu_tick[3] = vpxt_cpu_tick_return(Version3_Dec.c_str(), 1);
+    }
+    else
+    {
+        opt.Mode = Mode;
+
+        opt.Version = 0;
+
+        if (vpxt_compress_ivf_to_ivf(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        opt.Version = 1;
+
+        if (vpxt_compress_ivf_to_ivf(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        opt.Version = 2;
+
+        if (vpxt_compress_ivf_to_ivf(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        opt.Version = 3;
+
+        if (vpxt_compress_ivf_to_ivf(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        printf("\n\n");
+        fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time1 = vpxt_time_decompress_ivf_to_ivf(Version0.c_str(), Version0_Dec.c_str(), Deccpu_tick[0]);
+
+        if (Time1 == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        printf("\n");
+        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time2 = vpxt_time_decompress_ivf_to_ivf(Version1.c_str(), Version1_Dec.c_str(), Deccpu_tick[1]);
+
+        if (Time2 == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        printf("\n");
+        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time3 = vpxt_time_decompress_ivf_to_ivf(Version2.c_str(), Version2_Dec.c_str(), Deccpu_tick[2]);
+
+        if (Time3 == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+        printf("\n");
+        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time4 = vpxt_time_decompress_ivf_to_ivf(Version3.c_str(), Version3_Dec.c_str(), Deccpu_tick[3]);
+
+        if (Time4 == -1)
+        {
+            fclose(fp);
+            string File1Str = File1;
+            record_test_complete(MainDirString, File1Str, TestType);
+            return 2;
+        }
+
+    }
+
+    //Create Compression only stop test short.
+    if (TestType == 2)
+    {
+        fclose(fp);
+        string File1Str = File1;
+        record_test_complete(MainDirString, File1Str, TestType);
+        return 10;
+    }
+
+    PSNRArr[0] = vpxt_ivf_psnr(input, Version0.c_str(), 0, 0, 1, NULL);
+    PSNRArr[1] = vpxt_ivf_psnr(input, Version1.c_str(), 0, 0, 1, NULL);
+    PSNRArr[2] = vpxt_ivf_psnr(input, Version2.c_str(), 0, 0, 1, NULL);
+    PSNRArr[3] = vpxt_ivf_psnr(input, Version3.c_str(), 0, 0, 1, NULL);
+
+    tprintf("\n");
+
+    int PSNRFail = 0;
+    int TIMEFail = 0;
+    int i = 0;
+
+    while (i < 4)
+    {
+
+        int t = i + 1;
+
+        while (t < 4)
+        {
+            //i should always have Higher PSNR than t
+            //i should always have a higher Deccpu_tick as well.
+            if (PSNRArr[i] < PSNRArr[t])
+            {
+                if (Deccpu_tick[i] < Deccpu_tick[t])
+                {
+                    tprintf("\nFailed Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
+                            "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
+                    TIMEFail++;
+                    PSNRFail++;
+                }
+                else
+                {
+                    tprintf("\n       Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
+                            "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
+                    PSNRFail++;
+                }
+            }
+            else
+            {
+                if (Deccpu_tick[i] < Deccpu_tick[t])
+                {
+                    tprintf("\nFailed Version %i Decode Tick: %d <= Version %i Decode Tick: %d\n"
+                            "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
+                    TIMEFail++;
+                }
+                else
+                {
+                    tprintf("\n       Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
+                            "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
+                }
+            }
+
+            t++;
+        }
+
+        i++;
+    }
+
+    //Fail tracks PSNR Fails
+    //Fail2 tracks Time Fails
+
+    int fail = 0;
+    tprintf("\n\nResults:\n\n");
+
+    if (PSNRFail == 0)// && TIMEFail == 0)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "All PSNRs decrease as version numbers increase - Passed");
+        string OutputChar1str = OutputChar1;
+        formated_print(OutputChar1str, 5);
+        tprintf("\n");
+    }
+
+    if (PSNRFail < 2 && PSNRFail != 0)// && TIMEFail == 0)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "All but one PSNR Decreases as version numbers increase - Min Passed");
+        string OutputChar1str = OutputChar1;
+        formated_print(OutputChar1str, 5);
+        tprintf("\n");
+        fail = 2;
+    }
+
+    if (PSNRFail >= 2)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "Not all PSNRs decrease as version numbers increase - Failed");
+        string OutputChar1str = OutputChar1;
+        formated_print(OutputChar1str, 5);
+        tprintf("\n");
+        fail = 1;
+    }
+
+    if (TIMEFail == 0)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "All Decode ticks decrease as version numbers increase - Passed");
+        string OutputChar1str = OutputChar1;
+        formated_print(OutputChar1str, 5);
+        tprintf("\n");
+    }
+
+    if (TIMEFail < 2 && TIMEFail != 0)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "All but one Decode ticks decrease as version numbers increase - Min Passed");
+        string OutputChar1str = OutputChar1;
+        formated_print(OutputChar1str, 5);
+        tprintf("\n");
+        fail = 2;
+    }
+
+    if (TIMEFail >= 2)
+    {
+        char OutputChar1[255];
+        snprintf(OutputChar1, 255, "Not all Decode ticks increase as version numbers increase - Failed");
+        string OutputChar1str = OutputChar1;
+        formated_print(OutputChar1str, 5);
+        tprintf("\n");
+        fail = 1;
+    }
+
+    if (fail == 2)
+    {
+        tprintf("\nMin Passed\n");
+
+        fclose(fp);
+        string File1Str = File1;
+        record_test_complete(MainDirString, File1Str, TestType);
+        return 8;
+    }
+
+    if (fail == 1)
+    {
+        tprintf("\nFailed\n");
+
+        fclose(fp);
+        string File1Str = File1;
+        record_test_complete(MainDirString, File1Str, TestType);
+        return 0;
+    }
+    else
+    {
+        tprintf("\nPassed\n");
+
+        fclose(fp);
+        string File1Str = File1;
+        record_test_complete(MainDirString, File1Str, TestType);
+        return 1;
+    }
+
+    fclose(fp);
+    string File1Str = File1;
+    record_test_complete(MainDirString, File1Str, TestType);
+    return 6;
+}

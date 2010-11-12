@@ -1,25 +1,29 @@
 # directory to build to
 OBJDIR = build-arm7-new
+
 # source directory
-SourceDir = ../SourceFiles
+SourceDir = ../src
+
 # utilities source directory
-UtlSrcDir = ../../../../MasterFile/SourceFiles
+UtlSrcDir = ../../../../MasterFile/src/util
+PsnrDir = ../../../../MasterFile/src/util/psnr
+IvfDir = ../../../../MasterFile/src/util/vpx
 
 # source files
 SRC = \
-	$(SourceDir)/supportingrelease.cpp \
-	$(SourceDir)/psnr.c \
-	$(SourceDir)/ssim2.cpp \
+	$(SourceDir)/supportingdebug.cpp \
+	$(PsnrDir)/psnr.c \
+	$(PsnrDir)/ssim.cpp \
 	$(UtlSrcDir)/utilities.cpp \
-	$(SourceDir)/ivf.c \
-	$(SourceDir)/md5_utils.cpp \
+	$(IvfDir)/ivf.c \
+	$(IvfDir)/md5_utils.cpp \
 
 # source object files
 SRCOBJ = \
    $(OBJDIR)/supportingrelease.o \
    $(OBJDIR)/ivf.o \
    $(OBJDIR)/psnr.o \
-   $(OBJDIR)/ssim2.o \
+   $(OBJDIR)/ssim.o \
    $(OBJDIR)/utilities.o \
    $(OBJDIR)/md5_utils.o\
 
@@ -36,14 +40,14 @@ INCLUDE = -I ../../../../MasterFile/include -I ../include/release-new-arm7 -D AP
 $(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe: $(SRCOBJ)
 	$(GPP) $(INCLUDE) -o "$(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe" $(SRCOBJ) $(LFLAGS)
 
-$(OBJDIR)/ivf.o: $(SourceDir)/ivf.c
-	$(GCC) -c $(SourceDir)/ivf.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
+$(OBJDIR)/ivf.o: $(IvfDir)/ivf.c
+	$(GCC) -c $(IvfDir)/ivf.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
 
-$(OBJDIR)/psnr.o: $(SourceDir)/psnr.c
-	$(GCC) -c $(SourceDir)/psnr.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/psnr.o
+$(OBJDIR)/psnr.o: $(PsnrDir)/psnr.c
+	$(GCC) -c $(PsnrDir)/psnr.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/psnr.o
 
-$(OBJDIR)/ssim2.o: $(SourceDir)/ssim2.cpp
-	$(GPP) -c $(SourceDir)/ssim2.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ssim2.o
+$(OBJDIR)/ssim.o: $(PsnrDir)/ssim.cpp
+	$(GPP) -c $(PsnrDir)/ssim.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ssim.o
 
 $(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
 	$(GPP) -c $(UtlSrcDir)/utilities.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/utilities.o
@@ -51,8 +55,8 @@ $(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
 $(OBJDIR)/supportingrelease.o: $(SourceDir)/supportingrelease.cpp
 	$(GPP) -c $(SourceDir)/supportingrelease.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/supportingrelease.o
 
-$(OBJDIR)/md5_utils.o: $(SourceDir)/md5_utils.cpp
-	$(GPP) -c $(SourceDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+$(OBJDIR)/md5_utils.o: $(IvfDir)/md5_utils.cpp
+	$(GPP) -c $(IvfDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
 
 clean:
 	rm -f $(SRCOBJ) $(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe

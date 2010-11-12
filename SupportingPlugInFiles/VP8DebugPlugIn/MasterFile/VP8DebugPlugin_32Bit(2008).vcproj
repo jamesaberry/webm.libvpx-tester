@@ -200,29 +200,41 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\MasterFile\SourceFiles\ivf.c"
+				RelativePath=".\src\supportingdebug.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\MasterFile\SourceFiles\md5_utils.cpp"
+			<Filter
+				Name="util"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\MasterFile\SourceFiles\psnr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\MasterFile\SourceFiles\ssim2.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceFiles\supportingdebug.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\MasterFile\SourceFiles\utilities.cpp"
-				>
-			</File>
+				<File
+					RelativePath="..\..\..\MasterFile\src\util\utilities.cpp"
+					>
+				</File>
+				<Filter
+					Name="psnr"
+					>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\psnr\psnr.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\psnr\ssim.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="vpx"
+					>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\ivf.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\md5_utils.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

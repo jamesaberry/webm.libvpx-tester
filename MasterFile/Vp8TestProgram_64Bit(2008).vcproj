@@ -115,9 +115,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Copy to bin folder"
-				CommandLine="echo copy &quot;$(TargetPath)&quot; .\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; .\bin\&#x0D;&#x0A;"
-				Outputs=".\bin\on2plugin7test.exe"
+				Description=""
+				CommandLine=""
+				Outputs=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -189,7 +189,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; .\bin"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -202,80 +202,232 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\SourceFiles\driver.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceFiles\ivf.c"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceFiles\psnr.c"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceFiles\ssim2.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceFiles\Tests.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceFiles\Tools.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceFiles\utilities.cpp"
+				RelativePath=".\src\driver.cpp"
 				>
 			</File>
 			<Filter
-				Name="DataRateIVF"
+				Name="tests"
 				>
 				<File
-					RelativePath=".\SourceFiles\Arguments.cpp"
+					RelativePath=".\src\tests\test_allow_drop_frames.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\SourceFiles\FourCC.cpp"
+					RelativePath=".\src\tests\test_allow_lag.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_allow_spatial_resampling.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_auto_key_frame.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_buffer_level.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_change_cpu_dec.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_change_cpu_enc.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_data_rate.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_debug_matches_release.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_drop_frame_watermark.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_encoder_break_out.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_error_resolution.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_extra_file.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_fixed_quantizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_force_key_frame.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_frame_size.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_good_vs_best.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_lag_in_frames.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_max_quantizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_mem_leak.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_mem_leak2.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_min_quantizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_multithreaded.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_new_vs_old_psnr.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_new_vs_old_real_time_speed.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_noise_sensitivity.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_one_pass_vs_two_pass.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_play_alternate.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_post_processor.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_reconstruct_buffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_resample_down_watermark.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_speed.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_test_vector.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_two_pass_vs_two_pass_best.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_undershoot.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_version.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_win_lin_mac_match.cpp"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="MD5"
+				Name="tools"
 				>
 				<File
-					RelativePath=".\SourceFiles\md5_utils.cpp"
+					RelativePath=".\src\tools\code_coverage.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tools\graph_psnr.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tools\rand_comp.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tools\run_multiple_tests.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tools\tools.cpp"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="IVFEnc"
+				Name="util"
 				>
 				<File
-					RelativePath=".\SourceFiles\args.cpp"
+					RelativePath=".\src\util\utilities.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\SourceFiles\args.h"
+				<Filter
+					Name="vpx"
 					>
-				</File>
-				<File
-					RelativePath=".\SourceFiles\ivfdec.cpp"
+					<File
+						RelativePath=".\src\util\vpx\args.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\ivf.c"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\ivfdec.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\ivfenc.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\md5_utils.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\y4minput.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="psnr"
 					>
-				</File>
-				<File
-					RelativePath=".\SourceFiles\ivfenc.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\SourceFiles\y4minput.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\SourceFiles\y4minput.h"
-					>
-				</File>
+					<File
+						RelativePath=".\src\util\psnr\psnr.c"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\psnr\ssim.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -331,16 +483,6 @@
 					>
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-		</Filter>
-		<Filter
-			Name="CompIVF"
-			>
 		</Filter>
 	</Files>
 	<Globals>

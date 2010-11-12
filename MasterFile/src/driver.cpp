@@ -1,11 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "test-definitions.h"
+#include "vpxt_test_definitions.h"
 #include <iostream>
 #include <fstream>
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "vpxt_test_list.h"
+#include "utilities.h"
+#include "tools.h"
 using namespace std;
 
 #if defined(_WIN32)
@@ -30,118 +32,10 @@ using namespace std;
 #include <dirent.h>
 #endif
 
-//This is temporary need better solution
-#ifdef DSHOW
-char TesterExePath[256];
-#endif
-
-////////////////////////Slash Character Definion////////////////////////
-extern char slashChar();
-extern string slashCharStr();
-////////////////////////////////////////////////////////////////////////
-
-//Utilities
-extern void FolderName(const char *input, char *output);
-extern int Test0InputTextCheck(const char *input, int MoreInfo);
-extern int IVFCheckPBMThreshold(const char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
-extern int DisplayIVFHeaderInfo(int argc, char *argv[]);
-extern int CompareIVFHeaderInfo(int argc, char *argv[]);
-extern double IVFDisplayDropedFrames(char *inputchar, int PrintSwitch);
-extern double IVFDisplayResizedFrames(const char *inputchar, int PrintSwitch);
-extern double IVFDisplayVisibleFrames(const char *inputchar, int PrintSwitch);
-extern double IVFDisplayAltRefFrames(const char *inputFile, int Selector);
-extern double IVFDisplayKeyFrames(const char *inputFile, int Selector);
-extern void tprintf(const char *fmt, ...);
-extern int FolderExistCheck(string FolderName);
-extern char *itoa_custom(int value, char *result, int base);
-extern int MakeDir(string CreateDir2);
-
-//Tools
-extern int ComprIVF2IVF(int argc, char *argv[], string WorkingDir);
-extern int DecIVF2IVF(int argc, char *argv[]);
-extern int DecIVF2Raw(int argc, char *argv[]);
-extern int IVFDataRateTool(int argc, char *argv[]);
-extern int IVFPSNRrun(int argc, char *argv[]);
-extern int IVFCheckPBMrun(int argc, char *argv[]);
-extern int compareIVF(int argc, char *argv[]);
-extern int WriteIndividualFramesOut(int argc, char *argv[]);
-extern int IVF2Raw(char *inputFile, char *outputDir);
-extern int Raw2IVF(int argc, char *argv[]);
-extern int CutIVFTool(int argc, char *argv[]);
-extern int CropRawIVFTool(int argc, char *argv[]);
-extern int PasteIVF(int argc, char *argv[]);
-extern int CombineIndvFrames(int argc, char *argv[]);
-extern int PlayCompIVF(int argc, char *argv[]);
-extern int PlayDecIVF(int argc, char *argv[]);
-extern int DeleteAllIVFFiles(int argc, char *argv[]);
-extern int CopyAllTxtFiles(int argc, char *argv[]);
-extern int SideBySideText(int argc, char *argv[]);
-extern int CompressionEquiv(int argc, char *argv[], string WorkingDir);
-extern int ConvertParmFileToIVFenc(char *input, char *output);
-extern int CompMatchesIVFenc(int argc, char *argv[]);
-extern int CompareCodeCoverage(int argc, char *argv[]);
-extern int FormatCodeCoverageFile(int argc, char *argv[]);
-extern int TestVectorIndex(int argc, char *argv[]);
-extern int APICOMPRESS(int argc, char *argv[]);
-extern int APIDECOMPRESS(int argc, char *argv[]);
-extern int IVFDECTestVectorCheck(int argc, char *argv[]);
-extern int ArrayCovFailListToFullList(int argc, char *argv[]);
-extern int ArrayCovSummaryFile(int argc, char *argv[]);
-extern int WinMemMonFormat(int argc, char *argv[]);
-extern int WinMemMonGraph(int argc, char *argv[]);
-extern int CreateRandParFile(int argc, char *argv[]);
-extern int RunIVFDec(int argc, char *argv[]);
-extern int RunIVFEnc(int argc, char *argv[]);
-extern int SolveQuad();
-extern int PrintCPUInfo();
-
-/////Tests
-extern int PrintVersion();
-extern int ExternalTestRunner(int argc, char *argv[], string WorkingDir,  int NumberofTests);
-extern int RandComp(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int GraphPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AllowDF(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AllowLagTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AllowSpatialResamplingTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int AutoKeyFramingWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int BufferLevelWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int CPUDecOnlyWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ChangeCPUWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DFWM(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DataRateTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int DebugMatchesRelease(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int EncoderBreakOut(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ErrorRes(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ExtraFileCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int FixedQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ForceKeyFrameWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int FrameSizeTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int GoodQvBestQ(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int LagInFramesTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MaxQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MemLeakCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MemLeakCheck2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MinQTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int MultiThreadedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int NewVsOldPSNR(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int NewVsOldRealTimeSpeed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int NoiseSensitivityWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int OnePassVsTwoPass(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int PlayAlternate(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int PostProcessorWorks(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ReconBuffer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int ResampleDownWaterMark(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int SpeedTest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int TestVectorCheck(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int TwoPassVsTwoPassBest(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int UnderShoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int Version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int WinLinMacMatch(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-
 //CodeCoverage
-extern int CodeCoverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
+extern int code_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
 
-int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
+int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 {
     ///////////////////////////////////////////Create Working Folder////////////////////////////////////
 
@@ -177,7 +71,7 @@ int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
     char Folder3[255];
     char Folder2[255];
 
-    FolderName(argv[0], Folder3);
+    vpxt_folder_name(argv[0], Folder3);
     snprintf(Folder2, 255, "%s", Folder3);
     string Folder = Folder2;
 
@@ -187,11 +81,11 @@ int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
     Folder.append(DateAndTime3);
     string FolderCheck = Folder;
 
-    while (FolderExistCheck(FolderCheck)) //Make sure folder doesnt already exist
+    while (vpxt_folder_exist_check(FolderCheck)) //Make sure folder doesnt already exist
     {
         number++;
         char numberChar[255];
-        itoa_custom(number, numberChar, 10);
+        vpx_itoa_custom(number, numberChar, 10);
 
         FolderCheck = Folder;
         FolderCheck.append("_");
@@ -201,7 +95,7 @@ int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
     if (number != 0) //append sub number to end of folder name
     {
         char numberChar[255];
-        itoa_custom(number + 1, numberChar, 10);
+        vpx_itoa_custom(number + 1, numberChar, 10);
 
         Folder.append("_");
         Folder.append(numberChar);
@@ -213,7 +107,7 @@ int CreateWorkingFolder(int argc, char *argv[], char *WorkingDirChar)
 
     return 0;
 }
-string DateString()
+string date_string()
 {
     time_t rawtime;
     struct tm *timeinfo;
@@ -246,7 +140,7 @@ string DateString()
     return DateAndTime3;
 
 }
-void OnErrorOutPut()
+void on_error_output()
 {
     printf("\n"
            "Instructions for Use\n"
@@ -296,1128 +190,10 @@ void OnErrorOutPut()
            "                                           \n"
           );
 }
-void Print1(string WorkingDir)
+void write_32bit_quick_test(string WorkingDir)
 {
     char FolderNameChar[255];
-    FolderName(WorkingDir.c_str(), FolderNameChar);
-    string TextfileString = FolderNameChar;
-    TextfileString.append("PrintTxtFiles.txt");
-
-    FILE *fp;
-
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
-    {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
-        exit(1);
-    }
-
-    fprintf(stderr,
-            " 0 ExternalTestRunner \n\n"
-            "    <Test Type>\n"
-            "         <1 - Create Files and Run Tests>\n"
-            "         <2 - Create Files only>\n"
-            "         <3 - Run Tests For Existing Files - Requires Input Test Directory>\n"
-            "    <Input Text File>\n"
-            "    <Optional - Input Test Directory>\n");
-
-    fprintf(stderr, "\n\n\n"
-            " 1 AllowDF \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 2 AllowSpatialResampling \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 3 AllowSpatialResampling2 \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 4 AutoKeyFramingWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 5 BufferLevelWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 6 CPUDecOnlyWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 7 ChangeCPUDec \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 8 ChangeCPUWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            " 9 ChangeIDCTDecWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "10 ChangeIDCTDecWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "11 ComboCheckRun \n\n"
-            "    <Settings Inputfile>\n"
-            "    <Primary Avi Inputfile>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "12 DFWMTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "13 DataRateMaxWorks \n\n"
-            "    This Test is not a valid VP8 Test.\n");
-
-    fprintf(stderr, "\n\n\n"
-            "14 DataRateTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "15 DebugMatchesRelease \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-            "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "16  ErrorRes \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n ");
-
-    fprintf(stderr, "\n\n\n"
-            "17 ExtraFileCheck \n\n"
-            "    <Inputfile>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "18 ForceKeyFrameWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <ForceKeyFrame>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "19 GoodQvBestQ \n\n"
-            "    <inputfile>\n"
-            "    <Target Bit Rate>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "20 IDCTDecOnlyWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "21 InterlaceWorks \n\n"
-            "    This Test is not a valid VP8 Test.\n");
-
-    fprintf(stderr, "\n\n\n"
-            "22 KeyInKeyOutWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <ForceKeyFrame>\n"
-            "	 <Optional Settings File>\n"
-           );
-    fprintf(stderr, "\n\n\n"
-            "23 MaxQTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "24 MemLeakCheck \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Newest Debug executable>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "25 MinQTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "26 NewVsOldPSRN \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Exe File To Compare>\n"
-            "	 <Optional Settings File>\n"
-            "\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "27 NewVsOldRealTimeSpeed \n\n"
-            "    <inputfile>\n"
-            "    <Target Bit Rate>\n"
-            "    <Exe File To Compare>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "28 NewVsOldSpeed \n\n"
-            "    This Test is not a valid VP8 Test.\n");
-
-    fprintf(stderr, "\n\n\n"
-            "29 NoiseSensitivityWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "30 OnePassVsTwoPass \n\n"
-            "    <inputfile>\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "31 PostProcessorWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "32 PreProcessorWorks \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "33 GraphPSNR\n\n"
-            "    <Inputfile 1>\n"
-            "    <Inputfile 2>\n"
-            "    <UV Swap off:0 on:1>\n"
-            "    <Frame Stats off:0 on:1>\n"
-            "\n");
-
-    fprintf(stderr, "\n\n\n"
-            "34 ResampleDownWaterMark \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "35 RandComp\n\n"
-            "    <Inputfile>\n"
-           );
-    fprintf(stderr, "\n\n\n"
-            "36  \n\n"
-            "    This Test is not a valid VP8 Test.\n");
-
-    fprintf(stderr, "\n\n\n"
-            "37 TwoPassVsTwoPassBest \n\n"
-            "    <inputfile>\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "38 UnderShoot \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "39 VP61vVP62 \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "40 VP6MvVP60 \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-            "\n");
-
-    fprintf(stderr, "\n\n\n"
-            "41  AllowLag \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "42  AltFreqTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Alt Freq 1>\n"
-            "    <Alt Freq 2>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "43  FixedQ \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "    <FixedQ 1>\n "
-            "    <FixedQ 2>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "44  LagInFrames \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Lag in Frames 1>\n"
-            "    <Lag in Frames 2>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "45  MultiThreadedTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "46  PlayAlternate \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "47  SpeedTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "    <Target Bit Rate>\n"
-            "    <Lag In Frames>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "48  Version \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "49  WinLinMacMatch \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "    <Test Mode>\n"
-            "          (0)Create Test Files\n"
-            "          (1)Preform Test\n"
-            "    <Input Folder - enter N/A if none>\n "
-            "    <Optional Settings File>\n"
-           );
-
-    fprintf(stderr, "\n\n\n"
-            "50  EncoderBreakOut \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
-           );
-    fprintf(stderr, "\n\n\n"
-            "51  MemLeakCheck2 \n\n"
-            "    <Mem Leak Check Exe>\n"
-           );
-    fprintf(stderr, "\n\n\n"
-            "52  TestVectorCheck \n\n"
-            "      <Input Directory>\n"
-            "\n"
-           );
-
-    printf("\n\nDisplay Test Inputs text file created:\n%s\n\n", TextfileString.c_str());
-    fclose(fp);
-
-    return;
-}
-void Print2(string WorkingDir)
-{
-
-
-    char FolderNameChar[255];
-    FolderName(WorkingDir.c_str(), FolderNameChar);
-    string TextfileString2 = FolderNameChar;
-    TextfileString2.append("ComboTestSampleInput.txt");
-
-    FILE *fp2;
-
-    if ((fp2 = freopen(TextfileString2.c_str(), "w", stderr)) == NULL)
-    {
-        printf("Cannot open out put file: %s\n", TextfileString2.c_str());
-        exit(1);
-    }
-
-    fprintf(stderr,
-            "Anything above Test 1 is effectively commented out.  Anything below that that does not start with \"Test\" or\n"
-            "one of the strings below with out the \'%%\' will set the coresponding setting to the value selected.\n"
-            "The \'%%\' sign will comment out anything on the line that follows regardless of what it is.\n"
-            "\n"
-            "%%File=\n"
-            "%%CpuUsed=\n"
-            "%%AutoKey=\n"
-            "%%KeyFreq=\n"
-            "%%NoiseSensitivity=\n"
-            "%%Sharpness=\n"
-            "%%Mode=\n"
-            "%%RateNum=\n"
-            "%%RateDenom=\n"
-            "%%TargetBandwidth=\n"
-            //"%%MaxAllowedDatarate=\n"
-            "%%FixedQ=\n"
-            "%%BestAllowedQ=\n"
-            "%%QuantizerMax=\n"
-            "%%StartingBufferLevel=\n"
-            "%%OptimalBufferLevel=\n"
-            "%%MaximumBufferSize=\n"
-            "%%AllowDF=\n"
-            "%%DropFramesWaterMark=\n"
-            "%%AllowSpatialResampling=\n"
-            "%%ResampleDownWaterMark=\n"
-            "%%ResampleUpWaterMark=\n"
-            "%%TwoPassVBRBias=\n"
-            "%%TwoPassVBRMinSection=\n"
-            "%%TwoPassVBRMaxSection=\n"
-            "%%DeleteFirstPassFile=\n"
-            "%%FirstPassFile=\n"
-            "%%TwoPassVBRMinSection=\n"
-            "%%EncodeBreakout=\n"
-            "\n"
-            "%%VP8Vars\n"
-            "%%AllowLag=\n"
-            "%%LagInFrames=\n"
-            "%%PlayAlternate=\n"
-            "%%AltFreq=\n"
-            "%%AltQ=\n"
-            "%%KeyQ=\n"
-            "%%GoldQ=\n"
-            "%%Version=\n"
-            "\n"
-            "%%----------Test Information------------\n"
-            "\n"
-            "________________________________________________\n"
-            "\n"
-            "Test1\n"
-            "File=C:\\I420 Video\\ivf\\I420_+spidey_noAudio_352x176_15fps.ivf\n"
-            "TargetBandwidth=128\n"
-            "BestAllowedQ=20\n"
-            "StartingBufferLevel=3\n"
-            //"MaxAllowedDatarate=200\n"
-            "MaximumBufferSize=3\n"
-            "\n"
-            "________________________________________________\n"
-            "\n"
-            "Test2\n"
-            "File=C:\\I420 Video\\ivf\\I420_+spidey_noAudio_352x176_15fps.ivf\n"
-            "NoiseSensitivity=1\n"
-            "KeyFreq=20\n"
-            "TargetBandwidth=100\n"
-            "BestAllowedQ=35\n"
-            "________________________________________________\n"
-            "\n"
-            "Test3\n"
-            "File=C:\\I420 Video\\ivf\\I420_+spidey_noAudio.ivf\n"
-            "TargetBandwidth=25\n"
-            "BestAllowedQ=20\n"
-            "_______________________________________________\n"
-            "\n"
-            "Test4\n"
-            "File=C:\\I420 Video\\ivf\\I420_+spidey_noAudio_352x176_15fps.ivf\n"
-            "AllowDF=1\n"
-            "TargetBandwidth=128\n"
-            //"MaxAllowedDatarate=22\n"
-            "QuantizerMax=45\n"
-            "________________________________________________\n"
-            "\n"
-            "Test5\n"
-            "File=C:\\I420 Video\\ivf\\I420_+spidey_noAudio_352x176_15fps.ivf\n"
-            "AllowDF=0\n"
-            "TargetBandwidth=128\n"
-            //"MaxAllowedDatarate=22\n"
-            "QuantizerMax=45\n"
-            "________________________________________________\n"
-            "Test6\n"
-            "File=C:\\I420 Video\\ivf\\I420_+spidey_noAudio_352x176_15fps.ivf\n"
-            "AllowDF=1\n"
-            "TargetBandwidth=128\n"
-            //"%MaxAllowedDatarate=22\n"
-            "QuantizerMax=45\n"
-            "_______________________________________________\n"
-            "Test7\n"
-            "File=C:\\I420 Video\\ivf\\I420_+spidey_noAudio.ivf\n"
-            "AllowDF=1\n"
-            "TargetBandwidth=128\n"
-            //"MaxAllowedDatarate=22\n"
-            "QuantizerMax=45\n"
-            "________________________________________________\n"
-            "\n"
-            "________________________________________________\n"
-            "%%Test9\n"
-            "________________________________________________\n"
-            "%%Test10\n"
-            "________________________________________________\n"
-            "%%Test11\n"
-            "________________________________________________\n"
-           );
-
-    printf("\n\nSample Combo Test Run text file created:\n%s\n\n", TextfileString2.c_str());
-    fclose(fp2);
-
-    return;
-
-}
-void Print3(string WorkingDir)
-{
-    char FolderNameChar[255];
-    FolderName(WorkingDir.c_str(), FolderNameChar);
-    string TextfileString3 = FolderNameChar;
-    TextfileString3.append("MultiRunSampleInput.txt");
-    //cout << TextfileString3.c_str() << endl;
-
-    FILE *fp3;
-
-    if ((fp3 = freopen(TextfileString3.c_str(), "w", stderr)) == NULL)
-    {
-        printf("Cannot open out put file: %s\n", TextfileString3.c_str());
-        exit(1);
-    }
-
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "1@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "3@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "6@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "7@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "8@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "9@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "10@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "9@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "10@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "%%11 DNW - Does Not Work In Multi Run\n"
-            "11@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "12@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@Mode@BitRate@Name_of_Newest_Debug_PlugIn@Name_of_Newest_Release_PlugIn\n"
-            "15@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "16@Full_IVF_Path_And_FileName\n"
-            "18@Full_IVF_Path_And_FileName@Mode@BitRate@ForceKeyFrame\n"
-            "19@Full_IVF_Path_And_FileName@BitRate\n"
-            "20@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "%%21 DNE - Does Not Exist in VP8\n"
-            "22@Full_IVF_Path_And_FileName@Mode@BitRate@ForceKeyFrame\n"
-            "21@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "22@Full_IVF_Path_And_FileName@Mode@BitRate@Name_of_Newest_Debug_PlugIn\n"
-            "24@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "26@Full_IVF_Path_And_FileName@Mode@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "27@Full_IVF_Path_And_FileName@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "%%28 DNE - Does Not Exist in VP8\n"
-            "28@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "29@Full_IVF_Path_And_FileName@BitRate\n"
-            "31@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "32@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "%%33 DNW - Does Not Work In Multi Run\n"
-            "33@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "%%35 DNW - Does Not Work In Multi Run\n"
-            "%%36 DNE - Does Not Exist in VP8\n"
-            "36@Full_IVF_Path_And_FileName@BitRate\n"
-            "37@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "%%39 Padding\n"
-            "%%40 Padding\n"
-            "2@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "5@Full_IVF_Path_And_FileName@Mode@BitRate@Alt_Freq_1@Alt_Freq_2\n"
-            "17@Full_IVF_Path_And_FileName@Mode@BitRate@FixedQ_1@FixedQ_2\n"
-            "20@Full_IVF_Path_And_FileName@Mode@BitRate@Lag_in_Frames_1@Lag_in_Frames_2\n"
-            "25@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "30@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "34@Full_IVF_Path_And_FileName@Mode@BitRate@Lag_in_Frames_3\n"
-            "38@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "14@Full_IVF_Path_And_FileName@Mode@BitRate\n"
-            "23@Name_of_Newest_Debug_PlugIn\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-           );
-
-    printf("\n\nSample Multi Run text file created:\n%s\n\n", TextfileString3.c_str());
-    fclose(fp3);
-
-    return;
-}
-void Print4(string WorkingDir)
-{
-    char FolderNameChar[255];
-    FolderName(WorkingDir.c_str(), FolderNameChar);
-    string TextfileString4 = FolderNameChar;
-    TextfileString4.append("FullModeMultiRunSampleInput.txt");
-
-    FILE *fp4;
-
-    if ((fp4 = freopen(TextfileString4.c_str(), "w", stderr)) == NULL)
-    {
-        printf("Cannot open out put file: %s\n", TextfileString4.c_str());
-        exit(1);
-    }
-
-    fprintf(stderr,
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%Instructions: Replace the following: Full_IVF_Path_And_FileName, BitRate, Name_of_Oldest_Release_\n"
-            "%%              PlugIn, ForceKeyFrame, Name_of_Newest_Debug_PlugIn, Name_of_Newest_Release_PlugIn, \n"
-            "%%              Lag_in_Frames_1, Lag_in_Frames_2, Lag_in_Frames_2, Alt_Freq_1, and Alt_Freq_2 with \n"
-            "%%              the settings you wish to test.\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "16@Full_IVF_Path_And_FileName\n"
-            "19@Full_IVF_Path_And_FileName@BitRate\n"
-            "27@Full_IVF_Path_And_FileName@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "29@Full_IVF_Path_And_FileName@BitRate\n"
-            "36@Full_IVF_Path_And_FileName@BitRate\n"
-            "23@Name_of_Newest_Debug_PlugIn\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-            "25@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "25@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "34@Full_IVF_Path_And_FileName@0@BitRate@Lag_in_Frames_3\n"
-            "34@Full_IVF_Path_And_FileName@1@BitRate@Lag_in_Frames_3\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
-
-            "%%%%%%%%%%%%%%Mode0%%%%%%%%%%%%%%\n"
-            "%%1 DNW - Does Not Work For Mode 0\n"
-            "%%2 DNW - Does Not Work For Mode 0\n"
-            "4@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "%%4 DNW - Does Not Work For Mode 0\n"
-            "7@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "%%6 DNW - Does Not Work For Mode 0\n"
-            "%%7 DNW - Does Not Work For Mode 0\n"
-            "%%8 DNW - Does Not Work For Mode 0\n"
-            "%%9 DNW - Does Not Work For Mode 0\n"
-            "%%10 DNW - Does Not Work For Mode 0\n"
-            "%%11 DNW - Does Not Work In Multi Run\n"
-            "%%12 DNW - Does Not Work For Mode 0\n"
-            "13@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "12@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "%%15 DNW - Does Not Work For Mode 0\n"
-            "15@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "18@Full_IVF_Path_And_FileName@0@BitRate@ForceKeyFrame\n"
-            "%%20 DNW - Does Not Work For Mode 0\n"
-            "%%21 DNE - Does Not Exist in VP8\n"
-            "%%22 DNE - Does Not Exist in VP8\n"
-            "21@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "22@Full_IVF_Path_And_FileName@0@BitRate@Name_of_Newest_Debug_PlugIn\n"
-            "24@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "26@Full_IVF_Path_And_FileName@0@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "%%28 DNE - Does Not Exist in VP8\n"
-            "28@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "31@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "%%32 DNW - Does Not Work For Mode 0\n"
-            "%%33 DNW - Does Not Work In Multi Run\n"
-            "33@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "%%35 DNW - Does Not Work In Multi Run\n"
-            "%%36 DNE - Does Not Exist in VP8\n"
-            "%%38 DNW - Does Not Work For Mode 0\n"
-            "%%39 Padding\n"
-            "%%40 Padding\n"
-            "%%41 DNW - Does Not Work For Mode 0\n"
-            "%%42 DNW - Does Not Work For Mode 0\n"
-            "%%43 DNW - Does Not Work For Mode 0\n"
-            "20@Full_IVF_Path_And_FileName@0@BitRate@Lag_in_Frames_1@Lag_in_Frames_2\n"
-            "%%46 DNW - Does Not Work For Mode 0\n"
-            "38@Full_IVF_Path_And_FileName@0@BitRate\n"
-            "14@Full_IVF_Path_And_FileName@4@BitRate\n\n"
-
-            "%%%%%%%%%%%%%%Mode1%%%%%%%%%%%%%%\n"
-            "1@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "6@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "7@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "8@Full_IVF_Path_And_FileName@1@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@1@BitRate@Version\n"
-            "10@Full_IVF_Path_And_FileName@1@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "10@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "%%11 DNW - Does Not Work In Multi Run\n"
-            "11@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "12@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@1@BitRate@Name_of_Newest_Debug_PlugIn@Name_of_Newest_Release_PlugIn\n"
-            "15@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "18@Full_IVF_Path_And_FileName@1@BitRate@ForceKeyFrame\n"
-            "20@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "%%21 DNE - Does Not Exist in VP8\n"
-            "%%22 DNE - Does Not Exist in VP8\n"
-            "21@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "22@Full_IVF_Path_And_FileName@1@BitRate@Name_of_Newest_Debug_PlugIn\n"
-            "24@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "26@Full_IVF_Path_And_FileName@1@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "%%28 DNE - Does Not Exist in VP8\n"
-            "28@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "31@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "32@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "%%33 DNW - Does Not Work In Multi Run\n"
-            "33@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "%%35 DNW - Does Not Work In Multi Run\n"
-            "%%36 DNE - Does Not Exist in VP8\n"
-            "37@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "%%39 Padding\n"
-            "%%40 Padding\n"
-            "2@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "5@Full_IVF_Path_And_FileName@1@BitRate@Alt_Freq_1@Alt_Freq_2\n"
-            "17@Full_IVF_Path_And_FileName@1@BitRate@FixedQ_1@FixedQ_2\n"
-            "20@Full_IVF_Path_And_FileName@1@BitRate@Lag_in_Frames_1@Lag_in_Frames_2\n"
-            "30@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "38@Full_IVF_Path_And_FileName@1@BitRate\n"
-            "14@Full_IVF_Path_And_FileName@1@BitRate\n\n"
-
-            "%%%%%%%%%%%%%%Mode2%%%%%%%%%%%%%%\n"
-            "1@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "6@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "7@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "8@Full_IVF_Path_And_FileName@2@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@2@BitRate@Version\n"
-            "10@Full_IVF_Path_And_FileName@2@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "10@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "%%11 DNW - Does Not Work In Multi Run\n"
-            "11@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "12@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@2@BitRate@Name_of_Newest_Debug_PlugIn@Name_of_Newest_Release_PlugIn\n"
-            "15@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "18@Full_IVF_Path_And_FileName@2@BitRate@ForceKeyFrame\n"
-            "20@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "%%21 DNE - Does Not Exist in VP8\n"
-            "%%22 DNE - Does Not Exist in VP8\n"
-            "21@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "22@Full_IVF_Path_And_FileName@2@BitRate@Name_of_Newest_Debug_PlugIn\n"
-            "24@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "26@Full_IVF_Path_And_FileName@2@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "%%28 DNE - Does Not Exist in VP8\n"
-            "28@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "31@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "32@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "%%33 DNW - Does Not Work In Multi Run\n"
-            "33@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "%%35 DNW - Does Not Work In Multi Run\n"
-            "%%36 DNE - Does Not Exist in VP8\n"
-            "37@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "%%39 Padding\n"
-            "%%40 Padding\n"
-            "2@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "5@Full_IVF_Path_And_FileName@2@BitRate@Alt_Freq_1@Alt_Freq_2\n"
-            "17@Full_IVF_Path_And_FileName@2@BitRate@FixedQ_1@FixedQ_2\n"
-            "20@Full_IVF_Path_And_FileName@2@BitRate@Lag_in_Frames_1@Lag_in_Frames_2\n"
-            "30@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "38@Full_IVF_Path_And_FileName@2@BitRate\n"
-            "14@Full_IVF_Path_And_FileName@2@BitRate\n\n"
-
-            "%%%%%%%%%%%%%%Mode4%%%%%%%%%%%%%%\n"
-            "1@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "6@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "7@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "8@Full_IVF_Path_And_FileName@4@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@4@BitRate@Version\n"
-            "10@Full_IVF_Path_And_FileName@4@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "10@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "%%11 DNW - Does Not Work In Multi Run\n"
-            "11@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "12@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@4@BitRate@Name_of_Newest_Debug_PlugIn@Name_of_Newest_Release_PlugIn\n"
-            "15@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "18@Full_IVF_Path_And_FileName@4@BitRate@ForceKeyFrame\n"
-            "20@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "%%21 DNE - Does Not Exist in VP8\n"
-            "%%22 DNE - Does Not Exist in VP8\n"
-            "21@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "22@Full_IVF_Path_And_FileName@4@BitRate@Name_of_Newest_Debug_PlugIn\n"
-            "24@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "26@Full_IVF_Path_And_FileName@4@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "%%28 DNE - Does Not Exist in VP8\n"
-            "28@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "31@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "32@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "%%33 DNW - Does Not Work In Multi Run\n"
-            "33@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "%%35 DNW - Does Not Work In Multi Run\n"
-            "%%36 DNE - Does Not Exist in VP8\n"
-            "37@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "%%39 Padding\n"
-            "%%40 Padding\n"
-            "2@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "5@Full_IVF_Path_And_FileName@4@BitRate@Alt_Freq_1@Alt_Freq_2\n"
-            "17@Full_IVF_Path_And_FileName@4@BitRate@FixedQ_1@FixedQ_2\n"
-            "20@Full_IVF_Path_And_FileName@4@BitRate@Lag_in_Frames_1@Lag_in_Frames_2\n"
-            "30@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "38@Full_IVF_Path_And_FileName@4@BitRate\n"
-            "14@Full_IVF_Path_And_FileName@4@BitRate\n\n"
-
-            "%%%%%%%%%%%%%%Mode5%%%%%%%%%%%%%%\n"
-            "1@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "4@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "6@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "7@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "8@Full_IVF_Path_And_FileName@5@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@5@BitRate@Version\n"
-            "10@Full_IVF_Path_And_FileName@5@BitRate@Version\n"
-            "9@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "10@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "%%11 DNW - Does Not Work In Multi Run\n"
-            "11@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "12@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "13@Full_IVF_Path_And_FileName@5@BitRate@Name_of_Newest_Debug_PlugIn@Name_of_Newest_Release_PlugIn\n"
-            "15@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "18@Full_IVF_Path_And_FileName@5@BitRate@ForceKeyFrame\n"
-            "20@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "%%21 DNE - Does Not Exist in VP8\n"
-            "%%22 DNE - Does Not Exist in VP8\n"
-            "21@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "22@Full_IVF_Path_And_FileName@5@BitRate@Name_of_Newest_Debug_PlugIn\n"
-            "24@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "26@Full_IVF_Path_And_FileName@5@BitRate@Name_of_Oldest_Release_PlugIn\n"
-            "%%28 DNE - Does Not Exist in VP8\n"
-            "28@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "31@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "32@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "%%33 DNW - Does Not Work In Multi Run\n"
-            "33@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "%%35 DNW - Does Not Work In Multi Run\n"
-            "%%36 DNE - Does Not Exist in VP8\n"
-            "37@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "%%39 Padding\n"
-            "%%40 Padding\n"
-            "2@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "5@Full_IVF_Path_And_FileName@5@BitRate@Alt_Freq_1@Alt_Freq_2\n"
-            "17@Full_IVF_Path_And_FileName@5@BitRate@FixedQ_1@FixedQ_2\n"
-            "20@Full_IVF_Path_And_FileName@5@BitRate@Lag_in_Frames_1@Lag_in_Frames_2\n"
-            "30@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "38@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "14@Full_IVF_Path_And_FileName@5@BitRate\n"
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-           );
-
-    printf("\n\nSample Multi Run text file created:\n%s\n\n", TextfileString4.c_str());
-    fclose(fp4);
-}
-void Print5(string WorkingDir)
-{
-    char FolderNameChar[255];
-    FolderName(WorkingDir.c_str(), FolderNameChar);
+    vpxt_folder_name(WorkingDir.c_str(), FolderNameChar);
     string TextfileString5 = FolderNameChar;
     TextfileString5.append("QuickTest_32Bit.txt");
 
@@ -1605,10 +381,10 @@ void Print5(string WorkingDir)
     printf("\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-void Print6(string WorkingDir)
+void write_64bit_quick_test(string WorkingDir)
 {
     char FolderNameChar[255];
-    FolderName(WorkingDir.c_str(), FolderNameChar);
+    vpxt_folder_name(WorkingDir.c_str(), FolderNameChar);
     string TextfileString5 = FolderNameChar;
     TextfileString5.append("QuickTest_64Bit.txt");
 
@@ -1796,14 +572,14 @@ void Print6(string WorkingDir)
     printf("\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-void PrintTxtFiles(string WorkingDir)
+void print_quick_test_files(string WorkingDir)
 {
-    Print5(WorkingDir);//32BitQuickRun
-    Print6(WorkingDir);//64BitQuickRun
+    write_32bit_quick_test(WorkingDir);//32BitQuickRun
+    write_64bit_quick_test(WorkingDir);//64BitQuickRun
 
     return;
 }
-void FormatedPrint(string SummaryStr, int selector)
+void formated_print(string SummaryStr, int selector)
 {
 
     //selector == 1 -> Summary
@@ -1933,7 +709,7 @@ void FormatedPrint(string SummaryStr, int selector)
 
     return;
 }
-void TestHelp(int argc, char *argv[], string WorkingDir)
+void test_help(int argc, char *argv[], string WorkingDir)
 {
 
     string TestInputString = argv[1];
@@ -1943,7 +719,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
     {
         printf(
             "\nUse:\n\n"
-            " 0 ExternalTestRunner \n\n"
+            " 0 run_multipule_tests \n\n"
             "    <Test Type>\n"
             "         <1 - Create Files and Run Tests>\n"
             "         <2 - Create Files only>\n"
@@ -1951,7 +727,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
             "    <Input Text File>\n"
             "    <Optional - Input Test Directory>\n");
 
-        FormatedPrint("The test runs tests from an input file and summarizes the results. The test can be run in four modes: Mode 1 - Create compressions and run tests, Mode 2 - Create compressions only, Mode 3 - Run tests on preexisting compressions, and Mode 4 - Resume tests in progress. To create a template driver text file use the command: CreateSampleTextFiles.", 1);
+        formated_print("The test runs tests from an input file and summarizes the results. The test can be run in four modes: Mode 1 - Create compressions and run tests, Mode 2 - Create compressions only, Mode 3 - Run tests on preexisting compressions, and Mode 4 - Resume tests in progress. To create a template driver text file use the command: CreateSampleTextFiles.", 1);
     }
 
     if (selector == AlWDFNUM)
@@ -1967,10 +743,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , AlWDFNUM);
 
-        FormatedPrint("The test creates two files; the first with Drop Frames on, the second with Drop Frames off. It then records and compares the number of frames each file has.  If Drop Frames on has fewer frames than Drop Frames off; the test passes.", 1);
+        formated_print("The test creates two files; the first with Drop Frames on, the second with Drop Frames off. It then records and compares the number of frames each file has.  If Drop Frames on has fewer frames than Drop Frames off; the test passes.", 1);
 
     }
 
@@ -1987,10 +763,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , ALWLGNUM);
 
-        FormatedPrint("The test creates two compressions; the first with Allow Lag equal to 0, the second with Allow Lag equal to 1.  If the correct number of lagged frames are detected via quantizer output, alternate reference frames exist for Allow Lag on, Allow Lag on has the same number of visible frames as Allow Lag off, and Allow Lag on is not identical to Allow Lag off; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
+        formated_print("The test creates two compressions; the first with Allow Lag equal to 0, the second with Allow Lag equal to 1.  If the correct number of lagged frames are detected via quantizer output, alternate reference frames exist for Allow Lag on, Allow Lag on has the same number of visible frames as Allow Lag off, and Allow Lag on is not identical to Allow Lag off; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
     }
 
     if (selector == ALWSRNUM)
@@ -2006,10 +782,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , ALWSRNUM);
 
-        FormatedPrint("The test creates two files the first with Spatial Resampling off the second with Spatial Resampling on. The test then records the number of resized frames for each and computes the PSNR for Spatial Resampling on.  If the number of resized frames for Spatial Resampling on is greater than 0, the number of resized frames for Spatial Resampling off equals 0, and the PSNR calculated for Spatial Resampling on is greater than 15; the test passes.", 1);
+        formated_print("The test creates two files the first with Spatial Resampling off the second with Spatial Resampling on. The test then records the number of resized frames for each and computes the PSNR for Spatial Resampling on.  If the number of resized frames for Spatial Resampling on is greater than 0, the number of resized frames for Spatial Resampling off equals 0, and the PSNR calculated for Spatial Resampling on is greater than 15; the test passes.", 1);
     }
 
     if (selector == AUTKFNUM)
@@ -2025,10 +801,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , AUTKFNUM);
 
-        FormatedPrint("The test creates two files with identical parameters setting Auto Key Frame equal to 6. The test then records the placement of each files key frames.  If both files key frames occur in identical locations and at least as frequently as Auto Key Frame dictates; the test passes.", 1);
+        formated_print("The test creates two files with identical parameters setting Auto Key Frame equal to 6. The test then records the placement of each files key frames.  If both files key frames occur in identical locations and at least as frequently as Auto Key Frame dictates; the test passes.", 1);
 
     }
 
@@ -2045,10 +821,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , BUFLVNUM);
 
-        FormatedPrint("The test creates a compression and runs CheckPBM on it.  If no buffer under run is detected; the test passes.", 1);
+        formated_print("The test creates a compression and runs CheckPBM on it.  If no buffer under run is detected; the test passes.", 1);
 
     }
 
@@ -2069,7 +845,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , CPUDENUM);
 
-        FormatedPrint("The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1). The test then compares the decompressions against one another.  If all decompressions are identical and the times to decompress them are not and all instruction sets are run; the test passes.", 1);
+        formated_print("The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1). The test then compares the decompressions against one another.  If all decompressions are identical and the times to decompress them are not and all instruction sets are run; the test passes.", 1);
 
     }
 
@@ -2090,7 +866,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , CHGWRNUM);
 
-        FormatedPrint("The test creates compressions of the user input version (0-3) for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1).  If all compressions are identical, compression times are not, and all instruction sets are run; the test passes.", 1);
+        formated_print("The test creates compressions of the user input version (0-3) for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1).  If all compressions are identical, compression times are not, and all instruction sets are run; the test passes.", 1);
     }
 
     if (selector == DFWMWNUM)
@@ -2106,10 +882,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , DFWMWNUM);
 
-        FormatedPrint("The test creates 6 compressions with DFWM values of 100 80 60 40 20 and 0 and records their sizes.  If each successively lower DFWM compression has a equal or larger size than the previous the test passes.", 1);
+        formated_print("The test creates 6 compressions with DFWM values of 100 80 60 40 20 and 0 and records their sizes.  If each successively lower DFWM compression has a equal or larger size than the previous the test passes.", 1);
 
     }
 
@@ -2126,10 +902,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , DTARTNUM);
 
-        FormatedPrint("The test creates a compression and records it data rate.  If the compressions data rate is within 30% of the input target bandwidth; the test passes.", 1);
+        formated_print("The test creates a compression and records it data rate.  If the compressions data rate is within 30% of the input target bandwidth; the test passes.", 1);
 
     }
 
@@ -2148,10 +924,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
                "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , DBMRLNUM);
 
-        FormatedPrint("The test creates two compressions the first using an executable built using the newest release library, the second using an executable built using the newest debug library.  If the two compressions are identical; the test passes.", 1);
+        formated_print("The test creates two compressions the first using an executable built using the newest release library, the second using an executable built using the newest debug library.  If the two compressions are identical; the test passes.", 1);
 
     }
 
@@ -2168,10 +944,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , ENCBONUM);
 
-        FormatedPrint("The test creates four compressions. The first with an EncodeBreakout of 0, the second with an EncodeBreakout of 100, the thrid with an EncodeBreakout of 500 and the fourth with an EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated.  If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are with in 2 dB the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive and if the PSNRs have greater than a 5 dB difference the test fails.", 1);
+        formated_print("The test creates four compressions. The first with an EncodeBreakout of 0, the second with an EncodeBreakout of 100, the thrid with an EncodeBreakout of 500 and the fourth with an EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated.  If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are with in 2 dB the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive and if the PSNRs have greater than a 5 dB difference the test fails.", 1);
     }
 
     if (selector == ERRMWNUM)
@@ -2189,7 +965,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n "
                , ERRMWNUM);
 
-        FormatedPrint("The test creates two compressions the first with Error Resilient Mode off the second on. The test then records their PSNR values.  If their PSNRs are with in 10% of one another the test passes.", 1);
+        formated_print("The test creates two compressions the first with Error Resilient Mode off the second on. The test then records their PSNR values.  If their PSNRs are with in 10% of one another the test passes.", 1);
 
     }
 
@@ -2198,10 +974,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
         printf("\nUse:\n\n"
                "%2i ExtraFileCheck \n\n"
                "    <Inputfile>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , EXTFINUM);
 
-        FormatedPrint("The test creates a two pass compression and checks the current directory, the directory the executable is located in and the directory the output file is written to for extra files.  If no extra files are found the test passes.", 1);
+        formated_print("The test creates a two pass compression and checks the current directory, the directory the executable is located in and the directory the output file is written to for extra files.  If no extra files are found the test passes.", 1);
     }
 
     if (selector == FIXDQNUM)
@@ -2219,10 +995,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n "
                "    <FixedQ 1>\n "
                "    <FixedQ 2>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , FIXDQNUM);
 
-        FormatedPrint("The test creates two compressions each with user input Fixed Quantizers and records the quantizers used to encode each frame. The test then records the compressions sizes.  If all quantizers for each compression match the input Fixed Quantizer and the smaller quantizers compression has a larger file size; the test passes.", 1);
+        formated_print("The test creates two compressions each with user input Fixed Quantizers and records the quantizers used to encode each frame. The test then records the compressions sizes.  If all quantizers for each compression match the input Fixed Quantizer and the smaller quantizers compression has a larger file size; the test passes.", 1);
     }
 
     if (selector == FKEFRNUM)
@@ -2239,10 +1015,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
                "    <ForceKeyFrame>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , FKEFRNUM);
 
-        FormatedPrint("The test creates a compression using a user input value for a Force Key Frame Interval. The compressor forces a key frame for every Force Key Frame Invervalith frame. The Test then records the placement of all key frames in the compression.  If key frames occur only when Force Key Frame dictates; the test passes.", 1);
+        formated_print("The test creates a compression using a user input value for a Force Key Frame Interval. The compressor forces a key frame for every Force Key Frame Invervalith frame. The Test then records the placement of all key frames in the compression.  If key frames occur only when Force Key Frame dictates; the test passes.", 1);
 
     }
 
@@ -2263,7 +1039,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Starting Height-must be a mult of 16>\n"
                "     <Optional Settings File>\n"
               );
-        FormatedPrint("The test creates fourty-six cropped raw ivf files from a user input file, starting height and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs within five percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.", 1);
+        formated_print("The test creates fourty-six cropped raw ivf files from a user input file, starting height and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs within five percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.", 1);
     }
 
     if (selector == GQVBQNUM)
@@ -2272,10 +1048,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "%2i GoodQvBestQ \n\n"
                "    <inputfile>\n"
                "    <Target Bit Rate>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , GQVBQNUM);
 
-        FormatedPrint("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the good quality curve and best quality curve.  If the area under the best quality curve is greater than the area under the good quality curve; the test passes.", 1);
+        formated_print("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the good quality curve and best quality curve.  If the area under the best quality curve is greater than the area under the good quality curve; the test passes.", 1);
     }
 
     if (selector == LGIFRNUM)
@@ -2293,10 +1069,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n"
                "    <Lag in Frames 1>\n"
                "    <Lag in Frames 2>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , LGIFRNUM);
 
-        FormatedPrint("The test creates three compressions one with Allow Lag set to 0 the second and third with Allow Lag set to 1. The second compression uses the first user input Lag in Frames value for its Lag in frames and the third uses the second user input value for its Lag in Frames. The test outputs each files quantizer values for each encoded frame.  If none of the files are identical, the PSNRs of each successive file are within 10% of the last and the quantizer output shows that the proper number of frames were lagged; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
+        formated_print("The test creates three compressions one with Allow Lag set to 0 the second and third with Allow Lag set to 1. The second compression uses the first user input Lag in Frames value for its Lag in frames and the third uses the second user input value for its Lag in Frames. The test outputs each files quantizer values for each encoded frame.  If none of the files are identical, the PSNRs of each successive file are within 10% of the last and the quantizer output shows that the proper number of frames were lagged; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
     }
 
     if (selector == MAXQUNUM)
@@ -2312,10 +1088,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , MAXQUNUM);
 
-        FormatedPrint("The test creates nine files the first with a WorstAllowedQ equal to 3 and each subsequent file with a WorstAllowedQ eight greater than the last until 63. The test records the individual quantizer values for each encoded frame.  If the PSNRs of each WorstAllowedQ compression from 3 to 63 increase as Worst AllowedQ decreases and the recorded quantizers for each file do not exceed their corresponding WorstAllowedQ for all compressions; the test passes.", 1);
+        formated_print("The test creates nine files the first with a WorstAllowedQ equal to 3 and each subsequent file with a WorstAllowedQ eight greater than the last until 63. The test records the individual quantizer values for each encoded frame.  If the PSNRs of each WorstAllowedQ compression from 3 to 63 increase as Worst AllowedQ decreases and the recorded quantizers for each file do not exceed their corresponding WorstAllowedQ for all compressions; the test passes.", 1);
 
     }
 
@@ -2333,10 +1109,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
                "    <Newest Debug executable>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , MEML1NUM);
 
-        FormatedPrint("The Test creates a compression using the debug executable to check memory usage and records the results to an output file.  If no memory leaks are found the test passes.", 1);
+        formated_print("The Test creates a compression using the debug executable to check memory usage and records the results to an output file.  If no memory leaks are found the test passes.", 1);
     }
 
     if (selector == MEML2NUM)
@@ -2347,7 +1123,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "\n"
                , MEML2NUM);
 
-        FormatedPrint("The test uses the debug executable to open and close 10,000 instances of the encoder and open and close 10,000 instance the decoder and then checks to make sure there are no memory leaks.  If there are no leaks the test passes.", 1);
+        formated_print("The test uses the debug executable to open and close 10,000 instances of the encoder and open and close 10,000 instance the decoder and then checks to make sure there are no memory leaks.  If there are no leaks the test passes.", 1);
     }
 
     if (selector == MINQUNUM)
@@ -2363,10 +1139,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , MINQUNUM);
 
-        FormatedPrint("The test creates two files the first with a MinQ equal to 10 the second with a MinQ equal to 60 and records the quantizer used for each compressions frames.  If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding MinQ; the test passes.", 1);
+        formated_print("The test creates two files the first with a MinQ equal to 10 the second with a MinQ equal to 60 and records the quantizer used for each compressions frames.  If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding MinQ; the test passes.", 1);
     }
 
     if (selector == MULTTNUM)
@@ -2382,7 +1158,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , MULTTNUM);
 
-        FormatedPrint("The test creates two compressions the first using a MultiThreaded equal to 2 the second using a MultiThreaded equal to 0. The test then compares the times to compress each.  If MultiThreaded 2 is faster than 0; the test passes.", 1);
+        formated_print("The test creates two compressions the first using a MultiThreaded equal to 2 the second using a MultiThreaded equal to 0. The test then compares the times to compress each.  If MultiThreaded 2 is faster than 0; the test passes.", 1);
     }
 
     if (selector == NVOPSNUM)
@@ -2399,11 +1175,11 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
                "    <Exe File To Compare>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                "\n"
                , NVOPSNUM);
 
-        FormatedPrint("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. It then computes and records PSNR values for each.  If new PSNR is greater than olds PSNR or is at least within 1% of the old; the test passes.", 1);
+        formated_print("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. It then computes and records PSNR values for each.  If new PSNR is greater than olds PSNR or is at least within 1% of the old; the test passes.", 1);
     }
 
     if (selector == NVORTNUM)
@@ -2413,10 +1189,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <inputfile>\n"
                "    <Target Bit Rate>\n"
                "    <Exe File To Compare>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , NVORTNUM);
 
-        FormatedPrint("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took.  If the new compressions time is at least 10% faster than the old compressions time; the test passes.", 1);
+        formated_print("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took.  If the new compressions time is at least 10% faster than the old compressions time; the test passes.", 1);
     }
 
     if (selector == NOISENUM)
@@ -2432,10 +1208,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , NOISENUM);
 
-        FormatedPrint("The test compresses seven files with Noise Sensitivity values from 0 to 6 and computes PSNR values for each.  If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6; the test passes.", 1);
+        formated_print("The test compresses seven files with Noise Sensitivity values from 0 to 6 and computes PSNR values for each.  If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6; the test passes.", 1);
     }
 
     if (selector == OV2PSNUM)
@@ -2444,10 +1220,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "%2i OnePassVsTwoPass \n\n"
                "    <inputfile>\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , OV2PSNUM);
 
-        FormatedPrint("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at one pass good quality and two pass good quality, the second and fifth compressions for the input target bandwidth at one pass good quality and two pass good quality, and the thrid and sixth at 30% more than the input target bandwidth at one pass good quality and two pass good quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the one pass good quality curve and the two pass good quality curve.  If the area under the two pass good quality curve is greater than the area under the one pass good quality curve; the test passes.", 1);
+        formated_print("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at one pass good quality and two pass good quality, the second and fifth compressions for the input target bandwidth at one pass good quality and two pass good quality, and the thrid and sixth at 30% more than the input target bandwidth at one pass good quality and two pass good quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the one pass good quality curve and the two pass good quality curve.  If the area under the two pass good quality curve is greater than the area under the one pass good quality curve; the test passes.", 1);
     }
 
     if (selector == PLYALNUM)
@@ -2463,10 +1239,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n"
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , PLYALNUM);
 
-        FormatedPrint("The test creates two compressions the first with Play Alternate equal to 0 the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions.  If alternate reference frames exist for Play Alternate = 1 and not for Play Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2 are equal, and the files are not identical; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
+        formated_print("The test creates two compressions the first with Play Alternate equal to 0 the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions.  If alternate reference frames exist for Play Alternate = 1 and not for Play Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2 are equal, and the files are not identical; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
     }
 
     if (selector == POSTPNUM)
@@ -2482,10 +1258,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , POSTPNUM);
 
-        FormatedPrint("The test creates a compression then creates a No Filtering decompression, decompressions for Deblock and Noise levels ranging from 0 to 15.  If all Deblock and Noise decompressions return a different PSNR than the No Filtering Decompression but are within 10%; the test passes.", 1);
+        formated_print("The test creates a compression then creates a No Filtering decompression, decompressions for Deblock and Noise levels ranging from 0 to 15.  If all Deblock and Noise decompressions return a different PSNR than the No Filtering Decompression but are within 10%; the test passes.", 1);
     }
 
     if (selector == RECONBUF)
@@ -2501,11 +1277,11 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
-            "	 <Optional Settings File>\n"
+            "     <Optional Settings File>\n"
             , RECONBUF);
 
 
-        FormatedPrint("The test creates a compression and internally compares the compressor's preview frames to the decoded output produced by decompressing the compressor�s en-coded frame. The state of each frame is recorded to a text file.  If the contents of all preview frames are identical to the content of all decoded frames; the test passes.", 1);
+        formated_print("The test creates a compression and internally compares the compressor's preview frames to the decoded output produced by decompressing the compressor�s en-coded frame. The state of each frame is recorded to a text file.  If the contents of all preview frames are identical to the content of all decoded frames; the test passes.", 1);
     }
 
     if (selector == RSDWMNUM)
@@ -2521,10 +1297,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , RSDWMNUM);
 
-        FormatedPrint("The test creates two files the first with resample-down-watermark set to 90 the second with resample-down-watermark set to 10. The test then records the frames at which the file buffer reaches the designated thresholds, the location of key frames and location of resized frames for both files.  If the first resized frame occurs on the first instance where the frame prior to a key frame reaches the correct buffer saturation for both compressions; the test passes.", 1);
+        formated_print("The test creates two files the first with resample-down-watermark set to 90 the second with resample-down-watermark set to 10. The test then records the frames at which the file buffer reaches the designated thresholds, the location of key frames and location of resized frames for both files.  If the first resized frame occurs on the first instance where the frame prior to a key frame reaches the correct buffer saturation for both compressions; the test passes.", 1);
     }
 
     if (selector == SPEEDNUM)
@@ -2536,10 +1312,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , SPEEDNUM);
 
-        FormatedPrint("The test works for RealTime Mode and Good Quality Mode. For Real Time Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions for CpuUsed Values from 0 to 5.  If compression speed increases as CpuUsed increases and all PSNRs are within 10% of the previous; the test passes.", 1);
+        formated_print("The test works for RealTime Mode and Good Quality Mode. For Real Time Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions for CpuUsed Values from 0 to 5.  If compression speed increases as CpuUsed increases and all PSNRs are within 10% of the previous; the test passes.", 1);
     }
 
     if (selector == TV2BTNUM)
@@ -2550,7 +1326,7 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "\n"
                , TV2BTNUM);
 
-        FormatedPrint("This test decodes each VP8 Test Vector and Checks its MD5 checksum against the expected value.  If all Test Vectors decode properly and all MD5 checksums match their expected values; the test passes.", 1);
+        formated_print("This test decodes each VP8 Test Vector and Checks its MD5 checksum against the expected value.  If all Test Vectors decode properly and all MD5 checksums match their expected values; the test passes.", 1);
 
     }
 
@@ -2560,10 +1336,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "%2i TwoPassVsTwoPassBest \n\n"
                "    <inputfile>\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , TV2BTNUM);
 
-        FormatedPrint("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at two pass good quality and two pass best quality, the second and fifth compressions for the input target bandwidth at two pass good quality and two pass best quality, and the third and sixth at 30% more than the input target bandwidth at two pass good quality and two pass best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the two pass good quality curve and the two pass best quality curve.  If the area under the two pass best quality curve is greater than the area under the two pass good quality curve; the test passes.", 1);
+        formated_print("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at two pass good quality and two pass best quality, the second and fifth compressions for the input target bandwidth at two pass good quality and two pass best quality, and the third and sixth at 30% more than the input target bandwidth at two pass good quality and two pass best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the two pass good quality curve and the two pass best quality curve.  If the area under the two pass best quality curve is greater than the area under the two pass good quality curve; the test passes.", 1);
 
 
     }
@@ -2581,10 +1357,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , UNDSHNUM);
 
-        FormatedPrint("The test creates two files the first with an undershoot equal to 10 the second with an undershoot equal to 100.  If the Undershoot 100 compressions file size is greater than the Undershoot 10 compressions file size; the test passes.", 1);
+        formated_print("The test creates two files the first with an undershoot equal to 10 the second with an undershoot equal to 100.  If the Undershoot 100 compressions file size is greater than the Undershoot 10 compressions file size; the test passes.", 1);
     }
 
     if (selector == VERSINUM)
@@ -2600,10 +1376,10 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "          (4)Two Pass\n"
                "          (5)Two Pass Best Quality\n"
                "    <Target Bit Rate>\n "
-               "	 <Optional Settings File>\n"
+               "     <Optional Settings File>\n"
                , VERSINUM);
 
-        FormatedPrint("The test creates four compressions the first with Version equal to 0 the second with version equal to 1 the third with version equal to 2 the fourth with version equal to 3. The test then decodes each and records the time it took to do so.  If each successive version takes less time than the prior to decode and has a lower PSNR; the test passes.", 1);
+        formated_print("The test creates four compressions the first with Version equal to 0 the second with version equal to 1 the third with version equal to 2 the fourth with version equal to 3. The test then decodes each and records the time it took to do so.  If each successive version takes less time than the prior to decode and has a lower PSNR; the test passes.", 1);
     }
 
     if (selector == WMLMMNUM)
@@ -2626,12 +1402,12 @@ void TestHelp(int argc, char *argv[], string WorkingDir)
                "    <Optional Settings File>\n"
                , WMLMMNUM);
 
-        FormatedPrint("The test can be run in two test modes. The first Mode, 0 creates platform specific compressions and decompressions to be tested on another platform. The second Mode creates platform specific compressions and decompressions and then compares them to previously encoded and decoded files created by test mode 0.  If the files are identical the test passes.", 1);
+        formated_print("The test can be run in two test modes. The first Mode, 0 creates platform specific compressions and decompressions to be tested on another platform. The second Mode creates platform specific compressions and decompressions and then compares them to previously encoded and decoded files created by test mode 0.  If the files are identical the test passes.", 1);
     }
 
     return;
 }
-int  ToolHelp(string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
+int  tool_help(string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
 {
     if (InputString.compare("IVF2IVFCompr") == 0)
     {
@@ -2645,7 +1421,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <Optional - Parameter File>\n"
         );
 
-        FormatedPrint("This utility will take in a raw ivf file and produce an encoded ivf file using the given mode and bitrate.  Default encode settings can be overridden by specifying a parameter file.", 2);
+        formated_print("This utility will take in a raw ivf file and produce an encoded ivf file using the given mode and bitrate.  Default encode settings can be overridden by specifying a parameter file.", 2);
         return 1;
     }
 
@@ -2657,7 +1433,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <outputfile>\n"
         );
 
-        FormatedPrint("This utility will take in an encoded ivf file and output a decoded ivf file.", 2);
+        formated_print("This utility will take in an encoded ivf file and output a decoded ivf file.", 2);
         return 1;
     }
 
@@ -2669,7 +1445,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <outputfile>\n"
         );
 
-        FormatedPrint("This utility will take in an encoded ivf file and output a decoded raw file.", 2);
+        formated_print("This utility will take in an encoded ivf file and output a decoded raw file.", 2);
         return 1;
     }
 
@@ -2680,7 +1456,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <inputfile>\n"
         );
 
-        FormatedPrint("This utility will take in an ivf file and compute its average, min, max, and file data rates. ", 2);
+        formated_print("This utility will take in an ivf file and compute its average, min, max, and file data rates. ", 2);
         return 1;
     }
 
@@ -2692,7 +1468,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "     <Comp IVF File>\n"
         );
 
-        FormatedPrint("This utility will compute an encoded files psnr using the encoded file's ivf source file.", 2);
+        formated_print("This utility will compute an encoded files psnr using the encoded file's ivf source file.", 2);
         return 1;
     }
 
@@ -2706,7 +1482,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "     <prebuffer>\n"
         );
 
-        FormatedPrint("This utility will run CheckPBM to make sure a buffer under run wont occur.", 2);
+        formated_print("This utility will run CheckPBM to make sure a buffer under run wont occur.", 2);
         return 1;
     }
 
@@ -2722,7 +1498,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <FourCC>\n"
         );
 
-        FormatedPrint("This utility will take in a raw file and produce a raw ivf file.", 2);
+        formated_print("This utility will take in a raw file and produce a raw ivf file.", 2);
         return 1;
     }
 
@@ -2734,7 +1510,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Output File>\n"
               );
 
-        FormatedPrint("This utility will take in an ivf file and produce a raw file.", 2);
+        formated_print("This utility will take in an ivf file and produce a raw file.", 2);
         return 1;
     }
 
@@ -2746,14 +1522,14 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <OutPutDir>\n"
         );
 
-        FormatedPrint("This utility will take in an ivf file and produce individual raw frames for each frame that exists in the user specified directory.", 2);
+        formated_print("This utility will take in an ivf file and produce individual raw frames for each frame that exists in the user specified directory.", 2);
         return 1;
     }
 
     if (InputString.compare("CombineIndvFrames") == 0)
     {
         printf("\n  CombineIndvFrames");
-        FormatedPrint("This utility will combine all individual decoded frames in a folder into a single raw file in numerical order.", 2);
+        formated_print("This utility will combine all individual decoded frames in a folder into a single raw file in numerical order.", 2);
         printf(
             "\n"
             "   Usage:\n"
@@ -2792,7 +1568,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "     <inputfile2>\n"
         );
 
-        FormatedPrint("This utility will compare the video content of two ivf files and will display if they are identical, or if they differ the first frame they differ at.", 2);
+        formated_print("This utility will compare the video content of two ivf files and will display if they are identical, or if they differ the first frame they differ at.", 2);
         return 1;
     }
 
@@ -2806,7 +1582,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <OutputFile>\n"
               );
 
-        FormatedPrint("This utility will compare the file and frame headers of two ivf files.", 2);
+        formated_print("This utility will compare the file and frame headers of two ivf files.", 2);
         return 1;
     }
 
@@ -2819,7 +1595,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Optional Outputfile>\n"
               );
 
-        FormatedPrint("This utility will display the file and frame headers of an ivf file.", 2);
+        formated_print("This utility will display the file and frame headers of an ivf file.", 2);
         return 1;
     }
 
@@ -2831,7 +1607,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        FormatedPrint("This utility will display the location of key frames within an ivf file to the screen or an output file.", 2);
+        formated_print("This utility will display the location of key frames within an ivf file to the screen or an output file.", 2);
         return 1;
     }
 
@@ -2843,7 +1619,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        FormatedPrint("This utility will display the location of resized frames within an ivf file to the screen or an output file.", 2);
+        formated_print("This utility will display the location of resized frames within an ivf file to the screen or an output file.", 2);
         return 1;
     }
 
@@ -2855,7 +1631,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        FormatedPrint("This utility will display the location of visible frames within an ivf file to the screen or an output file.", 2);
+        formated_print("This utility will display the location of visible frames within an ivf file to the screen or an output file.", 2);
         return 1;
     }
 
@@ -2867,7 +1643,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        FormatedPrint("This utility will display the location of alternate reference frames within an ivf file to the screen or an output file.", 2);
+        formated_print("This utility will display the location of alternate reference frames within an ivf file to the screen or an output file.", 2);
         return 1;
     }
 
@@ -2882,7 +1658,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <Ending Frame>\n"
         );
 
-        FormatedPrint("This utility will cut a portion of an ivf file starting at Starting Frame and ending at Ending Frame to a new output file", 2);
+        formated_print("This utility will cut a portion of an ivf file starting at Starting Frame and ending at Ending Frame to a new output file", 2);
         return 1;
     }
 
@@ -2896,7 +1672,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <First Paste Frame>\n"
         );
 
-        FormatedPrint("This utility will paste the contents of Inputfile2 into Inputfile1 starting at Inputfile1's First Paste Frame to a new Outputfile.", 2);
+        formated_print("This utility will paste the contents of Inputfile2 into Inputfile1 starting at Inputfile1's First Paste Frame to a new Outputfile.", 2);
         return 1;
     }
 
@@ -2907,10 +1683,10 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "\n  PlayDecIVF\n\n"
             "    <inputfile>\n"
         );
-        FormatedPrint("This Tool will convert an uncompressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.", 2);
+        formated_print("This Tool will convert an uncompressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.", 2);
 #else
         printf("\n  PlayDecIVF");
-        FormatedPrint("This Tool will convert an uncompressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:", 2);
+        formated_print("This Tool will convert an uncompressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:", 2);
         printf("    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
                "    cd mplayer\n"
                "    ./configure\n"
@@ -2929,10 +1705,10 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "\n  PlayCompIVF\n\n"
             "    <inputfile>\n"
         );
-        FormatedPrint("This Tool will convert a compressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.", 2);
+        formated_print("This Tool will convert a compressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.", 2);
 #else
         printf("\n  PlayCompIVF");
-        FormatedPrint("This Tool will convert a compressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:", 2);
+        formated_print("This Tool will convert a compressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:", 2);
         printf("    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
                "    cd mplayer\n"
                "    ./configure\n"
@@ -2946,13 +1722,13 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
 
     if (InputString.compare("CreateSampleTextFiles") == 0)
     {
-        FormatedPrint("This utility will create sample text files.", 2);
+        formated_print("This utility will create sample text files.", 2);
         return 1;
     }
 
     if (InputString.compare("PrintVersion") == 0)
     {
-        FormatedPrint("This utility will print the version of vp8 being used by the tester.", 2);
+        formated_print("This utility will print the version of vp8 being used by the tester.", 2);
         return 1;
     }
 
@@ -2963,7 +1739,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <Output Par File>\n"
         );
 
-        FormatedPrint("This utility will create a valid vp8 random parameter file.", 2);
+        formated_print("This utility will create a valid vp8 random parameter file.", 2);
         return 1;
     }
 
@@ -2974,7 +1750,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Inputfile>\n"
               );
 
-        FormatedPrint("This utility will create a compression using random parameters for an input ivf file.", 2);
+        formated_print("This utility will create a compression using random parameters for an input ivf file.", 2);
         return 1;
     }
 
@@ -2989,13 +1765,13 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
                "    <Optional - Par Input>\n"
               );
 
-        FormatedPrint("The utility creates compressions from user input starting to user input ending bit rates at user input steps.  The utility then computes and outputs the data rates and PSNRs of the resultant files.", 2);
+        formated_print("The utility creates compressions from user input starting to user input ending bit rates at user input steps.  The utility then computes and outputs the data rates and PSNRs of the resultant files.", 2);
     }
 
     if (InputString.compare("TestVectorIndex") == 0)
     {
         printf("\n  TestVectorIndex\n");
-        FormatedPrint("This Utility makes use of the TestVectorsIndividualRunsResults Directory to locate the first report of a line being covered by a test vector and reports relevant information about it.", 2);
+        formated_print("This Utility makes use of the TestVectorsIndividualRunsResults Directory to locate the first report of a line being covered by a test vector and reports relevant information about it.", 2);
         /*printf("\n  Valid Files to check include:\n"
                 "     alloccommon\n"
                 "     blockd\n"
@@ -3041,7 +1817,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "\n"
         );
 
-        FormatedPrint("This utility is a clone of the standard VP8 ivfenc utility.", 2);
+        formated_print("This utility is a clone of the standard VP8 ivfenc utility.", 2);
         return 1;
     }
 
@@ -3052,7 +1828,7 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "\n"
         );
 
-        FormatedPrint("This utility is a clone of the standard VP8 ivfdec utility.", 2);
+        formated_print("This utility is a clone of the standard VP8 ivfdec utility.", 2);
         return 1;
     }
 
@@ -3069,13 +1845,13 @@ int  ToolHelp(string InputString)//return 1 if string found return 0 if string n
             "    <Raw/IVF 0-Raw 1-IVF>\n"
         );
 
-        FormatedPrint("This utility will take in a raw ivf file and produce a croped raw ivf file using the input size parameters.", 2);
+        formated_print("This utility will take in a raw ivf file and produce a croped raw ivf file using the input size parameters.", 2);
         return 1;
     }
 
     return 0;
 }
-void FormatSummaryByTest(char *InputFileNameCharAr, int DeleteOldFile)
+void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile)
 {
     cout << "\n Formating Summary file.\n";
     string InputFileName = InputFileNameCharAr;
@@ -3283,7 +2059,7 @@ void FormatSummaryByTest(char *InputFileNameCharAr, int DeleteOldFile)
     return;
 
 }
-void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
+void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldFile)
 {
     cout << "\n Formating Summary file.\n";
 
@@ -3294,7 +2070,7 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
     SummaryByTestOutput.append("_Expanded.txt");
 
     char TestsRunChar[255];
-    FolderName(InputFileNameCharAr, TestsRunChar);
+    vpxt_folder_name(InputFileNameCharAr, TestsRunChar);
     string TestsRun = TestsRunChar;
     TestsRun.append("TestsRun.txt");
 
@@ -3839,7 +2615,7 @@ void FormatSummaryByTestandResult(char *InputFileNameCharAr, int DeleteOldFile)
     return;
 
 }
-void ShowHiddenCmds()
+void show_hidden_cmds()
 {
     printf("\n\n"
            "    Hidden Commands \n"
@@ -3884,18 +2660,13 @@ int  main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        OnErrorOutPut();
+        on_error_output();
         return 0;
     }
 
-#ifdef DSHOW
-    snprintf(TesterExePath, 255, "%s", argv[0]);
-    //strcpy(TesterExePath, argv[0]);
-#endif
-
     string EmptyAr[1];
     char WorkingDirChar[256]  = "";
-    CreateWorkingFolder(argc, argv, WorkingDirChar);
+    create_working_folder(argc, argv, WorkingDirChar);
     string WorkingDir = "";
     WorkingDir.append(WorkingDirChar);
     string TestInputString(argv[1]);
@@ -3920,18 +2691,18 @@ int  main(int argc, char *argv[])
 
     if (TestInputString1.compare("Help") == 0 || TestInputString1.compare("HELP") == 0  || TestInputString1.compare("help") == 0)
     {
-        OnErrorOutPut();
-        FormatedPrint("To run tests input the number to the left of the test name along with test specific input.  To obtain more information about a specific test or utility input the number of the test or the utility name you wish to inquire about followed by \"help\".", 2);
+        on_error_output();
+        formated_print("To run tests input the number to the left of the test name along with test specific input.  To obtain more information about a specific test or utility input the number of the test or the utility name you wish to inquire about followed by \"help\".", 2);
         return 0;
     }
 
     if (TestInputString2.compare("Help") == 0 || TestInputString2.compare("HELP") == 0  || TestInputString2.compare("help") == 0)
     {
-        int ToolHelpCheck = ToolHelp(TestInputString1);
+        int ToolHelpCheck = tool_help(TestInputString1);
 
         if (!ToolHelpCheck)
         {
-            TestHelp(argc, argv, WorkingDir);
+            test_help(argc, argv, WorkingDir);
         }
 
         return 0;
@@ -3943,16 +2714,16 @@ int  main(int argc, char *argv[])
     if (TestInputString.compare("TestPrint") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         cout << "\n";
-        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 1);
+        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 1);
         cout << "\n";
-        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 2);
+        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 2);
         cout << "\n";
-        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 3);
+        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 3);
         cout << "\n";
-        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 4);
+        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 4);
         cout << "\n";
         cout << "\n";
-        FormatedPrint("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 5);
+        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 5);
         cout << "\n";
         cout << "\n";
         return 0;
@@ -3986,7 +2757,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        IVFCheckPBMThreshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
+        vpxt_ivf_check_pbm_threshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
 
         return 0;
     }
@@ -4017,13 +2788,13 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("CompIVFHeader") == 0)                  //Compares the Headers of two ivf files
     {
-        CompareIVFHeaderInfo(argc, argv);
+        vpxt_compare_ivf_header_info(argc, argv);
         return 0;
     }
 
     if (TestInputString.compare("DispIVFHeader") == 0)                  //Displays the header contents of an ivf file
     {
-        DisplayIVFHeaderInfo(argc, argv);
+        vpxt_display_ivf_header_info(argc, argv);
         return 0;
     }
 
@@ -4035,7 +2806,7 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("CreateSampleTextFiles") == 0)          //Creates sample text files that include quick test and other templates
     {
-        PrintTxtFiles(WorkingDir);
+        print_quick_test_files(WorkingDir);
         return 0;
     }
 
@@ -4053,7 +2824,7 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("PasteIVF") == 0)                           //Modifies an ivf files size
     {
-        PasteIVF(argc, argv);
+        vpxt_paste_ivf(argc, argv);
         return 0;
     }
 
@@ -4069,7 +2840,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        int resizedframes = IVFDisplayResizedFrames(argv[2], atoi(argv[3]));
+        int resizedframes = vpxt_display_resized_frames(argv[2], atoi(argv[3]));
         printf("\nResized Frames Found: %i\n", resizedframes);
         return 0;
     }
@@ -4086,7 +2857,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        int droppedframes = IVFDisplayDropedFrames(argv[2], atoi(argv[3]));
+        int droppedframes = vpxt_display_droped_frames(argv[2], atoi(argv[3]));
         printf("\nDropped Frames Counted: %i \n\n (Num is aprox as any frame droped after last encoded frame cannot be counted)\n", droppedframes);
         return 0;
     }
@@ -4103,7 +2874,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        int visframenum = IVFDisplayVisibleFrames(argv[2], atoi(argv[3]));
+        int visframenum = vpxt_display_visible_frames(argv[2], atoi(argv[3]));
         printf("\nVisible Frames Found: %i\n", visframenum);
 
         return 0;
@@ -4121,7 +2892,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        int altrefframes = IVFDisplayAltRefFrames(argv[2], atoi(argv[3]));
+        int altrefframes = vpxt_display_alt_ref_frames(argv[2], atoi(argv[3]));
         printf("\nAlternate Reference Frames Found: %i\n", altrefframes);
         return 0;
     }
@@ -4138,7 +2909,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        int keyframecount = IVFDisplayKeyFrames(argv[2], atoi(argv[3]));
+        int keyframecount = vpxt_display_key_frames(argv[2], atoi(argv[3]));
         printf("\nKey Frames Found: %i\n", keyframecount);
         return 0;
     }
@@ -4154,7 +2925,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        IVFDisplayAltRefFrames(argv[2], 0);
+        vpxt_display_alt_ref_frames(argv[2], 0);
         return 0;
     }
 
@@ -4172,10 +2943,10 @@ int  main(int argc, char *argv[])
 
         /*argv3int = 0;
         safe_strto32(argv[3], &argv3int);
-        FormatSummaryByTest(argv[2], argv3int);*/
+        format_summary_by_test(argv[2], argv3int);*/
 
 
-        FormatSummaryByTest(argv[2], atoi(argv[3]));
+        format_summary_by_test(argv[2], atoi(argv[3]));
         return 0;
     }
 
@@ -4192,7 +2963,7 @@ int  main(int argc, char *argv[])
             return 0;
         }
 
-        FormatSummaryByTestandResult(argv[2], atoi(argv[3]));
+        format_summary_by_test_and_result(argv[2], atoi(argv[3]));
         return 0;
     }
 
@@ -4215,7 +2986,7 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("PlayCompIVF") == 0)                        //Plays a compressed ivf file (Decodes the file to an ivf then converts that ivf to a raw then used tnmplay.exe to play that file.)
     {
-        PlayCompIVF(argc, argv);
+        Playvpxt_compare_ivf(argc, argv);
         return 0;
     }
 
@@ -4228,7 +2999,7 @@ int  main(int argc, char *argv[])
     ////////////////////Hidden Commands/////////////////////////
     if (TestInputString.compare("ShowHidden") == 0)                     //Shows Hidden Commands
     {
-        ShowHiddenCmds();
+        show_hidden_cmds();
         return 0;
     }
 
@@ -4246,13 +3017,13 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("CodeCoverage") == 0)                   //Preforms Code Coverage Tests for data coverage if enabled
     {
-        CodeCoverage(argc, argv, WorkingDir, EmptyAr);
+        code_coverage(argc, argv, WorkingDir, EmptyAr);
         return 0;
     }
 
     if (TestInputString.compare("CompareCodeCoverage") == 0)                //Compares New Code Coverage Results to Old Code Coverage Results and merges the files to an updated version
     {
-        CompareCodeCoverage(argc, argv);
+        Comparecode_coverage(argc, argv);
         return 0;
     }
 
@@ -4264,7 +3035,7 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("IVFDECTestVectorCheck") == 0)          //
     {
-        IVFDECTestVectorCheck(argc, argv);
+        IVFDECtest_vector_test(argc, argv);
         return 0;
     }
 
@@ -4288,13 +3059,13 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("PrintVersion") == 0)                   //Prints the internal version number - make sure all libs built in same multithreadedmode - properties  C++ CodeGen RuntimeLibrary
     {
-        PrintVersion();
+        print_version();
         return 0;
     }
 
     if (TestInputString.compare("Test0InputTextCheck") == 0)                //Checks to make sure a Multi Run Input file has the correct format
     {
-        Test0InputTextCheck(argv[2], 1);
+        vpxt_run_multiple_tests_input_check(argv[2], 1);
         return 0;
     }
 
@@ -4393,13 +3164,13 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("GraphPSNR") == 0)              //
     {
-        GraphPSNR(argc, argv, WorkingDir, EmptyAr, 1);
+        graph_psnr(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
     if (TestInputString.compare("RandIVFComp") == 0)                //
     {
-        RandComp(argc, argv, WorkingDir, EmptyAr, 1);
+        rand_comp(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
@@ -4437,7 +3208,7 @@ int  main(int argc, char *argv[])
     if (selector > 100 || selector < 0)
     {
 
-        OnErrorOutPut();
+        on_error_output();
         return 0;
     }
 
@@ -4446,7 +3217,7 @@ int  main(int argc, char *argv[])
         if (argc < 4)
         {
             printf(
-                "  ExternalTestRunner \n\n"
+                "  run_multipule_tests \n\n"
                 "    <Test Type>\n"
                 "      <1 - Create Files and Run Tests>\n"
                 "        <Input Text File>\n"
@@ -4465,7 +3236,7 @@ int  main(int argc, char *argv[])
 
         if (atoi(argv[2]) != 4 && atoi(argv[2]) != 3)
         {
-            VaildInput = Test0InputTextCheck(argv[3], 0);
+            VaildInput = vpxt_run_multiple_tests_input_check(argv[3], 0);
 
             if (VaildInput <= 0)
             {
@@ -4479,7 +3250,7 @@ int  main(int argc, char *argv[])
             inputCheck.append(argv[3]);
             inputCheck.append(slashCharStr().c_str());
             inputCheck.append("TestsRun.txt");
-            VaildInput = Test0InputTextCheck(inputCheck.c_str(), 0);
+            VaildInput = vpxt_run_multiple_tests_input_check(inputCheck.c_str(), 0);
 
             if (VaildInput <= 0)
             {
@@ -4488,7 +3259,7 @@ int  main(int argc, char *argv[])
             }
         }
 
-        ExternalTestRunner(argc, argv, WorkingDir.c_str(), VaildInput);
+        run_multiple_tests(argc, argv, WorkingDir.c_str(), VaildInput);
 
         string SummaryFile = WorkingDir;
 
@@ -4499,7 +3270,7 @@ int  main(int argc, char *argv[])
             SummaryFile.append(slashCharStr());
             SummaryFile.append("Mode1Results.txt");
             snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            FormatSummaryByTestandResult(SummaryFileChar, 0);
+            format_summary_by_test_and_result(SummaryFileChar, 0);
             return 0;
         }
 
@@ -4511,7 +3282,7 @@ int  main(int argc, char *argv[])
             SummaryFile.append(slashCharStr());
             SummaryFile.append("Mode2Results.txt");
             snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            FormatSummaryByTestandResult(SummaryFileChar, 0);
+            format_summary_by_test_and_result(SummaryFileChar, 0);
             return 0;
         }
 
@@ -4572,7 +3343,7 @@ int  main(int argc, char *argv[])
                 SummaryFile.append(slashCharStr());
                 SummaryFile.append("Mode1Results.txt");
                 snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-                FormatSummaryByTestandResult(SummaryFileChar, 0);
+                format_summary_by_test_and_result(SummaryFileChar, 0);
                 return 0;
             }
 
@@ -4583,7 +3354,7 @@ int  main(int argc, char *argv[])
                 SummaryFile.append(slashCharStr());
                 SummaryFile.append("Mode3Results.txt");
                 snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-                FormatSummaryByTestandResult(SummaryFileChar, 0);
+                format_summary_by_test_and_result(SummaryFileChar, 0);
             }
         }
 
@@ -4592,191 +3363,191 @@ int  main(int argc, char *argv[])
 
     if (selector == AlWDFNUM)
     {
-        return AllowDF(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_allow_drop_frames(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ALWLGNUM)
     {
-        return AllowLagTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_allow_lag(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ALWSRNUM)
     {
-        return AllowSpatialResamplingTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_allow_spatial_resampling(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == AUTKFNUM)
     {
-        return AutoKeyFramingWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_auto_key_frame(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == BUFLVNUM)
     {
-        return BufferLevelWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_buffer_level(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == CPUDENUM)
     {
-        return CPUDecOnlyWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_change_cpu_dec(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == CHGWRNUM)
     {
-        return ChangeCPUWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_change_cpu_enc(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == DFWMWNUM)
     {
-        return DFWM(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_drop_frame_watermark(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == DTARTNUM)
     {
-        return DataRateTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_data_rate(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == DBMRLNUM)
     {
-        return DebugMatchesRelease(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_debug_matches_release(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ENCBONUM)
     {
-        return EncoderBreakOut(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_encoder_break_out(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == ERRMWNUM)
     {
-        return ErrorRes(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_error_resolution(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == EXTFINUM)
     {
-        return ExtraFileCheck(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_extra_file(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == FIXDQNUM)
     {
-        return FixedQ(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_fixed_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == FKEFRNUM)
     {
-        return ForceKeyFrameWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_force_key_frame(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == FRSZTNUM)
     {
-        return FrameSizeTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_frame_size(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == GQVBQNUM)
     {
-        return GoodQvBestQ(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_good_vs_best(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == LGIFRNUM)
     {
-        return LagInFramesTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_lag_in_frames(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MAXQUNUM)
     {
-        return MaxQTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_max_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MEML1NUM)
     {
-        return MemLeakCheck(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_mem_leak(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MEML2NUM)
     {
-        return MemLeakCheck2(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_mem_leak2(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MINQUNUM)
     {
-        return MinQTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_min_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == MULTTNUM)
     {
-        return MultiThreadedTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_multithreaded(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == NVOPSNUM)
     {
-        NewVsOldPSNR(argc, argv, WorkingDir, EmptyAr, 1);
+        test_new_vs_old_psnr(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
     if (selector == NVORTNUM)
     {
-        return NewVsOldRealTimeSpeed(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_new_vs_old_real_time_speed(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == NOISENUM)
     {
-        return NoiseSensitivityWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_noise_sensitivity(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == OV2PSNUM)
     {
-        return OnePassVsTwoPass(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_one_pass_vs_two_pass(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == PLYALNUM)
     {
-        return PlayAlternate(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_play_alternate(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == POSTPNUM)
     {
-        return PostProcessorWorks(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_post_processor(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == RECONBUF)
     {
-        return ReconBuffer(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_reconstruct_buffer(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == RSDWMNUM)
     {
-        return ResampleDownWaterMark(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_resample_down_watermark(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == SPEEDNUM)
     {
-        return SpeedTest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_speed(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == TVECTNUM)
     {
-        return TestVectorCheck(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_vector_test(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == TV2BTNUM)
     {
-        return TwoPassVsTwoPassBest(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_two_pass_vs_two_pass_best(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == UNDSHNUM)
     {
-        return UnderShoot(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_undershoot(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == VERSINUM)
     {
-        return Version(argc, argv, WorkingDir, EmptyAr, 1);
+        return version_test(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == WMLMMNUM)
     {
-        return WinLinMacMatch(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_win_lin_mac_match(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
-    OnErrorOutPut();
+    on_error_output();
     return 0;
 
 }

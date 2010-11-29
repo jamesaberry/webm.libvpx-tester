@@ -136,7 +136,7 @@ extern "C" TOKENEXTRABITS vp8d_token_extra_bits2[12];
 //} nearB[3];
 /////////////////////////////////////////////////////////////////////////////////
 #endif
-int code_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[])
+int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[])
 {
 
     //DATA COVERED AS OF 05-23-2010
@@ -210,7 +210,7 @@ int code_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[])
     {
         printf(
             "  CodeCoverage \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"

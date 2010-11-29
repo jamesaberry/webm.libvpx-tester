@@ -2,11 +2,15 @@
 
 int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
+
+    char *MyDir = "test_new_vs_old_psnr";
+
     if (!(argc == 7 || argc == 8))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  NewVsOldPSRN \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -19,7 +23,6 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
             "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
             "    <Optional Settings File>\n"
             "\n"
-
         );
         return 0;
     }
@@ -27,42 +30,20 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     char *input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
-    int ParFileNum = atoi(argv[6]);
     char ExeInput[255];
-
-    //#if defined(_WIN32)
-    //        {
     snprintf(ExeInput, 255, "%s", argv[5]);
-    //        }
-    //#elif defined(linux)
-    //        {
-    //            string ExeInputStr = argv[5];
-    //            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-    //        }
-    //#elif defined(__APPLE__)
-    //        {
-    //            string ExeInputStr = argv[5];
-    //            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-    //        }
-    //#elif defined(__POWERPC__)
-    //        {
-    //            string ExeInputStr = argv[5];
-    //            snprintf(ExeInput, 255, "%s", ExeInputStr.c_str());
-    //        }
-    //#endif
+    int ParFileNum = atoi(argv[6]);
+
+    int speed = 0;
+
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
-
+    string CurTestDirStr = "";
     string ExeString = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-    char WorkingDir3[255] = "";
-    char *MyDir = "NewVsOldPSNR";
-    string MainDirString = "";
-    char File1[255] = "";
-
-
-    //////////////////////////////////////////////////////////////////////
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
     char ExeChar[1024];
@@ -79,18 +60,23 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 #endif
 
     //////////////////////////////////////////////
-    string NewEncFile = WorkingDirString;
-    string OldEncFile = WorkingDirString;
-    string ParFile = WorkingDirString;
+    string NewEncFile = CurTestDirStr;
+    NewEncFile.append(slashCharStr());
+    NewEncFile.append(MyDir);
+    NewEncFile.append("_compression_new.ivf");
+
+    string OldEncFile = CurTestDirStr;
+    OldEncFile.append(slashCharStr());
+    OldEncFile.append(MyDir);
+    OldEncFile.append("_compression_old.ivf");
+
+    string ParFile = CurTestDirStr;
+    ParFile.append(slashCharStr());
+    ParFile.append(MyDir);
+    ParFile.append("_parameter_file.txt");
+
     string Program = ExeString;
     string FPF_Program = "";
-
-    NewEncFile.append(slashCharStr());
-    NewEncFile.append("outputVP8New.ivf");
-    OldEncFile.append(slashCharStr());
-    OldEncFile.append("outputVP8Old.ivf");
-    ParFile.append(slashCharStr());
-    ParFile.append("ParFile.txt");
 
 #if defined(_WIN32)
     {
@@ -127,16 +113,14 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
-
-    cout << "TextfileString: " << TextfileString.c_str() << "\n";
 
     FILE *fp;
 
@@ -149,25 +133,16 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int speed = 0;
-
-
-    tprintf("New Vs Old PSNR Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -178,9 +153,9 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -192,9 +167,9 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     if (!vpxt_file_exists_check(argv[5]))
     {
         tprintf("\nInput executable %s does not exist\n", argv[5]);
+
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
@@ -204,7 +179,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     opt.auto_key = 1;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -217,8 +192,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
             if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
 
@@ -244,8 +218,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
             if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
 
@@ -273,8 +246,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
             if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
 
@@ -296,8 +268,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
                 if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
@@ -338,8 +309,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
                 if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
@@ -370,8 +340,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
                 if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
@@ -412,8 +381,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
                 if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0) == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
@@ -436,30 +404,31 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
     if (vpxt_file_size(OldEncFile.c_str(), 0) == 0)
     {
         tprintf("\nError - Old File Incorrect\n");
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+
+        fclose(fp);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     //////////////////////////////////////////////Input OLD PSNR//////////////////////////////////////////////
-    char TimeTextFile[256];
+    //char TimeTextFile[256];
+    //vpxt_folder_name(NewEncFile.c_str(), TimeTextFile);
+    //string TimeTextFileStr = TimeTextFile
 
-    vpxt_folder_name(NewEncFile.c_str(), TimeTextFile);
-    string TimeTextFileStr = TimeTextFile;
-
-    TimeTextFileStr.append("outputVP8Old_OLD_PSNR.txt");
+    string TimeTextFileStr = OldEncFile;
+    TimeTextFileStr.erase(TimeTextFileStr.length() - 4, 4);
+    TimeTextFileStr.append("_psnr.txt");
 
     float PSNROLD;
     ifstream infile(TimeTextFileStr.c_str());
@@ -482,54 +451,37 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
     if (PSNRArr[0] > PSNRArr[1])
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "New PSNR: %.2f > Old PSNR: %.2f - Passed", PSNRArr[0], PSNRArr[1]);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
-        tprintf("\n");
+        vpxt_formated_print(RESPRT, "New PSNR: %.2f > Old PSNR: %.2f - Passed", PSNRArr[0], PSNRArr[1]);
 
-        tprintf("\nPassed\n");
+        tprintf("\n\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
 
     if (PSNRArr[0] <= PSNRArr[1] + (PSNRArr[1] * 0.005) && PSNRArr[0] >= PSNRArr[1] - (PSNRArr[1] * 0.005))
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "New PSNR: %.2f is with in 1/2%% of old: %.2f - Min Passed", PSNRArr[0], PSNRArr[1]);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "New PSNR: %.2f is with in 1/2%% of old: %.2f - Min Passed", PSNRArr[0], PSNRArr[1]);
 
-        tprintf("\n");
-        tprintf("\nMin Passed\n");
+        tprintf("\n\nMin Passed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 8;
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "New PSNR: %.2f < Old PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[1]);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "New PSNR: %.2f < Old PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[1]);
 
-        tprintf("\n");
-        tprintf("\n New PSNR: %.2f lower than Old PSNR: %.2f - Failed\n", PSNRArr[0], PSNRArr[1]);
-        tprintf("\nFailed\n");
+        tprintf("\n\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

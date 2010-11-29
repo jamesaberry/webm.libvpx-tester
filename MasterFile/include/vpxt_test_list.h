@@ -40,5 +40,5 @@ extern int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[
 extern int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);

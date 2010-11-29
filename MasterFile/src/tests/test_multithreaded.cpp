@@ -2,13 +2,40 @@
 
 int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "MultiThreaded";
+    char *CompressString = "Multithreaded";
+    char *MyDir = "test_multithreaded";
 
     if (!(argc == 7 || argc == 6))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  MultiThreadedTest \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "    <Target Bit Rate>\n"
+            "    <Number of Cores to Use>\n"
+            "     <Optional Settings File>\n"
+            "\n"
+        );
+        return 0;
+    }
+
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+    unsigned int CoreCount = atoi(argv[5]);
+
+    int MultiThreaded = 0;
+    unsigned int Time1;
+    unsigned int Time2;
+
+    if (Mode != 0 && Mode != 1)
+    {
+        printf(
+            "  test_multithreaded \n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -19,40 +46,31 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
         return 0;
     }
 
-    char *input = argv[2];
-
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "MultiThreadedTest";
-    string MainDirString = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string MultiThreadedOnOutFile = WorkingDirString;
-    string MultiThreadedOffOutFile = WorkingDirString;
-
+    string MultiThreadedOnOutFile = CurTestDirStr;
     MultiThreadedOnOutFile.append(slashCharStr());
-    MultiThreadedOnOutFile.append("MultiThreadedOnOutput.ivf");
+    MultiThreadedOnOutFile.append(MyDir);
+    MultiThreadedOnOutFile.append("_compression_1.ivf");
+
+    string MultiThreadedOffOutFile = CurTestDirStr;
     MultiThreadedOffOutFile.append(slashCharStr());
-    MultiThreadedOffOutFile.append("MultiThreadedOffOutput.ivf");
-
-    //char MultiThreadedOnOutFile[255];
-    //char MultiThreadedOffOutFile[255];
-
-    //snprintf(MultiThreaded14OutFile, 255, "%s", WorkingDir4.c_str());
-    //snprintf(MultiThreaded00OutFile, 255, "%s", WorkingDir5.c_str());
+    MultiThreadedOffOutFile.append(MyDir);
+    MultiThreadedOffOutFile.append("_compression_0.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -68,27 +86,16 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int MultiThreaded = 0;
-    int BitRate = atoi(argv[4]);
-    unsigned int CoreCount = atoi(argv[5]);//VPX_GetProcCoreCount();
-
-    unsigned int Time1;
-    unsigned int Time2;
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     if (!(CoreCount > 1))
     {
@@ -96,26 +103,6 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
         fclose(fp);
         return 0;
     }
-
-    int Mode = atoi(argv[3]);
-
-    if (Mode != 0 && Mode != 1)
-    {
-        printf(
-            "  MultiThreadedTest \n\n"
-            "    <inputfile>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "    <Target Bit Rate>\n"
-            "    <Number of Cores to Use>\n"
-            "     <Optional Settings File>\n"
-        );
-        fclose(fp);
-        return 0;
-    }
-
-    tprintf("MultiThreaded Test");
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -126,9 +113,9 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -142,7 +129,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     opt.end_usage = 0;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         Time1 = vpxt_time_return(MultiThreadedOnOutFile.c_str(), 0);
         Time2 = vpxt_time_return(MultiThreadedOffOutFile.c_str(), 0);
@@ -160,8 +147,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
             if (Time1 == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
 
@@ -173,8 +159,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
             if (Time2 == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
         }
@@ -189,8 +174,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
             if (Time1 == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
 
@@ -202,20 +186,18 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
             if (Time2 == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -229,54 +211,38 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if (Time1 < Time2)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "%s time: %u < %s time2: %u - Passed", Time1FileName, Time1, Time2FileName, Time2);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
-        tprintf("\n");
+        vpxt_formated_print(RESPRT, "%s time: %u < %s time2: %u - Passed", Time1FileName, Time1, Time2FileName, Time2);
 
-        tprintf("\nPassed\n");
+        tprintf("\n\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
 
     if (Time1 == Time2)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "%s time: %u == %s time: %u - Indeterminate", Time1FileName, Time1, Time2FileName, Time2);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
-        tprintf("\n");
+        vpxt_formated_print(RESPRT, "%s time: %u == %s time: %u - Indeterminate", Time1FileName, Time1, Time2FileName, Time2);
 
-        tprintf("\nIndeterminate\n");
+        tprintf("\n\nIndeterminate\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
     if (Time1 > Time2)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "%s time: %u > %s time: %u - Failed", Time1FileName, Time1, Time2FileName, Time2);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
-        tprintf("\n");
+        vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed", Time1FileName, Time1, Time2FileName, Time2);
 
-        tprintf("\nFailed\n");
+        tprintf("\n\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

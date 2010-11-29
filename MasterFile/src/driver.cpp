@@ -1,13 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "vpxt_test_definitions.h"
+#include "vpxt_test_list.h"
+#include "utilities.h"
+#include "driver.h"
+#include "tools.h"
 #include <iostream>
 #include <fstream>
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-#include "vpxt_test_list.h"
-#include "utilities.h"
-#include "tools.h"
 using namespace std;
 
 #if defined(_WIN32)
@@ -15,17 +16,7 @@ using namespace std;
 #include <tchar.h>
 #include <direct.h>
 #define snprintf _snprintf
-#elif defined(linux)
-#include <stddef.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <dirent.h>
-#elif defined(__APPLE__)
-#include <stddef.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <dirent.h>
-#elif defined(__POWERPC__)
+#else
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -33,7 +24,7 @@ using namespace std;
 #endif
 
 //CodeCoverage
-extern int code_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
+extern int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
 
 int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 {
@@ -85,7 +76,7 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
     {
         number++;
         char numberChar[255];
-        vpx_itoa_custom(number, numberChar, 10);
+        vpxt_itoa_custom(number, numberChar, 10);
 
         FolderCheck = Folder;
         FolderCheck.append("_");
@@ -95,7 +86,7 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
     if (number != 0) //append sub number to end of folder name
     {
         char numberChar[255];
-        vpx_itoa_custom(number + 1, numberChar, 10);
+        vpxt_itoa_custom(number + 1, numberChar, 10);
 
         Folder.append("_");
         Folder.append(numberChar);
@@ -140,53 +131,97 @@ string date_string()
     return DateAndTime3;
 
 }
-void on_error_output()
+void vpxt_on_error_output()
 {
-    printf("\n"
-           "Instructions for Use\n"
+    /*printf("\n"
+           "Usage: Tester.exe <options> \n"
            "\n"
-           " VP8 Test Program\n"
-           "\n"
-           "  <Test Number>                          Tools\n"
+           "  <tests options>         \n"
+           "                          \n"
+           "   (0) run_multiple_tests <test type> <input file>\n"
+           "   (1) test_allow_drop_frames <input file> <compression mode> <target bit rate>\n"
+           "   (2) test_allow_lag  <input file> <compression mode> <target bit rate>\n"
+           "   (3) test_allow_spatial_resampling <input file> <compression mode> <target bit rate>\n"
+           "   (4) test_auto_key_frame <input file> <compression mode> <target bit rate> <key frame frequency>\n"
+           "   (5) test_buffer_level <input file> <compression mode> <target bit rate>\n"
+           "   (6) test_change_cpu_dec <input file> <compression mode> <target bit rate> <version>\n"
+           "   (7) test_change_cpu_enc <input file> <compression mode> <target bit rate> <version>\n"
+           "   (8) test_data_rate <input file> <compression mode> <target bit rate>\n"
+           "   (9) test_debug_matches_release <input file> <compression mode> <target bit rate> <debug.exe> <release.exe>\n"
+           "  (10) test_drop_frame_watermark <input file> <compression mode> <target bit rate>\n"
+           "  (11) test_encoder_break_out <input file> <compression mode> <target bit rate>\n"
+           "  (12) test_error_resolution <input file> <compression mode> <target bit rate>\n"
+           "  (13) test_extra_file <input file>\n"
+           "  (14) test_fixed_quantizer <input file> <compression mode> <target bit rate> <fixed q1> <fixed q2>\n"
+           "  (15) test_force_key_frame <input file> <compression mode> <target bit rate> <force key frame>\n"
+           "  (16) test_frame_size <input file> <compression mode> <target bit rate> <starting width> <starting height>\n"
+           "  (17) test_good_vs_best <input file> <target bit rate>\n"
+           "  (18) test_lag_in_frames <input file> <compression mode> <target bit rate> <lag in frames 1> <lag in frames 2>\n"
+           "  (19) test_max_quantizer <input file> <compression mode> <target bit rate>\n"
+           "  (20) test_mem_leak <input file> <compression mode> <target bit rate> <debug.exe>\n"
+           "  (21) test_mem_leak2 <debug.exe> <decode test files>\n"
+           "  (22) test_min_quantizer <input file> <compression mode> <target bit rate>\n"
+           "  (23) test_multithreaded <input file> <compression mode> <target bit rate> <number of cores to use>\n"
+           "  (24) test_new_vs_old_psnr <input file> <compression mode> <target bit rate> <old_release.exe> <par version>\n"
+           "  (25) test_new_vs_old_real_time_speed <input file> <target bit rate> <old_release.exe> <par version>\n"
+           "  (26) test_noise_sensitivity <input file> <compression mode> <target bit rate>\n"
+           "  (27) test_one_pass_vs_two_pass <input file> <target bit rate>\n"
+           "  (28) test_play_alternate <input file> <compression mode> <target bit rate>\n"
+           "  (29) test_post_processor <input file> <compression mode> <target bit rate>\n"
+           "  (30) test_reconstruct_buffer <input file> <compression mode> <target bit rate>\n"
+           "  (31) test_resample_down_watermark <input file> <compression mode> <target bit rate>\n"
+           "  (32) test_speed <input file> <compression mode> <target bit rate> <lag in frames>\n"
+           "  (33) test_test_vector <input directory>\n"
+           "  (34) test_two_pass_vs_two_pass_best <input file> <target bit rate>\n"
+           "  (35) test_undershoot <input file> <compression mode> <target bit rate>\n"
+           "  (36) test_version <input file> <compression mode> <target bit rate>\n"
+           "  (37) test_win_lin_mac_match <input file> <compression mode> <target bit rate> <common folder> <common settings>\n"
            "                                           \n"
-           "   (0)RunTestsFromFile                     IVFEnc\n"
-           "   (1)AllowDropFrames                      IVFDec\n"
-           "   (2)AllowLagTest                         IVF2IVFCompr\n"
-           "   (3)AllowSpatialResampling               IVF2IVFDec\n"
-           "   (4)AutoKeyFramingWorks                  IVF2RawDec\n"
-           "   (5)BufferLevelWorks                     \n"
-           "   (6)CPUDecOnlyWorks                      IVFDataRate\n"
-           "   (7)ChangeCPUWorks                       IVFPSNR\n"
-           "   (8)DropFramesWaterMarkWorks             IVFCheckPBM\n"
-           "   (9)DataRateTest                         \n"
-           "  (10)DebugMatchesRelease                  Raw2IVF\n"
-           "  (11)EncoderBreakOut                      IVF2Raw\n"
-           "  (12)ErrorResilientModeWorks              IVF2RawFrames\n"
-           "  (13)ExtraFileCheck                       CombineIndvFrames\n"
-           "  (14)FixedQ                               \n"
-           "  (15)ForceKeyFrameWorks                   CompareIVF\n"
-           "  (16)FrameSizeTest                        CompIVFHeader\n"
-           "  (17)GoodQualityVsBestQuality             DispIVFHeader\n"
-           "  (18)LagInFramesTest                      \n"
-           "  (19)MaxQuantizerTest                     DispKeyFrames\n"
-           "  (20)MemLeakCheck                         DispResizedFrames\n"
-           "  (21)MemLeakCheck2                        DispVisibleFrames\n"
-           "  (22)MinQuantizerTest                     DispAltRefFrames\n"
-           "  (23)MultiThreadedTest                    \n"
-           "  (24)NewVsOldPSNR                         CropRawIVF\n"
-           "  (25)NewVsOldRealTimeSpeed                CutIVF\n"
-           "  (26)NoiseSensitivityWorks                PasteIVF\n"
-           "  (27)OnePassVsTwoPass                     \n"
-           "  (28)PlayAlternate                        PlayDecIVF\n"
-           "  (29)PostProcessorWorks                   PlayCompIVF\n"
-           "  (30)ReconBuffer                          \n"
-           "  (31)ResampleDownWaterMark                CreateSampleTextFiles\n"
-           "  (32)SpeedTest                            PrintVersion\n"
-           "  (33)TestVectorCheck                      \n"
-           "  (34)TwoPassVsTwoPassBest                 RandParFile\n"
-           "  (35)UnderShoot                           RandIVFComp\n"
-           "  (36)Version                              GraphPSNR\n"
-           "  (37)WinLinMacMatch                       Help\n"
+          );*/
+
+    printf("\n"
+           "Usage: Tester.exe <options> \n"
+           "\n"
+           "  <tests options>                          <tool options>\n"
+           "                                            \n"
+           "   (0) run_multiple_tests                   IVFEnc\n"
+           "   (1) test_allow_drop_frames               IVFDec\n"
+           "   (2) test_allow_lag                       IVF2IVFCompr\n"
+           "   (3) test_allow_spatial_resampling        IVF2IVFDec\n"
+           "   (4) test_auto_key_frame                  IVF2RawDec\n"
+           "   (5) test_buffer_level                    \n"
+           "   (6) test_change_cpu_dec                  IVFDataRate\n"
+           "   (7) test_change_cpu_enc                  IVFPSNR\n"
+           "   (8) test_data_rate                       IVFCheckPBM\n"
+           "   (9) test_debug_matches_release           \n"
+           "  (10) test_drop_frame_watermark            Raw2IVF\n"
+           "  (11) test_encoder_break_out               IVF2Raw\n"
+           "  (12) test_error_resolution                IVF2RawFrames\n"
+           "  (13) test_extra_file                      CombineIndvFrames\n"
+           "  (14) test_fixed_quantizer                 \n"
+           "  (15) test_force_key_frame                 CompareIVF\n"
+           "  (16) test_frame_size                      CompIVFHeader\n"
+           "  (17) test_good_vs_best                    DispIVFHeader\n"
+           "  (18) test_lag_in_frames                   \n"
+           "  (19) test_max_quantizer                   DispKeyFrames\n"
+           "  (20) test_mem_leak                        DispResizedFrames\n"
+           "  (21) test_mem_leak2                       DispVisibleFrames\n"
+           "  (22) test_min_quantizer                   DispAltRefFrames\n"
+           "  (23) test_multithreaded                   \n"
+           "  (24) test_new_vs_old_psnr                 CropRawIVF\n"
+           "  (25) test_new_vs_old_real_time_speed      CutIVF\n"
+           "  (26) test_noise_sensitivity               PasteIVF\n"
+           "  (27) test_one_pass_vs_two_pass            \n"
+           "  (28) test_play_alternate                  PlayDecIVF\n"
+           "  (29) test_post_processor                  PlayCompIVF\n"
+           "  (30) test_reconstruct_buffer              \n"
+           "  (31) test_resample_down_watermark         CreateSampleTextFiles\n"
+           "  (32) test_speed                           PrintVersion\n"
+           "  (33) test_test_vector                     \n"
+           "  (34) test_two_pass_vs_two_pass_best       RandParFile\n"
+           "  (35) test_undershoot                      RandIVFComp\n"
+           "  (36) test_version                         GraphPSNR\n"
+           "  (37) test_win_lin_mac_match               Help\n"
            "                                           \n"
           );
 }
@@ -222,158 +257,158 @@ void write_32bit_quick_test(string WorkingDir)
     fprintf(fp5, "%%              \n");
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf\n", EXTFINUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", GQVBQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", MEML2NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVORTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", OV2PSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cTestVectors\n", TVECTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", TV2BTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", WMLMMNUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf\n", "test_extra_file", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_good_vs_best", slashChar(), slashChar());
+    fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_real_time_speed", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cTestVectors\n", "test_test_vector", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", "test_win_lin_mac_match", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2\n", MULTTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2\n", MULTTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@10\n", SPEEDNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@10\n", SPEEDNUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2\n", "test_multithreaded", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2\n", "test_multithreaded", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@10\n", "test_speed", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@10\n", "test_speed", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode0%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@6\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode1%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128\n", AlWDFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", CHGWRNUM, slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128\n", "test_allow_drop_frames", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode2%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode4%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ALWLGNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@10@24\n", LGIFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", PLYALNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_allow_lag", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@10@24\n", "test_lag_in_frames", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_play_alternate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode5%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ALWLGNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@10@24\n", LGIFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", PLYALNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_allow_lag", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@10@24\n", "test_lag_in_frames", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_play_alternate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
 
@@ -413,158 +448,158 @@ void write_64bit_quick_test(string WorkingDir)
     fprintf(fp5, "%%              \n");
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf\n", EXTFINUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", GQVBQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", MEML2NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVORTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", OV2PSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cTestVectors\n", TVECTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@128\n", TV2BTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", WMLMMNUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf\n", "test_extra_file", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_good_vs_best", slashChar(), slashChar());
+    fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_real_time_speed", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cTestVectors\n", "test_test_vector", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", "test_win_lin_mac_match", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2\n", MULTTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2\n", MULTTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@10\n", SPEEDNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@10\n", SPEEDNUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2\n", "test_multithreaded", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2\n", "test_multithreaded", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@10\n", "test_speed", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@10\n", "test_speed", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%Tests That For Multiple Modes Per input File%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode0%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@6\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@0@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@6\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode1%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128\n", AlWDFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", CHGWRNUM, slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@1@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128\n", "test_allow_drop_frames", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@1@..%cTestClips%cSpecialCaseParameterFiles%c1ChangeCPUWorksCPUUsage4.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode2%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@2@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode4%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ALWLGNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@10@24\n", LGIFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", PLYALNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@4@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_allow_lag", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@10@24\n", "test_lag_in_frames", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_play_alternate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode5%%%%\n");
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ALWLGNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ALWSRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@6\n", AUTKFNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", BUFLVNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CPUDENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@0\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@1\n", CHGWRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@288\n", DFWMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", DTARTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", DBMRLNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", ENCBONUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", ERRMWNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@20@60\n", FIXDQNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@24\n", FKEFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@176@144\n", FRSZTNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@10@24\n", LGIFRNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MAXQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", MEML1NUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", MINQUNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", NVOPSNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", NOISENUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", PLYALNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", POSTPNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RECONBUF, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", RSDWMNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", UNDSHNUM, slashChar(), slashChar());
-    fprintf(fp5, "%i@..%cTestClips%csrc16.ivf@5@128\n", VERSINUM, slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_allow_lag", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@0\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@1\n", "test_change_cpu_enc", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_error_resolution", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@24\n", "test_force_key_frame", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@10@24\n", "test_lag_in_frames", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_max_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_min_quantizer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_psnr", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_noise_sensitivity", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_play_alternate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_post_processor", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_reconstruct_buffer", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_resample_down_watermark", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_undershoot", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
 
@@ -579,141 +614,10 @@ void print_quick_test_files(string WorkingDir)
 
     return;
 }
-void formated_print(string SummaryStr, int selector)
+void vpxt_test_help(int argc, char *argv[], string WorkingDir)
 {
-
-    //selector == 1 -> Summary
-    //selector == 2 -> Help
-    //selector == 3 -> Function
-    //selector == 4 -> Other non formatted output
-    //selector == 5 -> Individual Pass Fail output
-
-    string SummaryStrOutput;
-    int EndOfLineLength = 0;
-
-    if (selector == 1 || selector == 2 || selector == 3) //add padding for formating
-    {
-        SummaryStrOutput.append("         ");
-    }
-
-    if (selector == 5) //add padding for formating
-    {
-        SummaryStrOutput.append(" * ");
-    }
-
-    //determine cut off to keep words whole
-    int Cutoff;
-
-    if (selector == 1 || selector == 2 || selector == 3)
-    {
-        Cutoff = 66;
-    }
-
-    if (selector == 4)
-    {
-        Cutoff = 79;
-    }
-
-    if (selector == 5)
-    {
-        Cutoff = 70;
-    }
-
-    int x = 0;
-
-    while (x + Cutoff < SummaryStr.length())
-    {
-
-
-        if (SummaryStr.substr(x + Cutoff + 1, 1).compare(" ") == 0 || SummaryStr.substr(x + Cutoff, 1).compare(" ") == 0)
-        {
-            Cutoff++;
-        }
-        else
-        {
-            while (SummaryStr.substr(x + Cutoff, 1).compare(" ") != 0)
-            {
-                Cutoff--;
-            }
-
-            Cutoff++;
-        }
-
-        //add the properly formated string to the output string
-        SummaryStrOutput.append(SummaryStr.substr(x, Cutoff));
-
-
-        if (selector == 1 || selector == 2 || selector == 3) //add padding for formating
-        {
-            SummaryStrOutput.append("\n         ");
-        }
-
-        if (selector == 5) //add padding for formating
-        {
-            SummaryStrOutput.append("\n   ");
-        }
-
-        x = x + Cutoff;
-
-        while (SummaryStr.substr(x, 1).compare(" ") == 0)
-        {
-            x++;
-        }
-
-        if (selector == 1 || selector == 2 || selector == 3)
-        {
-            Cutoff = 66;
-        }
-
-        if (selector == 4)
-        {
-            Cutoff = 79;
-        }
-
-        if (selector == 5)
-        {
-            Cutoff = 70;
-        }
-
-    }
-
-    SummaryStrOutput.append(SummaryStr.substr(x, SummaryStr.length() - x));
-
-    if (selector == 1)
-    {
-        printf("\n\nSummary:\n");
-        printf("%s\n\n", SummaryStrOutput.c_str());
-    }
-
-    if (selector == 2)
-    {
-        printf("\n\n  Help:\n");
-        printf("%s\n\n", SummaryStrOutput.c_str());
-    }
-
-    if (selector == 3)
-    {
-        printf("\n\nFunction:\n");
-        printf("%s\n\n", SummaryStrOutput.c_str());
-    }
-
-    if (selector == 4)
-    {
-        fprintf(stderr, "%s", SummaryStrOutput.c_str());
-    }
-
-    if (selector == 5)
-    {
-        tprintf("%s", SummaryStrOutput.c_str());
-    }
-
-    return;
-}
-void test_help(int argc, char *argv[], string WorkingDir)
-{
-
     string TestInputString = argv[1];
-    int selector = atoi(argv[1]);
+    int selector = vpxt_identify_test(argv[1]);
 
     if (TestInputString.compare("0") == 0)
     {
@@ -727,14 +631,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
             "    <Input Text File>\n"
             "    <Optional - Input Test Directory>\n");
 
-        formated_print("The test runs tests from an input file and summarizes the results. The test can be run in four modes: Mode 1 - Create compressions and run tests, Mode 2 - Create compressions only, Mode 3 - Run tests on preexisting compressions, and Mode 4 - Resume tests in progress. To create a template driver text file use the command: CreateSampleTextFiles.", 1);
+        vpxt_formated_print(HLPPRT, "The test runs tests from an input file and summarizes the results. The test can be run in four modes: Mode 1 - Create compressions and run tests, Mode 2 - Create compressions only, Mode 3 - Run tests on preexisting compressions, and Mode 4 - Resume tests in progress. To create a template driver text file use the command: CreateSampleTextFiles.");
     }
 
     if (selector == AlWDFNUM)
     {
         printf("\nUse:\n\n"
                "%2i AllowDF \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -746,7 +650,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , AlWDFNUM);
 
-        formated_print("The test creates two files; the first with Drop Frames on, the second with Drop Frames off. It then records and compares the number of frames each file has.  If Drop Frames on has fewer frames than Drop Frames off; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two files; the first with Drop Frames on, the second with Drop Frames off. It then records and compares the number of frames each file has.  If Drop Frames on has fewer frames than Drop Frames off; the test passes.");
 
     }
 
@@ -754,7 +658,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i AllowLag \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -766,14 +670,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , ALWLGNUM);
 
-        formated_print("The test creates two compressions; the first with Allow Lag equal to 0, the second with Allow Lag equal to 1.  If the correct number of lagged frames are detected via quantizer output, alternate reference frames exist for Allow Lag on, Allow Lag on has the same number of visible frames as Allow Lag off, and Allow Lag on is not identical to Allow Lag off; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions; the first with Allow Lag equal to 0, the second with Allow Lag equal to 1.  If the correct number of lagged frames are detected via quantizer output, alternate reference frames exist for Allow Lag on, Allow Lag on has the same number of visible frames as Allow Lag off, and Allow Lag on is not identical to Allow Lag off; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)");
     }
 
     if (selector == ALWSRNUM)
     {
         printf("\nUse:\n\n"
                "%2i AllowSpatialResampling \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -785,14 +689,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , ALWSRNUM);
 
-        formated_print("The test creates two files the first with Spatial Resampling off the second with Spatial Resampling on. The test then records the number of resized frames for each and computes the PSNR for Spatial Resampling on.  If the number of resized frames for Spatial Resampling on is greater than 0, the number of resized frames for Spatial Resampling off equals 0, and the PSNR calculated for Spatial Resampling on is greater than 15; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two files the first with Spatial Resampling off the second with Spatial Resampling on. The test then records the number of resized frames for each and computes the PSNR for Spatial Resampling on.  If the number of resized frames for Spatial Resampling on is greater than 0, the number of resized frames for Spatial Resampling off equals 0, and the PSNR calculated for Spatial Resampling on is greater than 15; the test passes.");
     }
 
     if (selector == AUTKFNUM)
     {
         printf("\nUse:\n\n"
                "%2i AutoKeyFramingWorks \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -804,7 +708,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , AUTKFNUM);
 
-        formated_print("The test creates two files with identical parameters setting Auto Key Frame equal to 6. The test then records the placement of each files key frames.  If both files key frames occur in identical locations and at least as frequently as Auto Key Frame dictates; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two files with identical parameters setting Auto Key Frame equal to 6. The test then records the placement of each files key frames.  If both files key frames occur in identical locations and at least as frequently as Auto Key Frame dictates; the test passes.");
 
     }
 
@@ -812,7 +716,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i BufferLevelWorks \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -824,7 +728,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , BUFLVNUM);
 
-        formated_print("The test creates a compression and runs CheckPBM on it.  If no buffer under run is detected; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates a compression and runs CheckPBM on it.  If no buffer under run is detected; the test passes.");
 
     }
 
@@ -832,7 +736,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i CPUDecOnlyWorks \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -845,7 +749,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , CPUDENUM);
 
-        formated_print("The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1). The test then compares the decompressions against one another.  If all decompressions are identical and the times to decompress them are not and all instruction sets are run; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates a compression of the user input version (0-3) and then decompresses it for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1). The test then compares the decompressions against one another.  If all decompressions are identical and the times to decompress them are not and all instruction sets are run; the test passes.");
 
     }
 
@@ -853,7 +757,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i ChangeCPUWorks \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -866,14 +770,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , CHGWRNUM);
 
-        formated_print("The test creates compressions of the user input version (0-3) for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1).  If all compressions are identical, compression times are not, and all instruction sets are run; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates compressions of the user input version (0-3) for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1).  If all compressions are identical, compression times are not, and all instruction sets are run; the test passes.");
     }
 
     if (selector == DFWMWNUM)
     {
         printf("\nUse:\n\n"
                "%2i DFWMTest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -885,7 +789,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , DFWMWNUM);
 
-        formated_print("The test creates 6 compressions with DFWM values of 100 80 60 40 20 and 0 and records their sizes.  If each successively lower DFWM compression has a equal or larger size than the previous the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates 6 compressions with DFWM values of 100 80 60 40 20 and 0 and records their sizes.  If each successively lower DFWM compression has a equal or larger size than the previous the test passes.");
 
     }
 
@@ -893,7 +797,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i DataRateTest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -905,7 +809,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , DTARTNUM);
 
-        formated_print("The test creates a compression and records it data rate.  If the compressions data rate is within 30% of the input target bandwidth; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates a compression and records it data rate.  If the compressions data rate is within 30% of the input target bandwidth; the test passes.");
 
     }
 
@@ -913,7 +817,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i DebugMatchesRelease \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -927,7 +831,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , DBMRLNUM);
 
-        formated_print("The test creates two compressions the first using an executable built using the newest release library, the second using an executable built using the newest debug library.  If the two compressions are identical; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions the first using an executable built using the newest release library, the second using an executable built using the newest debug library.  If the two compressions are identical; the test passes.");
 
     }
 
@@ -935,7 +839,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i EncoderBreakOut \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -947,14 +851,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , ENCBONUM);
 
-        formated_print("The test creates four compressions. The first with an EncodeBreakout of 0, the second with an EncodeBreakout of 100, the thrid with an EncodeBreakout of 500 and the fourth with an EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated.  If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are with in 2 dB the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive and if the PSNRs have greater than a 5 dB difference the test fails.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates four compressions. The first with an EncodeBreakout of 0, the second with an EncodeBreakout of 100, the thrid with an EncodeBreakout of 500 and the fourth with an EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated.  If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are with in 2 dB the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive and if the PSNRs have greater than a 5 dB difference the test fails.");
     }
 
     if (selector == ERRMWNUM)
     {
         printf("\nUse:\n\n"
                "%2i ErrorRes \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -965,7 +869,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "    <Target Bit Rate>\n "
                , ERRMWNUM);
 
-        formated_print("The test creates two compressions the first with Error Resilient Mode off the second on. The test then records their PSNR values.  If their PSNRs are with in 10% of one another the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions the first with Error Resilient Mode off the second on. The test then records their PSNR values.  If their PSNRs are with in 10% of one another the test passes.");
 
     }
 
@@ -973,18 +877,18 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i ExtraFileCheck \n\n"
-               "    <Inputfile>\n"
+               "    <Input File>\n"
                "     <Optional Settings File>\n"
                , EXTFINUM);
 
-        formated_print("The test creates a two pass compression and checks the current directory, the directory the executable is located in and the directory the output file is written to for extra files.  If no extra files are found the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates a two pass compression and checks the current directory, the directory the executable is located in and the directory the output file is written to for extra files.  If no extra files are found the test passes.");
     }
 
     if (selector == FIXDQNUM)
     {
         printf("\nUse:\n\n"
                "%2i FixedQ \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -998,14 +902,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , FIXDQNUM);
 
-        formated_print("The test creates two compressions each with user input Fixed Quantizers and records the quantizers used to encode each frame. The test then records the compressions sizes.  If all quantizers for each compression match the input Fixed Quantizer and the smaller quantizers compression has a larger file size; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions each with user input Fixed Quantizers and records the quantizers used to encode each frame. The test then records the compressions sizes.  If all quantizers for each compression match the input Fixed Quantizer and the smaller quantizers compression has a larger file size; the test passes.");
     }
 
     if (selector == FKEFRNUM)
     {
         printf("\nUse:\n\n"
                "%2i ForceKeyFrameWorks \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1018,7 +922,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , FKEFRNUM);
 
-        formated_print("The test creates a compression using a user input value for a Force Key Frame Interval. The compressor forces a key frame for every Force Key Frame Invervalith frame. The Test then records the placement of all key frames in the compression.  If key frames occur only when Force Key Frame dictates; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates a compression using a user input value for a Force Key Frame Interval. The compressor forces a key frame for every Force Key Frame Invervalith frame. The Test then records the placement of all key frames in the compression.  If key frames occur only when Force Key Frame dictates; the test passes.");
 
     }
 
@@ -1026,7 +930,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "  FrameSizeTest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1039,26 +943,26 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "    <Starting Height-must be a mult of 16>\n"
                "     <Optional Settings File>\n"
               );
-        formated_print("The test creates fourty-six cropped raw ivf files from a user input file, starting height and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs within five percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates fourty-six cropped raw ivf files from a user input file, starting height and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its psnr.  If all compressions psnrs within five percent of the starting width height files psnr and all psnrs are greater than 25 the test passes.");
     }
 
     if (selector == GQVBQNUM)
     {
         printf("\nUse:\n\n"
                "%2i GoodQvBestQ \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Target Bit Rate>\n"
                "     <Optional Settings File>\n"
                , GQVBQNUM);
 
-        formated_print("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the good quality curve and best quality curve.  If the area under the best quality curve is greater than the area under the good quality curve; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the good quality curve and best quality curve.  If the area under the best quality curve is greater than the area under the good quality curve; the test passes.");
     }
 
     if (selector == LGIFRNUM)
     {
         printf("\nUse:\n\n"
                "%2i LagInFrames \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1072,14 +976,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , LGIFRNUM);
 
-        formated_print("The test creates three compressions one with Allow Lag set to 0 the second and third with Allow Lag set to 1. The second compression uses the first user input Lag in Frames value for its Lag in frames and the third uses the second user input value for its Lag in Frames. The test outputs each files quantizer values for each encoded frame.  If none of the files are identical, the PSNRs of each successive file are within 10% of the last and the quantizer output shows that the proper number of frames were lagged; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
+        vpxt_formated_print(HLPPRT, "The test creates three compressions one with Allow Lag set to 0 the second and third with Allow Lag set to 1. The second compression uses the first user input Lag in Frames value for its Lag in frames and the third uses the second user input value for its Lag in Frames. The test outputs each files quantizer values for each encoded frame.  If none of the files are identical, the PSNRs of each successive file are within 10% of the last and the quantizer output shows that the proper number of frames were lagged; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)");
     }
 
     if (selector == MAXQUNUM)
     {
         printf("\nUse:\n\n"
                "%2i MaxQTest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1091,7 +995,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , MAXQUNUM);
 
-        formated_print("The test creates nine files the first with a WorstAllowedQ equal to 3 and each subsequent file with a WorstAllowedQ eight greater than the last until 63. The test records the individual quantizer values for each encoded frame.  If the PSNRs of each WorstAllowedQ compression from 3 to 63 increase as Worst AllowedQ decreases and the recorded quantizers for each file do not exceed their corresponding WorstAllowedQ for all compressions; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates nine files the first with a WorstAllowedQ equal to 3 and each subsequent file with a WorstAllowedQ eight greater than the last until 63. The test records the individual quantizer values for each encoded frame.  If the PSNRs of each WorstAllowedQ compression from 3 to 63 increase as Worst AllowedQ decreases and the recorded quantizers for each file do not exceed their corresponding WorstAllowedQ for all compressions; the test passes.");
 
     }
 
@@ -1099,7 +1003,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i MemLeakCheck \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1112,7 +1016,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , MEML1NUM);
 
-        formated_print("The Test creates a compression using the debug executable to check memory usage and records the results to an output file.  If no memory leaks are found the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The Test creates a compression using the debug executable to check memory usage and records the results to an output file.  If no memory leaks are found the test passes.");
     }
 
     if (selector == MEML2NUM)
@@ -1123,14 +1027,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "\n"
                , MEML2NUM);
 
-        formated_print("The test uses the debug executable to open and close 10,000 instances of the encoder and open and close 10,000 instance the decoder and then checks to make sure there are no memory leaks.  If there are no leaks the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test uses the debug executable to open and close 10,000 instances of the encoder and open and close 10,000 instance the decoder and then checks to make sure there are no memory leaks.  If there are no leaks the test passes.");
     }
 
     if (selector == MINQUNUM)
     {
         printf("\nUse:\n\n"
                "%2i MinQTest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1142,14 +1046,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , MINQUNUM);
 
-        formated_print("The test creates two files the first with a MinQ equal to 10 the second with a MinQ equal to 60 and records the quantizer used for each compressions frames.  If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding MinQ; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two files the first with a MinQ equal to 10 the second with a MinQ equal to 60 and records the quantizer used for each compressions frames.  If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding MinQ; the test passes.");
     }
 
     if (selector == MULTTNUM)
     {
         printf("\nUse:\n\n"
                "%2i MultiThreadedTest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1158,14 +1062,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , MULTTNUM);
 
-        formated_print("The test creates two compressions the first using a MultiThreaded equal to 2 the second using a MultiThreaded equal to 0. The test then compares the times to compress each.  If MultiThreaded 2 is faster than 0; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions the first using a MultiThreaded equal to 2 the second using a MultiThreaded equal to 0. The test then compares the times to compress each.  If MultiThreaded 2 is faster than 0; the test passes.");
     }
 
     if (selector == NVOPSNUM)
     {
         printf("\nUse:\n\n"
                "%2i NewVsOldPSRN \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1179,27 +1083,27 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "\n"
                , NVOPSNUM);
 
-        formated_print("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. It then computes and records PSNR values for each.  If new PSNR is greater than olds PSNR or is at least within 1% of the old; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. It then computes and records PSNR values for each.  If new PSNR is greater than olds PSNR or is at least within 1% of the old; the test passes.");
     }
 
     if (selector == NVORTNUM)
     {
         printf("\nUse:\n\n"
                "%2i NewVsOldRealTimeSpeed \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Target Bit Rate>\n"
                "    <Exe File To Compare>\n"
                "     <Optional Settings File>\n"
                , NVORTNUM);
 
-        formated_print("The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took.  If the new compressions time is at least 10% faster than the old compressions time; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took.  If the new compressions time is at least 10% faster than the old compressions time; the test passes.");
     }
 
     if (selector == NOISENUM)
     {
         printf("\nUse:\n\n"
                "%2i NoiseSensitivityWorks \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1211,26 +1115,26 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , NOISENUM);
 
-        formated_print("The test compresses seven files with Noise Sensitivity values from 0 to 6 and computes PSNR values for each.  If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test compresses seven files with Noise Sensitivity values from 0 to 6 and computes PSNR values for each.  If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6; the test passes.");
     }
 
     if (selector == OV2PSNUM)
     {
         printf("\nUse:\n\n"
                "%2i OnePassVsTwoPass \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Target Bit Rate>\n "
                "     <Optional Settings File>\n"
                , OV2PSNUM);
 
-        formated_print("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at one pass good quality and two pass good quality, the second and fifth compressions for the input target bandwidth at one pass good quality and two pass good quality, and the thrid and sixth at 30% more than the input target bandwidth at one pass good quality and two pass good quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the one pass good quality curve and the two pass good quality curve.  If the area under the two pass good quality curve is greater than the area under the one pass good quality curve; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at one pass good quality and two pass good quality, the second and fifth compressions for the input target bandwidth at one pass good quality and two pass good quality, and the thrid and sixth at 30% more than the input target bandwidth at one pass good quality and two pass good quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the one pass good quality curve and the two pass good quality curve.  If the area under the two pass good quality curve is greater than the area under the one pass good quality curve; the test passes.");
     }
 
     if (selector == PLYALNUM)
     {
         printf("\nUse:\n\n"
                "%2i PlayAlternate \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1242,14 +1146,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , PLYALNUM);
 
-        formated_print("The test creates two compressions the first with Play Alternate equal to 0 the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions.  If alternate reference frames exist for Play Alternate = 1 and not for Play Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2 are equal, and the files are not identical; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two compressions the first with Play Alternate equal to 0 the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions.  If alternate reference frames exist for Play Alternate = 1 and not for Play Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2 are equal, and the files are not identical; the test passes.  (Test Pass/Fail only valid for modes 4 and 5.)");
     }
 
     if (selector == POSTPNUM)
     {
         printf("\nUse:\n\n"
                "%2i PostProcessorWorks \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1261,14 +1165,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , POSTPNUM);
 
-        formated_print("The test creates a compression then creates a No Filtering decompression, decompressions for Deblock and Noise levels ranging from 0 to 15.  If all Deblock and Noise decompressions return a different PSNR than the No Filtering Decompression but are within 10%; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates a compression then creates a No Filtering decompression, decompressions for Deblock and Noise levels ranging from 0 to 15.  If all Deblock and Noise decompressions return a different PSNR than the No Filtering Decompression but are within 10%; the test passes.");
     }
 
-    if (selector == RECONBUF)
+    if (selector == RECBFNUM)
     {
         printf(
-            "  ReconBuffer \n\n"
-            "    <inputfile>\n"
+            "  RECBFNUMfer \n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -1278,17 +1182,17 @@ void test_help(int argc, char *argv[], string WorkingDir)
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
             "     <Optional Settings File>\n"
-            , RECONBUF);
+            , RECBFNUM);
 
 
-        formated_print("The test creates a compression and internally compares the compressor's preview frames to the decoded output produced by decompressing the compressor�s en-coded frame. The state of each frame is recorded to a text file.  If the contents of all preview frames are identical to the content of all decoded frames; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates a compression and internally compares the compressor's preview frames to the decoded output produced by decompressing the compressor�s en-coded frame. The state of each frame is recorded to a text file.  If the contents of all preview frames are identical to the content of all decoded frames; the test passes.");
     }
 
     if (selector == RSDWMNUM)
     {
         printf("\nUse:\n\n"
                "%2i ResampleDownWaterMark \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1300,14 +1204,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , RSDWMNUM);
 
-        formated_print("The test creates two files the first with resample-down-watermark set to 90 the second with resample-down-watermark set to 10. The test then records the frames at which the file buffer reaches the designated thresholds, the location of key frames and location of resized frames for both files.  If the first resized frame occurs on the first instance where the frame prior to a key frame reaches the correct buffer saturation for both compressions; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two files the first with resample-down-watermark set to 90 the second with resample-down-watermark set to 10. The test then records the frames at which the file buffer reaches the designated thresholds, the location of key frames and location of resized frames for both files.  If the first resized frame occurs on the first instance where the frame prior to a key frame reaches the correct buffer saturation for both compressions; the test passes.");
     }
 
     if (selector == SPEEDNUM)
     {
         printf("\nUse:\n\n"
                "%2i SpeedTest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1315,7 +1219,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , SPEEDNUM);
 
-        formated_print("The test works for RealTime Mode and Good Quality Mode. For Real Time Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions for CpuUsed Values from 0 to 5.  If compression speed increases as CpuUsed increases and all PSNRs are within 10% of the previous; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test works for RealTime Mode and Good Quality Mode. For Real Time Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions for CpuUsed Values from 0 to 5.  If compression speed increases as CpuUsed increases and all PSNRs are within 10% of the previous; the test passes.");
     }
 
     if (selector == TV2BTNUM)
@@ -1326,7 +1230,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "\n"
                , TV2BTNUM);
 
-        formated_print("This test decodes each VP8 Test Vector and Checks its MD5 checksum against the expected value.  If all Test Vectors decode properly and all MD5 checksums match their expected values; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "This test decodes each VP8 Test Vector and Checks its MD5 checksum against the expected value.  If all Test Vectors decode properly and all MD5 checksums match their expected values; the test passes.");
 
     }
 
@@ -1334,12 +1238,12 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i TwoPassVsTwoPassBest \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Target Bit Rate>\n "
                "     <Optional Settings File>\n"
                , TV2BTNUM);
 
-        formated_print("The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at two pass good quality and two pass best quality, the second and fifth compressions for the input target bandwidth at two pass good quality and two pass best quality, and the third and sixth at 30% more than the input target bandwidth at two pass good quality and two pass best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the two pass good quality curve and the two pass best quality curve.  If the area under the two pass best quality curve is greater than the area under the two pass good quality curve; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates six compressions. The first and fourth compressions for 30% less than the input target bandwidth at two pass good quality and two pass best quality, the second and fifth compressions for the input target bandwidth at two pass good quality and two pass best quality, and the third and sixth at 30% more than the input target bandwidth at two pass good quality and two pass best quality. The test then records each files data rate and PSNR and computes the area under the curve for the common interval between the two pass good quality curve and the two pass best quality curve.  If the area under the two pass best quality curve is greater than the area under the two pass good quality curve; the test passes.");
 
 
     }
@@ -1348,7 +1252,7 @@ void test_help(int argc, char *argv[], string WorkingDir)
     {
         printf("\nUse:\n\n"
                "%2i UnderShoot \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1360,14 +1264,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , UNDSHNUM);
 
-        formated_print("The test creates two files the first with an undershoot equal to 10 the second with an undershoot equal to 100.  If the Undershoot 100 compressions file size is greater than the Undershoot 10 compressions file size; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates two files the first with an undershoot equal to 10 the second with an undershoot equal to 100.  If the Undershoot 100 compressions file size is greater than the Undershoot 10 compressions file size; the test passes.");
     }
 
     if (selector == VERSINUM)
     {
         printf("\nUse:\n\n"
                "%2i Version \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1379,14 +1283,14 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "     <Optional Settings File>\n"
                , VERSINUM);
 
-        formated_print("The test creates four compressions the first with Version equal to 0 the second with version equal to 1 the third with version equal to 2 the fourth with version equal to 3. The test then decodes each and records the time it took to do so.  If each successive version takes less time than the prior to decode and has a lower PSNR; the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test creates four compressions the first with Version equal to 0 the second with version equal to 1 the third with version equal to 2 the fourth with version equal to 3. The test then decodes each and records the time it took to do so.  If each successive version takes less time than the prior to decode and has a lower PSNR; the test passes.");
     }
 
     if (selector == WMLMMNUM)
     {
         printf("\nUse:\n\n"
                "%2i WinLinMacMatch \n\n"
-               "    <inputfile>\n"
+               "    <Input File>\n"
                "    <Mode>\n"
                "          (0)Realtime/Live Encoding\n"
                "          (1)Good Quality Fast Encoding\n"
@@ -1402,26 +1306,26 @@ void test_help(int argc, char *argv[], string WorkingDir)
                "    <Optional Settings File>\n"
                , WMLMMNUM);
 
-        formated_print("The test can be run in two test modes. The first Mode, 0 creates platform specific compressions and decompressions to be tested on another platform. The second Mode creates platform specific compressions and decompressions and then compares them to previously encoded and decoded files created by test mode 0.  If the files are identical the test passes.", 1);
+        vpxt_formated_print(HLPPRT, "The test can be run in two test modes. The first Mode, 0 creates platform specific compressions and decompressions to be tested on another platform. The second Mode creates platform specific compressions and decompressions and then compares them to previously encoded and decoded files created by test mode 0.  If the files are identical the test passes.");
     }
 
     return;
 }
-int  tool_help(string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
+int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
 {
     if (InputString.compare("IVF2IVFCompr") == 0)
     {
         printf(
             "\n  Compress IVF to IVF \n\n"
             "    <(1)Normal Compress |(2)TimeCompress>\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <Bit Rate>\n"
             "    <Mode>\n"
             "    <Optional - Parameter File>\n"
         );
 
-        formated_print("This utility will take in a raw ivf file and produce an encoded ivf file using the given mode and bitrate.  Default encode settings can be overridden by specifying a parameter file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in a raw ivf file and produce an encoded ivf file using the given mode and bitrate.  Default encode settings can be overridden by specifying a parameter file.");
         return 1;
     }
 
@@ -1429,11 +1333,11 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf(
             "\n  Decompress IVF to IVF \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
         );
 
-        formated_print("This utility will take in an encoded ivf file and output a decoded ivf file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in an encoded ivf file and output a decoded ivf file.");
         return 1;
     }
 
@@ -1441,11 +1345,11 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf(
             "\n  Decompress IVF to Raw \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
         );
 
-        formated_print("This utility will take in an encoded ivf file and output a decoded raw file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in an encoded ivf file and output a decoded raw file.");
         return 1;
     }
 
@@ -1453,10 +1357,10 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf(
             "\n  IVF DataRate \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
         );
 
-        formated_print("This utility will take in an ivf file and compute its average, min, max, and file data rates. ", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in an ivf file and compute its average, min, max, and file data rates. ");
         return 1;
     }
 
@@ -1468,7 +1372,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "     <Comp IVF File>\n"
         );
 
-        formated_print("This utility will compute an encoded files psnr using the encoded file's ivf source file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will compute an encoded files psnr using the encoded file's ivf source file.");
         return 1;
     }
 
@@ -1482,7 +1386,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "     <prebuffer>\n"
         );
 
-        formated_print("This utility will run CheckPBM to make sure a buffer under run wont occur.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will run CheckPBM to make sure a buffer under run wont occur.");
         return 1;
     }
 
@@ -1490,7 +1394,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf(
             "\n  Raw2IVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <OutPutDir>\n"
             "    <Width>\n"
             "    <Height>\n"
@@ -1498,7 +1402,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "    <FourCC>\n"
         );
 
-        formated_print("This utility will take in a raw file and produce a raw ivf file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in a raw file and produce a raw ivf file.");
         return 1;
     }
 
@@ -1510,7 +1414,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
                "    <Output File>\n"
               );
 
-        formated_print("This utility will take in an ivf file and produce a raw file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in an ivf file and produce a raw file.");
         return 1;
     }
 
@@ -1518,18 +1422,18 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf(
             "\n  IVF2RawFrames\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <OutPutDir>\n"
         );
 
-        formated_print("This utility will take in an ivf file and produce individual raw frames for each frame that exists in the user specified directory.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in an ivf file and produce individual raw frames for each frame that exists in the user specified directory.");
         return 1;
     }
 
     if (InputString.compare("CombineIndvFrames") == 0)
     {
         printf("\n  CombineIndvFrames");
-        formated_print("This utility will combine all individual decoded frames in a folder into a single raw file in numerical order.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will combine all individual decoded frames in a folder into a single raw file in numerical order.");
         printf(
             "\n"
             "   Usage:\n"
@@ -1568,7 +1472,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "     <inputfile2>\n"
         );
 
-        formated_print("This utility will compare the video content of two ivf files and will display if they are identical, or if they differ the first frame they differ at.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will compare the video content of two ivf files and will display if they are identical, or if they differ the first frame they differ at.");
         return 1;
     }
 
@@ -1582,7 +1486,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
                "    <OutputFile>\n"
               );
 
-        formated_print("This utility will compare the file and frame headers of two ivf files.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will compare the file and frame headers of two ivf files.");
         return 1;
     }
 
@@ -1590,12 +1494,12 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf("\n"
                "  DisplayIVFHeaderInfo \n\n"
-               "    <Inputfile>\n"
+               "    <Input File>\n"
                "    <Full File Info 1/yes-0/no>\n"
                "    <Optional Outputfile>\n"
               );
 
-        formated_print("This utility will display the file and frame headers of an ivf file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will display the file and frame headers of an ivf file.");
         return 1;
     }
 
@@ -1607,7 +1511,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        formated_print("This utility will display the location of key frames within an ivf file to the screen or an output file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will display the location of key frames within an ivf file to the screen or an output file.");
         return 1;
     }
 
@@ -1619,7 +1523,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        formated_print("This utility will display the location of resized frames within an ivf file to the screen or an output file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will display the location of resized frames within an ivf file to the screen or an output file.");
         return 1;
     }
 
@@ -1631,7 +1535,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        formated_print("This utility will display the location of visible frames within an ivf file to the screen or an output file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will display the location of visible frames within an ivf file to the screen or an output file.");
         return 1;
     }
 
@@ -1643,7 +1547,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
                "    <Write to file 0 | 1 Print to screen>\n"
                "\n");
 
-        formated_print("This utility will display the location of alternate reference frames within an ivf file to the screen or an output file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will display the location of alternate reference frames within an ivf file to the screen or an output file.");
         return 1;
     }
 
@@ -1652,13 +1556,13 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf(
             "\n  CutIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <Starting Frame>\n"
             "    <Ending Frame>\n"
         );
 
-        formated_print("This utility will cut a portion of an ivf file starting at Starting Frame and ending at Ending Frame to a new output file", 2);
+        vpxt_formated_print(TOLPRT, "This utility will cut a portion of an ivf file starting at Starting Frame and ending at Ending Frame to a new output file");
         return 1;
     }
 
@@ -1672,7 +1576,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "    <First Paste Frame>\n"
         );
 
-        formated_print("This utility will paste the contents of Inputfile2 into Inputfile1 starting at Inputfile1's First Paste Frame to a new Outputfile.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will paste the contents of Inputfile2 into Inputfile1 starting at Inputfile1's First Paste Frame to a new Outputfile.");
         return 1;
     }
 
@@ -1681,12 +1585,12 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
 #if defined(_WIN32)
         printf(
             "\n  PlayDecIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
         );
-        formated_print("This Tool will convert an uncompressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.", 2);
+        vpxt_formated_print(TOLPRT, "This Tool will convert an uncompressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.");
 #else
         printf("\n  PlayDecIVF");
-        formated_print("This Tool will convert an uncompressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:", 2);
+        vpxt_formated_print(TOLPRT, "This Tool will convert an uncompressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:");
         printf("    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
                "    cd mplayer\n"
                "    ./configure\n"
@@ -1703,12 +1607,12 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
 #if defined(_WIN32)
         printf(
             "\n  PlayCompIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
         );
-        formated_print("This Tool will convert a compressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.", 2);
+        vpxt_formated_print(TOLPRT, "This Tool will convert a compressed ivf file to a raw yuv file and play it using tmnplay.  Please be sure to put a copy of tmnplay in your C:\\bin directory.  Tmnplay can be found in the TestClips directory.");
 #else
         printf("\n  PlayCompIVF");
-        formated_print("This Tool will convert a compressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:", 2);
+        vpxt_formated_print(TOLPRT, "This Tool will convert a compressed ivf file to a raw yuv file and play it using mplayer.  To install mplayer open a command console and type:");
         printf("    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
                "    cd mplayer\n"
                "    ./configure\n"
@@ -1722,13 +1626,13 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
 
     if (InputString.compare("CreateSampleTextFiles") == 0)
     {
-        formated_print("This utility will create sample text files.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will create sample text files.");
         return 1;
     }
 
     if (InputString.compare("PrintVersion") == 0)
     {
-        formated_print("This utility will print the version of vp8 being used by the tester.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will print the version of vp8 being used by the tester.");
         return 1;
     }
 
@@ -1739,7 +1643,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "    <Output Par File>\n"
         );
 
-        formated_print("This utility will create a valid vp8 random parameter file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will create a valid vp8 random parameter file.");
         return 1;
     }
 
@@ -1747,10 +1651,10 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf("\n"
                "  RandComp\n\n"
-               "    <Inputfile>\n"
+               "    <Input File>\n"
               );
 
-        formated_print("This utility will create a compression using random parameters for an input ivf file.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will create a compression using random parameters for an input ivf file.");
         return 1;
     }
 
@@ -1765,13 +1669,13 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
                "    <Optional - Par Input>\n"
               );
 
-        formated_print("The utility creates compressions from user input starting to user input ending bit rates at user input steps.  The utility then computes and outputs the data rates and PSNRs of the resultant files.", 2);
+        vpxt_formated_print(TOLPRT, "The utility creates compressions from user input starting to user input ending bit rates at user input steps.  The utility then computes and outputs the data rates and PSNRs of the resultant files.");
     }
 
     if (InputString.compare("TestVectorIndex") == 0)
     {
         printf("\n  TestVectorIndex\n");
-        formated_print("This Utility makes use of the TestVectorsIndividualRunsResults Directory to locate the first report of a line being covered by a test vector and reports relevant information about it.", 2);
+        vpxt_formated_print(TOLPRT, "This Utility makes use of the TestVectorsIndividualRunsResults Directory to locate the first report of a line being covered by a test vector and reports relevant information about it.");
         /*printf("\n  Valid Files to check include:\n"
                 "     alloccommon\n"
                 "     blockd\n"
@@ -1817,7 +1721,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "\n"
         );
 
-        formated_print("This utility is a clone of the standard VP8 ivfenc utility.", 2);
+        vpxt_formated_print(TOLPRT, "This utility is a clone of the standard VP8 ivfenc utility.");
         return 1;
     }
 
@@ -1828,7 +1732,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "\n"
         );
 
-        formated_print("This utility is a clone of the standard VP8 ivfdec utility.", 2);
+        vpxt_formated_print(TOLPRT, "This utility is a clone of the standard VP8 ivfdec utility.");
         return 1;
     }
 
@@ -1836,7 +1740,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
     {
         printf(
             "\n  CropRawIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <xoffset>\n"
             "    <yoffset>\n"
@@ -1845,7 +1749,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
             "    <Raw/IVF 0-Raw 1-IVF>\n"
         );
 
-        formated_print("This utility will take in a raw ivf file and produce a croped raw ivf file using the input size parameters.", 2);
+        vpxt_formated_print(TOLPRT, "This utility will take in a raw ivf file and produce a croped raw ivf file using the input size parameters.");
         return 1;
     }
 
@@ -1853,7 +1757,7 @@ int  tool_help(string InputString)//return 1 if string found return 0 if string 
 }
 void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile)
 {
-    cout << "\n Formating Summary file.\n";
+    printf("\n Formating Summary file.\n");
     string InputFileName = InputFileNameCharAr;
     string SummaryByTestOutput = InputFileName;
     SummaryByTestOutput.erase(SummaryByTestOutput.end() - 4, SummaryByTestOutput.end());
@@ -1882,119 +1786,118 @@ void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile)
     string TestTrackerName;
     int TestTracker = 1;
 
-    while (TestTracker < 40)
+    while (TestTracker <= MAXTENUM)
     {
         if (TestTracker == AlWDFNUM)
-            TestTrackerName = "AllowDropFrames";
+            TestTrackerName = "Test_Allow_Drop_Frames";
 
         if (TestTracker == ALWLGNUM)
-            TestTrackerName = "AllowLagTest";
+            TestTrackerName = "Test_Allow_Lag";
 
         if (TestTracker == ALWSRNUM)
-            TestTrackerName = "AllowSpatialResampling";
+            TestTrackerName = "Test_Allow_Spatial_Resampling";
 
         if (TestTracker == AUTKFNUM)
-            TestTrackerName = "AutoKeyFramingWorks";
+            TestTrackerName = "Test_Auto_Key_Frame";
 
         if (TestTracker == BUFLVNUM)
-            TestTrackerName = "BufferLevelWorks";
+            TestTrackerName = "Test_Buffer_Level";
 
         if (TestTracker == CPUDENUM)
-            TestTrackerName = "CPUDecOnlyWorks";
+            TestTrackerName = "Test_Change_Cpu_Dec";
 
         if (TestTracker == CHGWRNUM)
-            TestTrackerName = "ChangeCPUWorks";
-
-        if (TestTracker == DFWMWNUM)
-            TestTrackerName = "DropFramesWaterMarkWorks";
+            TestTrackerName = "Test_Change_Cpu_Enc";
 
         if (TestTracker == DTARTNUM)
-            TestTrackerName = "DataRateTest";
+            TestTrackerName = "Test_Data_Rate";
 
         if (TestTracker == DBMRLNUM)
-            TestTrackerName = "DebugMatchesRelease";
+            TestTrackerName = "Test_Debug_Matches_Release";
+
+        if (TestTracker == DFWMWNUM)
+            TestTrackerName = "Test_Drop_Frame_Watermark";
 
         if (TestTracker == ENCBONUM)
-            TestTrackerName = "EncoderBreakOut";
+            TestTrackerName = "Test_Encoder_Break_Out";
 
         if (TestTracker == ERRMWNUM)
-            TestTrackerName = "ErrorResilientModeWorks";
+            TestTrackerName = "Test_Error_Resolution";
 
         if (TestTracker == EXTFINUM)
-            TestTrackerName = "ExtraFileCheck";
+            TestTrackerName = "Test_Extra_File";
 
         if (TestTracker == FIXDQNUM)
-            TestTrackerName = "FixedQ";
+            TestTrackerName = "Test_Fixed_Quantizer";
 
         if (TestTracker == FKEFRNUM)
-            TestTrackerName = "ForceKeyFrameWorks";
+            TestTrackerName = "Test_Force_Key_frame";
 
         if (TestTracker == FRSZTNUM)
-            TestTrackerName = "FrameSizeTest";
+            TestTrackerName = "Test_Frame_Size";
 
         if (TestTracker == GQVBQNUM)
-            TestTrackerName = "GoodQualityVsBestQuality";
+            TestTrackerName = "Test_Good_Vs_Best";
 
         if (TestTracker == LGIFRNUM)
-            TestTrackerName = "LagInFramesTest";
+            TestTrackerName = "Test_Lag_In_Frames";
 
         if (TestTracker == MAXQUNUM)
-            TestTrackerName = "MaxQuantizerTest";
+            TestTrackerName = "Test_Max_Quantizer";
 
         if (TestTracker == MEML1NUM)
-            TestTrackerName = "MemLeakCheck";
+            TestTrackerName = "Test_Mem_Leak";
 
         if (TestTracker == MEML2NUM)
-            TestTrackerName = "MemLeakCheck2";
+            TestTrackerName = "Test_Mem_Leak2";
 
         if (TestTracker == MINQUNUM)
-            TestTrackerName = "MinQuantizerTest";
+            TestTrackerName = "Test_Min_Quantizer";
 
         if (TestTracker == MULTTNUM)
-            TestTrackerName = "MultiThreadedTest";
+            TestTrackerName = "Test_Multithreaded";
 
         if (TestTracker == NVOPSNUM)
-            TestTrackerName = "NewVsOldPSNR";
+            TestTrackerName = "Test_New_Vs_Old_Psnr";
 
         if (TestTracker == NVORTNUM)
-            TestTrackerName = "NewVsOldRealTimeSpeed";
+            TestTrackerName = "Test_New_Vs_Old_Real_Time_Speed";
 
         if (TestTracker == NOISENUM)
-            TestTrackerName = "NoiseSensitivityWorks";
+            TestTrackerName = "Test_Noise_Sensitivity";
 
         if (TestTracker == OV2PSNUM)
-            TestTrackerName = "OnePassVsTwoPass";
+            TestTrackerName = "Test_One_Pass_Vs_Two_Pass";
 
         if (TestTracker == PLYALNUM)
-            TestTrackerName = "PlayAlternate";
+            TestTrackerName = "Test_Play_Alternate";
 
         if (TestTracker == POSTPNUM)
-            TestTrackerName = "PostProcessorWorks";
+            TestTrackerName = "Test_Post_Processor";
 
-        if (TestTracker == RECONBUF)
-            TestTrackerName = "ReconBuffer";
+        if (TestTracker == RECBFNUM)
+            TestTrackerName = "Test_Reconstruct_Buffer";
 
         if (TestTracker == RSDWMNUM)
-            TestTrackerName = "ResampleDownWaterMark";
+            TestTrackerName = "Test_Resample_Down_Watermark";
 
         if (TestTracker == SPEEDNUM)
-            TestTrackerName = "SpeedTest";
+            TestTrackerName = "Sest_Speed";
 
         if (TestTracker == TVECTNUM)
-            TestTrackerName = "TestVectorCheck";
+            TestTrackerName = "Test_Test_Vector";
 
         if (TestTracker == TV2BTNUM)
-            TestTrackerName = "TwoPassVsTwoPassBest";
+            TestTrackerName = "Test_Two_Pass_Vs_Two_Pass_Best";
 
         if (TestTracker == UNDSHNUM)
-            TestTrackerName = "UnderShoot";
+            TestTrackerName = "Test_Undershoot";
 
         if (TestTracker == VERSINUM)
-            TestTrackerName = "Version";
+            TestTrackerName = "Test_Version";
 
         if (TestTracker == WMLMMNUM)
-            TestTrackerName = "WinLinMacMatch";
-
+            TestTrackerName = "Test_Win_Lin_Mac_Match";
 
         fstream FormatSummaryByTestFile;
         FormatSummaryByTestFile.open(InputFileName.c_str());
@@ -2024,7 +1927,7 @@ void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile)
             int n = 5;
             int i = 0;
 
-            while (n < 35 && buffer[n] != ' ')
+            while (n < 39 && buffer[n] != ' ')
             {
                 buffer2[i] = buffer[n];
                 n++;
@@ -2061,18 +1964,18 @@ void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile)
 }
 void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldFile)
 {
-    cout << "\n Formating Summary file.\n";
+    printf("\n Formating Summary file.\n");
 
     string InputFileName = InputFileNameCharAr;
     string SummaryByTestOutput = InputFileName;
     SummaryByTestOutput.erase(SummaryByTestOutput.end() - 4, SummaryByTestOutput.end());
 
-    SummaryByTestOutput.append("_Expanded.txt");
+    SummaryByTestOutput.append("_expanded.txt");
 
     char TestsRunChar[255];
     vpxt_folder_name(InputFileNameCharAr, TestsRunChar);
     string TestsRun = TestsRunChar;
-    TestsRun.append("TestsRun.txt");
+    TestsRun.append("tests_run.txt");
 
     if (DeleteOldFile == 1)
     {
@@ -2110,8 +2013,8 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
     int TestTracker = 1;
     int ResultTracker = 0;
 
-
-    while (TestTracker < 40)
+    //loop through all existing tests alphabeticaly
+    while (TestTracker <= MAXTENUM)
     {
         ResultTracker = 0;
 
@@ -2120,116 +2023,115 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
         //This iterates through all possible tests run using the test tracker names to specify which was run the number is only to drive
         //The iteration through and does not represent test number
         if (TestTracker == AlWDFNUM)
-            TestTrackerName = "AllowDropFrames";
+            TestTrackerName = "Test_Allow_Drop_Frames";
 
         if (TestTracker == ALWLGNUM)
-            TestTrackerName = "AllowLagTest";
+            TestTrackerName = "Test_Allow_Lag";
 
         if (TestTracker == ALWSRNUM)
-            TestTrackerName = "AllowSpatialResampling";
+            TestTrackerName = "Test_Allow_Spatial_Resampling";
 
         if (TestTracker == AUTKFNUM)
-            TestTrackerName = "AutoKeyFramingWorks";
+            TestTrackerName = "Test_Auto_Key_Frame";
 
         if (TestTracker == BUFLVNUM)
-            TestTrackerName = "BufferLevelWorks";
+            TestTrackerName = "Test_Buffer_Level";
 
         if (TestTracker == CPUDENUM)
-            TestTrackerName = "CPUDecOnlyWorks";
+            TestTrackerName = "Test_Change_Cpu_Dec";
 
         if (TestTracker == CHGWRNUM)
-            TestTrackerName = "ChangeCPUWorks";
-
-        if (TestTracker == DFWMWNUM)
-            TestTrackerName = "DropFramesWaterMarkWorks";
+            TestTrackerName = "Test_Change_Cpu_Enc";
 
         if (TestTracker == DTARTNUM)
-            TestTrackerName = "DataRateTest";
+            TestTrackerName = "Test_Data_Rate";
 
         if (TestTracker == DBMRLNUM)
-            TestTrackerName = "DebugMatchesRelease";
+            TestTrackerName = "Test_Debug_Matches_Release";
+
+        if (TestTracker == DFWMWNUM)
+            TestTrackerName = "Test_Drop_Frame_Watermark";
 
         if (TestTracker == ENCBONUM)
-            TestTrackerName = "EncoderBreakOut";
+            TestTrackerName = "Test_Encoder_Break_Out";
 
         if (TestTracker == ERRMWNUM)
-            TestTrackerName = "ErrorResilientModeWorks";
+            TestTrackerName = "Test_Error_Resolution";
 
         if (TestTracker == EXTFINUM)
-            TestTrackerName = "ExtraFileCheck";
+            TestTrackerName = "Test_Extra_File";
 
         if (TestTracker == FIXDQNUM)
-            TestTrackerName = "FixedQ";
+            TestTrackerName = "Test_Fixed_Quantizer";
 
         if (TestTracker == FKEFRNUM)
-            TestTrackerName = "ForceKeyFrameWorks";
+            TestTrackerName = "Test_Force_Key_frame";
 
         if (TestTracker == FRSZTNUM)
-            TestTrackerName = "FrameSizeTest";
+            TestTrackerName = "Test_Frame_Size";
 
         if (TestTracker == GQVBQNUM)
-            TestTrackerName = "GoodQualityVsBestQuality";
+            TestTrackerName = "Test_Good_Vs_Best";
 
         if (TestTracker == LGIFRNUM)
-            TestTrackerName = "LagInFramesTest";
+            TestTrackerName = "Test_Lag_In_Frames";
 
         if (TestTracker == MAXQUNUM)
-            TestTrackerName = "MaxQuantizerTest";
+            TestTrackerName = "Test_Max_Quantizer";
 
         if (TestTracker == MEML1NUM)
-            TestTrackerName = "MemLeakCheck";
+            TestTrackerName = "Test_Mem_Leak";
 
         if (TestTracker == MEML2NUM)
-            TestTrackerName = "MemLeakCheck2";
+            TestTrackerName = "Test_Mem_Leak2";
 
         if (TestTracker == MINQUNUM)
-            TestTrackerName = "MinQuantizerTest";
+            TestTrackerName = "Test_Min_Quantizer";
 
         if (TestTracker == MULTTNUM)
-            TestTrackerName = "MultiThreadedTest";
+            TestTrackerName = "Test_Multithreaded";
 
         if (TestTracker == NVOPSNUM)
-            TestTrackerName = "NewVsOldPSNR";
+            TestTrackerName = "Test_New_Vs_Old_Psnr";
 
         if (TestTracker == NVORTNUM)
-            TestTrackerName = "NewVsOldRealTimeSpeed";
+            TestTrackerName = "Test_New_Vs_Old_Real_Time_Speed";
 
         if (TestTracker == NOISENUM)
-            TestTrackerName = "NoiseSensitivityWorks";
+            TestTrackerName = "Test_Noise_Sensitivity";
 
         if (TestTracker == OV2PSNUM)
-            TestTrackerName = "OnePassVsTwoPass";
+            TestTrackerName = "Test_One_Pass_Vs_Two_Pass";
 
         if (TestTracker == PLYALNUM)
-            TestTrackerName = "PlayAlternate";
+            TestTrackerName = "Test_Play_Alternate";
 
         if (TestTracker == POSTPNUM)
-            TestTrackerName = "PostProcessorWorks";
+            TestTrackerName = "Test_Post_Processor";
 
-        if (TestTracker == RECONBUF)
-            TestTrackerName = "ReconBuffer";
+        if (TestTracker == RECBFNUM)
+            TestTrackerName = "Test_Reconstruct_Buffer";
 
         if (TestTracker == RSDWMNUM)
-            TestTrackerName = "ResampleDownWaterMark";
+            TestTrackerName = "Test_Resample_Down_Watermark";
 
         if (TestTracker == SPEEDNUM)
-            TestTrackerName = "SpeedTest";
+            TestTrackerName = "Sest_Speed";
 
         if (TestTracker == TVECTNUM)
-            TestTrackerName = "TestVectorCheck";
+            TestTrackerName = "Test_Test_Vector";
 
         if (TestTracker == TV2BTNUM)
-            TestTrackerName = "TwoPassVsTwoPassBest";
+            TestTrackerName = "Test_Two_Pass_Vs_Two_Pass_Best";
 
         if (TestTracker == UNDSHNUM)
-            TestTrackerName = "UnderShoot";
+            TestTrackerName = "Test_Undershoot";
 
         if (TestTracker == VERSINUM)
-            TestTrackerName = "Version";
+            TestTrackerName = "Test_Version";
 
         if (TestTracker == WMLMMNUM)
-            TestTrackerName = "WinLinMacMatch";
-
+            TestTrackerName = "Test_Win_Lin_Mac_Match";
 
         int PassedTrack = 0;
         int FailedTrack = 0;
@@ -2242,6 +2144,7 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
         int TestNotSupportedTrack = 0;
         int MinTestPassed = 0;
 
+        //loop though all possible results
         while (ResultTracker < 13)
         {
             if (ResultTracker == 1)
@@ -2314,17 +2217,17 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
                 int n = 5;
                 int i = 0;
 
-                while (n < 35 && buffer[n] != ' ')
+                while (n < 39 && buffer[n] != ' ')
                 {
                     buffer2[i] = buffer[n];
                     n++;
                     i++;
                 }
 
-                n = 63;
+                n = 62;
                 i = 0;
 
-                while (n < 190 && buffer[n] != ' ')
+                while (n < 194 && buffer[n] != ' ')
                 {
                     buffer3[i] = buffer[n];
                     n++;
@@ -2334,6 +2237,7 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
                 string TestReadString = buffer2;
                 string TestResultString = buffer3;
 
+                //check to see if names and states match up
                 if (TestReadString.compare(TestTrackerName) == 0 && TestResultString.compare(TestTrackerResult) == 0)
                 {
                     if (ResultTracker == 1)
@@ -2365,18 +2269,39 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
 
                     if (DoOnce1)
                     {
-                        cerr << "\n\n ====================================================================" << buffer2 << "==================================================================== \n";
+                        //print test header
+                        int leftLineSize = 75 - (TestReadString.size() / 2);
+                        int counter = 0;
+
+                        fprintf(stderr, "\n\n");
+
+                        while (counter < leftLineSize)
+                        {
+                            fprintf(stderr, "=");
+                            counter++;
+                        }
+
+                        fprintf(stderr, "%s", TestReadString.c_str());
+                        counter = counter + TestReadString.size();
+
+                        while (counter < 150)
+                        {
+                            fprintf(stderr, "=");
+                            counter++;
+                        }
+
+                        fprintf(stderr, "\n");
                         DoOnce1 = 0;
                     }
 
                     if (DoOnce2)
                     {
-                        cerr << "\n " << buffer3 << ":\n\n";
-                        fprintf(stderr, "%4s %-30s%-28s%s  Test Settings\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                        fprintf(stderr, "\n %s:\n\n", buffer3);
+                        fprintf(stderr, "%4s %-32s%-25s%s  Test Settings\n\n", "#", "            Test Name" , "     Date and Time", "Status");
                         DoOnce2 = 0;
                     }
 
-                    cerr << buffer << " ";
+                    fprintf(stderr, "%s ", buffer);
 
                     ///////////////////Get the correct Test Input settings and output them to summary.//////////////
                     fstream TestsRunFile;
@@ -2430,16 +2355,13 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
                                 t++;
                             }
 
-                            cerr << buffer4 << "\n";
-
+                            printf("%s\n", buffer4);
                         }
                     }
 
                     TestsRunFile.close();
                     //////////////////////////////////////////////////////////////////////////////////////////////
-
                 }
-
             }
 
             FormatSummaryByTestFile.close();
@@ -2469,19 +2391,13 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
         }
 
         if (SeeComboRunLogTrack != 0)
-        {
             PrintOutput = 1;
-        }
 
         if (SeePSNRLogTrack != 0)
-        {
             PrintOutput = 1;
-        }
 
         if (RandomTestCompletedTrack != 0)
-        {
             PrintOutput = 1;
-        }
 
         if (CompressionMadeTrack != 0)
         {
@@ -2490,122 +2406,80 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
         }
 
         if (ErrorFileMismatchTrack != 0)
-        {
             PrintOutput = 1;
-        }
 
         if (TestNotSupportedTrack != 0)
-        {
             PrintOutput = 1;
-        }
 
         if (MinTestPassed != 0)
-        {
             PrintOutput = 1;
-        }
 
         if (PrintOutput == 1)
         {
             if (!CompressExist == 1)
             {
-                cerr << "\n\n\n" << TestTrackerName.c_str() << " Summary:\n\n";
-
-                cerr << "Passed: " << PassedTrack << "\n";
-                cerr << "Failed: " << FailedTrack << "\n";
-                cerr << "Indeterminate: " << IndeterminateTrack << "\n";
+                fprintf(stderr, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
+                fprintf(stderr, "Passed: %i\n", PassedTrack);
+                fprintf(stderr, "Failed: %i\n", FailedTrack);
+                fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
 
                 if (SeeComboRunLogTrack != 0)
-                {
-                    cerr << "SeeComboRunLogTrack: " << SeeComboRunLogTrack << "\n";
-                }
+                    fprintf(stderr, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
 
                 if (SeePSNRLogTrack != 0)
-                {
-                    cerr << "SeePSNRLogTrack: " << SeePSNRLogTrack << "\n";
-                }
+                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
 
                 if (RandomTestCompletedTrack != 0)
-                {
-                    cerr << "RandomTestCompletedTrack: " << RandomTestCompletedTrack << "\n";
-                }
+                    fprintf(stderr, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
 
                 if (CompressionMadeTrack != 0)
-                {
-                    cerr << "CompressionMadeTrack: " << CompressionMadeTrack << "\n";
-                }
+                    fprintf(stderr, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
 
                 if (ErrorFileMismatchTrack != 0)
-                {
-                    cerr << "ErrorFileMismatchTrack: " << ErrorFileMismatchTrack << "\n";
-                }
+                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
 
                 if (TestNotSupportedTrack != 0)
-                {
-                    cerr << "TestNotSupportedTrack: " << TestNotSupportedTrack << "\n";
-                }
+                    fprintf(stderr, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
 
                 if (MinTestPassed != 0)
-                {
-                    cerr << "MinTestPassed: " << MinTestPassed << "\n";
-                }
+                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
             }
             else
             {
-                cerr << "\n\n\n" << TestTrackerName.c_str() << " Summary:\n\n";
+                fprintf(stderr, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
 
                 if (PassedTrack != 0)
-                {
-                    cerr << "Passed: " << PassedTrack << "\n";
-
-                }
+                    fprintf(stderr, "Passed: %i\n", PassedTrack);
 
                 if (FailedTrack != 0)
-                {
-                    cerr << "Failed: " << FailedTrack << "\n";
-                }
+                    fprintf(stderr, "Failed: %i\n", FailedTrack);
 
                 if (IndeterminateTrack != 0)
-                {
-                    cerr << "Indeterminate: " << IndeterminateTrack << "\n";
-                }
+                    fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
 
                 if (SeeComboRunLogTrack != 0)
-                {
-                    cerr << "SeeComboRunLogTrack: " << SeeComboRunLogTrack << "\n";
-                }
+                    fprintf(stderr, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
 
                 if (SeePSNRLogTrack != 0)
-                {
-                    cerr << "SeePSNRLogTrack: " << SeePSNRLogTrack << "\n";
-                }
+                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
 
                 if (RandomTestCompletedTrack != 0)
-                {
-                    cerr << "RandomTestCompletedTrack: " << RandomTestCompletedTrack << "\n";
-                }
+                    fprintf(stderr, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
 
                 if (CompressionMadeTrack != 0)
-                {
-                    cerr << "CompressionMadeTrack: " << CompressionMadeTrack << "\n";
-                }
+                    fprintf(stderr, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
 
                 if (ErrorFileMismatchTrack != 0)
-                {
-                    cerr << "ErrorFileMismatchTrack: " << ErrorFileMismatchTrack << "\n";
-                }
+                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
 
                 if (TestNotSupportedTrack != 0)
-                {
-                    cerr << "TestNotSupportedTrack: " << TestNotSupportedTrack << "\n";
-                }
+                    fprintf(stderr, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
 
                 if (MinTestPassed != 0)
-                {
-                    cerr << "MinTestPassed: " << MinTestPassed << "\n";
-                }
+                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
             }
 
-            cerr << "\n\n";
+            fprintf(stderr, "\n\n");
         }
 
         TestTracker++;
@@ -2660,7 +2534,7 @@ int  main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        on_error_output();
+        vpxt_on_error_output();
         return 0;
     }
 
@@ -2691,18 +2565,18 @@ int  main(int argc, char *argv[])
 
     if (TestInputString1.compare("Help") == 0 || TestInputString1.compare("HELP") == 0  || TestInputString1.compare("help") == 0)
     {
-        on_error_output();
-        formated_print("To run tests input the number to the left of the test name along with test specific input.  To obtain more information about a specific test or utility input the number of the test or the utility name you wish to inquire about followed by \"help\".", 2);
+        vpxt_on_error_output();
+        vpxt_formated_print(TOLPRT, "To run tests input the number to the left of the test name along with test specific input.  To obtain more information about a specific test or utility input the number of the test or the utility name you wish to inquire about followed by \"help\".");
         return 0;
     }
 
     if (TestInputString2.compare("Help") == 0 || TestInputString2.compare("HELP") == 0  || TestInputString2.compare("help") == 0)
     {
-        int ToolHelpCheck = tool_help(TestInputString1);
+        int ToolHelpCheck = vpxt_tool_help(TestInputString1);
 
         if (!ToolHelpCheck)
         {
-            test_help(argc, argv, WorkingDir);
+            vpxt_test_help(argc, argv, WorkingDir);
         }
 
         return 0;
@@ -2711,21 +2585,48 @@ int  main(int argc, char *argv[])
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////Tools//////////////////////////////////////////////////////////
     ////////////////////Public Commands/////////////////////////
+    if (TestInputString.compare("DirectorCheck") == 0)//delete this
+    {
+        vector<string> ignore;
+        vector<string> list;
+        string dirctory = argv[2];
+
+        ignore.push_back(".");
+        ignore.push_back("..");
+        //ignore.push_back("New Text Document.txt");
+        //ignore.push_back("ExtraFileCheckTest.txt");
+        //ignore.push_back("Extra File Check Test_TestOnly.txt");
+        //ignore.push_back("ExtraFileCheck_Paramaters.txt");
+        //ignore.push_back("ExtraFileCheck_APIParamaters.txt");
+
+        int INTEGER = vpxt_find_non_ignored_files_in_dir(ignore, list, dirctory);
+
+        int i = 0;
+
+        while (i < list.size())
+        {
+            cout << i << " " << list[i].c_str() << "\n";
+            i++;
+        }
+
+        cout << "\nReturn value: " << INTEGER << "\n";
+
+        return 0;
+    }
+
     if (TestInputString.compare("TestPrint") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         cout << "\n";
-        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 1);
+        vpxt_formated_print(HLPPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
         cout << "\n";
-        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 2);
+        vpxt_formated_print(TOLPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
         cout << "\n";
-        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 3);
+        vpxt_formated_print(FUNPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
         cout << "\n";
-        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 4);
-        cout << "\n";
-        cout << "\n";
-        formated_print("This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.", 5);
-        cout << "\n";
-        cout << "\n";
+        vpxt_formated_print(OTRPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
+        cout << "\n\n";
+        vpxt_formated_print(RESPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
+        cout << "\n\n";
         return 0;
     }
 
@@ -3017,13 +2918,13 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("CodeCoverage") == 0)                   //Preforms Code Coverage Tests for data coverage if enabled
     {
-        code_coverage(argc, argv, WorkingDir, EmptyAr);
+        vpxt_array_coverage(argc, argv, WorkingDir, EmptyAr);
         return 0;
     }
 
     if (TestInputString.compare("CompareCodeCoverage") == 0)                //Compares New Code Coverage Results to Old Code Coverage Results and merges the files to an updated version
     {
-        Comparecode_coverage(argc, argv);
+        compare_code_coverage(argc, argv);
         return 0;
     }
 
@@ -3121,7 +3022,7 @@ int  main(int argc, char *argv[])
         {
             printf(
                 "\n  IVF2RawFrames\n\n"
-                "    <inputfile>\n"
+                "    <Input File>\n"
                 "    <OutPutDir>\n"
             );
             return 0;
@@ -3203,16 +3104,17 @@ int  main(int argc, char *argv[])
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    int selector = atoi(argv[1]);
+    //int selector = atoi(argv[1]);
+    int selector = vpxt_identify_test(argv[1]);
 
-    if (selector > 100 || selector < 0)
+
+    if (selector > MAXTENUM || selector < 0)
     {
-
-        on_error_output();
+        vpxt_on_error_output();
         return 0;
     }
 
-    if (TestInputString.compare("0") == 0)
+    if (selector == 0)
     {
         if (argc < 4)
         {
@@ -3249,7 +3151,7 @@ int  main(int argc, char *argv[])
             string inputCheck = "";
             inputCheck.append(argv[3]);
             inputCheck.append(slashCharStr().c_str());
-            inputCheck.append("TestsRun.txt");
+            inputCheck.append("tests_run.txt");
             VaildInput = vpxt_run_multiple_tests_input_check(inputCheck.c_str(), 0);
 
             if (VaildInput <= 0)
@@ -3268,7 +3170,7 @@ int  main(int argc, char *argv[])
             char SummaryFileChar[255] = "";
             SummaryFile.erase(SummaryFile.end() - 1);
             SummaryFile.append(slashCharStr());
-            SummaryFile.append("Mode1Results.txt");
+            SummaryFile.append("test_results.txt");
             snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
             format_summary_by_test_and_result(SummaryFileChar, 0);
             return 0;
@@ -3280,7 +3182,7 @@ int  main(int argc, char *argv[])
             char SummaryFileChar[255] = "";
             SummaryFile.erase(SummaryFile.end() - 1);
             SummaryFile.append(slashCharStr());
-            SummaryFile.append("Mode2Results.txt");
+            SummaryFile.append("compression_results.txt");
             snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
             format_summary_by_test_and_result(SummaryFileChar, 0);
             return 0;
@@ -3294,13 +3196,13 @@ int  main(int argc, char *argv[])
 
             SummCompAndTest = argv[3];
             SummCompAndTest.append(slashCharStr());
-            SummCompAndTest.append("Mode1Results.txt");         // Mode 1
+            SummCompAndTest.append("test_results.txt");     // Mode 1
             SummComp = argv[3];
             SummComp.append(slashCharStr());
-            SummComp.append("Mode2Results.txt");                    // Mode 2
+            SummComp.append("compression_results.txt");     // Mode 2
             SummTest = argv[3];
             SummTest.append(slashCharStr());
-            SummTest.append("Mode3Results.txt");                            // Mode 3
+            SummTest.append("compression_test_results.txt");// Mode 3
 
             int TestRunning = 0;
             fstream SummCompAndTestFile;
@@ -3341,7 +3243,7 @@ int  main(int argc, char *argv[])
             {
                 char SummaryFileChar[255] = "";
                 SummaryFile.append(slashCharStr());
-                SummaryFile.append("Mode1Results.txt");
+                SummaryFile.append("test_results.txt");
                 snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
                 format_summary_by_test_and_result(SummaryFileChar, 0);
                 return 0;
@@ -3352,7 +3254,7 @@ int  main(int argc, char *argv[])
 
                 char SummaryFileChar[255] = "";
                 SummaryFile.append(slashCharStr());
-                SummaryFile.append("Mode3Results.txt");
+                SummaryFile.append("compression_test_results.txt");
                 snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
                 format_summary_by_test_and_result(SummaryFileChar, 0);
             }
@@ -3507,7 +3409,7 @@ int  main(int argc, char *argv[])
         return test_post_processor(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
-    if (selector == RECONBUF)
+    if (selector == RECBFNUM)
     {
         return test_reconstruct_buffer(argc, argv, WorkingDir, EmptyAr, 1);
     }
@@ -3539,7 +3441,7 @@ int  main(int argc, char *argv[])
 
     if (selector == VERSINUM)
     {
-        return version_test(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_version(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == WMLMMNUM)
@@ -3547,7 +3449,7 @@ int  main(int argc, char *argv[])
         return test_win_lin_mac_match(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
-    on_error_output();
+    vpxt_on_error_output();
     return 0;
 
 }

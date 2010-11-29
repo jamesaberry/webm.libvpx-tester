@@ -9,7 +9,7 @@ int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
     {
         printf("\n"
                "  RandComp\n\n"
-               "    <Inputfile>\n\n"
+               "    <Input File>\n\n"
               );
         return 0;
     }
@@ -115,8 +115,7 @@ int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(MainDirString, File1, TestType);
             return 2;
         }
     }
@@ -131,8 +130,7 @@ int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(MainDirString, File1, TestType);
             return 2;
         }
     }
@@ -147,8 +145,7 @@ int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(MainDirString, File1, TestType);
             return 2;
         }
     }
@@ -167,8 +164,7 @@ int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
         if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(MainDirString, File1, TestType);
             return 2;
         }
     }

@@ -2,14 +2,15 @@
 
 int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "DropFramesWaterMark";
-    char *input = argv[2];
+    char *CompressString = "Drop Frames Watermark";
+    char *MyDir = "test_drop_frame_watermark";
 
     if (!(argc == 6 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  DFWMTest \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -17,35 +18,39 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
             "          (3)Two Pass - First Pass\n"
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "    <Optional Settings File>\n");
-
+            "    <Target Bit Rate>\n"
+            "    <Optional Settings File>\n"
+            "\n"
+        );
         return 0;
     }
 
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+
+    int speed = 0;
+
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "DropFramesWaterMark";
-    string MainDirString = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string DFWMOutFileBase = WorkingDirString;
-
+    string DFWMOutFileBase = CurTestDirStr;
     DFWMOutFileBase.append(slashCharStr());
-    DFWMOutFileBase.append("DFWMOutput");
+    DFWMOutFileBase.append(MyDir);
+    DFWMOutFileBase.append("_compression_");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -61,30 +66,16 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int speed = 0;
-    int BitRate = atoi(argv[4]);
-
-    int Mode = atoi(argv[3]);
-
-
-    printf("Drop Frame Watermark Works Test");
-    fprintf(stderr, "Drop Frame Watermark Works Test");
-
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -94,11 +85,10 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            printf("\nInput Settings file %s does not exist\n", argv[argc-1]);
-            fprintf(stderr, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -109,12 +99,10 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     /////////////////////////////////////////////////////////
 
     opt.target_bandwidth = BitRate;
-    /////Newly added//////
     opt.worst_allowed_q = 15;
     opt.allow_df = 1;
     opt.allow_spatial_resampling = 0;
     opt.end_usage = 0;
-    //////////////////////
 
     int n = 100;
     int PSNRToggle = 0;
@@ -123,13 +111,13 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     long DMFW[6];
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         while (n >= 0)
         {
             ///////Update File Name///////
             char num[20];
-            vpx_itoa_custom(n, num, 10);
+            vpxt_itoa_custom(n, num, 10);
             string DFWMOutFile = DFWMOutFileBase;
             DFWMOutFile.append(num);
             DFWMOutFile.append(".ivf");
@@ -154,7 +142,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
 
             ///////Update File Name///////
             char num[20];
-            vpx_itoa_custom(n, num, 10);
+            vpxt_itoa_custom(n, num, 10);
             string DFWMOutFile = DFWMOutFileBase;
             DFWMOutFile.append(num);
             DFWMOutFile.append(".ivf");
@@ -164,8 +152,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
             if (vpxt_compress_ivf_to_ivf(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
 
@@ -186,11 +173,10 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -222,20 +208,14 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
         {
             EqualBool++;
 
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %4i = DFWM%4i: %4i - Indeterminate", n - 20, DMFW[i+1], n, DMFW[i]);
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "DFWM%4i: %4i = DFWM%4i: %4i - Indeterminate", n - 20, DMFW[i+1], n, DMFW[i]);
             printf("\n");
             fprintf(stderr, "\n");
         }
 
         if (DMFW[i+1] > DMFW[i])
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %4i > DFWM%4i: %4i - Passed", n - 20, DMFW[i+1], n, DMFW[i]);
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "DFWM%4i: %4i > DFWM%4i: %4i - Passed", n - 20, DMFW[i+1], n, DMFW[i]);
             printf("\n");
             fprintf(stderr, "\n");
         }
@@ -244,10 +224,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
         {
             testBool = 0;
 
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DFWM%4i: %4i < DFWM%4i: %4i - Failed", n - 20, DMFW[i+1], n, DMFW[i]);
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "DFWM%4i: %4i < DFWM%4i: %4i - Failed", n - 20, DMFW[i+1], n, DMFW[i]);
             printf("\n");
             fprintf(stderr, "\n");
         }
@@ -258,37 +235,33 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
 
     if (testBool == 0)
     {
-        printf("\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf("\nFailed\n");
+
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
     else
     {
         if (EqualBool == 5)
         {
-            printf("\n\nUnknown: Drop-Frames-Watermark has no effect, try different parameters \n");
-            fprintf(stderr, "\n\nUnknown: Drop-Frames-Watermark has no effect, try different parameters \n");
+            tprintf("\n\nUnknown: Drop-Frames-Watermark has no effect, try different parameters \n");
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
         else
         {
-            printf("\nPassed\n");
-            fprintf(stderr, "\nPassed\n");
+            tprintf("\nPassed\n");
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 1;
         }
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

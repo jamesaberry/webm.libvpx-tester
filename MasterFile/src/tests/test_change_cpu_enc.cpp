@@ -2,14 +2,15 @@
 
 int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-
     char *CompressString = "Version:";
+    char *MyDir = "test_change_cpu_enc";
 
     if (!(argc == 7 || argc == 6))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  ChangeCPUWorks \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -20,37 +21,47 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
             "    <Target Bit Rate>\n"
             "    <Version>\n"
             "    <Optional Settings File>\n"
+            "\n"
         );
         return 0;
     }
 
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+    int VersionNum = atoi(argv[5]);
+
+    int speed = 0;
+    int Fail = 0;
+    int ModesRun = 0;
+
+    unsigned int cpu_tick1 = 0;
+    unsigned int cpu_tick2 = 0;
+
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "ChangeCPUWorks";
-    string MainDirString = "";
-    char File1[255] = "";
-
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string ChangedCPUDec0OutFile = WorkingDirString;
-    string ChangedCPUDecNOutBase = WorkingDirString;
-
+    string ChangedCPUDec0OutFile = CurTestDirStr;
     ChangedCPUDec0OutFile.append(slashCharStr());
-    ChangedCPUDec0OutFile.append("ChangeCPUWorksOutput_NONE.ivf");
+    ChangedCPUDec0OutFile.append("test_change_cpu_enc_compression_none.ivf");
+
+    string ChangedCPUDecNOutBase = CurTestDirStr;
     ChangedCPUDecNOutBase.append(slashCharStr());
-    ChangedCPUDecNOutBase.append("ChangeCPUWorksOutput_");
+    ChangedCPUDecNOutBase.append(MyDir);
+    ChangedCPUDecNOutBase.append("_compression_");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -66,34 +77,16 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    tprintf("Change CPU Works Test");
-
-    char *input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int VersionNum = atoi(argv[5]);
-
-    int speed = 0;
-    int Fail = 0;
-    int ModesRun = 0;
-
-    unsigned int cpu_tick1 = 0;
-    unsigned int cpu_tick2 = 0;
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -104,9 +97,9 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -125,38 +118,45 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
     putenv("ON2_SIMD_CAPS=0");
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         vector<string> CompressonVector;
 
         string OutputStr0 = ChangedCPUDecNOutBase;
-        OutputStr0.append("None.ivf");
+        OutputStr0.append("none.ivf");
         string OutputStr1 = ChangedCPUDecNOutBase;
-        OutputStr1.append("MMX.ivf");
+        OutputStr1.append("mmx.ivf");
         string OutputStr2 = ChangedCPUDecNOutBase;
-        OutputStr2.append("SSE.ivf");
+        OutputStr2.append("sse.ivf");
         string OutputStr3 = ChangedCPUDecNOutBase;
-        OutputStr3.append("SSE2.ivf");
+        OutputStr3.append("sse2.ivf");
         string OutputStr4 = ChangedCPUDecNOutBase;
-        OutputStr4.append("SSE3.ivf");
+        OutputStr4.append("sse3.ivf");
         string OutputStr5 = ChangedCPUDecNOutBase;
-        OutputStr5.append("SSSE3.ivf");
+        OutputStr5.append("ssse3.ivf");
         string OutputStr6 = ChangedCPUDecNOutBase;
-        OutputStr6.append("SSE4_1.ivf");
+        OutputStr6.append("sse4_1.ivf");
 
-        if (vpxt_file_exists_check(OutputStr0))CompressonVector.push_back(OutputStr0);
+        if (vpxt_file_exists_check(OutputStr0))
+            CompressonVector.push_back(OutputStr0);
 
-        if (vpxt_file_exists_check(OutputStr1))CompressonVector.push_back(OutputStr1);
+        if (vpxt_file_exists_check(OutputStr1))
+            CompressonVector.push_back(OutputStr1);
 
-        if (vpxt_file_exists_check(OutputStr2))CompressonVector.push_back(OutputStr2);
+        if (vpxt_file_exists_check(OutputStr2))
+            CompressonVector.push_back(OutputStr2);
 
-        if (vpxt_file_exists_check(OutputStr3))CompressonVector.push_back(OutputStr3);
+        if (vpxt_file_exists_check(OutputStr3))
+            CompressonVector.push_back(OutputStr3);
 
-        if (vpxt_file_exists_check(OutputStr4))CompressonVector.push_back(OutputStr4);
+        if (vpxt_file_exists_check(OutputStr4))
+            CompressonVector.push_back(OutputStr4);
 
-        if (vpxt_file_exists_check(OutputStr5))CompressonVector.push_back(OutputStr5);
+        if (vpxt_file_exists_check(OutputStr5))
+            CompressonVector.push_back(OutputStr5);
 
-        if (vpxt_file_exists_check(OutputStr6))CompressonVector.push_back(OutputStr6);
+        if (vpxt_file_exists_check(OutputStr6))
+            CompressonVector.push_back(OutputStr6);
 
         ModesRun = CompressonVector.size();
 
@@ -173,12 +173,12 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
             {
                 tprintf("\n");
 
-                char CompFile1[255];
+                char CompFileIndexOutputChar[255];
                 char CompFile2[255];
-                vpxt_file_name(CompressonVector[CurrentFile-1].c_str(), CompFile1, 0);
+                vpxt_file_name(CompressonVector[CurrentFile-1].c_str(), CompFileIndexOutputChar, 0);
                 vpxt_file_name(CompressonVector[CurrentFile].c_str(), CompFile2, 0);
 
-                tprintf("\nComparing %s to %s\n", CompFile1, CompFile2);
+                tprintf("\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
                 int lngRC = vpxt_compare_ivf(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str());
 
@@ -217,7 +217,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
 
         putenv("ON2_SIMD_CAPS=0");
         string OutputStr = ChangedCPUDecNOutBase;
-        OutputStr.append("NONE.ivf");
+        OutputStr.append("none.ivf");
 
         tprintf("\n\nDetected CPU capability: NONE");
         unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input, OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1);
@@ -226,8 +226,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
         if (Time1 == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -244,17 +243,23 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
             int CPUFound = 0;
             int Has_Check = (counter + 1) / 2;
 
-            if ((Simd_Caps & HAS_MMX)    == Has_Check) CPUFound = 1;
+            if ((Simd_Caps & HAS_MMX)    == Has_Check)
+                CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE)    == Has_Check) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE)    == Has_Check)
+                CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE2)   == Has_Check) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE2)   == Has_Check)
+                CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE3)   == Has_Check) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE3)   == Has_Check)
+                CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSSE3)  == Has_Check) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSSE3)  == Has_Check)
+                CPUFound = 1;
 
-            if ((Simd_Caps & HAS_SSE4_1) == Has_Check) CPUFound = 1;
+            if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
+                CPUFound = 1;
 
             if (CPUFound == 1)
             {
@@ -262,55 +267,41 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
                 tprintf("\nDetected CPU capability: ");
 
                 if ((Simd_Caps & HAS_MMX)    == Has_Check)
-                {
-                    CPUStr = "MMX";
-                }
+                    CPUStr = "mmx";
 
                 if ((Simd_Caps & HAS_SSE)    == Has_Check)
-                {
-                    CPUStr = "SSE";
-                }
+                    CPUStr = "sse";
 
                 if ((Simd_Caps & HAS_SSE2)   == Has_Check)
-                {
-                    CPUStr = "SSE2";
-                }
+                    CPUStr = "sse2";
 
                 if ((Simd_Caps & HAS_SSE3)   == Has_Check)
-                {
-                    CPUStr = "SSE3";
-                }
+                    CPUStr = "sse3";
 
                 if ((Simd_Caps & HAS_SSSE3)  == Has_Check)
-                {
-                    CPUStr = "SSSE3";
-                }
+                    CPUStr = "ssse3";
 
                 if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
-                {
-                    CPUStr = "SSE4_1";
-                }
+                    CPUStr = "sse4_1";
 
                 tprintf("%s", CPUStr.c_str());
 
                 ///////////Updating CPU///////////
                 string CPUIDSTRING = "ON2_SIMD_CAPS=";
                 char CounterChar[10];
-                vpx_itoa_custom(counter, CounterChar, 10);
+                vpxt_itoa_custom(counter, CounterChar, 10);
                 CPUIDSTRING.append(CounterChar);
 
                 char CPUChar[255];
                 snprintf(CPUChar, 255, CPUIDSTRING.c_str());
                 putenv(CPUChar);
 
-                //tprintf("\n\nCPU:%i", counter);
-
                 ///////Compresion and Time ///////
                 string ChangedCPUDecNOutCurrent = ChangedCPUDecNOutBase;
                 string ChangedCPUDecNOutLast = ChangedCPUDecNOutBase;
 
                 char count[20];
-                vpx_itoa_custom(counter, count, 10);
+                vpxt_itoa_custom(counter, count, 10);
                 ChangedCPUDecNOutCurrent.append(CPUStr.c_str());
                 ChangedCPUDecNOutCurrent.append(".ivf");
 
@@ -321,19 +312,19 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
                 if (Time2 == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
                 if (TestType != 2 && counter != 0)
                 {
-                    char CompFile1[255];
+                    char CompFileIndexOutputChar[255];
+                    vpxt_file_name(CompressonVector[CompressonVector.size()-1].c_str(), CompFileIndexOutputChar, 0);
+
                     char CompFile2[255];
-                    vpxt_file_name(CompressonVector[CompressonVector.size()-1].c_str(), CompFile1, 0);
                     vpxt_file_name(CompressonVector[CompressonVector.size()-2].c_str(), CompFile2, 0);
 
-                    tprintf("\nComparing %s to %s\n", CompFile1, CompFile2);
+                    tprintf("\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
                     int lngRC = vpxt_compare_ivf(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str());
 
@@ -371,54 +362,40 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         putenv("ON2_SIMD_CAPS=");
         return 10;
     }
 
-    //cpu_tick1 = vpxt_cpu_tick_return(ChangedCPUDec0OutFile.c_str(), 0);
     int overallfail = 0;
 
     tprintf("\n\nResults:\n\n");
 
     if (Fail != 1)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All Files are identical - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All Files are identical - Passed");
         tprintf("\n");
     }
 
     if (Fail == 1)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All Files are not identical - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All Files are not identical - Failed");
         tprintf("\n");
         overallfail = 1;
     }
 
     if (ModesRun == 7)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All instruction sets run - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All instruction sets run - Passed");
         tprintf("\n");
     }
 
     if (ModesRun != 7)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Not all instruction sets run - MinPassed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Not all instruction sets run - MinPassed");
         tprintf("\n");
 
         if (overallfail != 1) overallfail = 2;
@@ -426,20 +403,14 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (cpu_tick1 == cpu_tick2)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "cpu_tick1: %u == cpu_tick2: %u - Failed", cpu_tick1, cpu_tick2);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "cpu_tick1: %u == cpu_tick2: %u - Failed", cpu_tick1, cpu_tick2);
         tprintf("\n");
         overallfail = 1;
     }
 
     if (cpu_tick1 != cpu_tick2)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "cpu_tick1: %u != cpu_tick2: %u - Passed", cpu_tick1, cpu_tick2);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "cpu_tick1: %u != cpu_tick2: %u - Passed", cpu_tick1, cpu_tick2);
         tprintf("\n");
     }
 
@@ -449,8 +420,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
 
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
@@ -460,8 +430,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
 
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
@@ -470,13 +439,11 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
 
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

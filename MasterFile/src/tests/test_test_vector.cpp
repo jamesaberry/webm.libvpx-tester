@@ -3,38 +3,36 @@
 int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Test Vector Check";
-    int CurTestVector = 1;
-    int LastTestVector = 102;
-
-    char *input = argv[2];
+    char *MyDir = "test_test_vector";
 
     if (!(argc == 3))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  TestVectorCheck \n\n"
+            "\n\n"
             "    <Input Directory>\n"
             "\n"
         );
-
         return 0;
     }
 
+    char *input = argv[2];
+
+    int CurTestVector = 1;
+    int LastTestVector = 102;
+
     ////////////Formatting Test Specific Directory////////////
 
-    string WorkingDirString = ""; // <- All Options need to set a value for this
+    string CurTestDirStr = ""; // <- All Options need to set a value for this
+    string FileIndexStr = "";
+    char MainTestDirChar[255] = "";
+    char FileIndexOutputChar[255] = "";
 
-    string MainDirString = "";
-    char *MyDir = "TestVectorCheck";
-
-    char WorkingDir3[255] = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
     string TestVectorFolder = argv[2];
-    string TestVectorOutFolder = WorkingDirString.c_str();
-    //TestVectorOutFolder.erase(TestVectorOutFolder.end() - 1);
+    string TestVectorOutFolder = CurTestDirStr.c_str();
 
     int TestVectorNum = 0;
     string TestVector[102];
@@ -471,28 +469,6 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
         TestVectorNum++;
     }
 
-    ////print out the names above
-    //CurTestVector = 1;
-    //while(CurTestVector < LastTestVector)
-    //{
-    //  //printf("\n%s",TestVector[CurTestVector].c_str());
-    //  CurTestVector++;
-    //}
-
-    //CurTestVector = 1;
-    //while(CurTestVector < LastTestVector)
-    //{
-    //  //printf("\n%s",TestVector_Raw[CurTestVector].c_str());
-    //  CurTestVector++;
-    //}
-
-    //CurTestVector = 1;
-    //while(CurTestVector < LastTestVector)
-    //{
-    //  //printf("\n%s",TestVector_Text[CurTestVector].c_str());
-    //  CurTestVector++;
-    //}
-
     string MD5Key[101];
 
     //New Test Vectors 2.0.0 MD5 Checksums
@@ -602,11 +578,11 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
     int DeleteTV = 0; // if = 1 will delete decompressed tesetvectors if 0 will not
 
     /////////////OutPutfile////////////
-    string TextfileString(WorkingDirString.c_str());
+    string TextfileString(CurTestDirStr.c_str());
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -623,24 +599,18 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    tprintf("Test Vector Check Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -655,8 +625,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
             if (vpxt_decompress_ivf_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str()) == -1)
             {
                 fclose(fp);
-                string File1Str = File1;
-                record_test_complete(MainDirString, File1Str, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                 return 2;
             }
 
@@ -666,11 +635,10 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
     vector<int> FailVector;
 
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -751,17 +719,12 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
     if (Fail == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All decoded test vector MD5 checksum's match expected checksum's - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All decoded test vector MD5 checksum's match expected checksum's - Passed");
 
-        tprintf("\n");
-        tprintf("\nPassed\n");
+        tprintf("\n\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
@@ -796,38 +759,27 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
             }
 
             char TVFailNumChar[32] = "";
-            vpx_itoa_custom(FailVector[q], TVFailNumChar, 10);
+            vpxt_itoa_custom(FailVector[q], TVFailNumChar, 10);
             FailStr.append(TVFailNumChar);
             q++;
         }
 
         if (FailVector.size() == 1)
-        {
             FailStr.append(" does not match");
-        }
         else
-        {
             FailStr.append(" do not match");
-        }
 
         FailStr.append(" - Failed");
+        vpxt_formated_print(RESPRT, FailStr.c_str());
 
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, FailStr.c_str());
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
-
-        tprintf("\n");
-        tprintf("\nFailed\n");
+        tprintf("\n\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

@@ -2,15 +2,15 @@
 
 int test_force_key_frame(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-
-    char *CompressString = "opt.key_freq";
-    char *input = argv[2];
+    char *CompressString = "Key Frame Frequency";
+    char *MyDir = "test_force_key_frame";
 
     if (!(argc == 6 || argc == 7))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  ForceKeyFrameWorks \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -26,47 +26,38 @@ int test_force_key_frame(int argc, char *argv[], string WorkingDir, string Files
         return 0;
     }
 
-
-
-    int speed = 0;
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int ForceKeyFrameInt = atoi(argv[5]);
 
-    int Mode = atoi(argv[3]);
+    int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "ForceKeyFrameWorks";
-    string MainDirString = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string KeyFrameoutputfile = WorkingDirString;
-    string ForceKeyFrame = WorkingDirString;
-
-    KeyFrameoutputfile.append(slashCharStr());
-    KeyFrameoutputfile.append("ForceKeyFrameOutput_KeyFrames.txt");
+    string ForceKeyFrame = CurTestDirStr;
     ForceKeyFrame.append(slashCharStr());
-    ForceKeyFrame.append("ForceKeyFrameOutput.ivf");
+    ForceKeyFrame.append(MyDir);
+    ForceKeyFrame.append("_compression.ivf");
 
-    //char KeyFrameoutputfile[255];
-    //char ForceKeyFrame[255];
-
-    //snprintf(outputfile, 255, "%s", WorkingDir4.c_str());
-    //snprintf(ForceKeyFrame, 255, "%s", WorkingDir5.c_str());
+    string KeyFrameoutputfile = CurTestDirStr;
+    KeyFrameoutputfile.append(slashCharStr());
+    KeyFrameoutputfile.append(MyDir);
+    KeyFrameoutputfile.append("_compression_key_frames.txt");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -83,22 +74,16 @@ int test_force_key_frame(int argc, char *argv[], string WorkingDir, string Files
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    tprintf("Force Key Frame Works Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -109,9 +94,9 @@ int test_force_key_frame(int argc, char *argv[], string WorkingDir, string Files
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -125,7 +110,7 @@ int test_force_key_frame(int argc, char *argv[], string WorkingDir, string Files
     opt.auto_key = 0;//1;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -137,126 +122,45 @@ int test_force_key_frame(int argc, char *argv[], string WorkingDir, string Files
         if (vpxt_compress_ivf_to_ivf_force_key_frame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
     vpxt_display_key_frames(ForceKeyFrame.c_str(), 1);
-    //////////////////////////////////////////////////////////////////////////////////
-    ifstream infile(KeyFrameoutputfile.c_str());
 
-    if (!infile.good())
-    {
-        tprintf("\nKey Frame File Not Present\n");
-        fclose(fp);
-        return 0;
-    }
-
-    tprintf("\n\nResults:\n\n");
-
-    int fail = 0;
-    int selector2 = 0;
-    int doOnce2 = 0;
-    int x2;
-    int y2;
-    int framecount = 0;
-
-    while (!infile.eof())
-    {
-        if (selector2 == 1)
-        {
-            infile >> x2;
-            selector2 = 2;
-        }
-        else
-        {
-            infile >> y2;
-            selector2 = 1;
-        }
-
-        if (doOnce2 == 0)
-        {
-            x2 = y2;
-            infile >> y2;
-            doOnce2 = 1;
-            selector2 = 1;
-        }
-
-        if (vpxt_abs_int(y2 - x2) != ForceKeyFrameInt)
-        {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Key Frames do not occur only when Force Key Frame dictates: %i - Failed", ForceKeyFrameInt);
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
-            tprintf("\n");
-            fail = 1;
-        }
-    }
-
-    int maxKeyFrame = 0;
-
-    if (x2 > y2)
-    {
-        maxKeyFrame = x2;
-    }
-    else
-    {
-        maxKeyFrame = y2;
-    }
-
-    int NumberofFrames = vpxt_get_number_of_frames(ForceKeyFrame.c_str());
-
-    if (NumberofFrames - 1 >= (maxKeyFrame + ForceKeyFrameInt))
-    {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Key Frames do not occur only when Force Key Frame dictates: %i - Failed", ForceKeyFrameInt);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
-        tprintf("\n");
-        fail = 1;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
+    int fail = vpxt_check_force_key_frames(KeyFrameoutputfile.c_str(), ForceKeyFrameInt, ForceKeyFrame.c_str());
 
     if (fail == 1)
     {
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Key Frames occur only when Force Key Frame dictates: %i - Passed", ForceKeyFrameInt);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Key Frames occur only when Force Key Frame dictates: %i - Passed", ForceKeyFrameInt);
         tprintf("\n");
 
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 
 }

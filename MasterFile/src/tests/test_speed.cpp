@@ -2,13 +2,42 @@
 
 int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "CpuUsed";
+    char *CompressString = "Cpu Used";
+    char *MyDir = "test_speed";
 
     if (!(argc == 6 || argc == 7))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  SpeedTest \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "    <Target Bit Rate>\n"
+            "    <Lag In Frames>\n"
+            "    <Optional Settings File>\n"
+            "\n"
+        );
+        return 0;
+    }
+
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+    int LagInFramesInput = atoi(argv[5]);
+
+    int speed = 0;
+    int Fail = 0;
+    int Fail2 = 0;
+    int Failb = 0;
+    int Fail2b = 0;
+
+    if (Mode != 0 && Mode != 1)
+    {
+        printf(
+            "  test_speed \n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -19,38 +48,31 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         return 0;
     }
 
-    char *input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int LagInFramesInput = atoi(argv[5]);
-
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "SpeedTest";
-    string MainDirString = "";
-    char File1[255] = "";
-
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string SpeedTestGoodQBase = WorkingDirString;
-    string SpeedTestRealTimeBase = WorkingDirString;
-
+    string SpeedTestGoodQBase = CurTestDirStr;
     SpeedTestGoodQBase.append(slashCharStr());
-    SpeedTestGoodQBase.append("SpeedTestGoodQ_CpuUsed");
+    SpeedTestGoodQBase.append(MyDir);
+    SpeedTestGoodQBase.append("_compression_cpu_used_");
+
+    string SpeedTestRealTimeBase = CurTestDirStr;
     SpeedTestRealTimeBase.append(slashCharStr());
-    SpeedTestRealTimeBase.append("SpeedTestRealTime_CpuUsed");
+    SpeedTestRealTimeBase.append(MyDir);
+    SpeedTestRealTimeBase.append("_compression_cpu_used_");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -66,36 +88,16 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    tprintf("Speed Test");
-
-    if (Mode != 0 && Mode != 1)
-    {
-        fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
-        return 0;
-    }
-
-    int speed = 0;
-    int Fail = 0;
-    int Fail2 = 0;
-    int Failb = 0;
-    int Fail2b = 0;
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -106,9 +108,9 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -133,7 +135,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     double RealPSNRArrPos[18];
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         int counter = 0;
 
@@ -142,7 +144,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
             while (counter < 6)
             {
                 char CounterChar[4];
-                vpx_itoa_custom(counter, CounterChar, 10);
+                vpxt_itoa_custom(counter, CounterChar, 10);
 
                 string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
@@ -162,7 +164,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
             while (counter > -17)
             {
                 char CounterChar[4];
-                vpx_itoa_custom(counter, CounterChar, 10);
+                vpxt_itoa_custom(counter, CounterChar, 10);
 
                 string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
@@ -179,7 +181,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
             while (counter < 17)
             {
                 char CounterChar[4];
-                vpx_itoa_custom(counter, CounterChar, 10);
+                vpxt_itoa_custom(counter, CounterChar, 10);
 
                 string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
@@ -201,7 +203,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
             while (counter < 6)
             {
                 char CounterChar[4];
-                vpx_itoa_custom(counter, CounterChar, 10);
+                vpxt_itoa_custom(counter, CounterChar, 10);
 
                 string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
@@ -215,8 +217,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
                 if (Time == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
@@ -237,7 +238,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
             while (counter > -17)
             {
                 char CounterChar[4];
-                vpx_itoa_custom(counter, CounterChar, 10);
+                vpxt_itoa_custom(counter, CounterChar, 10);
 
                 string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
@@ -251,8 +252,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
                 if (Time == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
@@ -270,7 +270,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
             while (counter < 17)
             {
                 char CounterChar[4];
-                vpx_itoa_custom(counter, CounterChar, 10);
+                vpxt_itoa_custom(counter, CounterChar, 10);
 
                 string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
@@ -284,8 +284,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
                 if (Time == -1)
                 {
                     fclose(fp);
-                    string File1Str = File1;
-                    record_test_complete(MainDirString, File1Str, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     return 2;
                 }
 
@@ -300,12 +299,11 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -449,10 +447,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
         if (Fail == 0)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "All encode ticks decrease as CpuUsed increases - Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed increases - Passed");
             tprintf("\n");
 
             //printf("All encode ticks decrease as CpuUsed increases - Passed");
@@ -460,65 +455,45 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
         if (Fail < 4 && Fail != 0)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Enough encode ticks decrease as CpuUsed increases - Min Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Enough encode ticks decrease as CpuUsed increases - Min Passed");
             tprintf("\n");
             pass = 2;
         }
 
         if (Fail >= 4)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Not enough encode ticks decrease as CpuUsed increases - Failed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Not enough encode ticks decrease as CpuUsed increases - Failed");
             tprintf("\n");
             pass = 0;
         }
 
         if (Fail2 == 0)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "All PSNRs are within 10%% - Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "All PSNRs are within 10%% - Passed");
             tprintf("\n");
         }
 
         if (Fail2 < 2 && Fail2 != 0)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Enough PSNRs are within 10%% - Min Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Enough PSNRs are within 10%% - Min Passed");
             tprintf("\n");
             pass = 2;
         }
 
         if (Fail2 >= 2)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Not enough PSNRs are within 10%% - Failed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Not enough PSNRs are within 10%% - Failed");
             tprintf("\n");
             pass = 0;
         }
 
         if (Failb != 0)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Not all Encode speeds are within 10%% - Failed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Not all Encode speeds are within 10%% - Failed");
             tprintf("\n");
             pass = 0;
         }
     }
-
-
 
     if (Mode == 1)
     {
@@ -526,36 +501,24 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
         if (Fail == 1)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Not all encode ticks decrease as CpuUsed increases - Failed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Not all encode ticks decrease as CpuUsed increases - Failed");
             tprintf("\n");
             pass = 0;
         }
         else
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "All encode ticks decrease as CpuUsed increases - Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed increases - Passed");
             tprintf("\n");
         }
 
         if (Fail2 == 0)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "All PSNR values are within 10%% of eachother - Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "All PSNR values are within 10%% of eachother - Passed");
             tprintf("\n");
         }
         else
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Not all PSNR values are within 10%% of eachother - Failed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Not all PSNR values are within 10%% of eachother - Failed");
             tprintf("\n");
             pass = 0;
         }
@@ -566,8 +529,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
@@ -576,8 +538,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
@@ -585,13 +546,11 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         tprintf("\nMin Passed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 8;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

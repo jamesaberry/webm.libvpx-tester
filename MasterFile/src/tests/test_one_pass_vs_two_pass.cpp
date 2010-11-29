@@ -2,57 +2,71 @@
 
 int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "AllowDF";
+    char *CompressString = "Allow Drop Frames";
+    char *MyDir = "test_one_pass_vs_two_pass";
 
     if (!(argc == 4 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  OnePassVsTwoPass \n\n"
-            "    <inputfile>\n"
-            "    <Target Bit Rate>\n ");
+            "\n\n"
+            "    <Input File>\n"
+            "    <Target Bit Rate>\n"
+            "\n"
+        );
         return 0;
     }
 
+    char *input = argv[2];
+    int BitRate = atoi(argv[3]);
+
+    int speed = 0;
+
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "OnePassVsTwoPass";
-    string MainDirString = "";
-    char File1[255] = "";
-
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-
-    string TwoPassOutFile1 = WorkingDirString;
-    string OnePassOutFile1 = WorkingDirString;
-    string TwoPassOutFile2 = WorkingDirString;
-    string OnePassOutFile2 = WorkingDirString;
-    string TwoPassOutFile3 = WorkingDirString;
-    string OnePassOutFile3 = WorkingDirString;
-
-    TwoPassOutFile1.append(slashCharStr());
-    TwoPassOutFile1.append("TwoPassOutput1.ivf");
+    string OnePassOutFile1 = CurTestDirStr;
     OnePassOutFile1.append(slashCharStr());
-    OnePassOutFile1.append("OnePassOutput1.ivf");
-    TwoPassOutFile2.append(slashCharStr());
-    TwoPassOutFile2.append("TwoPassOutput2.ivf");
+    OnePassOutFile1.append(MyDir);
+    OnePassOutFile1.append("_compression_one_pass_1.ivf");
+
+    string OnePassOutFile2 = CurTestDirStr;
     OnePassOutFile2.append(slashCharStr());
-    OnePassOutFile2.append("OnePassOutput2.ivf");
-    TwoPassOutFile3.append(slashCharStr());
-    TwoPassOutFile3.append("TwoPassOutput3.ivf");
+    OnePassOutFile2.append(MyDir);
+    OnePassOutFile2.append("_compression_one_pass_2.ivf");
+
+    string OnePassOutFile3 = CurTestDirStr;
     OnePassOutFile3.append(slashCharStr());
-    OnePassOutFile3.append("OnePassOutput3.ivf");
+    OnePassOutFile3.append(MyDir);
+    OnePassOutFile3.append("_compression_one_pass_3.ivf");
+
+    string TwoPassOutFile1 = CurTestDirStr;
+    TwoPassOutFile1.append(slashCharStr());
+    TwoPassOutFile1.append(MyDir);
+    TwoPassOutFile1.append("_compression_two_pass_1.ivf");
+
+    string TwoPassOutFile2 = CurTestDirStr;
+    TwoPassOutFile2.append(slashCharStr());
+    TwoPassOutFile2.append(MyDir);
+    TwoPassOutFile2.append("_compression_two_pass_2.ivf");
+
+    string TwoPassOutFile3 = CurTestDirStr;
+    TwoPassOutFile3.append(slashCharStr());
+    TwoPassOutFile3.append(MyDir);
+    TwoPassOutFile3.append("_compression_two_pass_3.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -68,27 +82,16 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    tprintf("One Pass Vs Two Pass Test");
-
-    char *input = argv[2];
-    int BitRate = atoi(argv[3]);
-
-    int speed = 0;
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -99,9 +102,9 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -118,7 +121,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
 
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -130,8 +133,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -140,8 +142,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -150,8 +151,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -161,8 +161,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         if (vpxt_compress_ivf_to_ivf(input, OnePassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -171,8 +170,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         if (vpxt_compress_ivf_to_ivf(input, OnePassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -181,23 +179,21 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         if (vpxt_compress_ivf_to_ivf(input, OnePassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
-    cout << "\n";
+    printf("\n");
 
     float SizeTwoPass1 = vpxt_ivf_data_rate(TwoPassOutFile1.c_str(), 1);
     float SizeOnePass1 = vpxt_ivf_data_rate(OnePassOutFile1.c_str(), 1);
@@ -257,23 +253,8 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
     vpxt_solve_quadradic(SizeTwoPass1, SizeTwoPass2, SizeTwoPass3, PSNRTwoPass1, PSNRTwoPass2, PSNRTwoPass3, TwoPassA, TwoPassB, TwoPassC);
     float TwoPassAreaVal = vpxt_area_under_quadradic(TwoPassA, TwoPassB, TwoPassC, minCommon, maxCommon);
 
-    //cout << "\n\nGoodAreaVal: " << GoodAreaVal << "\n\n";
-
     vpxt_solve_quadradic(SizeOnePass1, SizeOnePass2, SizeOnePass3, PSNROnePass1, PSNROnePass2, PSNROnePass3, OnePassA, OnePassB, OnePassC);
     float OnePassAreaVal = vpxt_area_under_quadradic(OnePassA, OnePassB, OnePassC, minCommon, maxCommon);
-
-    //cout << "\n\nBestAreaVal: " << BestAreaVal << "\n\n";
-
-    /*cout << GoodA << "\n";
-    cout << GoodB << "\n";
-    cout << GoodC << "\n";
-
-    cout << BestA << "\n";
-    cout << BestB << "\n";;
-    cout << BestC << "\n";*/
-
-    //float PSRNPerc = vpxt_abs_float((PSNRB1 - PSNRG1) / PSNRG1) * 100.00;
-    //float BRPerc = (vpxt_abs_float(BestSize1 - GoodSize1) / GoodSize1) * 100.00;
 
     tprintf("\n\n"
             "Data Points:\n"
@@ -308,29 +289,20 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
 
     if (TwoPassAreaVal == OnePassAreaVal)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Two Pass area under curve: %.2f == One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f == One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
         tprintf("\n");
     }
 
     if (OnePassAreaVal < TwoPassAreaVal)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Two Pass area under curve: %.2f > One Pass area under curve: %.2f - Passed", TwoPassAreaVal, OnePassAreaVal);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f > One Pass area under curve: %.2f - Passed", TwoPassAreaVal, OnePassAreaVal);
         tprintf("\n");
         Pass = 1;
     }
 
     if (OnePassAreaVal > TwoPassAreaVal)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Two Pass  area under curve: %.2f < One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Two Pass  area under curve: %.2f < One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
         tprintf("\n");
     }
 
@@ -339,8 +311,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
@@ -348,13 +319,11 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

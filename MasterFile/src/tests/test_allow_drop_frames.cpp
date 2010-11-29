@@ -3,13 +3,14 @@
 int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
-    char *input = argv[2];
+    char *MyDir = "test_allow_drop_frames";
 
     if (!(argc == 6 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  AllowDF \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -17,42 +18,47 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
             "          (3)Two Pass - First Pass\n"
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
+            "    <Target Bit Rate>\n"
             "    <Optional Settings File>\n"
+            "\n"
         );
-
         return 0;
     }
 
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+
+    int speed = 0;
+
     ////////////Formatting Test Specific Directory////////////
+    string CurTestDirStr = "";
+    string FileIndexStr = "";
+    char MainTestDirChar[255] = "";
+    char FileIndexOutputChar[255] = "";
 
-    string WorkingDirString = "";
-    string MainDirString = "";
-    char *MyDir = "AllowDF";
-    char WorkingDir3[255] = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string AllowDFon = WorkingDirString;
-    string AllowDFoff = WorkingDirString;
-
+    string AllowDFon = CurTestDirStr;
     AllowDFon.append(slashCharStr());
-    AllowDFon.append("AllowDFOnOutput.ivf");
+    AllowDFon.append(MyDir);
+    AllowDFon.append("_compression_1.ivf");
+
+    string AllowDFoff = CurTestDirStr;
     AllowDFoff.append(slashCharStr());
-    AllowDFoff.append("AllowDFOffOutput.ivf");
+    AllowDFoff.append(MyDir);
+    AllowDFoff.append("_compression_0.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
-
 
     FILE *fp;
 
@@ -65,20 +71,16 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-        print_header_full_test(argc, argv, WorkingDir3);
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-        print_header_compression_only(argc, argv, WorkingDir3);
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-        print_header_test_only(argc, argv, WorkingDirString);
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int speed = 0;
-    int BitRate = atoi(argv[4]);;
-    int Mode = atoi(argv[3]);
-
-    tprintf("Allow Drop Frames Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -89,9 +91,9 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -108,7 +110,7 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
     //Test Type 3 = Mode 2 = Run Test Compressions
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -120,8 +122,7 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
         if (vpxt_compress_ivf_to_ivf(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -130,17 +131,15 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
         if (vpxt_compress_ivf_to_ivf(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -153,29 +152,20 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
 
     if (AllowDFonFrames < AllowDFoffFrames)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DF on frames = %i < DF off frames = %i - Passed", AllowDFonFrames, AllowDFoffFrames);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DF on frames = %i < DF off frames = %i - Passed", AllowDFonFrames, AllowDFoffFrames);
         tprintf("\n");
     }
 
     if (AllowDFoffFrames == AllowDFonFrames)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DF on frames = %i == DF off frames = %i No effect - Failed", AllowDFonFrames, AllowDFoffFrames);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DF on frames = %i == DF off frames = %i No effect - Failed", AllowDFonFrames, AllowDFoffFrames);
         tprintf("\n");
         fail = 1;
     }
 
     if (AllowDFonFrames > AllowDFoffFrames)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DF on frames = %i > DF off frames = %i - Failed", AllowDFonFrames, AllowDFoffFrames);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DF on frames = %i > DF off frames = %i - Failed", AllowDFonFrames, AllowDFoffFrames);
         tprintf("\n");
         fail = 1;
     }
@@ -184,21 +174,19 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
     {
         tprintf("\nPassed\n");
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
     {
         tprintf("\nFailed\n");
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

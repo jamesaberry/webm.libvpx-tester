@@ -1,16 +1,16 @@
 #include "vpxt_test_declarations.h"
 
-#include "vpxt_test_declarations.h"
-
 int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "ResampleDownWaterMark";
+    char *CompressString = "Resample Down Watermark";
+    char *MyDir = "test_resample_down_watermark";
 
     if (!(argc == 6 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  ResampleDownWaterMark \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -18,39 +18,44 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
             "          (3)Two Pass - First Pass\n"
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
+            "    <Target Bit Rate>\n"
             "    <Optional Settings File>\n"
+            "\n"
         );
         return 0;
     }
 
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+
+    int speed = 0;
+
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "ResampleDownWaterMark";
-    string MainDirString = "";
-    char File1[255] = "";
-
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string DownWaterSamp90OutFile = WorkingDirString;
-    string DownWaterSamp10OutFile = WorkingDirString;
-
+    string DownWaterSamp90OutFile = CurTestDirStr;
     DownWaterSamp90OutFile.append(slashCharStr());
-    DownWaterSamp90OutFile.append("DownWaterSamp90Output.ivf");
+    DownWaterSamp90OutFile.append(MyDir);
+    DownWaterSamp90OutFile.append("_compression_90.ivf");
+
+    string DownWaterSamp10OutFile = CurTestDirStr;
     DownWaterSamp10OutFile.append(slashCharStr());
-    DownWaterSamp10OutFile.append("DownWaterSamp10Output.ivf");
+    DownWaterSamp10OutFile.append(MyDir);
+    DownWaterSamp10OutFile.append("_compression_10.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -66,28 +71,16 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    tprintf("Resample Down WaterMark Test");
-
-    char *input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-
-    int speed = 0;
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -98,9 +91,9 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -123,7 +116,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     opt.resample_up_water_mark = 100;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -136,8 +129,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         if (vpxt_compress_ivf_to_ivf(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -146,19 +138,17 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         if (vpxt_compress_ivf_to_ivf(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -197,35 +187,18 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         RDWMCheck90int = -2;
     }
 
-    /*cout << "\n";
-    cout << "DispKeyFrames90int: " <<  DispKeyFrames90int << "\n";
-    cout << "DispResized90int: " <<  DispResized90int << "\n";
-    cout << "DispCheckPBMThr90int: " <<  DispCheckPBMThr90int << "\n";
-    cout << "RDWMCheck90int: " << RDWMCheck90int << "\n";
-    cout << "\n";
-    cout << "DispKeyFrames10int: " <<  DispKeyFrames10int << "\n";
-    cout << "DispResized10int: " <<  DispResized10int << "\n";
-    cout << "DispCheckPBMThr10int: " <<  DispCheckPBMThr10int << "\n";
-    cout << "RDWMCheck90int: " << RDWMCheck90int << "\n";*/
-
     int fail = 0; //1 = failed // 2 = indt // 3 = track resize for 10 // track resize for 90
     tprintf("\n\nResults:\n\n");
 
     if (DispResized10int > 0 && DispResized90int > 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Both DWMS 10 and 90 returned resized frames - Indeterminate");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned resized frames - Indeterminate");
         tprintf("\n");
     }
 
     if (DispResized10int == 0 && DispResized90int > 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DWMS 10 returned no resized frames; DWMS 90 returned resized frames - Indeterminate");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DWMS 10 returned no resized frames; DWMS 90 returned resized frames - Indeterminate");
         tprintf("\n");
         fail = 4;
         //indt
@@ -233,10 +206,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (DispResized10int > 0 && DispResized90int == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DWMS 90 returned no resized frames; DWMS 10 returned resized frames - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DWMS 90 returned no resized frames; DWMS 10 returned resized frames - Failed");
         tprintf("\n");
         fail = 1;
         //fail
@@ -244,30 +214,21 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (DispResized10int == 0 && DispResized90int == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Both DWMS 10 and 90 returned  no resized frames - Indeterminate");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned  no resized frames - Indeterminate");
         tprintf("\n");
         fail = 2;
     }
 
     if (RDWMCheck10int == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DWMS 10 resizes first frame at correct buffer location - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DWMS 10 resizes first frame at correct buffer location - Passed");
         tprintf("\n");
         //fail
     }
 
     if (RDWMCheck10int == 1)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DWMS 10 does not resize first frame at correct buffer location - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DWMS 10 does not resize first frame at correct buffer location - Failed");
         tprintf("\n");
         fail = 1;
         //fail
@@ -275,10 +236,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (RDWMCheck10int == -3)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DWMS 10 buffer threshold never reached - Indeterminate");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DWMS 10 buffer threshold never reached - Indeterminate");
         tprintf("\n");
         fail = 2;
         //fail
@@ -288,20 +246,14 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     {
         if (fail == 4)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DWMS 90 resizes first frame at correct buffer location - Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at correct buffer location - Passed");
             tprintf("\n");
             fail = 3;
             //fail
         }
         else
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "DWMS 90 resizes first frame at correct buffer location - Passed");
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at correct buffer location - Passed");
             tprintf("\n");
             //fail
         }
@@ -309,10 +261,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (RDWMCheck90int == 1)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DWMS 90 does not resize first frame at correct buffer location - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DWMS 90 does not resize first frame at correct buffer location - Failed");
         tprintf("\n");
         fail = 2;
         //fail
@@ -320,10 +269,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (RDWMCheck90int == -3)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "DWMS 90 buffer threshold never reached - Indeterminate");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "DWMS 90 buffer threshold never reached - Indeterminate");
         tprintf("\n");
         fail = 2;
         //fail
@@ -334,8 +280,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
 
@@ -344,8 +289,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         tprintf("\nMin Passed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 8;
     }
 
@@ -354,8 +298,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         tprintf("\nIndeterminate\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
     else
@@ -363,13 +306,11 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

@@ -29,7 +29,7 @@ int SideBySideText(int argc, char *argv[]);
 int CompressionEquiv(int argc, char *argv[], string WorkingDir);
 int ConvertParmFileToIVFenc(char *input, char *output);
 int CompMatchesIVFenc(int argc, char *argv[]);
-int Comparecode_coverage(int argc, char *argv[]);
+int compare_code_coverage(int argc, char *argv[]);
 int FormatCodeCoverageFile(int argc, char *argv[]);
 int TestVectorIndex(int argc, char *argv[]);
 int APICOMPRESS(int argc, char *argv[]);

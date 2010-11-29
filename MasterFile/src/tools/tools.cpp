@@ -1,16 +1,16 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "ivf.h"
-#include "onyx.h"
-#include <sstream>
+#include "utilities.h"
+#include "driver.h"
 #include "comp_ivf.h"
+#include "onyx.h"
+#include "ivf.h"
+#include "x86.h"
+#include <sstream>
 #include <fstream>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
-#include "x86.h"
-#include "utilities.h"
-#include "driver.h"
 using namespace std;
 
 #if defined(_WIN32)
@@ -64,7 +64,7 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
         printf(
             "\n  Compress IVF to IVF \n\n"
             "    <(1)Normal Compress |(2)TimeCompress>\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <Bit Rate>\n"
             "    <Mode>\n"
@@ -202,7 +202,7 @@ int CopyIVF2IVF(int argc, char *argv[], string WorkingDir)
     {
         printf(
             "\n  Copy IVF to IVF \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n ");
 
         return 0;
@@ -231,7 +231,7 @@ int DecIVF2IVF(int argc, char *argv[])
     {
         printf(
             "\n  Decompress IVF to IVF \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "\n");
 
@@ -251,7 +251,7 @@ int DecIVF2Raw(int argc, char *argv[])
     {
         printf(
             "\n  Decompress IVF to Raw \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "\n");
 
@@ -271,7 +271,7 @@ int IVFDataRateTool(int argc, char *argv[])
     {
         printf(
             "\n  IVF DataRate \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "\n");
         return 0;
     }
@@ -453,7 +453,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
     {
         printf(
             "\n  IVF2RawFrames\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <OutPutDir>\n"
             "    <WriteOutAllFrames-1=yes|0=no>\n"
         );
@@ -580,9 +580,9 @@ int WriteIndividualFramesOut(int argc, char *argv[])
         char currentVideoFrameStr[10];
         char widthchar[10];
         char heightchar[10];
-        vpx_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
-        vpx_itoa_custom(ivfhRaw.width, widthchar, 10);
-        vpx_itoa_custom(ivfhRaw.height, heightchar, 10);
+        vpxt_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
+        vpxt_itoa_custom(ivfhRaw.width, widthchar, 10);
+        vpxt_itoa_custom(ivfhRaw.height, heightchar, 10);
 
         outputDirStr.append(slashCharStr());
         char InputFileName2[255];
@@ -742,7 +742,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
         string outputDirStr = outputDir;
         char currentVideoFrameStr[10];
-        vpx_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
+        vpxt_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
         outputDirStr.append(slashCharStr());
         outputDirStr.append("Frame_");
         outputDirStr.append(currentVideoFrameStr);
@@ -783,7 +783,7 @@ int Raw2IVF(int argc, char *argv[])
     {
         printf(
             "\n  Raw2IVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <OutPutDir>\n"
             "    <Width>\n"
             "    <Height>\n"
@@ -913,7 +913,7 @@ int CutIVFTool(int argc, char *argv[])
     {
         printf(
             "\n  CutIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <Starting Frame>\n"
             "    <Ending Frame>\n"
@@ -936,7 +936,7 @@ int CropRawIVFTool(int argc, char *argv[])
     {
         printf(
             "\n  CropRawIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <xoffset>\n"
             "    <yoffset>\n"
@@ -1068,7 +1068,7 @@ int CombineIndvFrames(int argc, char *argv[])
         }
 
         char CurrentFrameChar[512];
-        vpx_itoa_custom(CurrentFrame, CurrentFrameChar, 10);
+        vpxt_itoa_custom(CurrentFrame, CurrentFrameChar, 10);
         CurIndividualFrameFileName.append(CurrentFrameChar);
         CurIndividualFrameFileName.append(extension);
 
@@ -1110,7 +1110,7 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
     {
         printf(
             "\n  PlayCompIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
         );
         return 0;
     }
@@ -1169,7 +1169,7 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
     vpxt_decompress_ivf_to_raw_no_error_output(input, output2);
 
     char FiveChar[256];
-    vpx_itoa_custom(5, FiveChar, 10);
+    vpxt_itoa_custom(5, FiveChar, 10);
 
     dummyargv1[2] = output;
     dummyargv1[3] = output2;
@@ -1202,10 +1202,10 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
     int FrameRate = (ivfhRaw.rate / ivfhRaw.scale);
     int YUV = 0;
 
-    vpx_itoa_custom(Width, WidthChar, 10);
-    vpx_itoa_custom(Height, HeightChar, 10);
-    vpx_itoa_custom(FrameRate, FrameRateChar, 10);
-    vpx_itoa_custom(YUV, YUVChar, 10);
+    vpxt_itoa_custom(Width, WidthChar, 10);
+    vpxt_itoa_custom(Height, HeightChar, 10);
+    vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
+    vpxt_itoa_custom(YUV, YUVChar, 10);
     fclose(in);
     ////////////////////////////////////////////////////////////////////
 
@@ -1300,7 +1300,7 @@ int PlayDecIVF(int argc, char *argv[])
     {
         printf(
             "\n  PlayDecIVF\n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
         );
         return 0;
     }
@@ -1347,7 +1347,7 @@ int PlayDecIVF(int argc, char *argv[])
     snprintf(output2, 255, "%s", inputStr.c_str());
 
     char FiveChar[256];
-    vpx_itoa_custom(5, FiveChar, 10);
+    vpxt_itoa_custom(5, FiveChar, 10);
 
     dummyargv1[2] = input;
     dummyargv1[3] = output2;
@@ -1385,10 +1385,10 @@ int PlayDecIVF(int argc, char *argv[])
         YUV = 0;
     }
 
-    vpx_itoa_custom(Width, WidthChar, 10);
-    vpx_itoa_custom(Height, HeightChar, 10);
-    vpx_itoa_custom(FrameRate, FrameRateChar, 10);
-    vpx_itoa_custom(YUV, YUVChar, 10);
+    vpxt_itoa_custom(Width, WidthChar, 10);
+    vpxt_itoa_custom(Height, HeightChar, 10);
+    vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
+    vpxt_itoa_custom(YUV, YUVChar, 10);
     fclose(in);
     ////////////////////////////////////////////////////////////////////
 
@@ -1580,11 +1580,14 @@ int DecoderCheck(int argc, char *argv[])
     snprintf(CompressionOutput, 255, "%s", CompressionOutputStr.c_str());
 
     printf("\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput1Char);
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput1Char);
+    unsigned int CPUTick1 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput1Char, CPUTick1);
     printf("\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput2Char);
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput2Char);
+    unsigned int CPUTick2 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput2Char, CPUTick2);
     printf("\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput3Char);
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput3Char);
+    unsigned int CPUTick3 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput3Char, CPUTick3);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     int speed = 0;
@@ -1608,11 +1611,14 @@ int DecoderCheck(int argc, char *argv[])
 
 
     printf("\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput1Char);
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput1Char);
+    unsigned int CPUTick4 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput1Char, CPUTick4);
     printf("\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput2Char);
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput2Char);
+    unsigned int CPUTick5 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput2Char, CPUTick5);
     printf("\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput3Char);
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput3Char);
+    unsigned int CPUTick6 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput3Char, CPUTick6);
 
     cout << "\n\n";
 
@@ -3158,7 +3164,7 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
     {
         printf(
             "\n  Compress IVF to IVF \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <Bit Rate>\n"
             "    <Mode>\n"
@@ -3293,10 +3299,11 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
     cout << "\nDecompressIVFtoIVFNoOutput\n";
     vpxt_decompress_ivf_to_ivf_no_output((char *)output1.c_str(), (char *) output2DEC.c_str());
     cout << "\nTimeDecompressIVFtoIVF\n";
-    unsigned int CPUTick = 0;
-    vpxt_time_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick);
+    unsigned int CPUTick1 = 0;
+    vpxt_time_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick1);
     cout << "\nDecompressIVFtoIVFTimeAndOutput\n";
-    vpxt_decompress_ivf_to_ivf_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str());
+    unsigned int CPUTick2 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2);
     cout << "\n\n";
 
     if (vpxt_compare_ivf((char *) output1DEC.c_str(), (char *) output2DEC.c_str()) == -1)
@@ -3330,7 +3337,7 @@ int CompMatchesIVFenc(int argc, char *argv[])
     {
         printf(
             "\n  Compress IVF to IVF \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <Bit Rate>\n"
             "    <Mode>\n"
@@ -3352,7 +3359,7 @@ int CompMatchesIVFenc(int argc, char *argv[])
     string OutputsettingsFile = output;
     OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
     string OutputsettingsFile2 = OutputsettingsFile;
-    OutputsettingsFile.append("_Paramaters.txt");
+    OutputsettingsFile.append("_paramaters_core.txt");
 /////////////////////IVFenc Par File//////////////////
     OutputsettingsFile2.append("_IVFEnc_Paramaters.txt");
     /////////////////////Tester IVF Comp//////////////////
@@ -3470,13 +3477,13 @@ int CompMatchesIVFenc(int argc, char *argv[])
     Program.append(RawInputNO);
     Program.append(" ");
     memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpx_itoa_custom(Width, ConversionHolder, 10));
+    Program.append(vpxt_itoa_custom(Width, ConversionHolder, 10));
     Program.append(" ");
     memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpx_itoa_custom(Height, ConversionHolder, 10));
+    Program.append(vpxt_itoa_custom(Height, ConversionHolder, 10));
     Program.append(" ");
     memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpx_itoa_custom(FrameRate, ConversionHolder, 10));
+    Program.append(vpxt_itoa_custom(FrameRate, ConversionHolder, 10));
     Program.append(" ");
     Program.append(IVFEncOutput1NO);
     Program.append(" ");
@@ -3502,7 +3509,7 @@ int CompMatchesIVFenc(int argc, char *argv[])
 
     return 0;
 }
-int Comparecode_coverage(int argc, char *argv[])
+int compare_code_coverage(int argc, char *argv[])
 {
     if (argc < 4)
     {
@@ -4053,9 +4060,9 @@ int TestVectorIndex(int argc, char *argv[])
             string currentFile = argv[3];
 
             char Charx[32];
-            vpx_itoa_custom(x, Charx, 10);
+            vpxt_itoa_custom(x, Charx, 10);
             char Chary[32];
-            vpx_itoa_custom(y, Chary, 10);
+            vpxt_itoa_custom(y, Chary, 10);
 
             if (x == 1 && y == 1)
             {
@@ -4166,7 +4173,7 @@ int APICOMPRESS(int argc, char *argv[])
     {
         printf(
             "\n  APICompress \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <outputfile>\n"
             "    <width>\n"
             "    <height>\n"
@@ -4203,7 +4210,7 @@ int APIDECOMPRESS(int argc, char *argv[])
     {
         printf(
             "\n  APIDecompress \n\n"
-            "    <inputfile>\n"
+            "    <Input File>\n"
             "    <Codec - vp8>\n"
             "    <outputfile>\n"
         );

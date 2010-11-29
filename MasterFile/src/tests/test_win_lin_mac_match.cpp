@@ -3,13 +3,14 @@
 int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "WinLinMacMatch";
-
+    char *MyDir = "test_win_lin_mac_match";
 
     if (!(argc == 8 || argc == 7))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  WinLinMacMatch \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -20,12 +21,20 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
             "    <Target Bit Rate>\n"
             "    <Common Base Folder>\n"
             "    <Common Settings File>\n"
+            "\n"
         );
         return 0;
     }
 
-    string arch = "Unknown";
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+    string basefolder = argv[5];
+    string ParameterFile = argv[6];
 
+    int speed = 0;
+
+    string arch = "Unknown";
 #if ARCH_X86
     arch = "-32Bit";
 #elif ARCH_X86_64
@@ -35,8 +44,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
 #elif HAVE_ARMV7
     arch = "-Arm7";
 #endif
-    char *input = argv[2];
-    string basefolder = argv[5];
+
     basefolder.append(slashCharStr().c_str());
     string versionstring = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
     size_t versionPos = versionstring.find("v");
@@ -51,38 +59,40 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
     int TestMode = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "WinLinMacMatch";
-    string MainDirString = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
     string FiletoEnc = "";
     string FiletoDec = "";
 
     string WinEnc = basefolder;
+    WinEnc.append(MyDir);
+    WinEnc.append("_compression_win.ivf");
+
     string LinEnc = basefolder;
+    LinEnc.append(MyDir);
+    LinEnc.append("_compression_lin.ivf");
+
     string MacEnc = basefolder;
+    MacEnc.append(MyDir);
+    MacEnc.append("_compression_mac.ivf");
 
     string WinDec = basefolder;
+    WinDec.append(MyDir);
+    WinDec.append("_decompression_win.ivf");
+
     string LinDec = basefolder;
+    LinDec.append(MyDir);
+    LinDec.append("_decompression_lin.ivf");
+
     string MacDec = basefolder;
-
-    string ParameterFile = argv[6];
-
-    WinEnc.append("WinEnc.ivf");
-    LinEnc.append("LinEnc.ivf");
-    MacEnc.append("MacEnc.ivf");
-
-    WinDec.append("WinDec.ivf");
-    LinDec.append("LinDec.ivf");
-    MacDec.append("MacDec.ivf");
-
+    MacDec.append(MyDir);
+    MacDec.append("_decompression_mac.ivf");
 
 #if defined(linux)
     FiletoEnc = LinEnc;
@@ -114,11 +124,11 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -134,26 +144,16 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int speed = 0;
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-
-    tprintf("Win Lin Mac Match");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -163,7 +163,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
 
     BitRate = opt.target_bandwidth;
 
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
 
     }
@@ -174,8 +174,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
         if (vpxt_compress_ivf_to_ivf(input, FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -185,20 +184,18 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
         if (vpxt_decompress_ivf_to_ivf(FiletoEnc.c_str(), FiletoDec.c_str()) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -206,17 +203,12 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
     {
         tprintf("\n\nResults:\n\n");
 
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Test files created.");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Test files created.");
 
-        tprintf("\n");
-        tprintf("\nIndeterminate\n");
+        tprintf("\n\nIndeterminate\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
@@ -384,38 +376,26 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
 
     if (ENCFAIL == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All encoded files are identical - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All encoded files are identical - Passed");
         tprintf("\n");
     }
 
     if (ENCFAIL > 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Not all encoded files are identical - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Not all encoded files are identical - Failed");
         tprintf("\n");
         fail = 1;
     }
 
     if (DECFAIL == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All decoded files are identical - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All decoded files are identical - Passed");
         tprintf("\n");
     }
 
     if (DECFAIL > 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Not all decoded files are identical - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Not all decoded files are identical - Failed");
         tprintf("\n");
         fail = 1;
     }
@@ -425,8 +405,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
     else
@@ -434,13 +413,11 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

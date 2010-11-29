@@ -51,3 +51,7 @@ extern "C"
 #include "vpx_timer.h"
     extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
 }
+
+#define TEST_ONLY 3
+#define COMP_ONLY 2
+#define TEST_AND_COMP 1

@@ -1,5 +1,6 @@
 #include "vpxt_test_declarations.h"
 #include "vpxt_test_list.h"
+#include "driver.h"
 
 int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofTests)
 {
@@ -34,7 +35,6 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     char buffer2[512] = "";
     char identicalFileBuffer[3] = "";
 
-    //int PassFail[9999] = {0};
     int *PassFail = new int[NumberofTests+2];
 
     string SummCompAndTest = "";
@@ -53,7 +53,6 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     int RecordRunTimes = 0; //If set to one will record run times of tests
     unsigned int RunTime1 = 0;
     unsigned int RunTime2 = 0;
-
     /////////////////////////////////////////////////////////////////////////////////////////
 
     int y = 0;
@@ -84,7 +83,6 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     char WorkingDir3[255] = "";
     char *MyDir = "Summary";
 
-
     ////////////////////Sets Stage for Resume Mode//////////////////////
     if (TestType == 4)
     {
@@ -97,21 +95,18 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         WorkingTextFilestr = WorkingDir;
         WorkingTextFilestr.append(slashCharStr());
-        WorkingTextFilestr.append("TestsRun.txt");                      //TestsRun.txt original file ided
+        WorkingTextFilestr.append("tests_run.txt");                      //TestsRun.txt original file ided
 
         //Determines which test is in the process of being run and sets the correct text file as input file
         SummCompAndTest = WorkingDir;
         SummCompAndTest.append(slashCharStr());
-        SummCompAndTest.append("Mode1Results.txt");     // Mode 1
-        //SummCompAndTest.append("Summary_CompressionsANDTests.txt");       // Mode 1
+        SummCompAndTest.append("test_results.txt");         // Mode 1
         SummComp = WorkingDir;
         SummComp.append(slashCharStr());
-        SummComp.append("Mode2Results.txt");                // Mode 2
-        //SummComp.append("Summary_CompressionsOnly.txt");              // Mode 2
+        SummComp.append("compression_results.txt");         // Mode 2
         SummTest = WorkingDir;
         SummTest.append(slashCharStr());
-        SummTest.append("Mode3Results.txt");                        // Mode 3
-        //SummTest.append("Summary_TestsOnly.txt");                     // Mode 3
+        SummTest.append("compression_test_results.txt");    // Mode 3
 
         int TestRunning = 0;
 
@@ -140,7 +135,6 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 TestRunning = 2;
             }
-
         }
 
         SummCompAndTestFile.close();
@@ -426,9 +420,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingDir3[v+1] = '\0';
 
         WorkDirFileStr = WorkingDir3;
-        //WorkDirFileStr.append(MyDir);
-        //WorkDirFileStr.append("_CompressionsANDTests.txt");
-        WorkDirFileStr.append("Mode1Results.txt");
+        WorkDirFileStr.append("test_results.txt");
 
     }
 
@@ -447,18 +439,14 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingDir3[v+1] = '\0';
 
         WorkDirFileStr = WorkingDir3;
-        //WorkDirFileStr.append(MyDir);
-        //WorkDirFileStr.append("_CompressionsOnly.txt");
-        WorkDirFileStr.append("Mode2Results.txt");
+        WorkDirFileStr.append("compression_results.txt");
     }
 
     if (TestType == 3)
     {
         WorkDirFileStr = argv[3];
         WorkDirFileStr.append(slashCharStr());
-        //WorkDirFileStr.append(MyDir);
-        //WorkDirFileStr.append("_TestsOnly.txt");
-        WorkDirFileStr.append("Mode3Results.txt");
+        WorkDirFileStr.append("compression_test_results.txt");
     }
 
 
@@ -478,7 +466,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingDir3[v+1] = '\0';
 
         WorkingTextFilestr = WorkingDir3;
-        WorkingTextFilestr.append("TestsRun.txt");
+        WorkingTextFilestr.append("tests_run.txt");
         ///////////////////////////////////////////////////
 
     }
@@ -538,7 +526,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         WorkingTextFilestr = WorkingDir;
         WorkingTextFilestr.append(slashCharStr());
-        WorkingTextFilestr.append("TestsRun.txt");          //TestsRun.txt original file ided
+        WorkingTextFilestr.append("tests_run.txt");          //TestsRun.txt original file ided
 
         WorkingDir.append("\"");
 
@@ -569,8 +557,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         string SummComp = argv[3];
         SummComp.append(slashCharStr());
-        SummComp.append("Mode2Results.txt");
-        //SummComp.append("Summary_CompressionsOnly.txt");
+        SummComp.append("compression_results.txt");
 
         fstream PriorResultInputFile2;
         PriorResultInputFile2.open(SummComp.c_str());
@@ -663,13 +650,12 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         {
             Buf1Var = 0;
 
-#if defined(_WIN32)
-
-            while (buffer[Buf1Var] != '\0')
+            //parses through gotline and seperates commands out
+            while (buffer[Buf1Var] != '\0' && buffer[Buf1Var] != '\r')
             {
                 int Buf2Var = 0;
 
-                while (buffer[Buf1Var] != 64 && buffer[Buf1Var] != '\0')
+                while (buffer[Buf1Var] != 64 && buffer[Buf1Var] != '\0' && buffer[Buf1Var] != '\r')
                 {
                     buffer2[Buf2Var] = buffer[Buf1Var];
                     Buf1Var++;
@@ -678,35 +664,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 buffer2[Buf2Var] = '\0';
 
-                if (buffer[Buf1Var] != '\0')
-                {
-                    Buf1Var++;
-                }
-
-                if (CommentBool == 0)
-                {
-                    StringAr[DummyArgvVar].clear();
-                    StringAr[DummyArgvVar].insert(0, buffer2);
-                    DummyArgvVar++;
-                }
-            }
-
-#elif defined(linux)
-
-            while (buffer[Buf1Var] != '\0')
-            {
-                int Buf2Var = 0;
-
-                while (buffer[Buf1Var] != 64 && buffer[Buf1Var] != '\0')
-                {
-                    buffer2[Buf2Var] = buffer[Buf1Var];
-                    Buf1Var++;
-                    Buf2Var++;
-                }
-
-                buffer2[Buf2Var] = '\0';
-
-                if (buffer[Buf1Var] != '\0')
+                if (buffer[Buf1Var] != '\0' && buffer[Buf1Var] != '\r')
                 {
                     Buf1Var++;
                 }
@@ -717,64 +675,6 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                     DummyArgvVar++;
                 }
             }
-
-#elif defined(__APPLE__)
-
-            while (buffer[Buf1Var] != '\r' && Buf1Var < bufferString.length())
-            {
-                int Buf2Var = 0;
-
-                while (buffer[Buf1Var] != 64 && buffer[Buf1Var] != '\r' && Buf1Var < bufferString.length())
-                {
-                    //cout << buffer[Buf1Var] << "\n";
-                    buffer2[Buf2Var] = buffer[Buf1Var];
-                    Buf1Var++;
-                    Buf2Var++;
-                }
-
-                buffer2[Buf2Var] = '\0';
-
-                if (buffer[Buf1Var] != '\r')
-                {
-                    Buf1Var++;
-                }
-
-                if (CommentBool == 0)
-                {
-                    StringAr[DummyArgvVar] = buffer2;
-                    DummyArgvVar++;
-                }
-            }
-
-#elif defined(__POWERPC__)
-
-            while (buffer[Buf1Var] != '\r' && Buf1Var < bufferString.length())
-            {
-                int Buf2Var = 0;
-
-                while (buffer[Buf1Var] != 64 && buffer[Buf1Var] != '\r' && Buf1Var < bufferString.length())
-                {
-                    //cout << buffer[Buf1Var] << "\n";
-                    buffer2[Buf2Var] = buffer[Buf1Var];
-                    Buf1Var++;
-                    Buf2Var++;
-                }
-
-                buffer2[Buf2Var] = '\0';
-
-                if (buffer[Buf1Var] != '\r')
-                {
-                    Buf1Var++;
-                }
-
-                if (CommentBool == 0)
-                {
-                    StringAr[DummyArgvVar] = buffer2;
-                    DummyArgvVar++;
-                }
-            }
-
-#endif
 
             y = 1;
 
@@ -785,17 +685,17 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             }
 
             char NumberOfTestsRunChar[4];
-            DummyArgv[y] = vpx_itoa_custom(NumberOfTestsRun, NumberOfTestsRunChar, 10);
+            DummyArgv[y] = vpxt_itoa_custom(NumberOfTestsRun, NumberOfTestsRunChar, 10);
 
             if (CommentBool == 0)
             {
                 printf("\n");
-                int selector = atoi(DummyArgv[1]);
 
-                if (selector >= 0 && selector < 53)
+                int selector = vpxt_identify_test(DummyArgv[1]);
+
+                if (selector >= 0 && selector < MAXTENUM)
                 {
-                    if (selector != 11 && selector != 33 && selector != 35 && selector != 0)
-                        NumberOfTestsRun++;
+                    NumberOfTestsRun++;
                 }
 
                 TimeStampPrevious = TimeStampAr2[0];
@@ -820,7 +720,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == AlWDFNUM)
                 {
-                    SelectorAr[SelectorArInt] = "AllowDropFrames";
+                    SelectorAr[SelectorArInt] = "Test_Allow_Drop_Frames";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -842,7 +742,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == ALWLGNUM)
                 {
-                    SelectorAr[SelectorArInt] = "AllowLagTest";
+                    SelectorAr[SelectorArInt] = "Test_Allow_Lag";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -864,7 +764,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == ALWSRNUM)
                 {
-                    SelectorAr[SelectorArInt] = "AllowSpatialResampling";
+                    SelectorAr[SelectorArInt] = "Test_Allow_Spatial_Resampling";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -886,7 +786,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == AUTKFNUM)
                 {
-                    SelectorAr[SelectorArInt] = "AutoKeyFramingWorks";
+                    SelectorAr[SelectorArInt] = "Test_Auto_Key_Frame";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -908,7 +808,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == BUFLVNUM)
                 {
-                    SelectorAr[SelectorArInt] = "BufferLevelWorks";
+                    SelectorAr[SelectorArInt] = "Test_Buffer_Level";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -930,7 +830,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == CPUDENUM)
                 {
-                    SelectorAr[SelectorArInt] = "CPUDecOnlyWorks";
+                    SelectorAr[SelectorArInt] = "Test_Change_Cpu_Dec";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -952,7 +852,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == CHGWRNUM)
                 {
-                    SelectorAr[SelectorArInt] = "ChangeCPUWorks";
+                    SelectorAr[SelectorArInt] = "Test_Change_Cpu_Enc";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -972,31 +872,9 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                     TestsRun++;
                 }
 
-                if (selector == DFWMWNUM)
-                {
-                    SelectorAr[SelectorArInt] = "DropFramesWaterMarkWorks";
-                    check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
-                    SelectorAr2[SelectorArInt] = TimeStampAr2[0];
-
-                    if (RecordRunTimes == 1)
-                    {
-                        RunTime1 = vpxt_get_time();
-                    }
-
-                    PassFail[PassFailInt] = test_drop_frame_watermark(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
-
-                    if (RecordRunTimes == 1)
-                    {
-                        RunTime2 = vpxt_get_time();
-                        RunTimeRecAr[SelectorArInt] = vpxt_get_time_in_micro_sec(RunTime1, RunTime2);
-                    }
-
-                    TestsRun++;
-                }
-
                 if (selector == DTARTNUM)
                 {
-                    SelectorAr[SelectorArInt] = "DataRateTest";
+                    SelectorAr[SelectorArInt] = "Test_Data_Rate";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1018,7 +896,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == DBMRLNUM)
                 {
-                    SelectorAr[SelectorArInt] = "DebugMatchesRelease";
+                    SelectorAr[SelectorArInt] = "Test_Debug_Matches_Release";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1038,9 +916,31 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                     TestsRun++;
                 }
 
+                if (selector == DFWMWNUM)
+                {
+                    SelectorAr[SelectorArInt] = "Test_Drop_Frame_Watermark";
+                    check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
+                    SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = vpxt_get_time();
+                    }
+
+                    PassFail[PassFailInt] = test_drop_frame_watermark(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = vpxt_get_time();
+                        RunTimeRecAr[SelectorArInt] = vpxt_get_time_in_micro_sec(RunTime1, RunTime2);
+                    }
+
+                    TestsRun++;
+                }
+
                 if (selector == ENCBONUM)
                 {
-                    SelectorAr[SelectorArInt] = "EncoderBreakOut";
+                    SelectorAr[SelectorArInt] = "Test_Encoder_Break_Out";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1062,7 +962,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == ERRMWNUM)
                 {
-                    SelectorAr[SelectorArInt] = "ErrorResilientModeWorks";
+                    SelectorAr[SelectorArInt] = "Test_Error_Resolution";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1084,7 +984,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == EXTFINUM)
                 {
-                    SelectorAr[SelectorArInt] = "ExtraFileCheck";
+                    SelectorAr[SelectorArInt] = "Test_Extra_File";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1106,7 +1006,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == FIXDQNUM)
                 {
-                    SelectorAr[SelectorArInt] = "FixedQ";
+                    SelectorAr[SelectorArInt] = "Test_Fixed_Quantizer";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1128,7 +1028,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == FKEFRNUM)
                 {
-                    SelectorAr[SelectorArInt] = "ForceKeyFrameWorks";
+                    SelectorAr[SelectorArInt] = "Test_Force_Key_Frame";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1150,7 +1050,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == FRSZTNUM)
                 {
-                    SelectorAr[SelectorArInt] = "FrameSizeTest";
+                    SelectorAr[SelectorArInt] = "Test_Frame_Size";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1172,7 +1072,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == GQVBQNUM)
                 {
-                    SelectorAr[SelectorArInt] = "GoodQualityVsBestQuality";
+                    SelectorAr[SelectorArInt] = "Test_Good_Vs_Best";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1194,7 +1094,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == LGIFRNUM)
                 {
-                    SelectorAr[SelectorArInt] = "LagInFramesTest";
+                    SelectorAr[SelectorArInt] = "Test_Lag_In_Frames";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1216,7 +1116,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == MAXQUNUM)
                 {
-                    SelectorAr[SelectorArInt] = "MaxQuantizerTest";
+                    SelectorAr[SelectorArInt] = "Test_Max_Quantizer";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1238,7 +1138,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == MEML1NUM)
                 {
-                    SelectorAr[SelectorArInt] = "MemLeakCheck";
+                    SelectorAr[SelectorArInt] = "Test_Mem_Leak";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1260,7 +1160,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == MEML2NUM)
                 {
-                    SelectorAr[SelectorArInt] = "MemLeakCheck2";
+                    SelectorAr[SelectorArInt] = "Test_Mem_Leak2";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1282,7 +1182,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == MINQUNUM)
                 {
-                    SelectorAr[SelectorArInt] = "MinQuantizerTest";
+                    SelectorAr[SelectorArInt] = "Test_Min_Quantizer";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1304,7 +1204,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == MULTTNUM)
                 {
-                    SelectorAr[SelectorArInt] = "MultiThreadedTest";
+                    SelectorAr[SelectorArInt] = "Test_Multithreaded";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1326,7 +1226,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == NVOPSNUM)
                 {
-                    SelectorAr[SelectorArInt] = "NewVsOldPSNR";
+                    SelectorAr[SelectorArInt] = "Test_New_Vs_Old_Psnr";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1348,7 +1248,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == NVORTNUM)
                 {
-                    SelectorAr[SelectorArInt] = "NewVsOldRealTimeSpeed";
+                    SelectorAr[SelectorArInt] = "Test_New_Vs_Old_Real_Time_Speed";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1370,7 +1270,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == NOISENUM)
                 {
-                    SelectorAr[SelectorArInt] = "NoiseSensitivityWorks";
+                    SelectorAr[SelectorArInt] = "Test_Noise_Sensitivity";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1392,7 +1292,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == OV2PSNUM)
                 {
-                    SelectorAr[SelectorArInt] = "OnePassVsTwoPass";
+                    SelectorAr[SelectorArInt] = "Test_One_Pass_Vs_Two_Pass";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1414,7 +1314,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == PLYALNUM)
                 {
-                    SelectorAr[SelectorArInt] = "PlayAlternate";
+                    SelectorAr[SelectorArInt] = "Test_Play_Alternate";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1436,7 +1336,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == POSTPNUM)
                 {
-                    SelectorAr[SelectorArInt] = "PostProcessorWorks";
+                    SelectorAr[SelectorArInt] = "Test_Post_Processor";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1456,9 +1356,9 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                     TestsRun++;
                 }
 
-                if (selector == RECONBUF)
+                if (selector == RECBFNUM)
                 {
-                    SelectorAr[SelectorArInt] = "ReconBuffer";
+                    SelectorAr[SelectorArInt] = "Test_Reconstruct_Buffer";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1480,7 +1380,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == RSDWMNUM)
                 {
-                    SelectorAr[SelectorArInt] = "ResampleDownWaterMark";
+                    SelectorAr[SelectorArInt] = "Test_Resample_Down_Watermark";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1502,7 +1402,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == SPEEDNUM)
                 {
-                    SelectorAr[SelectorArInt] = "SpeedTest";
+                    SelectorAr[SelectorArInt] = "Test_Speed";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1524,7 +1424,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == TVECTNUM)
                 {
-                    SelectorAr[SelectorArInt] = "TestVectorCheck";
+                    SelectorAr[SelectorArInt] = "Test_Test_Vector";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1546,7 +1446,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == TV2BTNUM)
                 {
-                    SelectorAr[SelectorArInt] = "TwoPassVsTwoPassBest";
+                    SelectorAr[SelectorArInt] = "Test_Two_Pass_Vs_Two_Pass_Best";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1568,7 +1468,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == UNDSHNUM)
                 {
-                    SelectorAr[SelectorArInt] = "UnderShoot";
+                    SelectorAr[SelectorArInt] = "Test_Undershoot";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1590,7 +1490,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == VERSINUM)
                 {
-                    SelectorAr[SelectorArInt] = "Version";
+                    SelectorAr[SelectorArInt] = "Test_Version";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1599,7 +1499,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = version_test(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_version(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1612,7 +1512,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if (selector == WMLMMNUM)
                 {
-                    SelectorAr[SelectorArInt] = "WinLinMacMatch";
+                    SelectorAr[SelectorArInt] = "Test_Win_Lin_Mac_Match";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1664,7 +1564,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                                 "                                Test Only Results \n");
                     }
 
-                    fprintf(stderr, "\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    fprintf(stderr, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
 
                     PrintMe = 0;
                 }
@@ -1672,7 +1572,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
 
                 SelectorAr2[SelectorArInt].erase(SelectorAr2[SelectorArInt].end() - 1);
-                fprintf(stderr, "%4i %-30s%-28s", SelectorArInt, SelectorAr[SelectorArInt].c_str(), SelectorAr2[SelectorArInt].c_str());
+                fprintf(stderr, "%4i %-32s%-25s", SelectorArInt, SelectorAr[SelectorArInt].c_str(), SelectorAr2[SelectorArInt].c_str());
 
                 SelectorAr2[SelectorArInt].append("\"");
 
@@ -1807,29 +1707,29 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     if (TestType == 1)
     {
         tprintf("\n-------------------------------------------------------------------------------\n\n"
-                "                                  Test Results \n");
+                "Test Results \n");
     }
 
     if (TestType == 2)
     {
         tprintf("\n-------------------------------------------------------------------------------\n\n"
-                "                                Test Compressions \n");
+                "Test Compressions \n");
     }
 
     if (TestType == 3)
     {
         tprintf("\n-------------------------------------------------------------------------------\n\n"
-                "                                Test Only Results \n");
+                "Test Only Results \n");
     }
 
     y = 0;
 
-    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
 
     while (y < TestsRun)
     {
         SelectorAr2[y].erase(SelectorAr2[y].end() - 1);
-        tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+        tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
 
         if (PassFail[y] == 1)
         {
@@ -1887,13 +1787,13 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     if (TestType == 1)
     {
         tprintf("\n-------------------------------------------------------------------------------\n\n"
-                "                              Test Results - Passed \n");
+                "Test Results - Passed \n");
     }
 
     if (TestType == 3)
     {
         tprintf("\n-------------------------------------------------------------------------------\n\n"
-                "                              Test Results - Passed \n");
+                "Test Results - Passed \n");
     }
 
     //tprintf("\n\n");
@@ -1911,11 +1811,11 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
                 tprintf("Passed\n");
             }
 
@@ -1924,19 +1824,19 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("NONE\n\n");
+            tprintf("\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                             Test Results - MinPassed \n");
+                    "Test Results - MinPassed \n");
         }
 
         if (TestType == 3)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                             Test Results - MinPassed \n");
+                    "Test Results - MinPassed \n");
         }
 
         TestIndicator = 0;
@@ -1948,11 +1848,11 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
                 tprintf("MinTestPassed\n");
             }
 
@@ -1961,19 +1861,19 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("NONE\n\n");
+            tprintf("\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                           Test Results - Indeterminate \n");
+                    "Test Results - Indeterminate \n");
         }
 
         if (TestType == 3)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                           Test Results - Indeterminate \n");
+                    "Test Results - Indeterminate \n");
         }
 
         TestIndicator = 0;
@@ -1985,11 +1885,11 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
                 tprintf("Indeterminate\n");
             }
 
@@ -1998,19 +1898,19 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("NONE\n\n");
+            tprintf("\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                              Test Results - Failed \n");
+                    "Test Results - Failed \n");
         }
 
         if (TestType == 3)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                              Test Results - Failed \n");
+                    "Test Results - Failed \n");
         }
 
         TestIndicator = 0;
@@ -2022,11 +1922,11 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
                 tprintf("Failed\n");
             }
 
@@ -2035,19 +1935,19 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("NONE\n\n");
+            tprintf("\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                               Test Results - Other \n");
+                    "Test Results - Other \n");
         }
 
         if (TestType == 3)
         {
             tprintf("\n-------------------------------------------------------------------------------\n\n"
-                    "                               Test Results - Other \n");
+                    "Test Results - Other \n");
         }
 
         TestIndicator = 0;
@@ -2059,11 +1959,11 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-30s%-28s%s\n\n", "#", "               Test Type" , "     Test Folder", "Status");
+                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-30s%-28s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
 
                 if (PassFail[y] == 3)
                 {
@@ -2102,7 +2002,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("NONE\n\n");
+            tprintf("\n    NONE\n\n");
         }
 
         /////////////////////////////Output Time it took to run test/////////////////////////////

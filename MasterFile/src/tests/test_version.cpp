@@ -1,16 +1,16 @@
 #include "vpxt_test_declarations.h"
 
-int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Version";
-
-    char *input = argv[2];
+    char *MyDir = "test_version";
 
     if (!(argc == 6 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  Version \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -20,72 +20,74 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             "          (5)Two Pass Best Quality\n"
             "    <Target Bit Rate>\n "
             "    <Optional Settings File>\n"
+            "\n"
         );
-
         return 0;
     }
 
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+    char *input2 = argv[5];
+
+    int speed = 0;
+
     ////////////Formatting Test Specific Directory////////////
 
-    string WorkingDirString = ""; // <- All Options need to set a value for this
+    string CurTestDirStr = ""; // <- All Options need to set a value for this
+    string FileIndexStr = "";
+    char MainTestDirChar[255] = "";
+    char FileIndexOutputChar[255] = "";
 
-    string MainDirString = "";
-    char *MyDir = "Version";
-
-    char WorkingDir3[255] = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string Version0 = WorkingDirString;
-    string Version1 = WorkingDirString;
-    string Version2 = WorkingDirString;
-    string Version3 = WorkingDirString;
-
-    string Version0_Dec = WorkingDirString;
-    string Version1_Dec = WorkingDirString;
-    string Version2_Dec = WorkingDirString;
-    string Version3_Dec = WorkingDirString;
-
-    string Version0_Deccpu_tick = WorkingDirString;
-    string Version1_Deccpu_tick = WorkingDirString;
-    string Version2_Deccpu_tick = WorkingDirString;
-    string Version3_Deccpu_tick = WorkingDirString;
-
+    string Version0 = CurTestDirStr;
     Version0.append(slashCharStr());
-    Version0.append("Version0.ivf");
+    Version0.append(MyDir);
+    Version0.append("_compression_0.ivf");
+
+    string Version1 = CurTestDirStr;
     Version1.append(slashCharStr());
-    Version1.append("Version1.ivf");
+    Version1.append(MyDir);
+    Version1.append("_compression_1.ivf");
+
+    string Version2 = CurTestDirStr;
     Version2.append(slashCharStr());
-    Version2.append("Version2.ivf");
+    Version2.append(MyDir);
+    Version2.append("_compression_2.ivf");
+
+    string Version3 = CurTestDirStr;
     Version3.append(slashCharStr());
-    Version3.append("Version3.ivf");
+    Version3.append(MyDir);
+    Version3.append("_compression_3.ivf");
 
+    string Version0_Dec = CurTestDirStr;
     Version0_Dec.append(slashCharStr());
-    Version0_Dec.append("Version0_Dec.ivf");
-    Version1_Dec.append(slashCharStr());
-    Version1_Dec.append("Version1_Dec.ivf");
-    Version2_Dec.append(slashCharStr());
-    Version2_Dec.append("Version2_Dec.ivf");
-    Version3_Dec.append(slashCharStr());
-    Version3_Dec.append("Version3_Dec.ivf");
+    Version0_Dec.append(MyDir);
+    Version0_Dec.append("_decompression_0.ivf");
 
-    Version0_Deccpu_tick.append(slashCharStr());
-    Version0_Deccpu_tick.append("Version0_Dec_CompressionTime.txt");
-    Version1_Deccpu_tick.append(slashCharStr());
-    Version1_Deccpu_tick.append("Version1_Dec_CompressionTime.txt");
-    Version2_Deccpu_tick.append(slashCharStr());
-    Version2_Deccpu_tick.append("Version2_Dec_CompressionTime.txt");
-    Version3_Deccpu_tick.append(slashCharStr());
-    Version3_Deccpu_tick.append("Version3_Dec_CompressionTime.txt");
+    string Version1_Dec = CurTestDirStr;
+    Version1_Dec.append(slashCharStr());
+    Version1_Dec.append(MyDir);
+    Version1_Dec.append("_decompression_1.ivf");
+
+    string Version2_Dec = CurTestDirStr;
+    Version2_Dec.append(slashCharStr());
+    Version2_Dec.append(MyDir);
+    Version2_Dec.append("_decompression_2.ivf");
+
+    string Version3_Dec = CurTestDirStr;
+    Version3_Dec.append(slashCharStr());
+    Version3_Dec.append(MyDir);
+    Version3_Dec.append("_decompression_3.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -101,29 +103,16 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int speed = 0;
-    int BitRate = atoi(argv[4]);;
-
-    int Mode = atoi(argv[3]);
-
-    char *input2 = argv[5];
-
-    tprintf("Version Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -134,9 +123,9 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -156,7 +145,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     //Test Type 3 = Mode 2 =Run Test Compressions
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         Deccpu_tick[0] = vpxt_cpu_tick_return(Version0_Dec.c_str(), 1);
         Deccpu_tick[1] = vpxt_cpu_tick_return(Version1_Dec.c_str(), 1);
@@ -172,8 +161,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (vpxt_compress_ivf_to_ivf(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -182,8 +170,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (vpxt_compress_ivf_to_ivf(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -192,8 +179,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (vpxt_compress_ivf_to_ivf(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -202,8 +188,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (vpxt_compress_ivf_to_ivf(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -214,8 +199,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (Time1 == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -226,8 +210,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (Time2 == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -238,8 +221,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (Time3 == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -250,19 +232,17 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         if (Time4 == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -331,58 +311,40 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     if (PSNRFail == 0)// && TIMEFail == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All PSNRs decrease as version numbers increase - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All PSNRs decrease as version numbers increase - Passed");
         tprintf("\n");
     }
 
     if (PSNRFail < 2 && PSNRFail != 0)// && TIMEFail == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All but one PSNR Decreases as version numbers increase - Min Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All but one PSNR Decreases as version numbers increase - Min Passed");
         tprintf("\n");
         fail = 2;
     }
 
     if (PSNRFail >= 2)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Not all PSNRs decrease as version numbers increase - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Not all PSNRs decrease as version numbers increase - Failed");
         tprintf("\n");
         fail = 1;
     }
 
     if (TIMEFail == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All Decode ticks decrease as version numbers increase - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All Decode ticks decrease as version numbers increase - Passed");
         tprintf("\n");
     }
 
     if (TIMEFail < 2 && TIMEFail != 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All but one Decode ticks decrease as version numbers increase - Min Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All but one Decode ticks decrease as version numbers increase - Min Passed");
         tprintf("\n");
         fail = 2;
     }
 
     if (TIMEFail >= 2)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Not all Decode ticks increase as version numbers increase - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Not all Decode ticks increase as version numbers increase - Failed");
         tprintf("\n");
         fail = 1;
     }
@@ -392,8 +354,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         tprintf("\nMin Passed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 8;
     }
 
@@ -402,8 +363,7 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
     else
@@ -411,13 +371,11 @@ int version_test(int argc, char *argv[], string WorkingDir, string FilesAr[], in
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

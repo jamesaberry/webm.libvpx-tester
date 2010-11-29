@@ -2,15 +2,15 @@
 
 int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-
-    char *CompressString = "BestAllowedQ";
-    char *input = argv[2];
+    char *CompressString = "Min Quantizer";
+    char *MyDir = "test_min_quantizer";
 
     if (!(argc == 6 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  MinQTest \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -18,44 +18,44 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
             "          (3)Two Pass - First Pass\n"
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
+            "    <Target Bit Rate>\n"
             "    <Optional Settings File>\n"
+            "\n"
         );
         return 0;
     }
 
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
+
+    int speed = 0;
+
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "MinQTest";
-    string MainDirString = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    string Min10QuantOutFile = CurTestDirStr;
+    Min10QuantOutFile.append(slashCharStr());
+    Min10QuantOutFile.append(MyDir);
+    Min10QuantOutFile.append("_compression_10.ivf");
 
-    WorkingDir4.append(slashCharStr());
-    WorkingDir4.append("Min10QuantOutput.ivf");
-    WorkingDir5.append(slashCharStr());
-    WorkingDir5.append("Min60QuantOutput.ivf");
-
-    char Min10QuantOutFile[255];
-    char Min60QuantOutFile[255];
-
-    snprintf(Min10QuantOutFile, 255, "%s", WorkingDir4.c_str());
-    snprintf(Min60QuantOutFile, 255, "%s", WorkingDir5.c_str());
+    string Min60QuantOutFile = CurTestDirStr;
+    Min60QuantOutFile.append(slashCharStr());
+    Min60QuantOutFile.append(MyDir);
+    Min60QuantOutFile.append("_compression_60.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -71,27 +71,16 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int speed = 0;
-    int BitRate = atoi(argv[4]);
-    int Mode = atoi(argv[3]);
-
-
-    tprintf("Min Quantizer Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -102,9 +91,9 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -120,7 +109,7 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     int n = 0;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -130,49 +119,46 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
 
         opt.best_allowed_q = 10;
 
-        if (vpxt_compress_ivf_to_ivf(input, Min10QuantOutFile, speed, BitRate, opt, CompressString, 10, 1) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
         opt.best_allowed_q = 60;
 
-        if (vpxt_compress_ivf_to_ivf(input, Min60QuantOutFile, speed, BitRate, opt, CompressString, 60, 1) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
-    PSNRArr[0] = vpxt_ivf_psnr(input, Min10QuantOutFile, 0, 0, 1, NULL);
-    PSNRArr[1] = vpxt_ivf_psnr(input, Min60QuantOutFile, 0, 0, 1, NULL);
+    PSNRArr[0] = vpxt_ivf_psnr(input, Min10QuantOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRArr[1] = vpxt_ivf_psnr(input, Min60QuantOutFile.c_str(), 0, 0, 1, NULL);
 
     tprintf("\n");
-    int Min10Q = vpxt_check_min_quantizer(Min10QuantOutFile, 10);
+    int Min10Q = vpxt_check_min_quantizer(Min10QuantOutFile.c_str(), 10);
     tprintf("\n\n");
-    int Min60Q = vpxt_check_min_quantizer(Min60QuantOutFile, 60);
+    int Min60Q = vpxt_check_min_quantizer(Min60QuantOutFile.c_str(), 60);
     tprintf("\n\n");
 
     char Min10FileName[255] = "";
     char Min60FileName[255] = "";
 
-    vpxt_file_name(Min10QuantOutFile, Min10FileName, 0);
-    vpxt_file_name(Min60QuantOutFile, Min60FileName, 0);
+    vpxt_file_name(Min10QuantOutFile.c_str(), Min10FileName, 0);
+    vpxt_file_name(Min60QuantOutFile.c_str(), Min60FileName, 0);
 
     int fail = 0;
 
@@ -180,55 +166,37 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if (Min10Q != -1)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Not all %s quantizers above MinQ - Failed", Min10FileName);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed", Min10FileName);
         tprintf("\n");
         fail = 1;
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All %s quantizers above MinQ - Passed", Min10FileName);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed", Min10FileName);
         tprintf("\n");
     }
 
     if (Min60Q != -1)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Not all %s quantizers above MinQ - Failed", Min60FileName);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed", Min60FileName);
         tprintf("\n");
         fail = 1;
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "All %s quantizers above MinQ - Passed", Min60FileName);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed", Min60FileName);
         tprintf("\n");
     }
 
     if (PSNRArr[0] <= PSNRArr[1])
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "MinQ 10 PSNR: %2.2f <= MinQ 60 PSNR: %2.2f - Failed", PSNRArr[0], PSNRArr[1]);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f <= MinQ 60 PSNR: %2.2f - Failed", PSNRArr[0], PSNRArr[1]);
         tprintf("\n");
         fail = 1;
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "MinQ 10 PSNR: %2.2f > MinQ 60 PSNR: %2.2f - Passed", PSNRArr[0], PSNRArr[1]);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f > MinQ 60 PSNR: %2.2f - Passed", PSNRArr[0], PSNRArr[1]);
         tprintf("\n");
     }
 
@@ -237,8 +205,7 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
     else
@@ -246,13 +213,11 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

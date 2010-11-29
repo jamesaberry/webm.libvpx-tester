@@ -137,7 +137,7 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
         string OutPutStr2 = OutPutStr;
         char TBChar[8];
-        vpx_itoa_custom(opt.target_bandwidth, TBChar, 10);
+        vpxt_itoa_custom(opt.target_bandwidth, TBChar, 10);
         OutPutStr2.append(TBChar);
         string OutPutStr3 = OutPutStr2;
         OutPutStr3.append("_Dec");
@@ -156,8 +156,7 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         if (EncTimeArr[x] == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(MainDirString, File1, TestType);
             return 2;
         }
 
@@ -167,8 +166,7 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         if (DecTimeArr[x] == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(MainDirString, File1, TestType);
             return 2;
         }
 

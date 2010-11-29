@@ -2,13 +2,15 @@
 
 int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "AllowSpatialResampling";
+    char *CompressString = "Allow Spatial Resampling";
+    char *MyDir = "test_allow_spatial_resampling";
 
     if (!(argc == 6 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  AllowSpatialResampling \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -16,36 +18,43 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
             "          (3)Two Pass - First Pass\n"
             "          (4)Two Pass\n"
             "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "    <Optional Settings File>\n");
-
+            "    <Target Bit Rate>\n"
+            "    <Optional Settings File>\n"
+            "\n"
+        );
         return 0;
     }
 
-    ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = ""; // <- All Options need to set a value for this
-    char *MyDir = "AllowSpatialResampling";
-    char WorkingDir3[255] = "";
-    string MainDirString = "";
-    char File1[255] = "";
+    int speed = 0;
+    char *input = argv[2];
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    ////////////Formatting Test Specific Directory////////////
+    string CurTestDirStr = "";
+    string FileIndexStr = "";
+    char MainTestDirChar[255] = "";
+    char FileIndexOutputChar[255] = "";
+
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string Spatialon = WorkingDirString;
-    string Spatialoff = WorkingDirString;
-
+    string Spatialon = CurTestDirStr;
     Spatialon.append(slashCharStr());
-    Spatialon.append("SpatialOnOutput.ivf");
+    Spatialon.append(MyDir);
+    Spatialon.append("_compression_1.ivf");
+
+    string Spatialoff = CurTestDirStr;
     Spatialoff.append(slashCharStr());
-    Spatialoff.append("SpatialOffOutput.ivf");
+    Spatialoff.append(MyDir);
+    Spatialoff.append("_compression_0.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -61,28 +70,16 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    char *input = argv[2];
-
-    int speed = 0;
-    int BitRate = atoi(argv[4]);
-    int Mode = atoi(argv[3]);
-
-    tprintf("Allow Spatial Resampling Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -93,9 +90,9 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -111,7 +108,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
     opt.resample_up_water_mark = 80;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -123,8 +120,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
         if (vpxt_compress_ivf_to_ivf(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -133,18 +129,16 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
         if (vpxt_compress_ivf_to_ivf(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -166,54 +160,36 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
 
     if (AllowSpatResampleONFramesResized > 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "AllowSpatialResampleOn Frames Resized %i > 0 - Passed", AllowSpatResampleONFramesResized);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOn Frames Resized %i > 0 - Passed", AllowSpatResampleONFramesResized);
         tprintf("\n");
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "AllowSpatialResampleOn Frames Resized %i <= 0 - Failed", AllowSpatResampleONFramesResized);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOn Frames Resized %i <= 0 - Failed", AllowSpatResampleONFramesResized);
         tprintf("\n");
         fail = 1;
     }
 
     if (AllowSpatResampleOFFFramesResized == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "AllowSpatialResampleOff Frames Resized %i == 0 - Passed", AllowSpatResampleOFFFramesResized);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOff Frames Resized %i == 0 - Passed", AllowSpatResampleOFFFramesResized);
         tprintf("\n");
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "AllowSpatialResampleOff Frames Resized %i != 0 - Failed", AllowSpatResampleOFFFramesResized);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOff Frames Resized %i != 0 - Failed", AllowSpatResampleOFFFramesResized);
         tprintf("\n");
         fail = 1;
     }
 
     if (SpatialResampPSNR > 15.0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "AllowSpatialResample PSNR: %f > 15.00 - Passed", SpatialResampPSNR);;
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "AllowSpatialResample PSNR: %f > 15.00 - Passed", SpatialResampPSNR);
         tprintf("\n");
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "AllowSpatialResample On PSNR: %f < 15.00 - Failed", SpatialResampPSNR);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "AllowSpatialResample On PSNR: %f < 15.00 - Failed", SpatialResampPSNR);
         tprintf("\n");
         fail = 1;
     }
@@ -222,21 +198,18 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
     {
         tprintf("\nPassed\n");
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
     {
         tprintf("\nFailed\n");
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

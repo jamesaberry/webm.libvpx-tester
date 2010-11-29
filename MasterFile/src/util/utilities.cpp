@@ -1,22 +1,23 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "vpxt_test_definitions.h"
-#include <math.h>
-#include "onyx.h"
-#include <cassert>
+#include "utilities.h"
+#include "driver.h"
 #include "yv12config.h"
+#include "header.h"
+#include "onyx.h"
+#include "ivf.h"
+#include "vp8.h"
+#include <math.h>
+#include <cassert>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <string.h>
-#include "ivf.h"
-#include "header.h"
-#include "vp8.h"
 #include <algorithm>
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
-#include "utilities.h"
-#include "driver.h"
+#include <ctype.h>
 using namespace std;
 
 typedef unsigned char BYTE;
@@ -869,6 +870,7 @@ void tprintf(const char *fmt, ...)
     if (charswritten < 2048)
     {
         string bufferStr = buffer;
+        string bufferStr2 = buffer;
         int curPos = 0;
         int lastNewLine = 0;
 
@@ -883,7 +885,7 @@ void tprintf(const char *fmt, ...)
 
                 if (curPos - lastNewLine > 79)
                 {
-                    bufferStr.insert(curPos, "\n");
+                    bufferStr2.insert(curPos, "\n");
                     lastNewLine = curPos;
                     curPos++;
                 }
@@ -893,7 +895,7 @@ void tprintf(const char *fmt, ...)
         }
 
         printf("%s", bufferStr.c_str());
-        fprintf(stderr, "%s", bufferStr.c_str());
+        fprintf(stderr, "%s", bufferStr2.c_str());
     }
     else
     {
@@ -1703,7 +1705,8 @@ long vpxt_file_size(const char *inFile, int printbool)
     end = ftell(f);
     fseek(f, pos, SEEK_SET);
 
-    tprintf("%i bytes", end - pos);
+    if (printbool)
+        tprintf("%i bytes", end - pos);
 
     fclose(f);
 
@@ -1897,6 +1900,141 @@ int vpxt_timestamp_compare(string TimeStampNow, string TimeStampPrevious)
 
     return 1;
 }
+int vpxt_identify_test(const char *test_char)
+{
+    // parse through possible options
+    //  if input is number return number
+    //  if input is string check for number string coresponds to return that
+    //  on error/cant find number string coresponds to return -1
+
+    if (atoi(test_char) != 0)
+        return atoi(test_char);
+    else
+    {
+        char test_char_no_space[255];
+        vpxt_remove_char_spaces(test_char, test_char_no_space, 255);//make sure no white spaces
+        string id_test_str = test_char_no_space;
+
+        if (id_test_str.substr(0, 1).compare("+") == 0)
+            id_test_str.erase(0, 1);
+
+        if (id_test_str.compare("test_allow_drop_frames") == 0)
+            return AlWDFNUM;
+
+        if (id_test_str.compare("test_allow_lag") == 0)
+            return ALWLGNUM;
+
+        if (id_test_str.compare("test_allow_spatial_resampling") == 0)
+            return ALWSRNUM;
+
+        if (id_test_str.compare("test_auto_key_frame") == 0)
+            return AUTKFNUM;
+
+        if (id_test_str.compare("test_buffer_level") == 0)
+            return BUFLVNUM;
+
+        if (id_test_str.compare("test_change_cpu_dec") == 0)
+            return CPUDENUM;
+
+        if (id_test_str.compare("test_change_cpu_enc") == 0)
+            return CHGWRNUM;
+
+        if (id_test_str.compare("test_data_rate") == 0)
+            return DTARTNUM;
+
+        if (id_test_str.compare("test_debug_matches_release") == 0)
+            return DBMRLNUM;
+
+        if (id_test_str.compare("test_drop_frame_watermark") == 0)
+            return DFWMWNUM;
+
+        if (id_test_str.compare("test_encoder_break_out") == 0)
+            return ENCBONUM;
+
+        if (id_test_str.compare("test_error_resolution") == 0)
+            return ERRMWNUM;
+
+        if (id_test_str.compare("test_extra_file") == 0)
+            return EXTFINUM;
+
+        if (id_test_str.compare("test_fixed_quantizer") == 0)
+            return FIXDQNUM;
+
+        if (id_test_str.compare("test_force_key_frame") == 0)
+            return FKEFRNUM;
+
+        if (id_test_str.compare("test_frame_size") == 0)
+            return FRSZTNUM;
+
+        if (id_test_str.compare("test_good_vs_best") == 0)
+            return GQVBQNUM;
+
+        if (id_test_str.compare("test_lag_in_frames") == 0)
+            return LGIFRNUM;
+
+        if (id_test_str.compare("test_max_quantizer") == 0)
+            return MAXQUNUM;
+
+        if (id_test_str.compare("test_mem_leak") == 0)
+            return MEML1NUM;
+
+        if (id_test_str.compare("test_mem_leak2") == 0)
+            return MEML2NUM;
+
+        if (id_test_str.compare("test_min_quantizer") == 0)
+            return MINQUNUM;
+
+        if (id_test_str.compare("test_multithreaded") == 0)
+            return MULTTNUM;
+
+        if (id_test_str.compare("test_new_vs_old_psnr") == 0)
+            return NVOPSNUM;
+
+        if (id_test_str.compare("test_new_vs_old_real_time_speed") == 0)
+            return NVORTNUM;
+
+        if (id_test_str.compare("test_noise_sensitivity") == 0)
+            return NOISENUM;
+
+        if (id_test_str.compare("test_one_pass_vs_two_pass") == 0)
+            return OV2PSNUM;
+
+        if (id_test_str.compare("test_play_alternate") == 0)
+            return PLYALNUM;
+
+        if (id_test_str.compare("test_post_processor") == 0)
+            return POSTPNUM;
+
+        if (id_test_str.compare("test_reconstruct_buffer") == 0)
+            return RECBFNUM;
+
+        if (id_test_str.compare("test_resample_down_watermark") == 0)
+            return RSDWMNUM;
+
+        if (id_test_str.compare("test_speed") == 0)
+            return SPEEDNUM;
+
+        if (id_test_str.compare("test_test_vector") == 0)
+            return TVECTNUM;
+
+        if (id_test_str.compare("test_two_pass_vs_two_pass_best") == 0)
+            return TV2BTNUM;
+
+        if (id_test_str.compare("test_undershoot") == 0)
+            return UNDSHNUM;
+
+        if (id_test_str.compare("test_version") == 0)
+            return VERSINUM;
+
+        if (id_test_str.compare("test_win_lin_mac_match") == 0)
+            return WMLMMNUM;
+
+        if (id_test_str.compare("0") == 0)
+            return 0;
+    }
+
+    return -1;
+}
 int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 {
     //function returns number of tests found if input is correct -1 if not correct and -3 if there is an error
@@ -2046,11 +2184,10 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
             ////////////////////////////////////////////////////////////////////
             if (CommentBool == 0)
             {
-                int selector = atoi(DummyArgv[1]);
+                int selector =  vpxt_identify_test(DummyArgv[1]);
 
-                if (selector >= 0 && selector < 52)
+                if (selector >= 0 && selector < MAXTENUM)
                 {
-                    //if (selector != 11 && selector != 33 && selector != 35 && selector != 0)
                     NumberOfTestsRun++;
                 }
 
@@ -2555,12 +2692,12 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 }
                 }*/
 
-                if (selector == RECONBUF)
+                if (selector == RECBFNUM)
                 {
                     if (!(DummyArgvVar == 6 || DummyArgvVar == 5))
                     {
                         SelectorAr[SelectorArInt].append(buffer);
-                        SelectorAr2[SelectorArInt] = "ReconBuffer";
+                        SelectorAr2[SelectorArInt] = "RECBFNUMfer";
                         PassFail[PassFailInt] = trackthis1;
                     }
                     else
@@ -2683,7 +2820,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
                     selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTTNUM &&
                     selector != NVOPSNUM && selector != NVORTNUM && selector != NOISENUM && selector != OV2PSNUM && selector != PLYALNUM &&
-                    selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM && selector != RECONBUF &&
+                    selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM && selector != RECBFNUM &&
                     selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
@@ -2924,6 +3061,25 @@ void vpxt_test_name(char *input, char *FileName)
 
     return;
 }
+int vpxt_remove_char_spaces(const char *input, char *output, int maxsize)
+{
+    int pos = 0;
+    int offset = 0;
+
+    while (input[pos] != '\0' && pos < maxsize)
+    {
+        if (input[pos] != ' ')
+            output[pos-offset] = input[pos];
+        else
+            offset++;
+
+        pos++;
+    }
+
+    output[pos-offset] = '\0';
+
+    return 0;
+}
 //--------------------------------------------------------Math------------------------------------------------------------------------
 int vpxt_decimal_places(int InputNumber)
 {
@@ -3034,7 +3190,7 @@ float vpxt_area_under_quadradic(float A, float B, float C, float X1, float X2)
     float TotalArea = Area2 - Area1;
     return TotalArea;
 }
-char *vpx_itoa_custom(int value, char *result, int base)
+char *vpxt_itoa_custom(int value, char *result, int base)
 {
     int x = 0;
 
@@ -3060,6 +3216,7 @@ char *vpx_itoa_custom(int value, char *result, int base)
 
     reverse(result, out);
     *out = 0;
+
     return result;
 }
 //----------------------------------------------------Cross Plat----------------------------------------------------------------------
@@ -3135,6 +3292,25 @@ unsigned int vpxt_get_time()
     Time = vpxt_get_high_res_timer_tick();
     return Time;
 }
+int vpxt_get_cur_dir(string &CurrentDir)
+{
+#if defined(_WIN32)
+    TCHAR CurrentDirChar[MAX_PATH] = "";
+
+    if (!::GetCurrentDirectory(sizeof(CurrentDirChar) - 1, CurrentDirChar))
+    {
+        tprintf("Could not get current directory");
+        return 0;
+    }
+
+    CurrentDir = CurrentDirChar;
+#else
+    char CurrentDirChar[256];
+    getcwd(CurrentDirChar, 256);
+    CurrentDir = CurrentDirChar;
+#endif
+    return 0;
+}
 int vpxt_make_dir(string CreateDir)
 {
 #if defined(_WIN32)
@@ -3204,6 +3380,135 @@ void vpxt_run_exe(string RunExe)
 #endif
 
     return;
+}
+int vpxt_add_dir_files_to_ignore(vector<string> &IgnoredFiles, string Directory)
+{
+
+#if defined(_WIN32)
+    WIN32_FIND_DATA FileData;
+    HANDLE hFind;
+    string FileName;
+
+    hFind = FindFirstFile(Directory.c_str(), &FileData);
+
+    while (FileName.compare(FileData.cFileName) != 0)
+    {
+        FileName = FileData.cFileName;
+        IgnoredFiles.push_back(FileName);
+        FindNextFile(hFind, &FileData);
+    }
+
+#else
+    //Record all files in the current directory.
+    DIR *FileData;
+    struct dirent *hFind;
+    string FileName;
+
+    FileData = opendir(Directory.c_str());
+    hFind = readdir(FileData);
+
+    while (FileName.compare(hFind->d_name) != 0)
+    {
+        FileName = hFind->d_name;
+        IgnoredFiles.push_back(FileName);
+
+        hFind = readdir(FileData);
+
+        if (hFind == NULL)
+        {
+            break;
+        }
+    }
+
+    closedir(FileData);
+#endif
+
+    return 0;
+}
+int vpxt_find_non_ignored_files_in_dir(vector<string> IgnoredFiles, vector<string> &FilesFound, string Directory)
+{
+    //Function returns the number of non ignored files found on success
+    //-1 on error
+
+#if defined(_WIN32)
+    int Fail = 0;
+    string FileName;
+    WIN32_FIND_DATA FileData;
+    HANDLE hFind;
+
+    hFind = FindFirstFile(Directory.c_str(), &FileData);
+
+    while (FileName.compare(FileData.cFileName) != 0)
+    {
+        FileName = FileData.cFileName;
+
+        int CurVecPos = 0;
+        int IgnoreFile = 0;
+
+        while (CurVecPos < IgnoredFiles.size())
+        {
+            if (IgnoredFiles[CurVecPos].compare(FileName.c_str()) == 0)
+            {
+                IgnoreFile = 1;
+            }
+
+            CurVecPos++;
+        }
+
+        if (IgnoreFile == 0)
+        {
+            FilesFound.push_back(FileName);
+        }
+
+        FindNextFile(hFind, &FileData);
+    }
+
+#else
+
+    DIR *FileData;
+    struct dirent *hFind;
+
+    FileData = opendir(Directory.c_str());
+    hFind = readdir(FileData);
+
+    string FileName;
+    vector<string> DestFileExtraVector;
+
+    while (FileName.compare(hFind->d_name) != 0)
+    {
+        FileName = hFind->d_name;
+
+        int CurVecPos = 0;
+        int IgnoreFile = 0;
+
+        while (CurVecPos < IgnoredFiles.size())
+        {
+            if (IgnoredFiles[CurVecPos].compare(FileName.c_str()) == 0)
+            {
+                IgnoreFile = 1;
+            }
+
+            CurVecPos++;
+        }
+
+        if (IgnoreFile == 0)
+        {
+            FilesFound.push_back(FileName);
+        }
+
+        hFind = readdir(FileData);
+
+        if (hFind == NULL)
+        {
+            break;
+        }
+    }
+
+    closedir(FileData);
+
+#endif
+
+    return FilesFound.size();
 }
 //---------------------------------------------------------IVF------------------------------------------------------------------------
 int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
@@ -4439,47 +4744,47 @@ int vpxt_faux_decompress(char *inputChar)
     return 1;
 }
 //---------------------------------------------------Test Functions-------------------------------------------------------------------
-int initialize_test_directory(int argc, char *argv[], int TestType, string WorkingDir, char *MyDir, string &WorkingDirString, string &MainDirString, char WorkingDir3[255], char File1[255], string FilesAr[])
+int initialize_test_directory(int argc, char *argv[], int TestType, string WorkingDir, char *MyDir, string &CurTestDirStr, string &FileIndexStr, char MainTestDirChar[255], char FileIndexOutputChar[255], string FilesAr[])
 {
-    //Initilizes WorkingDirString, MainDirString, WorkingDir3, and File1 to proper values.
+    //Initilizes CurTestDirStr, FileIndexStr, MainTestDirChar, and FileIndexOutputChar to proper values.
 
-    string Mode3TestMatch = "";
-    char WorkingDir2[255] = "";
+    string PrefTestOnlyTestMatch = "";
+    char CurTestDirChar[255] = "";
 
     if (TestType == 2 || TestType == 1)
     {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
+        snprintf(CurTestDirChar, 255, "%s", WorkingDir.c_str());
 
         int v = 0;
 
-        while (WorkingDir2[v] != '\"')
+        while (CurTestDirChar[v] != '\"')
         {
-            WorkingDir3[v] = WorkingDir2[v];
+            MainTestDirChar[v] = CurTestDirChar[v];
             v++;
         }
 
-        WorkingDir3[v] = slashChar();
-        WorkingDir3[v+1] = '\0';
-        WorkingDirString = WorkingDir3;
+        MainTestDirChar[v] = slashChar();
+        MainTestDirChar[v+1] = '\0';
+        CurTestDirStr = MainTestDirChar;
         /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
+        FileIndexStr = MainTestDirChar;
+        FileIndexStr.append("FileIndex.txt");
         /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr());
-        WorkingDirString.append(FilesAr[0]);
-        WorkingDirString.erase(WorkingDirString.length() - 1, 1);
+        CurTestDirStr.append(MyDir);
+        CurTestDirStr.append(slashCharStr());
+        CurTestDirStr.append(FilesAr[0]);
+        CurTestDirStr.erase(CurTestDirStr.length() - 1, 1);
 
-        string CreateDir2 = WorkingDirString;
+        string CreateDir2 = CurTestDirStr;
         CreateDir2.insert(0, "md \"");
         vpxt_make_dir_vpx(CreateDir2.c_str());
 
         ///////////////////////Records FileLocations for MultiPlat Test/////////////////
         if (TestType == 2)
         {
-            char WorkingDirString2[255];
-            snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
-            vpxt_subfolder_name(WorkingDirString2, File1);
+            char CurTestDirStr2[255];
+            snprintf(CurTestDirStr2, 255, "%s", CurTestDirStr.c_str());
+            vpxt_subfolder_name(CurTestDirStr2, FileIndexOutputChar);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -4488,17 +4793,17 @@ int initialize_test_directory(int argc, char *argv[], int TestType, string Worki
     {
         //Use WorkingDir to get the main folder
         //Use Index File to get the rest of the string
-        //Put it all together Setting WorkingDirString to the location of the files we want to examine.
+        //Put it all together Setting CurTestDirStr to the location of the files we want to examine.
         char buffer[255];
 
-        string WorkingDir2 = WorkingDir;
+        string CurTestDirChar = WorkingDir;
 
-        WorkingDir2.append(slashCharStr());
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
+        CurTestDirChar.append(slashCharStr());
+        FileIndexStr = CurTestDirChar;
+        FileIndexStr.append("FileIndex.txt");
 
         fstream FileStream;
-        FileStream.open(MainDirString.c_str(), fstream::in | fstream::out | fstream::app);
+        FileStream.open(FileIndexStr.c_str(), fstream::in | fstream::out | fstream::app);
 
         int n = 0;
 
@@ -4510,24 +4815,24 @@ int initialize_test_directory(int argc, char *argv[], int TestType, string Worki
 
         FileStream.close();
 
-        char Mode3TestMatchChar[255];
-        vpxt_test_name(buffer, Mode3TestMatchChar);
-        Mode3TestMatch = Mode3TestMatchChar;
+        char PrefTestOnlyTestMatchChar[255];
+        vpxt_test_name(buffer, PrefTestOnlyTestMatchChar);
+        PrefTestOnlyTestMatch = PrefTestOnlyTestMatchChar;
 
-        if (Mode3TestMatch.compare(MyDir) != 0)
+        if (PrefTestOnlyTestMatch.compare(MyDir) != 0)
         {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch.c_str(), MyDir);
+            printf("Error: File mismatch ");
+            printf("PrefTestOnlyTestMatch: %s MyDir: %s", PrefTestOnlyTestMatch.c_str(), MyDir);
             return 11;
         }
 
-        WorkingDir2.append(buffer);
-        WorkingDirString = WorkingDir2;
+        CurTestDirChar.append(buffer);
+        CurTestDirStr = CurTestDirChar;
     }
 
     return 0;
 }
-void record_test_complete(string MainDirString, string File1String, int TestType)
+void record_test_complete(string MainDirString, const char *FileIndexOutputChar, int TestType)
 {
     if (TestType == 2)
     {
@@ -4540,7 +4845,7 @@ void record_test_complete(string MainDirString, string File1String, int TestType
             return;
         }
 
-        FileStream << File1String << "\n";
+        FileStream << FileIndexOutputChar << "\n";
         FileStream.close();
     }
 
@@ -4838,7 +5143,7 @@ void check_time_stamp(int SelectorArInt, string *SelectorAr, string *SelectorAr2
         if (vpxt_timestamp_compare(TimeStampAr2[0], TimeStampPrevious))
         {
             identicalFileVar++;
-            vpx_itoa_custom(identicalFileVar, identicalFileBuffer, 10);
+            vpxt_itoa_custom(identicalFileVar, identicalFileBuffer, 10);
             TimeStampAr2[0].erase(TimeStampAr2[0].end() - 1);
             TimeStampAr2[0].append("_");
             TimeStampAr2[0].append(identicalFileBuffer);
@@ -4854,6 +5159,200 @@ void check_time_stamp(int SelectorArInt, string *SelectorAr, string *SelectorAr2
         identicalFileVar = 1;
     }
 }
+void vpxt_formated_print(int selector, const char *fmt, ...)
+{
+    char buffer[2048];
+    va_list ap;
+    va_start(ap, fmt);
+
+    int charswritten = vsnprintf(buffer, sizeof(buffer) - 1, fmt, ap);
+    string SummaryStr = buffer;
+
+    //selector == HLPPRT -> Summary
+    //selector == TOLPRT -> Help
+    //selector == FUNPRT -> Function
+    //selector == OTRPRT -> Other non formatted output
+    //selector == RESPRT -> Individual Pass Fail output
+
+    string SummaryStrOutput;
+    int EndOfLineLength = 0;
+
+    if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT) //add padding for formating
+    {
+        SummaryStrOutput.append("         ");
+    }
+
+    if (selector == RESPRT) //add padding for formating
+    {
+        SummaryStrOutput.append(" * ");
+    }
+
+    //determine cut off to keep words whole
+    int Cutoff;
+
+    if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
+    {
+        Cutoff = 66;
+    }
+
+    if (selector == OTRPRT)
+    {
+        Cutoff = 79;
+    }
+
+    if (selector == RESPRT)
+    {
+        Cutoff = 70;
+    }
+
+    int x = 0;
+
+    while (x + Cutoff < SummaryStr.length())
+    {
+
+
+        if (SummaryStr.substr(x + Cutoff + 1, 1).compare(" ") == 0 || SummaryStr.substr(x + Cutoff, 1).compare(" ") == 0)
+        {
+            Cutoff++;
+        }
+        else
+        {
+            while (SummaryStr.substr(x + Cutoff, 1).compare(" ") != 0)
+            {
+                Cutoff--;
+            }
+
+            Cutoff++;
+        }
+
+        //add the properly formated string to the output string
+        SummaryStrOutput.append(SummaryStr.substr(x, Cutoff));
+
+
+        if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT) //add padding for formating
+        {
+            SummaryStrOutput.append("\n         ");
+        }
+
+        if (selector == RESPRT) //add padding for formating
+        {
+            SummaryStrOutput.append("\n   ");
+        }
+
+        x = x + Cutoff;
+
+        while (SummaryStr.substr(x, 1).compare(" ") == 0)
+        {
+            x++;
+        }
+
+        if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
+        {
+            Cutoff = 66;
+        }
+
+        if (selector == OTRPRT)
+        {
+            Cutoff = 79;
+        }
+
+        if (selector == RESPRT)
+        {
+            Cutoff = 70;
+        }
+
+    }
+
+    SummaryStrOutput.append(SummaryStr.substr(x, SummaryStr.length() - x));
+
+    if (selector == HLPPRT)
+    {
+        printf("\n\nSummary:\n");
+        printf("%s\n\n", SummaryStrOutput.c_str());
+    }
+
+    if (selector == TOLPRT)
+    {
+        printf("\n\n  Help:\n");
+        printf("%s\n\n", SummaryStrOutput.c_str());
+    }
+
+    if (selector == FUNPRT)
+    {
+        printf("\n\nFunction:\n");
+        printf("%s\n\n", SummaryStrOutput.c_str());
+    }
+
+    if (selector == OTRPRT)
+    {
+        fprintf(stderr, "%s", SummaryStrOutput.c_str());
+    }
+
+    if (selector == RESPRT)
+    {
+        tprintf("%s", SummaryStrOutput.c_str());
+    }
+
+    return;
+}
+void vpxt_cap_string_print(int selector, const char *fmt, ...)
+{
+    //This function will capitalize the first letter of any word
+    //seperated with either an '_' or a ' ' and print it.
+
+    char buffer[2048];
+    char buffer_cap[2048];
+    va_list ap;
+    va_start(ap, fmt);
+
+    int charswritten = vsnprintf(buffer, sizeof(buffer) - 1, fmt, ap);
+
+    int parse_int = 0;
+    int cap_next = 0;
+
+    while (buffer[parse_int] != '\0' && parse_int < sizeof(buffer))
+    {
+        char add_to_buffer_cap;
+
+        if (cap_next == 1)
+        {
+            //Capitalize current letter
+            add_to_buffer_cap = toupper(buffer[parse_int]);
+            cap_next = 0;
+        }
+        else
+        {
+            add_to_buffer_cap =  buffer[parse_int];
+        }
+
+        if (parse_int == 0)
+        {
+            //Capitalize current letter
+            add_to_buffer_cap = toupper(buffer[parse_int]);
+        }
+
+        if (buffer[parse_int] == '_' || buffer[parse_int] == ' ')
+        {
+            cap_next = 1;
+        }
+
+        buffer_cap[parse_int] = add_to_buffer_cap;
+        parse_int++;
+    }
+
+    buffer_cap[parse_int] = '\0';
+
+    if (selector == PRINT_STD)
+        printf("%s", buffer_cap);
+
+    if (selector == PRINT_STDERR)
+        fprintf(stderr, "%s", buffer_cap);
+
+    if (selector == PRINT_BOTH)
+        tprintf("%s", buffer_cap);
+
+    return;
+}
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
 int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
@@ -4868,7 +5367,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
     {
         string QuantOutStr = outputFile2;
         QuantOutStr.erase(QuantOutStr.length() - 4, 4);
-        QuantOutStr.append("_Quantizers.txt");
+        QuantOutStr.append("_quantizers.txt");
         char QuantOutChar[255];
         snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
 
@@ -5161,14 +5660,14 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_Paramaters.txt");
+            OutputsettingsFile.append("_paramaters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
-            OutputsettingsFile.append("_APIParamaters.txt");
+            OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
+            OutputsettingsFile.append("_paramaters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -5526,14 +6025,14 @@ int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2,
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_Paramaters.txt");
+            OutputsettingsFile.append("_paramaters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
-            OutputsettingsFile.append("_APIParamaters.txt");
+            OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
+            OutputsettingsFile.append("_paramaters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -5876,14 +6375,14 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_Paramaters.txt");
+            OutputsettingsFile.append("_paramaters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
-            OutputsettingsFile.append("_APIParamaters.txt");
+            OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
+            OutputsettingsFile.append("_paramaters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -5990,13 +6489,13 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
     vpxt_remove_file_extension(outputFile2, TextFilechar1);
     vpxt_remove_file_extension(outputFile2, TextFilechar2);
 
-    char *FullNameMs = strcat(TextFilechar1, "CompressionTime.txt");
+    char *FullNameMs = strcat(TextFilechar1, "compression_time.txt");
 
     ofstream FullNameMsFile(FullNameMs);
     FullNameMsFile << cx_time;
     FullNameMsFile.close();
 
-    char *FullNameCpu = strcat(TextFilechar2, "CompressionCPUTick.txt");
+    char *FullNameCpu = strcat(TextFilechar2, "compression_cpu_tick.txt");
 
     ofstream FullNameCpuFile(FullNameCpu);
     FullNameCpuFile << total_cpu_time_used;
@@ -6017,7 +6516,7 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
     {
         string QuantOutStr = outputFile2;
         QuantOutStr.erase(QuantOutStr.length() - 4, 4);
-        QuantOutStr.append("_Quantizers.txt");
+        QuantOutStr.append("_quantizers.txt");
         char QuantOutChar[255];
         snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
 
@@ -6313,14 +6812,14 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_Paramaters.txt");
+            OutputsettingsFile.append("_paramaters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
-            OutputsettingsFile.append("_APIParamaters.txt");
+            OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
+            OutputsettingsFile.append("_paramaters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -6464,7 +6963,7 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
     {
         string QuantOutStr = outputFile2;
         QuantOutStr.erase(QuantOutStr.length() - 4, 4);
-        QuantOutStr.append("_Quantizers.txt");
+        QuantOutStr.append("_quantizers.txt");
         char QuantOutChar[255];
         snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
 
@@ -6817,14 +7316,14 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_Paramaters.txt");
+            OutputsettingsFile.append("_paramaters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
-            OutputsettingsFile.erase(OutputsettingsFile.length() - 15, 15);
-            OutputsettingsFile.append("_APIParamaters.txt");
+            OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
+            OutputsettingsFile.append("_paramaters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -6964,7 +7463,7 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
                         out_fn3STR.append(slashCharStr().c_str());
 
                         char intchar[56];
-                        vpx_itoa_custom(frames_out, intchar, 10);
+                        vpxt_itoa_custom(frames_out, intchar, 10);
                         out_fn3STR.append(intchar);
                         out_fn3STR.append(".raw");
                         out3 = out_open(out_fn3STR.c_str(), 0);
@@ -6975,7 +7474,7 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
                         out_fn4STR.append(slashCharStr().c_str());
 
                         char intchar2[56];
-                        vpx_itoa_custom(frames_out, intchar2, 10);
+                        vpxt_itoa_custom(frames_out, intchar2, 10);
                         out_fn4STR.append(intchar2);
                         out_fn4STR.append(".raw");
                         out4 = out_open(out_fn4STR.c_str(), 0);
@@ -7920,8 +8419,8 @@ unsigned int vpxt_time_decompress_ivf_to_ivf(const char *inputchar, const char *
     const char             *fn2 = outputchar;
     void *out;
     vpx_codec_dec_cfg_t     cfg = {0};
-    unsigned long           dx_time = 0;
-    double total_cpu_time_used = 0;
+    unsigned int           dx_time = 0;
+    unsigned int           total_cpu_time_used = 0;
 
     int CharCount = 0;
 
@@ -8098,13 +8597,13 @@ fail:
     vpxt_remove_file_extension(outputchar, TextFilechar1);
     vpxt_remove_file_extension(outputchar, TextFilechar2);
 
-    char *FullNameMs = strcat(TextFilechar1, "DecompressionTime.txt");
+    char *FullNameMs = strcat(TextFilechar1, "decompression_time.txt");
 
     ofstream FullNameMsFile(FullNameMs);
     FullNameMsFile << dx_time;
     FullNameMsFile.close();
 
-    char *FullNameCpu = strcat(TextFilechar2, "DecompressionCPUTick.txt");
+    char *FullNameCpu = strcat(TextFilechar2, "decompression_cpu_tick.txt");
 
     ofstream FullNameCpuFile(FullNameCpu);
     FullNameCpuFile << total_cpu_time_used;
@@ -8113,7 +8612,7 @@ fail:
     CPUTick = total_cpu_time_used;
     return dx_time;
 }
-unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, const char *outputchar)
+unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, const char *outputchar, unsigned int &CPUTick)
 {
     vpx_codec_ctx_t       decoder;
     const char            *fn = inputchar;
@@ -8125,12 +8624,11 @@ unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, c
     int                    stop_after = 0, postproc = 0, summary = 1;
     vpx_codec_iface_t       *iface = NULL;
     unsigned int           is_ivf, fourcc;
-    double total_cpu_time_used = 0;
-    unsigned int total_cpu_time_used_ms = 0;
-    const char                   *fn2 = outputchar;
+    const char             *fn2 = outputchar;
     void *out;
-    vpx_codec_dec_cfg_t     cfg = {0};
-    unsigned long           dx_time = 0;
+    vpx_codec_dec_cfg_t    cfg = {0};
+    unsigned int           dx_time = 0;
+    unsigned int           total_cpu_time_used = 0;
 
     int CharCount = 0;
 
@@ -8185,7 +8683,9 @@ unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, c
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
         struct vpx_usec_timer timer;
+        unsigned __int64 start, end;
 
+        start = vpxt_get_cpu_tick();
         vpx_usec_timer_start(&timer);
 
         if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
@@ -8200,7 +8700,10 @@ unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, c
         }
 
         vpx_usec_timer_mark(&timer);
+        end  = vpxt_get_cpu_tick();
+
         dx_time += vpx_usec_timer_elapsed(&timer);
+        total_cpu_time_used = total_cpu_time_used + (end - start);
 
         ++frame;
 
@@ -8264,11 +8767,11 @@ unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, c
             break;
     }
 
-    total_cpu_time_used_ms = (unsigned int)(total_cpu_time_used);
-
     if (summary)
     {
-        tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, total_cpu_time_used_ms, (float)frame * 1000000.0 / (float)total_cpu_time_used_ms);
+        //tprintf("\n\nDecoded %d frames in %lu us (%.2f fps)\n", frame, total_cpu_time_used_ms, (float)frame * 1000000.0 / (float)total_cpu_time_used_ms);
+        tprintf("\n\n Decoded %d frames in %lu us (%.2f fps)\n", frame, dx_time, (float)frame * 1000000.0 / (float)dx_time);
+        tprintf(" Total CPU Ticks: %i\n", total_cpu_time_used);
     }
 
 fail:
@@ -8286,16 +8789,25 @@ fail:
     fclose(infile);
 
     char TextFilechar1[255];
+    char TextFilechar2[255];
 
     vpxt_remove_file_extension(outputchar, TextFilechar1);
+    vpxt_remove_file_extension(outputchar, TextFilechar2);
 
-    char *FullName = strcat(TextFilechar1, "DecompressionTime.txt");
+    char *FullNameMs = strcat(TextFilechar1, "decompression_time.txt");
 
-    ofstream outfile2(FullName);
-    outfile2 << dx_time;
-    outfile2.close();
+    ofstream FullNameMsFile(FullNameMs);
+    FullNameMsFile << dx_time;
+    FullNameMsFile.close();
 
-    return total_cpu_time_used_ms;
+    char *FullNameCpu = strcat(TextFilechar2, "decompression_cpu_tick.txt");
+
+    ofstream FullNameCpuFile(FullNameCpu);
+    FullNameCpuFile << total_cpu_time_used;
+    FullNameCpuFile.close();
+
+    CPUTick = total_cpu_time_used;
+    return dx_time;
 }
 int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar)
 {
@@ -9241,7 +9753,7 @@ int vpxt_display_ivf_header_info(int argc, char *argv[])
     {
         printf("\n"
                "  DisplayIVFHeaderInfo \n\n"
-               "    <Inputfile>\n"
+               "    <Input File>\n"
                "    <Full File Info 1/yes-0/no>\n"
                "    <Optional Outputfile>\n\n"
               );
@@ -10141,7 +10653,7 @@ double vpxt_display_droped_frames(char *inputchar, int PrintSwitch)
 
     string DropedInStr = inputchar;
     DropedInStr.erase(DropedInStr.length() - 4, 4);
-    DropedInStr.append("_AproxDropedFrames.txt");
+    DropedInStr.append("_aprox_droped_frames.txt");
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", DropedInStr.c_str());
 
@@ -10263,7 +10775,7 @@ double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
 
     string ResizeInStr = inputchar;
     ResizeInStr.erase(ResizeInStr.length() - 4, 4);
-    ResizeInStr.append("_ResizedFrames.txt");
+    ResizeInStr.append("_resized_frames.txt");
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", ResizeInStr.c_str());
 
@@ -10438,7 +10950,7 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
     // 1 = write to file
     string VisInStr = inputFile;
     VisInStr.erase(VisInStr.length() - 4, 4);
-    VisInStr.append("_VisibleFrames.txt");
+    VisInStr.append("_visible_frames.txt");
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", VisInStr.c_str());
 
@@ -10666,7 +11178,7 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
 
     string AltRefInStr = inputFile;
     AltRefInStr.erase(AltRefInStr.length() - 4, 4);
-    AltRefInStr.append("_AltRefFrames.txt");
+    AltRefInStr.append("_alt_ref_frames.txt");
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", AltRefInStr.c_str());
 
@@ -10893,7 +11405,7 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
 
     string KeyInStr = inputFile;
     KeyInStr.erase(KeyInStr.length() - 4, 4);
-    KeyInStr.append("_KeyFrames.txt");
+    KeyInStr.append("_key_frames.txt");
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", KeyInStr.c_str());
 
@@ -11163,13 +11675,13 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
 
     string ResizeFramesStr = InputFile;
     ResizeFramesStr.erase(ResizeFramesStr.length() - 4, 4);
-    ResizeFramesStr.append("_ResizedFrames.txt");
+    ResizeFramesStr.append("_resized_frames.txt");
     char ResizeFramesChar[255] = "";
     snprintf(ResizeFramesChar, 255, "%s", ResizeFramesStr.c_str());
 
     string KeyFramesStr = InputFile;
     KeyFramesStr.erase(KeyFramesStr.length() - 4, 4);
-    KeyFramesStr.append("_KeyFrames.txt");
+    KeyFramesStr.append("_key_frames.txt");
     char KeyFramesChar[255] = "";
     snprintf(KeyFramesChar, 255, "%s", KeyFramesStr.c_str());
 
@@ -11293,7 +11805,7 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
 
     ////////////////////////////////////////////////////////
 }
-int vpxt_check_min_quantizer(char *inputFile, int MinQuantizer)
+int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
 {
     char QuantDispNameChar[255] = "";
     vpxt_file_name(inputFile, QuantDispNameChar, 0);
@@ -11302,7 +11814,7 @@ int vpxt_check_min_quantizer(char *inputFile, int MinQuantizer)
 
     string QuantInStr = inputFile;
     QuantInStr.erase(QuantInStr.length() - 4, 4);
-    QuantInStr.append("_Quantizers.txt");
+    QuantInStr.append("_quantizers.txt");
     char QuantInChar[255] = "";
     snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
 
@@ -11358,7 +11870,7 @@ int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer)
 
     string QuantInStr = inputFile;
     QuantInStr.erase(QuantInStr.length() - 4, 4);
-    QuantInStr.append("_Quantizers.txt");
+    QuantInStr.append("_quantizers.txt");
     char QuantInChar[255] = "";
     snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
 
@@ -11412,7 +11924,7 @@ int vpxt_check_fixed_quantizer(const char *inputFile, int FixedQuantizer)
 
     string QuantInStr = inputFile;
     QuantInStr.erase(QuantInStr.length() - 4, 4);
-    QuantInStr.append("_Quantizers.txt");
+    QuantInStr.append("_quantizers.txt");
     char QuantInChar[255] = "";
     snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
 
@@ -11470,12 +11982,12 @@ int vpxt_time_return(const char *infile, int FileType)
 
     if (FileType == 0)
     {
-        FullName = strcat(TextFilechar1, "CompressionTime.txt");
+        FullName = strcat(TextFilechar1, "compression_time.txt");
     }
 
     if (FileType == 1)
     {
-        FullName = strcat(TextFilechar1, "DecompressionTime.txt");
+        FullName = strcat(TextFilechar1, "decompression_time.txt");
     }
 
     ifstream infile2(FullName);
@@ -11503,12 +12015,12 @@ int vpxt_cpu_tick_return(const char *infile, int FileType)
 
     if (FileType == 0)
     {
-        FullName = strcat(TextFilechar1, "CompressionCPUTick.txt");
+        FullName = strcat(TextFilechar1, "compression_cpu_tick.txt");
     }
 
     if (FileType == 1)
     {
-        FullName = strcat(TextFilechar1, "DecompressionCPUTick.txt");
+        FullName = strcat(TextFilechar1, "decompression_cpu_tick.txt");
     }
 
     ifstream infile2(FullName);
@@ -11545,6 +12057,81 @@ int vpxt_get_number_of_frames(const char *inputFile)
     fclose(in);
 
     return FrameLength;
+}
+int vpxt_check_force_key_frames(const char *KeyFrameoutputfile, int ForceKeyFrameInt, const char *ForceKeyFrame)
+{
+    // return - 1 if file not found
+    // return 1 if failed
+    // return 0 if passed
+
+    ifstream infile(KeyFrameoutputfile);
+
+    if (!infile.good())
+    {
+        tprintf("\nKey Frame File Not Present\n");
+        //fclose(fp);
+        return -1;
+    }
+
+    tprintf("\n\nResults:\n\n");
+
+    int fail = 0;
+    int selector2 = 0;
+    int doOnce2 = 0;
+    int x2;
+    int y2;
+    int framecount = 0;
+
+    while (!infile.eof())
+    {
+        if (selector2 == 1)
+        {
+            infile >> x2;
+            selector2 = 2;
+        }
+        else
+        {
+            infile >> y2;
+            selector2 = 1;
+        }
+
+        if (doOnce2 == 0)
+        {
+            x2 = y2;
+            infile >> y2;
+            doOnce2 = 1;
+            selector2 = 1;
+        }
+
+        if (vpxt_abs_int(y2 - x2) != ForceKeyFrameInt)
+        {
+            vpxt_formated_print(5, "Key Frames do not occur only when Force Key Frame dictates: %i - Failed", ForceKeyFrameInt);
+            tprintf("\n");
+            fail = 1;
+        }
+    }
+
+    int maxKeyFrame = 0;
+
+    if (x2 > y2)
+    {
+        maxKeyFrame = x2;
+    }
+    else
+    {
+        maxKeyFrame = y2;
+    }
+
+    int NumberofFrames = vpxt_get_number_of_frames(ForceKeyFrame);
+
+    if (NumberofFrames - 1 >= (maxKeyFrame + ForceKeyFrameInt))
+    {
+        vpxt_formated_print(RESPRT, "Key Frames do not occur only when Force Key Frame dictates: %i - Failed", ForceKeyFrameInt);
+        tprintf("\n");
+        fail = 1;
+    }
+
+    return fail;
 }
 //-----------------------------------------------------------IVF Enc------------------------------------------------------
 int API20Encoder(long width, long height, char *infilechar, char *outfilechar)

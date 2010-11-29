@@ -2,13 +2,15 @@
 
 int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "opt.auto_keyFrame";
+    char *CompressString = "Auto Key Frame";
+    char *MyDir = "test_auto_key_frame";
 
     if (!(argc == 7 || argc == 6))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  AutoKeyFramingWorks \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -19,46 +21,53 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
             "    <Target Bit Rate>\n"
             "    <Key Frame Frequency>\n"
             "    <Optional Settings File>\n"
-            "\n");
+            "\n"
+        );
         return 0;
     }
 
-    int speed = 0;
     char *input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int AutoKeyFramingInt = atoi(argv[5]);
 
-    ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
-    char WorkingDir3[255] = "";
-    char *MyDir = "AutoKeyFramingWorks";
-    string MainDirString = "";
-    char File1[255] = "";
+    int speed = 0;
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    ////////////Formatting Test Specific Directory////////////
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
+
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string KeyFrameTxtOut1 = WorkingDirString;
-    string KeyFrameTxtOut2 = WorkingDirString;
-    string AutoKeyFramingWorks1 = WorkingDirString;
-    string AutoKeyFramingWorks2 = WorkingDirString;
-
-    KeyFrameTxtOut1.append(slashCharStr());
-    KeyFrameTxtOut1.append("AutoKeyFramingWorksOutput1_KeyFrames.txt");
+    string AutoKeyFramingWorks1 = CurTestDirStr;
     AutoKeyFramingWorks1.append(slashCharStr());
-    AutoKeyFramingWorks1.append("AutoKeyFramingWorksOutput1.ivf");
-    KeyFrameTxtOut2.append(slashCharStr());
-    KeyFrameTxtOut2.append("AutoKeyFramingWorksOutput2_KeyFrames.txt");
+    AutoKeyFramingWorks1.append(MyDir);
+    AutoKeyFramingWorks1.append("_compression_1.ivf");
+
+    string AutoKeyFramingWorks2 = CurTestDirStr;
     AutoKeyFramingWorks2.append(slashCharStr());
-    AutoKeyFramingWorks2.append("AutoKeyFramingWorksOutput2.ivf");
+    AutoKeyFramingWorks2.append(MyDir);
+    AutoKeyFramingWorks2.append("_compression_2.ivf");
+
+    string KeyFrameTxtOut1 = CurTestDirStr;
+    KeyFrameTxtOut1.append(slashCharStr());
+    KeyFrameTxtOut1.append(MyDir);
+    KeyFrameTxtOut1.append("_compression_1_key_frames.txt");
+
+    string KeyFrameTxtOut2 = CurTestDirStr;
+    KeyFrameTxtOut2.append(slashCharStr());
+    KeyFrameTxtOut2.append(MyDir);
+    KeyFrameTxtOut2.append("_compression_2_key_frames.txt");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -74,22 +83,16 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    tprintf("Auto Key Framing Works Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -100,9 +103,9 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -117,7 +120,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     opt.key_freq = AutoKeyFramingInt;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -128,41 +131,37 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
         if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
         if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
     vpxt_display_key_frames(AutoKeyFramingWorks1.c_str(), 1);
     vpxt_display_key_frames(AutoKeyFramingWorks2.c_str(), 1);
 
-    ifstream infile1(KeyFrameTxtOut1.c_str());
+    ifstream inFileIndexOutputChar(KeyFrameTxtOut1.c_str());
     ifstream infile2(KeyFrameTxtOut2.c_str());
 
-    if (!infile1.good())
+    if (!inFileIndexOutputChar.good())
     {
         tprintf("\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
@@ -170,8 +169,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     {
         tprintf("\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
@@ -179,9 +177,9 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     int x;
     int y;
 
-    while (!infile1.eof() && !infile2.eof())
+    while (!inFileIndexOutputChar.eof() && !infile2.eof())
     {
-        infile1 >> x;
+        inFileIndexOutputChar >> x;
         infile2 >> y;
 
         if (x != y)
@@ -191,7 +189,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
 
     }
 
-    if (!infile1.eof())
+    if (!inFileIndexOutputChar.eof())
     {
         fail = 1;
     }
@@ -201,7 +199,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
         fail = 1;
     }
 
-    infile1.close();
+    inFileIndexOutputChar.close();
     infile2.close();
 
     char AutoKeyFramingWorks1FileName[255];
@@ -250,10 +248,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
 
         if (vpxt_abs_int(y2 - x2) > AutoKeyFramingInt)
         {
-            char OutputChar1[255];
-            snprintf(OutputChar1, 255, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, x2, y2);
-            string OutputChar1str = OutputChar1;
-            formated_print(OutputChar1str, 5);
+            vpxt_formated_print(RESPRT, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, x2, y2);
             tprintf("\n");
             fail2 = 1;
         }
@@ -274,10 +269,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (NumberofFrames - 1 >= (maxKeyFrame + AutoKeyFramingInt))
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, maxKeyFrame, NumberofFrames - 1);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, maxKeyFrame, NumberofFrames - 1);
         tprintf("\n");
         fail = 1;
     }
@@ -285,46 +277,34 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     ///////////////////////////////////////////////////////////////////////////
     if (fail2 == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Key Frames occur at least as frequently as Auto Key Frame dictates: %i - Passed", AutoKeyFramingInt);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Key Frames occur at least as frequently as Auto Key Frame dictates: %i - Passed", AutoKeyFramingInt);
         tprintf("\n");
     }
 
     if (fail == 0)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Key Frames occur at the same locations for %s and %s - Passed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Key Frames occur at the same locations for %s and %s - Passed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
         tprintf("\n");
 
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Key Frames do not occur at the same locations for %s and %s - Failed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Key Frames do not occur at the same locations for %s and %s - Failed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
         tprintf("\n");
 
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

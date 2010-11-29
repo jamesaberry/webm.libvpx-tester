@@ -123,7 +123,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
         string outputDirStr = outputDir;
         char currentVideoFrameStr[10];
-        vpx_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
+        vpxt_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
         outputDirStr.append(slashCharStr());
         outputDirStr.append("Frame_");
         outputDirStr.append(currentVideoFrameStr);

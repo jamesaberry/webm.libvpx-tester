@@ -2,74 +2,72 @@
 
 int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-
-    char *CompressString = "Allow DF";
-    char *input = argv[2];
+    char *CompressString = "Allow Drop Frames";
+    char *MyDir = "test_good_vs_best";
 
     if (!(argc == 4 || argc == 5))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  GoodQvBestQ \n\n"
-            "    <inputfile>\n"
-            "    <Target Bit Rate>\n ");
-
+            "\n\n"
+            "    <Input File>\n"
+            "    <Target Bit Rate>\n"
+            "\n"
+        );
         return 0;
     }
 
+    char *input = argv[2];
+    int BitRate = atoi(argv[3]);
+
+    int speed = 0;
+
     /////////////////Might want to see if you can make a function to do this so its a bit cleaner/////////////////
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "GoodQvBestQ";
-    string MainDirString = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
+    string GoodOutFile1 = CurTestDirStr;
+    GoodOutFile1.append(slashCharStr());
+    GoodOutFile1.append(MyDir);
+    GoodOutFile1.append("_compression_good_1.ivf");
 
-    string GvBgOutFile1 = WorkingDirString;
-    string GvBbOutFile1 = WorkingDirString;
-    string GvBgOutFile2 = WorkingDirString;
-    string GvBbOutFile2 = WorkingDirString;
-    string GvBgOutFile3 = WorkingDirString;
-    string GvBbOutFile3 = WorkingDirString;
+    string GoodOutFile2 = CurTestDirStr;
+    GoodOutFile2.append(slashCharStr());
+    GoodOutFile2.append(MyDir);
+    GoodOutFile2.append("_compression_good_2.ivf");
 
-    GvBgOutFile1.append(slashCharStr());
-    GvBgOutFile1.append("GoodVsBestGood1.ivf");
-    GvBbOutFile1.append(slashCharStr());
-    GvBbOutFile1.append("GoodVsBestBest1.ivf");
-    GvBgOutFile2.append(slashCharStr());
-    GvBgOutFile2.append("GoodVsBestGood2.ivf");
-    GvBbOutFile2.append(slashCharStr());
-    GvBbOutFile2.append("GoodVsBestBest2.ivf");
-    GvBgOutFile3.append(slashCharStr());
-    GvBgOutFile3.append("GoodVsBestGood3.ivf");
-    GvBbOutFile3.append(slashCharStr());
-    GvBbOutFile3.append("GoodVsBestBest3.ivf");
+    string GoodOutFile3 = CurTestDirStr;
+    GoodOutFile3.append(slashCharStr());
+    GoodOutFile3.append(MyDir);
+    GoodOutFile3.append("_compression_good_3.ivf");
 
-    //char GvBgOutFile1[255];
-    //char GvBgOutFile2[255];
-    //char GvBgOutFile3[255];
-    //char GvBbOutFile1[255];
-    //char GvBbOutFile2[255];
-    //char GvBbOutFile3[255];
+    string BestOutFile1 = CurTestDirStr;
+    BestOutFile1.append(slashCharStr());
+    BestOutFile1.append(MyDir);
+    BestOutFile1.append("_compression_best_1.ivf");
 
-    //snprintf(GvBgOutFile1, 255, "%s", WorkingDir4.c_str());
-    //snprintf(GvBbOutFile1, 255, "%s", WorkingDir5.c_str());
-    //snprintf(GvBgOutFile2, 255, "%s", WorkingDir4b.c_str());
-    //snprintf(GvBbOutFile2, 255, "%s", WorkingDir5b.c_str());
-    //snprintf(GvBgOutFile3, 255, "%s", WorkingDir4c.c_str());
-    //snprintf(GvBbOutFile3, 255, "%s", WorkingDir5c.c_str());
+    string BestOutFile2 = CurTestDirStr;
+    BestOutFile2.append(slashCharStr());
+    BestOutFile2.append(MyDir);
+    BestOutFile2.append("_compression_best_2.ivf");
+
+    string BestOutFile3 = CurTestDirStr;
+    BestOutFile3.append(slashCharStr());
+    BestOutFile3.append(MyDir);
+    BestOutFile3.append("_compression_best_3.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -86,25 +84,16 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    int speed = 0;
-    int BitRate = atoi(argv[3]);
-
-    tprintf("Good Quality vs Best Quality Test");
+    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -115,9 +104,9 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -132,10 +121,8 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     int BitRate2 = BitRate;
     int BitRate3 = BitRate + (BitRate * 0.3);
 
-    //opt.target_bandwidth = BitRate;
-
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -144,83 +131,76 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_GOODQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input, GvBgOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, GvBgOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, GvBgOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_BESTQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input, GvBbOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, BestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, GvBbOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, BestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, GvBbOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, BestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
     tprintf("\n");
 
-    float GoodSize1 = vpxt_ivf_data_rate(GvBgOutFile1.c_str(), 1);
-    float BestSize1 = vpxt_ivf_data_rate(GvBbOutFile1.c_str(), 1);
-    float GoodSize2 = vpxt_ivf_data_rate(GvBgOutFile2.c_str(), 1);
-    float BestSize2 = vpxt_ivf_data_rate(GvBbOutFile2.c_str(), 1);
-    float GoodSize3 = vpxt_ivf_data_rate(GvBgOutFile3.c_str(), 1);
-    float BestSize3 = vpxt_ivf_data_rate(GvBbOutFile3.c_str(), 1);
+    float GoodSize1 = vpxt_ivf_data_rate(GoodOutFile1.c_str(), 1);
+    float BestSize1 = vpxt_ivf_data_rate(BestOutFile1.c_str(), 1);
+    float GoodSize2 = vpxt_ivf_data_rate(GoodOutFile2.c_str(), 1);
+    float BestSize2 = vpxt_ivf_data_rate(BestOutFile2.c_str(), 1);
+    float GoodSize3 = vpxt_ivf_data_rate(GoodOutFile3.c_str(), 1);
+    float BestSize3 = vpxt_ivf_data_rate(BestOutFile3.c_str(), 1);
 
     double PSNRG1;
     double PSNRB1;
@@ -229,12 +209,12 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     double PSNRG3;
     double PSNRB3;
 
-    PSNRG1 = vpxt_ivf_psnr(input, GvBgOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRB1 = vpxt_ivf_psnr(input, GvBbOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRG2 = vpxt_ivf_psnr(input, GvBgOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRB2 = vpxt_ivf_psnr(input, GvBbOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRG3 = vpxt_ivf_psnr(input, GvBgOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNRB3 = vpxt_ivf_psnr(input, GvBbOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRG1 = vpxt_ivf_psnr(input, GoodOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRB1 = vpxt_ivf_psnr(input, BestOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRG2 = vpxt_ivf_psnr(input, GoodOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRB2 = vpxt_ivf_psnr(input, BestOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRG3 = vpxt_ivf_psnr(input, GoodOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRB3 = vpxt_ivf_psnr(input, BestOutFile3.c_str(), 1, 0, 1, NULL);
 
     float GoodA = 0;
     float GoodB = 0;
@@ -306,29 +286,20 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
 
     if (GoodAreaVal == BestAreaVal)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Best Quality area under curve: %.2f == Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f == Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
         tprintf("\n");
     }
 
     if (BestAreaVal > GoodAreaVal)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Best Quality area under curve: %.2f > Good Quality area under curve: %.2f - Passed", BestAreaVal, GoodAreaVal);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f > Good Quality area under curve: %.2f - Passed", BestAreaVal, GoodAreaVal);
         tprintf("\n");
         Pass = 1;
     }
 
     if (BestAreaVal < GoodAreaVal)
     {
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Best Quality area under curve: %.2f < Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f < Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
         tprintf("\n");
     }
 
@@ -337,8 +308,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
         tprintf("\nPassed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
@@ -346,13 +316,11 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
         tprintf("\nFailed\n");
 
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

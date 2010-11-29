@@ -2,12 +2,15 @@
 
 int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    // So long as Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
+    //Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
+    char *MyDir = "test_debug_matches_release";
+
     if (!(argc == 7 || argc == 8))
     {
+        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         printf(
-            "  DebugMatchesRelease \n\n"
-            "    <inputfile>\n"
+            "\n\n"
+            "    <Input File>\n"
             "    <Mode>\n"
             "          (0)Realtime/Live Encoding\n"
             "          (1)Good Quality Fast Encoding\n"
@@ -19,7 +22,8 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
             "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
             "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
             "    <Optional Settings File>\n"
-            "\n");
+            "\n"
+        );
         return 0;
     }
 
@@ -28,47 +32,49 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     int BitRate = atoi(argv[4]);
     char *ExeInputDebug = argv[5];
     char ExeInputRelease[255];
-
     snprintf(ExeInputRelease, 255, "%s", argv[6]);
 
     ////////////Formatting Test Specific Directory////////////
-    string WorkingDirString = "";
+    string CurTestDirStr = "";
+    char MainTestDirChar[255] = "";
+    string FileIndexStr = "";
+    char FileIndexOutputChar[255] = "";
 
-
-    char WorkingDir3[255] = "";
-    char *MyDir = "DebugMatchesRelease";
-    string MainDirString = "";
-    char File1[255] = "";
-
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, WorkingDirString, MainDirString, WorkingDir3, File1, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
     char ExeCharDebugRelease[1024];
     vpxt_folder_name(argv[0], ExeCharDebugRelease);
     string ExeCharDebugReleaseString = ExeCharDebugRelease;
 
-    string DebugOutput = WorkingDirString;
-    string ReleaseOutput = WorkingDirString;
-    string WorkingDir6 = WorkingDirString;
-    string ParFileDebug = WorkingDirString;
-    string ParFileRelease = WorkingDirString;
-    string ProgramDebug = ExeCharDebugReleaseString;
-    string ProgramRelease = ExeCharDebugReleaseString;
-
     string DebugExeLoc = ExeCharDebugReleaseString;
     DebugExeLoc.append(ExeInputDebug);
+
     string ReleaseExeLoc = ExeCharDebugReleaseString;
     ReleaseExeLoc.append(ExeInputRelease);
 
+    string DebugOutput = CurTestDirStr;
     DebugOutput.append(slashCharStr());
-    DebugOutput.append("output_Debug.ivf");
-    ReleaseOutput.append(slashCharStr());
-    ReleaseOutput.append("output_Release.ivf");
+    DebugOutput.append(MyDir);
+    DebugOutput.append("_compression_debug.ivf");
 
+    string ReleaseOutput = CurTestDirStr;
+    ReleaseOutput.append(slashCharStr());
+    ReleaseOutput.append(MyDir);
+    ReleaseOutput.append("_compression_release.ivf");
+
+    string ParFileDebug = CurTestDirStr;
     ParFileDebug.append(slashCharStr());
-    ParFileDebug.append("ParFileDebug.txt");
+    ParFileDebug.append(MyDir);
+    ParFileDebug.append("_parameter_file_debug.txt");
+
+    string ParFileRelease = CurTestDirStr;
     ParFileRelease.append(slashCharStr());
-    ParFileRelease.append("ParFileRelease.txt");
+    ParFileRelease.append(MyDir);
+    ParFileRelease.append("_parameter_file_release.txt");
+
+    string ProgramDebug = ExeCharDebugReleaseString;
+    string ProgramRelease = ExeCharDebugReleaseString;
 
 #if defined(_WIN32)
     {
@@ -127,11 +133,11 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
-    if (TestType == 2 || TestType == 1)
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
         TextfileString.append(".txt");
     else
         TextfileString.append("_TestOnly.txt");
@@ -147,20 +153,16 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
-    {
-        print_header_full_test(argc, argv, WorkingDir3);
-    }
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (TestType == 2)
-    {
-        print_header_compression_only(argc, argv, WorkingDir3);
-    }
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (TestType == 3)
-    {
-        print_header_test_only(argc, argv, WorkingDirString);
-    }
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
+
+    vpxt_cap_string_print(PRINT_BOTH, "%s\n", MyDir);
 
     fclose(fp);
 
@@ -170,9 +172,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         exit(1);
     }
 
-    tprintf("Debug Matches Release Test");
-
-    int speed = 0;
+    fprintf(stderr, " ");
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -183,9 +183,9 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
             tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+
             fclose(fp);
-            string File1Str = File1;
-            record_test_complete(MainDirString, File1Str, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -197,9 +197,9 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     if (!vpxt_file_exists_check(argv[6]))
     {
         tprintf("\nInput executable %s does not exist\n", argv[6]);
+
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
@@ -207,9 +207,9 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     if (!vpxt_file_exists_check(argv[5]))
     {
         tprintf("\nInput executable %s does not exist\n", argv[5]);
+
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
@@ -217,9 +217,9 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     if (!vpxt_file_exists_check(argv[2]))
     {
         tprintf("\nInput encode file %s does not exist\n", argv[2]);
+
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
@@ -228,7 +228,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     opt.target_bandwidth = BitRate;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
-    if (TestType == 3)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -333,7 +333,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file11.\n");
+                printf("Cannot open out put FileIndexOutputChar1.\n");
                 exit(1);
             }
 
@@ -345,11 +345,10 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     }
 
     //Create Compression only stop test short.
-    if (TestType == 2)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
@@ -364,10 +363,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         tprintf("Files differ at frame: %i\n", lngRC);
         tprintf("\n\nResults:\n\n");
 
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Debug Compression not identical to Release Compression - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
         tprintf("\n");
         fail = 1;
     }
@@ -377,10 +373,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         tprintf("Files are identical\n");
         tprintf("\n\nResults:\n\n");
 
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Debug Compression identical to Release Compression - Passed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Debug Compression identical to Release Compression - Passed");
         tprintf("\n");
     }
 
@@ -389,10 +382,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         tprintf("File 2 ends before File 1\n");
         tprintf("\n\nResults:\n\n");
 
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Debug Compression not identical to Release Compression - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
         tprintf("\n");
         fail = 1;
     }
@@ -402,10 +392,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         tprintf("File 1 ends before File 2\n");
         tprintf("\n\nResults:\n\n");
 
-        char OutputChar1[255];
-        snprintf(OutputChar1, 255, "Debug Compression not identical to Release Compression - Failed");
-        string OutputChar1str = OutputChar1;
-        formated_print(OutputChar1str, 5);
+        vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
         tprintf("\n");
         fail = 1;
     }
@@ -413,22 +400,21 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     if (fail == 0)
     {
         tprintf("\nPassed\n");
+
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
     {
         tprintf("\nFailed\n");
+
         fclose(fp);
-        string File1Str = File1;
-        record_test_complete(MainDirString, File1Str, TestType);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
-    string File1Str = File1;
-    record_test_complete(MainDirString, File1Str, TestType);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

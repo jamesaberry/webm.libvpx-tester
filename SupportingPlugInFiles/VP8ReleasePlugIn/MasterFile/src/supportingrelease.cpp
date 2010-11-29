@@ -121,7 +121,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
         string outputDirStr = outputDir;
         char currentVideoFrameStr[10];
-        vpx_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
+        vpxt_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
         outputDirStr.append(slashCharStr());
         outputDirStr.append("Frame_");
         outputDirStr.append(currentVideoFrameStr);
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
 
         vpxt_remove_file_extension(outputFile, TextFilechar1);
 
-        char *FullName = strcat(TextFilechar1, "OLD_PSNR.txt");
+        char *FullName = strcat(TextFilechar1, "psnr.txt");
 
         ofstream outfile2(FullName);
         outfile2 << totalPsnr;

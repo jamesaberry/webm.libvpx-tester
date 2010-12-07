@@ -8,20 +8,20 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     if (!(argc == 6 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -64,7 +64,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -80,7 +80,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -90,7 +90,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -164,7 +164,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (DispResized10int > 0)
     {
-        printf("\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp10Filename);
+        tprintf(PRINT_STD, "\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp10Filename);
         RDWMCheck10int = vpxt_dfwm_check(DownWaterSamp10OutFile.c_str(), 1);
     }
     else
@@ -179,7 +179,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (DispResized90int > 0)
     {
-        printf("\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp90Filename);
+        tprintf(PRINT_STD, "\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp90Filename);
         RDWMCheck90int = vpxt_dfwm_check(DownWaterSamp90OutFile.c_str(), 1);
     }
     else
@@ -188,18 +188,18 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     }
 
     int fail = 0; //1 = failed // 2 = indt // 3 = track resize for 10 // track resize for 90
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (DispResized10int > 0 && DispResized90int > 0)
     {
         vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned resized frames - Indeterminate");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (DispResized10int == 0 && DispResized90int > 0)
     {
         vpxt_formated_print(RESPRT, "DWMS 10 returned no resized frames; DWMS 90 returned resized frames - Indeterminate");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 4;
         //indt
     }
@@ -207,7 +207,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     if (DispResized10int > 0 && DispResized90int == 0)
     {
         vpxt_formated_print(RESPRT, "DWMS 90 returned no resized frames; DWMS 10 returned resized frames - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
         //fail
     }
@@ -215,21 +215,21 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     if (DispResized10int == 0 && DispResized90int == 0)
     {
         vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned  no resized frames - Indeterminate");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 2;
     }
 
     if (RDWMCheck10int == 0)
     {
         vpxt_formated_print(RESPRT, "DWMS 10 resizes first frame at correct buffer location - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         //fail
     }
 
     if (RDWMCheck10int == 1)
     {
         vpxt_formated_print(RESPRT, "DWMS 10 does not resize first frame at correct buffer location - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
         //fail
     }
@@ -237,7 +237,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     if (RDWMCheck10int == -3)
     {
         vpxt_formated_print(RESPRT, "DWMS 10 buffer threshold never reached - Indeterminate");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 2;
         //fail
     }
@@ -247,14 +247,14 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
         if (fail == 4)
         {
             vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at correct buffer location - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 3;
             //fail
         }
         else
         {
             vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at correct buffer location - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             //fail
         }
     }
@@ -262,7 +262,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     if (RDWMCheck90int == 1)
     {
         vpxt_formated_print(RESPRT, "DWMS 90 does not resize first frame at correct buffer location - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 2;
         //fail
     }
@@ -270,14 +270,14 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     if (RDWMCheck90int == -3)
     {
         vpxt_formated_print(RESPRT, "DWMS 90 buffer threshold never reached - Indeterminate");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 2;
         //fail
     }
 
     if (fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -286,7 +286,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (fail == 3)
     {
-        tprintf("\nMin Passed\n");
+        tprintf(PRINT_BTH, "\nMin Passed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -295,7 +295,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
 
     if (fail == 2)
     {
-        tprintf("\nIndeterminate\n");
+        tprintf(PRINT_BTH, "\nIndeterminate\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -303,7 +303,7 @@ int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, stri
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

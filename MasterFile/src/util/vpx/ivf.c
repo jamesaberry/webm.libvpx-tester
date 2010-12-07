@@ -1,12 +1,12 @@
 /****************************************************************************
- *
- *   Module Title : ivf.c
- *
- *   Description  : On2 Intermediate video file format header
- *
- *   Copyright (c) 1999 - 2005  On2 Technologies Inc. All Rights Reserved.
- *
- ***************************************************************************/
+*
+*   Module Title : ivf.c
+*
+*   Description  : On2 Intermediate video file format header
+*
+*   Copyright (c) 1999 - 2005  On2 Technologies Inc. All Rights Reserved.
+*
+***************************************************************************/
 
 #include "ivf.h"
 #include <string.h>

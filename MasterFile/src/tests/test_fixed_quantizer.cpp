@@ -8,22 +8,22 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
     if (!(argc == 7 || argc == 8))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <FixedQ 1>\n"
-            "    <FixedQ 2>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <FixedQ 1>\n"
+                "    <FixedQ 2>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -72,7 +72,7 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -88,7 +88,7 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -98,7 +98,7 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -117,7 +117,7 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
 
     if (FixedQ1Int < 0 || FixedQ1Int > 63 || FixedQ2Int < 0 || FixedQ2Int > 63)
     {
-        tprintf("\n\nInvaild Qunatizer Range, Vaild range = 0-63 - Indeterminate\n");
+        tprintf(PRINT_BTH, "\n\nInvaild Qunatizer Range, Vaild range = 0-63 - Indeterminate\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -163,21 +163,21 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
         return 10;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     int fail = 0;
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
     int FixedQCheckVal1 = vpxt_check_fixed_quantizer(FixedQ1.c_str(), FixedQ1Int);
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
     int FixedQCheckVal2 = vpxt_check_fixed_quantizer(FixedQ2.c_str(), FixedQ2Int);
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
     int FixedQSize1 = vpxt_file_size(FixedQ1.c_str(), 1);
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
     int FixedQSize2 = vpxt_file_size(FixedQ2.c_str(), 1);
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     char FixedQ1FileName[255] = "";
     char FixedQ2FileName[255] = "";
@@ -185,30 +185,30 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
     vpxt_file_name(FixedQ1.c_str(), FixedQ1FileName, 0);
     vpxt_file_name(FixedQ2.c_str(), FixedQ2FileName, 0);
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (FixedQCheckVal1 != -1)
     {
         vpxt_formated_print(RESPRT, "Quantizer not fixed for %s for frame %i - Failed", FixedQ1FileName, FixedQCheckVal1);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "Quantizer fixed at %i for all frames for %s - Passed", FixedQ1Int, FixedQ1FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (FixedQCheckVal2 != -1)
     {
         vpxt_formated_print(RESPRT, "Quantizer not fixed for %s for frame %i - Failed", FixedQ2FileName, FixedQCheckVal2);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "Quantizer fixed at %i for all frames for %s - Passed", FixedQ2Int, FixedQ2FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (FixedQ1Int < FixedQ2Int) //make sure that lower fixed q has higher datarate
@@ -217,13 +217,13 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
         if (FixedQSize1 <= FixedQSize2)
         {
             vpxt_formated_print(RESPRT, "%s file size: %i >= %s file size: %i - Failed", FixedQ2FileName, FixedQSize2, FixedQ1FileName, FixedQSize1);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "%s file size: %i > %s file size: %i - Passed", FixedQ1FileName, FixedQSize1, FixedQ2FileName, FixedQSize2);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
     }
     else
@@ -231,19 +231,19 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
         if (FixedQSize2 <= FixedQSize1)
         {
             vpxt_formated_print(RESPRT, "%s file size: %i >= %s file size: %i - Failed", FixedQ1FileName, FixedQSize1, FixedQ2FileName, FixedQSize2);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "%s file size: %i > %s file size: %i - Failed", FixedQ2FileName, FixedQSize2, FixedQ1FileName, FixedQSize1);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
     }
 
     if (fail == 1)
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -251,7 +251,7 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
     }
     else
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

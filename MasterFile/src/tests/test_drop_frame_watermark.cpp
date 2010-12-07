@@ -8,20 +8,20 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     if (!(argc == 6 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -59,7 +59,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -75,7 +75,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -85,7 +85,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -122,10 +122,10 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
             DFWMOutFile.append(num);
             DFWMOutFile.append(".ivf");
 
-            printf("\n");
+            tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
             DMFW[i] = vpxt_file_size(DFWMOutFile.c_str(), 1);
-            printf("\n");
+            tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
 
             i++;
@@ -158,10 +158,10 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
 
             if (TestType != 2)
             {
-                printf("\n");
+                tprintf(PRINT_STD, "\n");
                 fprintf(stderr, "\n");
                 DMFW[i] = vpxt_display_visible_frames(DFWMOutFile.c_str(), 1);
-                printf("\n");
+                tprintf(PRINT_STD, "\n");
                 fprintf(stderr, "\n");
             }
 
@@ -185,12 +185,12 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     int EqualBool = 0;
     int testBool = 1;
 
-    printf("\n\n");
+    tprintf(PRINT_STD, "\n\n");
     fprintf(stderr, "\n\n");
 
     while (i < 6)
     {
-        printf("DFWM%4i Visible Frames: %4i\n", n, DMFW[i]);//cout << "DFWM" << n << " Size " << DMFW[i] << "\n";
+        tprintf(PRINT_STD, "DFWM%4i Visible Frames: %4i\n", n, DMFW[i]);//cout << "DFWM" << n << " Size " << DMFW[i] << "\n";
         fprintf(stderr, "DFWM%4i Visible Frames: %4i\n", n, DMFW[i]);//cerr << "DFWM" << n << " Size " << DMFW[i] << "\n";
         i++;
         n = n - 20;
@@ -199,7 +199,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     n = 100;
     i = 0;
 
-    printf("\n\nResults:\n\n");
+    tprintf(PRINT_STD, "\n\nResults:\n\n");
     fprintf(stderr, "\n\nResults:\n\n");
 
     while (i < 5)
@@ -209,14 +209,14 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
             EqualBool++;
 
             vpxt_formated_print(RESPRT, "DFWM%4i: %4i = DFWM%4i: %4i - Indeterminate", n - 20, DMFW[i+1], n, DMFW[i]);
-            printf("\n");
+            tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
         }
 
         if (DMFW[i+1] > DMFW[i])
         {
             vpxt_formated_print(RESPRT, "DFWM%4i: %4i > DFWM%4i: %4i - Passed", n - 20, DMFW[i+1], n, DMFW[i]);
-            printf("\n");
+            tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
         }
 
@@ -225,7 +225,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
             testBool = 0;
 
             vpxt_formated_print(RESPRT, "DFWM%4i: %4i < DFWM%4i: %4i - Failed", n - 20, DMFW[i+1], n, DMFW[i]);
-            printf("\n");
+            tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
         }
 
@@ -235,7 +235,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
 
     if (testBool == 0)
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -245,7 +245,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
     {
         if (EqualBool == 5)
         {
-            tprintf("\n\nUnknown: Drop-Frames-Watermark has no effect, try different parameters \n");
+            tprintf(PRINT_BTH, "\n\nUnknown: Drop-Frames-Watermark has no effect, try different parameters \n");
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -253,7 +253,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
         }
         else
         {
-            tprintf("\nPassed\n");
+            tprintf(PRINT_BTH, "\nPassed\n");
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

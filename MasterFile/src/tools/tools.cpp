@@ -61,15 +61,15 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
 
     if (argc < 7 || argc > 8)
     {
-        printf(
-            "\n  Compress IVF to IVF \n\n"
-            "    <(1)Normal Compress |(2)TimeCompress>\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "    <Bit Rate>\n"
-            "    <Mode>\n"
-            "    <Optional - Parameter File>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  Compress IVF to IVF \n\n"
+                "    <(1)Normal Compress |(2)TimeCompress>\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Bit Rate>\n"
+                "    <Mode>\n"
+                "    <Optional - Parameter File>\n"
+                "\n");
 
         return 0;
     }
@@ -200,10 +200,10 @@ int CopyIVF2IVF(int argc, char *argv[], string WorkingDir)
 
     if (argc < 3)
     {
-        printf(
-            "\n  Copy IVF to IVF \n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n ");
+        tprintf(PRINT_STD,
+                "\n  Copy IVF to IVF \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n ");
 
         return 0;
     }
@@ -229,11 +229,11 @@ int DecIVF2IVF(int argc, char *argv[])
 {
     if (argc < 4)
     {
-        printf(
-            "\n  Decompress IVF to IVF \n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  Decompress IVF to IVF \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "\n");
 
         return 0;
     }
@@ -249,11 +249,11 @@ int DecIVF2Raw(int argc, char *argv[])
 {
     if (argc < 4)
     {
-        printf(
-            "\n  Decompress IVF to Raw \n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  Decompress IVF to Raw \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "\n");
 
         return 0;
     }
@@ -269,10 +269,10 @@ int IVFDataRateTool(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf(
-            "\n  IVF DataRate \n\n"
-            "    <Input File>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  IVF DataRate \n\n"
+                "    <Input File>\n"
+                "\n");
         return 0;
     }
 
@@ -284,12 +284,12 @@ int IVFPSNRrun(int argc, char *argv[])
 {
     if (argc < 5)
     {
-        printf(
-            "\n  IVFPSNR\n\n"
-            "     <Raw IVF File>\n"
-            "     <Comp IVF File>\n"
-            "     <Run SSIM 0 no 1 yes>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  IVFPSNR\n\n"
+                "     <Raw IVF File>\n"
+                "     <Comp IVF File>\n"
+                "     <Run SSIM 0 no 1 yes>\n"
+                "\n");
         exit(0);
     }
 
@@ -306,7 +306,7 @@ int IVFPSNRrun(int argc, char *argv[])
         vpxt_ivf_psnr(Raw, Comp, 0, 3, 0, NULL);
     }
 
-    printf("\n");
+    tprintf(PRINT_STD, "\n");
 
     return 0;
 }
@@ -314,13 +314,13 @@ int IVFCheckPBMrun(int argc, char *argv[])
 {
     if (argc < 6)
     {
-        printf(
-            "\n  IVFCheckPBM\n\n"
-            "     <input>\n"
-            "     <bitrate>\n"
-            "     <bufferSize>\n"
-            "     <prebuffer>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  IVFCheckPBM\n\n"
+                "     <input>\n"
+                "     <bitrate>\n"
+                "     <bufferSize>\n"
+                "     <prebuffer>\n"
+                "\n");
         exit(0);
     }
 
@@ -334,11 +334,11 @@ int IVFCheckPBMrun(int argc, char *argv[])
 
     if (outputme == -11)
     {
-        printf("CheckPBM Passed\n");
+        tprintf(PRINT_STD, "CheckPBM Passed\n");
     }
     else
     {
-        printf("CheckPBM failed at: %i\n", outputme);
+        tprintf(PRINT_STD, "CheckPBM failed at: %i\n", outputme);
     }
 
     return 0;
@@ -347,18 +347,18 @@ int compareIVF(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf(
-            "\n  CompareIVF\n\n"
-            "     <inputfile1>\n"
-            "     <inputfile2>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  CompareIVF\n\n"
+                "     <inputfile1>\n"
+                "     <inputfile2>\n"
+               );
         return 0;
     }
 
     char *Output3 = argv[2];
     char *Output = argv[3];
 
-    printf("\nComparing Files:\n\n");
+    tprintf(PRINT_STD, "\nComparing Files:\n\n");
     cout << Output3 << "\n";
     cout << Output << "\n";
 
@@ -375,12 +375,12 @@ int compareIVF(int argc, char *argv[])
 
     if (CompIVFOutput == -2)
     {
-        printf("\n\nFail: File 2 ends before File 1.\n");
+        tprintf(PRINT_STD, "\n\nFail: File 2 ends before File 1.\n");
     }
 
     if (CompIVFOutput == -3)
     {
-        printf("\n\nFail: File 1 ends before File 2.\n");
+        tprintf(PRINT_STD, "\n\nFail: File 1 ends before File 2.\n");
     }
 
     if (CompIVFOutput != -1 && CompIVFOutput != -2 && CompIVFOutput != -3)
@@ -397,13 +397,13 @@ int RawDataIVF(char *input, char *output)
 
     if (in == NULL)
     {
-        tprintf("\nInput file: - does not exist");
+        tprintf(PRINT_BTH, "\nInput file: - does not exist");
         return 0;
     }
 
     if (out == NULL)
     {
-        tprintf("\nOutput file: - does not exist");
+        tprintf(PRINT_BTH, "\nOutput file: - does not exist");
         return 0;
     }
 
@@ -451,12 +451,12 @@ int WriteIndividualFramesOut(int argc, char *argv[])
 {
     if (argc < 4)
     {
-        printf(
-            "\n  IVF2RawFrames\n\n"
-            "    <Input File>\n"
-            "    <OutPutDir>\n"
-            "    <WriteOutAllFrames-1=yes|0=no>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  IVF2RawFrames\n\n"
+                "    <Input File>\n"
+                "    <OutPutDir>\n"
+                "    <WriteOutAllFrames-1=yes|0=no>\n"
+               );
         return 0;
     }
 
@@ -469,7 +469,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
 
     if (in == NULL)
     {
-        tprintf("\nInput file does not exist");
+        tprintf(PRINT_BTH, "\nInput file does not exist");
         return 0;
     }
 
@@ -559,17 +559,17 @@ int WriteIndividualFramesOut(int argc, char *argv[])
     }
 
     FILE *out2 = fopen(outputDirChar2, "wb");
-///////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////
     int LastFrameDecPlaces = vpxt_decimal_places(ivfhRaw.length);
 
-///////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////
     while (currentVideoFrame <= frameCount)
     {
         /*fprintf(stderr, "FRAME HEADER 0\n"
-            "Frame Size            - %i \n"
-            "Time Stamp            - %i \n"
-            "\n"
-            ,ivf_fhRaw.frameSize,ivf_fhRaw.timeStamp);*/
+        "Frame Size            - %i \n"
+        "Time Stamp            - %i \n"
+        "\n"
+        ,ivf_fhRaw.frameSize,ivf_fhRaw.timeStamp);*/
 
         cout << ".";
         memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
@@ -599,7 +599,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
         outputDirStr.append("x");
         outputDirStr.append(heightchar);
         outputDirStr.append("-Frame-");
-///////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////
         int CurNumDecPlaces = vpxt_decimal_places(currentVideoFrame);
 
         while (CurNumDecPlaces < LastFrameDecPlaces) //add zeros for increasing frames
@@ -609,7 +609,7 @@ int WriteIndividualFramesOut(int argc, char *argv[])
             CurNumDecPlaces++;
         }
 
-///////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////
         outputDirStr.append(currentVideoFrameStr);
         outputDirStr.append(".raw");
 
@@ -650,7 +650,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     if (in == NULL)
     {
-        tprintf("\nInput file does not exist");
+        tprintf(PRINT_BTH, "\nInput file does not exist");
         return 0;
     }
 
@@ -781,15 +781,15 @@ int Raw2IVF(int argc, char *argv[])
 {
     if (argc < 8)
     {
-        printf(
-            "\n  Raw2IVF\n\n"
-            "    <Input File>\n"
-            "    <OutPutDir>\n"
-            "    <Width>\n"
-            "    <Height>\n"
-            "    <FrameRate>\n"
-            "    <FourCC>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Raw2IVF\n\n"
+                "    <Input File>\n"
+                "    <OutPutDir>\n"
+                "    <Width>\n"
+                "    <Height>\n"
+                "    <FrameRate>\n"
+                "    <FourCC>\n"
+               );
         return 0;
     }
 
@@ -806,7 +806,7 @@ int Raw2IVF(int argc, char *argv[])
 
     if (in == NULL)
     {
-        tprintf("\nInput file does not exist");
+        tprintf(PRINT_BTH, "\nInput file does not exist");
         return 0;
     }
 
@@ -839,22 +839,22 @@ int Raw2IVF(int argc, char *argv[])
     vpxt_format_ivf_header_write(ivfhRaw);
     fwrite(&ivfhRaw, 1, 32, out2);
 
-    printf("IVF DataRate\n\n"
-           "FILE HEADER \n\n"
-           "File Header            - %c%c%c%c \n"
-           "File Format Version    - %i \n"
-           "File Header Size       - %i \n"
-           "Video Data FourCC      - %i \n"
-           "Video Image Width      - %i \n"
-           "Video Image Height     - %i \n"
-           "Frame Rate Rate        - %i \n"
-           "Frame Rate Scale       - %i \n"
-           "Video Length in Frames - %i \n"
-           "Unused                 - %c \n"
-           "\n\n"
-           , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
-           , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
-           , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
+    tprintf(PRINT_STD, "IVF DataRate\n\n"
+            "FILE HEADER \n\n"
+            "File Header            - %c%c%c%c \n"
+            "File Format Version    - %i \n"
+            "File Header Size       - %i \n"
+            "Video Data FourCC      - %i \n"
+            "Video Image Width      - %i \n"
+            "Video Image Height     - %i \n"
+            "Frame Rate Rate        - %i \n"
+            "Frame Rate Scale       - %i \n"
+            "Video Length in Frames - %i \n"
+            "Unused                 - %c \n"
+            "\n\n"
+            , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
+            , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
+            , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
 
     IVF_FRAME_HEADER ivf_fhRaw;
     ivf_fhRaw.frameSize = ivfhRaw.width * ivfhRaw.height * 3 / 2;
@@ -911,13 +911,13 @@ int CutIVFTool(int argc, char *argv[])
 {
     if (argc < 5)
     {
-        printf(
-            "\n  CutIVF\n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "    <Starting Frame>\n"
-            "    <Ending Frame>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  CutIVF\n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Starting Frame>\n"
+                "    <Ending Frame>\n"
+               );
         return 0;
     }
 
@@ -934,16 +934,16 @@ int CropRawIVFTool(int argc, char *argv[])
 {
     if (argc < 8)
     {
-        printf(
-            "\n  CropRawIVF\n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "    <xoffset>\n"
-            "    <yoffset>\n"
-            "    <New Frame Width>\n"
-            "    <New Frame Height>\n"
-            "    <Raw/IVF 0-Raw 1-IVF>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  CropRawIVF\n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <xoffset>\n"
+                "    <yoffset>\n"
+                "    <New Frame Width>\n"
+                "    <New Frame Height>\n"
+                "    <Raw/IVF 0-Raw 1-IVF>\n"
+               );
         return 0;
     }
 
@@ -962,13 +962,13 @@ int vpxt_paste_ivf(int argc, char *argv[])
 {
     if (argc < 5)
     {
-        printf(
-            "\n  PasteIVF\n\n"
-            "    <Inputfile1>\n"
-            "    <Inputfile2>\n"
-            "    <Outputfile>\n"
-            "    <First Paste Frame>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  PasteIVF\n\n"
+                "    <Inputfile1>\n"
+                "    <Inputfile2>\n"
+                "    <Outputfile>\n"
+                "    <First Paste Frame>\n"
+               );
         return 0;
     }
 
@@ -986,15 +986,15 @@ int CombineIndvFrames(int argc, char *argv[])
 {
     if (argc != 8)
     {
-        printf(
-            "\n  MakeRawFromIndvFrames\n\n"
-            "    <Input Director>\n"
-            "    <Namebase>\n"
-            "    <File Extension - include .>\n"
-            "    <First Frame - Include preceding zeros>\n"
-            "    <Last  Frame - Include preceding zeros>\n"
-            "    <Output File>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  MakeRawFromIndvFrames\n\n"
+                "    <Input Director>\n"
+                "    <Namebase>\n"
+                "    <File Extension - include .>\n"
+                "    <First Frame - Include preceding zeros>\n"
+                "    <Last  Frame - Include preceding zeros>\n"
+                "    <Output File>\n"
+               );
         return 0;
     }
 
@@ -1037,7 +1037,7 @@ int CombineIndvFrames(int argc, char *argv[])
 
     if (out == NULL)
     {
-        printf("\nOutput file does not exist");
+        tprintf(PRINT_STD, "\nOutput file does not exist");
         return 0;
     }
 
@@ -1086,7 +1086,7 @@ int CombineIndvFrames(int argc, char *argv[])
         if (in != NULL && fileSize > 0)
         {
 
-            printf("%s\n", CurIndividualFrameFileNameOnly);
+            tprintf(PRINT_STD, "%s\n", CurIndividualFrameFileNameOnly);
             char *inputBuffer = new char[fileSize*2];
             fread(inputBuffer, 1, fileSize, in);
             fwrite(inputBuffer, 1, fileSize, out);
@@ -1095,7 +1095,7 @@ int CombineIndvFrames(int argc, char *argv[])
         }
         else
         {
-            printf("%s - Skiped\n", CurIndividualFrameFileNameOnly);
+            tprintf(PRINT_STD, "%s - Skiped\n", CurIndividualFrameFileNameOnly);
         }
 
         CurrentFrame++;
@@ -1108,10 +1108,10 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf(
-            "\n  PlayCompIVF\n\n"
-            "    <Input File>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  PlayCompIVF\n\n"
+                "    <Input File>\n"
+               );
         return 0;
     }
 
@@ -1131,7 +1131,7 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
     {
         //if(!vpxt_file_exists_check("/usr/bin/mplayer"))
         //{
-        //  printf("\nError - c:\\bin\\tmnplay.exe not found.\n");
+        // tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
         //  return 0;
         //}
     }
@@ -1140,7 +1140,7 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
     {
         if (!vpxt_file_exists_check("c:\\bin\\tmnplay.exe"))
         {
-            printf("\nError - c:\\bin\\tmnplay.exe not found.\n");
+            tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
             return 0;
         }
     }
@@ -1165,7 +1165,7 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
     inputStr.append(".raw");
     snprintf(output2, 255, "%s", inputStr.c_str());
 
-    printf("\nAPI - Decompressing VP8 IVF File to Raw File: \n");
+    tprintf(PRINT_STD, "\nAPI - Decompressing VP8 IVF File to Raw File: \n");
     vpxt_decompress_ivf_to_raw_no_error_output(input, output2);
 
     char FiveChar[256];
@@ -1183,7 +1183,7 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
 
     if (in == NULL)
     {
-        tprintf("\nInput file does not exist");
+        tprintf(PRINT_BTH, "\nInput file does not exist");
         return 0;
     }
 
@@ -1263,25 +1263,25 @@ int Playvpxt_compare_ivf(int argc, char *argv[])
     if (!SysRet == 0)
     {
 #if defined(_WIN32)
-        printf("\n"
-               "    An error occured when trying to play the file.  Please\n"
-               "    Make sure tmnplay is located in your c:\\bin directory.\n"
-               "    tmnplay can be found in the TestClips directory.\n"
-              );
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    Make sure tmnplay is located in your c:\\bin directory.\n"
+                "    tmnplay can be found in the TestClips directory.\n"
+               );
 #else
-        printf("\n"
-               "    An error occured when trying to play the file.  Please\n"
-               "    make sure that mplayer is installed correctly.  mplayer\n"
-               "    can be installed by typing:\n"
-               "\n"
-               "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
-               "    cd mplayer\n"
-               "    ./configure\n"
-               "    make\n"
-               "    make install\n"
-               "\n"
-               "    from a command Prompt."
-              );
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    make sure that mplayer is installed correctly.  mplayer\n"
+                "    can be installed by typing:\n"
+                "\n"
+                "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
+                "    cd mplayer\n"
+                "    ./configure\n"
+                "    make\n"
+                "    make install\n"
+                "\n"
+                "    from a command Prompt."
+               );
 #endif
     }
 
@@ -1298,10 +1298,10 @@ int PlayDecIVF(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf(
-            "\n  PlayDecIVF\n\n"
-            "    <Input File>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  PlayDecIVF\n\n"
+                "    <Input File>\n"
+               );
         return 0;
     }
 
@@ -1330,7 +1330,7 @@ int PlayDecIVF(int argc, char *argv[])
     {
         if (!vpxt_file_exists_check("c:\\bin\\tmnplay.exe"))
         {
-            printf("\nError - c:\\bin\\tmnplay.exe not found.\n");
+            tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
             return 0;
         }
     }
@@ -1361,7 +1361,7 @@ int PlayDecIVF(int argc, char *argv[])
 
     if (in == NULL)
     {
-        tprintf("\nInput file does not exist");
+        tprintf(PRINT_BTH, "\nInput file does not exist");
         return 0;
     }
 
@@ -1457,25 +1457,25 @@ int PlayDecIVF(int argc, char *argv[])
     if (!SysRet == 0)
     {
 #if defined(_WIN32)
-        printf("\n"
-               "    An error occured when trying to play the file.  Please\n"
-               "    Make sure tmnplay is located in your c:\\bin directory.\n"
-               "    tmnplay can be found in the TestClips directory.\n"
-              );
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    Make sure tmnplay is located in your c:\\bin directory.\n"
+                "    tmnplay can be found in the TestClips directory.\n"
+               );
 #else
-        printf("\n"
-               "    An error occured when trying to play the file.  Please\n"
-               "    make sure that mplayer is installed correctly.  mplayer\n"
-               "    can be installed by typing:\n"
-               "\n"
-               "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
-               "    cd mplayer\n"
-               "    ./configure\n"
-               "    make\n"
-               "    make install\n"
-               "\n"
-               "    from a command Prompt."
-              );
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    make sure that mplayer is installed correctly.  mplayer\n"
+                "    can be installed by typing:\n"
+                "\n"
+                "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
+                "    cd mplayer\n"
+                "    ./configure\n"
+                "    make\n"
+                "    make install\n"
+                "\n"
+                "    from a command Prompt."
+               );
 #endif
     }
 
@@ -1579,13 +1579,13 @@ int DecoderCheck(int argc, char *argv[])
     snprintf(CompressionInput, 255, "%s", CompressionInputStr.c_str());
     snprintf(CompressionOutput, 255, "%s", CompressionOutputStr.c_str());
 
-    printf("\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput1Char);
+    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput1Char);
     unsigned int CPUTick1 = 0;
     vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput1Char, CPUTick1);
-    printf("\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput2Char);
+    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput2Char);
     unsigned int CPUTick2 = 0;
     vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput2Char, CPUTick2);
-    printf("\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput3Char);
+    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput3Char);
     unsigned int CPUTick3 = 0;
     vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput3Char, CPUTick3);
 
@@ -1603,20 +1603,20 @@ int DecoderCheck(int argc, char *argv[])
     if (Mode == 1)
     {
         opt.Mode = MODE_GOODQUALITY;
-        printf("\n\nCompressing %s to %s\n", CompressionInput, CompressionOutput);
+        tprintf(PRINT_STD, "\n\nCompressing %s to %s\n", CompressionInput, CompressionOutput);
         vpxt_compress_ivf_to_ivf_no_error_output(CompressionInput, CompressionOutput, speed, BitRate, opt, "", 0, 0);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    printf("\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput1Char);
+    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput1Char);
     unsigned int CPUTick4 = 0;
     vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput1Char, CPUTick4);
-    printf("\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput2Char);
+    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput2Char);
     unsigned int CPUTick5 = 0;
     vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput2Char, CPUTick5);
-    printf("\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput3Char);
+    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput3Char);
     unsigned int CPUTick6 = 0;
     vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput3Char, CPUTick6);
 
@@ -1742,7 +1742,7 @@ int IVFParseandDelete(char *DirName)
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -1775,11 +1775,11 @@ int IVFParseandDelete(char *DirName)
                 {
                     if (remove(outputString.c_str()) == 0)
                     {
-                        printf("%s Successfully Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                     }
                     else
                     {
-                        printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                     }
                 }
             }
@@ -1806,7 +1806,7 @@ int IVFParseandDelete(char *DirName)
 
     if (hFind == INVALID_HANDLE_VALUE)
     {
-        printf("FindFirstFile failed (%d)\n", GetLastError());
+        tprintf(PRINT_STD, "FindFirstFile failed (%d)\n", GetLastError());
         return 0;
     }
     else
@@ -1835,11 +1835,11 @@ int IVFParseandDelete(char *DirName)
                 {
                     if (remove(outputString.c_str()) == 0)
                     {
-                        printf("%s Successfully Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                     }
                     else
                     {
-                        printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                     }
                 }
             }
@@ -1871,11 +1871,11 @@ int IVFParseandDelete(char *DirName)
                     {
                         if (remove(outputString.c_str()) == 0)
                         {
-                            printf("%s Successfully Deleted\n\n", outputString.c_str());
+                            tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                         }
                         else
                         {
-                            printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                            tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                         }
                     }
                 }
@@ -1898,10 +1898,10 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (argc < 3)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
         return 0;
     }
 
@@ -1914,7 +1914,7 @@ int DeleteAllIVFFiles(int argc, char *argv[])
         return 0;
     }
 
-    printf("\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
     cin >> continueSTR;
 
     if (continueSTR.compare("YES") != 0)
@@ -1942,7 +1942,7 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -1975,11 +1975,11 @@ int DeleteAllIVFFiles(int argc, char *argv[])
                 {
                     if (remove(outputString.c_str()) == 0)
                     {
-                        printf("%s Successfully Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                     }
                     else
                     {
-                        printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                     }
                 }
             }
@@ -1997,10 +1997,10 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (argc < 3)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
         return 0;
     }
 
@@ -2013,7 +2013,7 @@ int DeleteAllIVFFiles(int argc, char *argv[])
         return 0;
     }
 
-    printf("\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
     cin >> continueSTR;
 
     if (continueSTR.compare("YES") != 0)
@@ -2040,7 +2040,7 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2072,11 +2072,11 @@ int DeleteAllIVFFiles(int argc, char *argv[])
                 {
                     if (remove(outputString.c_str()) == 0)
                     {
-                        printf("%s Successfully Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                     }
                     else
                     {
-                        printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                     }
                 }
             }
@@ -2094,10 +2094,10 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (argc < 3)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
         return 0;
     }
 
@@ -2110,7 +2110,7 @@ int DeleteAllIVFFiles(int argc, char *argv[])
         return 0;
     }
 
-    printf("\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
     cin >> continueSTR;
 
     if (continueSTR.compare("YES") != 0)
@@ -2137,7 +2137,7 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2168,11 +2168,11 @@ int DeleteAllIVFFiles(int argc, char *argv[])
                 {
                     if (remove(outputString.c_str()) == 0)
                     {
-                        printf("%s Successfully Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                     }
                     else
                     {
-                        printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                     }
                 }
             }
@@ -2187,10 +2187,10 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (argc < 3)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
         return 0;
     }
 
@@ -2203,7 +2203,7 @@ int DeleteAllIVFFiles(int argc, char *argv[])
         return 0;
     }
 
-    printf("\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
     cin >> continueSTR;
 
     if (continueSTR.compare("YES") != 0)
@@ -2229,8 +2229,8 @@ int DeleteAllIVFFiles(int argc, char *argv[])
 
     if (hFind == INVALID_HANDLE_VALUE)
     {
-        printf("\nFindFirstFile failed (%d)\n", GetLastError());
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "\nFindFirstFile failed (%d)\n", GetLastError());
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2259,11 +2259,11 @@ int DeleteAllIVFFiles(int argc, char *argv[])
                 {
                     if (remove(outputString.c_str()) == 0)
                     {
-                        printf("%s Successfully Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                     }
                     else
                     {
-                        printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                     }
                 }
             }
@@ -2295,11 +2295,11 @@ int DeleteAllIVFFiles(int argc, char *argv[])
                     {
                         if (remove(outputString.c_str()) == 0)
                         {
-                            printf("%s Successfully Deleted\n\n", outputString.c_str());
+                            tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
                         }
                         else
                         {
-                            printf("Error: %s Not Deleted\n\n", outputString.c_str());
+                            tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
                         }
                     }
                 }
@@ -2333,7 +2333,7 @@ int TxtParseandCopy(char *DirName, char *BaseOutputDir, int BaseInputStrLength)
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2408,7 +2408,7 @@ int TxtParseandCopy(char *DirName, char *BaseOutputDir, int BaseInputStrLength)
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2483,7 +2483,7 @@ int TxtParseandCopy(char *DirName, char *BaseOutputDir, int BaseInputStrLength)
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2554,7 +2554,7 @@ int TxtParseandCopy(char *DirName, char *BaseOutputDir, int BaseInputStrLength)
 
     if (hFind == INVALID_HANDLE_VALUE)
     {
-        printf("FindFirstFile failed (%d)\n", GetLastError());
+        tprintf(PRINT_STD, "FindFirstFile failed (%d)\n", GetLastError());
         return 0;
     }
     else
@@ -2667,11 +2667,11 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (argc < 4)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-            "    <Output Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
         return 0;
     }
 
@@ -2693,7 +2693,7 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2758,11 +2758,11 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (argc < 4)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-            "    <Output Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
         return 0;
     }
 
@@ -2783,7 +2783,7 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2848,11 +2848,11 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (argc < 4)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-            "    <Output Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
         return 0;
     }
 
@@ -2873,7 +2873,7 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (FindFileDataA == NULL)
     {
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -2935,11 +2935,11 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (argc < 4)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input Directory>\n"
-            "    <Output Directory>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
         return 0;
     }
 
@@ -2961,8 +2961,8 @@ int CopyAllTxtFiles(int argc, char *argv[])
 
     if (hFind == INVALID_HANDLE_VALUE)
     {
-        printf("\nFindFirstFile failed (%d)\n", GetLastError());
-        printf("Could not open first file.\n");
+        tprintf(PRINT_STD, "\nFindFirstFile failed (%d)\n", GetLastError());
+        tprintf(PRINT_STD, "Could not open first file.\n");
         return 0;
     }
     else
@@ -3070,12 +3070,12 @@ int SideBySideText(int argc, char *argv[])
 {
     if (argc < 5)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input File 1>\n"
-            "    <Input File 2>\n"
-            "    <Output File>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input File 1>\n"
+                "    <Input File 2>\n"
+                "    <Output File>\n"
+               );
         return 0;
     }
 
@@ -3162,14 +3162,14 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
 
     if (argc < 6 || argc > 7)
     {
-        printf(
-            "\n  Compress IVF to IVF \n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "    <Bit Rate>\n"
-            "    <Mode>\n"
-            "    <Optional - Parameter File>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  Compress IVF to IVF \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Bit Rate>\n"
+                "    <Mode>\n"
+                "    <Optional - Parameter File>\n"
+                "\n");
 
         return 0;
     }
@@ -3335,14 +3335,14 @@ int CompMatchesIVFenc(int argc, char *argv[])
 
     if (argc < 6 || argc > 7)
     {
-        printf(
-            "\n  Compress IVF to IVF \n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "    <Bit Rate>\n"
-            "    <Mode>\n"
-            "    <Optional - Parameter File>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n  Compress IVF to IVF \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Bit Rate>\n"
+                "    <Mode>\n"
+                "    <Optional - Parameter File>\n"
+                "\n");
 
         return 0;
     }
@@ -3360,24 +3360,24 @@ int CompMatchesIVFenc(int argc, char *argv[])
     OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
     string OutputsettingsFile2 = OutputsettingsFile;
     OutputsettingsFile.append("_paramaters_core.txt");
-/////////////////////IVFenc Par File//////////////////
+    /////////////////////IVFenc Par File//////////////////
     OutputsettingsFile2.append("_IVFEnc_Paramaters.txt");
     /////////////////////Tester IVF Comp//////////////////
-/////////////////////IVFENC IVF Comp//////////////////
+    /////////////////////IVFENC IVF Comp//////////////////
     string IVFEncOutput1STR = input;
     string IVFEncOutput2STR = input;
     IVFEncOutput1STR.erase(IVFEncOutput1STR.length() - 4, 4);
     IVFEncOutput2STR.erase(IVFEncOutput2STR.length() - 4, 4);
     IVFEncOutput1STR.append("_IVFENC.ivf");
     IVFEncOutput2STR.append("_IVFENC.yuv");
-/////////////////////IVF Source to Raw///////////////
+    /////////////////////IVF Source to Raw///////////////
     string RawInput = input;
     string RawInputNameOnly = FileNameChar;
 
     RawInput.erase(RawInput.length() - 4, 4);
     RawInput.append("_Raw.yuv");
     RawInputNameOnly.append("_Raw.yuv");
-//////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
 
 
     char ParameterFileTesterFP[255];    // Full path of tester parm file
@@ -3513,17 +3513,17 @@ int compare_code_coverage(int argc, char *argv[])
 {
     if (argc < 4)
     {
-        printf(
-            "\n Compare Code Coverage\n\n"
-            "    <Current Code Coverage Dir>\n"
-            "    <New Code Coverage Dir>\n"
-            "    <Updated Code Coverage Dir>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n Compare Code Coverage\n\n"
+                "    <Current Code Coverage Dir>\n"
+                "    <New Code Coverage Dir>\n"
+                "    <Updated Code Coverage Dir>\n"
+                "\n");
 
         return 0;
     }
 
-    printf("\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
+    tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
 
     string currentFile = "";
     int x = 1;
@@ -3727,7 +3727,7 @@ int compare_code_coverage(int argc, char *argv[])
             return 0;
         }
 
-        printf("\nChecking: %s", currentFile.c_str());
+        tprintf(PRINT_STD, "\nChecking: %s", currentFile.c_str());
         int line = 0;
 
         while (!CurCCFile.eof())
@@ -3751,7 +3751,7 @@ int compare_code_coverage(int argc, char *argv[])
             {
                 if (NewCCStr.compare(0, 10, "    #####:") != 0)
                 {
-                    printf("\nNew Activation: %s\n     %s", NewCC.c_str(), NewCCStr.c_str());
+                    tprintf(PRINT_STD, "\nNew Activation: %s\n     %s", NewCC.c_str(), NewCCStr.c_str());
                     UpdCCFile << NewCCStr.c_str();
                     UnqCCFile << NewCCStr.c_str() << "\n";
                 }
@@ -3791,16 +3791,16 @@ int FormatCodeCoverageFile(int argc, char *argv[])
 {
     if (argc < 4)
     {
-        printf(
-            "\n Format Code Coverage Files\n\n"
-            "    <Current Code Coverage Dir>\n"
-            "    <New Code Coverage Dir>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n Format Code Coverage Files\n\n"
+                "    <Current Code Coverage Dir>\n"
+                "    <New Code Coverage Dir>\n"
+                "\n");
 
         return 0;
     }
 
-    printf("\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
+    tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
 
     string currentFile = "";
     int x = 1;
@@ -3995,7 +3995,7 @@ int FormatCodeCoverageFile(int argc, char *argv[])
             return 0;
         }
 
-        printf("\nFormatting: %s", currentFile.c_str());
+        tprintf(PRINT_STD, "\nFormatting: %s", currentFile.c_str());
         int line = 0;
         int Function = 0;
 
@@ -4035,17 +4035,17 @@ int TestVectorIndex(int argc, char *argv[])
 {
     if (argc < 4)
     {
-        printf(
-            "\n Test Vector Index\n\n"
-            "    <Current Code Coverage Dir>\n"
-            "    <File to Check>\n"
-            "    <Line Number to Check>\n"
-            "\n");
+        tprintf(PRINT_STD,
+                "\n Test Vector Index\n\n"
+                "    <Current Code Coverage Dir>\n"
+                "    <File to Check>\n"
+                "    <Line Number to Check>\n"
+                "\n");
 
         return 0;
     }
 
-    printf("\n Searching for %s Line %i Coverage.\n\n", argv[3], atoi(argv[4]));
+    tprintf(PRINT_STD, "\n Searching for %s Line %i Coverage.\n\n", argv[3], atoi(argv[4]));
 
     string currentFile = "";
     int x = 1;
@@ -4119,31 +4119,31 @@ int TestVectorIndex(int argc, char *argv[])
                             {
                                 cout << "          " << CurCCStr << "\n";
                                 cout << "  Found\n";
-                                printf("          Line Covered by Test Vector %i ", y);
+                                tprintf(PRINT_STD, "          Line Covered by Test Vector %i ", y);
 
                                 if (x == 1)
                                 {
-                                    printf("Under Normal Conditions\n");
+                                    tprintf(PRINT_STD, "Under Normal Conditions\n");
                                 }
 
                                 if (x == 2)
                                 {
-                                    printf("When run using Multiple Cores\n");
+                                    tprintf(PRINT_STD, "When run using Multiple Cores\n");
                                 }
 
                                 if (x == 3)
                                 {
-                                    printf("When run using Add Noise\n");
+                                    tprintf(PRINT_STD, "When run using Add Noise\n");
                                 }
 
                                 if (x == 4)
                                 {
-                                    printf("When run using Deblock\n");
+                                    tprintf(PRINT_STD, "When run using Deblock\n");
                                 }
 
                                 if (x == 5)
                                 {
-                                    printf("When run using Demarcoblock\n");
+                                    tprintf(PRINT_STD, "When run using Demarcoblock\n");
                                 }
 
                                 return 0;
@@ -4171,14 +4171,14 @@ int APICOMPRESS(int argc, char *argv[])
 
     if (argc != 7)
     {
-        printf(
-            "\n  APICompress \n\n"
-            "    <Input File>\n"
-            "    <outputfile>\n"
-            "    <width>\n"
-            "    <height>\n"
-            "    <frame rate>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  APICompress \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <width>\n"
+                "    <height>\n"
+                "    <frame rate>\n"
+               );
 
         return 0;
     }
@@ -4196,7 +4196,7 @@ int APICOMPRESS(int argc, char *argv[])
     API20Encoder(width, height, input, output);
 
 #else
-    printf("\n Function Not supported in current build \n");
+    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
 #endif
 
     return 0;
@@ -4208,12 +4208,12 @@ int APIDECOMPRESS(int argc, char *argv[])
 
     if (argc != 5)
     {
-        printf(
-            "\n  APIDecompress \n\n"
-            "    <Input File>\n"
-            "    <Codec - vp8>\n"
-            "    <outputfile>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  APIDecompress \n\n"
+                "    <Input File>\n"
+                "    <Codec - vp8>\n"
+                "    <outputfile>\n"
+               );
         return 0;
     }
 
@@ -4223,7 +4223,7 @@ int APIDECOMPRESS(int argc, char *argv[])
 
     API20Decoder(input , output);
 #else
-    printf("\n Function Not supported in current build \n");
+    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
 #endif
 
     return 0;
@@ -4240,14 +4240,14 @@ int ArrayCovFailListToFullList(int argc, char *argv[])
 
     if (!(argc == 4))
     {
-        printf("\n"
-               "  ArrayCovFailListToFullList \n\n"
-               "    <Input File>\n"
-               "    <Output File>\n"
-               "\n"
-               "  Note: The input file must have one line of white space at the top of the file\n"
-               "\n"
-              );
+        tprintf(PRINT_STD, "\n"
+                "  ArrayCovFailListToFullList \n\n"
+                "    <Input File>\n"
+                "    <Output File>\n"
+                "\n"
+                "  Note: The input file must have one line of white space at the top of the file\n"
+                "\n"
+               );
 
         return 0;
     }
@@ -7102,14 +7102,14 @@ int ArrayCovSummaryFile(int argc, char *argv[])
 {
     if (!(argc == 6))
     {
-        printf("\n"
-               "  ArrayCovSummaryFile \n\n"
-               "    <Current Summary>\n"
-               "    <TestVector Number>\n"
-               "    <TestVector Summary>\n"
-               "    <Output File>\n"
-               "\n"
-              );
+        tprintf(PRINT_STD, "\n"
+                "  ArrayCovSummaryFile \n\n"
+                "    <Current Summary>\n"
+                "    <TestVector Number>\n"
+                "    <TestVector Summary>\n"
+                "    <Output File>\n"
+                "\n"
+               );
 
         return 0;
     }
@@ -7179,11 +7179,11 @@ int WinMemMonFormat(int argc, char *argv[])
     //Use in combination with WinMemMonGraph to get data in a format condusive to graphing
     if (argc < 4)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input File 1>\n"
-            "    <Output File>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input File 1>\n"
+                "    <Output File>\n"
+               );
         return 0;
     }
 
@@ -7257,12 +7257,12 @@ int WinMemMonGraph(int argc, char *argv[])
     //of a programs usage for memmonitor gathered data
     if (argc < 5)
     {
-        printf(
-            "\n  Delete IVF Files\n\n"
-            "    <Input File 1>\n"
-            "    <Output File>\n"
-            "    <Time Interval In Seconds>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input File 1>\n"
+                "    <Output File>\n"
+                "    <Time Interval In Seconds>\n"
+               );
         return 0;
     }
 
@@ -7330,10 +7330,10 @@ int CreateRandParFile(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf(
-            "\n  RandomParFile\n\n"
-            "    <Output Par File>\n"
-        );
+        tprintf(PRINT_STD,
+                "\n  RandomParFile\n\n"
+                "    <Output Par File>\n"
+               );
         return 0;
     }
 
@@ -7342,7 +7342,7 @@ int CreateRandParFile(int argc, char *argv[])
     VP8_CONFIG opt = vpxt_random_parameters(opt, "", 0);
     vpxt_output_settings(output, opt);
 
-    printf("\nSaved to: %s\n", output);
+    tprintf(PRINT_STD, "\nSaved to: %s\n", output);
 
     return 0;
 }
@@ -7406,18 +7406,18 @@ int SolveQuad()
     float B = 0;
     float C = 0;
 
-    printf("\nIntput X1: ");
+    tprintf(PRINT_STD, "\nIntput X1: ");
     cin >> X1;
-    printf("Intput X2: ");
+    tprintf(PRINT_STD, "Intput X2: ");
     cin >> X2;
-    printf("Intput X3: ");
+    tprintf(PRINT_STD, "Intput X3: ");
     cin >> X3;
 
-    printf("Intput Y1: ");
+    tprintf(PRINT_STD, "Intput Y1: ");
     cin >> Y1;
-    printf("Intput Y2: ");
+    tprintf(PRINT_STD, "Intput Y2: ");
     cin >> Y2;
-    printf("Intput Y3: ");
+    tprintf(PRINT_STD, "Intput Y3: ");
     cin >> Y3;
 
 
@@ -7429,7 +7429,7 @@ int SolveQuad()
     cout << "\nB = " << B;
     cout << "\nC = " << C;
 
-    printf("\n\ny = %.2fx^2 + %.2fx + %.2f\n\n", A, B, C);
+    tprintf(PRINT_STD, "\n\ny = %.2fx^2 + %.2fx + %.2f\n\n", A, B, C);
 
     return 0;
 }
@@ -7440,22 +7440,21 @@ int PrintCPUInfo()
 
     //printf("\nSimd_Caps = %i\n",Simd_Caps);
 
-    printf("\nDetected CPU capabilities:\n");
+    tprintf(PRINT_STD, "\nDetected CPU capabilities:\n");
 
-    if ((Simd_Caps & HAS_MMX)    == HAS_MMX)    printf("\n     MMX    Detected");
+    if ((Simd_Caps & HAS_MMX)    == HAS_MMX)   tprintf(PRINT_STD, "\n     MMX    Detected");
 
-    if ((Simd_Caps & HAS_SSE)    == HAS_SSE)    printf("\n     SSE    Detected");
+    if ((Simd_Caps & HAS_SSE)    == HAS_SSE)   tprintf(PRINT_STD, "\n     SSE    Detected");
 
-    if ((Simd_Caps & HAS_SSE2)   == HAS_SSE2)   printf("\n     SSE2   Detected");
+    if ((Simd_Caps & HAS_SSE2)   == HAS_SSE2)  tprintf(PRINT_STD, "\n     SSE2   Detected");
 
-    if ((Simd_Caps & HAS_SSE3)   == HAS_SSE3)   printf("\n     SSE3   Detected");
+    if ((Simd_Caps & HAS_SSE3)   == HAS_SSE3)  tprintf(PRINT_STD, "\n     SSE3   Detected");
 
-    if ((Simd_Caps & HAS_SSSE3)  == HAS_SSSE3)  printf("\n     SSSE3  Detected");
+    if ((Simd_Caps & HAS_SSSE3)  == HAS_SSSE3) tprintf(PRINT_STD, "\n     SSSE3  Detected");
 
-    if ((Simd_Caps & HAS_SSE4_1) == HAS_SSE4_1) printf("\n     SSE4_1 Detected");
+    if ((Simd_Caps & HAS_SSE4_1) == HAS_SSE4_1)tprintf(PRINT_STD, "\n     SSE4_1 Detected");
 
-    printf("\n");
-
+    tprintf(PRINT_STD, "\n");
 
     return 0;
 }

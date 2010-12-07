@@ -8,18 +8,18 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     {
         if (argc < 4)
         {
-            printf(
-                "  run_multipule_tests \n\n"
-                "    <Test Type>\n"
-                "      <1 - Create Files and Run Tests>\n"
-                "        <Input Text File>\n"
-                "      <2 - Create Files only>\n"
-                "        <Input Text File>\n"
-                "      <3 - Run Tests For Existing Files>\n"
-                "        <Input Test Directory>\n"
-                "      <4 - Resume Test>\n"
-                "        <Input Test Directory>\n"
-                "\n");
+            tprintf(PRINT_STD,
+                    "  run_multipule_tests \n\n"
+                    "    <Test Type>\n"
+                    "      <1 - Create Files and Run Tests>\n"
+                    "        <Input Text File>\n"
+                    "      <2 - Create Files only>\n"
+                    "        <Input Text File>\n"
+                    "      <3 - Run Tests For Existing Files>\n"
+                    "        <Input Test Directory>\n"
+                    "      <4 - Resume Test>\n"
+                    "        <Input Test Directory>\n"
+                    "\n");
 
             return 0;
         }
@@ -27,7 +27,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if (WorkingDir.length() > 175)
     {
-        tprintf("\nError: Folder Path Length too long.\n");
+        tprintf(PRINT_BTH, "\nError: Folder Path Length too long.\n");
         return 0;
     }
 
@@ -144,7 +144,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         //exits with error if it cant find a summary file
         if (TestRunning == 0)
         {
-            printf("\nError: No Summary File found\n");
+            tprintf(PRINT_STD, "\nError: No Summary File found\n");
             delete [] PassFail;
             return 0;
         }
@@ -356,7 +356,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                 {
                     if (TestRunning == 1)
                     {
-                        printf("\nAll tests and compressions have already been created and run.\n");
+                        tprintf(PRINT_STD, "\nAll tests and compressions have already been created and run.\n");
                         PriorResultInputFile.close();
                         exit(0);
                     }
@@ -481,7 +481,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (!infile.good())
         {
-            printf("\nInput File does not exist\n");
+            tprintf(PRINT_STD, "\nInput File does not exist\n");
             delete [] PassFail;
             return 0;
         }
@@ -564,7 +564,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (!PriorResultInputFile2.good())
         {
-            printf("\nError opening file: %s\n", SummComp.c_str());
+            tprintf(PRINT_STD, "\nError opening file: %s\n", SummComp.c_str());
             delete [] PassFail;
             return 0;
         }
@@ -620,7 +620,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if (!WorkingTextFile.good())
     {
-        printf("\nInput File does not exist\n");
+        tprintf(PRINT_STD, "\nInput File does not exist\n");
         delete [] PassFail;
         return 0;
     }
@@ -689,7 +689,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
             if (CommentBool == 0)
             {
-                printf("\n");
+                tprintf(PRINT_STD, "\n");
 
                 int selector = vpxt_identify_test(DummyArgv[1]);
 
@@ -714,7 +714,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                     if (TestType == 1)
                     {
                         //run_multiple_tests(DummyArgvVar, (char **)DummyArgv, WorkingDir,);
-                        printf("Not Implemented Yet.\n");
+                        tprintf(PRINT_STD, "Not Implemented Yet.\n");
                     }
                 }
 
@@ -1537,7 +1537,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                 if ((fp = freopen(WorkDirFileStr.c_str(), "a", stderr)) == NULL)
                 {
-                    printf("Cannot open summary out put file.\n");
+                    tprintf(PRINT_STD, "Cannot open summary out put file.\n");
                     delete [] PassFail;
                     return 0;
                 }
@@ -1672,21 +1672,21 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     {
         if (TestType == 1)
         {
-            printf("\nAll tests and compressions have already been created and run.\n");
+            tprintf(PRINT_STD, "\nAll tests and compressions have already been created and run.\n");
             delete [] PassFail;
             return 0;
         }
 
         if (TestType == 2)
         {
-            printf("\nAll compressions have already been created.\n");
+            tprintf(PRINT_STD, "\nAll compressions have already been created.\n");
             delete [] PassFail;
             return 0;
         }
 
         if (TestType == 3)
         {
-            printf("\nAll tests on compressions have already been run.\n");
+            tprintf(PRINT_STD, "\nAll tests on compressions have already been run.\n");
             delete [] PassFail;
             return 0;
         }
@@ -1696,89 +1696,89 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if ((fp = freopen(WorkDirFileStr.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open summary out put file.\n");
+        tprintf(PRINT_STD, "Cannot open summary out put file.\n");
         delete [] PassFail;
         return 0;
     }
 
-    printf("\n\n\n");
+    tprintf(PRINT_STD, "\n\n\n");
     print_header_info();
 
     if (TestType == 1)
     {
-        tprintf("\n-------------------------------------------------------------------------------\n\n"
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                 "Test Results \n");
     }
 
     if (TestType == 2)
     {
-        tprintf("\n-------------------------------------------------------------------------------\n\n"
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                 "Test Compressions \n");
     }
 
     if (TestType == 3)
     {
-        tprintf("\n-------------------------------------------------------------------------------\n\n"
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                 "Test Only Results \n");
     }
 
     y = 0;
 
-    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
 
     while (y < TestsRun)
     {
         SelectorAr2[y].erase(SelectorAr2[y].end() - 1);
-        tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+        tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
 
         if (PassFail[y] == 1)
         {
-            tprintf("Passed\n");
+            tprintf(PRINT_BTH, "Passed\n");
         }
 
         if (PassFail[y] == 0)
         {
-            tprintf("Failed\n");
+            tprintf(PRINT_BTH, "Failed\n");
         }
 
         if (PassFail[y] == 2)
         {
-            tprintf("Indeterminate\n");
+            tprintf(PRINT_BTH, "Indeterminate\n");
         }
 
         if (PassFail[y] == 3)
         {
-            tprintf("SeeComboRunLog\n");
+            tprintf(PRINT_BTH, "SeeComboRunLog\n");
         }
 
         if (PassFail[y] == 4)
         {
-            tprintf("SeePSNRLog\n");
+            tprintf(PRINT_BTH, "SeePSNRLog\n");
         }
 
         if (PassFail[y] == 5)
         {
-            tprintf("RandomTestCompleted\n");
+            tprintf(PRINT_BTH, "RandomTestCompleted\n");
         }
 
         if (PassFail[y] == 8)
         {
-            tprintf("MinTestPassed\n");
+            tprintf(PRINT_BTH, "MinTestPassed\n");
         }
 
         if (PassFail[y] == 10)
         {
-            tprintf("CompressionMade\n");
+            tprintf(PRINT_BTH, "CompressionMade\n");
         }
 
         if (PassFail[y] == 11)
         {
-            tprintf("ErrorFileMismatch\n");
+            tprintf(PRINT_BTH, "ErrorFileMismatch\n");
         }
 
         if (PassFail[y] == 12)
         {
-            tprintf("TestNotSupported\n");
+            tprintf(PRINT_BTH, "TestNotSupported\n");
         }
 
         y++;
@@ -1786,17 +1786,17 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if (TestType == 1)
     {
-        tprintf("\n-------------------------------------------------------------------------------\n\n"
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                 "Test Results - Passed \n");
     }
 
     if (TestType == 3)
     {
-        tprintf("\n-------------------------------------------------------------------------------\n\n"
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                 "Test Results - Passed \n");
     }
 
-    //tprintf("\n\n");
+    //tprintf(PRINT_BTH, "\n\n");
 
     int TestIndicator = 0;
 
@@ -1811,12 +1811,12 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+                    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                tprintf("Passed\n");
+                tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf(PRINT_BTH, "Passed\n");
             }
 
             y++;
@@ -1824,18 +1824,18 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("\n    NONE\n\n");
+            tprintf(PRINT_BTH, "\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - MinPassed \n");
         }
 
         if (TestType == 3)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - MinPassed \n");
         }
 
@@ -1848,12 +1848,12 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+                    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                tprintf("MinTestPassed\n");
+                tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf(PRINT_BTH, "MinTestPassed\n");
             }
 
             y++;
@@ -1861,18 +1861,18 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("\n    NONE\n\n");
+            tprintf(PRINT_BTH, "\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - Indeterminate \n");
         }
 
         if (TestType == 3)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - Indeterminate \n");
         }
 
@@ -1885,12 +1885,12 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+                    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                tprintf("Indeterminate\n");
+                tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf(PRINT_BTH, "Indeterminate\n");
             }
 
             y++;
@@ -1898,18 +1898,18 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("\n    NONE\n\n");
+            tprintf(PRINT_BTH, "\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - Failed \n");
         }
 
         if (TestType == 3)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - Failed \n");
         }
 
@@ -1922,12 +1922,12 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+                    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                tprintf("Failed\n");
+                tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf(PRINT_BTH, "Failed\n");
             }
 
             y++;
@@ -1935,18 +1935,18 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("\n    NONE\n\n");
+            tprintf(PRINT_BTH, "\n    NONE\n\n");
         }
 
         if (TestType == 1)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - Other \n");
         }
 
         if (TestType == 3)
         {
-            tprintf("\n-------------------------------------------------------------------------------\n\n"
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
                     "Test Results - Other \n");
         }
 
@@ -1959,40 +1959,40 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             {
                 if (TestIndicator == 0)
                 {
-                    tprintf("\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+                    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
                 }
 
                 TestIndicator = 1;
-                tprintf("%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
 
                 if (PassFail[y] == 3)
                 {
-                    tprintf("SeeComboRunLog\n");
+                    tprintf(PRINT_BTH, "SeeComboRunLog\n");
                 }
 
                 if (PassFail[y] == 4)
                 {
-                    tprintf("SeePSNRLog\n");
+                    tprintf(PRINT_BTH, "SeePSNRLog\n");
                 }
 
                 if (PassFail[y] == 5)
                 {
-                    tprintf("RandomTestCompleted\n");
+                    tprintf(PRINT_BTH, "RandomTestCompleted\n");
                 }
 
                 if (PassFail[y] == 10)
                 {
-                    tprintf("CompressionMade.\n");
+                    tprintf(PRINT_BTH, "CompressionMade.\n");
                 }
 
                 if (PassFail[y] == 11)
                 {
-                    tprintf("ErrorFileMismatch\n");
+                    tprintf(PRINT_BTH, "ErrorFileMismatch\n");
                 }
 
                 if (PassFail[y] == 12)
                 {
-                    tprintf("TestNotSupported\n");
+                    tprintf(PRINT_BTH, "TestNotSupported\n");
                 }
 
             }
@@ -2002,7 +2002,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         if (TestIndicator == 0)
         {
-            tprintf("\n    NONE\n\n");
+            tprintf(PRINT_BTH, "\n    NONE\n\n");
         }
 
         /////////////////////////////Output Time it took to run test/////////////////////////////
@@ -2015,31 +2015,31 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             FILE *outputTime;
             outputTime = fopen(TimeoutputStr.c_str() , "w");
 
-            printf("\n-------------------------------------------------------------------------------\n\n"
-                   "                       Time to Run Tests\n");
+            tprintf(PRINT_STD, "\n-------------------------------------------------------------------------------\n\n"
+                    "                       Time to Run Tests\n");
             fprintf(outputTime, "\n-------------------------------------------------------------------------------\n\n"
                     "                       Time to Run Tests\n");
 
-            printf("\n\n%4s %-28s%s\n\n", "", " Test Name", "            Time");
+            tprintf(PRINT_STD, "\n\n%4s %-28s%s\n\n", "", " Test Name", "            Time");
             fprintf(outputTime, "\n\n%4s %-28s%s\n\n", "", " Test Name", "            Time");
 
             y = 0;
 
             while (y < TestsRun)
             {
-                printf("   %s", SelectorAr[y].c_str());
+                tprintf(PRINT_STD, "   %s", SelectorAr[y].c_str());
                 fprintf(outputTime, "   %s", SelectorAr[y].c_str());
 
                 int z = SelectorAr[y].size();
 
                 while (z <= 25)
                 {
-                    printf(" ");
+                    tprintf(PRINT_STD, " ");
                     fprintf(outputTime, " ");
                     z++;
                 }
 
-                printf("%20u ms\n", RunTimeRecAr[y]);
+                tprintf(PRINT_STD, "%20u ms\n", RunTimeRecAr[y]);
                 fprintf(outputTime, "%20u ms\n", RunTimeRecAr[y]);
                 y++;
             }

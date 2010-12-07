@@ -8,17 +8,17 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     if (!(argc == 7 || argc == 6))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "    <Target Bit Rate>\n"
-            "    <Number of Cores to Use>\n"
-            "     <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "    <Target Bit Rate>\n"
+                "    <Number of Cores to Use>\n"
+                "     <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -33,16 +33,16 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if (Mode != 0 && Mode != 1)
     {
-        printf(
-            "  test_multithreaded \n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "    <Target Bit Rate>\n"
-            "    <Number of Cores to Use>\n"
-            "     <Optional Settings File>\n"
-        );
+        tprintf(PRINT_STD,
+                "  test_multithreaded \n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "    <Target Bit Rate>\n"
+                "    <Number of Cores to Use>\n"
+                "     <Optional Settings File>\n"
+               );
         return 0;
     }
 
@@ -79,7 +79,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -95,11 +95,11 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     if (!(CoreCount > 1))
     {
-        printf("\nMultiple Cores not used Test aborted: %i\n", CoreCount);
+        tprintf(PRINT_STD, "\nMultiple Cores not used Test aborted: %i\n", CoreCount);
         fclose(fp);
         return 0;
     }
@@ -112,7 +112,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -207,13 +207,13 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     vpxt_file_name(MultiThreadedOnOutFile.c_str(), Time1FileName, 0);
     vpxt_file_name(MultiThreadedOffOutFile.c_str(), Time2FileName, 0);
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (Time1 < Time2)
     {
         vpxt_formated_print(RESPRT, "%s time: %u < %s time2: %u - Passed", Time1FileName, Time1, Time2FileName, Time2);
 
-        tprintf("\n\nPassed\n");
+        tprintf(PRINT_BTH, "\n\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -224,7 +224,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     {
         vpxt_formated_print(RESPRT, "%s time: %u == %s time: %u - Indeterminate", Time1FileName, Time1, Time2FileName, Time2);
 
-        tprintf("\n\nIndeterminate\n");
+        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -235,7 +235,7 @@ int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr
     {
         vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed", Time1FileName, Time1, Time2FileName, Time2);
 
-        tprintf("\n\nFailed\n");
+        tprintf(PRINT_BTH, "\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

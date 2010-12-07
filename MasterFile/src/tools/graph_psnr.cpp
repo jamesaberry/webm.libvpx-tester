@@ -4,15 +4,15 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 {
     if (argc < 6 || argc > 8)
     {
-        printf("\n"
-               "  GraphPSNR\n\n"
-               "    <Inputfile 1>\n"
-               "    <Starting Bit Rate>\n"
-               "    <Ending Bit Rate>\n"
-               "    <Bit Rate Step>\n"
-               "    <Optional - Par Input>\n"
+        tprintf(PRINT_STD, "\n"
+                "  GraphPSNR\n\n"
+                "    <Inputfile 1>\n"
+                "    <Starting Bit Rate>\n"
+                "    <Ending Bit Rate>\n"
+                "    <Bit Rate Step>\n"
+                "    <Optional - Par Input>\n"
 
-               "\n");
+                "\n");
         return 0;
     }
 
@@ -59,7 +59,7 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -81,7 +81,7 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         print_header_test_only(argc, argv, WorkingDirString);
     }
 
-    tprintf("Graph PSNR\n");
+    tprintf(PRINT_BTH, "Graph PSNR\n");
 
     char *input = argv[2];
     int FirstBitRate = atoi(argv[3]);
@@ -191,61 +191,61 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     int ArrSize = x;
     x = 0;
 
-    tprintf("\n\n");
+    tprintf(PRINT_BTH, "\n\n");
 
     while (x < ArrSize)
     {
-        tprintf(" DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: %i \n DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x], EncTimeArr[x], DecTimeArr[x]);
+        tprintf(PRINT_BTH, " DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: %i \n DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x], EncTimeArr[x], DecTimeArr[x]);
         x++;
     }
 
     x = 0;
 
-    tprintf("\n\nDataRate\n\n");
+    tprintf(PRINT_BTH, "\n\nDataRate\n\n");
 
     while (x < ArrSize)
     {
-        tprintf("%.2f\n", DataRateArr[x]);
+        tprintf(PRINT_BTH, "%.2f\n", DataRateArr[x]);
         x++;
     }
 
     x = 0;
 
-    tprintf("\nPSNR\n\n");
+    tprintf(PRINT_BTH, "\nPSNR\n\n");
 
     while (x < ArrSize)
     {
-        tprintf("%.2f\n", PSNRArr[x]);
+        tprintf(PRINT_BTH, "%.2f\n", PSNRArr[x]);
         x++;
     }
 
     x = 0;
 
-    tprintf("\nSSIM\n\n");
+    tprintf(PRINT_BTH, "\nSSIM\n\n");
 
     while (x < ArrSize)
     {
-        tprintf("%.2f\n", SSIMArr[x]);
+        tprintf(PRINT_BTH, "%.2f\n", SSIMArr[x]);
         x++;
     }
 
     x = 0;
 
-    tprintf("\nEncodeTime\n\n");
+    tprintf(PRINT_BTH, "\nEncodeTime\n\n");
 
     while (x < ArrSize)
     {
-        tprintf("%i\n", EncTimeArr[x]);
+        tprintf(PRINT_BTH, "%i\n", EncTimeArr[x]);
         x++;
     }
 
     x = 0;
 
-    tprintf("\nDecodeTime\n\n");
+    tprintf(PRINT_BTH, "\nDecodeTime\n\n");
 
     while (x < ArrSize)
     {
-        tprintf("%i\n", DecTimeArr[x]);
+        tprintf(PRINT_BTH, "%i\n", DecTimeArr[x]);
         x++;
     }
 

@@ -8,21 +8,21 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
     if (!(argc == 8 || argc == 7))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Common Base Folder>\n"
-            "    <Common Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Common Base Folder>\n"
+                "    <Common Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -137,7 +137,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -153,7 +153,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -178,7 +178,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
             return 2;
         }
 
-        printf("\n");
+        tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
         if (vpxt_decompress_ivf_to_ivf(FiletoEnc.c_str(), FiletoDec.c_str()) == -1)
@@ -201,11 +201,11 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
 
     if (TestMode == 0)
     {
-        tprintf("\n\nResults:\n\n");
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         vpxt_formated_print(RESPRT, "Test files created.");
 
-        tprintf("\n\nIndeterminate\n");
+        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -215,194 +215,194 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
     int ENCFAIL = 0;
     int DECFAIL = 0;
 
-    tprintf("\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
     int WinEncVsLinEnc = vpxt_compare_ivf(WinEnc.c_str(), LinEnc.c_str());
 
     if (WinEncVsLinEnc == -1)
     {
-        tprintf("\n\nFiles are Identical\n");
+        tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
     if (WinEncVsLinEnc >= 0)
     {
-        tprintf("\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
+        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
         ENCFAIL++;
     }
 
     if (WinEncVsLinEnc == -2)
     {
-        tprintf("\n\nFail: File 2 ends before File 1.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
         ENCFAIL++;
     }
 
     if (WinEncVsLinEnc == -3)
     {
-        tprintf("\n\nFail: File 1 ends before File 2.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
         ENCFAIL++;
     }
 
-    tprintf("\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
     int LinEncVsMacEnc = vpxt_compare_ivf(LinEnc.c_str(), MacEnc.c_str());
 
     if (LinEncVsMacEnc == -1)
     {
-        tprintf("\n\nFiles are Identical\n");
+        tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
     if (LinEncVsMacEnc >= 0)
     {
-        tprintf("\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
+        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
         ENCFAIL++;
     }
 
     if (LinEncVsMacEnc == -2)
     {
-        tprintf("\n\nFail: File 2 ends before File 1.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
         ENCFAIL++;
     }
 
     if (LinEncVsMacEnc == -3)
     {
-        tprintf("\n\nFail: File 1 ends before File 2.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
         ENCFAIL++;
     }
 
-    tprintf("\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
     int WinEncVsMacEnc = vpxt_compare_ivf(WinEnc.c_str(), MacEnc.c_str());
 
     if (WinEncVsMacEnc == -1)
     {
-        tprintf("\n\nFiles are Identical\n");
+        tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
     if (WinEncVsMacEnc >= 0)
     {
-        tprintf("\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
+        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
         ENCFAIL++;
     }
 
     if (WinEncVsMacEnc == -2)
     {
-        tprintf("\n\nFail: File 2 ends before File 1.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
         ENCFAIL++;
     }
 
     if (WinEncVsMacEnc == -3)
     {
-        tprintf("\n\nFail: File 1 ends before File 2.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
         ENCFAIL++;
     }
 
-    tprintf("\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
     int WinDecVsLinDec = vpxt_compare_ivf(WinDec.c_str(), LinDec.c_str());
 
     if (WinDecVsLinDec == -1)
     {
-        tprintf("\n\nFiles are Identical\n");
+        tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
     if (WinDecVsLinDec >= 0)
     {
-        tprintf("\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
+        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
         DECFAIL++;
     }
 
     if (WinDecVsLinDec == -2)
     {
-        tprintf("\n\nFail: File 2 ends before File 1.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
         DECFAIL++;
     }
 
     if (WinDecVsLinDec == -3)
     {
-        tprintf("\n\nFail: File 1 ends before File 2.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
         DECFAIL++;
     }
 
-    tprintf("\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
     int LinDecVsMacDec = vpxt_compare_ivf(LinDec.c_str(), MacDec.c_str());
 
     if (LinDecVsMacDec == -1)
     {
-        tprintf("\n\nFiles are Identical\n");
+        tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
     if (LinDecVsMacDec >= 0)
     {
-        tprintf("\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
+        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
         DECFAIL++;
     }
 
     if (LinDecVsMacDec == -2)
     {
-        tprintf("\n\nFail: File 2 ends before File 1.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
         DECFAIL++;
     }
 
     if (LinDecVsMacDec == -3)
     {
-        tprintf("\n\nFail: File 1 ends before File 2.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
         DECFAIL++;
     }
 
-    tprintf("\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
     int WinDecVsMacDec = vpxt_compare_ivf(WinDec.c_str(), MacDec.c_str());
 
     if (WinDecVsMacDec == -1)
     {
-        tprintf("\n\nFiles are Identical\n");
+        tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
     if (WinDecVsMacDec >= 0)
     {
-        tprintf("\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
+        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
         DECFAIL++;
     }
 
     if (WinDecVsMacDec == -2)
     {
-        tprintf("\n\nFail: File 2 ends before File 1.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
         DECFAIL++;
     }
 
     if (WinDecVsMacDec == -3)
     {
-        tprintf("\n\nFail: File 1 ends before File 2.\n");
+        tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
         DECFAIL++;
     }
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
     int fail = 0;
 
     if (ENCFAIL == 0)
     {
         vpxt_formated_print(RESPRT, "All encoded files are identical - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (ENCFAIL > 0)
     {
         vpxt_formated_print(RESPRT, "Not all encoded files are identical - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (DECFAIL == 0)
     {
         vpxt_formated_print(RESPRT, "All decoded files are identical - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (DECFAIL > 0)
     {
         vpxt_formated_print(RESPRT, "Not all decoded files are identical - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (fail == 1)
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -410,7 +410,7 @@ int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string Fil
     }
     else
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

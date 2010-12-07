@@ -208,25 +208,25 @@ int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (argc < 7)
     {
-        printf(
-            "  CodeCoverage \n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "    <Compress Input File or Decode>\n "
-            "          (NoCompress)Decode Input File\n"
-            "          (MakeCompression)Compress Input File\n"
-            "    <Array To Test 1 - 3 >\n "
-            "    <First Varriable in Array To Test>\n "
-            "    <Second Varriable in Array To Test - For 2 Dimensional Arrays>\n "
+        tprintf(PRINT_STD,
+                "  CodeCoverage \n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n "
+                "    <Compress Input File or Decode>\n "
+                "          (NoCompress)Decode Input File\n"
+                "          (MakeCompression)Compress Input File\n"
+                "    <Array To Test 1 - 3 >\n "
+                "    <First Varriable in Array To Test>\n "
+                "    <Second Varriable in Array To Test - For 2 Dimensional Arrays>\n "
 
-        );
+               );
 
         return 0;
 
@@ -317,8 +317,8 @@ int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesA
 
         if (Mode3TestMatch.compare(MyDir) != 0)
         {
-            printf("ErrorFileMisMatch ");
-            printf("Mode3TestMatch: %s MyDir: %s", Mode3TestMatch, MyDir);
+            tprintf(PRINT_STD, "ErrorFileMisMatch ");
+            tprintf(PRINT_STD, "Mode3TestMatch: %s MyDir: %s", Mode3TestMatch, MyDir);
             return 11;
         }
 
@@ -360,7 +360,7 @@ int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesA
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -390,7 +390,7 @@ int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesA
 
     char *input2 = argv[5];
 
-    printf("Code Coverage Test\n");
+    tprintf(PRINT_STD, "Code Coverage Test\n");
     fprintf(stderr, "Code Coverage Test\n");
 
     VP8_CONFIG opt;

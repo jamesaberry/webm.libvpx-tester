@@ -8,20 +8,20 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
     if (!(argc == 6 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -59,7 +59,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -75,7 +75,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s\n", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s\n", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -85,7 +85,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -138,19 +138,19 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
     int countme = 0;
     double ssim = 0;
 
-    tprintf("\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+    tprintf(PRINT_BTH, "\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
     PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
     countme++;
 
     flags++;
-    tprintf("\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+    tprintf(PRINT_BTH, "\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
     PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
     countme++;
     flags++;
 
     while (deblock_level != 16)
     {
-        tprintf("\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+        tprintf(PRINT_BTH, "\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
         countme++;
         deblock_level++;
@@ -162,7 +162,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
 
     while (noise_level != 8)
     {
-        tprintf("\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
+        tprintf(PRINT_BTH, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
         PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
         countme++;
 
@@ -175,22 +175,22 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
     int TestFail = 0;
     int TenPercent = 0;
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (PSNRArr[0] != PSNRArr[1])
     {
         vpxt_formated_print(RESPRT, "DEBLOCK PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", PSNRArr[1], PSNRArr[0]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "DEBLOCK PSNR: %4.2f == NOFILTERING PSNR: %4.2f - Failed", PSNRArr[1], PSNRArr[0]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
         TestFail = 1;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     x = 2;
 
@@ -199,12 +199,12 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
         if (PSNRArr[0] != PSNRArr[x])
         {
             vpxt_formated_print(RESPRT, "DeblockLevel %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "DeblockLevel %*i PSNR: %4.2f += NOFILTERING PSNR: %4.2f - Failed", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
 
             TestFail = 1;
         }
@@ -212,19 +212,19 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
         x++;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     while (x < 26)
     {
         if (PSNRArr[0] != PSNRArr[x])
         {
             vpxt_formated_print(RESPRT, "noise_level %*i PSNR: %4.2f != NOFILTERING PSNR: %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "noise_level %*i PSNR: %4.2f == NOFILTERING PSNR: %4.2f - Failed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
 
             TestFail = 1;
         }
@@ -234,24 +234,24 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
 
     /////////////////////////////
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     float PSNRPercent = vpxt_abs_float(PSNRArr[1] - PSNRArr[0]) / PSNRArr[0];
 
     if (PSNRPercent < 0.1)
     {
         vpxt_formated_print(RESPRT, "DEBLOCK PSNR: %4.2f within 10%% of %4.2f - Passed", PSNRArr[1], PSNRArr[0]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "DEBLOCK PSNR: %4.2f not within 10%% of %4.2f - Failed", PSNRArr[1], PSNRArr[0]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
         TenPercent = 1;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     x = 2;
 
@@ -262,12 +262,12 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
         if (PSNRPercent < 0.1)
         {
             vpxt_formated_print(RESPRT, "DeblockLevel %*i PSNR: %4.2f within 10%% of %4.2f - Passed", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "DeblockLvl %*i PSNR: %4.2f not within 10%% of %4.2f - Failed", 2, x - 2, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
 
             TenPercent = 1;
         }
@@ -275,7 +275,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
         x++;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     while (x < 26)
     {
@@ -284,12 +284,12 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
         if (PSNRPercent < 0.1)
         {
             vpxt_formated_print(RESPRT, "noise_level %*i PSNR: %4.2f within 10%% of %4.2f - Passed", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "noise_level %*i PSNR: %4.2f not within 10%% of %4.2f - Indeterminate", 2, x - 18, PSNRArr[x], PSNRArr[0]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
 
             TenPercent = 1;
         }
@@ -301,7 +301,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
     {
         if (TenPercent == 0)
         {
-            tprintf("\nPassed\n");
+            tprintf(PRINT_BTH, "\nPassed\n");
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -309,7 +309,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
         }
         else
         {
-            tprintf("\nMin Passed\n");
+            tprintf(PRINT_BTH, "\nMin Passed\n");
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -318,7 +318,7 @@ int test_post_processor(int argc, char *argv[], string WorkingDir, string FilesA
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

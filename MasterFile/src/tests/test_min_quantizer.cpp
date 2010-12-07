@@ -8,20 +8,20 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     if (!(argc == 6 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -64,7 +64,7 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -80,7 +80,7 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -90,7 +90,7 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -148,11 +148,11 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     PSNRArr[0] = vpxt_ivf_psnr(input, Min10QuantOutFile.c_str(), 0, 0, 1, NULL);
     PSNRArr[1] = vpxt_ivf_psnr(input, Min60QuantOutFile.c_str(), 0, 0, 1, NULL);
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
     int Min10Q = vpxt_check_min_quantizer(Min10QuantOutFile.c_str(), 10);
-    tprintf("\n\n");
+    tprintf(PRINT_BTH, "\n\n");
     int Min60Q = vpxt_check_min_quantizer(Min60QuantOutFile.c_str(), 60);
-    tprintf("\n\n");
+    tprintf(PRINT_BTH, "\n\n");
 
     char Min10FileName[255] = "";
     char Min60FileName[255] = "";
@@ -162,47 +162,47 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
 
     int fail = 0;
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (Min10Q != -1)
     {
         vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed", Min10FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed", Min10FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (Min60Q != -1)
     {
         vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed", Min60FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed", Min60FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (PSNRArr[0] <= PSNRArr[1])
     {
         vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f <= MinQ 60 PSNR: %2.2f - Failed", PSNRArr[0], PSNRArr[1]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f > MinQ 60 PSNR: %2.2f - Passed", PSNRArr[0], PSNRArr[1]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (fail == 1)
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -210,7 +210,7 @@ int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     }
     else
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -8,22 +8,22 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     if (!(argc == 7 || argc == 8))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-            "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
+                "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -146,7 +146,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file2.\n");
+        tprintf(PRINT_STD, "Cannot open out put file2.\n");
         exit(1);
     }
 
@@ -162,13 +162,13 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s\n", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s\n", MyDir);
 
     fclose(fp);
 
     if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
     {
-        printf("Cannot open out put file3.\n");
+        tprintf(PRINT_STD, "Cannot open out put file3.\n");
         exit(1);
     }
 
@@ -182,7 +182,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -196,7 +196,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(argv[6]))
     {
-        tprintf("\nInput executable %s does not exist\n", argv[6]);
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[6]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -206,7 +206,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(argv[5]))
     {
-        tprintf("\nInput executable %s does not exist\n", argv[5]);
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[5]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -216,7 +216,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     /////////////////Make Sure ivf File Exists///////////////
     if (!vpxt_file_exists_check(argv[2]))
     {
-        tprintf("\nInput encode file %s does not exist\n", argv[2]);
+        tprintf(PRINT_BTH, "\nInput encode file %s does not exist\n", argv[2]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -246,7 +246,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file4.\n");
+                tprintf(PRINT_STD, "Cannot open out put file4.\n");
                 exit(1);
             }
 
@@ -266,7 +266,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file5.\n");
+                tprintf(PRINT_STD, "Cannot open out put file5.\n");
                 exit(1);
             }
 
@@ -287,7 +287,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file6.\n");
+                tprintf(PRINT_STD, "Cannot open out put file6.\n");
                 exit(1);
             }
 
@@ -312,7 +312,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file9.\n");
+                tprintf(PRINT_STD, "Cannot open out put file9.\n");
                 exit(1);
             }
 
@@ -333,7 +333,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put FileIndexOutputChar1.\n");
+                tprintf(PRINT_STD, "Cannot open out put FileIndexOutputChar1.\n");
                 exit(1);
             }
 
@@ -352,7 +352,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         return 10;
     }
 
-    tprintf("\n\nComparing Files: ");
+    tprintf(PRINT_BTH, "\n\nComparing Files: ");
 
     int lngRC = vpxt_compare_ivf(ReleaseOutput.c_str(), DebugOutput.c_str());
 
@@ -360,46 +360,46 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
 
     if (lngRC >= 0)
     {
-        tprintf("Files differ at frame: %i\n", lngRC);
-        tprintf("\n\nResults:\n\n");
+        tprintf(PRINT_BTH, "Files differ at frame: %i\n", lngRC);
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (lngRC == -1)
     {
-        tprintf("Files are identical\n");
-        tprintf("\n\nResults:\n\n");
+        tprintf(PRINT_BTH, "Files are identical\n");
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         vpxt_formated_print(RESPRT, "Debug Compression identical to Release Compression - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (lngRC == -2)
     {
-        tprintf("File 2 ends before File 1\n");
-        tprintf("\n\nResults:\n\n");
+        tprintf(PRINT_BTH, "File 2 ends before File 1\n");
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (lngRC == -3)
     {
-        tprintf("File 1 ends before File 2\n");
-        tprintf("\n\nResults:\n\n");
+        tprintf(PRINT_BTH, "File 1 ends before File 2\n");
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -407,7 +407,7 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

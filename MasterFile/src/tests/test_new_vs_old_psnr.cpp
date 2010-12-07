@@ -8,22 +8,22 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     if (!(argc == 7 || argc == 8))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Exe File To Compare>\n"
-            "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Exe File To Compare>\n"
+                "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -126,7 +126,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -142,7 +142,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -152,7 +152,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -166,7 +166,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(argv[5]))
     {
-        tprintf("\nInput executable %s does not exist\n", argv[5]);
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[5]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -202,7 +202,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                 exit(1);
             }
 
@@ -228,7 +228,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                 exit(1);
             }
 
@@ -279,7 +279,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
                 if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
                 {
-                    printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                     exit(1);
                 }
 
@@ -294,7 +294,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
                 if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
                 {
-                    printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                     exit(1);
                 }
 
@@ -320,7 +320,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
                 if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
                 {
-                    printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                     exit(1);
                 }
 
@@ -351,7 +351,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
                 if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
                 {
-                    printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                     exit(1);
                 }
 
@@ -366,7 +366,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
                 if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
                 {
-                    printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                     exit(1);
                 }
 
@@ -392,7 +392,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
                 if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
                 {
-                    printf("Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
                     exit(1);
                 }
 
@@ -414,7 +414,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 
     if (vpxt_file_size(OldEncFile.c_str(), 0) == 0)
     {
-        tprintf("\nError - Old File Incorrect\n");
+        tprintf(PRINT_BTH, "\nError - Old File Incorrect\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -441,19 +441,19 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     PSNRArr[0] = vpxt_ivf_psnr(input, NewEncFile.c_str(), 0, 0, 1, NULL);
     PSNRArr[1] = PSNROLD;
 
-    tprintf("\nNew DataRate");
+    tprintf(PRINT_BTH, "\nNew DataRate");
     vpxt_ivf_data_rate(NewEncFile.c_str(), 1);
 
-    tprintf("\nOld DataRate");
+    tprintf(PRINT_BTH, "\nOld DataRate");
     vpxt_ivf_data_rate(OldEncFile.c_str(), 1);
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (PSNRArr[0] > PSNRArr[1])
     {
         vpxt_formated_print(RESPRT, "New PSNR: %.2f > Old PSNR: %.2f - Passed", PSNRArr[0], PSNRArr[1]);
 
-        tprintf("\n\nPassed\n");
+        tprintf(PRINT_BTH, "\n\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -464,7 +464,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     {
         vpxt_formated_print(RESPRT, "New PSNR: %.2f is with in 1/2%% of old: %.2f - Min Passed", PSNRArr[0], PSNRArr[1]);
 
-        tprintf("\n\nMin Passed\n");
+        tprintf(PRINT_BTH, "\n\nMin Passed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -474,7 +474,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
     {
         vpxt_formated_print(RESPRT, "New PSNR: %.2f < Old PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[1]);
 
-        tprintf("\n\nFailed\n");
+        tprintf(PRINT_BTH, "\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

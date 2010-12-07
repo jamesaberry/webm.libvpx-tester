@@ -8,12 +8,12 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     if (!(argc == 4 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Mem Leak Check Exe>\n"
-            "    <Decode Test File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Mem Leak Check Exe>\n"
+                "    <Decode Test File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -134,7 +134,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -150,7 +150,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -160,7 +160,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -174,7 +174,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(argv[2]))
     {
-        tprintf("\nInput executable %s does not exist\n", argv[2]);
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[2]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -184,7 +184,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     /////////////////Make Sure ivf File Exists///////////////
     if (!vpxt_file_exists_check(argv[3]))
     {
-        tprintf("\nInput decode file %s does not exist\n", argv[3]);
+        tprintf(PRINT_BTH, "\nInput decode file %s does not exist\n", argv[3]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -206,7 +206,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
         {
-            printf("Cannot open out put file4.\n");
+            tprintf(PRINT_STD, "Cannot open out put file4.\n");
             exit(1);
         }
 
@@ -229,7 +229,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     int fail = 0;
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     FILE *infile4 = fopen(MemLeakCheckTXT1Str.c_str(), "rb");
 
@@ -238,7 +238,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char MemLeakCheckTXTFileName[200];
         vpxt_file_name(MemLeakCheckTXT1Str.c_str(), MemLeakCheckTXTFileName, 0);
         vpxt_formated_print(RESPRT, "File not found: %s - Failed", MemLeakCheckTXTFileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
@@ -255,12 +255,12 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         if (bufferString4.compare(0, 24, "_currently Allocated= 0;") == 0)
         {
             vpxt_formated_print(RESPRT, "Encode Memory Currently Allocated == 0 - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "Encode Memory Currently Allocated != 0 - %s - Failed", bufferString4.c_str());
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
     }
@@ -272,7 +272,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         char MemLeakCheckTXTFileName[200];
         vpxt_file_name(MemLeakCheckTXT2Str.c_str(), MemLeakCheckTXTFileName, 0);
         vpxt_formated_print(RESPRT, "File not found: %s - Failed", MemLeakCheckTXTFileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
@@ -289,12 +289,12 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
         if (bufferString5.compare(0, 24, "_currently Allocated= 0;") == 0)
         {
             vpxt_formated_print(RESPRT, "Decode Memory Currently Allocated == 0 - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "Decode Memory Currently Allocated != 0 - %s - Failed", bufferString5.c_str());
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
     }
@@ -305,7 +305,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
     if (fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -313,7 +313,7 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -8,21 +8,21 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     if (!(argc == 7 || argc == 6))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Key Frame Frequency>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Key Frame Frequency>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -76,7 +76,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -92,7 +92,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -102,7 +102,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -159,7 +159,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (!inFileIndexOutputChar.good())
     {
-        tprintf("\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
+        tprintf(PRINT_BTH, "\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -167,7 +167,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (!infile2.good())
     {
-        tprintf("\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
+        tprintf(PRINT_BTH, "\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -207,7 +207,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     char AutoKeyFramingWorks2FileName[255];
     vpxt_file_name(AutoKeyFramingWorks2.c_str(), AutoKeyFramingWorks2FileName, 0);
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     //////////////////////////////////////////////////////////////////////////////////
     int fail2 = 0;
@@ -215,7 +215,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (!infile.good())
     {
-        tprintf("\nKey Frame File Not Present - Failed");
+        tprintf(PRINT_BTH, "\nKey Frame File Not Present - Failed");
         fclose(fp);
         return 0;
     }
@@ -249,7 +249,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
         if (vpxt_abs_int(y2 - x2) > AutoKeyFramingInt)
         {
             vpxt_formated_print(RESPRT, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, x2, y2);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail2 = 1;
         }
     }
@@ -270,7 +270,7 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     if (NumberofFrames - 1 >= (maxKeyFrame + AutoKeyFramingInt))
     {
         vpxt_formated_print(RESPRT, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, maxKeyFrame, NumberofFrames - 1);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
@@ -278,15 +278,15 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     if (fail2 == 0)
     {
         vpxt_formated_print(RESPRT, "Key Frames occur at least as frequently as Auto Key Frame dictates: %i - Passed", AutoKeyFramingInt);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (fail == 0)
     {
         vpxt_formated_print(RESPRT, "Key Frames occur at the same locations for %s and %s - Passed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -295,9 +295,9 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     else
     {
         vpxt_formated_print(RESPRT, "Key Frames do not occur at the same locations for %s and %s - Failed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

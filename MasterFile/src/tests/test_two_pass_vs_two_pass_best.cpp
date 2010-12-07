@@ -8,13 +8,13 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, st
     if (!(argc == 4 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Target Bit Rate>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Target Bit Rate>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -76,7 +76,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, st
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -92,7 +92,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, st
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -102,7 +102,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, st
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -252,7 +252,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, st
     float BestAreaVal = vpxt_area_under_quadradic(BestA, BestB, BestC, minCommon, maxCommon);
 
 
-    tprintf("\n\n"
+    tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"
             "\n"
             " Good Q\n"
@@ -276,37 +276,37 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, st
             , BestSize3, PSNRB3
            );
 
-    tprintf("Two Pass Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
-    tprintf("Two Pass Best Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
-    tprintf("\nTwo Pass area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
-    tprintf("Two Pass Best area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
+    tprintf(PRINT_BTH, "Two Pass Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
+    tprintf(PRINT_BTH, "Two Pass Best Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
+    tprintf(PRINT_BTH, "\nTwo Pass area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
+    tprintf(PRINT_BTH, "Two Pass Best area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
 
     int Pass = 0;
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (GoodAreaVal == BestAreaVal)
     {
         vpxt_formated_print(RESPRT, "Two Pass Best area under curve: %.2f == Two Pass area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (BestAreaVal > GoodAreaVal)
     {
         vpxt_formated_print(RESPRT, "Two Pass Best area under curve: %.2f > Two Pass area under curve: %.2f - Passed", BestAreaVal, GoodAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         Pass = 1;
     }
 
     if (BestAreaVal < GoodAreaVal)
     {
         vpxt_formated_print(RESPRT, "Two Pass Best area under curve: %.2f < Two Pass area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (Pass == 1)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -314,7 +314,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], string WorkingDir, st
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

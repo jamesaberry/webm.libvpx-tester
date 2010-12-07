@@ -8,22 +8,22 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
     if (!(argc == 7 || argc == 8))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Lag in Frames 1>\n"
-            "    <Lag in Frames 2>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Lag in Frames 1>\n"
+                "    <Lag in Frames 2>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -80,7 +80,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -96,7 +96,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -106,7 +106,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -123,7 +123,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if (LagInFrames1Val > 25 || LagInFrames2Val > 25 || LagInFrames2Val < 0 || LagInFrames1Val < 0)
     {
-        tprintf("\nLag in Frames settings must be between 0 and 25.\n");
+        tprintf(PRINT_BTH, "\nLag in Frames settings must be between 0 and 25.\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -218,82 +218,82 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
     vpxt_file_name(LagInFrames1.c_str(), LagInFrames1FileName, 0);
     vpxt_file_name(LagInFrames2.c_str(), LagInFrames2FileName, 0);
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (LagInFramesFound0 == 0)
     {
         vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed", LagInFrames0FileName, LagInFramesFound0);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s improperly lagged frames %i - Failed", LagInFrames0FileName, LagInFramesFound0);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (LagInFramesFound1 == LagInFrames1Val)
     {
         vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed", LagInFrames1FileName, LagInFramesFound1);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s improperly lagged %i frames - Failed", LagInFrames1FileName, LagInFramesFound1);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (LagInFramesFound2 == LagInFrames2Val)
     {
         vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed", LagInFrames2FileName, LagInFramesFound2);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s improperly lagged %i frames - Failed", LagInFrames2FileName, LagInFramesFound2);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (lngRC1 == -1)
     {
         vpxt_formated_print(RESPRT, "%s identical to %s - Failed", LagInFrames0FileName, LagInFrames1FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s not identical to %s - Passed", LagInFrames0FileName, LagInFrames1FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (lngRC2 == -1)
     {
         vpxt_formated_print(RESPRT, "%s identical to %s - Failed", LagInFrames1FileName, LagInFrames2FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s not identical to %s - Passed", LagInFrames1FileName, LagInFrames2FileName);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0) && LagInFrames1PSNR >= (LagInFrames0PSNR - TenPer0))
     {
         vpxt_formated_print(RESPRT, "PSNR for %s is within 10%% of PSNR for %s - %.2f < %.2f < %.2f - Passed", LagInFrames0FileName, LagInFrames1FileName, (LagInFrames0PSNR - TenPer0), LagInFrames1PSNR, (LagInFrames0PSNR + TenPer0));
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         if (!(LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0)))
         {
             vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName, LagInFrames1FileName, (LagInFrames0PSNR + TenPer0), LagInFrames1PSNR);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName, LagInFrames1FileName, LagInFrames1PSNR, (LagInFrames0PSNR - TenPer0));
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
     }
@@ -301,27 +301,27 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
     if (LagInFrames2PSNR <= (LagInFrames1PSNR + TenPer1) && LagInFrames2PSNR >= (LagInFrames1PSNR - TenPer1))
     {
         vpxt_formated_print(RESPRT, "PSNR for %s is within 10%% of PSNR for %s - %.2f < %.2f < %.2f - Passed", LagInFrames1FileName, LagInFrames2FileName, (LagInFrames1PSNR - TenPer1), LagInFrames2PSNR, (LagInFrames1PSNR + TenPer1));
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         if (!(LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0)))
         {
             vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName, LagInFrames2FileName, (LagInFrames1PSNR + TenPer1), LagInFrames2PSNR);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName, LagInFrames2FileName, LagInFrames2PSNR, (LagInFrames1PSNR - TenPer1));
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
     }
 
     if (fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -329,7 +329,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

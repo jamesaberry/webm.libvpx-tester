@@ -35,19 +35,19 @@ using namespace std;
 
 
 /*
- *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree. An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */
+*  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
+*
+*  Use of this source code is governed by a BSD-style license
+*  that can be found in the LICENSE file in the root of the source
+*  tree. An additional intellectual property rights grant can be found
+*  in the file PATENTS.  All contributing project authors may
+*  be found in the AUTHORS file in the root of the source tree.
+*/
 
 
 /* This is a simple program that encodes YV12 files and generates ivf
- * files using the new interface.
- */
+* files using the new interface.
+*/
 #define CONFIG_VP8_ENCODER 1
 #if defined(_WIN32)
 #define USE_POSIX_MMAP 0
@@ -115,8 +115,8 @@ static void ctx_exit_on_error(vpx_codec_ctx_t *ctx, const char *s)
 }
 
 /* This structure is used to abstract the different ways of handling
- * first pass statistics.
- */
+* first pass statistics.
+*/
 typedef struct
 {
     vpx_fixed_buf_t buf;
@@ -290,9 +290,9 @@ static int read_frame(FILE *f, vpx_image_t *img, unsigned int file_type,
             char junk[IVF_FRAME_HDR_SZ];
 
             /* Skip the frame header. We know how big the frame should be. See
-             * write_ivf_frame_header() for documentation on the frame header
-             * layout.
-             */
+            * write_ivf_frame_header() for documentation on the frame header
+            * layout.
+            */
             fread(junk, 1, IVF_FRAME_HDR_SZ, f);
         }
 
@@ -304,9 +304,9 @@ static int read_frame(FILE *f, vpx_image_t *img, unsigned int file_type,
             int r;
 
             /* Determine the correct plane based on the image format. The for-loop
-             * always counts in Y,U,V order, but this may not match the order of
-             * the data on disk.
-             */
+            * always counts in Y,U,V order, but this may not match the order of
+            * the data on disk.
+            */
             switch (plane)
             {
             case 1:
@@ -365,8 +365,8 @@ unsigned int file_is_ivf(FILE *infile,
         return 0;
 
     /* See write_ivf_file_header() for more documentation on the file header
-     * layout.
-     */
+    * layout.
+    */
     if (fread(raw_hdr + 4, 1, IVF_FILE_HDR_SZ - 4, infile)
         == IVF_FILE_HDR_SZ - 4)
     {
@@ -665,8 +665,8 @@ int ivfenc(int argc, const char **argv_)
 
 
     /* First parse the codec and usage values, because we want to apply other
-     * parameters on top of the default configuration provided by the codec.
-     */
+    * parameters on top of the default configuration provided by the codec.
+    */
     argv = argv_dup(argc - 1, argv_ + 1);
 
     for (argi = argj = argv; (*argj = *argi); argi += arg.argv_step)
@@ -733,8 +733,8 @@ int ivfenc(int argc, const char **argv_)
     }
 
     /* Ensure that --passes and --pass are consistent. If --pass is set and --passes=2,
-     * ensure --fpf was set.
-     */
+    * ensure --fpf was set.
+    */
     if (one_pass_only)
     {
         /* DWIM: Assume the user meant passes=2 if pass=2 is specified */
@@ -922,8 +922,8 @@ int ivfenc(int argc, const char **argv_)
                 cfg.g_h = y4m.pic_h;
 
                 /* Use the frame rate from the file only if none was specified
-                 * on the command-line.
-                 */
+                * on the command-line.
+                */
                 if (!arg_have_timebase)
                 {
                     cfg.g_timebase.num = y4m.fps_d;
@@ -1006,8 +1006,8 @@ int ivfenc(int argc, const char **argv_)
         {
             if (file_type == FILE_TYPE_Y4M)
                 /*The Y4M reader does its own allocation.
-                  Just initialize this here to avoid problems if we never read any
-                   frames.*/
+                Just initialize this here to avoid problems if we never read any
+                frames.*/
                 memset(&raw, 0, sizeof(raw));
             else
                 vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
@@ -1070,9 +1070,9 @@ int ivfenc(int argc, const char **argv_)
         ctx_exit_on_error(&encoder, "Failed to initialize encoder");
 
         /* Note that we bypass the vpx_codec_control wrapper macro because
-         * we're being clever to store the control IDs in an array. Real
-         * applications will want to make use of the enumerations directly
-         */
+        * we're being clever to store the control IDs in an array. Real
+        * applications will want to make use of the enumerations directly
+        */
         for (i = 0; i < arg_ctrl_cnt; i++)
         {
             if (vpx_codec_control_(&encoder, arg_ctrls[i][0], arg_ctrls[i][1]))
@@ -1160,8 +1160,8 @@ int ivfenc(int argc, const char **argv_)
         }
 
         /* this bitrate calc is simplified and relies on the fact that this
-         * application uses 1/timebase for framerate.
-         */
+        * application uses 1/timebase for framerate.
+        */
         fprintf(stderr,
                 "\rPass %d/%d frame %4d/%-4d %7ldB %7ldb/f %7"PRId64"b/s"
                 " %7lu %s (%.2f fps)\033[K", pass + 1,

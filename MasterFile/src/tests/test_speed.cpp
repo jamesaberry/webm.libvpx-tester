@@ -8,17 +8,17 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     if (!(argc == 6 || argc == 7))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "    <Target Bit Rate>\n"
-            "    <Lag In Frames>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "    <Target Bit Rate>\n"
+                "    <Lag In Frames>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -35,16 +35,16 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
     if (Mode != 0 && Mode != 1)
     {
-        printf(
-            "  test_speed \n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "    <Target Bit Rate>\n"
-            "    <Lag In Frames>\n"
-            "    <Optional Settings File>\n"
-        );
+        tprintf(PRINT_STD,
+                "  test_speed \n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "    <Target Bit Rate>\n"
+                "    <Lag In Frames>\n"
+                "    <Optional Settings File>\n"
+               );
         return 0;
     }
 
@@ -81,7 +81,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -97,7 +97,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -107,7 +107,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -124,7 +124,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     opt.Mode = MODE_GOODQUALITY;
     opt.lag_in_frames = LagInFramesInput;
 
-    tprintf("\nLagInFrames: %i\n", LagInFramesInput);
+    tprintf(PRINT_BTH, "\nLagInFrames: %i\n", LagInFramesInput);
 
     unsigned int GoodTotalcpu_tick[7];
     unsigned int RealTotalcpu_tick[17];
@@ -319,11 +319,11 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         {
             if (GoodTotalcpu_tick[counter] < GoodTotalcpu_tick[counter-1])
             {
-                tprintf("      CpuUsed %*i Encode Tick: %i < CpuUsed %*i Encode Tick: %i\n", 2, counter, GoodTotalcpu_tick[counter], 2, counter - 1, GoodTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed %*i Encode Tick: %i < CpuUsed %*i Encode Tick: %i\n", 2, counter, GoodTotalcpu_tick[counter], 2, counter - 1, GoodTotalcpu_tick[counter-1]);
             }
             else
             {
-                tprintf("Fail: CpuUsed %*i Encode Tick: %i > CpuUsed %*i Encode Tick: %i\n", 2, counter, GoodTotalcpu_tick[counter], 2, counter - 1, GoodTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed %*i Encode Tick: %i > CpuUsed %*i Encode Tick: %i\n", 2, counter, GoodTotalcpu_tick[counter], 2, counter - 1, GoodTotalcpu_tick[counter-1]);
                 Fail = 1;
             }
 
@@ -332,11 +332,11 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
             if (PSNRPercent < 0.1)
             {
-                tprintf("      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
             }
             else
             {
-                tprintf("Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
                 Fail2 = 1;
             }
 
@@ -352,11 +352,11 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         {
             if (RealTotalcpu_tick[counter] < RealTotalcpu_tick[counter-1])
             {
-                tprintf("      CpuUsed -%*i Encode Tick: %i < CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1, RealTotalcpu_tick[counter], 2, counter, RealTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed -%*i Encode Tick: %i < CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1, RealTotalcpu_tick[counter], 2, counter, RealTotalcpu_tick[counter-1]);
             }
             else
             {
-                tprintf("Fail: CpuUsed -%*i Encode Tick: %i > CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1, RealTotalcpu_tick[counter], 2, counter, RealTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i Encode Tick: %i > CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1, RealTotalcpu_tick[counter], 2, counter, RealTotalcpu_tick[counter-1]);
                 Fail++;
 
                 float TimePercent = (RealTotalcpu_tick[counter] - RealTotalcpu_tick[counter-1]);
@@ -380,18 +380,18 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
             if (PSNRPercent < 0.1)
             {
-                tprintf("      CpuUsed -%*i PSNR: %4.2f within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed -%*i PSNR: %4.2f within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
             }
             else
             {
-                tprintf("Fail: CpuUsed -%*i PSNR: %4.2f not within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i PSNR: %4.2f not within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
                 Fail2++;
             }
 
             counter++;
         }
 
-        tprintf("\n\n");
+        tprintf(PRINT_BTH, "\n\n");
 
         counter = 1;
 
@@ -399,12 +399,12 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         {
             if (RealTotalcpu_tickPos[counter] < RealTotalcpu_tickPos[counter-1])
             {
-                tprintf("      CpuUsed %*i Encode Tick: %i < CpuUsed %*i Encode Tick: %i\n", 2, counter, RealTotalcpu_tickPos[counter], 2, counter - 1, RealTotalcpu_tickPos[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed %*i Encode Tick: %i < CpuUsed %*i Encode Tick: %i\n", 2, counter, RealTotalcpu_tickPos[counter], 2, counter - 1, RealTotalcpu_tickPos[counter-1]);
             }
             else
             {
 
-                tprintf("Fail: CpuUsed %*i Encode Tick: %i > CpuUsed %*i Encode Tick: %i\n", 2, counter, RealTotalcpu_tickPos[counter], 2, counter - 1, RealTotalcpu_tickPos[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed %*i Encode Tick: %i > CpuUsed %*i Encode Tick: %i\n", 2, counter, RealTotalcpu_tickPos[counter], 2, counter - 1, RealTotalcpu_tickPos[counter-1]);
                 Fail++;
 
                 float TimePercent = (RealTotalcpu_tickPos[counter] - RealTotalcpu_tickPos[counter-1]);
@@ -428,11 +428,11 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
             if (PSNRPercent < 0.1)
             {
-                tprintf("      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
             }
             else
             {
-                tprintf("Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
                 Fail2++;
             }
 
@@ -443,12 +443,12 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
     if (Mode == 0)
     {
-        tprintf("\n\nResults:\n\n");
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         if (Fail == 0)
         {
             vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed increases - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
 
             //printf("All encode ticks decrease as CpuUsed increases - Passed");
         }
@@ -456,77 +456,77 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         if (Fail < 4 && Fail != 0)
         {
             vpxt_formated_print(RESPRT, "Enough encode ticks decrease as CpuUsed increases - Min Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             pass = 2;
         }
 
         if (Fail >= 4)
         {
             vpxt_formated_print(RESPRT, "Not enough encode ticks decrease as CpuUsed increases - Failed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
 
         if (Fail2 == 0)
         {
             vpxt_formated_print(RESPRT, "All PSNRs are within 10%% - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
 
         if (Fail2 < 2 && Fail2 != 0)
         {
             vpxt_formated_print(RESPRT, "Enough PSNRs are within 10%% - Min Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             pass = 2;
         }
 
         if (Fail2 >= 2)
         {
             vpxt_formated_print(RESPRT, "Not enough PSNRs are within 10%% - Failed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
 
         if (Failb != 0)
         {
             vpxt_formated_print(RESPRT, "Not all Encode speeds are within 10%% - Failed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
     }
 
     if (Mode == 1)
     {
-        tprintf("\n\nResults:\n\n");
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         if (Fail == 1)
         {
             vpxt_formated_print(RESPRT, "Not all encode ticks decrease as CpuUsed increases - Failed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
         else
         {
             vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed increases - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
 
         if (Fail2 == 0)
         {
             vpxt_formated_print(RESPRT, "All PSNR values are within 10%% of eachother - Passed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "Not all PSNR values are within 10%% of eachother - Failed");
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
     }
 
     if (pass == 0)
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -535,7 +535,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
 
     if (pass == 1)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -543,7 +543,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
     }
     else
     {
-        tprintf("\nMin Passed\n");
+        tprintf(PRINT_BTH, "\nMin Passed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

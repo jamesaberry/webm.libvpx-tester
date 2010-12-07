@@ -8,20 +8,20 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     if (!(argc == 6 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n "
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n "
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -96,7 +96,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -112,7 +112,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -122,7 +122,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -192,7 +192,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             return 2;
         }
 
-        printf("\n\n");
+        tprintf(PRINT_STD, "\n\n");
         fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
         unsigned int Time1 = vpxt_time_decompress_ivf_to_ivf(Version0.c_str(), Version0_Dec.c_str(), Deccpu_tick[0]);
 
@@ -203,7 +203,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             return 2;
         }
 
-        printf("\n");
+        tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
         unsigned int Time2 = vpxt_time_decompress_ivf_to_ivf(Version1.c_str(), Version1_Dec.c_str(), Deccpu_tick[1]);
 
@@ -214,7 +214,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             return 2;
         }
 
-        printf("\n");
+        tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
         unsigned int Time3 = vpxt_time_decompress_ivf_to_ivf(Version2.c_str(), Version2_Dec.c_str(), Deccpu_tick[2]);
 
@@ -225,7 +225,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             return 2;
         }
 
-        printf("\n");
+        tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
         unsigned int Time4 = vpxt_time_decompress_ivf_to_ivf(Version3.c_str(), Version3_Dec.c_str(), Deccpu_tick[3]);
 
@@ -251,7 +251,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     PSNRArr[2] = vpxt_ivf_psnr(input, Version2.c_str(), 0, 0, 1, NULL);
     PSNRArr[3] = vpxt_ivf_psnr(input, Version3.c_str(), 0, 0, 1, NULL);
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     int PSNRFail = 0;
     int TIMEFail = 0;
@@ -270,14 +270,14 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             {
                 if (Deccpu_tick[i] < Deccpu_tick[t])
                 {
-                    tprintf("\nFailed Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
+                    tprintf(PRINT_BTH, "\nFailed Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
                             "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
                     TIMEFail++;
                     PSNRFail++;
                 }
                 else
                 {
-                    tprintf("\n       Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
+                    tprintf(PRINT_BTH, "\n       Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
                             "Failed Version %i PSNR: %f <= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
                     PSNRFail++;
                 }
@@ -286,13 +286,13 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
             {
                 if (Deccpu_tick[i] < Deccpu_tick[t])
                 {
-                    tprintf("\nFailed Version %i Decode Tick: %d <= Version %i Decode Tick: %d\n"
+                    tprintf(PRINT_BTH, "\nFailed Version %i Decode Tick: %d <= Version %i Decode Tick: %d\n"
                             "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
                     TIMEFail++;
                 }
                 else
                 {
-                    tprintf("\n       Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
+                    tprintf(PRINT_BTH, "\n       Version %i Decode Tick: %d >= Version %i Decode Tick: %d\n"
                             "       Version %i PSNR: %f >= Version %i PSNR: %f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i, PSNRArr[i], t, PSNRArr[t]);
                 }
             }
@@ -307,51 +307,51 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     //Fail2 tracks Time Fails
 
     int fail = 0;
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (PSNRFail == 0)// && TIMEFail == 0)
     {
         vpxt_formated_print(RESPRT, "All PSNRs decrease as version numbers increase - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (PSNRFail < 2 && PSNRFail != 0)// && TIMEFail == 0)
     {
         vpxt_formated_print(RESPRT, "All but one PSNR Decreases as version numbers increase - Min Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 2;
     }
 
     if (PSNRFail >= 2)
     {
         vpxt_formated_print(RESPRT, "Not all PSNRs decrease as version numbers increase - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (TIMEFail == 0)
     {
         vpxt_formated_print(RESPRT, "All Decode ticks decrease as version numbers increase - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (TIMEFail < 2 && TIMEFail != 0)
     {
         vpxt_formated_print(RESPRT, "All but one Decode ticks decrease as version numbers increase - Min Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 2;
     }
 
     if (TIMEFail >= 2)
     {
         vpxt_formated_print(RESPRT, "Not all Decode ticks increase as version numbers increase - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (fail == 2)
     {
-        tprintf("\nMin Passed\n");
+        tprintf(PRINT_BTH, "\nMin Passed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -360,7 +360,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
     if (fail == 1)
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -368,7 +368,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
     }
     else
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

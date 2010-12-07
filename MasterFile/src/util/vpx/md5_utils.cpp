@@ -1,24 +1,24 @@
 /*
- * This code implements the MD5 message-digest algorithm.
- * The algorithm is due to Ron Rivest.  This code was
- * written by Colin Plumb in 1993, no copyright is claimed.
- * This code is in the public domain; do with it what you wish.
- *
- * Equivalent code is available from RSA Data Security, Inc.
- * This code has been tested against that, and is equivalent,
- * except that you don't need to include two pages of legalese
- * with every copy.
- *
- * To compute the message digest of a chunk of bytes, declare an
- * MD5Context structure, pass it to MD5Init, call MD5Update as
- * needed on buffers full of bytes, and then call MD5Final, which
- * will fill a supplied 16-byte array with the digest.
- *
- * Changed so as no longer to depend on Colin Plumb's `usual.h' header
- * definitions
- *  - Ian Jackson <ian@chiark.greenend.org.uk>.
- * Still in the public domain.
- */
+* This code implements the MD5 message-digest algorithm.
+* The algorithm is due to Ron Rivest.  This code was
+* written by Colin Plumb in 1993, no copyright is claimed.
+* This code is in the public domain; do with it what you wish.
+*
+* Equivalent code is available from RSA Data Security, Inc.
+* This code has been tested against that, and is equivalent,
+* except that you don't need to include two pages of legalese
+* with every copy.
+*
+* To compute the message digest of a chunk of bytes, declare an
+* MD5Context structure, pass it to MD5Init, call MD5Update as
+* needed on buffers full of bytes, and then call MD5Final, which
+* will fill a supplied 16-byte array with the digest.
+*
+* Changed so as no longer to depend on Colin Plumb's `usual.h' header
+* definitions
+*  - Ian Jackson <ian@chiark.greenend.org.uk>.
+* Still in the public domain.
+*/
 
 #include <sys/types.h>    /* for stupid systems */
 
@@ -49,9 +49,9 @@ byteSwap(UWORD32 *buf, unsigned words)
 }
 
 /*
- * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
- * initialization constants.
- */
+* Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
+* initialization constants.
+*/
 void
 MD5Init(struct MD5Context *ctx)
 {
@@ -65,9 +65,9 @@ MD5Init(struct MD5Context *ctx)
 }
 
 /*
- * Update context to reflect the concatenation of another buffer full
- * of bytes.
- */
+* Update context to reflect the concatenation of another buffer full
+* of bytes.
+*/
 void
 MD5Update(struct MD5Context *ctx, md5byte const *buf, unsigned len)
 {
@@ -110,9 +110,9 @@ MD5Update(struct MD5Context *ctx, md5byte const *buf, unsigned len)
 }
 
 /*
- * Final wrapup - pad to 64-byte boundary with the bit pattern
- * 1 0* (64-bit count of bits processed, MSB-first)
- */
+* Final wrapup - pad to 64-byte boundary with the bit pattern
+* 1 0* (64-bit count of bits processed, MSB-first)
+*/
 void
 MD5Final(md5byte digest[16], struct MD5Context *ctx)
 {
@@ -162,10 +162,10 @@ MD5Final(md5byte digest[16], struct MD5Context *ctx)
     (w += f(x,y,z) + in, w = (w<<s | w>>(32-s)) + x)
 
 /*
- * The core of the MD5 algorithm, this alters an existing MD5 hash to
- * reflect the addition of 16 longwords of new data.  MD5Update blocks
- * the data and converts bytes into longwords for this routine.
- */
+* The core of the MD5 algorithm, this alters an existing MD5 hash to
+* reflect the addition of 16 longwords of new data.  MD5Update blocks
+* the data and converts bytes into longwords for this routine.
+*/
 void
 MD5Transform(UWORD32 buf[4], UWORD32 const in[16])
 {

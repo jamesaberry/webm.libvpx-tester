@@ -8,20 +8,20 @@ int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[],
     if (!(argc == 6 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -64,7 +64,7 @@ int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -80,7 +80,7 @@ int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[],
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -90,7 +90,7 @@ int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -142,21 +142,21 @@ int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[],
         return 10;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
     long FileIndexOutputCharbytes = vpxt_file_size(UnderShoot10.c_str(), 1);
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
     long File2bytes = vpxt_file_size(UnderShoot100.c_str(), 1);
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (FileIndexOutputCharbytes < File2bytes)
     {
         vpxt_formated_print(RESPRT, "File size 1:%i < File size 2:%i - Passed", FileIndexOutputCharbytes , File2bytes);
 
-        tprintf("\n\nPassed\n");
+        tprintf(PRINT_BTH, "\n\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,7 +167,7 @@ int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         vpxt_formated_print(RESPRT, "No effect try different file - Indeterminate");
 
-        tprintf("\n\nIndeterminate\n");
+        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -177,7 +177,7 @@ int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         vpxt_formated_print(RESPRT, "File size 1:%i > File size 2:%i - Failed", FileIndexOutputCharbytes , File2bytes);
 
-        tprintf("\n\nFailed\n");
+        tprintf(PRINT_BTH, "\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -8,8 +8,8 @@ using namespace std;
 #define UTILITIES_H_GUARD
 
 #define PRINT_STD 1
-#define PRINT_STDERR 2
-#define PRINT_BOTH 3
+#define PRINT_ERR 2
+#define PRINT_BTH 3
 
 #define HLPPRT 1
 #define TOLPRT 2
@@ -17,7 +17,7 @@ using namespace std;
 #define OTRPRT 4
 #define RESPRT 5
 
-void tprintf(const char *fmt, ...);
+void tprintf(int PrintSelection, const char *fmt, ...);
 string slashCharStr();
 char slashChar();
 //-----------------------------------------------------VP8 Settings-------------------------------------------------------------------

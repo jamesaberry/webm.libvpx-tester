@@ -8,12 +8,12 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
     if (!(argc == 3 || argc == 4))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -80,7 +80,7 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -96,8 +96,8 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
-    tprintf("\n\n---------------------------Checking for OPSNR Files----------------------------\n\n");
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    tprintf(PRINT_BTH, "\n\n---------------------------Checking for OPSNR Files----------------------------\n\n");
 
     /////////////////////////////////////////////////Delete opsnr.stt////////////////////////////////////////////
 
@@ -105,53 +105,53 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
     string CurrentDirOPSNR = CurrentDir;
 
     CurrentDirOPSNR.append(slashCharStr());
-    tprintf("Checking: %s For opsnr.stt - ", CurrentDirOPSNR.c_str());
+    tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", CurrentDirOPSNR.c_str());
     CurrentDirOPSNR.append("opsnr.stt");
 
     FILE *FileCurrentDirOPSNR = fopen(CurrentDirOPSNR.c_str(), "rb");
 
     if (FileCurrentDirOPSNR == NULL)
-        tprintf("opsnr.stt File not found. \n\n");
+        tprintf(PRINT_BTH, "opsnr.stt File not found. \n\n");
     else
     {
         fclose(FileCurrentDirOPSNR);
         remove(CurrentDirOPSNR.c_str());
-        tprintf("opsnr.stt File found and deleted. \n");
+        tprintf(PRINT_BTH, "opsnr.stt File found and deleted. \n");
     }
 
     //check Tester Dirctory
     string TesterDirOPSNR = TesterDirChar;
-    tprintf("Checking: %s For opsnr.stt - ", TesterDirOPSNR.c_str());
+    tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", TesterDirOPSNR.c_str());
     TesterDirOPSNR.append("opsnr.stt");
 
     FILE *FileTesterOPSNR = fopen(TesterDirOPSNR.c_str(), "rb");
 
     if (FileTesterOPSNR == NULL)
-        tprintf("opsnr.stt File not found. \n\n");
+        tprintf(PRINT_BTH, "opsnr.stt File not found. \n\n");
     else
     {
         fclose(FileTesterOPSNR);
         remove(TesterDirOPSNR.c_str());
-        tprintf("opsnr.stt File found and deleted. \n");
+        tprintf(PRINT_BTH, "opsnr.stt File found and deleted. \n");
     }
 
     //check Compression Directory
     string CompDirOPSNR = CompressionDir;
-    tprintf("Checking: %s For opsnr.stt - ", CompDirOPSNR.c_str());
+    tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", CompDirOPSNR.c_str());
     CompDirOPSNR.append("opsnr.stt");
 
     FILE *FileCompDirOPSNR = fopen(CompDirOPSNR.c_str(), "rb");
 
     if (FileCompDirOPSNR == NULL)
-        tprintf("opsnr.stt File not found. \n\n");
+        tprintf(PRINT_BTH, "opsnr.stt File not found. \n\n");
     else
     {
         fclose(FileCompDirOPSNR);
         remove(CompDirOPSNR.c_str());
-        tprintf("opsnr.stt File found and deleted. \n");
+        tprintf(PRINT_BTH, "opsnr.stt File found and deleted. \n");
     }
 
-    tprintf("------------------------------------------------------------------------------\n");
+    tprintf(PRINT_BTH, "------------------------------------------------------------------------------\n");
     ////////////////////////////////////////////////////////////////
 
     VP8_CONFIG opt;
@@ -162,7 +162,7 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -196,13 +196,13 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if (TestType == TEST_ONLY)
     {
-        tprintf("\nExtraFileCheck Test Run Previously Retreiveing Result\n");
+        tprintf(PRINT_BTH, "\nExtraFileCheck Test Run Previously Retreiveing Result\n");
 
         ifstream infile(ExtraFileCheckResultStr.c_str());
 
         if (!infile.is_open())
         {
-            tprintf("File: %s not opened", ExtraFileCheckResultStr.c_str());
+            tprintf(PRINT_BTH, "File: %s not opened", ExtraFileCheckResultStr.c_str());
             return 0;
         }
 
@@ -211,7 +211,7 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         if (Fail == 1)
         {
-            tprintf("\n\nExtra files found - Test Failed\n");
+            tprintf(PRINT_BTH, "\n\nExtra files found - Test Failed\n");
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -220,7 +220,7 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         if (Fail == 0)
         {
-            tprintf("\n\n No extra files found - Test Passed\n");
+            tprintf(PRINT_BTH, "\n\n No extra files found - Test Passed\n");
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -239,10 +239,10 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
         }
     }
 
-    tprintf("\n\n---------------------------Checking for Extra Files----------------------------\n\n");
-    tprintf("Checking: %s", CompressionDirAllFiles.c_str());
-    tprintf("\n\nChecking: %s", TesterDirAllFiles.c_str());
-    tprintf("\n\nChecking: %s\n\n", CurrentDirAllFiles.c_str());
+    tprintf(PRINT_BTH, "\n\n---------------------------Checking for Extra Files----------------------------\n\n");
+    tprintf(PRINT_BTH, "Checking: %s", CompressionDirAllFiles.c_str());
+    tprintf(PRINT_BTH, "\n\nChecking: %s", TesterDirAllFiles.c_str());
+    tprintf(PRINT_BTH, "\n\nChecking: %s\n\n", CurrentDirAllFiles.c_str());
 
     vector<string> FoundTesterDir;
     vector<string> FoundCurrentDir;
@@ -252,8 +252,8 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
     int CompDirFail = vpxt_find_non_ignored_files_in_dir(IgnoreCompressionDir, FoundCompressionDir, CompressionDirAllFiles);
     int TesterDirFail = vpxt_find_non_ignored_files_in_dir(IgnoreTesterDir, FoundTesterDir, TesterDirAllFiles);
 
-    tprintf("------------------------------------------------------------------------------\n");
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "------------------------------------------------------------------------------\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (TestType == COMP_ONLY)
     {
@@ -261,12 +261,12 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         if (CurDirFail == 0 && CompDirFail == 0 && TesterDirFail == 0)
         {
-            tprintf("\nNo extra files found\n");
+            tprintf(PRINT_BTH, "\nNo extra files found\n");
             outfile << 0;
         }
         else
         {
-            tprintf("\nExtra files found\n");
+            tprintf(PRINT_BTH, "\nExtra files found\n");
             outfile << 1;
         }
 
@@ -329,7 +329,7 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if (Fail == 1)
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -338,7 +338,7 @@ int test_extra_file(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if (Fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

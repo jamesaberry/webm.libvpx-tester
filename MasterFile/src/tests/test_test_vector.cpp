@@ -8,11 +8,11 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
     if (!(argc == 3))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input Directory>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input Directory>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -592,7 +592,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -608,7 +608,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     if (TestType == TEST_ONLY)
     {
@@ -620,7 +620,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
         while (CurTestVector < LastTestVector)
         {
-            tprintf("\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
+            tprintf(PRINT_BTH, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
             if (vpxt_decompress_ivf_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str()) == -1)
             {
@@ -647,7 +647,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
 
     while (CurTestVector < LastTestVector)
     {
-        tprintf("\n\nComputing MD5 for TestVector %i", CurTestVector);
+        tprintf(PRINT_BTH, "\n\nComputing MD5 for TestVector %i", CurTestVector);
         vpxt_dec_compute_md5(TestVector[CurTestVector].c_str(), TestVector_Text[CurTestVector].c_str());
         CurTestVector++;
     }
@@ -664,7 +664,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
             }
             else
             {
-                printf("Error: %s Not Deleted\n\n", TestVector_Raw[CurTestVector].c_str());
+                tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", TestVector_Raw[CurTestVector].c_str());
             }
 
             CurTestVector++;
@@ -689,11 +689,11 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
         infile.getline(buffer, 1024);
         infile.close();
 
-        tprintf("\n\n");
+        tprintf(PRINT_BTH, "\n\n");
 
         if (MD5Key[x].compare(buffer) == 0)
         {
-            tprintf(" VP8 Test Vector %i: %s \n"
+            tprintf(PRINT_BTH, " VP8 Test Vector %i: %s \n"
                     " Observed: %s \n"
                     " Expected: %s \n"
                     " -Pass \n\n"
@@ -701,7 +701,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
         }
         else
         {
-            tprintf(" VP8 Test Vector %i: %s \n"
+            tprintf(PRINT_BTH, " VP8 Test Vector %i: %s \n"
                     " Observed: %s \n"
                     " Expected: %s \n"
                     " -Fail \n\n"
@@ -715,13 +715,13 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
         x++;
     }
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (Fail == 0)
     {
         vpxt_formated_print(RESPRT, "All decoded test vector MD5 checksum's match expected checksum's - Passed");
 
-        tprintf("\n\nPassed\n");
+        tprintf(PRINT_BTH, "\n\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -772,7 +772,7 @@ int test_vector_test(int argc, char *argv[], string WorkingDir, string FilesAr[]
         FailStr.append(" - Failed");
         vpxt_formated_print(RESPRT, FailStr.c_str());
 
-        tprintf("\n\nFailed\n");
+        tprintf(PRINT_BTH, "\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

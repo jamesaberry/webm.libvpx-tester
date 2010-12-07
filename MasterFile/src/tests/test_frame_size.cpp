@@ -8,22 +8,22 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
     if (!(argc == 8 || argc == 7))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Starting Width-must be a mult of 16>\n"
-            "    <Starting Height-must be a mult of 16>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Starting Width-must be a mult of 16>\n"
+                "    <Starting Height-must be a mult of 16>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
 
         return 0;
     }
@@ -137,7 +137,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -156,7 +156,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
     //Make sure starting width and height are mults of 16
     if ((StartingWidth % 16 != 0) && (StartingHeight % 16 != 0))
     {
-        tprintf("\nError: Starting width and height are not multiples of 16\n\nFailed\n");
+        tprintf(PRINT_BTH, "\nError: Starting width and height are not multiples of 16\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -165,7 +165,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if (StartingHeight % 16 != 0)
     {
-        tprintf("\nError: Starting height is not a multiple of 16\n\nFailed\n");
+        tprintf(PRINT_BTH, "\nError: Starting height is not a multiple of 16\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -174,14 +174,14 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
     if (StartingWidth % 16 != 0)
     {
-        tprintf("\nError: Starting width is not a multiple of 16\n\nFailed\n");
+        tprintf(PRINT_BTH, "\nError: Starting width is not a multiple of 16\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -191,7 +191,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -224,7 +224,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         while (x < 16)
         {
-            tprintf("\nCroping to %i %i", StartingWidth, StartingHeight - x);
+            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
             vpxt_crop_raw_ivf(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
             x++;
             RawCropNum++;
@@ -235,7 +235,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         while (x < 16)
         {
-            tprintf("\nCroping to %i %i", StartingWidth - x, StartingHeight);
+            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
             vpxt_crop_raw_ivf(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
             x++;
             RawCropNum++;
@@ -245,7 +245,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         while (x < 16)
         {
-            tprintf("\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
+            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
             vpxt_crop_raw_ivf(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
             x++;
             RawCropNum++;
@@ -263,7 +263,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
             snprintf(FileNameChar, 256, RawCrop[RawCropNum].c_str());
             vpxt_file_name(FileNameChar, FileNameChar2, 1);
 
-            tprintf("\nCompressing %s", FileNameChar2);
+            tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
 
             if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
             {
@@ -307,22 +307,22 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         if (RawCropNum == 1)
         {
-            printf("\n\n PSNR %s: %.2f", FileNameChar2, PSNRAr[RawCropNum-1]);
+            tprintf(PRINT_STD, "\n\n PSNR %s: %.2f", FileNameChar2, PSNRAr[RawCropNum-1]);
         }
         else if (PSNRAr[RawCropNum-1] <  PSNRAr[0] + FivePercentPSNR && PSNRAr[RawCropNum-1] >  PSNRAr[0] - FivePercentPSNR)
         {
-            tprintf("\n PSNR %s: %.2f within 5%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+            tprintf(PRINT_BTH, "\n PSNR %s: %.2f within 5%% of %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
         }
         else
         {
-            tprintf("\n PSNR %s: %.2f not within 5%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+            tprintf(PRINT_BTH, "\n PSNR %s: %.2f not within 5%% of %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
             PercentFail = 1;
         }
 
         RawCropNum++;
     }
 
-    tprintf("\n\n");
+    tprintf(PRINT_BTH, "\n\n");
 
     RawCropNum = 1;
 
@@ -335,11 +335,11 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
         if (PSNRAr[RawCropNum-1] > 25.0)
         {
-            tprintf("\n PSNR %s: %.2f > %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+            tprintf(PRINT_BTH, "\n PSNR %s: %.2f > %.2f - Passed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
         }
         else
         {
-            tprintf("\n PSNR %s: %.2f < %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+            tprintf(PRINT_BTH, "\n PSNR %s: %.2f < %.2f - Failed", FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
             MinPSNRFail = 1;
         }
 
@@ -347,38 +347,38 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
 
 
-    printf("\n");
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_STD, "\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     int fail = 0;
 
     if (PercentFail == 0)
     {
         vpxt_formated_print(RESPRT, "All PSNRs are within 3%% of %.2f - Passed", PSNRAr[0]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Not all PSNRs are within 3%% of %.2f - Failed", PSNRAr[0]);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (MinPSNRFail == 0)
     {
         vpxt_formated_print(RESPRT, "All PSNRs are greater than 25.0 - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Not all PSNRs are greater than 25.0 - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -386,7 +386,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

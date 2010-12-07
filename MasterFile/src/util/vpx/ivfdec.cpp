@@ -30,19 +30,19 @@ using namespace std;
 #include <cstdio>
 
 /*
- *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree. An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */
+*  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
+*
+*  Use of this source code is governed by a BSD-style license
+*  that can be found in the LICENSE file in the root of the source
+*  tree. An additional intellectual property rights grant can be found
+*  in the file PATENTS.  All contributing project authors may
+*  be found in the AUTHORS file in the root of the source tree.
+*/
 
 
 /* This is a simple program that reads ivf files and decodes them
- * using the new interface. Decoded frames are output as YV12 raw.
- */
+* using the new interface. Decoded frames are output as YV12 raw.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -207,9 +207,9 @@ static int read_frame(FILE                  *infile,
     uint32_t new_buf_sz;
 
     /* For both the raw and ivf formats, the frame size is the first 4 bytes
-     * of the frame header. We just need to special case on the header
-     * size.
-     */
+    * of the frame header. We just need to special case on the header
+    * size.
+    */
     if (fread(raw_hdr, is_ivf ? IVF_FRAME_HDR_SZ : RAW_FRAME_HDR_SZ, 1,
               infile) != 1)
     {
@@ -522,13 +522,13 @@ int ivfdec(int argc, const char **argv_)
             }
 
             /*Correct for the factor of 2 applied to the timebase in the
-               encoder.*/
+            encoder.*/
             if (timebase_den & 1)timebase_num <<= 1;
             else timebase_den >>= 1;
 
             /*Note: We can't output an aspect ratio here because IVF doesn't
-               store one, and neither does VP8.
-              That will have to wait until these tools support WebM natively.*/
+            store one, and neither does VP8.
+            That will have to wait until these tools support WebM natively.*/
             sprintf(buffer, "YUV4MPEG2 C%s W%u H%u F%u:%u I%c\n",
                     "420jpeg", width, height, timebase_den, timebase_num, 'p');
             out_put_ivfdec(out, (unsigned char *)buffer, strlen(buffer), do_md5);

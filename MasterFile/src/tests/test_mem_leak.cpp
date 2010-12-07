@@ -8,21 +8,21 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     if (!(argc == 6 || argc == 7))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Mem Leak Check Exe>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Mem Leak Check Exe>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -140,7 +140,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -156,7 +156,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -166,7 +166,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -180,7 +180,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(argv[5]))
     {
-        tprintf("\nInput executable %s does not exist\n", argv[5]);
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[5]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -190,7 +190,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     /////////////////Make Sure ivf File Exists///////////////
     if (!vpxt_file_exists_check(argv[2]))
     {
-        tprintf("\nInput encode file %s does not exist\n", argv[2]);
+        tprintf(PRINT_BTH, "\nInput encode file %s does not exist\n", argv[2]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -214,7 +214,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file4.\n");
+                tprintf(PRINT_STD, "Cannot open out put file4.\n");
                 exit(1);
             }
 
@@ -231,7 +231,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file4.\n");
+                tprintf(PRINT_STD, "Cannot open out put file4.\n");
                 exit(1);
             }
 
@@ -248,7 +248,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                printf("Cannot open out put file4.\n");
+                tprintf(PRINT_STD, "Cannot open out put file4.\n");
                 exit(1);
             }
 
@@ -290,16 +290,16 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
 
     int fail = 0;
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     ifstream infile4(MemLeakCheckTxtStr.c_str());
 
     if (!infile4.good())
     {
         vpxt_formated_print(RESPRT, "MemLeakCheckOutput.txt not found - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -318,18 +318,18 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     if (bufferString4.compare(0, 24, "_currently Allocated= 0;") == 0)
     {
         vpxt_formated_print(RESPRT, "Memory Currently Allocated == 0 - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Memory Currently Allocated != 0 - %s - Failed", bufferString4.c_str());
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -337,7 +337,7 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

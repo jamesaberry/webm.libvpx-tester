@@ -8,20 +8,20 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     if (!(argc == 6 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -61,7 +61,7 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -77,7 +77,7 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -87,7 +87,7 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -120,14 +120,14 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
             QuantOutFile.append(num);
             QuantOutFile.append(".ivf");
 
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
 
             if (TestType != 2)
             {
                 PSNRArr[i] = vpxt_ivf_psnr(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
-                tprintf("\n");
+                tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
-                tprintf("\n");
+                tprintf(PRINT_BTH, "\n");
             }
 
             n = n + 8;
@@ -157,14 +157,14 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
                 return 2;
             }
 
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
 
             if (TestType != 2)
             {
                 PSNRArr[i] = vpxt_ivf_psnr(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
-                tprintf("\n");
+                tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
-                tprintf("\n");
+                tprintf(PRINT_BTH, "\n");
             }
 
             n = n + 8;
@@ -182,26 +182,26 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
         return 10;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     i = 0;
     int MaxQDisplayValue = 3;
     int fail = 0;
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     while (i < 7)
     {
         if (!(PSNRArr[i+1] <= PSNRArr[i]))
         {
             vpxt_formated_print(RESPRT, "MaxQ %2i %.2f > %.2f MaxQ %2i - Failed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "MaxQ %2i %.2f <= %.2f MaxQ %2i - Passed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
 
         i++;
@@ -216,13 +216,13 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
         if (MaxQArr[i] != -1)
         {
             vpxt_formated_print(RESPRT, "MaxQ value exceded for MaxQ %2i - frame %i - Failed", MaxQDisplayValue, MaxQArr[i]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "MaxQ value not exceded for MaxQ %2i - Passed", MaxQDisplayValue, MaxQArr[i]);
-            tprintf("\n");
+            tprintf(PRINT_BTH, "\n");
         }
 
         MaxQDisplayValue = MaxQDisplayValue + 8;
@@ -231,7 +231,7 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
 
     if (fail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -239,7 +239,7 @@ int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

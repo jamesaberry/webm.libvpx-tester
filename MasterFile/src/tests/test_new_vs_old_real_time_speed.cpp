@@ -8,15 +8,15 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     if (!(argc == 7 || argc == 6))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Target Bit Rate>\n"
-            "    <Exe File To Compare>\n"
-            "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Target Bit Rate>\n"
+                "    <Exe File To Compare>\n"
+                "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -108,7 +108,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -124,7 +124,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -134,7 +134,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -148,7 +148,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(argv[4]))
     {
-        tprintf("\nInput executable %s does not exist\n", argv[4]);
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[4]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,8 +167,8 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
         cpu_tick1 = vpxt_cpu_tick_return(outputVP8New.c_str(), 0);
         cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old2.c_str(), 0);
 
-        tprintf("\ncpu_tick1: %i\n", cpu_tick1);
-        tprintf("\ncpu_tick2: %i\n", cpu_tick2);
+        tprintf(PRINT_BTH, "\ncpu_tick1: %i\n", cpu_tick1);
+        tprintf(PRINT_BTH, "\ncpu_tick2: %i\n", cpu_tick2);
     }
     else
     {
@@ -184,13 +184,13 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
         }
 
         vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
-        printf("\nCompressing Old File\n");
+        tprintf(PRINT_STD, "\nCompressing Old File\n");
 
         fclose(fp);
 
         if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
         {
-            printf("Cannot open out put file: %s\n", TextfileString.c_str());
+            tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
             exit(1);
         }
 
@@ -200,8 +200,8 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
         unsigned int Time2 = vpxt_time_return(outputVP8Old2.c_str(), 0);
         cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old2.c_str(), 0);
 
-        tprintf("\n\nFile completed: Time in Microseconds: %i", Time2);
-        tprintf("\n Total CPU Ticks: %u\n", cpu_tick2);
+        tprintf(PRINT_BTH, "\n\nFile completed: Time in Microseconds: %i", Time2);
+        tprintf(PRINT_BTH, "\n Total CPU Ticks: %u\n", cpu_tick2);
     }
 
     //Create Compression only stop test short.
@@ -213,13 +213,13 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
         return 10;
     }
 
-    tprintf("\n\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\n\nResults:\n\n");
 
     if (cpu_tick1 > cpu_tick2)
     {
         vpxt_formated_print(RESPRT, "Old: %i is Faster than New: %i - Failed", cpu_tick2, cpu_tick1);
 
-        tprintf("\n\nFailed\n");
+        tprintf(PRINT_BTH, "\n\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -230,7 +230,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     {
         vpxt_formated_print(RESPRT, "New: %i is Faster than Old: %i - Passed", cpu_tick1, cpu_tick2);
 
-        tprintf("\n\nPassed\n");
+        tprintf(PRINT_BTH, "\n\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -240,7 +240,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     {
         vpxt_formated_print(RESPRT, "Files Took the same amount of time - Indeterminate");
 
-        tprintf("\n\nIndeterminate\n");
+        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

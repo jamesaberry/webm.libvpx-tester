@@ -8,12 +8,12 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     if (!(argc == 4 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Target Bit Rate>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Target Bit Rate>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -77,7 +77,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -93,7 +93,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -103,7 +103,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -193,7 +193,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
         return 10;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     float GoodSize1 = vpxt_ivf_data_rate(GoodOutFile1.c_str(), 1);
     float BestSize1 = vpxt_ivf_data_rate(BestOutFile1.c_str(), 1);
@@ -251,7 +251,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     vpxt_solve_quadradic(BestSize1, BestSize2, BestSize3, PSNRB1, PSNRB2, PSNRB3, BestA, BestB, BestC);
     float BestAreaVal = vpxt_area_under_quadradic(BestA, BestB, BestC, minCommon, maxCommon);
 
-    tprintf("\n\n"
+    tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"
             "\n"
             " Good Q\n"
@@ -275,37 +275,37 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
             , BestSize3, PSNRB3
            );
 
-    tprintf("Good Quality Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
-    tprintf("Best Quality Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
-    tprintf("\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
-    tprintf("Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
+    tprintf(PRINT_BTH, "Good Quality Curve: y = %fx^2 + %fx + %f\n", GoodA, GoodB, GoodC);
+    tprintf(PRINT_BTH, "Best Quality Curve: y = %fx^2 + %fx + %f\n", BestA, BestB, BestC);
+    tprintf(PRINT_BTH, "\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
+    tprintf(PRINT_BTH, "Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, BestAreaVal);
 
     int Pass = 0;
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (GoodAreaVal == BestAreaVal)
     {
         vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f == Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (BestAreaVal > GoodAreaVal)
     {
         vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f > Good Quality area under curve: %.2f - Passed", BestAreaVal, GoodAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         Pass = 1;
     }
 
     if (BestAreaVal < GoodAreaVal)
     {
         vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f < Good Quality area under curve: %.2f - Failed", BestAreaVal, GoodAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (Pass == 1)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -313,7 +313,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

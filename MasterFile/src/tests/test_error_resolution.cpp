@@ -8,19 +8,19 @@ int test_error_resolution(int argc, char *argv[], string WorkingDir, string File
     if (argc != 5)
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -65,7 +65,7 @@ int test_error_resolution(int argc, char *argv[], string WorkingDir, string File
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -82,7 +82,7 @@ int test_error_resolution(int argc, char *argv[], string WorkingDir, string File
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s\n", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s\n", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -123,7 +123,7 @@ int test_error_resolution(int argc, char *argv[], string WorkingDir, string File
         return 10;
     }
 
-    tprintf("\n");
+    tprintf(PRINT_BTH, "\n");
 
     double PSNRon;
     double PSNRoff;
@@ -133,14 +133,14 @@ int test_error_resolution(int argc, char *argv[], string WorkingDir, string File
 
     float PSRNPerc = 100 * vpxt_abs_float((PSNRon - PSNRoff) / PSNRoff);
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (PSRNPerc < 10.00)
     {
         vpxt_formated_print(RESPRT, "ErrorRes on PSNR is within 10%% of Error Res off PSNR: %.2f%% - Passed", PSRNPerc);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -149,9 +149,9 @@ int test_error_resolution(int argc, char *argv[], string WorkingDir, string File
     else
     {
         vpxt_formated_print(RESPRT, "ErrorRes on PSNR is not within 10%% of Error Res off PSNR: %.2f%% - Failed", PSRNPerc);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

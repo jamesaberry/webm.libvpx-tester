@@ -8,12 +8,12 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
     if (!(argc == 4 || argc == 5))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Target Bit Rate>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Target Bit Rate>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -75,7 +75,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -91,7 +91,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -101,7 +101,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -193,7 +193,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
         return 10;
     }
 
-    printf("\n");
+    tprintf(PRINT_STD, "\n");
 
     float SizeTwoPass1 = vpxt_ivf_data_rate(TwoPassOutFile1.c_str(), 1);
     float SizeOnePass1 = vpxt_ivf_data_rate(OnePassOutFile1.c_str(), 1);
@@ -256,7 +256,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
     vpxt_solve_quadradic(SizeOnePass1, SizeOnePass2, SizeOnePass3, PSNROnePass1, PSNROnePass2, PSNROnePass3, OnePassA, OnePassB, OnePassC);
     float OnePassAreaVal = vpxt_area_under_quadradic(OnePassA, OnePassB, OnePassC, minCommon, maxCommon);
 
-    tprintf("\n\n"
+    tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"
             "\n"
             " Two Pass\n"
@@ -280,35 +280,35 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
             , SizeOnePass3, PSNROnePass3
            );
 
-    tprintf("Two Pass Curve: y = %fx^2 + %fx + %f\n", TwoPassA, TwoPassB, TwoPassC);
-    tprintf("One Pass Curve: y = %fx^2 + %fx + %f\n", OnePassA, OnePassB, OnePassC);
-    tprintf("\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
-    tprintf("Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
+    tprintf(PRINT_BTH, "Two Pass Curve: y = %fx^2 + %fx + %f\n", TwoPassA, TwoPassB, TwoPassC);
+    tprintf(PRINT_BTH, "One Pass Curve: y = %fx^2 + %fx + %f\n", OnePassA, OnePassB, OnePassC);
+    tprintf(PRINT_BTH, "\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
+    tprintf(PRINT_BTH, "Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
 
-    tprintf("\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (TwoPassAreaVal == OnePassAreaVal)
     {
         vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f == One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (OnePassAreaVal < TwoPassAreaVal)
     {
         vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f > One Pass area under curve: %.2f - Passed", TwoPassAreaVal, OnePassAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         Pass = 1;
     }
 
     if (OnePassAreaVal > TwoPassAreaVal)
     {
         vpxt_formated_print(RESPRT, "Two Pass  area under curve: %.2f < One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (Pass == 1)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -316,7 +316,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string 
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

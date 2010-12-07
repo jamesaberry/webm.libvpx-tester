@@ -8,21 +8,21 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
     if (!(argc == 7 || argc == 6))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        printf(
-            "\n\n"
-            "    <Input File>\n"
-            "    <Mode>\n"
-            "          (0)Realtime/Live Encoding\n"
-            "          (1)Good Quality Fast Encoding\n"
-            "          (2)One Pass Best Quality\n"
-            "          (3)Two Pass - First Pass\n"
-            "          (4)Two Pass\n"
-            "          (5)Two Pass Best Quality\n"
-            "    <Target Bit Rate>\n"
-            "    <Version>\n"
-            "    <Optional Settings File>\n"
-            "\n"
-        );
+        tprintf(PRINT_STD,
+                "\n\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Version>\n"
+                "    <Optional Settings File>\n"
+                "\n"
+               );
         return 0;
     }
 
@@ -72,7 +72,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 
@@ -88,7 +88,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
     if (TestType == TEST_ONLY)
         print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BOTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -98,7 +98,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf("\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -173,37 +173,37 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
 
             if (CurrentDecFile >= 1)
             {
-                tprintf("\n");
+                tprintf(PRINT_BTH, "\n");
 
                 char CompFileIndexOutputChar[255];
                 char CompFile2[255];
                 vpxt_file_name(DecompressonVector[CurrentDecFile-1].c_str(), CompFileIndexOutputChar, 0);
                 vpxt_file_name(DecompressonVector[CurrentDecFile].c_str(), CompFile2, 0);
 
-                tprintf("\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
+                tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
                 int lngRC = vpxt_compare_ivf(DecompressonVector[CurrentDecFile-1].c_str(), DecompressonVector[CurrentDecFile].c_str());
 
                 if (lngRC >= 0)
                 {
-                    tprintf("\n * Fail: Files differ at frame: %i", lngRC);
+                    tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: %i", lngRC);
                     Fail = 1;
                 }
 
                 if (lngRC == -1)
                 {
-                    tprintf(" * Files are identical");
+                    tprintf(PRINT_BTH, " * Files are identical");
                 }
 
                 if (lngRC == -2)
                 {
-                    tprintf("\n * Fail: File 2 ends before File 1.\n");
+                    tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File 1.\n");
                     Fail = 1;
                 }
 
                 if (lngRC == -3)
                 {
-                    tprintf("\n * Fail: File 1 ends before File 2.\n");
+                    tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File 2.\n");
                     Fail = 1;
                 }
             }
@@ -211,7 +211,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
             CurrentDecFile++;
         }
 
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
@@ -230,7 +230,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
         string Output2Str = CPUDecOnlyWorksOut_CPU;
         Output2Str.append("NONE.ivf");
 
-        tprintf("\n\nDetected CPU capability: NONE");
+        tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
         unsigned int CPUTick1 = 0;
         totalms = vpxt_decompress_ivf_to_ivf_time_and_output(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str(), CPUTick1);
         DecompressonVector.push_back(Output2Str);
@@ -242,7 +242,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
             return 2;
         }
 
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
         int counterMax = 64;
         counter++;
@@ -276,7 +276,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
             if (CPUFound == 1)
             {
                 string CPUStr = "";
-                tprintf("\nDetected CPU capability: ");
+                tprintf(PRINT_BTH, "\nDetected CPU capability: ");
 
                 if ((Simd_Caps & HAS_MMX)    == Has_Check)
                     CPUStr = "mmx";
@@ -296,7 +296,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
                 if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
                     CPUStr = "sse4_1";
 
-                tprintf("%s", CPUStr.c_str());
+                tprintf(PRINT_BTH, "%s", CPUStr.c_str());
 
                 string CPUIDSTRING = "ON2_SIMD_CAPS=";
                 char CounterChar[10];
@@ -341,37 +341,37 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
                     vpxt_file_name(DecompressonVector[DecompressonVector.size()-1].c_str(), CompFileIndexOutputChar, 0);
                     vpxt_file_name(DecompressonVector[DecompressonVector.size()-2].c_str(), CompFile2, 0);
 
-                    tprintf("\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
+                    tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
                     int lngRC = vpxt_compare_ivf(DecompressonVector[DecompressonVector.size()-1].c_str(), DecompressonVector[DecompressonVector.size()-2].c_str());
 
                     if (lngRC >= 0)
                     {
-                        tprintf("\n * Fail: Files differ at frame: %i on file number %i", lngRC, i);
+                        tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: %i on file number %i", lngRC, i);
                         Fail = 1;
                     }
 
                     if (lngRC == -1)
                     {
-                        tprintf(" * Files are identical");
+                        tprintf(PRINT_BTH, " * Files are identical");
                     }
 
                     if (lngRC == -2)
                     {
-                        tprintf("\n * Fail: File 2 ends before File 1.\n");
+                        tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File 1.\n");
                         Fail = 1;
                     }
 
                     if (lngRC == -3)
                     {
-                        tprintf("\n * Fail: File 1 ends before File 2.\n");
+                        tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File 2.\n");
                         Fail = 1;
                     }
                 }
             }
 
             counter = ((counter + 1) * 2) - 1;
-            tprintf("\n\n");
+            tprintf(PRINT_BTH, "\n\n");
             i++;
         }
 
@@ -389,31 +389,31 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
     }
 
     int overallfail = 0;
-    tprintf("\nResults:\n\n");
+    tprintf(PRINT_BTH, "\nResults:\n\n");
 
     if (Fail == 0)
     {
         vpxt_formated_print(RESPRT, "All Files Identical - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (Fail == 1)
     {
         vpxt_formated_print(RESPRT, "All Files not Identical - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         overallfail = 1;
     }
 
     if (ModesRun == 7)
     {
         vpxt_formated_print(RESPRT, "All instruction sets run - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (ModesRun != 7)
     {
         vpxt_formated_print(RESPRT, "Not all instruction sets run - MinPassed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
 
         if (overallfail != 1) overallfail = 2;
     }
@@ -421,19 +421,19 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
     if (totalms != totalms2)
     {
         vpxt_formated_print(RESPRT, "Decompress times are not equal - Passed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
     }
 
     if (totalms == totalms2)
     {
         vpxt_formated_print(RESPRT, "CPU changes are not effecting the runtime - Failed");
-        tprintf("\n");
+        tprintf(PRINT_BTH, "\n");
         overallfail = 1;
     }
 
     if (overallfail == 2)
     {
-        tprintf("\nMinPassed\n");
+        tprintf(PRINT_BTH, "\nMinPassed\n");
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -442,7 +442,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
 
     if (overallfail == 0)
     {
-        tprintf("\nPassed\n");
+        tprintf(PRINT_BTH, "\nPassed\n");
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -450,7 +450,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
     }
     else
     {
-        tprintf("\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

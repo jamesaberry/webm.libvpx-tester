@@ -7,10 +7,10 @@ int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
 
     if (argc != 3)
     {
-        printf("\n"
-               "  RandComp\n\n"
-               "    <Input File>\n\n"
-              );
+        tprintf(PRINT_STD, "\n"
+                "  RandComp\n\n"
+                "    <Input File>\n\n"
+               );
         return 0;
     }
 
@@ -78,7 +78,7 @@ int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int T
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        printf("Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
         exit(1);
     }
 

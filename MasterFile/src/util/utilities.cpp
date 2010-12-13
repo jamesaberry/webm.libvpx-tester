@@ -5438,6 +5438,8 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
     int                      arg_use_i420 = 1;
     unsigned long            cx_time = 0;
 
+    struct vpx_rational      arg_framerate = {30, 1};
+
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
 
@@ -5714,6 +5716,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
             struct vpx_usec_timer timer;
+            int64_t frame_start, next_frame_start;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -5738,8 +5741,14 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             else
                 frame_avail = 0;
 
+            frame_start = (cfg.g_timebase.den * (int64_t)(frames_in - 1)
+                           * arg_framerate.den) / cfg.g_timebase.num / arg_framerate.num;
+            next_frame_start = (cfg.g_timebase.den * (int64_t)(frames_in)
+                                * arg_framerate.den)
+                               / cfg.g_timebase.num / arg_framerate.num;
+
             vpx_usec_timer_start(&timer);
-            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, 0, arg_deadline);
+            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, frame_start, next_frame_start - frame_start, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
             ctx_exit_on_error(&encoder, "Failed to encode frame");
@@ -5881,6 +5890,8 @@ int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2,
     int                      arg_use_i420 = 1;
     double total_cpu_time_used = 0;
     unsigned long          cx_time = 0;
+
+    struct vpx_rational      arg_framerate = {30, 1};
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -6118,6 +6129,7 @@ int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2,
             const vpx_codec_cx_pkt_t *pkt;
             clock_t start, end;
             struct vpx_usec_timer timer;
+            int64_t frame_start, next_frame_start;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -6142,9 +6154,14 @@ int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2,
             else
                 frame_avail = 0;
 
+            frame_start = (cfg.g_timebase.den * (int64_t)(frames_in - 1)
+                           * arg_framerate.den) / cfg.g_timebase.num / arg_framerate.num;
+            next_frame_start = (cfg.g_timebase.den * (int64_t)(frames_in)
+                                * arg_framerate.den)
+                               / cfg.g_timebase.num / arg_framerate.num;
+
             vpx_usec_timer_start(&timer);
-            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2,
-                             2, 0, arg_deadline);
+            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, frame_start, next_frame_start - frame_start, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
 
@@ -6233,6 +6250,7 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
     unsigned long            cx_time = 0;
     unsigned int total_cpu_time_used = 0;
     int framesoutrec = 0;
+    struct vpx_rational      arg_framerate = {30, 1};
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, 0);
@@ -6468,6 +6486,7 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
             const vpx_codec_cx_pkt_t *pkt;
             unsigned int start, end;
             struct vpx_usec_timer timer;
+            int64_t frame_start, next_frame_start;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -6492,9 +6511,14 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
             else
                 frame_avail = 0;
 
-            start = vpxt_get_cpu_tick();
+            frame_start = (cfg.g_timebase.den * (int64_t)(frames_in - 1)
+                           * arg_framerate.den) / cfg.g_timebase.num / arg_framerate.num;
+            next_frame_start = (cfg.g_timebase.den * (int64_t)(frames_in)
+                                * arg_framerate.den)
+                               / cfg.g_timebase.num / arg_framerate.num;
+
             vpx_usec_timer_start(&timer);
-            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, 0, arg_deadline);
+            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, frame_start, next_frame_start - frame_start, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
             end = vpxt_get_cpu_tick();
@@ -6627,6 +6651,7 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
     int                  flags = 0;
     unsigned long          cx_time = 0;
 
+    struct vpx_rational      arg_framerate = {30, 1};
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -6906,6 +6931,7 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
             struct vpx_usec_timer timer;
+            int64_t frame_start, next_frame_start;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -6943,9 +6969,14 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
                 flags &= ~VPX_EFLAG_FORCE_KF;
             }
 
+            frame_start = (cfg.g_timebase.den * (int64_t)(frames_in - 1)
+                           * arg_framerate.den) / cfg.g_timebase.num / arg_framerate.num;
+            next_frame_start = (cfg.g_timebase.den * (int64_t)(frames_in)
+                                * arg_framerate.den)
+                               / cfg.g_timebase.num / arg_framerate.num;
 
             vpx_usec_timer_start(&timer);
-            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2, 2, flags, arg_deadline);
+            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, frame_start, next_frame_start - frame_start, flags, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
 
@@ -7073,6 +7104,7 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
     double total_cpu_time_used = 0;
     unsigned long          cx_time = 0;
 
+    struct vpx_rational      arg_framerate = {30, 1};
 
     //outfile = encoded ivf file
     void *out;//all raw preview frames
@@ -7453,6 +7485,7 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
             struct vpx_usec_timer timer;
+            int64_t frame_start, next_frame_start;
 
             if (!arg_limit || frames_in < arg_limit)
             {
@@ -7477,9 +7510,14 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
             else
                 frame_avail = 0;
 
+            frame_start = (cfg.g_timebase.den * (int64_t)(frames_in - 1)
+                           * arg_framerate.den) / cfg.g_timebase.num / arg_framerate.num;
+            next_frame_start = (cfg.g_timebase.den * (int64_t)(frames_in)
+                                * arg_framerate.den)
+                               / cfg.g_timebase.num / arg_framerate.num;
+
             vpx_usec_timer_start(&timer);
-            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2,
-                             2, 0, arg_deadline);
+            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, frame_start, next_frame_start - frame_start, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
             ctx_exit_on_error(&encoder, "Failed to encode frame");

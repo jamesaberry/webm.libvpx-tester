@@ -81,7 +81,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 #if defined(_WIN32)
     {
         Program.append(ExeInput);
-        Program.append("\" \"");
+        Program.append("\" compress \"");
         Program.append(input);
         Program.append("\" \"");
         Program.append(OldEncFile);
@@ -98,7 +98,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
 #else
     {
         Program.append(ExeInput);
-        Program.append("\' \'");
+        Program.append("\' compress \'");
         Program.append(input);
         Program.append("\' \'");
         Program.append(OldEncFile);

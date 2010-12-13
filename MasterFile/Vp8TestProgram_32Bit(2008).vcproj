@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Codec Tests"
+	Name="libvpx-tester-32bit"
 	ProjectGUID="{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}"
 	RootNamespace="on2plugin7test"
 	Keyword="Win32Proj"
@@ -299,11 +299,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\tests\test_new_vs_old_psnr.cpp"
+					RelativePath=".\src\tests\test_new_vs_old_enc_cpu_tick.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\tests\test_new_vs_old_real_time_speed.cpp"
+					RelativePath=".\src\tests\test_new_vs_old_psnr.cpp"
 					>
 				</File>
 				<File
@@ -427,12 +427,6 @@
 					</File>
 				</Filter>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
 		</Filter>
 	</Files>
 	<Globals>

@@ -39,7 +39,7 @@ SRC = \
    $(TestsDir)/test_min_quantizer.cpp  \
    $(TestsDir)/test_multithreaded.cpp  \
    $(TestsDir)/test_new_vs_old_psnr.cpp  \
-   $(TestsDir)/test_new_vs_old_real_time_speed.cpp  \
+   $(TestsDir)/test_new_vs_old_enc_cpu_tick.cpp  \
    $(TestsDir)/test_noise_sensitivity.cpp  \
    $(TestsDir)/test_one_pass_vs_two_pass.cpp  \
    $(TestsDir)/test_play_alternate.cpp  \
@@ -94,7 +94,7 @@ SRCOBJ = \
    $(OBJDIR)/test_min_quantizer.o  \
    $(OBJDIR)/test_multithreaded.o  \
    $(OBJDIR)/test_new_vs_old_psnr.o  \
-   $(OBJDIR)/test_new_vs_old_real_time_speed.o  \
+   $(OBJDIR)/test_new_vs_old_enc_cpu_tick.o  \
    $(OBJDIR)/test_noise_sensitivity.o  \
    $(OBJDIR)/test_one_pass_vs_two_pass.o  \
    $(OBJDIR)/test_play_alternate.o  \
@@ -217,8 +217,8 @@ $(OBJDIR)/test_multithreaded.o: $(TestsDir)/test_multithreaded.cpp
 $(OBJDIR)/test_new_vs_old_psnr.o: $(TestsDir)/test_new_vs_old_psnr.cpp
 	$(GPP) -c $(TestsDir)/test_new_vs_old_psnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_psnr.o
 
-$(OBJDIR)/test_new_vs_old_real_time_speed.o: $(TestsDir)/test_new_vs_old_real_time_speed.cpp
-	$(GPP) -c $(TestsDir)/test_new_vs_old_real_time_speed.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_real_time_speed.o
+$(OBJDIR)/test_new_vs_old_enc_cpu_tick.o: $(TestsDir)/test_new_vs_old_enc_cpu_tick.cpp
+	$(GPP) -c $(TestsDir)/test_new_vs_old_enc_cpu_tick.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_enc_cpu_tick.o
 
 $(OBJDIR)/test_noise_sensitivity.o: $(TestsDir)/test_noise_sensitivity.cpp
 	$(GPP) -c $(TestsDir)/test_noise_sensitivity.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_noise_sensitivity.o

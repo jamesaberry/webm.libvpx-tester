@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Codec Tests"
+	Name="libvpx-teser-debug-plugin-32bit"
 	ProjectGUID="{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}"
 	RootNamespace="on2plugin7test"
 	Keyword="Win32Proj"
@@ -235,50 +235,6 @@
 					</File>
 				</Filter>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath=".\HeaderFiles\ivf.h"
-				>
-			</File>
-			<File
-				RelativePath=".\HeaderFiles\onyx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\HeaderFiles\onyxd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\HeaderFiles\ppflags.h"
-				>
-			</File>
-			<File
-				RelativePath=".\HeaderFiles\type_aliases.h"
-				>
-			</File>
-			<Filter
-				Name="VP8"
-				>
-				<File
-					RelativePath=".\HeaderFiles\header.h"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-		</Filter>
-		<Filter
-			Name="CompIVF"
-			>
 		</Filter>
 	</Files>
 	<Globals>

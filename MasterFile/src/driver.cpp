@@ -163,7 +163,7 @@ void vpxt_on_error_output()
     "  (22) test_min_quantizer <input file> <compression mode> <target bit rate>\n"
     "  (23) test_multithreaded <input file> <compression mode> <target bit rate> <number of cores to use>\n"
     "  (24) test_new_vs_old_psnr <input file> <compression mode> <target bit rate> <old_release.exe> <par version>\n"
-    "  (25) test_new_vs_old_real_time_speed <input file> <target bit rate> <old_release.exe> <par version>\n"
+    "  (25) test_new_vs_old_enc_cpu_tick <input file> <target bit rate> <old_release.exe> <par version>\n"
     "  (26) test_noise_sensitivity <input file> <compression mode> <target bit rate>\n"
     "  (27) test_one_pass_vs_two_pass <input file> <target bit rate>\n"
     "  (28) test_play_alternate <input file> <compression mode> <target bit rate>\n"
@@ -209,7 +209,7 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "  (22) test_min_quantizer                   DispAltRefFrames\n");
     tprintf(PRINT_STD, "  (23) test_multithreaded                   \n");
     tprintf(PRINT_STD, "  (24) test_new_vs_old_psnr                 CropRawIVF\n");
-    tprintf(PRINT_STD, "  (25) test_new_vs_old_real_time_speed      CutIVF\n");
+    tprintf(PRINT_STD, "  (25) test_new_vs_old_enc_cpu_tick         CutIVF\n");
     tprintf(PRINT_STD, "  (26) test_noise_sensitivity               PasteIVF\n");
     tprintf(PRINT_STD, "  (27) test_one_pass_vs_two_pass            \n");
     tprintf(PRINT_STD, "  (28) test_play_alternate                  PlayDecIVF\n");
@@ -261,7 +261,7 @@ void write_32bit_quick_test(string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf\n", "test_extra_file", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_good_vs_best", slashChar(), slashChar());
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
-    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_real_time_speed", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_32Bit.exe@2\n", "test_new_vs_old_enc_cpu_tick", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cTestVectors\n", "test_test_vector", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
@@ -457,7 +457,7 @@ void write_64bit_quick_test(string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf\n", "test_extra_file", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_good_vs_best", slashChar(), slashChar());
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
-    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_real_time_speed", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@VP8vOldest_PlugIn_RLib_RMode_64Bit.exe@2\n", "test_new_vs_old_enc_cpu_tick", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cTestVectors\n", "test_test_vector", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
@@ -1097,7 +1097,7 @@ void vpxt_test_help(int argc, char *argv[], string WorkingDir)
         vpxt_formated_print(HLPPRT, "The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. It then computes and records PSNR values for each.  If new PSNR is greater than olds PSNR or is at least within 1% of the old; the test passes.");
     }
 
-    if (selector == NVORTNUM)
+    if (selector == NVOECPTK)
     {
         tprintf(PRINT_STD, "\nUse:\n\n"
                 "%2i NewVsOldRealTimeSpeed \n\n"
@@ -1105,7 +1105,7 @@ void vpxt_test_help(int argc, char *argv[], string WorkingDir)
                 "    <Target Bit Rate>\n"
                 "    <Exe File To Compare>\n"
                 "     <Optional Settings File>\n"
-                , NVORTNUM);
+                , NVOECPTK);
 
         vpxt_formated_print(HLPPRT, "The test creates two compressions the first using the newest version of VP8 and the second using a separate executable built using an older version. The test records the time that each compression took.  If the new compressions time is at least 10% faster than the old compressions time; the test passes.");
     }
@@ -1871,8 +1871,8 @@ void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile)
         if (TestTracker == NVOPSNUM)
             TestTrackerName = "Test_New_Vs_Old_Psnr";
 
-        if (TestTracker == NVORTNUM)
-            TestTrackerName = "Test_New_Vs_Old_Real_Time_Speed";
+        if (TestTracker == NVOECPTK)
+            TestTrackerName = "test_new_vs_old_enc_cpu_tick";
 
         if (TestTracker == NOISENUM)
             TestTrackerName = "Test_Noise_Sensitivity";
@@ -2105,8 +2105,8 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
         if (TestTracker == NVOPSNUM)
             TestTrackerName = "Test_New_Vs_Old_Psnr";
 
-        if (TestTracker == NVORTNUM)
-            TestTrackerName = "Test_New_Vs_Old_Real_Time_Speed";
+        if (TestTracker == NVOECPTK)
+            TestTrackerName = "test_new_vs_old_enc_cpu_tick";
 
         if (TestTracker == NOISENUM)
             TestTrackerName = "Test_Noise_Sensitivity";
@@ -3395,9 +3395,9 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (selector == NVORTNUM)
+    if (selector == NVOECPTK)
     {
-        return test_new_vs_old_real_time_speed(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_new_vs_old_enc_cpu_tick(argc, argv, WorkingDir, EmptyAr, 1);
     }
 
     if (selector == NOISENUM)

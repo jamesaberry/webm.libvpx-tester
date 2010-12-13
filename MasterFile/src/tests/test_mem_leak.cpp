@@ -2,7 +2,7 @@
 
 int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    //Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
+    //Needs Debug.exe
     char *MyDir = "test_mem_leak";
 
     if (!(argc == 6 || argc == 7))
@@ -46,83 +46,89 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     //Get the exe's parent folder From argv[0] Paths for both exes will be the same
     vpxt_folder_name(argv[0], ExeCharMemLeak);
 
+    /////////////////////////////////////////////////
+    string MemLeakCheckIVFDECStr = CurTestDirStr;
+    MemLeakCheckIVFDECStr.append(slashCharStr());
+    MemLeakCheckIVFDECStr.append(MyDir);
+    MemLeakCheckIVFDECStr.append("_decompression.ivf");
+    /////////////////////////////////////////////////
+
     string MemLeakCheckIVFStr = CurTestDirStr;
     MemLeakCheckIVFStr.append(slashCharStr());
     MemLeakCheckIVFStr.append(MyDir);
     MemLeakCheckIVFStr.append("_compression.ivf");
 
-    string MemLeakCheckTxtStr = CurTestDirStr;
-    MemLeakCheckTxtStr.append(slashCharStr());
-    MemLeakCheckTxtStr.append(MyDir);
-    MemLeakCheckTxtStr.append("_compression_output.txt");
+    string EncMemLeakCheckTxtStr = CurTestDirStr;
+    EncMemLeakCheckTxtStr.append(slashCharStr());
+    EncMemLeakCheckTxtStr.append(MyDir);
+    EncMemLeakCheckTxtStr.append("_compression_memory_summary.txt");
+
+    string DecMemLeakCheckTxtStr = CurTestDirStr;
+    DecMemLeakCheckTxtStr.append(slashCharStr());
+    DecMemLeakCheckTxtStr.append(MyDir);
+    DecMemLeakCheckTxtStr.append("_decompression_memory_summary.txt");
 
     string MemLeakCheckParFileStr = CurTestDirStr;
     MemLeakCheckParFileStr.append(slashCharStr());
     MemLeakCheckParFileStr.append(MyDir);
     MemLeakCheckParFileStr.append("_compression_parameter_file.txt");
 
-    string ExeCharMemLeakStr = ExeCharMemLeak;
-    string ProgramMemLeakCheckStr = "";
-    string MemLeakCheckTXT_FPStr = "";
-    string ProgramMemLeakCheck_FirstPassStr = "";
+    string ProgramEncMemLeakCheckStr = "";
+    string ProgramDecMemLeakCheckStr = "";
 
 #if defined(_WIN32)
     {
-        ProgramMemLeakCheckStr = "\"\"";
-        ProgramMemLeakCheckStr.append(ExeCharMemLeakStr.c_str());  // Exe Path
-        ProgramMemLeakCheckStr.append(MemLeakExe);         // Exe Name
-        ProgramMemLeakCheckStr.append("\" \"");
-        ProgramMemLeakCheckStr.append(input);              // Input
-        ProgramMemLeakCheckStr.append("\" \"");
-        ProgramMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
-        ProgramMemLeakCheckStr.append("\" 8 \"");
-        ProgramMemLeakCheckStr.append(MemLeakCheckParFileStr);        // Par File
-        ProgramMemLeakCheckStr.append("\" 4 \"");
-        ProgramMemLeakCheckStr.append(MemLeakCheckTxtStr.c_str());        // Mem Output File
-        ProgramMemLeakCheckStr.append("\"\"");
-        MemLeakCheckTXT_FPStr.append(slashCharStr());
-        MemLeakCheckTXT_FPStr.append("MemLeakCheckOutput_FP.txt");
-        ProgramMemLeakCheck_FirstPassStr = "\"\"";
-        ProgramMemLeakCheck_FirstPassStr.append(ExeCharMemLeakStr); // Exe Path
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakExe);        // Exe Name
-        ProgramMemLeakCheck_FirstPassStr.append("\" \"");
-        ProgramMemLeakCheck_FirstPassStr.append(input);             // Input
-        ProgramMemLeakCheck_FirstPassStr.append("\" \"");
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakCheckIVFStr.c_str());       // Output
-        ProgramMemLeakCheck_FirstPassStr.append("\" 8 \"");
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakCheckParFileStr);       // Par File
-        ProgramMemLeakCheck_FirstPassStr.append("\" 4 \"");
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakCheckTXT_FPStr.c_str());      // Mem Output File
-        ProgramMemLeakCheck_FirstPassStr.append("\"\"");
+        //compression
+        ProgramEncMemLeakCheckStr = "\"\"";
+        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
+        ProgramEncMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramEncMemLeakCheckStr.append("\" memcompress \"");
+        ProgramEncMemLeakCheckStr.append(input);              // Input
+        ProgramEncMemLeakCheckStr.append("\" \"");
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
+        ProgramEncMemLeakCheckStr.append("\" 8 \"");
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckParFileStr.c_str());        // Par File
+        ProgramEncMemLeakCheckStr.append("\" 0 \"");
+        ProgramEncMemLeakCheckStr.append(EncMemLeakCheckTxtStr.c_str());        // Mem Output File
+        ProgramEncMemLeakCheckStr.append("\"\"");
+        //decompression
+        ProgramDecMemLeakCheckStr = "\"\"";
+        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
+        ProgramDecMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramDecMemLeakCheckStr.append("\" memdecompress \"");
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());              // Input
+        ProgramDecMemLeakCheckStr.append("\" \"");
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFDECStr.c_str());        // Output
+        ProgramDecMemLeakCheckStr.append("\" \"");
+        ProgramDecMemLeakCheckStr.append(DecMemLeakCheckTxtStr.c_str());        // Par File
+        ProgramDecMemLeakCheckStr.append("\"\"");
     }
 #else
     {
-        ProgramMemLeakCheckStr = "\"";
-        ProgramMemLeakCheckStr.append(ExeCharMemLeakStr.c_str());  // Exe Path
-        ProgramMemLeakCheckStr.append(MemLeakExe);         // Exe Name
-        ProgramMemLeakCheckStr.append("\" \"");
-        ProgramMemLeakCheckStr.append(input);              // Input
-        ProgramMemLeakCheckStr.append("\" \"");
-        ProgramMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
-        ProgramMemLeakCheckStr.append("\" 8 \"");
-        ProgramMemLeakCheckStr.append(MemLeakCheckParFileStr);        // Par File
-        ProgramMemLeakCheckStr.append("\" 4 \"");
-        ProgramMemLeakCheckStr.append(MemLeakCheckTxtStr.c_str());        // Mem Output File
-        ProgramMemLeakCheckStr.append("\"");
-        MemLeakCheckTXT_FPStr.append(slashCharStr());
-        MemLeakCheckTXT_FPStr.append("MemLeakCheckOutput_FP.txt");
-        ProgramMemLeakCheck_FirstPassStr = "\"";
-        ProgramMemLeakCheck_FirstPassStr.append(ExeCharMemLeakStr); // Exe Path
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakExe);            // Exe Name
-        ProgramMemLeakCheck_FirstPassStr.append("\" \"");
-        ProgramMemLeakCheck_FirstPassStr.append(input);             // Input
-        ProgramMemLeakCheck_FirstPassStr.append("\" \"");
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakCheckIVFStr.c_str());       // Output
-        ProgramMemLeakCheck_FirstPassStr.append("\" 8 \"");
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakCheckParFileStr);       // Par File
-        ProgramMemLeakCheck_FirstPassStr.append("\" 4 \"");
-        ProgramMemLeakCheck_FirstPassStr.append(MemLeakCheckTXT_FPStr.c_str());      // Mem Output File
-        ProgramMemLeakCheck_FirstPassStr.append("\"");
+        //compression
+        ProgramEncMemLeakCheckStr = "\"";
+        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
+        ProgramEncMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramEncMemLeakCheckStr.append("\" memcompress \"");
+        ProgramEncMemLeakCheckStr.append(input);              // Input
+        ProgramEncMemLeakCheckStr.append("\" \"");
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
+        ProgramEncMemLeakCheckStr.append("\" 8 \"");
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckParFileStr.c_str());        // Par File
+        ProgramEncMemLeakCheckStr.append("\" 0 \"");
+        ProgramEncMemLeakCheckStr.append(EncMemLeakCheckTxtStr.c_str());        // Mem Output File
+        ProgramEncMemLeakCheckStr.append("\"");
+        //decompression
+        ProgramDecMemLeakCheckStr = "\"";
+        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
+        ProgramDecMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramDecMemLeakCheckStr.append("\" memdecompress \"");
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());              // Input
+        ProgramDecMemLeakCheckStr.append("\" \"");
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFDECStr.c_str());        // Output
+        ProgramDecMemLeakCheckStr.append("\" \"");
+        ProgramDecMemLeakCheckStr.append(DecMemLeakCheckTxtStr.c_str());        // Par File
+        ProgramDecMemLeakCheckStr.append("\"");
     }
 #endif
 
@@ -208,75 +214,20 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
     }
     else
     {
-        if (Mode == 0)
+        fclose(fp);
+
+        if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
         {
-            fclose(fp);
-
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put file4.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-
-            opt.Mode = MODE_REALTIME;
-            vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
-            vpxt_run_exe(ProgramMemLeakCheckStr.c_str());
+            tprintf(PRINT_STD, "Cannot open out put file4.\n");
+            exit(1);
         }
 
-        if (Mode == 1)
-        {
-            fclose(fp);
+        fprintf(stderr, " ");
 
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put file4.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-
-            opt.Mode = MODE_GOODQUALITY;
-            vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
-            vpxt_run_exe(ProgramMemLeakCheckStr.c_str());
-        }
-
-        if (Mode == 2)
-        {
-            fclose(fp);
-
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put file4.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-
-            opt.Mode = MODE_BESTQUALITY;
-            vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
-            vpxt_run_exe(ProgramMemLeakCheckStr.c_str());
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.Mode = MODE_SECONDPASS;
-            vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
-            vpxt_run_exe(ProgramMemLeakCheckStr.c_str());
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-            vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
-            vpxt_run_exe(ProgramMemLeakCheckStr.c_str());
-        }
-
+        opt.Mode = Mode;
+        vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
+        vpxt_run_exe(ProgramEncMemLeakCheckStr.c_str());
+        vpxt_run_exe(ProgramDecMemLeakCheckStr.c_str());
     }
 
     //Create Compression only stop test short.
@@ -292,39 +243,47 @@ int test_mem_leak(int argc, char *argv[], string WorkingDir, string FilesAr[], i
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    ifstream infile4(MemLeakCheckTxtStr.c_str());
+    string MemCompressResults = "";
+    string MemDecompressResults = "";
 
-    if (!infile4.good())
+    if (vpxt_check_mem_state(EncMemLeakCheckTxtStr, MemCompressResults) == -1)
     {
-        vpxt_formated_print(RESPRT, "MemLeakCheckOutput.txt not found - Failed");
-        tprintf(PRINT_BTH, "\n");
-
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-        return 0;
-    }
-
-    char buffer4[256];
-
-    infile4.getline(buffer4, 256);
-    infile4.getline(buffer4, 256);
-    infile4.getline(buffer4, 256);
-    infile4.getline(buffer4, 256);
-
-    string bufferString4 = buffer4;
-
-    if (bufferString4.compare(0, 24, "_currently Allocated= 0;") == 0)
-    {
-        vpxt_formated_print(RESPRT, "Memory Currently Allocated == 0 - Passed");
-        tprintf(PRINT_BTH, "\n");
+        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr);
+        fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Memory Currently Allocated != 0 - %s - Failed", bufferString4.c_str());
-        tprintf(PRINT_BTH, "\n");
+        if (MemCompressResults.compare(0, 24, "_currently Allocated= 0;") == 0)
+        {
+            vpxt_formated_print(RESPRT, "Compression Memory Currently Allocated == 0 - Passed");
+            tprintf(PRINT_BTH, "\n");
+        }
+        else
+        {
+            vpxt_formated_print(RESPRT, "Compression Memory Currently Allocated != 0 - %s - Failed", MemCompressResults.c_str());
+            tprintf(PRINT_BTH, "\n");
+            fail = 1;
+        }
+    }
+
+    if (vpxt_check_mem_state(DecMemLeakCheckTxtStr, MemDecompressResults) == -1)
+    {
+        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr);
         fail = 1;
+    }
+    else
+    {
+        if (MemDecompressResults.compare(0, 24, "_currently Allocated= 0;") == 0)
+        {
+            vpxt_formated_print(RESPRT, "Decompression Memory Currently Allocated == 0 - Passed");
+            tprintf(PRINT_BTH, "\n");
+        }
+        else
+        {
+            vpxt_formated_print(RESPRT, "Decompression Memory Currently Allocated != 0 - %s - Failed", MemDecompressResults.c_str());
+            tprintf(PRINT_BTH, "\n");
+            fail = 1;
+        }
     }
 
     if (fail == 0)

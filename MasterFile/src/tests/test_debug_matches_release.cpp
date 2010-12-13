@@ -2,7 +2,7 @@
 
 int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    //Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
+    //Needs Debug.exe and Release.exe
     char *MyDir = "test_debug_matches_release";
 
     if (!(argc == 7 || argc == 8))
@@ -53,15 +53,25 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     string ReleaseExeLoc = ExeCharDebugReleaseString;
     ReleaseExeLoc.append(ExeInputRelease);
 
-    string DebugOutput = CurTestDirStr;
-    DebugOutput.append(slashCharStr());
-    DebugOutput.append(MyDir);
-    DebugOutput.append("_compression_debug.ivf");
+    string DebugOutputEnc = CurTestDirStr;
+    DebugOutputEnc.append(slashCharStr());
+    DebugOutputEnc.append(MyDir);
+    DebugOutputEnc.append("_compression_debug.ivf");
 
-    string ReleaseOutput = CurTestDirStr;
-    ReleaseOutput.append(slashCharStr());
-    ReleaseOutput.append(MyDir);
-    ReleaseOutput.append("_compression_release.ivf");
+    string ReleaseOutputEnc = CurTestDirStr;
+    ReleaseOutputEnc.append(slashCharStr());
+    ReleaseOutputEnc.append(MyDir);
+    ReleaseOutputEnc.append("_compression_release.ivf");
+
+    string DebugOutputDec = CurTestDirStr;
+    DebugOutputDec.append(slashCharStr());
+    DebugOutputDec.append(MyDir);
+    DebugOutputDec.append("_decompression_debug.ivf");
+
+    string ReleaseOutputDec = CurTestDirStr;
+    ReleaseOutputDec.append(slashCharStr());
+    ReleaseOutputDec.append(MyDir);
+    ReleaseOutputDec.append("_decompression_release.ivf");
 
     string ParFileDebug = CurTestDirStr;
     ParFileDebug.append(slashCharStr());
@@ -73,62 +83,96 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     ParFileRelease.append(MyDir);
     ParFileRelease.append("_parameter_file_release.txt");
 
-    string ProgramDebug = ExeCharDebugReleaseString;
-    string ProgramRelease = ExeCharDebugReleaseString;
+    string ProgramDebugEnc = ExeCharDebugReleaseString;
+    string ProgramReleaseEnc = ExeCharDebugReleaseString;
+    string ProgramDebugDec = ExeCharDebugReleaseString;
+    string ProgramReleaseDec = ExeCharDebugReleaseString;
 
 #if defined(_WIN32)
     {
-        ProgramDebug.append(ExeInputRelease);
-        ProgramDebug.append("\" \"");
-        ProgramDebug.append(input);
-        ProgramDebug.append("\" \"");
-        ProgramDebug.append(DebugOutput);
-        ProgramDebug.append("\" 8");
-        ProgramDebug.append(" \"");
-        ProgramDebug.append(ParFileDebug);
-        ProgramDebug.append("\"");
-        ProgramDebug.append(" 0");
-        ProgramDebug.append("\"");
-        ProgramRelease.append(ExeInputDebug);
-        ProgramRelease.append("\" \"");
-        ProgramRelease.append(input);
-        ProgramRelease.append("\" \"");
-        ProgramRelease.append(ReleaseOutput);
-        ProgramRelease.append("\" 8");
-        ProgramRelease.append(" \"");
-        ProgramRelease.append(ParFileRelease);
-        ProgramRelease.append("\"");
-        ProgramRelease.append(" 0");
-        ProgramRelease.append("\"");
+        ProgramDebugEnc.insert(0, "\"\"");
+        ProgramDebugEnc.append(ExeInputRelease);
+        ProgramDebugEnc.append("\" compress \"");
+        ProgramDebugEnc.append(input);
+        ProgramDebugEnc.append("\" \"");
+        ProgramDebugEnc.append(DebugOutputEnc);
+        ProgramDebugEnc.append("\" 8");
+        ProgramDebugEnc.append(" \"");
+        ProgramDebugEnc.append(ParFileDebug);
+        ProgramDebugEnc.append("\"");
+        ProgramDebugEnc.append(" 0");
+        ProgramDebugEnc.append("\"");
 
-        ProgramDebug.insert(0, "\"\"");
-        ProgramRelease.insert(0, "\"\"");
+        ProgramDebugDec.insert(0, "\"\"");
+        ProgramDebugDec.append(ExeInputRelease);
+        ProgramDebugDec.append("\" decompress \"");
+        ProgramDebugDec.append(DebugOutputEnc);
+        ProgramDebugDec.append("\" \"");
+        ProgramDebugDec.append(DebugOutputDec);
+        ProgramDebugDec.append("\"\" ");
+
+        ProgramReleaseEnc.insert(0, "\"\"");
+        ProgramReleaseEnc.append(ExeInputDebug);
+        ProgramReleaseEnc.append("\" compress \"");
+        ProgramReleaseEnc.append(input);
+        ProgramReleaseEnc.append("\" \"");
+        ProgramReleaseEnc.append(ReleaseOutputEnc);
+        ProgramReleaseEnc.append("\" 8");
+        ProgramReleaseEnc.append(" \"");
+        ProgramReleaseEnc.append(ParFileRelease);
+        ProgramReleaseEnc.append("\"");
+        ProgramReleaseEnc.append(" 0");
+        ProgramReleaseEnc.append("\"");
+
+        ProgramReleaseDec.insert(0, "\"\"");
+        ProgramReleaseDec.append(ExeInputDebug);
+        ProgramReleaseDec.append("\" decompress \"");
+        ProgramReleaseDec.append(ReleaseOutputEnc);
+        ProgramReleaseDec.append("\" \"");
+        ProgramReleaseDec.append(ReleaseOutputDec);
+        ProgramReleaseDec.append("\"\" ");
     }
 #else
     {
-        ProgramDebug.append(ExeInputRelease);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(input);
-        ProgramDebug.append("\' \'");
-        ProgramDebug.append(DebugOutput);
-        ProgramDebug.append("\' 8");
-        ProgramDebug.append(" \'");
-        ProgramDebug.append(ParFileDebug);
-        ProgramDebug.append("\'");
-        ProgramDebug.append(" 0");
-        ProgramRelease.append(ExeInputDebug);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(input);
-        ProgramRelease.append("\' \'");
-        ProgramRelease.append(ReleaseOutput);
-        ProgramRelease.append("\' 8");
-        ProgramRelease.append(" \'");
-        ProgramRelease.append(ParFileRelease);
-        ProgramRelease.append("\'");
-        ProgramRelease.append(" 0");
+        ProgramDebugEnc.insert(0, "\'");
+        ProgramDebugEnc.append(ExeInputRelease);
+        ProgramDebugEnc.append("\' compress \'");
+        ProgramDebugEnc.append(input);
+        ProgramDebugEnc.append("\' \'");
+        ProgramDebugEnc.append(DebugOutputEnc);
+        ProgramDebugEnc.append("\' 8");
+        ProgramDebugEnc.append(" \'");
+        ProgramDebugEnc.append(ParFileDebug);
+        ProgramDebugEnc.append("\'");
+        ProgramDebugEnc.append(" 0");
 
-        ProgramDebug.insert(0, "\'");
-        ProgramRelease.insert(0, "\'");
+        ProgramDebugDec.insert(0, "\'");
+        ProgramDebugDec.append(ExeInputRelease);
+        ProgramDebugDec.append("\' decompress \'");
+        ProgramDebugDec.append(DebugOutputEnc);
+        ProgramDebugDec.append("\' \'");
+        ProgramDebugDec.append(DebugOutputDec);
+        ProgramDebugDec.append("\' ");
+
+        ProgramReleaseEnc.insert(0, "\'");
+        ProgramReleaseEnc.append(ExeInputDebug);
+        ProgramReleaseEnc.append("\' compress \'");
+        ProgramReleaseEnc.append(input);
+        ProgramReleaseEnc.append("\' \'");
+        ProgramReleaseEnc.append(ReleaseOutputEnc);
+        ProgramReleaseEnc.append("\' 8");
+        ProgramReleaseEnc.append(" \'");
+        ProgramReleaseEnc.append(ParFileRelease);
+        ProgramReleaseEnc.append("\'");
+        ProgramReleaseEnc.append(" 0");
+
+        ProgramReleaseDec.insert(0, "\'");
+        ProgramReleaseDec.append(ExeInputDebug);
+        ProgramReleaseDec.append("\' decompress \'");
+        ProgramReleaseDec.append(ReleaseOutputEnc);
+        ProgramReleaseDec.append("\' \'");
+        ProgramReleaseDec.append(ReleaseOutputDec);
+        ProgramReleaseDec.append("\'");
     }
 #endif
 
@@ -234,114 +278,24 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
     }
     else
     {
-        if (Mode == 0)
+        opt.Mode = Mode;
+
+        vpxt_output_settings(ParFileDebug.c_str(), opt);
+        vpxt_run_exe(ProgramDebugEnc);
+        vpxt_run_exe(ProgramDebugDec);
+        vpxt_output_settings(ParFileRelease.c_str(), opt);
+
+        fclose(fp);
+
+        if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
         {
-            opt.Mode = MODE_REALTIME;
-
-            vpxt_output_settings(ParFileDebug.c_str(), opt);
-            vpxt_run_exe(ProgramDebug);
-            vpxt_output_settings(ParFileRelease.c_str(), opt);
-
-            fclose(fp);
-
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put file4.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-            vpxt_run_exe(ProgramRelease);
+            tprintf(PRINT_STD, "Cannot open out put FileIndexOutputChar1.\n");
+            exit(1);
         }
 
-        if (Mode == 1)
-        {
-            opt.Mode = MODE_GOODQUALITY;
-
-            vpxt_output_settings(ParFileDebug.c_str(), opt);
-            vpxt_run_exe(ProgramDebug);
-            vpxt_output_settings(ParFileRelease.c_str(), opt);
-
-            fclose(fp);
-
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put file5.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-
-            vpxt_run_exe(ProgramRelease);
-        }
-
-        if (Mode == 2)
-        {
-            opt.Mode = MODE_BESTQUALITY;
-
-            vpxt_output_settings(ParFileDebug.c_str(), opt);
-            vpxt_run_exe(ProgramDebug);
-            vpxt_output_settings(ParFileRelease.c_str(), opt);
-
-            fclose(fp);
-
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put file6.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-
-            vpxt_run_exe(ProgramRelease);
-        }
-
-        if (Mode == 3)
-        {
-        }
-
-        if (Mode == 4)
-        {
-            opt.Mode = MODE_SECONDPASS;
-
-            vpxt_output_settings(ParFileDebug.c_str(), opt);
-            vpxt_run_exe(ProgramDebug);
-            vpxt_output_settings(ParFileRelease.c_str(), opt);
-
-            fclose(fp);
-
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put file9.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-
-            vpxt_run_exe(ProgramRelease);
-        }
-
-        if (Mode == 5)
-        {
-            opt.Mode = MODE_SECONDPASS_BEST;
-
-            vpxt_output_settings(ParFileDebug.c_str(), opt);
-            vpxt_run_exe(ProgramDebug);
-            vpxt_output_settings(ParFileRelease.c_str(), opt);
-
-            fclose(fp);
-
-            if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
-            {
-                tprintf(PRINT_STD, "Cannot open out put FileIndexOutputChar1.\n");
-                exit(1);
-            }
-
-            fprintf(stderr, " ");
-
-            vpxt_run_exe(ProgramRelease);
-
-        }
+        fprintf(stderr, " ");
+        vpxt_run_exe(ProgramReleaseEnc);
+        vpxt_run_exe(ProgramReleaseDec);
     }
 
     //Create Compression only stop test short.
@@ -352,48 +306,35 @@ int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string
         return 10;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing Files: ");
+    tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
+    int lngRCEnc = vpxt_compare_ivf(ReleaseOutputEnc.c_str(), DebugOutputEnc.c_str());
+    int EncMatch = vpxt_print_compare_ivf_results(lngRCEnc);
 
-    int lngRC = vpxt_compare_ivf(ReleaseOutput.c_str(), DebugOutput.c_str());
+    tprintf(PRINT_BTH, "Comparing Decompression Files: ");
+    int lngRCDec = vpxt_compare_ivf(ReleaseOutputDec.c_str(), DebugOutputDec.c_str());
+    int DecMatch = vpxt_print_compare_ivf_results(lngRCDec);
 
     int fail = 0;
 
-    if (lngRC >= 0)
-    {
-        tprintf(PRINT_BTH, "Files differ at frame: %i\n", lngRC);
-        tprintf(PRINT_BTH, "\n\nResults:\n\n");
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
+    if (EncMatch == 1)
+    {
+        vpxt_formated_print(RESPRT, "Debug Compression identical to Release Compression - Passed\n");
+    }
+    else
+    {
         vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
-        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (lngRC == -1)
+    if (DecMatch == 1)
     {
-        tprintf(PRINT_BTH, "Files are identical\n");
-        tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-        vpxt_formated_print(RESPRT, "Debug Compression identical to Release Compression - Passed");
-        tprintf(PRINT_BTH, "\n");
+        vpxt_formated_print(RESPRT, "Debug Decompression identical to Release Decompression - Passed\n");
     }
-
-    if (lngRC == -2)
+    else
     {
-        tprintf(PRINT_BTH, "File 2 ends before File 1\n");
-        tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-        vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
-        tprintf(PRINT_BTH, "\n");
-        fail = 1;
-    }
-
-    if (lngRC == -3)
-    {
-        tprintf(PRINT_BTH, "File 1 ends before File 2\n");
-        tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-        vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
-        tprintf(PRINT_BTH, "\n");
+        vpxt_formated_print(RESPRT, "Debug Decmpression not identical to Release Decompression - Failed");
         fail = 1;
     }
 

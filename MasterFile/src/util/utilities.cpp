@@ -2024,8 +2024,8 @@ int vpxt_identify_test(const char *test_char)
         if (id_test_str.compare("test_new_vs_old_psnr") == 0)
             return NVOPSNUM;
 
-        if (id_test_str.compare("test_new_vs_old_real_time_speed") == 0)
-            return NVORTNUM;
+        if (id_test_str.compare("test_new_vs_old_enc_cpu_tick") == 0)
+            return NVOECPTK;
 
         if (id_test_str.compare("test_noise_sensitivity") == 0)
             return NOISENUM;
@@ -2636,7 +2636,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == NVORTNUM)
+                if (selector == NVOECPTK)
                 {
                     if (!(DummyArgvVar == 7 || DummyArgvVar == 6))
                     {
@@ -2853,7 +2853,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
                     selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTTNUM &&
-                    selector != NVOPSNUM && selector != NVORTNUM && selector != NOISENUM && selector != OV2PSNUM && selector != PLYALNUM &&
+                    selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM && selector != OV2PSNUM && selector != PLYALNUM &&
                     selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM && selector != RECBFNUM &&
                     selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM)
                 {
@@ -8477,7 +8477,7 @@ fail:
 unsigned int vpxt_time_decompress_ivf_to_ivf(const char *inputchar, const char *outputchar, unsigned int &CPUTick)
 {
     //Time Decompress is not supposed to save output that is the only difference between it and
-    //DecompressIVFtoIVFTimeAndOutput
+    //vpxt_decompress_ivf_to_ivf_time_and_output
     vpx_codec_ctx_t       decoder;
     const char            *fn = inputchar;
     int                    i;
@@ -12204,6 +12204,56 @@ int vpxt_check_force_key_frames(const char *KeyFrameoutputfile, int ForceKeyFram
     }
 
     return fail;
+}
+int vpxt_check_mem_state(string FileName, string &bufferString)
+{
+    ifstream infile4(FileName.c_str());
+
+    if (!infile4.good())
+        return -1;
+
+    char buffer4[256];
+
+    infile4.getline(buffer4, 256);
+    infile4.getline(buffer4, 256);
+    infile4.getline(buffer4, 256);
+    infile4.getline(buffer4, 256);
+
+    bufferString = buffer4;
+
+    return 0;
+}
+int vpxt_print_compare_ivf_results(int lngRC)
+{
+    //return 1 for files identical
+    //retrun -1 for files not identical
+    //return 0 on error
+
+    if (lngRC >= 0)
+    {
+        tprintf(PRINT_BTH, "Files differ at frame: %i\n", lngRC);
+        return -1;
+    }
+
+    if (lngRC == -1)
+    {
+        tprintf(PRINT_BTH, "Files are identical\n");
+        return 1;
+    }
+
+    if (lngRC == -2)
+    {
+        tprintf(PRINT_BTH, "File 2 ends before File 1\n");
+        return -1;
+    }
+
+    if (lngRC == -3)
+    {
+        tprintf(PRINT_BTH, "File 1 ends before File 2\n");
+        return -1;
+    }
+
+    return 0;
 }
 //-----------------------------------------------------------IVF Enc------------------------------------------------------
 int API20Encoder(long width, long height, char *infilechar, char *outfilechar)

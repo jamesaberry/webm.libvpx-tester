@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Codec Tests"
+	Name="libvpx-tester-64bit"
 	ProjectGUID="{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}"
 	RootNamespace="on2plugin7test"
 	Keyword="Win32Proj"
@@ -205,6 +205,10 @@
 				RelativePath=".\src\driver.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\src\tests\test_new_vs_old_enc_cpu_tick.cpp"
+				>
+			</File>
 			<Filter
 				Name="tests"
 				>
@@ -302,10 +306,6 @@
 				</File>
 				<File
 					RelativePath=".\src\tests\test_new_vs_old_psnr.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\tests\test_new_vs_old_real_time_speed.cpp"
 					>
 				</File>
 				<File
@@ -428,60 +428,6 @@
 						>
 					</File>
 				</Filter>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath=".\SourceFiles\md5_utils.h"
-				>
-			</File>
-			<Filter
-				Name="DataRate IVF"
-				>
-				<File
-					RelativePath=".\Source Files\Arguments.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\Arguments.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\FourCC.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\version.hpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="VP8"
-				>
-				<File
-					RelativePath=".\Source Files\header.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\onyx.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\onyxd.h"
-					>
-				</File>
-				<File
-					RelativePath=".\SourceFiles\ppflags.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\type_aliases.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 	</Files>

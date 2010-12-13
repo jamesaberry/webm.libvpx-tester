@@ -1246,9 +1246,9 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                     TestsRun++;
                 }
 
-                if (selector == NVORTNUM)
+                if (selector == NVOECPTK)
                 {
-                    SelectorAr[SelectorArInt] = "Test_New_Vs_Old_Real_Time_Speed";
+                    SelectorAr[SelectorArInt] = "test_new_vs_old_enc_cpu_tick";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1257,7 +1257,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_new_vs_old_real_time_speed(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_new_vs_old_enc_cpu_tick(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
 
                     if (RecordRunTimes == 1)
                     {

@@ -2,7 +2,7 @@
 
 int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    //Debug.exe <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>
+    //Needs Debug.exe
     char *MyDir = "test_mem_leak2";
 
     if (!(argc == 4 || argc == 5))
@@ -41,82 +41,52 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
     vpxt_folder_name(argv[0], ExeCharMemLeak);
     string ExeCharMemLeakStr = ExeCharMemLeak;
 
-    string MemLeakCheckIVFStr = CurTestDirStr;
-    MemLeakCheckIVFStr.append(slashCharStr());
-    MemLeakCheckIVFStr.append(MyDir);
-    MemLeakCheckIVFStr.append("_compression.ivf");
+    string MemLeakCheckTXTBase = CurTestDirStr;
+    MemLeakCheckTXTBase.append(slashCharStr());
+    MemLeakCheckTXTBase.append(MyDir);
 
-    string MemLeakCheckTXTStr = CurTestDirStr;
-    MemLeakCheckTXTStr.append(slashCharStr());
-    MemLeakCheckTXTStr.append(MyDir);
+    string MemLeakCheckTXT1Str = MemLeakCheckTXTBase;
+    MemLeakCheckTXT1Str.append("_compression_memory_summary.txt");
 
-    string MemLeakCheckParFileStr = CurTestDirStr;
-    MemLeakCheckParFileStr.append(slashCharStr());
-    MemLeakCheckParFileStr.append(MyDir);
-    MemLeakCheckParFileStr.append("_compression_parameter_file.txt");
-
-    string MemLeakCheckTXT1Str = MemLeakCheckTXTStr;
-    MemLeakCheckTXT1Str.append("_compression_output.txt");
-
-    string MemLeakCheckTXT2Str = MemLeakCheckTXTStr;
-    MemLeakCheckTXT2Str.append("_decompression_output.txt");
+    string MemLeakCheckTXT2Str = MemLeakCheckTXTBase;
+    MemLeakCheckTXT2Str.append("_decompression_memory_summary.txt");
 
     string ProgramMemLeakCheckEncStr;
     string ProgramMemLeakCheckDecStr;
 
 #if defined(_WIN32)
+    //Faux Compress
     ProgramMemLeakCheckEncStr = "\"\"";
-    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);  // Exe Path
-    ProgramMemLeakCheckEncStr.append(MemLeakExe);         // Exe Name
-    ProgramMemLeakCheckEncStr.append("\" \"");
-    ProgramMemLeakCheckEncStr.append(input);              // Input
-    ProgramMemLeakCheckEncStr.append("\" \"");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckIVFStr);        // Output
-    ProgramMemLeakCheckEncStr.append("\" 0 \"");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckParFileStr);        // Par File
-    ProgramMemLeakCheckEncStr.append("\" 5 \"");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXTStr);        // Mem Output File
+    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);            // Exe Path
+    ProgramMemLeakCheckEncStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckEncStr.append("\" fauxcompress \"");
+    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXT1Str.c_str());  // Output txt file
     ProgramMemLeakCheckEncStr.append("\"\"");
+    //Faux Decompress
     ProgramMemLeakCheckDecStr = "\"\"";
-    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr); // Exe Path
-    ProgramMemLeakCheckDecStr.append(MemLeakExe);            // Exe Name
+    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr);            // Exe Path
+    ProgramMemLeakCheckDecStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckDecStr.append("\" fauxdecompress \"");
+    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXT2Str.c_str());  // Output txt file
     ProgramMemLeakCheckDecStr.append("\" \"");
-    ProgramMemLeakCheckDecStr.append(input);             // Input
-    ProgramMemLeakCheckDecStr.append("\" \"");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckIVFStr);       // Output
-    ProgramMemLeakCheckDecStr.append("\" 0 \"");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckParFileStr);       // Par File
-    ProgramMemLeakCheckDecStr.append("\" 6 \"");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXTStr);      // Mem Output File
-    ProgramMemLeakCheckDecStr.append("\" \"");
-    ProgramMemLeakCheckDecStr.append(DecInFile);
-    ProgramMemLeakCheckDecStr.append("\"");
+    ProgramMemLeakCheckDecStr.append(DecInFile);                    // Input faux dec file
+    ProgramMemLeakCheckDecStr.append("\"\"");
 #else
+    //Faux Compress
     ProgramMemLeakCheckEncStr = "\'";
-    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);  // Exe Path
-    ProgramMemLeakCheckEncStr.append(MemLeakExe);         // Exe Name
-    ProgramMemLeakCheckEncStr.append("\' \'");
-    ProgramMemLeakCheckEncStr.append(input);              // Input
-    ProgramMemLeakCheckEncStr.append("\' \'");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckIVFStr);        // Output
-    ProgramMemLeakCheckEncStr.append("\' 0 \'");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckParFileStr);        // Par File
-    ProgramMemLeakCheckEncStr.append("\' 5 \'");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXTStr);        // Mem Output File
+    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);            // Exe Path
+    ProgramMemLeakCheckEncStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckEncStr.append("\' fauxcompress \'");
+    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXT1Str.c_str());  // Output txt file
     ProgramMemLeakCheckEncStr.append("\'");
+    //Faux Decompress
     ProgramMemLeakCheckDecStr = "\'";
-    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr); // Exe Path
-    ProgramMemLeakCheckDecStr.append(MemLeakExe);            // Exe Name
+    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr);            // Exe Path
+    ProgramMemLeakCheckDecStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckDecStr.append("\' fauxdecompress \'");
+    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXT2Str.c_str());  // Output txt file
     ProgramMemLeakCheckDecStr.append("\' \'");
-    ProgramMemLeakCheckDecStr.append(input);             // Input
-    ProgramMemLeakCheckDecStr.append("\' \'");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckIVFStr);       // Output
-    ProgramMemLeakCheckDecStr.append("\' 0 \'");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckParFileStr);       // Par File
-    ProgramMemLeakCheckDecStr.append("\' 6 \'");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXTStr);      // Mem Output File
-    ProgramMemLeakCheckDecStr.append("\' \'");
-    ProgramMemLeakCheckDecStr.append(DecInFile);
+    ProgramMemLeakCheckDecStr.append(DecInFile);                    // Input faux dec file
     ProgramMemLeakCheckDecStr.append("\'");
 #endif
 
@@ -212,8 +182,8 @@ int test_mem_leak2(int argc, char *argv[], string WorkingDir, string FilesAr[], 
 
         fprintf(stderr, " ");
 
-        opt.Mode = MODE_GOODQUALITY;
-        vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
+        //opt.Mode = MODE_GOODQUALITY;
+        //vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
         vpxt_run_exe(ProgramMemLeakCheckEncStr.c_str());
         vpxt_run_exe(ProgramMemLeakCheckDecStr.c_str());
     }

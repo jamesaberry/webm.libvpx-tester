@@ -13,6 +13,7 @@
 #include <string.h>
 #include <cstdio>
 #include "vp8cx.h"
+#include "vp8dx.h"
 #include "utilities.h"
 using namespace std;
 
@@ -29,8 +30,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf(PRINT_BTH, "\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -156,92 +156,110 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     return 0;
 }
+void supportingReleaseOnError()
+{
+    tprintf(PRINT_STD, "\n"
+            "  IVF VP8 Release\n\n"
+            "    <Mode>\n"
+            "      <compress>\n"
+            "      <decompress>\n"
+            "\n"
+            "  Compress Release                                 Decompress Release\n"
+            "\n"
+            "    <Inputfile>                                      <Inputfile>\n"
+            "    <Outputfile>                                     <Outputfile>\n"
+            "    <Par File Origin 7 VP7 8 VP8>\n"
+            "    <Par File>\n"
+            "    <Extra Commands>\n"
+            "      <0 No Extra Commands>\n"
+            "      <1 Run PSNR only>\n"
+            "      <2 Record Compression Time only>\n"
+            "      <3 Record Compression Time and Run PSNR>\n"
+            "\n"
+            "\n"
+            "   Release Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+}
+int supportingFileRunPSNR(char *inputFile, char *outputFile)
+{
+    double totalPsnr;
+    cout << "\n\n";
+    double ssimDummyVar = 0;
+    totalPsnr = vpxt_ivf_psnr(inputFile, outputFile, 0, 0, 1, NULL);
 
+    char TextFilechar1[255];
+    vpxt_remove_file_extension(outputFile, TextFilechar1);
+
+    char *FullName = strcat(TextFilechar1, "OLD_PSNR.txt");
+
+    ofstream outfile2(FullName);
+    outfile2 << totalPsnr;
+    outfile2.close();
+
+    return 0;
+}
 int main(int argc, char *argv[])
 {
-    int FrameStats = 0;
-    int forceUVswap2 = 0;
-    int frameStats2 = 0;
-    int PSNRRun = 0;
-    int RunNTimes = 0;
+    string Compress = "compress";
+    string Decompress = "decompress";
 
-    if (argc < 6)
+    if (argc < 3)
     {
-        printf("\n"
-               "  IVF VP8 Compress Release\n\n"
-               "    <Inputfile>\n"
-               "    <Outputfile>\n"
-               "    <Par File Origin 7 VP7 8 VP8>\n"
-               "    <Par File>\n"
-               "    <Extra Commands>\n"
-               "      <0 No Extra Commands>\n"
-               "      <1 Run PSNR only>\n"
-               "      <2 Record Compression Time only>\n"
-               "      <3 Record Compression Time and Run PSNR>\n"
-               "\n"
-               "\n"
-               "   Release Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+        supportingReleaseOnError();
         return 0;
     }
 
-    char *inputFile = argv[1];
-    char *outputFile = argv[2];
-    int ParVer = atoi(argv[3]);
-    char *parfile = argv[4];
-    int ExtraCommand = atoi(argv[5]);
-
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-    if (ParVer == 7)
+    if (Compress.compare(argv[1]) == 0)
     {
-        cout << "\n\nNot Yet Supported\n\n";
+        if (argc < 7)
+        {
+            supportingReleaseOnError();
+            return 0;
+        }
+
+        char *inputFile = argv[2];
+        char *outputFile = argv[3];
+        int ParVer = atoi(argv[4]);
+        char *parfile = argv[5];
+        int ExtraCommand = atoi(argv[6]);
+
+        VP8_CONFIG opt;
+        vpxt_default_parameters(opt);
+        unsigned int CPUTick = 0;
+
+        if (ParVer == 7)
+            cout << "\n\nNot Yet Supported\n\n";
+
+        if (ParVer == 8)
+            opt = vpxt_input_settings(parfile);
+
+        tprintf(PRINT_BTH, "\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+        vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick);
+
+        if (ExtraCommand == 1 || ExtraCommand == 3)
+            supportingFileRunPSNR(inputFile, outputFile);
+
+        return 0;
     }
 
-    if (ParVer == 8)
+    if (Decompress.compare(argv[1]) == 0)
     {
-        opt = vpxt_input_settings(parfile);
+        if (argc < 3)
+        {
+            supportingReleaseOnError();
+            return 0;
+        }
+
+        tprintf(PRINT_BTH, "\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_dx_algo));
+
+        char *inputFile = argv[2];
+        char *outputFile = argv[3];
+        unsigned int CPUTick = 0;
+
+        vpxt_decompress_ivf_to_ivf_time_and_output(inputFile, outputFile, CPUTick);
+
+        return 0;
     }
 
-    printf("\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-    fprintf(stderr, "\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    cout << "inputFile: " << inputFile << "\n";
-    cout << "outputFile: " << outputFile << "\n";
-    cout << "parfile: " << parfile << "\n";
-    cerr << "inputFile: " << inputFile << "\n";
-    cerr << "outputFile: " << outputFile << "\n";
-    cerr << "parfile: " << parfile << "\n";
-
-    string outputFile2 = outputFile;
-    outputFile2.append("DEC.ivf");
-
-    char outputFile2Char [255];
-
-    snprintf(outputFile2Char, 255, "%s", outputFile2.c_str());
-
-    unsigned int CPUTick = 0;
-    vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick);
-
-    double totalPsnr;
-
-    if (ExtraCommand == 1 || ExtraCommand == 3)
-    {
-        cout << "\n\n";
-        double ssimDummyVar = 0;
-        totalPsnr = vpxt_ivf_psnr(inputFile, outputFile, 0, 0, 1, NULL);
-
-        char TextFilechar1[255];
-
-        vpxt_remove_file_extension(outputFile, TextFilechar1);
-
-        char *FullName = strcat(TextFilechar1, "psnr.txt");
-
-        ofstream outfile2(FullName);
-        outfile2 << totalPsnr;
-        outfile2.close();
-    }
-
+    supportingReleaseOnError();
     return 0;
 }

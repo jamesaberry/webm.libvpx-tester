@@ -1,16 +1,23 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
 
-    char *MyDir = "test_new_vs_old_real_time_speed";
+    char *MyDir = "test_new_vs_old_enc_cpu_tick";
 
-    if (!(argc == 7 || argc == 6))
+    if (!(argc == 8 || argc == 7))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         tprintf(PRINT_STD,
                 "\n\n"
                 "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
                 "    <Exe File To Compare>\n"
                 "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
@@ -21,10 +28,11 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     }
 
     char *input = argv[2];
-    int BitRate = atoi(argv[3]);
+    int Mode = atoi(argv[3]);
+    int BitRate = atoi(argv[4]);
     char ExeInput[255];
-    snprintf(ExeInput, 255, "%s", argv[4]);
-    int ParFileNum = atoi(argv[5]);
+    snprintf(ExeInput, 255, "%s", argv[5]);
+    int ParFileNum = atoi(argv[6]);
 
     int speed = 0;
     unsigned int cpu_tick1 = 0;
@@ -68,7 +76,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     {
         Program.insert(0, "\"");
         Program.insert(0, "\"");
-        Program.append("\" \"");
+        Program.append("\" compress \"");
         Program.append(input);
         Program.append("\" \"");
         Program.append(outputVP8Old);
@@ -82,7 +90,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
 #else
     {
         Program.insert(0, "\'./");
-        Program.append("\' \'");
+        Program.append("\' compress \'");
         Program.append(input);
         Program.append("\' \'");
         Program.append(outputVP8Old);
@@ -130,7 +138,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (argc == 8)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -146,9 +154,9 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     }
 
     /////////////////Make Sure Exe File Exists///////////////
-    if (!vpxt_file_exists_check(argv[4]))
+    if (!vpxt_file_exists_check(argv[5]))
     {
-        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[4]);
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[5]);
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -173,7 +181,7 @@ int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, s
     else
     {
 
-        opt.Mode = MODE_REALTIME;
+        opt.Mode = Mode;
         unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1);
 
         if (Time == -1)

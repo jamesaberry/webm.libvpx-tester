@@ -14,6 +14,7 @@
 #include "vpx_config.h"
 #include "vpx_mem.h"
 #include "vp8cx.h"
+#include "vp8dx.h"
 #include "utilities.h"
 #include <cstdio>
 using namespace std;
@@ -31,8 +32,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     if (in == NULL)
     {
-        printf("\nInput file does not exist");
-        fprintf(stderr, "\nInput file does not exist");
+        tprintf(PRINT_BTH, "\nInput file does not exist");
         fclose(in);
         return 0;
     }
@@ -158,87 +158,98 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     return 0;
 }
+void supportingDebugOnError()
+{
+    tprintf(PRINT_STD, "\n"
+            "  IVF VP8 Debug\n\n"
+            "    <Mode>\n"
+            "      <compress>\n"
+            "      <decompress>\n"
+            "      <memcompress>\n"
+            "      <memdecompress>\n"
+            "      <fauxcompress>\n"
+            "      <fauxdecompress>\n"
+            "\n"
+            "  Compress Debug                                  Decompress Debug\n"
+            "\n"
+            "    <Inputfile>                                      <Inputfile>\n"
+            "    <Outputfile>                                     <Outputfile>\n"
+            "    <Par File Origin 7 VP7 8 VP8>\n"
+            "    <Par File>\n"
+            "    <Extra Commands>\n"
+            "      <0 No Extra Commands>\n"
+            "      <1 Run PSNR only>\n"
+            "      <2 Record Compression Time only>\n"
+            "      <3 Record Compression Time and Run PSNR>\n"
+            "\n"
+            "  Compress Mem Leak Check                    Decompress Mem Leak Check\n"
+            "\n"
+            "    <Inputfile>                                      <Inputfile>\n"
+            "    <Outputfile>                                     <Outputfile>\n"
+            "    <Par File Origin 7 VP7 8 VP8>                    <Memory Output File>\n"
+            "    <Par File>\n"
+            "    <Extra Commands>\n"
+            "      <0 No Extra Commands>\n"
+            "      <1 Run PSNR only>\n"
+            "      <2 Record Compression Time only>\n"
+            "      <3 Record Compression Time and Run PSNR>\n"
+            "    <Memory Output File>\n"
+            "\n"
+            "  Faux Compress                                    Faux Decompress\n"
+            "\n"
+            "    <mem output file>                                <mem output file>\n"
+            "\n"
+            "\n"
+            "   Debug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo)
+           );
+}
+int supportingFileRunPSNR(char *inputFile, char *outputFile)
+{
+    double totalPsnr;
+    cout << "\n\n";
+    double ssimDummyVar = 0;
+    totalPsnr = vpxt_ivf_psnr(inputFile, outputFile, 0, 0, 1, NULL);
+
+    char TextFilechar1[255];
+    vpxt_remove_file_extension(outputFile, TextFilechar1);
+
+    char *FullName = strcat(TextFilechar1, "OLD_PSNR.txt");
+
+    ofstream outfile2(FullName);
+    outfile2 << totalPsnr;
+    outfile2.close();
+
+    return 0;
+}
 int main(int argc, char *argv[])
 {
-    int FrameStats = 0;
-    int forceUVswap2 = 0;
-    int frameStats2 = 0;
-    int PSNRRun = 0;
-    int RunNTimes = 0;
+    string Compress = "compress";
+    string memCompress = "memcompress";
+    string fauxCompress = "fauxcompress";
 
-    if (argc < 6)
+    string Decompress = "decompress";
+    string memDecompress = "memdecompress";
+    string fauxDecompress = "fauxdecompress";
+
+    //If Faux Compress
+    if (fauxCompress.compare(argv[1]) == 0)
     {
-        printf("\n"
-               "  IVF VP8 Compress Release\n\n"
-               "    <Inputfile>\n"
-               "    <Outputfile>\n"
-               "    <Par File Origin 7 VP7 8 VP8>\n"
-               "    <Par File>\n"
-               "    <Extra Commands>\n"
-               "      <0 No Extra Commands>\n"
-               "      <1 Run PSNR only>\n"
-               "      <2 Record Compression Time only>\n"
-               "      <3 Record Compression Time and Run PSNR>\n"
-               "\n"
-               "\n"
-               "   Debug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-        return 0;
-    }
+        if (argc < 2)
+        {
+            supportingDebugOnError();
+            return 0;
+        }
 
-    printf("\nDebug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-    fprintf(stderr, "\nDebug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    char *inputFile = argv[1];
-    char *outputFile = argv[2];
-    int ParVer = atoi(argv[3]);
-    char *parfile = argv[4];
-    int ExtraCommand = atoi(argv[5]);
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-
-    if (ParVer == 7)
-    {
-        cout << "\n\nNot Yet Supported\n\n";
-    }
-
-    if (ParVer == 8)
-    {
-        opt = vpxt_input_settings(parfile);
-    }
-
-    if (ExtraCommand == 4)
-    {
-        //This handles the Mem Leak Check Test.
-
-        char *MemLeakCheckTXT = argv[6];
-
-        vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
-        unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, opt.multi_threaded, opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick);
-        vpx_memory_tracker_dump();
-
-        return 0;
-    }
-
-    if (ExtraCommand == 5)
-    {
-        string MemLeakCheckTXTStr1 = argv[6];
-        MemLeakCheckTXTStr1.append("_Encode.txt");
+        //This tests faux compress
+        string MemLeakCheckTXTStr1 = argv[2];
         char MemLeakCheckTXT1[255];
         snprintf(MemLeakCheckTXT1, 255, "%s", MemLeakCheckTXTStr1.c_str());
 
         vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT1);
         int x = 0;
         int n = 0;
-#ifdef API
-        printf("\nAPI - Testing Faux Compressions:\n");
-        fprintf(stderr, "\nAPI - Testing Faux Compressions:\n");
-#else
-        printf("\nTesting Faux Compressions:\n");
-        fprintf(stderr, "\nTesting Faux Compressions:\n");
-#endif
+
+        tprintf(PRINT_BTH, "\nAPI - Testing Faux Compressions:\n");
 
         while (x < 10000)
         {
@@ -246,8 +257,7 @@ int main(int argc, char *argv[])
 
             if (n == 125)
             {
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(PRINT_BTH, ".");
                 n = 0;
             }
 
@@ -259,24 +269,26 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (ExtraCommand == 6)
+    //If Faux Decompress
+    if (fauxDecompress.compare(argv[1]) == 0)
     {
-        string MemLeakCheckTXTStr2 = argv[6];
-        char *DecinputChar = argv[7];
-        MemLeakCheckTXTStr2.append("_Decode.txt");
+        if (argc < 3)
+        {
+            supportingDebugOnError();
+            return 0;
+        }
+
+        //This tests faux decompress
+        string MemLeakCheckTXTStr2 = argv[2];
+        char *DecinputChar = argv[3];
         char MemLeakCheckTXT2[255];
         snprintf(MemLeakCheckTXT2, 255, "%s", MemLeakCheckTXTStr2.c_str());
 
         vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT2);
         int x = 0;
         int n = 0;
-#ifdef API
-        printf("\n\nAPI - Testing Faux Decompressions:\n");
-        fprintf(stderr, "\n\nAPI - Testing Faux Decompressions:\n");
-#else
-        printf("\n\nTesting Faux Decompressions:\n");
-        fprintf(stderr, "\n\nTesting Faux Decompressions:\n");
-#endif
+
+        tprintf(PRINT_BTH, "\n\nAPI - Testing Faux Decompressions:\n");
 
         while (x < 10000)
         {
@@ -284,8 +296,7 @@ int main(int argc, char *argv[])
 
             if (n == 125)
             {
-                printf(".");
-                fprintf(stderr, ".");
+                tprintf(PRINT_BTH, ".");
                 n = 0;
             }
 
@@ -298,40 +309,95 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    cout << "inputFile: " << inputFile << "\n";
-    cout << "outputFile: " << outputFile << "\n";
-    cout << "parfile: " << parfile << "\n";
-    cerr << "inputFile: " << inputFile << "\n";
-    cerr << "outputFile: " << outputFile << "\n";
-    cerr << "parfile: " << parfile << "\n";
-
-    string outputFile2 = outputFile;
-    outputFile2.append("DEC.ivf");
-
-    char outputFile2Char [256];
-
-    snprintf(outputFile2Char, 255, "%s", outputFile2.c_str());
-    unsigned int CPUTick = 0;
-    vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick);
-
-    double totalPsnr;
-
-    if (ExtraCommand == 1 || ExtraCommand == 3)
+    //If Compress or Compress Mem Leak Check
+    if (Compress.compare(argv[1]) == 0 || memCompress.compare(argv[1]) == 0)
     {
-        cout << "\n\n";
-        double ssimDummyVar = 0;
-        totalPsnr = vpxt_ivf_psnr(inputFile, outputFile, 0, 0, 1, NULL);
+        if (argc < 7)
+        {
+            supportingDebugOnError();
+            return 0;
+        }
 
-        char TextFilechar1[255];
+        tprintf(PRINT_BTH, "\nDebug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
-        vpxt_remove_file_extension(outputFile, TextFilechar1);
+        char *inputFile = argv[2];
+        char *outputFile = argv[3];
+        int ParVer = atoi(argv[4]);
+        char *parfile = argv[5];
+        int ExtraCommand = atoi(argv[6]);
 
-        char *FullName = strcat(TextFilechar1, "OLD_PSNR.txt");
+        VP8_CONFIG opt;
+        vpxt_default_parameters(opt);
+        unsigned int CPUTick = 0;
 
-        ofstream outfile2(FullName);
-        outfile2 << totalPsnr;
-        outfile2.close();
+        if (ParVer == 7)
+            cout << "\n\nNot Yet Supported\n\n";
+
+        if (ParVer == 8)
+            opt = vpxt_input_settings(parfile);
+
+        //If Mem Leak Check
+        if (memCompress.compare(argv[1]) == 0)
+        {
+            //This handles the Mem Leak Check Test.
+            if (argc < 8)
+            {
+                supportingDebugOnError();
+                return 0;
+            }
+
+            char *MemLeakCheckTXT = argv[7];
+            vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
+            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, opt.multi_threaded, opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick);
+            vpx_memory_tracker_dump();
+        }
+
+        //If Compress
+        if (Compress.compare(argv[1]) == 0)
+            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick);
+
+        if (ExtraCommand == 1 || ExtraCommand == 3)
+            supportingFileRunPSNR(inputFile, outputFile);
+
+        return 0;
     }
 
+    //If Decompress or Decomress Mem Leak Check
+    if (Decompress.compare(argv[1]) == 0 || memDecompress.compare(argv[1]) == 0)
+    {
+        if (argc < 3)
+        {
+            supportingDebugOnError();
+            return 0;
+        }
+
+        tprintf(PRINT_BTH, "\nDebug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_dx_algo));
+
+        char *inputFile = argv[2];
+        char *outputFile = argv[3];
+        unsigned int CPUTick = 0;
+
+        if (memDecompress.compare(argv[1]) == 0)
+        {
+            //This handles the Mem Leak Check Test.
+            if (argc < 4)
+            {
+                supportingDebugOnError();
+                return 0;
+            }
+
+            char *MemLeakCheckTXT = argv[4];
+            vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
+            vpxt_decompress_ivf_to_ivf_time_and_output(inputFile, outputFile, CPUTick);
+            vpx_memory_tracker_dump();
+        }
+
+        if (Decompress.compare(argv[1]) == 0)
+            vpxt_decompress_ivf_to_ivf_time_and_output(inputFile, outputFile, CPUTick);
+
+        return 0;
+    }
+
+    supportingDebugOnError();
     return 0;
 }

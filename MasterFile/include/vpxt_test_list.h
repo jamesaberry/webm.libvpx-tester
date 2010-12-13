@@ -29,7 +29,7 @@ extern int test_mem_leak2(int argc, char *argv[], string WorkingDir, string File
 extern int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int test_new_vs_old_real_time_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_noise_sensitivity(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_one_pass_vs_two_pass(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_play_alternate(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);

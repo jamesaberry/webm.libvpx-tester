@@ -421,25 +421,10 @@ int test_new_vs_old_psnr(int argc, char *argv[], string WorkingDir, string Files
         return 0;
     }
 
-    //////////////////////////////////////////////Input OLD PSNR//////////////////////////////////////////////
-    //char TimeTextFile[256];
-    //vpxt_folder_name(NewEncFile.c_str(), TimeTextFile);
-    //string TimeTextFileStr = TimeTextFile
-
-    string TimeTextFileStr = OldEncFile;
-    TimeTextFileStr.erase(TimeTextFileStr.length() - 4, 4);
-    TimeTextFileStr.append("_psnr.txt");
-
-    float PSNROLD;
-    ifstream infile(TimeTextFileStr.c_str());
-    infile >> PSNROLD;
-    infile.close();
-    /////////////////////////////////////////////////////////////
-
     double PSNRArr[2];
 
     PSNRArr[0] = vpxt_ivf_psnr(input, NewEncFile.c_str(), 0, 0, 1, NULL);
-    PSNRArr[1] = PSNROLD;
+    PSNRArr[1] = vpxt_get_psnr(OldEncFile.c_str());
 
     tprintf(PRINT_BTH, "\nNew DataRate");
     vpxt_ivf_data_rate(NewEncFile.c_str(), 1);

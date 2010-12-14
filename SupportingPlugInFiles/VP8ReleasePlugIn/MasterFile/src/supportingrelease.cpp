@@ -189,7 +189,7 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
     char TextFilechar1[255];
     vpxt_remove_file_extension(outputFile, TextFilechar1);
 
-    char *FullName = strcat(TextFilechar1, "OLD_PSNR.txt");
+    char *FullName = strcat(TextFilechar1, "psnr.txt");
 
     ofstream outfile2(FullName);
     outfile2 << totalPsnr;

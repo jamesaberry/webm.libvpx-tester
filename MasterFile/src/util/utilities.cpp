@@ -6517,6 +6517,7 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
                                 * arg_framerate.den)
                                / cfg.g_timebase.num / arg_framerate.num;
 
+            start = vpxt_get_cpu_tick();
             vpx_usec_timer_start(&timer);
             vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, frame_start, next_frame_start - frame_start, 0, arg_deadline);
             vpx_usec_timer_mark(&timer);
@@ -12292,6 +12293,34 @@ int vpxt_print_compare_ivf_results(int lngRC)
     }
 
     return 0;
+}
+double vpxt_get_psnr(const char *compFileName)
+{
+    //Takes in a compression full path and looks for the psnr file
+    //accociated with it.
+    string TimeTextFileStr = compFileName;
+    TimeTextFileStr.erase(TimeTextFileStr.length() - 4, 4);
+    TimeTextFileStr.append("_psnr.txt");
+
+    double inputPSNR;
+    ifstream infile(TimeTextFileStr.c_str());
+
+    if (!infile.good())
+    {
+        tprintf(PRINT_BTH, "\nFailed to open input file: %s", TimeTextFileStr.c_str());
+        return 0;
+    }
+
+    infile >> inputPSNR;
+    infile.close();
+
+    if (inputPSNR <= 0.0 || inputPSNR >= 60.0)
+    {
+        tprintf(PRINT_BTH, "\nPSNR value is not vailid: %f\n", inputPSNR);
+        return 0;
+    }
+
+    return inputPSNR;
 }
 //-----------------------------------------------------------IVF Enc------------------------------------------------------
 int API20Encoder(long width, long height, char *infilechar, char *outfilechar)

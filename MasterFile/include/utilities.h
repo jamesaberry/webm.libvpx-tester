@@ -127,6 +127,7 @@ int vpxt_get_number_of_frames(const char *inputFile);
 int vpxt_check_force_key_frames(const char *KeyFrameoutputfile, int ForceKeyFrameInt, const char *ForceKeyFrame);
 int vpxt_check_mem_state(string FileName, string &bufferString);
 int vpxt_print_compare_ivf_results(int lngRC);
+double vpxt_get_psnr(const char *compFileName);
 //-----------------------------------------------------------IVF Enc------------------------------------------------------
 int API20Encoder(long width, long height, char *infilechar, char *outfilechar);
 int API20EncoderIVF2IVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt);

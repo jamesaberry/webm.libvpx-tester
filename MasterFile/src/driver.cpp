@@ -2292,35 +2292,35 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
                         int leftLineSize = 75 - (TestReadString.size() / 2);
                         int counter = 0;
 
-                        fprintf(stderr, "\n\n");
+                        tprintf(PRINT_ERR, "\n\n");
 
                         while (counter < leftLineSize)
                         {
-                            fprintf(stderr, "=");
+                            tprintf(PRINT_ERR, "=");
                             counter++;
                         }
 
-                        fprintf(stderr, "%s", TestReadString.c_str());
+                        tprintf(PRINT_ERR, "%s", TestReadString.c_str());
                         counter = counter + TestReadString.size();
 
                         while (counter < 150)
                         {
-                            fprintf(stderr, "=");
+                            tprintf(PRINT_ERR, "=");
                             counter++;
                         }
 
-                        fprintf(stderr, "\n");
+                        tprintf(PRINT_ERR, "\n");
                         DoOnce1 = 0;
                     }
 
                     if (DoOnce2)
                     {
-                        fprintf(stderr, "\n %s:\n\n", buffer3);
-                        fprintf(stderr, "%4s %-32s%-25s%s  Test Settings\n\n", "#", "            Test Name" , "     Date and Time", "Status");
+                        tprintf(PRINT_ERR, "\n %s:\n\n", buffer3);
+                        tprintf(PRINT_ERR, "%4s %-32s%-25s%s  Test Settings\n\n", "#", "            Test Name" , "     Date and Time", "Status");
                         DoOnce2 = 0;
                     }
 
-                    fprintf(stderr, "%s ", buffer);
+                    tprintf(PRINT_ERR, "%s ", buffer);
 
                     ///////////////////Get the correct Test Input settings and output them to summary.//////////////
                     fstream TestsRunFile;
@@ -2374,7 +2374,7 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
                                 t++;
                             }
 
-                            tprintf(PRINT_STD, "%s\n", buffer4);
+                            tprintf(PRINT_ERR, "%s\n", buffer4);
                         }
                     }
 
@@ -2437,68 +2437,68 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
         {
             if (!CompressExist == 1)
             {
-                fprintf(stderr, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
-                fprintf(stderr, "Passed: %i\n", PassedTrack);
-                fprintf(stderr, "Failed: %i\n", FailedTrack);
-                fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
+                tprintf(PRINT_ERR, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
+                tprintf(PRINT_ERR, "Passed: %i\n", PassedTrack);
+                tprintf(PRINT_ERR, "Failed: %i\n", FailedTrack);
+                tprintf(PRINT_ERR, "Indeterminate: %i\n", IndeterminateTrack);
 
                 if (SeeComboRunLogTrack != 0)
-                    fprintf(stderr, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
+                    tprintf(PRINT_ERR, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
 
                 if (SeePSNRLogTrack != 0)
-                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
+                    tprintf(PRINT_ERR, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
 
                 if (RandomTestCompletedTrack != 0)
-                    fprintf(stderr, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
+                    tprintf(PRINT_ERR, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
 
                 if (CompressionMadeTrack != 0)
-                    fprintf(stderr, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
+                    tprintf(PRINT_ERR, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
 
                 if (ErrorFileMismatchTrack != 0)
-                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
+                    tprintf(PRINT_ERR, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
 
                 if (TestNotSupportedTrack != 0)
-                    fprintf(stderr, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
+                    tprintf(PRINT_ERR, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
 
                 if (MinTestPassed != 0)
-                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
+                    tprintf(PRINT_ERR, "MinTestPassed: %i\n", MinTestPassed);
             }
             else
             {
-                fprintf(stderr, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
+                tprintf(PRINT_ERR, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
 
                 if (PassedTrack != 0)
-                    fprintf(stderr, "Passed: %i\n", PassedTrack);
+                    tprintf(PRINT_ERR, "Passed: %i\n", PassedTrack);
 
                 if (FailedTrack != 0)
-                    fprintf(stderr, "Failed: %i\n", FailedTrack);
+                    tprintf(PRINT_ERR, "Failed: %i\n", FailedTrack);
 
                 if (IndeterminateTrack != 0)
-                    fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
+                    tprintf(PRINT_ERR, "Indeterminate: %i\n", IndeterminateTrack);
 
                 if (SeeComboRunLogTrack != 0)
-                    fprintf(stderr, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
+                    tprintf(PRINT_ERR, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
 
                 if (SeePSNRLogTrack != 0)
-                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
+                    tprintf(PRINT_ERR, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
 
                 if (RandomTestCompletedTrack != 0)
-                    fprintf(stderr, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
+                    tprintf(PRINT_ERR, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
 
                 if (CompressionMadeTrack != 0)
-                    fprintf(stderr, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
+                    tprintf(PRINT_ERR, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
 
                 if (ErrorFileMismatchTrack != 0)
-                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
+                    tprintf(PRINT_ERR, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
 
                 if (TestNotSupportedTrack != 0)
-                    fprintf(stderr, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
+                    tprintf(PRINT_ERR, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
 
                 if (MinTestPassed != 0)
-                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
+                    tprintf(PRINT_ERR, "MinTestPassed: %i\n", MinTestPassed);
             }
 
-            fprintf(stderr, "\n\n");
+            tprintf(PRINT_ERR, "\n\n");
         }
 
         TestTracker++;

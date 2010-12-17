@@ -131,7 +131,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_GOODQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -140,7 +140,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -149,7 +149,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -159,7 +159,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_BESTQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input, BestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, BestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -168,7 +168,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, BestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, BestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -177,7 +177,7 @@ int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, BestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, BestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

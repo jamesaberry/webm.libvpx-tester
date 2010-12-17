@@ -151,7 +151,7 @@ int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
         snprintf(outputChar2, 255, "%s", OutPutStr3.c_str());
 
         unsigned int cpu_tick1 = 0;
-        EncTimeArr[x] = vpxt_time_compress_ivf_to_ivf(input, outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1);
+        EncTimeArr[x] = vpxt_time_compress_ivf_to_ivf(input, outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1, 0, 3, 3);
 
         if (EncTimeArr[x] == -1)
         {

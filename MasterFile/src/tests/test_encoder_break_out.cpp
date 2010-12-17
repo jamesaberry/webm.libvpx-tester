@@ -153,7 +153,7 @@ int test_encoder_break_out(int argc, char *argv[], string WorkingDir, string Fil
 
         opt.encode_breakout = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -162,7 +162,7 @@ int test_encoder_break_out(int argc, char *argv[], string WorkingDir, string Fil
 
         opt.encode_breakout = 100;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -171,7 +171,7 @@ int test_encoder_break_out(int argc, char *argv[], string WorkingDir, string Fil
 
         opt.encode_breakout = 500;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -180,7 +180,7 @@ int test_encoder_break_out(int argc, char *argv[], string WorkingDir, string Fil
 
         opt.encode_breakout = 1000;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

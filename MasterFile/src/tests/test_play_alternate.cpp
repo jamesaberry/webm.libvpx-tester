@@ -131,7 +131,7 @@ int test_play_alternate(int argc, char *argv[], string WorkingDir, string FilesA
         opt.Mode = Mode;
         opt.play_alternate = PlayAlternate1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -140,7 +140,7 @@ int test_play_alternate(int argc, char *argv[], string WorkingDir, string FilesA
 
         opt.play_alternate = PlayAlternate2Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

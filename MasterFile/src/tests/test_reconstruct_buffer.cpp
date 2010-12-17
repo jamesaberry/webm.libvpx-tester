@@ -117,7 +117,7 @@ int test_reconstruct_buffer(int argc, char *argv[], string WorkingDir, string Fi
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input, ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input, ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

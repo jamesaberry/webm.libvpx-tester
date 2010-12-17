@@ -218,7 +218,7 @@ int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesA
         vector<string> DecompressonVector;
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

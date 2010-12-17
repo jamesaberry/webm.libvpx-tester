@@ -212,7 +212,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_GOODQUALITY;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, GoodTotalcpu_tick[counter]);
+                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, GoodTotalcpu_tick[counter], 0, 3, 3);
 
                 if (Time == -1)
                 {
@@ -247,7 +247,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tick[counter2]);
+                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tick[counter2], 0, 3, 3);
 
                 if (Time == -1)
                 {
@@ -279,7 +279,7 @@ int test_speed(int argc, char *argv[], string WorkingDir, string FilesAr[], int 
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tickPos[counter]);
+                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tickPos[counter], 0, 3, 3);
 
                 if (Time == -1)
                 {

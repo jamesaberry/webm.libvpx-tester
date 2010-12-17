@@ -109,13 +109,13 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
 
         if (CompressionType == 1)
         {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         }
 
         if (CompressionType == 2)
         {
             unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
         }
     }
 
@@ -125,13 +125,13 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
 
         if (CompressionType == 1)
         {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         }
 
         if (CompressionType == 2)
         {
             unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
         }
     }
 
@@ -141,13 +141,13 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
 
         if (CompressionType == 1)
         {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         }
 
         if (CompressionType == 2)
         {
             unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
         }
     }
 
@@ -161,13 +161,13 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
 
         if (CompressionType == 1)
         {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         }
 
         if (CompressionType == 2)
         {
             unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
         }
     }
 
@@ -177,13 +177,13 @@ int ComprIVF2IVF(int argc, char *argv[], string WorkingDir)
 
         if (CompressionType == 1)
         {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         }
 
         if (CompressionType == 2)
         {
             unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
         }
     }
 
@@ -1604,7 +1604,7 @@ int DecoderCheck(int argc, char *argv[])
     {
         opt.Mode = MODE_GOODQUALITY;
         tprintf(PRINT_STD, "\n\nCompressing %s to %s\n", CompressionInput, CompressionOutput);
-        vpxt_compress_ivf_to_ivf_no_error_output(CompressionInput, CompressionOutput, speed, BitRate, opt, "", 0, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output(CompressionInput, CompressionOutput, speed, BitRate, opt, "", 0, 0, 0, 3, 3);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3204,20 +3204,20 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
     if (Mode == 0)
     {
         opt.Mode = MODE_REALTIME;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *)output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *)output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
     }
 
     if (Mode == 1)
     {
         opt.Mode = MODE_GOODQUALITY;
 
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
 
     }
 
@@ -3225,10 +3225,10 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
     {
         opt.Mode = MODE_BESTQUALITY;
 
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
     }
 
     if (Mode == 3)
@@ -3239,27 +3239,27 @@ int CompressionEquiv(int argc, char *argv[], string WorkingDir)
     if (Mode == 4)
     {
         opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
 
         opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
 
         opt.Mode = MODE_SECONDPASS;
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
     }
 
     if (Mode == 5)
     {
         opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
 
         opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
 
         opt.Mode = MODE_SECONDPASS_BEST;
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
     }
 
     if (vpxt_compare_ivf((char *)output1.c_str(), (char *)output2.c_str()) == -1)
@@ -3433,19 +3433,19 @@ int CompMatchesIVFenc(int argc, char *argv[])
     if (Mode == 0)
     {
         opt.Mode = MODE_REALTIME;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
     }
 
     if (Mode == 1)
     {
         opt.Mode = MODE_GOODQUALITY;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
     }
 
     if (Mode == 2)
     {
         opt.Mode = MODE_BESTQUALITY;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
     }
 
     if (Mode == 3)
@@ -3455,13 +3455,13 @@ int CompMatchesIVFenc(int argc, char *argv[])
     if (Mode == 4)
     {
         opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
     }
 
     if (Mode == 5)
     {
         opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
     }
 
     ConvertParmFileToIVFenc(ParameterFileTesterFP, ParameterFileIVFEncFP);  //Make IVFENC Parameter file from Tester Parameter File

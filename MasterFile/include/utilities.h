@@ -91,11 +91,11 @@ void vpxt_formated_print(int selector, const char *fmt, ...);
 void vpxt_cap_string_print(int selector, const char *fmt, ...);
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
-int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
-int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
-unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick);
-int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame);
-int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck);
+int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
+int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
+unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick, int arnr_max_frames, int arnr_strength, int arnr_type);
+int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, int arnr_max_frames, int arnr_strength, int arnr_type);
+int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
 int vpxt_decompress_ivf_to_ivf(const char *inputchar, const char *outputchar);
 int vpxt_decompress_ivf_to_raw(const char *inputchar, const char *outputchar);
 int vpxt_decompress_ivf_to_raw_no_error_output(char *inputchar, char *outputchar);

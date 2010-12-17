@@ -2,7 +2,7 @@
 
 int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
-    char *CompressString = "Version:";
+    char *CompressString = "Arnr Maxframes:";
     char *MyDir = "test_change_cpu_enc";
 
     if (!(argc == 7 || argc == 6))
@@ -19,7 +19,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
-                "    <Version>\n"
+                "    <Arnr Maxframes>\n"
                 "    <Optional Settings File>\n"
                 "\n"
                );
@@ -29,7 +29,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
     char *input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
-    int VersionNum = atoi(argv[5]);
+    int ArnrMaxframes = atoi(argv[5]);
 
     int speed = 0;
     int Fail = 0;
@@ -110,8 +110,8 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
     /////////////////////////////////////////////////////////
 
     opt.target_bandwidth = BitRate;
-    opt.Version = VersionNum;
-    int CompressInt = opt.Version;
+    //opt.Version = VersionNum;
+    int CompressInt = ArnrMaxframes;
     opt.Mode = Mode;
     int counter = 0;
 
@@ -220,7 +220,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
         OutputStr.append("none.ivf");
 
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
-        unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input, OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1);
+        unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input, OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1, ArnrMaxframes, 3, 3);
         CompressonVector.push_back(OutputStr);
 
         if (Time1 == -1)
@@ -306,7 +306,7 @@ int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesA
                 ChangedCPUDecNOutCurrent.append(".ivf");
 
                 opt.Mode = Mode;
-                unsigned int Time2 = vpxt_time_compress_ivf_to_ivf(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2);
+                unsigned int Time2 = vpxt_time_compress_ivf_to_ivf(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2, 0, 3, 3);
                 CompressonVector.push_back(ChangedCPUDecNOutCurrent);
 
                 if (Time2 == -1)

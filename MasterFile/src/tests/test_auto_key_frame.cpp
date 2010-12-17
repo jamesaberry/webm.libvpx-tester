@@ -128,14 +128,14 @@ int test_auto_key_frame(int argc, char *argv[], string WorkingDir, string FilesA
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
-        if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

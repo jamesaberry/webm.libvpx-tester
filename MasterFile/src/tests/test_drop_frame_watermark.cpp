@@ -149,7 +149,7 @@ int test_drop_frame_watermark(int argc, char *argv[], string WorkingDir, string 
 
             opt.Mode = Mode;
 
-            if (vpxt_compress_ivf_to_ivf(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
+            if (vpxt_compress_ivf_to_ivf(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

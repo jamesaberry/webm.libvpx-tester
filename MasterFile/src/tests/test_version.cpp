@@ -158,7 +158,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         opt.Version = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,7 +167,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         opt.Version = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -176,7 +176,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         opt.Version = 2;
 
-        if (vpxt_compress_ivf_to_ivf(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -185,7 +185,7 @@ int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], in
 
         opt.Version = 3;
 
-        if (vpxt_compress_ivf_to_ivf(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -265,7 +265,7 @@ int test_frame_size(int argc, char *argv[], string WorkingDir, string FilesAr[],
 
             tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
 
-            if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

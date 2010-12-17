@@ -182,7 +182,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], string WorkingDir, stri
     {
 
         opt.Mode = Mode;
-        unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1);
+        unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, 0, 3, 3);
 
         if (Time == -1)
         {

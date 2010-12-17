@@ -5389,7 +5389,7 @@ void vpxt_cap_string_print(int selector, const char *fmt, ...)
 }
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
-int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
+int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -5420,6 +5420,18 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////check arnr values///////////////////
+    if (arnr_max_frames < 0 || arnr_max_frames > 15)
+        return -1;
+
+    if (arnr_strength > 6)
+        return -1;
+
+    if (arnr_type < 1 || arnr_type > 3)
+        return -1;
+
+    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
     const char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -5674,6 +5686,10 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
         {
@@ -5863,7 +5879,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
 
     return 0;
 }
-int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
+int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type)
 {
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
@@ -5872,6 +5888,17 @@ int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2,
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////check arnr values///////////////////
+    if (arnr_max_frames < 0 || arnr_max_frames > 15)
+        return -1;
+
+    if (arnr_strength > 6)
+        return -1;
+
+    if (arnr_type < 1 || arnr_type > 3)
+        return -1;
+
+    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
     char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -6092,6 +6119,10 @@ int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2,
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
         {
@@ -6221,7 +6252,7 @@ int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2,
     vpx_img_free(&raw);
     return 0;
 }
-unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick)
+unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick, int arnr_max_frames, int arnr_strength, int arnr_type)
 {
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
@@ -6230,6 +6261,17 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////check arnr values///////////////////
+    if (arnr_max_frames < 0 || arnr_max_frames > 15)
+        return -1;
+
+    if (arnr_strength > 6)
+        return -1;
+
+    if (arnr_type < 1 || arnr_type > 3)
+        return -1;
+
+    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
     const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -6449,6 +6491,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
         {
@@ -6601,7 +6647,7 @@ unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFi
     CPUTick = total_cpu_time_used;
     return cx_time;
 }
-int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame)
+int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, int arnr_max_frames, int arnr_strength, int arnr_type)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -6632,6 +6678,17 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////check arnr values///////////////////
+    if (arnr_max_frames < 0 || arnr_max_frames > 15)
+        return -1;
+
+    if (arnr_strength > 6)
+        return -1;
+
+    if (arnr_type < 1 || arnr_type > 3)
+        return -1;
+
+    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
     const char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -6888,6 +6945,10 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
         {
@@ -7055,7 +7116,7 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *output
 
     return 0;
 }
-int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
+int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -7086,6 +7147,17 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////check arnr values///////////////////
+    if (arnr_max_frames < 0 || arnr_max_frames > 15)
+        return -1;
+
+    if (arnr_strength > 6)
+        return -1;
+
+    if (arnr_type < 1 || arnr_type > 3)
+        return -1;
+
+    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t       encoder;
     const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -7395,6 +7467,10 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *out
         vpx_codec_control(&encoder, VP8E_SET_NOISE_SENSITIVITY, oxcf.noise_sensitivity);
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
+
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)

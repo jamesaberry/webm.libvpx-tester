@@ -119,7 +119,7 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
         opt.Mode = Mode;
         opt.allow_df = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -128,7 +128,7 @@ int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string Fil
 
         opt.allow_df = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

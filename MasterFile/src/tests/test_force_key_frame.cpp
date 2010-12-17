@@ -119,7 +119,7 @@ int test_force_key_frame(int argc, char *argv[], string WorkingDir, string Files
         opt.Mode = Mode;
         opt.key_freq = 0;//ForceKeyFrameInt;
 
-        if (vpxt_compress_ivf_to_ivf_force_key_frame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
+        if (vpxt_compress_ivf_to_ivf_force_key_frame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

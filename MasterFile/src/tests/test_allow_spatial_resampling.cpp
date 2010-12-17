@@ -117,7 +117,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
         opt.Mode = Mode;
         opt.allow_spatial_resampling = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -126,7 +126,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, str
 
         opt.allow_spatial_resampling = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

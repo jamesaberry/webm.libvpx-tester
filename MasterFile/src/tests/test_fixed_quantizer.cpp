@@ -137,7 +137,7 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
 
         opt.fixed_q = FixedQ1Int;
 
-        if (vpxt_compress_ivf_to_ivf(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -146,7 +146,7 @@ int test_fixed_quantizer(int argc, char *argv[], string WorkingDir, string Files
 
         opt.fixed_q = FixedQ2Int;
 
-        if (vpxt_compress_ivf_to_ivf(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

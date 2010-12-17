@@ -146,7 +146,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
         opt.allow_lag = 0;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -156,7 +156,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -166,7 +166,7 @@ int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames2Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+        if (vpxt_compress_ivf_to_ivf(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

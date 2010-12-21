@@ -9,6 +9,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 using namespace std;
 
 #if defined(_WIN32)
@@ -52,7 +53,7 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
             DateAndTimeCharArray[w] = DateAndTime.c_str()[w];
         }
 
-        w++;
+        w = w + 1;
     }
 
     DateAndTimeCharArray[w] = '\0';
@@ -74,7 +75,7 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 
     while (vpxt_folder_exist_check(FolderCheck)) //Make sure folder doesnt already exist
     {
-        number++;
+        number = number + 1;
         char numberChar[255];
         vpxt_itoa_custom(number, numberChar, 10);
 
@@ -121,7 +122,7 @@ string date_string()
             DateAndTimeCharArray[w] = DateAndTime.c_str()[w];
         }
 
-        w++;
+        w = w + 1;
     }
 
     DateAndTimeCharArray[w] = '\"';
@@ -184,8 +185,8 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "\n");
     tprintf(PRINT_STD, "  <tests options>                          <tool options>\n");
     tprintf(PRINT_STD, "                                            \n");
-    tprintf(PRINT_STD, "   (0) run_multiple_tests                   IVFEnc\n");
-    tprintf(PRINT_STD, "   (1) test_allow_drop_frames               IVFDec\n");
+    tprintf(PRINT_STD, "   (0) run_multiple_tests                   VPXEnc\n");
+    tprintf(PRINT_STD, "   (1) test_allow_drop_frames               VPXDec\n");
     tprintf(PRINT_STD, "   (2) test_allow_lag                       IVF2IVFCompr\n");
     tprintf(PRINT_STD, "   (3) test_allow_spatial_resampling        IVF2IVFDec\n");
     tprintf(PRINT_STD, "   (4) test_auto_key_frame                  IVF2RawDec\n");
@@ -1332,7 +1333,7 @@ void vpxt_test_help(int argc, char *argv[], string WorkingDir)
 }
 int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
 {
-    if (InputString.compare("IVF2IVFCompr") == 0)
+    if (InputString.compare("ivf2ivfcompr") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  Compress IVF to IVF \n\n"
@@ -1348,7 +1349,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVF2IVFDec") == 0)
+    if (InputString.compare("ivf2ivfdec") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  Decompress IVF to IVF \n\n"
@@ -1360,7 +1361,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVF2RawDec") == 0)
+    if (InputString.compare("ivf2rawdec") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  Decompress IVF to Raw \n\n"
@@ -1372,7 +1373,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVFDataRate") == 0)
+    if (InputString.compare("ivfdatarate") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  IVF DataRate \n\n"
@@ -1383,7 +1384,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVFPSNR") == 0)
+    if (InputString.compare("ivfpsnr") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  IVFPSNR\n\n"
@@ -1395,7 +1396,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVFCheckPBM") == 0)
+    if (InputString.compare("ivfcheckpbm") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  IVFCheckPBM\n\n"
@@ -1409,7 +1410,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("Raw2IVF") == 0)
+    if (InputString.compare("raw2ivf") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  Raw2IVF\n\n"
@@ -1425,7 +1426,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVF2Raw") == 0)
+    if (InputString.compare("ivf2raw") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  IVF2Raw \n\n"
@@ -1437,7 +1438,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVF2RawFrames") == 0)
+    if (InputString.compare("ivf2rawframes") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  IVF2RawFrames\n\n"
@@ -1449,7 +1450,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("CombineIndvFrames") == 0)
+    if (InputString.compare("combineindvframes") == 0)
     {
         tprintf(PRINT_STD, "\n  CombineIndvFrames");
         vpxt_formated_print(TOLPRT, "This utility will combine all individual decoded frames in a folder into a single raw file in numerical order.");
@@ -1483,7 +1484,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("CompareIVF") == 0)
+    if (InputString.compare("compareivf") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  CompareIVF\n\n"
@@ -1495,7 +1496,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("CompIVFHeader") == 0)
+    if (InputString.compare("compivfheader") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  CompareIVFHeaderInfo \n\n"
@@ -1509,7 +1510,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("DispIVFHeader") == 0)
+    if (InputString.compare("dispivfheader") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  DisplayIVFHeaderInfo \n\n"
@@ -1522,7 +1523,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("DispKeyFrames") == 0)
+    if (InputString.compare("dispkeyframes") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  DispKeyFrames \n\n"
@@ -1534,7 +1535,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("DispResizedFrames") == 0)
+    if (InputString.compare("dispresizedframes") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  DisplayResizedFrames \n\n"
@@ -1546,7 +1547,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("DispVisibleFrames") == 0)
+    if (InputString.compare("dispvisibleframes") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  DisplayVisibleFrames \n\n"
@@ -1558,7 +1559,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("DispAltRefFrames") == 0)
+    if (InputString.compare("dispaltrefframes") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  DisplayAltRefFrames \n\n"
@@ -1571,7 +1572,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
     }
 
 
-    if (InputString.compare("CutIVF") == 0)
+    if (InputString.compare("cutivf") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  CutIVF\n\n"
@@ -1585,7 +1586,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("PasteIVF") == 0)
+    if (InputString.compare("pastivf") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  PasteIVF\n\n"
@@ -1599,7 +1600,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("PlayDecIVF") == 0)
+    if (InputString.compare("playdecivf") == 0)
     {
 #if defined(_WIN32)
         tprintf(PRINT_STD,
@@ -1621,7 +1622,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("PlayCompIVF") == 0)
+    if (InputString.compare("playcomivf") == 0)
     {
 #if defined(_WIN32)
         tprintf(PRINT_STD,
@@ -1643,19 +1644,19 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("CreateSampleTextFiles") == 0)
+    if (InputString.compare("createsampletextfiles") == 0)
     {
         vpxt_formated_print(TOLPRT, "This utility will create sample text files.");
         return 1;
     }
 
-    if (InputString.compare("PrintVersion") == 0)
+    if (InputString.compare("printversion") == 0)
     {
         vpxt_formated_print(TOLPRT, "This utility will print the version of vp8 being used by the tester.");
         return 1;
     }
 
-    if (InputString.compare("RandParFile") == 0)
+    if (InputString.compare("randparfile") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  RandomParFile\n\n"
@@ -1666,7 +1667,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("RandIVFComp") == 0)
+    if (InputString.compare("randivfcomp") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  RandComp\n\n"
@@ -1677,7 +1678,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("GraphPSNR") == 0)
+    if (InputString.compare("graphpsnr") == 0)
     {
         tprintf(PRINT_STD, "\n"
                 "  GraphPSNR\n\n"
@@ -1691,7 +1692,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         vpxt_formated_print(TOLPRT, "The utility creates compressions from user input starting to user input ending bit rates at user input steps.  The utility then computes and outputs the data rates and PSNRs of the resultant files.");
     }
 
-    if (InputString.compare("TestVectorIndex") == 0)
+    if (InputString.compare("testvectorindex") == 0)
     {
         tprintf(PRINT_STD, "\n  TestVectorIndex\n");
         vpxt_formated_print(TOLPRT, "This Utility makes use of the TestVectorsIndividualRunsResults Directory to locate the first report of a line being covered by a test vector and reports relevant information about it.");
@@ -1733,10 +1734,10 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVFEnc") == 0)
+    if (InputString.compare("vpxenc") == 0)
     {
         tprintf(PRINT_STD,
-                "\n  IVFEnc\n"
+                "\n  VPXEnc\n"
                 "\n"
                );
 
@@ -1744,10 +1745,10 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("IVFDec") == 0)
+    if (InputString.compare("vpxdec") == 0)
     {
         tprintf(PRINT_STD,
-                "\n  IVFDec\n"
+                "\n  VPXDec\n"
                 "\n"
                );
 
@@ -1755,7 +1756,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
         return 1;
     }
 
-    if (InputString.compare("CropRawIVF") == 0)
+    if (InputString.compare("croprawivf") == 0)
     {
         tprintf(PRINT_STD,
                 "\n  CropRawIVF\n\n"
@@ -1774,221 +1775,14 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
 
     return 0;
 }
-void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile)
-{
-    tprintf(PRINT_STD, "\n Formating Summary file.\n");
-    string InputFileName = InputFileNameCharAr;
-    string SummaryByTestOutput = InputFileName;
-    SummaryByTestOutput.erase(SummaryByTestOutput.end() - 4, SummaryByTestOutput.end());
-
-    SummaryByTestOutput.append("_SortBy_Test.txt");
-
-    //Deletes old file if user chooses to.
-    if (DeleteOldFile == 1)
-    {
-        fstream FormatSummaryByTestFileOutDelete;
-        FormatSummaryByTestFileOutDelete.open(SummaryByTestOutput.c_str(), fstream::in | fstream::out | fstream::app);
-
-        if (FormatSummaryByTestFileOutDelete.good())
-        {
-            FormatSummaryByTestFileOutDelete.close();
-        }
-        else
-        {
-            FormatSummaryByTestFileOutDelete.close();
-        }
-    }
-
-    char buffer[1024];
-    char buffer2[36];
-
-    string TestTrackerName;
-    int TestTracker = 1;
-
-    while (TestTracker <= MAXTENUM)
-    {
-        if (TestTracker == AlWDFNUM)
-            TestTrackerName = "Test_Allow_Drop_Frames";
-
-        if (TestTracker == ALWLGNUM)
-            TestTrackerName = "Test_Allow_Lag";
-
-        if (TestTracker == ALWSRNUM)
-            TestTrackerName = "Test_Allow_Spatial_Resampling";
-
-        if (TestTracker == AUTKFNUM)
-            TestTrackerName = "Test_Auto_Key_Frame";
-
-        if (TestTracker == BUFLVNUM)
-            TestTrackerName = "Test_Buffer_Level";
-
-        if (TestTracker == CPUDENUM)
-            TestTrackerName = "Test_Change_Cpu_Dec";
-
-        if (TestTracker == CHGWRNUM)
-            TestTrackerName = "Test_Change_Cpu_Enc";
-
-        if (TestTracker == DTARTNUM)
-            TestTrackerName = "Test_Data_Rate";
-
-        if (TestTracker == DBMRLNUM)
-            TestTrackerName = "Test_Debug_Matches_Release";
-
-        if (TestTracker == DFWMWNUM)
-            TestTrackerName = "Test_Drop_Frame_Watermark";
-
-        if (TestTracker == ENCBONUM)
-            TestTrackerName = "Test_Encoder_Break_Out";
-
-        if (TestTracker == ERRMWNUM)
-            TestTrackerName = "Test_Error_Resolution";
-
-        if (TestTracker == EXTFINUM)
-            TestTrackerName = "Test_Extra_File";
-
-        if (TestTracker == FIXDQNUM)
-            TestTrackerName = "Test_Fixed_Quantizer";
-
-        if (TestTracker == FKEFRNUM)
-            TestTrackerName = "Test_Force_Key_frame";
-
-        if (TestTracker == FRSZTNUM)
-            TestTrackerName = "Test_Frame_Size";
-
-        if (TestTracker == GQVBQNUM)
-            TestTrackerName = "Test_Good_Vs_Best";
-
-        if (TestTracker == LGIFRNUM)
-            TestTrackerName = "Test_Lag_In_Frames";
-
-        if (TestTracker == MAXQUNUM)
-            TestTrackerName = "Test_Max_Quantizer";
-
-        if (TestTracker == MEML1NUM)
-            TestTrackerName = "Test_Mem_Leak";
-
-        if (TestTracker == MEML2NUM)
-            TestTrackerName = "Test_Mem_Leak2";
-
-        if (TestTracker == MINQUNUM)
-            TestTrackerName = "Test_Min_Quantizer";
-
-        if (TestTracker == MULTTNUM)
-            TestTrackerName = "Test_Multithreaded";
-
-        if (TestTracker == NVOPSNUM)
-            TestTrackerName = "Test_New_Vs_Old_Psnr";
-
-        if (TestTracker == NVOECPTK)
-            TestTrackerName = "test_new_vs_old_enc_cpu_tick";
-
-        if (TestTracker == NOISENUM)
-            TestTrackerName = "Test_Noise_Sensitivity";
-
-        if (TestTracker == OV2PSNUM)
-            TestTrackerName = "Test_One_Pass_Vs_Two_Pass";
-
-        if (TestTracker == PLYALNUM)
-            TestTrackerName = "Test_Play_Alternate";
-
-        if (TestTracker == POSTPNUM)
-            TestTrackerName = "Test_Post_Processor";
-
-        if (TestTracker == RECBFNUM)
-            TestTrackerName = "Test_Reconstruct_Buffer";
-
-        if (TestTracker == RSDWMNUM)
-            TestTrackerName = "Test_Resample_Down_Watermark";
-
-        if (TestTracker == SPEEDNUM)
-            TestTrackerName = "Sest_Speed";
-
-        if (TestTracker == TVECTNUM)
-            TestTrackerName = "Test_Test_Vector";
-
-        if (TestTracker == TV2BTNUM)
-            TestTrackerName = "Test_Two_Pass_Vs_Two_Pass_Best";
-
-        if (TestTracker == UNDSHNUM)
-            TestTrackerName = "Test_Undershoot";
-
-        if (TestTracker == VERSINUM)
-            TestTrackerName = "Test_Version";
-
-        if (TestTracker == WMLMMNUM)
-            TestTrackerName = "Test_Win_Lin_Mac_Match";
-
-        fstream FormatSummaryByTestFile;
-        FormatSummaryByTestFile.open(InputFileName.c_str());
-
-        if (!FormatSummaryByTestFile.good())
-        {
-            cout << "Cannot open input file.";
-            return;
-        }
-
-        int p = 0;
-        int DoOnce = 1;
-
-        //read in and throw away header
-        while (p < 7)
-        {
-            FormatSummaryByTestFile.getline(buffer, 1024);
-            p++;
-        }
-
-        while (!FormatSummaryByTestFile.eof() && buffer[0] != '-')
-        {
-            memset(buffer, 0, sizeof(buffer));
-            memset(buffer2, 0, sizeof(buffer2));
-            FormatSummaryByTestFile.getline(buffer, 1024);
-
-            int n = 5;
-            int i = 0;
-
-            while (n < 39 && buffer[n] != ' ')
-            {
-                buffer2[i] = buffer[n];
-                n++;
-                i++;
-            }
-
-            string TestReadString = buffer2;
-
-            if (TestReadString.compare(TestTrackerName) == 0)
-            {
-                fstream FormatSummaryByTestFileOut;
-                FormatSummaryByTestFileOut.open(SummaryByTestOutput.c_str(), fstream::in | fstream::out | fstream::app);
-
-                if (DoOnce)
-                {
-                    FormatSummaryByTestFileOut << "\n\n ===================================" << buffer2 << "=================================== \n\n";
-                    DoOnce = 0;
-                }
-
-                FormatSummaryByTestFileOut << buffer << "\n";
-                FormatSummaryByTestFileOut.close();
-
-            }
-
-        }
-
-        FormatSummaryByTestFile.close();
-
-        TestTracker++;
-    }
-
-    return;
-
-}
-void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldFile)
+void format_summary(char *InputFileNameCharAr)
 {
     tprintf(PRINT_STD, "\n Formating Summary file.\n");
 
     string InputFileName = InputFileNameCharAr;
     string SummaryByTestOutput = InputFileName;
-    SummaryByTestOutput.erase(SummaryByTestOutput.end() - 4, SummaryByTestOutput.end());
 
+    SummaryByTestOutput.erase(SummaryByTestOutput.end() - 4, SummaryByTestOutput.end());
     SummaryByTestOutput.append("_expanded.txt");
 
     char TestsRunChar[255];
@@ -1996,38 +1790,17 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
     string TestsRun = TestsRunChar;
     TestsRun.append("tests_run.txt");
 
-    if (DeleteOldFile == 1)
-    {
-        fstream FormatSummaryByTestFileOutDelete;
-        FormatSummaryByTestFileOutDelete.open(SummaryByTestOutput.c_str(), fstream::in | fstream::out | fstream::app);
-
-        if (FormatSummaryByTestFileOutDelete.good())
-        {
-            FormatSummaryByTestFileOutDelete.close();
-        }
-        else
-        {
-            FormatSummaryByTestFileOutDelete.close();
-        }
-    }
-
     FILE *fp;
 
-    if ((fp = freopen(SummaryByTestOutput.c_str(), "a", stderr)) == NULL)
+    if ((fp = freopen(SummaryByTestOutput.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open summary out put file: %s\n", SummaryByTestOutput.c_str());
         return;
     }
 
-    //Deletes old file if user chooses to.
-
-    char buffer[1024];
-    char buffer2[36];
-    char buffer3[128];
-    char buffer4[1024];
-
-    string TestTrackerName;
-    string TestTrackerResult;
+    string LineBuffer = "";
+    string TestTrackerName = "";
+    string TestTrackerResult = "";
 
     int TestTracker = 1;
     int ResultTracker = 0;
@@ -2037,7 +1810,7 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
     {
         ResultTracker = 0;
 
-        int DoOnce1 = 1;
+        bool PrintTestHeader1 = 1;
 
         //This iterates through all possible tests run using the test tracker names to specify which was run the number is only to drive
         //The iteration through and does not represent test number
@@ -2114,7 +1887,7 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
             TestTrackerName = "Test_New_Vs_Old_Psnr";
 
         if (TestTracker == NVOECPTK)
-            TestTrackerName = "test_new_vs_old_enc_cpu_tick";
+            TestTrackerName = "Test_New_Vs_Old_Enc_Cpu_Tick";
 
         if (TestTracker == NOISENUM)
             TestTrackerName = "Test_Noise_Sensitivity";
@@ -2135,7 +1908,7 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
             TestTrackerName = "Test_Resample_Down_Watermark";
 
         if (TestTracker == SPEEDNUM)
-            TestTrackerName = "Sest_Speed";
+            TestTrackerName = "Test_Speed";
 
         if (TestTracker == TVECTNUM)
             TestTrackerName = "Test_Test_Vector";
@@ -2208,183 +1981,162 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
             fstream FormatSummaryByTestFile;
             FormatSummaryByTestFile.open(InputFileName.c_str());
 
-            if (!FormatSummaryByTestFile.good())
+            if (!FormatSummaryByTestFile)
             {
                 cout << "Cannot open input file.";
                 return;
             }
 
             int p = 0;
-            int DoOnce2 = 1;
+            bool PrintTestHeader2 = 1;
 
             //read in and throw away header
-            while (p < 7)
+            while (p < 11)
             {
-                FormatSummaryByTestFile.getline(buffer, 1024);
-                p++;
+                //FormatSummaryByTestFile.getline(buffer, 1024);
+                getline(FormatSummaryByTestFile, LineBuffer);
+                p = p + 1;
             }
 
-            while (!FormatSummaryByTestFile.eof() && buffer[0] != '-')
+            while (!FormatSummaryByTestFile.eof() && LineBuffer[0] != '-')
             {
-                memset(buffer, 0, sizeof(buffer));
-                memset(buffer2, 0, sizeof(buffer2));
-                memset(buffer3, 0, sizeof(buffer2));
-                memset(buffer4, 0, sizeof(buffer2));
+                getline(FormatSummaryByTestFile, LineBuffer);
 
-                FormatSummaryByTestFile.getline(buffer, 1024);
-
-                int n = 5;
-                int i = 0;
-
-                while (n < 39 && buffer[n] != ' ')
+                if (LineBuffer.length() > 60)
                 {
-                    buffer2[i] = buffer[n];
-                    n++;
-                    i++;
-                }
+                    int n = 5;
 
-                n = 62;
-                i = 0;
+                    while (n < 39 && LineBuffer[n] != ' ')
+                        n = n + 1;
 
-                while (n < 194 && buffer[n] != ' ')
-                {
-                    buffer3[i] = buffer[n];
-                    n++;
-                    i++;
-                }
+                    string TestReadString = LineBuffer.substr(5, n - 5);
 
-                string TestReadString = buffer2;
-                string TestResultString = buffer3;
+                    n = 62;
 
-                //check to see if names and states match up
-                if (TestReadString.compare(TestTrackerName) == 0 && TestResultString.compare(TestTrackerResult) == 0)
-                {
-                    if (ResultTracker == 1)
-                        PassedTrack++;
+                    while (n < 194 && LineBuffer[n] != ' ' != 0 && n < LineBuffer.length())
+                        n = n + 1;
 
-                    if (ResultTracker == 0)
-                        FailedTrack++;
+                    string TestResultString = LineBuffer.substr(62, n - 62);
 
-                    if (ResultTracker == 2)
-                        IndeterminateTrack++;
-
-                    if (ResultTracker == 3)
-                        SeeComboRunLogTrack++;
-
-                    if (ResultTracker == 4)
-                        SeePSNRLogTrack++;
-
-                    if (ResultTracker == 8)
-                        MinTestPassed++;
-
-                    if (ResultTracker == 10)
-                        CompressionMadeTrack++;
-
-                    if (ResultTracker == 11)
-                        ErrorFileMismatchTrack++;
-
-                    if (ResultTracker == 12)
-                        TestNotSupportedTrack++;
-
-                    if (DoOnce1)
+                    //check to see if names and states match up
+                    if (TestReadString.compare(TestTrackerName) == 0 && TestResultString.compare(TestTrackerResult) == 0)
                     {
-                        //print test header
-                        int leftLineSize = 75 - (TestReadString.size() / 2);
-                        int counter = 0;
+                        if (ResultTracker == 1)
+                            PassedTrack = PassedTrack + 1;
 
-                        tprintf(PRINT_ERR, "\n\n");
+                        if (ResultTracker == 0)
+                            FailedTrack = FailedTrack + 1;
 
-                        while (counter < leftLineSize)
+                        if (ResultTracker == 2)
+                            IndeterminateTrack = IndeterminateTrack + 1;
+
+                        if (ResultTracker == 3)
+                            SeeComboRunLogTrack = SeeComboRunLogTrack + 1;
+
+                        if (ResultTracker == 4)
+                            SeePSNRLogTrack = SeePSNRLogTrack + 1;
+
+                        if (ResultTracker == 8)
+                            MinTestPassed = MinTestPassed + 1;
+
+                        if (ResultTracker == 10)
+                            CompressionMadeTrack = CompressionMadeTrack + 1;
+
+                        if (ResultTracker == 11)
+                            ErrorFileMismatchTrack = ErrorFileMismatchTrack + 1;
+
+                        if (ResultTracker == 12)
+                            TestNotSupportedTrack = TestNotSupportedTrack + 1;
+
+                        if (PrintTestHeader1)
                         {
-                            tprintf(PRINT_ERR, "=");
-                            counter++;
-                        }
+                            //print test header
+                            int leftLineSize = 75 - (TestReadString.size() / 2);
+                            int counter = 0;
 
-                        tprintf(PRINT_ERR, "%s", TestReadString.c_str());
-                        counter = counter + TestReadString.size();
+                            fprintf(stderr, "\n\n");
 
-                        while (counter < 150)
-                        {
-                            tprintf(PRINT_ERR, "=");
-                            counter++;
-                        }
-
-                        tprintf(PRINT_ERR, "\n");
-                        DoOnce1 = 0;
-                    }
-
-                    if (DoOnce2)
-                    {
-                        tprintf(PRINT_ERR, "\n %s:\n\n", buffer3);
-                        tprintf(PRINT_ERR, "%4s %-32s%-25s%s  Test Settings\n\n", "#", "            Test Name" , "     Date and Time", "Status");
-                        DoOnce2 = 0;
-                    }
-
-                    tprintf(PRINT_ERR, "%s ", buffer);
-
-                    ///////////////////Get the correct Test Input settings and output them to summary.//////////////
-                    fstream TestsRunFile;
-                    TestsRunFile.open(TestsRun.c_str(), fstream::in);
-
-                    if (!TestsRunFile.good())
-                    {
-                        TestsRunFile.close();
-                        FormatSummaryByTestFile.close();
-                        fclose(fp);
-                        tprintf(PRINT_BTH, "\nFile creation Canceled: Cannot find %s\n", TestsRun.c_str());
-                        return;
-                    }
-
-                    char TestRunNum[4] = "";
-
-                    int v = 0;
-
-                    while (v < 4)
-                    {
-                        TestRunNum[v] = buffer[v];
-                        v++;
-                    }
-
-                    string TestRunNumStr = TestRunNum;
-                    int TestRunNumInt = atoi(TestRunNumStr.c_str());
-
-                    int TestNumberCur = -1;
-
-                    while (!TestsRunFile.eof() && TestNumberCur != TestRunNumInt)
-                    {
-                        TestsRunFile.getline(buffer4, 1024);
-
-                        if (buffer4[0] == '+')
-                        {
-                            TestNumberCur++;
-                        }
-
-                        if (TestNumberCur == TestRunNumInt)
-                        {
-                            buffer4[0] = ' ';
-                            int t = 0;
-
-                            while (buffer4[t] != '\0')
+                            while (counter < leftLineSize)
                             {
-                                if (buffer4[t] == '@')
-                                {
-                                    buffer4[t] = ' ';
-                                }
-
-                                t++;
+                                fprintf(stderr, "=");
+                                counter = counter + 1;
                             }
 
-                            tprintf(PRINT_ERR, "%s\n", buffer4);
-                        }
-                    }
+                            fprintf(stderr, "%s", TestReadString.c_str());
+                            counter = counter + TestReadString.size();
 
-                    TestsRunFile.close();
-                    //////////////////////////////////////////////////////////////////////////////////////////////
+                            while (counter < 150)
+                            {
+                                fprintf(stderr, "=");
+                                counter = counter + 1;
+                            }
+
+                            fprintf(stderr, "\n");
+                            PrintTestHeader1 = 0;
+                        }
+
+                        if (PrintTestHeader2)
+                        {
+                            fprintf(stderr, "\n %s:\n\n", TestResultString.c_str());
+                            fprintf(stderr, "%4s %-32s%-25s%s  Test Settings\n\n", "#", "            Test Name" , "     Date and Time", "Status");
+                            PrintTestHeader2 = 0;
+                        }
+
+                        fprintf(stderr, "%s ", LineBuffer.c_str());
+
+                        ///////////////////Get the correct Test Input settings and output them to summary.//////////////
+                        fstream TestsRunFile;
+                        TestsRunFile.open(TestsRun.c_str(), fstream::in);
+
+                        if (!TestsRunFile)
+                        {
+                            TestsRunFile.close();
+                            FormatSummaryByTestFile.close();
+                            fclose(fp);
+                            tprintf(PRINT_BTH, "\nFile creation Canceled: Cannot find %s\n", TestsRun.c_str());
+                            return;
+                        }
+
+                        int TestRunNumInt = 0;
+                        stringstream TestRunNum(LineBuffer.substr(0, 4));
+                        TestRunNum >> TestRunNumInt;
+
+                        int TestNumberCur = -1;
+
+                        while (!TestsRunFile.eof() && TestNumberCur != TestRunNumInt)
+                        {
+                            string TestsRunString = "";
+                            getline(TestsRunFile, TestsRunString);
+                            string test = TestsRunString.substr(0, 1);
+
+                            if (TestsRunString[0] == '+')
+                                TestNumberCur = TestNumberCur + 1;
+
+                            if (TestNumberCur == TestRunNumInt)
+                            {
+                                TestsRunString[0] = ' ';
+                                int t = 0;
+
+                                while (t < TestsRunString.length())
+                                {
+                                    if (TestsRunString[t] == '@')
+                                        TestsRunString[t] = ' ';
+
+                                    t = t + 1;
+                                }
+
+                                fprintf(stderr, "%s\n", TestsRunString.c_str());
+                            }
+                        }
+
+                        TestsRunFile.close();
+                        //////////////////////////////////////////////////////////////////////////////////////////////
+                    }
                 }
             }
 
             FormatSummaryByTestFile.close();
-            ResultTracker++;
+            ResultTracker = ResultTracker + 1;
         }
 
         int PassorFailExist = 0;
@@ -2437,76 +2189,75 @@ void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldF
         {
             if (!CompressExist == 1)
             {
-                tprintf(PRINT_ERR, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
-                tprintf(PRINT_ERR, "Passed: %i\n", PassedTrack);
-                tprintf(PRINT_ERR, "Failed: %i\n", FailedTrack);
-                tprintf(PRINT_ERR, "Indeterminate: %i\n", IndeterminateTrack);
+                fprintf(stderr, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
+                fprintf(stderr, "Passed: %i\n", PassedTrack);
+                fprintf(stderr, "Failed: %i\n", FailedTrack);
+                fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
 
                 if (SeeComboRunLogTrack != 0)
-                    tprintf(PRINT_ERR, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
+                    fprintf(stderr, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
 
                 if (SeePSNRLogTrack != 0)
-                    tprintf(PRINT_ERR, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
+                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
 
                 if (RandomTestCompletedTrack != 0)
-                    tprintf(PRINT_ERR, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
+                    fprintf(stderr, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
 
                 if (CompressionMadeTrack != 0)
-                    tprintf(PRINT_ERR, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
+                    fprintf(stderr, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
 
                 if (ErrorFileMismatchTrack != 0)
-                    tprintf(PRINT_ERR, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
+                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
 
                 if (TestNotSupportedTrack != 0)
-                    tprintf(PRINT_ERR, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
+                    fprintf(stderr, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
 
                 if (MinTestPassed != 0)
-                    tprintf(PRINT_ERR, "MinTestPassed: %i\n", MinTestPassed);
+                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
             }
             else
             {
-                tprintf(PRINT_ERR, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
+                fprintf(stderr, "\n\n\n%s Summary:\n\n", TestTrackerName.c_str());
 
                 if (PassedTrack != 0)
-                    tprintf(PRINT_ERR, "Passed: %i\n", PassedTrack);
+                    fprintf(stderr, "Passed: %i\n", PassedTrack);
 
                 if (FailedTrack != 0)
-                    tprintf(PRINT_ERR, "Failed: %i\n", FailedTrack);
+                    fprintf(stderr, "Failed: %i\n", FailedTrack);
 
                 if (IndeterminateTrack != 0)
-                    tprintf(PRINT_ERR, "Indeterminate: %i\n", IndeterminateTrack);
+                    fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
 
                 if (SeeComboRunLogTrack != 0)
-                    tprintf(PRINT_ERR, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
+                    fprintf(stderr, "SeeComboRunLogTrack: %i\n", SeeComboRunLogTrack);
 
                 if (SeePSNRLogTrack != 0)
-                    tprintf(PRINT_ERR, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
+                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
 
                 if (RandomTestCompletedTrack != 0)
-                    tprintf(PRINT_ERR, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
+                    fprintf(stderr, "RandomTestCompletedTrack: %i\n", RandomTestCompletedTrack);
 
                 if (CompressionMadeTrack != 0)
-                    tprintf(PRINT_ERR, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
+                    fprintf(stderr, "CompressionMadeTrack: %i\n", CompressionMadeTrack);
 
                 if (ErrorFileMismatchTrack != 0)
-                    tprintf(PRINT_ERR, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
+                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n", ErrorFileMismatchTrack);
 
                 if (TestNotSupportedTrack != 0)
-                    tprintf(PRINT_ERR, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
+                    fprintf(stderr, "TestNotSupportedTrack: %i\n", TestNotSupportedTrack);
 
                 if (MinTestPassed != 0)
-                    tprintf(PRINT_ERR, "MinTestPassed: %i\n", MinTestPassed);
+                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
             }
 
-            tprintf(PRINT_ERR, "\n\n");
+            fprintf(stderr, "\n\n");
         }
 
-        TestTracker++;
+        TestTracker = TestTracker + 1;
     }
 
     fclose(fp);
     return;
-
 }
 void show_hidden_cmds()
 {
@@ -2563,13 +2314,14 @@ int  main(int argc, char *argv[])
     string WorkingDir = "";
     WorkingDir.append(WorkingDirChar);
     string TestInputString(argv[1]);
-    string TestInputString1(argv[1]);
-    string TestInputString2;
+    string TestInputString2 = "";
 
     if (argc > 2)
-    {
         TestInputString2 =  argv[2];
-    }
+
+
+    vpxt_lower_case_string(TestInputString);
+    vpxt_lower_case_string(TestInputString2);
 
     if (TestInputString.compare("0") == 0)
     {
@@ -2582,16 +2334,16 @@ int  main(int argc, char *argv[])
 
     /////////////////////////////////////////////////////////////Help//////////////////////////////////////////////////////////
 
-    if (TestInputString1.compare("Help") == 0 || TestInputString1.compare("HELP") == 0  || TestInputString1.compare("help") == 0)
+    if (TestInputString.compare("help") == 0)
     {
         vpxt_on_error_output();
         vpxt_formated_print(TOLPRT, "To run tests input the number to the left of the test name along with test specific input.  To obtain more information about a specific test or utility input the number of the test or the utility name you wish to inquire about followed by \"help\".");
         return 0;
     }
 
-    if (TestInputString2.compare("Help") == 0 || TestInputString2.compare("HELP") == 0  || TestInputString2.compare("help") == 0)
+    if (TestInputString2.compare("help") == 0)
     {
-        int ToolHelpCheck = vpxt_tool_help(TestInputString1);
+        int ToolHelpCheck = vpxt_tool_help(TestInputString);
 
         if (!ToolHelpCheck)
         {
@@ -2604,7 +2356,7 @@ int  main(int argc, char *argv[])
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////Tools//////////////////////////////////////////////////////////
     ////////////////////Public Commands/////////////////////////
-    if (TestInputString.compare("DirectorCheck") == 0)//delete this
+    if (TestInputString.compare("directorcheck") == 0)//delete this
     {
         vector<string> ignore;
         vector<string> list;
@@ -2625,7 +2377,7 @@ int  main(int argc, char *argv[])
         while (i < list.size())
         {
             cout << i << " " << list[i].c_str() << "\n";
-            i++;
+            i = i + 1;
         }
 
         cout << "\nReturn value: " << INTEGER << "\n";
@@ -2633,7 +2385,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("TestPrint") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("testprint") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         cout << "\n";
         vpxt_formated_print(HLPPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
@@ -2649,19 +2401,19 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("Quad") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("quad") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
     {
         SolveQuad();
         return 0;
     }
 
-    if (TestInputString.compare("IVF2IVFCompr") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("ivf2ivfcompr") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
     {
         ComprIVF2IVF(argc, argv, WorkingDir);
         return 0;
     }
 
-    if (TestInputString.compare("Thresh") == 0)                 //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("thresh") == 0)                 //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 8)
         {
@@ -2682,73 +2434,73 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("IVF2IVFDec") == 0)                     //Decompresses and IVF Compressed file to an IVF Raw File
+    if (TestInputString.compare("ivf2ivfdec") == 0)                     //Decompresses and IVF Compressed file to an IVF Raw File
     {
         DecIVF2IVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFDataRate") == 0)                        //Computes Data Rate for an input IVF File
+    if (TestInputString.compare("ivfdatarate") == 0)                        //Computes Data Rate for an input IVF File
     {
         IVFDataRateTool(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFPSNR") == 0)                            //Computes PSNR for two input files
+    if (TestInputString.compare("ivfpsnr") == 0)                            //Computes PSNR for two input files
     {
         IVFPSNRrun(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFCheckPBM") == 0)                        //Computes PBM For an input file
+    if (TestInputString.compare("ivfcheckpbm") == 0)                        //Computes PBM For an input file
     {
         IVFCheckPBMrun(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompIVFHeader") == 0)                  //Compares the Headers of two ivf files
+    if (TestInputString.compare("compivfheader") == 0)                  //Compares the Headers of two ivf files
     {
         vpxt_compare_ivf_header_info(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("DispIVFHeader") == 0)                  //Displays the header contents of an ivf file
+    if (TestInputString.compare("dispivfheader") == 0)                  //Displays the header contents of an ivf file
     {
         vpxt_display_ivf_header_info(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompareIVF") == 0)                     //Compares two ivf files
+    if (TestInputString.compare("compareivf") == 0)                     //Compares two ivf files
     {
         compareIVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CreateSampleTextFiles") == 0)          //Creates sample text files that include quick test and other templates
+    if (TestInputString.compare("createsampletextfiles") == 0)          //Creates sample text files that include quick test and other templates
     {
         print_quick_test_files(WorkingDir);
         return 0;
     }
 
-    if (TestInputString.compare("CutIVF") == 0)                         //Modifies an ivf files size
+    if (TestInputString.compare("cutivf") == 0)                         //Modifies an ivf files size
     {
         CutIVFTool(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CropRawIVF") == 0)                         //Modifies an ivf files size
+    if (TestInputString.compare("croprawivf") == 0)                         //Modifies an ivf files size
     {
         CropRawIVFTool(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("PasteIVF") == 0)                           //Modifies an ivf files size
+    if (TestInputString.compare("pasteivf") == 0)                           //Modifies an ivf files size
     {
         vpxt_paste_ivf(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("DispResizedFrames") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("dispresizedframes") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -2765,7 +2517,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispDroppedFrames") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("dispdropedframes") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -2782,7 +2534,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispVisibleFrames") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("dispvisibleframes") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -2800,7 +2552,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispAltRefFrames") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
+    if (TestInputString.compare("dispaltrefframes") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
     {
         if (argc < 4)
         {
@@ -2817,7 +2569,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispKeyFrames") == 0)                  //Displays which frames are key frames for an input compressed ivf file
+    if (TestInputString.compare("dispkeyframes") == 0)                  //Displays which frames are key frames for an input compressed ivf file
     {
         if (argc < 3)
         {
@@ -2834,7 +2586,7 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("DispAltRefFrames") == 0)                   //Displays which frames are key frames for an input compressed ivf file
+    if (TestInputString.compare("dispaltrefframes") == 0)                   //Displays which frames are key frames for an input compressed ivf file
     {
         if (argc < 3)
         {
@@ -2849,45 +2601,25 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("FormatSummaryByTest") == 0)                //Formats a Test Results output file by test
+
+
+    if (TestInputString.compare("formatsummary") == 0)   //Formats a test results output file by test and result
     {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD,
-                    "  FormatSummaryByTestandResult \n\n"
-                    "    <Text File to Format>\n"
-                    "    <Overwrite old Test and Result | 1 Yes 0 No  >\n"
-                    "\n");
-            return 0;
-        }
-
-        /*argv3int = 0;
-        safe_strto32(argv[3], &argv3int);
-        format_summary_by_test(argv[2], argv3int);*/
-
-
-        format_summary_by_test(argv[2], atoi(argv[3]));
-        return 0;
-    }
-
-    if (TestInputString.compare("FormatSummaryByTestandResult") == 0)   //Formats a test results output file by test and result
-    {
-        if (argc < 4)
+        if (argc < 3)
         {
             tprintf(PRINT_STD, "\n"
                     "  FormatSummaryByTestandResult \n\n"
                     "    <Text File to Format>\n"
-                    "    <Overwrite old Test and Result | 1 Yes 0 No  >\n"
                     "\n");
 
             return 0;
         }
 
-        format_summary_by_test_and_result(argv[2], atoi(argv[3]));
+        format_summary(argv[2]);
         return 0;
     }
 
-    if (TestInputString.compare("IVF2Raw") == 0)                            //Converts an ivf file to a raw file
+    if (TestInputString.compare("ivf2raw") == 0)                            //Converts an ivf file to a raw file
     {
         if (argc < 4)
         {
@@ -2904,92 +2636,92 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("PlayCompIVF") == 0)                        //Plays a compressed ivf file (Decodes the file to an ivf then converts that ivf to a raw then used tnmplay.exe to play that file.)
+    if (TestInputString.compare("playcompivf") == 0)                        //Plays a compressed ivf file (Decodes the file to an ivf then converts that ivf to a raw then used tnmplay.exe to play that file.)
     {
         Playvpxt_compare_ivf(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("PlayDecIVF") == 0)                     // Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
+    if (TestInputString.compare("playdecivf") == 0)                     // Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
     {
         PlayDecIVF(argc, argv);
         return 0;
     }
 
     ////////////////////Hidden Commands/////////////////////////
-    if (TestInputString.compare("ShowHidden") == 0)                     //Shows Hidden Commands
+    if (TestInputString.compare("showhidden") == 0)                     //Shows Hidden Commands
     {
         show_hidden_cmds();
         return 0;
     }
 
-    if (TestInputString.compare("APICOMPRESS") == 0)                        //API Compresion Clone
+    if (TestInputString.compare("apicompress") == 0)                        //API Compresion Clone
     {
         APICOMPRESS(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("APIDECOMPRESS") == 0)                  //API Decompression Clone
+    if (TestInputString.compare("apidecompress") == 0)                  //API Decompression Clone
     {
         APIDECOMPRESS(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CodeCoverage") == 0)                   //Preforms Code Coverage Tests for data coverage if enabled
+    if (TestInputString.compare("codecoverage") == 0)                   //Preforms Code Coverage Tests for data coverage if enabled
     {
         vpxt_array_coverage(argc, argv, WorkingDir, EmptyAr);
         return 0;
     }
 
-    if (TestInputString.compare("CompareCodeCoverage") == 0)                //Compares New Code Coverage Results to Old Code Coverage Results and merges the files to an updated version
+    if (TestInputString.compare("comparecodecoverage") == 0)                //Compares New Code Coverage Results to Old Code Coverage Results and merges the files to an updated version
     {
         compare_code_coverage(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("FormatCodeCoverageFile") == 0)         //Formats Cygwin Code Coverage files to the same format as regular linux
+    if (TestInputString.compare("formatcodecoveragefile") == 0)         //Formats Cygwin Code Coverage files to the same format as regular linux
     {
         FormatCodeCoverageFile(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFDECTestVectorCheck") == 0)          //
+    if (TestInputString.compare("ivfdectestvectorcheck") == 0)          //
     {
         IVFDECtest_vector_test(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("TestVectorIndex") == 0)                    //Will search a data base and return the Test Vector that covers an input File and Line Number
+    if (TestInputString.compare("testvectorindex") == 0)                    //Will search a data base and return the Test Vector that covers an input File and Line Number
     {
         TestVectorIndex(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompMatchesIVFenc") == 0)              //Makes sure that the Tester compressor matches ivfenc compressor
+    if (TestInputString.compare("compmatchesivfenc") == 0)              //Makes sure that the Tester compressor matches ivfenc compressor
     {
         CompMatchesIVFenc(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CompressionEquiv") == 0)               //makes sure that all variations of the compressor produce the same output
+    if (TestInputString.compare("compressionequiv") == 0)               //makes sure that all variations of the compressor produce the same output
     {
         CompressionEquiv(argc, argv, WorkingDir);
         return 0;
     }
 
-    if (TestInputString.compare("PrintVersion") == 0)                   //Prints the internal version number - make sure all libs built in same multithreadedmode - properties  C++ CodeGen RuntimeLibrary
+    if (TestInputString.compare("printversion") == 0)                   //Prints the internal version number - make sure all libs built in same multithreadedmode - properties  C++ CodeGen RuntimeLibrary
     {
         print_version();
         return 0;
     }
 
-    if (TestInputString.compare("Test0InputTextCheck") == 0)                //Checks to make sure a Multi Run Input file has the correct format
+    if (TestInputString.compare("test0inputcheck") == 0)                //Checks to make sure a Multi Run Input file has the correct format
     {
         vpxt_run_multiple_tests_input_check(argv[2], 1);
         return 0;
     }
 
-    if (TestInputString.compare("ConvertParFileToIVFEnc") == 0)         //converts Tester Parameter file to a IVFenc ParFile - obsolete
+    if (TestInputString.compare("convertparfiletoivfenc") == 0)         //converts Tester Parameter file to a IVFenc ParFile - obsolete
     {
         if (argc < 4)
         {
@@ -3005,37 +2737,37 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("CopyAllTxtFiles") == 0)                    //Copies all text files in a directory to a new directory preserving file structure
+    if (TestInputString.compare("copyalltxtfiles") == 0)                    //Copies all text files in a directory to a new directory preserving file structure
     {
         CopyAllTxtFiles(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVF2RawDec") == 0)                     //Decodes IVF File to Raw File
+    if (TestInputString.compare("ivf2rawdec") == 0)                     //Decodes IVF File to Raw File
     {
         DecIVF2Raw(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("DeleteAllIVFFiles") == 0)              //Deletes all IVF files in a directory be very care with this function!
+    if (TestInputString.compare("deleteallivffiles") == 0)              //Deletes all IVF files in a directory be very care with this function!
     {
         DeleteAllIVFFiles(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("Raw2IVF") == 0)                            //Converts an IVF File to a Raw File
+    if (TestInputString.compare("raw2ivf") == 0)                            //Converts an IVF File to a Raw File
     {
         Raw2IVF(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("SideBySideText") == 0)                 //Prints out the input from two text files side by side as coloums to an output txt file
+    if (TestInputString.compare("sidebysidetext") == 0)                 //Prints out the input from two text files side by side as coloums to an output txt file
     {
         SideBySideText(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVF2RawFrames") == 0)                  //Converts an ivf file to a raw file
+    if (TestInputString.compare("ivf2rawframes") == 0)                  //Converts an ivf file to a raw file
     {
         if (argc < 3)
         {
@@ -3052,67 +2784,67 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    if (TestInputString.compare("ArrayCovFailListToFull") == 0)         //
+    if (TestInputString.compare("arraycovfaillisttofull") == 0)         //
     {
         ArrayCovFailListToFullList(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("ArrayCovSummaryFile") == 0)                //
+    if (TestInputString.compare("arraycovsummaryfile") == 0)                //
     {
         ArrayCovSummaryFile(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("WinMemMonFormat") == 0)                //
+    if (TestInputString.compare("winmemmonformat") == 0)                //
     {
         WinMemMonFormat(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("WinMemMonGraph") == 0)             //
+    if (TestInputString.compare("winmemmongraph") == 0)             //
     {
         WinMemMonGraph(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("CombineIndvFrames") == 0)              //
+    if (TestInputString.compare("combineindvframes") == 0)              //
     {
         CombineIndvFrames(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("GraphPSNR") == 0)              //
+    if (TestInputString.compare("graphpsnr") == 0)              //
     {
         graph_psnr(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (TestInputString.compare("RandIVFComp") == 0)                //
+    if (TestInputString.compare("randivfcomp") == 0)                //
     {
         rand_comp(argc, argv, WorkingDir, EmptyAr, 1);
         return 0;
     }
 
-    if (TestInputString.compare("RandParFile") == 0)                //
+    if (TestInputString.compare("randparfile") == 0)                //
     {
         CreateRandParFile(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFDec") == 0)             //
+    if (TestInputString.compare("vpxdec") == 0)             //
     {
         RunIVFDec(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("IVFEnc") == 0)             //
+    if (TestInputString.compare("vpxenc") == 0)             //
     {
         RunIVFEnc(argc, argv);
         return 0;
     }
 
-    if (TestInputString.compare("PrintCPUInfo") == 0)             //
+    if (TestInputString.compare("printcpuinfo") == 0)             //
     {
         PrintCPUInfo();
         return 0;
@@ -3191,7 +2923,7 @@ int  main(int argc, char *argv[])
             SummaryFile.append(slashCharStr());
             SummaryFile.append("test_results.txt");
             snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            format_summary_by_test_and_result(SummaryFileChar, 0);
+            format_summary(SummaryFileChar);
             return 0;
         }
 
@@ -3203,7 +2935,7 @@ int  main(int argc, char *argv[])
             SummaryFile.append(slashCharStr());
             SummaryFile.append("compression_results.txt");
             snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            format_summary_by_test_and_result(SummaryFileChar, 0);
+            format_summary(SummaryFileChar);
             return 0;
         }
 
@@ -3227,7 +2959,7 @@ int  main(int argc, char *argv[])
             fstream SummCompAndTestFile;
             SummCompAndTestFile.open(SummCompAndTest.c_str());
 
-            if (SummCompAndTestFile.good())
+            if (SummCompAndTestFile)
             {
                 TestRunning = 1;
             }
@@ -3235,7 +2967,7 @@ int  main(int argc, char *argv[])
             fstream SummTestFile;
             SummTestFile.open(SummTest.c_str());
 
-            if (SummTestFile.good())
+            if (SummTestFile)
             {
                 TestRunning = 3;
             }
@@ -3243,7 +2975,7 @@ int  main(int argc, char *argv[])
             fstream SummCompFile;
             SummCompFile.open(SummComp.c_str());
 
-            if (SummCompFile.good())
+            if (SummCompFile)
             {
                 if (TestRunning != 3)
                 {
@@ -3264,7 +2996,7 @@ int  main(int argc, char *argv[])
                 SummaryFile.append(slashCharStr());
                 SummaryFile.append("test_results.txt");
                 snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-                format_summary_by_test_and_result(SummaryFileChar, 0);
+                format_summary(SummaryFileChar);
                 return 0;
             }
 
@@ -3275,7 +3007,7 @@ int  main(int argc, char *argv[])
                 SummaryFile.append(slashCharStr());
                 SummaryFile.append("compression_test_results.txt");
                 snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-                format_summary_by_test_and_result(SummaryFileChar, 0);
+                format_summary(SummaryFileChar);
             }
         }
 

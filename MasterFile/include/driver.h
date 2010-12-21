@@ -12,8 +12,7 @@ void write_64bit_quick_test(string WorkingDir);
 void print_quick_test_files(string WorkingDir);
 void vpxt_test_help(int argc, char *argv[], string WorkingDir);
 int  vpxt_tool_help(string InputString);
-void format_summary_by_test(char *InputFileNameCharAr, int DeleteOldFile);
-void format_summary_by_test_and_result(char *InputFileNameCharAr, int DeleteOldFile);
+void format_summary(char *InputFileNameCharAr);
 void show_hidden_cmds();
 
 #endif

@@ -1948,6 +1948,7 @@ int vpxt_identify_test(const char *test_char)
         char test_char_no_space[255];
         vpxt_remove_char_spaces(test_char, test_char_no_space, 255);//make sure no white spaces
         string id_test_str = test_char_no_space;
+        vpxt_lower_case_string(id_test_str);
 
         if (id_test_str.substr(0, 1).compare("+") == 0)
             id_test_str.erase(0, 1);
@@ -5386,6 +5387,18 @@ void vpxt_cap_string_print(int selector, const char *fmt, ...)
         tprintf(PRINT_BTH, "%s", buffer_cap);
 
     return;
+}
+int  vpxt_lower_case_string(string &input)
+{
+    int pos = 0;
+
+    while (pos < input.length())
+    {
+        input[pos] = tolower(input[pos]);
+        pos = pos + 1;
+    }
+
+    return 0;
 }
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API

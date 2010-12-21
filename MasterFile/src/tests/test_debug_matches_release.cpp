@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_debug_matches_release(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_debug_matches_release(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     //Needs Debug.exe and Release.exe
     char *MyDir = "test_debug_matches_release";

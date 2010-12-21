@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int tool_rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int tool_rand_comp(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
 
     char *CompressString = "RandomInput";

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_good_vs_best(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_good_vs_best(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_good_vs_best";

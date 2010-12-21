@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_play_alternate(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_play_alternate(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Play Alternate";
     char *MyDir = "test_play_alternate";

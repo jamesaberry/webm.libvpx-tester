@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_max_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_max_quantizer(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Max Quantizer";
     char *MyDir = "test_max_quantizer";

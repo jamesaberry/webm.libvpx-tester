@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_multithreaded(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_multithreaded(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Multithreaded";
     char *MyDir = "test_multithreaded";

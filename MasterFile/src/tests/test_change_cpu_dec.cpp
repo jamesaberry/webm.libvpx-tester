@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_change_cpu_dec(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_change_cpu_dec(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Version";
     char *MyDir = "test_change_cpu_dec";

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_lag_in_frames(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_lag_in_frames(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Lag In Frames";
     char *MyDir = "test_lag_in_frames";

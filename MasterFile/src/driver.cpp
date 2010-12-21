@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 //CodeCoverage
-extern int tool_array_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
+extern int tool_array_coverage(int argc, char *argv[], const string& WorkingDir, string FilesAr[]);
 
 int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 {

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_noise_sensitivity(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_noise_sensitivity(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     //This test looks a lot like NoiseSensitivityWorks but has a different purpose.  This test ensures
     //That different noise sensitivities have an effect for each possible noise sensitivity value and

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_min_quantizer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_min_quantizer(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Min Quantizer";
     char *MyDir = "test_min_quantizer";

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_reconstruct_buffer(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_reconstruct_buffer(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_reconstruct_buffer";

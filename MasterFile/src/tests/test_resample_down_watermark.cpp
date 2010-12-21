@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_resample_down_watermark(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_resample_down_watermark(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Resample Down Watermark";
     char *MyDir = "test_resample_down_watermark";

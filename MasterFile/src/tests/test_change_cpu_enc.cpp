@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_change_cpu_enc(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_change_cpu_enc(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Arnr Maxframes:";
     char *MyDir = "test_change_cpu_enc";

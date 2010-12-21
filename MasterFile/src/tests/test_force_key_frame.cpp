@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_force_key_frame(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int test_force_key_frame(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Key Frame Frequency";
     char *MyDir = "test_force_key_frame";

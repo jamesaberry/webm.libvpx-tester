@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_win_lin_mac_match(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_win_lin_mac_match(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "WinLinMacMatch";
     char *MyDir = "test_win_lin_mac_match";

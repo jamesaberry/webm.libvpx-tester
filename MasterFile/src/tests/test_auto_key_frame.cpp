@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_auto_key_frame(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_auto_key_frame(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Auto Key Frame";
     char *MyDir = "test_auto_key_frame";

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_error_resolution(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_error_resolution(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Error Resilient Mode";
     char *MyDir = "test_error_resolution";

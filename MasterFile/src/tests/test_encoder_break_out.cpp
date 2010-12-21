@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_encoder_break_out(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Encoder Break Out";
     char *MyDir = "test_encoder_break_out";

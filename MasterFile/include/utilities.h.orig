@@ -79,7 +79,7 @@ int vpxt_ivf_check_pbm_threshold(const char *inputFile, double bitRate, int maxB
 int vpxt_faux_compress();
 int vpxt_faux_decompress(char *inputChar);
 //---------------------------------------------------Test Functions-------------------------------------------------------------------
-int initialize_test_directory(int argc, char *argv[], int TestType, const string &WorkingDir, char *MyDir, string &WorkingDirString, string &MainDirString, char WorkingDir3[255], char File1[255], string FilesAr[]);
+int initialize_test_directory(int argc, char *argv[], int TestType, const string& WorkingDir, char *MyDir, string &WorkingDirString, string &MainDirString, char WorkingDir3[255], char File1[255], string FilesAr[]);
 void record_test_complete(string MainDirString, const char *FileIndexOutputChar, int TestType);
 int print_version();
 void print_header_info();

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_frame_size(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_frame_size(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Frame Size";
     char *MyDir = "test_frame_size";

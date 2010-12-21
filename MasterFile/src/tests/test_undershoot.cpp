@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_undershoot(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_undershoot(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Undershoot";
     char *MyDir = "test_undershoot";

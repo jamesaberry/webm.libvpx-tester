@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_mem_leak(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak";

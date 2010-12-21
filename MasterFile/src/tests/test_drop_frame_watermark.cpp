@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_drop_frame_watermark(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_drop_frame_watermark(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Drop Frames Watermark";
     char *MyDir = "test_drop_frame_watermark";

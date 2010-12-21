@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 //CodeCoverage
-extern int tool_array_coverage(int argc, char *argv[], const string& WorkingDir, string FilesAr[]);
+extern int tool_array_coverage(int argc, char *argv[], const string &WorkingDir, string FilesAr[]);
 
 int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 {
@@ -632,7 +632,7 @@ int print_quick_test_files(string WorkingDir)
     write_32bit_quick_test(WorkingDir);//32BitQuickRun
     write_64bit_quick_test(WorkingDir);//64BitQuickRun
 
-	return 0;
+    return 0;
 }
 void vpxt_test_help(int argc, char *argv[], string WorkingDir)
 {
@@ -2297,7 +2297,7 @@ int show_hidden_cmds()
             "         IVF2RawFrames            -Writes out individual Frame data to a dir\n"
 
             "\n");
-	return 0;
+    return 0;
 
 }
 int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)

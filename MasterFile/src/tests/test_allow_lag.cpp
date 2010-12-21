@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_lag(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_allow_lag(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Lag";
     char *MyDir = "test_allow_lag";

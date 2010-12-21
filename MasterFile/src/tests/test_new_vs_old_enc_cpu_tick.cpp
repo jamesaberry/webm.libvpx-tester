@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], const string& WorkingDir, string FilesAr[], int TestType)
+int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
 {
 
     char *MyDir = "test_new_vs_old_enc_cpu_tick";

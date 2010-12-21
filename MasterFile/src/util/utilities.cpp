@@ -4779,7 +4779,7 @@ int vpxt_faux_decompress(char *inputChar)
     return 1;
 }
 //---------------------------------------------------Test Functions-------------------------------------------------------------------
-int initialize_test_directory(int argc, char *argv[], int TestType, const string& WorkingDir, char *MyDir, string &CurTestDirStr, string &FileIndexStr, char MainTestDirChar[255], char FileIndexOutputChar[255], string FilesAr[])
+int initialize_test_directory(int argc, char *argv[], int TestType, const string &WorkingDir, char *MyDir, string &CurTestDirStr, string &FileIndexStr, char MainTestDirChar[255], char FileIndexOutputChar[255], string FilesAr[])
 {
     //Initilizes CurTestDirStr, FileIndexStr, MainTestDirChar, and FileIndexOutputChar to proper values.
 

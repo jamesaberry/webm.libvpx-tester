@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
+int tool_graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType)
 {
     if (argc < 6 || argc > 8)
     {

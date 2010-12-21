@@ -3,8 +3,6 @@ using namespace std;
 
 /////Tests
 extern int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofTests);
-extern int rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
-extern int graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_allow_drop_frames(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_allow_lag(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_allow_spatial_resampling(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
@@ -42,3 +40,7 @@ extern int test_two_pass_vs_two_pass_best(int argc, char *argv[], string Working
 extern int test_undershoot(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_version(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
 extern int test_win_lin_mac_match(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+
+//Tools
+extern int tool_rand_comp(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);
+extern int tool_graph_psnr(int argc, char *argv[], string WorkingDir, string FilesAr[], int TestType);

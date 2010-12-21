@@ -89,6 +89,7 @@ void print_header_test_only(int argc, char *argv[], string  WorkingDir3);
 void check_time_stamp(int SelectorArInt, string *SelectorAr, string *SelectorAr2, string TimeStampPrevious, int &identicalFileVar, string *TimeStampAr2);
 void vpxt_formated_print(int selector, const char *fmt, ...);
 void vpxt_cap_string_print(int selector, const char *fmt, ...);
+int  vpxt_lower_case_string(string &input);
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
 int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);

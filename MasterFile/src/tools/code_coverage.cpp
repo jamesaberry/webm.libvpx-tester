@@ -136,7 +136,7 @@ extern "C" TOKENEXTRABITS vp8d_token_extra_bits2[12];
 //} nearB[3];
 /////////////////////////////////////////////////////////////////////////////////
 #endif
-int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[])
+int tool_array_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[])
 {
 
     //DATA COVERED AS OF 05-23-2010

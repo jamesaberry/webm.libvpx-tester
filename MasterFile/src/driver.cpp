@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 //CodeCoverage
-extern int vpxt_array_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
+extern int tool_array_coverage(int argc, char *argv[], string WorkingDir, string FilesAr[]);
 
 int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 {
@@ -627,12 +627,12 @@ void write_64bit_quick_test(string WorkingDir)
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-void print_quick_test_files(string WorkingDir)
+int print_quick_test_files(string WorkingDir)
 {
     write_32bit_quick_test(WorkingDir);//32BitQuickRun
     write_64bit_quick_test(WorkingDir);//64BitQuickRun
 
-    return;
+	return 0;
 }
 void vpxt_test_help(int argc, char *argv[], string WorkingDir)
 {
@@ -2259,7 +2259,7 @@ void format_summary(char *InputFileNameCharAr)
     fclose(fp);
     return;
 }
-void show_hidden_cmds()
+int show_hidden_cmds()
 {
     tprintf(PRINT_STD, "\n\n"
             "    Hidden Commands \n"
@@ -2297,8 +2297,156 @@ void show_hidden_cmds()
             "         IVF2RawFrames            -Writes out individual Frame data to a dir\n"
 
             "\n");
-    return;
+	return 0;
 
+}
+int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "  run_multipule_tests \n\n"
+                "    <Test Type>\n"
+                "      <1 - Create Files and Run Tests>\n"
+                "        <Input Text File>\n"
+                "      <2 - Create Files only>\n"
+                "        <Input Text File>\n"
+                "      <3 - Run Tests For Existing Files>\n"
+                "        <Input Test Directory>\n"
+                "      <4 - Resume Test>\n"
+                "        <Input Test Directory>\n"
+                "\n");
+
+        return 0;
+    }
+
+    int VaildInput = 0;
+
+    if (atoi(argv[2]) != 4 && atoi(argv[2]) != 3)
+    {
+        VaildInput = vpxt_run_multiple_tests_input_check(argv[3], 0);
+
+        if (VaildInput <= 0)
+        {
+            tprintf(PRINT_STD, "\nExternal Test Runner Aborted\n\n");
+            return 0;
+        }
+    }
+    else
+    {
+        string inputCheck = "";
+        inputCheck.append(argv[3]);
+        inputCheck.append(slashCharStr().c_str());
+        inputCheck.append("tests_run.txt");
+        VaildInput = vpxt_run_multiple_tests_input_check(inputCheck.c_str(), 0);
+
+        if (VaildInput <= 0)
+        {
+            tprintf(PRINT_STD, "\nExternal Test Runner Aborted\n\n");
+            return 0;
+        }
+    }
+
+    run_multiple_tests(argc, argv, WorkingDir.c_str(), VaildInput);
+
+    string SummaryFile = WorkingDir;
+
+    if (atoi(argv[2]) == 1)
+    {
+        char SummaryFileChar[255] = "";
+        SummaryFile.erase(SummaryFile.end() - 1);
+        SummaryFile.append(slashCharStr());
+        SummaryFile.append("test_results.txt");
+        snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
+        format_summary(SummaryFileChar);
+        return 0;
+    }
+
+    if (atoi(argv[2]) == 3)
+    {
+
+        char SummaryFileChar[255] = "";
+        SummaryFile.erase(SummaryFile.end() - 1);
+        SummaryFile.append(slashCharStr());
+        SummaryFile.append("compression_results.txt");
+        snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
+        format_summary(SummaryFileChar);
+        return 0;
+    }
+
+    if (atoi(argv[2]) == 4)
+    {
+        string SummCompAndTest = "";
+        string SummComp = "";
+        string SummTest = "";
+
+        SummCompAndTest = argv[3];
+        SummCompAndTest.append(slashCharStr());
+        SummCompAndTest.append("test_results.txt");     // Mode 1
+        SummComp = argv[3];
+        SummComp.append(slashCharStr());
+        SummComp.append("compression_results.txt");     // Mode 2
+        SummTest = argv[3];
+        SummTest.append(slashCharStr());
+        SummTest.append("compression_test_results.txt");// Mode 3
+
+        int TestRunning = 0;
+        fstream SummCompAndTestFile;
+        SummCompAndTestFile.open(SummCompAndTest.c_str());
+
+        if (SummCompAndTestFile)
+        {
+            TestRunning = 1;
+        }
+
+        fstream SummTestFile;
+        SummTestFile.open(SummTest.c_str());
+
+        if (SummTestFile)
+        {
+            TestRunning = 3;
+        }
+
+        fstream SummCompFile;
+        SummCompFile.open(SummComp.c_str());
+
+        if (SummCompFile)
+        {
+            if (TestRunning != 3)
+            {
+                TestRunning = 2;
+            }
+
+        }
+
+        SummCompAndTestFile.close();
+        SummTestFile.close();
+        SummCompFile.close();
+
+        SummaryFile = argv[3];
+
+        if (TestRunning == 1)
+        {
+            char SummaryFileChar[255] = "";
+            SummaryFile.append(slashCharStr());
+            SummaryFile.append("test_results.txt");
+            snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
+            format_summary(SummaryFileChar);
+            return 0;
+        }
+
+        if (TestRunning == 3)
+        {
+
+            char SummaryFileChar[255] = "";
+            SummaryFile.append(slashCharStr());
+            SummaryFile.append("compression_test_results.txt");
+            snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
+            format_summary(SummaryFileChar);
+        }
+    }
+
+    return 0;
 }
 int  main(int argc, char *argv[])
 {
@@ -2318,7 +2466,6 @@ int  main(int argc, char *argv[])
 
     if (argc > 2)
         TestInputString2 =  argv[2];
-
 
     vpxt_lower_case_string(TestInputString);
     vpxt_lower_case_string(TestInputString2);
@@ -2356,508 +2503,178 @@ int  main(int argc, char *argv[])
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////Tools//////////////////////////////////////////////////////////
     ////////////////////Public Commands/////////////////////////
-    if (TestInputString.compare("directorcheck") == 0)//delete this
-    {
-        vector<string> ignore;
-        vector<string> list;
-        string dirctory = argv[2];
 
-        ignore.push_back(".");
-        ignore.push_back("..");
-        //ignore.push_back("New Text Document.txt");
-        //ignore.push_back("ExtraFileCheckTest.txt");
-        //ignore.push_back("Extra File Check Test_TestOnly.txt");
-        //ignore.push_back("ExtraFileCheck_Paramaters.txt");
-        //ignore.push_back("ExtraFileCheck_APIParamaters.txt");
+    if (TestInputString.compare("testprint") == 0)                          //Prints sample text in several formats
+        return tool_test_print();
 
-        int INTEGER = vpxt_find_non_ignored_files_in_dir(ignore, list, dirctory);
+    if (TestInputString.compare("quad") == 0)                               //Solves Quadradic
+        return tool_solve_quad();
 
-        int i = 0;
+    if (TestInputString.compare("ivf2ivfcompr") == 0)                       //Compresses an IVF Raw File to an IVF Compressed file
+        return tool_compr_ivf_to_ivf(argc, argv, WorkingDir);
 
-        while (i < list.size())
-        {
-            cout << i << " " << list[i].c_str() << "\n";
-            i = i + 1;
-        }
+    if (TestInputString.compare("thresh") == 0)                             //runs checkpbm
+        return tool_run_thresh(argc, argv);
 
-        cout << "\nReturn value: " << INTEGER << "\n";
-
-        return 0;
-    }
-
-    if (TestInputString.compare("testprint") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        cout << "\n";
-        vpxt_formated_print(HLPPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-        cout << "\n";
-        vpxt_formated_print(TOLPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-        cout << "\n";
-        vpxt_formated_print(FUNPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-        cout << "\n";
-        vpxt_formated_print(OTRPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-        cout << "\n\n";
-        vpxt_formated_print(RESPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-        cout << "\n\n";
-        return 0;
-    }
-
-    if (TestInputString.compare("quad") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        SolveQuad();
-        return 0;
-    }
-
-    if (TestInputString.compare("ivf2ivfcompr") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        ComprIVF2IVF(argc, argv, WorkingDir);
-        return 0;
-    }
-
-    if (TestInputString.compare("thresh") == 0)                 //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        if (argc < 8)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  DisplayResizedFrames \n\n"
-                    "    <Input IVF File>\n"
-                    "    <bitRate>\n"
-                    "    <maxBuffer>\n"
-                    "    <preBuffer>\n"
-                    "    <optBuffer>\n"
-                    "    <Threshold>\n"
-                    "\n");
-            return 0;
-        }
-
-        vpxt_ivf_check_pbm_threshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
-
-        return 0;
-    }
-
-    if (TestInputString.compare("ivf2ivfdec") == 0)                     //Decompresses and IVF Compressed file to an IVF Raw File
-    {
-        DecIVF2IVF(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("ivf2ivfdec") == 0)                         //Decompresses and IVF Compressed file to an IVF Raw File
+        return tool_dec_ivf_to_ivf(argc, argv);
 
     if (TestInputString.compare("ivfdatarate") == 0)                        //Computes Data Rate for an input IVF File
-    {
-        IVFDataRateTool(argc, argv);
-        return 0;
-    }
+        return tool_ivf_data_rate(argc, argv);
 
     if (TestInputString.compare("ivfpsnr") == 0)                            //Computes PSNR for two input files
-    {
-        IVFPSNRrun(argc, argv);
-        return 0;
-    }
+        return tool_ivf_psnr_run(argc, argv);
 
     if (TestInputString.compare("ivfcheckpbm") == 0)                        //Computes PBM For an input file
-    {
-        IVFCheckPBMrun(argc, argv);
-        return 0;
-    }
+        return tool_ivf_check_pbm_run(argc, argv);
 
-    if (TestInputString.compare("compivfheader") == 0)                  //Compares the Headers of two ivf files
-    {
-        vpxt_compare_ivf_header_info(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("compivfheader") == 0)                      //Compares the Headers of two ivf files
+        return vpxt_compare_ivf_header_info(argc, argv);
 
-    if (TestInputString.compare("dispivfheader") == 0)                  //Displays the header contents of an ivf file
-    {
-        vpxt_display_ivf_header_info(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("dispivfheader") == 0)                      //Displays the header contents of an ivf file
+        return vpxt_display_ivf_header_info(argc, argv);
 
-    if (TestInputString.compare("compareivf") == 0)                     //Compares two ivf files
-    {
-        compareIVF(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("compareivf") == 0)                         //Compares two ivf files
+        return tool_compare_ivf(argc, argv);
 
-    if (TestInputString.compare("createsampletextfiles") == 0)          //Creates sample text files that include quick test and other templates
-    {
-        print_quick_test_files(WorkingDir);
-        return 0;
-    }
+    if (TestInputString.compare("createsampletextfiles") == 0)              //Creates sample text files that include quick test and other templates
+        return print_quick_test_files(WorkingDir);
 
-    if (TestInputString.compare("cutivf") == 0)                         //Modifies an ivf files size
-    {
-        CutIVFTool(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("cutivf") == 0)                             //Modifies an ivf files size
+        return tool_cut_ivf(argc, argv);
 
     if (TestInputString.compare("croprawivf") == 0)                         //Modifies an ivf files size
-    {
-        CropRawIVFTool(argc, argv);
-        return 0;
-    }
+        return tool_crop_raw_ivf(argc, argv);
 
     if (TestInputString.compare("pasteivf") == 0)                           //Modifies an ivf files size
-    {
-        vpxt_paste_ivf(argc, argv);
-        return 0;
-    }
+        return tool_paste_ivf(argc, argv);
 
     if (TestInputString.compare("dispresizedframes") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  DisplayResizedFrames \n\n"
-                    "    <Input IVF File>\n"
-                    "    <Write to file 1 | 0 Print to screen>\n"
-                    "\n");
-            return 0;
-        }
+        return tool_disp_resized_frames(argc, argv);
 
-        int resizedframes = vpxt_display_resized_frames(argv[2], atoi(argv[3]));
-        tprintf(PRINT_STD, "\nResized Frames Found: %i\n", resizedframes);
-        return 0;
-    }
-
-    if (TestInputString.compare("dispdropedframes") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  DisplayDroppedFrames \n\n"
-                    "    <Input IVF File>\n"
-                    "    <Write to file 1 | 0 Print to screen>\n"
-                    "\n");
-            return 0;
-        }
-
-        int droppedframes = vpxt_display_droped_frames(argv[2], atoi(argv[3]));
-        tprintf(PRINT_STD, "\nDropped Frames Counted: %i \n\n (Num is aprox as any frame droped after last encoded frame cannot be counted)\n", droppedframes);
-        return 0;
-    }
+    if (TestInputString.compare("dispdropedframes") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
+        return tool_disp_droped_frames(argc, argv);
 
     if (TestInputString.compare("dispvisibleframes") == 0)                  //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  DisplayVisibleFrames \n\n"
-                    "    <Input IVF File>\n"
-                    "    <Write to file 0 | 1 Print to screen>\n"
-                    "\n");
-            return 0;
-        }
-
-        int visframenum = vpxt_display_visible_frames(argv[2], atoi(argv[3]));
-        tprintf(PRINT_STD, "\nVisible Frames Found: %i\n", visframenum);
-
-        return 0;
-    }
+        return tool_disp_visible_frames(argc, argv);
 
     if (TestInputString.compare("dispaltrefframes") == 0)                   //Compresses an IVF Raw File to an IVF Compressed file
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  DisplayAltRefFrames \n\n"
-                    "    <Input IVF File>\n"
-                    "    <Write to file 0 | 1 Print to screen>\n"
-                    "\n");
-            return 0;
-        }
+        return tool_disp_alt_ref_frames(argc, argv);
 
-        int altrefframes = vpxt_display_alt_ref_frames(argv[2], atoi(argv[3]));
-        tprintf(PRINT_STD, "\nAlternate Reference Frames Found: %i\n", altrefframes);
-        return 0;
-    }
+    if (TestInputString.compare("dispkeyframes") == 0)                      //Displays which frames are key frames for an input compressed ivf file
+        return tool_disp_key_frames(argc, argv);
 
-    if (TestInputString.compare("dispkeyframes") == 0)                  //Displays which frames are key frames for an input compressed ivf file
-    {
-        if (argc < 3)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  DispKeyFrames \n\n"
-                    "    <Input IVF File>\n"
-                    "    <Write to file 0 | 1 Print to screen>\n"
-                    "\n");
-            return 0;
-        }
+    if (TestInputString.compare("dispframedata") == 0)                      //Displays which frames are key frames for an input compressed ivf file
+        return tool_disp_frame_data(argc, argv);
 
-        int keyframecount = vpxt_display_key_frames(argv[2], atoi(argv[3]));
-        tprintf(PRINT_STD, "\nKey Frames Found: %i\n", keyframecount);
-        return 0;
-    }
-
-    if (TestInputString.compare("dispaltrefframes") == 0)                   //Displays which frames are key frames for an input compressed ivf file
-    {
-        if (argc < 3)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  DispFrameData \n\n"
-                    "    <Input IVF File>\n"
-                    "\n");
-            return 0;
-        }
-
-        vpxt_display_alt_ref_frames(argv[2], 0);
-        return 0;
-    }
-
-
-
-    if (TestInputString.compare("formatsummary") == 0)   //Formats a test results output file by test and result
-    {
-        if (argc < 3)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  FormatSummaryByTestandResult \n\n"
-                    "    <Text File to Format>\n"
-                    "\n");
-
-            return 0;
-        }
-
-        format_summary(argv[2]);
-        return 0;
-    }
+    if (TestInputString.compare("formatsummary") == 0)                      //Formats a test results output file by test and result
+        return tool_format_summary(argc, argv);
 
     if (TestInputString.compare("ivf2raw") == 0)                            //Converts an ivf file to a raw file
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD, "\n"
-                    "  IVF2Raw \n\n"
-                    "    <Input File>\n"
-                    "    <Output File>\n"
-                    "\n");
-
-            return 0;
-        }
-
-        IVF2Raw(argv[2], argv[3]);
-        return 0;
-    }
+        return tool_ivf_to_raw(argc, argv);
 
     if (TestInputString.compare("playcompivf") == 0)                        //Plays a compressed ivf file (Decodes the file to an ivf then converts that ivf to a raw then used tnmplay.exe to play that file.)
-    {
-        Playvpxt_compare_ivf(argc, argv);
-        return 0;
-    }
+        return tool_play_comp_ivf(argc, argv);
 
-    if (TestInputString.compare("playdecivf") == 0)                     // Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
-    {
-        PlayDecIVF(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("playdecivf") == 0)                         // Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
+        return tool_play_dec_ivf(argc, argv);
 
     ////////////////////Hidden Commands/////////////////////////
-    if (TestInputString.compare("showhidden") == 0)                     //Shows Hidden Commands
-    {
-        show_hidden_cmds();
-        return 0;
-    }
+    if (TestInputString.compare("showhidden") == 0)                         //Shows Hidden Commands
+        return show_hidden_cmds();
 
     if (TestInputString.compare("apicompress") == 0)                        //API Compresion Clone
-    {
-        APICOMPRESS(argc, argv);
-        return 0;
-    }
+        return tool_api_compress(argc, argv);
 
-    if (TestInputString.compare("apidecompress") == 0)                  //API Decompression Clone
-    {
-        APIDECOMPRESS(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("apidecompress") == 0)                      //API Decompression Clone
+        return tool_api_decompress(argc, argv);
 
-    if (TestInputString.compare("codecoverage") == 0)                   //Preforms Code Coverage Tests for data coverage if enabled
-    {
-        vpxt_array_coverage(argc, argv, WorkingDir, EmptyAr);
-        return 0;
-    }
+    if (TestInputString.compare("codecoverage") == 0)                       //Preforms Code Coverage Tests for data coverage if enabled
+        return tool_array_coverage(argc, argv, WorkingDir, EmptyAr);
 
     if (TestInputString.compare("comparecodecoverage") == 0)                //Compares New Code Coverage Results to Old Code Coverage Results and merges the files to an updated version
-    {
-        compare_code_coverage(argc, argv);
-        return 0;
-    }
+        return tool_compare_code_coverage(argc, argv);
 
-    if (TestInputString.compare("formatcodecoveragefile") == 0)         //Formats Cygwin Code Coverage files to the same format as regular linux
-    {
-        FormatCodeCoverageFile(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("formatcodecoveragefile") == 0)             //Formats Cygwin Code Coverage files to the same format as regular linux
+        return tool_format_code_coverage_file(argc, argv);
 
-    if (TestInputString.compare("ivfdectestvectorcheck") == 0)          //
-    {
-        IVFDECtest_vector_test(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("ivfdectestvectorcheck") == 0)              //
+        return tool_ivf_dec_test_vector_check(argc, argv);
 
     if (TestInputString.compare("testvectorindex") == 0)                    //Will search a data base and return the Test Vector that covers an input File and Line Number
-    {
-        TestVectorIndex(argc, argv);
-        return 0;
-    }
+        return tool_test_vector_index(argc, argv);
 
-    if (TestInputString.compare("compmatchesivfenc") == 0)              //Makes sure that the Tester compressor matches ivfenc compressor
-    {
-        CompMatchesIVFenc(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("compmatchesivfenc") == 0)                  //Makes sure that the Tester compressor matches ivfenc compressor
+        return tool_comp_matches_ivfenc(argc, argv);
 
-    if (TestInputString.compare("compressionequiv") == 0)               //makes sure that all variations of the compressor produce the same output
-    {
-        CompressionEquiv(argc, argv, WorkingDir);
-        return 0;
-    }
+    if (TestInputString.compare("compressionequiv") == 0)                   //makes sure that all variations of the compressor produce the same output
+        return tool_compression_equiv(argc, argv, WorkingDir);
 
-    if (TestInputString.compare("printversion") == 0)                   //Prints the internal version number - make sure all libs built in same multithreadedmode - properties  C++ CodeGen RuntimeLibrary
-    {
-        print_version();
-        return 0;
-    }
+    if (TestInputString.compare("printversion") == 0)                       //Prints the internal version number - make sure all libs built in same multithreadedmode - properties  C++ CodeGen RuntimeLibrary
+        return print_version();
 
-    if (TestInputString.compare("test0inputcheck") == 0)                //Checks to make sure a Multi Run Input file has the correct format
-    {
-        vpxt_run_multiple_tests_input_check(argv[2], 1);
-        return 0;
-    }
+    if (TestInputString.compare("test0inputcheck") == 0)                    //Checks to make sure a Multi Run Input file has the correct format
+        return vpxt_run_multiple_tests_input_check(argv[2], 1);
 
-    if (TestInputString.compare("convertparfiletoivfenc") == 0)         //converts Tester Parameter file to a IVFenc ParFile - obsolete
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD,
-                    "\n  Convert Parameter File\n\n"
-                    "     <input Par File>\n"
-                    "     <output Par File>\n"
-                    "\n");
-            exit(0);
-        }
-
-        ConvertParmFileToIVFenc(argv[2], argv[3]);
-        return 0;
-    }
+    if (TestInputString.compare("convertparfiletoivfenc") == 0)             //converts Tester Parameter file to a IVFenc ParFile - obsolete
+        return tool_convert_par_file_to_ivfenc(argc, argv);
 
     if (TestInputString.compare("copyalltxtfiles") == 0)                    //Copies all text files in a directory to a new directory preserving file structure
-    {
-        CopyAllTxtFiles(argc, argv);
-        return 0;
-    }
+        return tool_copy_all_txt_files(argc, argv);
 
-    if (TestInputString.compare("ivf2rawdec") == 0)                     //Decodes IVF File to Raw File
-    {
-        DecIVF2Raw(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("ivf2rawdec") == 0)                         //Decodes IVF File to Raw File
+        return tool_dec_ivf_to_raw(argc, argv);
 
-    if (TestInputString.compare("deleteallivffiles") == 0)              //Deletes all IVF files in a directory be very care with this function!
-    {
-        DeleteAllIVFFiles(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("deleteallivffiles") == 0)                  //Deletes all IVF files in a directory be very care with this function!
+        return tool_delete_all_ivf_files(argc, argv);
 
     if (TestInputString.compare("raw2ivf") == 0)                            //Converts an IVF File to a Raw File
-    {
-        Raw2IVF(argc, argv);
-        return 0;
-    }
+        return tool_raw_to_ivf(argc, argv);
 
-    if (TestInputString.compare("sidebysidetext") == 0)                 //Prints out the input from two text files side by side as coloums to an output txt file
-    {
-        SideBySideText(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("sidebysidetext") == 0)                     //Prints out the input from two text files side by side as coloums to an output txt file
+        return tool_side_by_side_text(argc, argv);
 
-    if (TestInputString.compare("ivf2rawframes") == 0)                  //Converts an ivf file to a raw file
-    {
-        if (argc < 3)
-        {
-            tprintf(PRINT_STD,
-                    "\n  IVF2RawFrames\n\n"
-                    "    <Input File>\n"
-                    "    <OutPutDir>\n"
-                   );
-            return 0;
-        }
+    if (TestInputString.compare("ivf2rawframes") == 0)                      //Converts an ivf file to a raw file
+        return tool_ivf_to_raw_frames(argc, argv);
 
-        argv[4] = "1";
-        WriteIndividualFramesOut(argc, argv);
-        return 0;
-    }
-
-    if (TestInputString.compare("arraycovfaillisttofull") == 0)         //
-    {
-        ArrayCovFailListToFullList(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("arraycovfaillisttofull") == 0)             //
+        return tool_array_cov_fail_list_to_full_list(argc, argv);
 
     if (TestInputString.compare("arraycovsummaryfile") == 0)                //
-    {
-        ArrayCovSummaryFile(argc, argv);
-        return 0;
-    }
+        return tool_array_cov_summary_file(argc, argv);
 
-    if (TestInputString.compare("winmemmonformat") == 0)                //
-    {
-        WinMemMonFormat(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("winmemmonformat") == 0)                    //
+        return tool_win_mem_mon_format(argc, argv);
 
-    if (TestInputString.compare("winmemmongraph") == 0)             //
-    {
-        WinMemMonGraph(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("winmemmongraph") == 0)                     //
+        return tool_win_mem_mon_graph(argc, argv);
 
-    if (TestInputString.compare("combineindvframes") == 0)              //
-    {
-        CombineIndvFrames(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("combineindvframes") == 0)                  //
+        return tool_combine_indv_frames(argc, argv);
 
-    if (TestInputString.compare("graphpsnr") == 0)              //
-    {
-        graph_psnr(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
-    }
+    if (TestInputString.compare("graphpsnr") == 0)                          //
+        return tool_graph_psnr(argc, argv, WorkingDir, EmptyAr, 1);
 
-    if (TestInputString.compare("randivfcomp") == 0)                //
-    {
-        rand_comp(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
-    }
+    if (TestInputString.compare("randivfcomp") == 0)                        //
+        return tool_rand_comp(argc, argv, WorkingDir, EmptyAr, 1);
 
-    if (TestInputString.compare("randparfile") == 0)                //
-    {
-        CreateRandParFile(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("randparfile") == 0)                        //
+        return tool_create_rand_par_file(argc, argv);
 
-    if (TestInputString.compare("vpxdec") == 0)             //
-    {
-        RunIVFDec(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("vpxdec") == 0)                             //
+        return tool_run_ivfdec(argc, argv);
 
-    if (TestInputString.compare("vpxenc") == 0)             //
-    {
-        RunIVFEnc(argc, argv);
-        return 0;
-    }
+    if (TestInputString.compare("vpxenc") == 0)                             //
+        return tool_run_ivfenc(argc, argv);
 
-    if (TestInputString.compare("printcpuinfo") == 0)             //
-    {
-        PrintCPUInfo();
-        return 0;
-    }
-
+    if (TestInputString.compare("printcpuinfo") == 0)                       //
+        return tool_print_cpu_info();
 
     tprintf(PRINT_STD, "\n");
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //int selector = atoi(argv[1]);
     int selector = vpxt_identify_test(argv[1]);
-
 
     if (selector > MAXTENUM || selector < 0)
     {
@@ -2866,341 +2683,119 @@ int  main(int argc, char *argv[])
     }
 
     if (selector == 0)
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD,
-                    "  run_multipule_tests \n\n"
-                    "    <Test Type>\n"
-                    "      <1 - Create Files and Run Tests>\n"
-                    "        <Input Text File>\n"
-                    "      <2 - Create Files only>\n"
-                    "        <Input Text File>\n"
-                    "      <3 - Run Tests For Existing Files>\n"
-                    "        <Input Test Directory>\n"
-                    "      <4 - Resume Test>\n"
-                    "        <Input Test Directory>\n"
-                    "\n");
-
-            return 0;
-        }
-
-        int VaildInput = 0;
-
-        if (atoi(argv[2]) != 4 && atoi(argv[2]) != 3)
-        {
-            VaildInput = vpxt_run_multiple_tests_input_check(argv[3], 0);
-
-            if (VaildInput <= 0)
-            {
-                tprintf(PRINT_STD, "\nExternal Test Runner Aborted\n\n");
-                return 0;
-            }
-        }
-        else
-        {
-            string inputCheck = "";
-            inputCheck.append(argv[3]);
-            inputCheck.append(slashCharStr().c_str());
-            inputCheck.append("tests_run.txt");
-            VaildInput = vpxt_run_multiple_tests_input_check(inputCheck.c_str(), 0);
-
-            if (VaildInput <= 0)
-            {
-                tprintf(PRINT_STD, "\nExternal Test Runner Aborted\n\n");
-                return 0;
-            }
-        }
-
-        run_multiple_tests(argc, argv, WorkingDir.c_str(), VaildInput);
-
-        string SummaryFile = WorkingDir;
-
-        if (atoi(argv[2]) == 1)
-        {
-            char SummaryFileChar[255] = "";
-            SummaryFile.erase(SummaryFile.end() - 1);
-            SummaryFile.append(slashCharStr());
-            SummaryFile.append("test_results.txt");
-            snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            format_summary(SummaryFileChar);
-            return 0;
-        }
-
-        if (atoi(argv[2]) == 3)
-        {
-
-            char SummaryFileChar[255] = "";
-            SummaryFile.erase(SummaryFile.end() - 1);
-            SummaryFile.append(slashCharStr());
-            SummaryFile.append("compression_results.txt");
-            snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            format_summary(SummaryFileChar);
-            return 0;
-        }
-
-        if (atoi(argv[2]) == 4)
-        {
-            string SummCompAndTest = "";
-            string SummComp = "";
-            string SummTest = "";
-
-            SummCompAndTest = argv[3];
-            SummCompAndTest.append(slashCharStr());
-            SummCompAndTest.append("test_results.txt");     // Mode 1
-            SummComp = argv[3];
-            SummComp.append(slashCharStr());
-            SummComp.append("compression_results.txt");     // Mode 2
-            SummTest = argv[3];
-            SummTest.append(slashCharStr());
-            SummTest.append("compression_test_results.txt");// Mode 3
-
-            int TestRunning = 0;
-            fstream SummCompAndTestFile;
-            SummCompAndTestFile.open(SummCompAndTest.c_str());
-
-            if (SummCompAndTestFile)
-            {
-                TestRunning = 1;
-            }
-
-            fstream SummTestFile;
-            SummTestFile.open(SummTest.c_str());
-
-            if (SummTestFile)
-            {
-                TestRunning = 3;
-            }
-
-            fstream SummCompFile;
-            SummCompFile.open(SummComp.c_str());
-
-            if (SummCompFile)
-            {
-                if (TestRunning != 3)
-                {
-                    TestRunning = 2;
-                }
-
-            }
-
-            SummCompAndTestFile.close();
-            SummTestFile.close();
-            SummCompFile.close();
-
-            SummaryFile = argv[3];
-
-            if (TestRunning == 1)
-            {
-                char SummaryFileChar[255] = "";
-                SummaryFile.append(slashCharStr());
-                SummaryFile.append("test_results.txt");
-                snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-                format_summary(SummaryFileChar);
-                return 0;
-            }
-
-            if (TestRunning == 3)
-            {
-
-                char SummaryFileChar[255] = "";
-                SummaryFile.append(slashCharStr());
-                SummaryFile.append("compression_test_results.txt");
-                snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-                format_summary(SummaryFileChar);
-            }
-        }
-
-        return 0;
-    }
+        return vpxt_run_multi(argc, argv, WorkingDir);
 
     if (selector == AlWDFNUM)
-    {
         return test_allow_drop_frames(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == ALWLGNUM)
-    {
         return test_allow_lag(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == ALWSRNUM)
-    {
         return test_allow_spatial_resampling(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == AUTKFNUM)
-    {
         return test_auto_key_frame(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == BUFLVNUM)
-    {
         return test_buffer_level(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == CPUDENUM)
-    {
         return test_change_cpu_dec(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == CHGWRNUM)
-    {
         return test_change_cpu_enc(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == DFWMWNUM)
-    {
         return test_drop_frame_watermark(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == DTARTNUM)
-    {
         return test_data_rate(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == DBMRLNUM)
-    {
         return test_debug_matches_release(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == ENCBONUM)
-    {
         return test_encoder_break_out(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == ERRMWNUM)
-    {
         return test_error_resolution(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == EXTFINUM)
-    {
         return test_extra_file(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == FIXDQNUM)
-    {
         return test_fixed_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == FKEFRNUM)
-    {
         return test_force_key_frame(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == FRSZTNUM)
-    {
         return test_frame_size(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == GQVBQNUM)
-    {
         return test_good_vs_best(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == LGIFRNUM)
-    {
         return test_lag_in_frames(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == MAXQUNUM)
-    {
         return test_max_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == MEML1NUM)
-    {
         return test_mem_leak(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == MEML2NUM)
-    {
         return test_mem_leak2(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == MINQUNUM)
-    {
         return test_min_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == MULTTNUM)
-    {
         return test_multithreaded(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == NVOPSNUM)
-    {
-        test_new_vs_old_psnr(argc, argv, WorkingDir, EmptyAr, 1);
-        return 0;
-    }
+        return test_new_vs_old_psnr(argc, argv, WorkingDir, EmptyAr, 1);
 
     if (selector == NVOECPTK)
-    {
         return test_new_vs_old_enc_cpu_tick(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == NOISENUM)
-    {
         return test_noise_sensitivity(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == OV2PSNUM)
-    {
         return test_one_pass_vs_two_pass(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == PLYALNUM)
-    {
         return test_play_alternate(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == POSTPNUM)
-    {
         return test_post_processor(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == RECBFNUM)
-    {
         return test_reconstruct_buffer(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == RSDWMNUM)
-    {
         return test_resample_down_watermark(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == SPEEDNUM)
-    {
         return test_speed(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == TVECTNUM)
-    {
         return test_vector_test(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == TV2BTNUM)
-    {
         return test_two_pass_vs_two_pass_best(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == UNDSHNUM)
-    {
         return test_undershoot(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == VERSINUM)
-    {
         return test_version(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     if (selector == WMLMMNUM)
-    {
         return test_win_lin_mac_match(argc, argv, WorkingDir, EmptyAr, 1);
-    }
 
     vpxt_on_error_output();
     return 0;
-
 }

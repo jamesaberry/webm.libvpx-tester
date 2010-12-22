@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_new_vs_old_psnr(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
 
     char *MyDir = "test_new_vs_old_psnr";
@@ -27,7 +27,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     char ExeInput[255];
@@ -82,7 +82,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
     {
         Program.append(ExeInput);
         Program.append("\" compress \"");
-        Program.append(input);
+        Program.append(input.c_str());
         Program.append("\" \"");
         Program.append(OldEncFile);
         Program.append("\" 8");
@@ -99,7 +99,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
     {
         Program.append(ExeInput);
         Program.append("\' compress \'");
-        Program.append(input);
+        Program.append(input.c_str());
         Program.append("\' \'");
         Program.append(OldEncFile);
         Program.append("\' 8");
@@ -189,7 +189,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
         {
             opt.Mode = MODE_REALTIME;
 
-            if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -215,7 +215,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
         {
             opt.Mode = MODE_GOODQUALITY;
 
-            if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -243,7 +243,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -265,7 +265,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
                 opt.Mode = MODE_SECONDPASS;
                 opt.lag_in_frames = 10;
 
-                if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
+                if (vpxt_compress_ivf_to_ivf(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
                 {
                     fclose(fp);
                     record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -306,7 +306,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
             {
                 opt.Mode = MODE_SECONDPASS;
 
-                if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
+                if (vpxt_compress_ivf_to_ivf(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
                 {
                     fclose(fp);
                     record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -337,7 +337,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
                 opt.Mode = MODE_SECONDPASS_BEST;
                 opt.lag_in_frames = 10;
 
-                if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
+                if (vpxt_compress_ivf_to_ivf(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
                 {
                     fclose(fp);
                     record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -378,7 +378,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
             {
                 opt.Mode = MODE_SECONDPASS_BEST;
 
-                if (vpxt_compress_ivf_to_ivf(input, NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
+                if (vpxt_compress_ivf_to_ivf(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, 0, 3, 3) == -1)
                 {
                     fclose(fp);
                     record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -423,7 +423,7 @@ int test_new_vs_old_psnr(int argc, char *argv[], const string &WorkingDir, strin
 
     double PSNRArr[2];
 
-    PSNRArr[0] = vpxt_ivf_psnr(input, NewEncFile.c_str(), 0, 0, 1, NULL);
+    PSNRArr[0] = vpxt_ivf_psnr(input.c_str(), NewEncFile.c_str(), 0, 0, 1, NULL);
     PSNRArr[1] = vpxt_get_psnr(OldEncFile.c_str());
 
     tprintf(PRINT_BTH, "\nNew DataRate");

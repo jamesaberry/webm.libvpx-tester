@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_max_quantizer(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_max_quantizer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Max Quantizer";
     char *MyDir = "test_max_quantizer";
@@ -25,7 +25,7 @@ int test_max_quantizer(int argc, char *argv[], const string &WorkingDir, string 
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -124,7 +124,7 @@ int test_max_quantizer(int argc, char *argv[], const string &WorkingDir, string 
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_ivf_psnr(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
+                PSNRArr[i] = vpxt_ivf_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
@@ -150,7 +150,7 @@ int test_max_quantizer(int argc, char *argv[], const string &WorkingDir, string 
 
             opt.Mode = Mode;
 
-            if (vpxt_compress_ivf_to_ivf(input, QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -161,7 +161,7 @@ int test_max_quantizer(int argc, char *argv[], const string &WorkingDir, string 
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_ivf_psnr(input, QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
+                PSNRArr[i] = vpxt_ivf_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int tool_rand_comp(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
 
     char *CompressString = "RandomInput";
@@ -14,7 +14,8 @@ int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string File
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
+
     ////////////Formatting Test Specific Directory////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
@@ -50,7 +51,7 @@ int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string File
     WorkingDir4.append(slashCharStr());
 
     char InputFileName[255];
-    vpxt_file_name(input, InputFileName, 0);
+    vpxt_file_name(input.c_str(), InputFileName, 0);
     string InputFileNameStr = InputFileName;
 
     if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 4).compare(".ivf") == 0) //if file extension is present remove it
@@ -102,7 +103,7 @@ int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string File
 
 
 
-    VP8_CONFIG opt = vpxt_random_parameters(opt, input, 1);
+    VP8_CONFIG opt = vpxt_random_parameters(opt, input.c_str(), 1);
     int Mode = opt.Mode;
 
     if (Mode == 0)
@@ -112,7 +113,7 @@ int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string File
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -127,7 +128,7 @@ int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string File
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -142,7 +143,7 @@ int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string File
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -161,7 +162,7 @@ int tool_rand_comp(int argc, char *argv[], const string &WorkingDir, string File
         opt.Mode = MODE_SECONDPASS_BEST;
 
         //vpxt_output_settings(RandCompParOut,opt);
-        if (vpxt_compress_ivf_to_ivf(input, RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);

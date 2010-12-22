@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_noise_sensitivity(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_noise_sensitivity(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     //This test looks a lot like NoiseSensitivityWorks but has a different purpose.  This test ensures
     //That different noise sensitivities have an effect for each possible noise sensitivity value and
@@ -28,7 +28,7 @@ int test_noise_sensitivity(int argc, char *argv[], const string &WorkingDir, str
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -130,7 +130,7 @@ int test_noise_sensitivity(int argc, char *argv[], const string &WorkingDir, str
             }
 
             tprintf(PRINT_BTH, "\n");
-            PSNRArr[Noise] = vpxt_ivf_psnr(input, NoiseSenseOut.c_str(), 0, 0, 1, NULL);
+            PSNRArr[Noise] = vpxt_ivf_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
             tprintf(PRINT_BTH, "\n");
             File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
             tprintf(PRINT_BTH, "\n");
@@ -157,7 +157,7 @@ int test_noise_sensitivity(int argc, char *argv[], const string &WorkingDir, str
 
             opt.noise_sensitivity = Noise;
 
-            if (vpxt_compress_ivf_to_ivf(input, NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -168,7 +168,7 @@ int test_noise_sensitivity(int argc, char *argv[], const string &WorkingDir, str
             {
 
                 tprintf(PRINT_BTH, "\n");
-                PSNRArr[Noise] = vpxt_ivf_psnr(input, NoiseSenseOut.c_str(), 0, 0, 1, NULL);
+                PSNRArr[Noise] = vpxt_ivf_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
                 tprintf(PRINT_BTH, "\n");

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_one_pass_vs_two_pass(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_one_pass_vs_two_pass";
@@ -17,7 +17,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int BitRate = atoi(argv[3]);
 
     int speed = 0;
@@ -130,7 +130,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
         opt.Mode = 5;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,7 +139,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -148,7 +148,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -158,7 +158,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
         opt.Mode = 2;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input, OnePassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), OnePassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,7 +167,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, OnePassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), OnePassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -176,7 +176,7 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, OnePassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), OnePassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -210,12 +210,12 @@ int test_one_pass_vs_two_pass(int argc, char *argv[], const string &WorkingDir, 
     double PSNROnePass2;
     double PSNROnePass3;
 
-    PSNRTwoPass1 = vpxt_ivf_psnr(input, TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRTwoPass2 = vpxt_ivf_psnr(input, TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRTwoPass3 = vpxt_ivf_psnr(input, TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNROnePass1 = vpxt_ivf_psnr(input, OnePassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNROnePass2 = vpxt_ivf_psnr(input, OnePassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNROnePass3 = vpxt_ivf_psnr(input, OnePassOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRTwoPass1 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRTwoPass2 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRTwoPass3 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNROnePass1 = vpxt_ivf_psnr(input.c_str(), OnePassOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNROnePass2 = vpxt_ivf_psnr(input.c_str(), OnePassOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNROnePass3 = vpxt_ivf_psnr(input.c_str(), OnePassOutFile3.c_str(), 1, 0, 1, NULL);
 
     //    double PSRNPerc = vpxt_abs_double(((PSNR2 - PSNR1) / PSNR1) * 100.00);
     //    double BRPerc = vpxt_abs_double(((Size2 - Size1) / Size1) * 100.00);

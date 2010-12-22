@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_speed(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Cpu Used";
     char *MyDir = "test_speed";
@@ -22,7 +22,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int LagInFramesInput = atoi(argv[5]);
@@ -151,7 +151,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
                 SpeedTestGoodQ.append(".ivf");
 
                 GoodTotalcpu_tick[counter] = vpxt_cpu_tick_return(SpeedTestGoodQ.c_str(), 0);
-                GoodPSNRArr[counter] = vpxt_ivf_psnr(input, SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
+                GoodPSNRArr[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
                 counter++;
             }
         }
@@ -171,7 +171,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
                 SpeedTestRealTime.append(".ivf");
 
                 RealTotalcpu_tick[counter2] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArr[counter2] = vpxt_ivf_psnr(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                RealPSNRArr[counter2] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 counter--;
                 counter2++;
             }
@@ -188,7 +188,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
                 SpeedTestRealTime.append(".ivf");
 
                 RealTotalcpu_tickPos[counter] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArrPos[counter] = vpxt_ivf_psnr(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                RealPSNRArrPos[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 counter++;
             }
         }
@@ -212,7 +212,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_GOODQUALITY;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, GoodTotalcpu_tick[counter], 0, 3, 3);
+                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, GoodTotalcpu_tick[counter], 0, 3, 3);
 
                 if (Time == -1)
                 {
@@ -223,7 +223,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    GoodPSNRArr[counter] = vpxt_ivf_psnr(input, SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
+                    GoodPSNRArr[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
                 }
 
                 counter++;
@@ -247,7 +247,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tick[counter2], 0, 3, 3);
+                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tick[counter2], 0, 3, 3);
 
                 if (Time == -1)
                 {
@@ -258,7 +258,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    RealPSNRArr[counter2] = vpxt_ivf_psnr(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                    RealPSNRArr[counter2] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 }
 
                 counter--;
@@ -279,7 +279,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tickPos[counter], 0, 3, 3);
+                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tickPos[counter], 0, 3, 3);
 
                 if (Time == -1)
                 {
@@ -290,7 +290,7 @@ int test_speed(int argc, char *argv[], const string &WorkingDir, string FilesAr[
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    RealPSNRArrPos[counter] = vpxt_ivf_psnr(input, SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                    RealPSNRArrPos[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 }
 
                 counter++;

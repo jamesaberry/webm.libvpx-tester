@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_drop_frame_watermark(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_drop_frame_watermark(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Drop Frames Watermark";
     char *MyDir = "test_drop_frame_watermark";
@@ -25,7 +25,7 @@ int test_drop_frame_watermark(int argc, char *argv[], const string &WorkingDir, 
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -149,7 +149,7 @@ int test_drop_frame_watermark(int argc, char *argv[], const string &WorkingDir, 
 
             opt.Mode = Mode;
 
-            if (vpxt_compress_ivf_to_ivf(input, DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0, 0, 3, 3) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

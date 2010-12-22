@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_spatial_resampling(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_allow_spatial_resampling(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Spatial Resampling";
     char *MyDir = "test_allow_spatial_resampling";
@@ -26,7 +26,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], const string &WorkingD
     }
 
     int speed = 0;
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -117,7 +117,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], const string &WorkingD
         opt.Mode = Mode;
         opt.allow_spatial_resampling = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -126,7 +126,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], const string &WorkingD
 
         opt.allow_spatial_resampling = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input, Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -142,7 +142,7 @@ int test_allow_spatial_resampling(int argc, char *argv[], const string &WorkingD
         return 10;
     }
 
-    double SpatialResampPSNR = vpxt_ivf_psnr(input, Spatialon.c_str(), 0, 0, 1, NULL);
+    double SpatialResampPSNR = vpxt_ivf_psnr(input.c_str(), Spatialon.c_str(), 0, 0, 1, NULL);
 
     char SpatialonFileName[255];
     vpxt_file_name(Spatialon.c_str(), SpatialonFileName, 0);

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_lag(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_allow_lag(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Lag";
     char *MyDir = "test_allow_lag";
@@ -25,10 +25,9 @@ int test_allow_lag(int argc, char *argv[], const string &WorkingDir, string File
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);;
-    char *input2 = argv[5];
+    int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
@@ -121,7 +120,7 @@ int test_allow_lag(int argc, char *argv[], const string &WorkingDir, string File
         opt.Mode = Mode;
         opt.allow_lag = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -130,7 +129,7 @@ int test_allow_lag(int argc, char *argv[], const string &WorkingDir, string File
 
         opt.allow_lag = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input, AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

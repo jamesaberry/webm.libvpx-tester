@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_resample_down_watermark(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_resample_down_watermark(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Resample Down Watermark";
     char *MyDir = "test_resample_down_watermark";
@@ -25,7 +25,7 @@ int test_resample_down_watermark(int argc, char *argv[], const string &WorkingDi
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -126,7 +126,7 @@ int test_resample_down_watermark(int argc, char *argv[], const string &WorkingDi
 
         opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-        if (vpxt_compress_ivf_to_ivf(input, DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -135,7 +135,7 @@ int test_resample_down_watermark(int argc, char *argv[], const string &WorkingDi
 
         opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-        if (vpxt_compress_ivf_to_ivf(input, DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

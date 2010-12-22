@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_auto_key_frame(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_auto_key_frame(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Auto Key Frame";
     char *MyDir = "test_auto_key_frame";
@@ -26,7 +26,7 @@ int test_auto_key_frame(int argc, char *argv[], const string &WorkingDir, string
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int AutoKeyFramingInt = atoi(argv[5]);
@@ -128,14 +128,14 @@ int test_auto_key_frame(int argc, char *argv[], const string &WorkingDir, string
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
-        if (vpxt_compress_ivf_to_ivf(input, AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

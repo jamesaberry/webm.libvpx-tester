@@ -55,48 +55,7 @@ typedef unsigned char       BYTE;
 extern int ivfdec(int argc, const char **argv_);
 extern int ivfenc(int argc, const char **argv_);
 
-int ConvertParmFileToIVFenc(char *input, char *output)
-{
 
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-    opt = vpxt_input_settings(input);
-    vpxt_output_settings_ivfenc(output, opt);
-
-    return 0;
-}
-int CopyIVF2IVF(int argc, char *argv[], string WorkingDir)
-{
-    char *CompressString = "Allow DF";
-
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  Copy IVF to IVF \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n ");
-
-        return 0;
-    }
-
-    char *input = argv[2];
-    char *output = argv[3];
-
-    int speed = 0;
-    int BitRate = 128;
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-    int CompressInt = opt.allow_df;
-
-    opt.target_bandwidth = BitRate;
-
-    opt.Mode = MODE_GOODQUALITY;
-
-    return 0;
-
-}
 int RawDataIVF(char *input, char *output)
 {
     FILE *in = fopen(input, "rb");
@@ -154,201 +113,7 @@ int RawDataIVF(char *input, char *output)
 
     return 0;
 }
-int WriteIndividualFramesOut(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVF2RawFrames\n\n"
-                "    <Input File>\n"
-                "    <OutPutDir>\n"
-                "    <WriteOutAllFrames-1=yes|0=no>\n"
-               );
-        return 0;
-    }
-
-    char *inputFile = argv[2];
-    char *outputDir = argv[3];
-    int WriteIndFrames = atoi(argv[4]);
-
-    FILE *in = fopen(inputFile, "rb");
-    ///////////////////////////////////
-
-    if (in == NULL)
-    {
-        tprintf(PRINT_BTH, "\nInput file does not exist");
-        return 0;
-    }
-
-    int currentVideoFrame = 1;
-    int frameCount = 0;
-    int byteRec = 0;
-
-    IVF_HEADER ivfhRaw;
-
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-    vpxt_format_ivf_header_read(&ivfhRaw);
-
-    /*printf( "IVF DataRate\n\n"
-    "FILE HEADER \n\n"
-    "File Header            - %c%c%c%c \n"
-    "File Format Version    - %i \n"
-    "File Header Size       - %i \n"
-    "Video Data FourCC      - %i \n"
-    "Video Image Width      - %i \n"
-    "Video Image Height     - %i \n"
-    "Frame Rate Rate        - %i \n"
-    "Frame Rate Scale       - %i \n"
-    "Video Length in Frames - %i \n"
-    "Unused                 - %c \n"
-    "\n\n"
-    ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.fourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-    ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
-
-    IVF_FRAME_HEADER ivf_fhRaw;
-
-    fread(&ivf_fhRaw.frameSize, 1, 4, in);
-    fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-    vpxt_format_frame_header_read(ivf_fhRaw);
-
-    frameCount = ivfhRaw.length;
-
-    long nSamples = frameCount;
-    long lRateNum = ivfhRaw.rate;
-    long lRateDenom = ivfhRaw.scale;
-
-    long nSamplesPerBlock = 1;
-
-    long nBytes = 0;
-    long nBytesMin = 999999;
-    long nBytesMax = 0;
-
-    fpos_t position;
-    fgetpos(in, &position);
-    cout << "\n";
-
-    string OutputDirStrwithQuotes = outputDir;
-
-    if (WriteIndFrames != 5)
-    {
-        OutputDirStrwithQuotes.append("\"");
-        OutputDirStrwithQuotes.insert(0, "md \"");
-        vpxt_make_dir_vpx(OutputDirStrwithQuotes);
-    }
-
-    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-
-    string outputDirStr2 = outputDir;
-    char outputDirChar2[255];
-
-    if (WriteIndFrames != 5)
-    {
-        outputDirStr2.append(slashCharStr());
-
-        char InputFileName[255];
-        vpxt_file_name(inputFile, InputFileName, 0);
-        string InputFileNameStr = InputFileName;
-
-        if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 1).compare(".") == 0) //if file extension is present remove it
-            outputDirStr2.append(InputFileNameStr.substr(0, InputFileNameStr.length() - 4));
-        else
-            outputDirStr2.append(InputFileName);
-
-        //outputDirStr2.append("AllFrames.raw");
-        outputDirStr2.append(".raw");
-        snprintf(outputDirChar2, 255, "%s", outputDirStr2.c_str());
-    }
-    else
-    {
-        snprintf(outputDirChar2, 255, "%s", outputDirStr2.c_str());
-    }
-
-    FILE *out2 = fopen(outputDirChar2, "wb");
-    ///////////////////////////////////////////////////////////////////////////////////////
-    int LastFrameDecPlaces = vpxt_decimal_places(ivfhRaw.length);
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-    while (currentVideoFrame <= frameCount)
-    {
-        /*fprintf(stderr, "FRAME HEADER 0\n"
-        "Frame Size            - %i \n"
-        "Time Stamp            - %i \n"
-        "\n"
-        ,ivf_fhRaw.frameSize,ivf_fhRaw.timeStamp);*/
-
-        cout << ".";
-        memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
-        fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-        string outputDirStr = outputDir;
-
-        char currentVideoFrameStr[10];
-        char widthchar[10];
-        char heightchar[10];
-        vpxt_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
-        vpxt_itoa_custom(ivfhRaw.width, widthchar, 10);
-        vpxt_itoa_custom(ivfhRaw.height, heightchar, 10);
-
-        outputDirStr.append(slashCharStr());
-        char InputFileName2[255];
-        vpxt_file_name(inputFile, InputFileName2, 0);
-        string InputFileNameStr2 = InputFileName2;
-
-        if (InputFileNameStr2.substr(InputFileNameStr2.length() - 4, 1).compare(".") == 0) //if file extension is present remove it
-            outputDirStr.append(InputFileNameStr2.substr(0, InputFileNameStr2.length() - 4));
-        else
-            outputDirStr.append(InputFileName2);
-
-        outputDirStr.append("-");
-        outputDirStr.append(widthchar);
-        outputDirStr.append("x");
-        outputDirStr.append(heightchar);
-        outputDirStr.append("-Frame-");
-        ///////////////////////////////////////////////////////////////////////////////////////
-        int CurNumDecPlaces = vpxt_decimal_places(currentVideoFrame);
-
-        while (CurNumDecPlaces < LastFrameDecPlaces) //add zeros for increasing frames
-        {
-            //printf("%i < %i ", CurNumDecPlaces,InputDecPlaces);
-            outputDirStr.append("0");
-            CurNumDecPlaces++;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////
-        outputDirStr.append(currentVideoFrameStr);
-        outputDirStr.append(".raw");
-
-        char outputDirChar[255];
-        snprintf(outputDirChar, 255, "%s", outputDirStr.c_str());
-
-        if (WriteIndFrames == 0 || WriteIndFrames == 5)
-        {
-            fwrite(inbuff, 1, ivf_fhRaw.frameSize, out2);
-        }
-
-        if (WriteIndFrames == 1)
-        {
-            FILE *out = fopen(outputDirChar, "wb");
-            fwrite(inbuff, 1, ivf_fhRaw.frameSize, out);
-            fwrite(inbuff, 1, ivf_fhRaw.frameSize, out2);
-            fclose(out);
-        }
-
-        fread(&ivf_fhRaw.frameSize, 1, 4, in);
-        fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-        vpxt_format_frame_header_read(ivf_fhRaw);
-
-        currentVideoFrame ++;
-    }
-
-    fclose(in);
-    fclose(out2);
-
-    return 0;
-}
-int IVF2Raw(char *inputFile, char *outputDir)
+int IVF2Raw(const char *inputFile, const char *outputDir)
 {
     int WriteIndFrames = 5;
 
@@ -484,7 +249,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     return 0;
 }
-int DecoderCheck(int argc, char *argv[])
+int DecoderCheck(int argc, const char *const *argv)
 {
     char ExeLoc[255];
     vpxt_folder_name(argv[0], ExeLoc);
@@ -887,7 +652,7 @@ int IVFParseandDelete(char *DirName)
 #endif
     return 0;
 }
-int TxtParseandCopy(char *DirName, char *BaseOutputDir, int BaseInputStrLength)
+int TxtParseandCopy(const char *DirName, const char *BaseOutputDir, int BaseInputStrLength)
 {
 #if defined(linux)
 
@@ -1232,3008 +997,9 @@ int TxtParseandCopy(char *DirName, char *BaseOutputDir, int BaseInputStrLength)
 #endif
     return 0;
 }
-int tool_compr_ivf_to_ivf(int argc, char *argv[], string WorkingDir)
-{
-    char *CompressString = "Allow DF";
 
-    if (argc < 7 || argc > 8)
-    {
-        tprintf(PRINT_STD,
-                "\n  Compress IVF to IVF \n\n"
-                "    <(1)Normal Compress |(2)TimeCompress>\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Bit Rate>\n"
-                "    <Mode>\n"
-                "    <Optional - Parameter File>\n"
-                "\n");
 
-        return 0;
-    }
-
-    int CompressionType = atoi(argv[2]);
-    char *input = argv[3];
-    char *output = argv[4];
-    int BitRate = atoi(argv[5]);
-    int Mode = atoi(argv[6]);
-
-    int speed = 0;
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-    opt.target_bandwidth = BitRate;
-
-    if (argc == 8)
-    {
-        opt = vpxt_input_settings(argv[7]);
-    }
-
-    int CompressInt = opt.allow_df;
-
-    ////////////Track Mem Usage//////////
-    //string MemLeakCheckTXT2Str = output;
-    //MemLeakCheckTXT2Str.append("_MemOut.txt");
-    //char MemLeakCheckTXT2[255];
-    //snprintf(MemLeakCheckTXT2, 255, "%s", MemLeakCheckTXT2Str.c_str());
-    //on2_MemoryTrackerSetLogType(0, MemLeakCheckTXT2);
-    //cout << "\nMemory Tracking to file: " << MemLeakCheckTXT2 << "\n";
-    /////////////////////////////////////
-
-    if (Mode == 0)
-    {
-        opt.Mode = MODE_REALTIME;
-
-        if (CompressionType == 1)
-        {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        }
-
-        if (CompressionType == 2)
-        {
-            unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-        }
-    }
-
-    if (Mode == 1)
-    {
-        opt.Mode = MODE_GOODQUALITY;
-
-        if (CompressionType == 1)
-        {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        }
-
-        if (CompressionType == 2)
-        {
-            unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-        }
-    }
-
-    if (Mode == 2)
-    {
-        opt.Mode = MODE_BESTQUALITY;
-
-        if (CompressionType == 1)
-        {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        }
-
-        if (CompressionType == 2)
-        {
-            unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-        }
-    }
-
-    if (Mode == 3)
-    {
-    }
-
-    if (Mode == 4)
-    {
-        opt.Mode = MODE_SECONDPASS;
-
-        if (CompressionType == 1)
-        {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        }
-
-        if (CompressionType == 2)
-        {
-            unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-        }
-    }
-
-    if (Mode == 5)
-    {
-        opt.Mode = MODE_SECONDPASS_BEST;
-
-        if (CompressionType == 1)
-        {
-            vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        }
-
-        if (CompressionType == 2)
-        {
-            unsigned int CPUTick = 0;
-            vpxt_time_compress_ivf_to_ivf(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-        }
-    }
-
-    ////////////Track Mem Usage//////////
-    //on2_MemoryTrackerDump();
-    /////////////////////////////////////
-    return 0;
-}
-
-
-int tool_dec_ivf_to_ivf(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Decompress IVF to IVF \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "\n");
-
-        return 0;
-    }
-
-    char *inputFile = argv[2];
-    char *outputFile = argv[3];
-
-    vpxt_decompress_ivf_to_ivf_no_output(inputFile, outputFile);
-
-    return 0;
-}
-int tool_dec_ivf_to_raw(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Decompress IVF to Raw \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "\n");
-
-        return 0;
-    }
-
-    char *inputFile = argv[2];
-    char *outputFile = argv[3];
-
-    vpxt_decompress_ivf_to_raw(inputFile, outputFile);
-
-    return 0;
-}
-int tool_ivf_data_rate(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVF DataRate \n\n"
-                "    <Input File>\n"
-                "\n");
-        return 0;
-    }
-
-    vpxt_ivf_data_rate(argv[2], 2);
-
-    return 1;
-}
-int tool_ivf_psnr_run(int argc, char *argv[])
-{
-    if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVFPSNR\n\n"
-                "     <Raw IVF File>\n"
-                "     <Comp IVF File>\n"
-                "     <Run SSIM 0 no 1 yes>\n"
-                "\n");
-        exit(0);
-    }
-
-    double runssim = 1;
-    char *Raw = argv[2];
-    char *Comp = argv[3];
-
-    if (atoi(argv[4]) == 1)
-    {
-        vpxt_ivf_psnr(Raw, Comp, 0, 3, 0, &runssim);
-    }
-    else
-    {
-        vpxt_ivf_psnr(Raw, Comp, 0, 3, 0, NULL);
-    }
-
-    tprintf(PRINT_STD, "\n");
-
-    return 0;
-}
-int tool_ivf_check_pbm_run(int argc, char *argv[])
-{
-    if (argc < 6)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVFCheckPBM\n\n"
-                "     <input>\n"
-                "     <bitrate>\n"
-                "     <bufferSize>\n"
-                "     <prebuffer>\n"
-                "\n");
-        exit(0);
-    }
-
-    char *inputFile = argv[2];
-    int bitRate = atoi(argv[3]);
-    int maxBuffer = atoi(argv[4]);
-    int preBuffer = atoi(argv[5]);
-    int outputme;
-
-    outputme = vpxt_ivf_check_pbm(inputFile, bitRate, maxBuffer, preBuffer);
-
-    if (outputme == -11)
-    {
-        tprintf(PRINT_STD, "CheckPBM Passed\n");
-    }
-    else
-    {
-        tprintf(PRINT_STD, "CheckPBM failed at: %i\n", outputme);
-    }
-
-    return 0;
-}
-int tool_compare_ivf(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  CompareIVF\n\n"
-                "     <inputfile1>\n"
-                "     <inputfile2>\n"
-               );
-        return 0;
-    }
-
-    char *Output3 = argv[2];
-    char *Output = argv[3];
-
-    tprintf(PRINT_STD, "\nComparing Files:\n\n");
-    cout << Output3 << "\n";
-    cout << Output << "\n";
-
-    char *CompIVFAr[5];
-    CompIVFAr[1] = (char *)Output;
-    CompIVFAr[2] = (char *)Output3;
-
-    int CompIVFOutput = vpxt_compare_ivf(Output3, Output);
-
-    if (CompIVFOutput == -1)
-    {
-        cout << "\n Files Contain Identical Video Data\n";
-    }
-
-    if (CompIVFOutput == -2)
-    {
-        tprintf(PRINT_STD, "\n\nFail: File 2 ends before File 1.\n");
-    }
-
-    if (CompIVFOutput == -3)
-    {
-        tprintf(PRINT_STD, "\n\nFail: File 1 ends before File 2.\n");
-    }
-
-    if (CompIVFOutput != -1 && CompIVFOutput != -2 && CompIVFOutput != -3)
-    {
-        cout << "\nFILES DIFFER AT FRAME: " << CompIVFOutput << "\n";
-    }
-
-    return 0;
-}
-int tool_raw_to_ivf(int argc, char *argv[])
-{
-    if (argc < 8)
-    {
-        tprintf(PRINT_STD,
-                "\n  Raw2IVF\n\n"
-                "    <Input File>\n"
-                "    <OutPutDir>\n"
-                "    <Width>\n"
-                "    <Height>\n"
-                "    <FrameRate>\n"
-                "    <FourCC>\n"
-               );
-        return 0;
-    }
-
-    char *inputFile = argv[2];
-    char *outputDir = argv[3];
-    int Width = atoi(argv[4]);
-    int Height = atoi(argv[5]);
-    int FrameRate = atoi(argv[6]);
-    string FourCC = argv[7];
-
-    FILE *in = fopen(inputFile, "rb");
-    FILE *out2 = fopen(outputDir, "wb");
-    ///////////////////////////////////
-
-    if (in == NULL)
-    {
-        tprintf(PRINT_BTH, "\nInput file does not exist");
-        return 0;
-    }
-
-    int currentVideoFrame = 0;
-    int frameCount = 0;
-    int byteRec = 0;
-
-    IVF_HEADER ivfhRaw;
-    InitIVFHeader(&ivfhRaw);
-
-    if (FourCC.compare("I420") == 0)
-    {
-        ivfhRaw.four_cc    = MAKEFOURCC('I', '4', '2', '0');
-    }
-
-    if (FourCC.compare("YV12") == 0)
-    {
-        ivfhRaw.four_cc    = MAKEFOURCC('Y', 'V', '1', '2');
-
-    }
-
-    ivfhRaw.headersize  = 32;
-    ivfhRaw.height      = Height;
-    ivfhRaw.length      = 0;
-    ivfhRaw.rate        = FrameRate;
-    ivfhRaw.scale       = 1;
-    ivfhRaw.version     = 0;
-    ivfhRaw.width       = Width;
-
-    vpxt_format_ivf_header_write(ivfhRaw);
-    fwrite(&ivfhRaw, 1, 32, out2);
-
-    tprintf(PRINT_STD, "IVF DataRate\n\n"
-            "FILE HEADER \n\n"
-            "File Header            - %c%c%c%c \n"
-            "File Format Version    - %i \n"
-            "File Header Size       - %i \n"
-            "Video Data FourCC      - %i \n"
-            "Video Image Width      - %i \n"
-            "Video Image Height     - %i \n"
-            "Frame Rate Rate        - %i \n"
-            "Frame Rate Scale       - %i \n"
-            "Video Length in Frames - %i \n"
-            "Unused                 - %c \n"
-            "\n\n"
-            , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
-            , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
-            , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
-
-    IVF_FRAME_HEADER ivf_fhRaw;
-    ivf_fhRaw.frameSize = ivfhRaw.width * ivfhRaw.height * 3 / 2;
-    ivf_fhRaw.timeStamp = 0;
-
-
-    long nSamples = frameCount;
-    long lRateNum = ivfhRaw.rate;
-    long lRateDenom = ivfhRaw.scale;
-
-    long nSamplesPerBlock = 1;
-
-    long nBytes = 0;
-    long nBytesMin = 999999;
-    long nBytesMax = 0;
-
-    cout << "\n Convereting to IVF.\n";
-
-    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-    int CharCount = 0;
-
-    while (!feof(in))
-    {
-        if (CharCount == 79)
-        {
-            cout << "\n";
-            CharCount = 0;
-        }
-
-        cout << ".";
-        memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
-        fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-        if (feof(in))
-            break;
-
-        vpxt_format_frame_header_write(ivf_fhRaw);
-        fwrite(&ivf_fhRaw, 1, sizeof(ivf_fhRaw), out2);
-        fwrite(inbuff, 1, ivf_fhRaw.frameSize, out2);
-        currentVideoFrame ++;
-    }
-
-    ivfhRaw.length = currentVideoFrame;
-    fseek(out2 , 0 , SEEK_SET);
-    vpxt_format_ivf_header_write(ivfhRaw);
-    fwrite(&ivfhRaw, 1, 32, out2);
-
-    fclose(in);
-    fclose(out2);
-
-    return 0;
-}
-int tool_cut_ivf(int argc, char *argv[])
-{
-    if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  CutIVF\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Starting Frame>\n"
-                "    <Ending Frame>\n"
-               );
-        return 0;
-    }
-
-    char *inputFile = argv[2];
-    char *outputFile = argv[3];
-    int StartingFrame = atoi(argv[4]);
-    int EndingFrame = atoi(argv[5]);
-
-    vpxt_cut_ivf(inputFile, outputFile, StartingFrame, EndingFrame);
-
-    return 0;
-}
-int tool_crop_raw_ivf(int argc, char *argv[])
-{
-    if (argc < 8)
-    {
-        tprintf(PRINT_STD,
-                "\n  CropRawIVF\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <xoffset>\n"
-                "    <yoffset>\n"
-                "    <New Frame Width>\n"
-                "    <New Frame Height>\n"
-                "    <Raw/IVF 0-Raw 1-IVF>\n"
-               );
-        return 0;
-    }
-
-    char *inputFile = argv[2];
-    char *outputFile = argv[3];
-    int xoffset = atoi(argv[4]);
-    int yoffset = atoi(argv[5]);
-    int newFrameWidth = atoi(argv[6]);
-    int newFrameHeight = atoi(argv[7]);
-    int FileIsIVF  = atoi(argv[8]);
-
-    vpxt_crop_raw_ivf(inputFile, outputFile, xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF, 0);
-    return 0;
-}
-int tool_paste_ivf(int argc, char *argv[])
-{
-    if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  PasteIVF\n\n"
-                "    <Inputfile1>\n"
-                "    <Inputfile2>\n"
-                "    <Outputfile>\n"
-                "    <First Paste Frame>\n"
-               );
-        return 0;
-    }
-
-    char *inputFile1 = argv[2];
-    char *inputFile2 = argv[3];
-    char *outputFile = argv[4];
-    int StartingFrame = atoi(argv[5]);
-
-    vpxt_paste_ivf(inputFile1, inputFile2, outputFile, StartingFrame);
-
-    return 0;
-}
-int tool_combine_indv_frames(int argc, char *argv[])
-{
-    if (argc != 8)
-    {
-        tprintf(PRINT_STD,
-                "\n  MakeRawFromIndvFrames\n\n"
-                "    <Input Director>\n"
-                "    <Namebase>\n"
-                "    <File Extension - include .>\n"
-                "    <First Frame - Include preceding zeros>\n"
-                "    <Last  Frame - Include preceding zeros>\n"
-                "    <Output File>\n"
-               );
-        return 0;
-    }
-
-    string inputDir = argv[2];
-    string namebase = argv[3];
-    string extension = argv[4];
-    int FirstFrame = atoi(argv[5]);
-    int LastFrame = atoi(argv[6]);
-    string outputfile = argv[7];
-
-
-    int x = 0;
-    int StaticZeroCount = 0;
-
-    while (argv[6][x] != NULL)
-    {
-        char ZeroCheck[2];
-        ZeroCheck[0] = argv[6][x];
-        ZeroCheck[1] = '\0';
-
-        //cout << "\n" << argv[6][x] << "\n";
-        if (atoi(ZeroCheck) == 0)
-        {
-            StaticZeroCount++;
-            //cout << "zero++";
-        }
-        else
-        {
-            break;
-        }
-
-        x++;
-    }
-
-    string CurIndividualFrameFileName = "";
-    int InputDecPlaces = vpxt_decimal_places(LastFrame);//find out how many dec places due to increasing frames
-    int CurrentFrame = FirstFrame;
-
-    FILE *out = fopen(outputfile.c_str(), "wb");
-
-    if (out == NULL)
-    {
-        tprintf(PRINT_STD, "\nOutput file does not exist");
-        return 0;
-    }
-
-    cout << "\n\n";
-
-    while (CurrentFrame <= LastFrame)
-    {
-        //printf("%i ",CurrentFrame);
-        CurIndividualFrameFileName = inputDir;
-        CurIndividualFrameFileName.append(slashCharStr());
-        CurIndividualFrameFileName.append(namebase);
-
-        int AddedStaticZeros = 0;
-
-        while (AddedStaticZeros < StaticZeroCount) //add static zeros
-        {
-            CurIndividualFrameFileName.append("0");
-            AddedStaticZeros++;
-        }
-
-        int CurNumDecPlaces = vpxt_decimal_places(CurrentFrame);
-
-        while (CurNumDecPlaces < InputDecPlaces) //add zeros for increasing frames
-        {
-            //printf("%i < %i ", CurNumDecPlaces,InputDecPlaces);
-            CurIndividualFrameFileName.append("0");
-            CurNumDecPlaces++;
-        }
-
-        char CurrentFrameChar[512];
-        vpxt_itoa_custom(CurrentFrame, CurrentFrameChar, 10);
-        CurIndividualFrameFileName.append(CurrentFrameChar);
-        CurIndividualFrameFileName.append(extension);
-
-
-
-        char CurIndividualFrameFileNameChar[255];
-        char CurIndividualFrameFileNameOnly[255];
-        snprintf(CurIndividualFrameFileNameChar, 255, "%s", CurIndividualFrameFileName.c_str());
-        vpxt_file_name(CurIndividualFrameFileNameChar, CurIndividualFrameFileNameOnly, 0);
-
-        int fileSize = vpxt_file_size(CurIndividualFrameFileNameChar, 0);
-
-        FILE *in = fopen(CurIndividualFrameFileName.c_str(), "rb");
-
-        if (in != NULL && fileSize > 0)
-        {
-
-            tprintf(PRINT_STD, "%s\n", CurIndividualFrameFileNameOnly);
-            char *inputBuffer = new char[fileSize*2];
-            fread(inputBuffer, 1, fileSize, in);
-            fwrite(inputBuffer, 1, fileSize, out);
-            delete [] inputBuffer;
-            fclose(in);
-        }
-        else
-        {
-            tprintf(PRINT_STD, "%s - Skiped\n", CurIndividualFrameFileNameOnly);
-        }
-
-        CurrentFrame++;
-    }
-
-    fclose(out);
-    return 0;
-}
-int tool_play_comp_ivf(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  PlayCompIVF\n\n"
-                "    <Input File>\n"
-               );
-        return 0;
-    }
-
-#if defined(__APPLE__)
-    {
-        //printf("\nError - Not Yet Implemented for Mac.\n");
-        //return 0;
-    }
-#endif
-#if defined(__POWERPC__)
-    {
-        //printf("\nError - Not Yet Implemented for Mac.\n");
-        //return 0;
-    }
-#endif
-#if defined(linux)
-    {
-        //if(!vpxt_file_exists_check("/usr/bin/mplayer"))
-        //{
-        // tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
-        //  return 0;
-        //}
-    }
-#endif
-#if defined(_WIN32)
-    {
-        if (!vpxt_file_exists_check("c:\\bin\\tmnplay.exe"))
-        {
-            tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
-            return 0;
-        }
-    }
-#endif
-
-    char *input = argv[2];
-
-    string inputStr = input;
-    inputStr.append("_DEC.ivf");
-
-    char output[255];
-    snprintf(output, 255, "%s", inputStr.c_str());
-
-    cout << "\n";
-
-    //vpxt_decompress_ivf_to_ivf_no_output(input,output);
-
-
-
-    char output2[256];
-    char *dummyargv1[6];
-    inputStr.append(".raw");
-    snprintf(output2, 255, "%s", inputStr.c_str());
-
-    tprintf(PRINT_STD, "\nAPI - Decompressing VP8 IVF File to Raw File: \n");
-    vpxt_decompress_ivf_to_raw_no_error_output(input, output2);
-
-    char FiveChar[256];
-    vpxt_itoa_custom(5, FiveChar, 10);
-
-    dummyargv1[2] = output;
-    dummyargv1[3] = output2;
-    dummyargv1[4] = FiveChar;
-
-    //cout << "\n\nConverting to IVF.";
-    //WriteIndividualFramesOut(4,dummyargv1);
-
-    /////////////////////Read In Data From IVF File/////////////////////
-    FILE *in = fopen(input, "rb");
-
-    if (in == NULL)
-    {
-        tprintf(PRINT_BTH, "\nInput file does not exist");
-        return 0;
-    }
-
-    IVF_HEADER ivfhRaw;
-
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-
-    char WidthChar[256];
-    char HeightChar[256];
-    char FrameRateChar[256];
-    char YUVChar[256];
-
-    int Width = ivfhRaw.width;
-    int Height = ivfhRaw.height;
-    int FrameRate = (ivfhRaw.rate / ivfhRaw.scale);
-    int YUV = 0;
-
-    vpxt_itoa_custom(Width, WidthChar, 10);
-    vpxt_itoa_custom(Height, HeightChar, 10);
-    vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
-    vpxt_itoa_custom(YUV, YUVChar, 10);
-    fclose(in);
-    ////////////////////////////////////////////////////////////////////
-
-    string Program;
-
-#if defined(_WIN32)
-    Program = "\"c:\\bin\\tmnplay.exe";
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" ");
-    Program.append(WidthChar);
-    Program.append(" ");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(FrameRateChar);
-    Program.append(" \"");
-    Program.append(YUVChar);
-#elif defined(linux)
-    Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" -loop 1000");
-#elif defined(__APPLE__)
-    Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" -loop 1000");
-#elif defined(__POWERPC__)
-    Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" -loop 1000");
-#endif
-
-    cout << "\n\n";
-
-    int SysRet = system(Program.c_str());
-
-    if (!SysRet == 0)
-    {
-#if defined(_WIN32)
-        tprintf(PRINT_STD, "\n"
-                "    An error occured when trying to play the file.  Please\n"
-                "    Make sure tmnplay is located in your c:\\bin directory.\n"
-                "    tmnplay can be found in the TestClips directory.\n"
-               );
-#else
-        tprintf(PRINT_STD, "\n"
-                "    An error occured when trying to play the file.  Please\n"
-                "    make sure that mplayer is installed correctly.  mplayer\n"
-                "    can be installed by typing:\n"
-                "\n"
-                "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
-                "    cd mplayer\n"
-                "    ./configure\n"
-                "    make\n"
-                "    make install\n"
-                "\n"
-                "    from a command Prompt."
-               );
-#endif
-    }
-
-
-    if (remove(output2) != 0)
-        cout << "\nError deleting file: " << output2 << "\n";
-    else
-        cout << "\n\nFile successfully deleted: " << output2 << "\n";;
-
-    return 0;
-
-}
-int tool_play_dec_ivf(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  PlayDecIVF\n\n"
-                "    <Input File>\n"
-               );
-        return 0;
-    }
-
-#if defined(linux)
-    {
-        if (!vpxt_file_exists_check("/usr/bin/mplayer"))
-        {
-            //printf("\nError - /usr/bin/mplayer not found.\n");
-            //return 0;
-        }
-    }
-#endif
-#if defined(__APPLE__)
-    {
-        //printf("\nError - Not Yet Implemented for Mac\n");
-        //return 0;
-    }
-#endif
-#if defined(__POWERPC__)
-    {
-        //printf("\nError - Not Yet Implemented for Mac\n");
-        //return 0;
-    }
-#endif
-#if defined(_WIN32)
-    {
-        if (!vpxt_file_exists_check("c:\\bin\\tmnplay.exe"))
-        {
-            tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
-            return 0;
-        }
-    }
-#endif
-
-
-    char *input = argv[2];
-
-    string inputStr = input;
-
-    char output2[255];
-    char *dummyargv1[6];
-    inputStr.append(".raw");
-    snprintf(output2, 255, "%s", inputStr.c_str());
-
-    char FiveChar[256];
-    vpxt_itoa_custom(5, FiveChar, 10);
-
-    dummyargv1[2] = input;
-    dummyargv1[3] = output2;
-    dummyargv1[4] = FiveChar;
-
-    cout << "\n\nConvereting to Raw.";
-    WriteIndividualFramesOut(4, dummyargv1);
-
-    /////////////////////Read In Data From IVF File/////////////////////
-    FILE *in = fopen(input, "rb");
-
-    if (in == NULL)
-    {
-        tprintf(PRINT_BTH, "\nInput file does not exist");
-        return 0;
-    }
-
-    IVF_HEADER ivfhRaw;
-
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-
-    char WidthChar[256];
-    char HeightChar[256];
-    char FrameRateChar[256];
-    char YUVChar[256];
-
-    int Width = ivfhRaw.width;
-    int Height = ivfhRaw.height;
-    int FrameRate = (ivfhRaw.rate / ivfhRaw.scale);
-    int YUV = 1;
-
-    if (ivfhRaw.four_cc == 808596553)//I420
-    {
-        YUV = 0;
-    }
-
-    vpxt_itoa_custom(Width, WidthChar, 10);
-    vpxt_itoa_custom(Height, HeightChar, 10);
-    vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
-    vpxt_itoa_custom(YUV, YUVChar, 10);
-    fclose(in);
-    ////////////////////////////////////////////////////////////////////
-
-    char output3[256];
-    inputStr.append("\\AllFrames.raw");
-    snprintf(output3, 255, "%s", inputStr.c_str());
-
-    char *dummyargv2[6];
-    dummyargv2[1] = output3;
-    dummyargv2[2] = WidthChar;
-    dummyargv2[3] = HeightChar;
-    dummyargv2[4] = FrameRateChar;
-    dummyargv2[5] = YUVChar;
-
-    string Program;
-
-#if defined(_WIN32)
-    Program = "\"c:\\bin\\tmnplay.exe";
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" ");
-    Program.append(WidthChar);
-    Program.append(" ");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(FrameRateChar);
-    Program.append(" \"");
-    Program.append(YUVChar);
-#elif defined(linux)
-    Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" -loop 1000");
-#elif defined(__APPLE__)
-    Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" -loop 1000");
-#elif defined(__POWERPC__)
-    Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output2);
-    Program.append("\"");
-    Program.append(" -loop 1000");
-#endif
-
-    cout << "\n\n";
-
-    int SysRet = system(Program.c_str());
-
-    if (!SysRet == 0)
-    {
-#if defined(_WIN32)
-        tprintf(PRINT_STD, "\n"
-                "    An error occured when trying to play the file.  Please\n"
-                "    Make sure tmnplay is located in your c:\\bin directory.\n"
-                "    tmnplay can be found in the TestClips directory.\n"
-               );
-#else
-        tprintf(PRINT_STD, "\n"
-                "    An error occured when trying to play the file.  Please\n"
-                "    make sure that mplayer is installed correctly.  mplayer\n"
-                "    can be installed by typing:\n"
-                "\n"
-                "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
-                "    cd mplayer\n"
-                "    ./configure\n"
-                "    make\n"
-                "    make install\n"
-                "\n"
-                "    from a command Prompt."
-               );
-#endif
-    }
-
-    if (remove(output2) != 0)
-        cout << "\nError deleting file: " << output2 << "\n";
-    else
-        cout << "\n\nFile successfully deleted: " << output2 << "\n";;
-
-    return 0;
-}
-int tool_delete_all_ivf_files(int argc, char *argv[])
-{
-#if defined(linux)
-
-    unsigned char isFile = 0x8;
-    unsigned char isFolder = 0x4;
-
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-               );
-        return 0;
-    }
-
-    string continueSTR;
-    string DoNotLetAllIVFsBeDeleted = argv[2];
-
-    if (DoNotLetAllIVFsBeDeleted.length() == 0)
-    {
-        cout << "\nEmpty input directory detected function aborted\n";
-        return 0;
-    }
-
-    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
-    cin >> continueSTR;
-
-    if (continueSTR.compare("YES") != 0)
-    {
-        cout << "\nFunction Aborted\n";
-        return 0;
-    }
-
-    cout << "\n";
-
-    string InputStr = argv[2];
-    char GetFirstFileChar[255];
-    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
-    //strcpy(GetFirstFileChar,InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    DIR *FindFileDataA;
-    struct dirent *hFindA;
-    string FileNameA;
-    vector<string> SourceFileVectorA;
-
-    FindFileDataA = opendir(argv[2]);
-
-    if (FindFileDataA == NULL)
-    {
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-
-        while (hFindA = readdir(FindFileDataA))
-        {
-            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                //strcpy(FullPathChar,FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
-
-            }
-
-            if (hFindA->d_type == isFile)
-            {
-                string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
-
-                string FileName = hFindA->d_name;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".ivf") == 0)
-                {
-                    if (remove(outputString.c_str()) == 0)
-                    {
-                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
-                    }
-                    else
-                    {
-                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
-                    }
-                }
-            }
-
-
-        }
-    }
-
-    return 0;
-
-#elif defined(__POWERPC__)
-
-    unsigned char isFile = 0x8;
-    unsigned char isFolder = 0x4;
-
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-               );
-        return 0;
-    }
-
-    string continueSTR;
-    string DoNotLetAllIVFsBeDeleted = argv[2];
-
-    if (DoNotLetAllIVFsBeDeleted.length() == 0)
-    {
-        cout << "\nEmpty input directory detected function aborted\n";
-        return 0;
-    }
-
-    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
-    cin >> continueSTR;
-
-    if (continueSTR.compare("YES") != 0)
-    {
-        cout << "\nFunction Aborted\n";
-        return 0;
-    }
-
-    cout << "\n";
-
-    string InputStr = argv[2];
-    char GetFirstFileChar[255];
-    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    DIR *FindFileDataA;
-    struct dirent *hFindA;
-    string FileNameA;
-    vector<string> SourceFileVectorA;
-
-    FindFileDataA = opendir(argv[2]);
-
-    if (FindFileDataA == NULL)
-    {
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-
-        while (hFindA = readdir(FindFileDataA))
-        {
-            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
-
-            }
-
-            if (hFindA->d_type == isFile)
-            {
-                string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
-
-                string FileName = hFindA->d_name;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".ivf") == 0)
-                {
-                    if (remove(outputString.c_str()) == 0)
-                    {
-                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
-                    }
-                    else
-                    {
-                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
-                    }
-                }
-            }
-
-
-        }
-    }
-
-    return 0;
-
-#elif defined(__APPLE__)
-
-    unsigned char isFile = 0x8;
-    unsigned char isFolder = 0x4;
-
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-               );
-        return 0;
-    }
-
-    string continueSTR;
-    string DoNotLetAllIVFsBeDeleted = argv[2];
-
-    if (DoNotLetAllIVFsBeDeleted.length() == 0)
-    {
-        cout << "\nEmpty input directory detected function aborted\n";
-        return 0;
-    }
-
-    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
-    cin >> continueSTR;
-
-    if (continueSTR.compare("YES") != 0)
-    {
-        cout << "\nFunction Aborted\n";
-        return 0;
-    }
-
-    cout << "\n";
-
-    string InputStr = argv[2];
-    char GetFirstFileChar[256];
-    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    DIR *FindFileDataA;
-    struct dirent *hFindA;
-    string FileNameA;
-    vector<string> SourceFileVectorA;
-
-    FindFileDataA = opendir(argv[2]);
-
-    if (FindFileDataA == NULL)
-    {
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-
-        while (hFindA = readdir(FindFileDataA))
-        {
-            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[256];
-                IVFParseandDelete(FullPathChar);
-
-            }
-
-            if (hFindA->d_type == isFile)
-            {
-                string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
-
-                string FileName = hFindA->d_name;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".ivf") == 0)
-                {
-                    if (remove(outputString.c_str()) == 0)
-                    {
-                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
-                    }
-                    else
-                    {
-                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
-                    }
-                }
-            }
-
-
-        }
-    }
-
-    return 0;
-
-#elif defined(_WIN32)
-
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-               );
-        return 0;
-    }
-
-    string continueSTR;
-    string DoNotLetAllIVFsBeDeleted = argv[2];
-
-    if (DoNotLetAllIVFsBeDeleted.length() == 0)
-    {
-        cout << "\nEmpty input directory detected function aborted\n";
-        return 0;
-    }
-
-    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
-    cin >> continueSTR;
-
-    if (continueSTR.compare("YES") != 0)
-    {
-        cout << "\nFunction Aborted\n";
-        return 0;
-    }
-
-    cout << "\n";
-
-    string InputStr = argv[2];
-    InputStr.append("\\*");
-    char GetFirstFileChar[255];
-    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    WIN32_FIND_DATA FindFileData;
-    HANDLE hFind;
-
-    hFind = FindFirstFile(GetFirstFileChar, &FindFileData);
-
-    if (hFind == INVALID_HANDLE_VALUE)
-    {
-        tprintf(PRINT_STD, "\nFindFirstFile failed (%d)\n", GetLastError());
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-        if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-        {
-            string FullPathName = argv[2];
-            FullPathName.append("\\");
-            FullPathName.append(FindFileData.cFileName);
-            char FullPathChar[255];
-            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-            IVFParseandDelete(FullPathChar);
-        }
-        else
-        {
-            if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-            {
-                string outputString = argv[2];
-                outputString.append("\\");
-                outputString.append(FindFileData.cFileName);
-
-                string FileName = FindFileData.cFileName;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".ivf") == 0)
-                {
-                    if (remove(outputString.c_str()) == 0)
-                    {
-                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
-                    }
-                    else
-                    {
-                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
-                    }
-                }
-            }
-        }
-
-        while (FindNextFile(hFind, &FindFileData) != 0)
-        {
-            if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("\\");
-                FullPathName.append(FindFileData.cFileName);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
-            }
-            else
-            {
-                if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-                {
-                    string outputString = argv[2];
-                    outputString.append("\\");
-                    outputString.append(FindFileData.cFileName);
-
-                    string FileName = FindFileData.cFileName;
-                    string extention = FileName.substr(FileName.length() - 4, 4);
-
-                    if (extention.compare(".ivf") == 0)
-                    {
-                        if (remove(outputString.c_str()) == 0)
-                        {
-                            tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
-                        }
-                        else
-                        {
-                            tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
-                        }
-                    }
-                }
-            }
-        }
-
-        FindClose(hFind);
-    }
-
-    return 0;
-#endif
-    return 0;
-}
-int tool_copy_all_txt_files(int argc, char *argv[])
-{
-#if defined(linux)
-
-    unsigned char isFile = 0x8;
-    unsigned char isFolder = 0x4;
-
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-                "    <Output Directory>\n"
-               );
-        return 0;
-    }
-
-
-    string InputStr = argv[2];
-    int BaseInputStrLength = InputStr.length();
-    char GetFirstFileChar[255];
-    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
-    //strcpy(GetFirstFileChar,InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    DIR *FindFileDataA;
-    struct dirent *hFindA;
-    string FileNameA;
-
-    FindFileDataA = opendir(argv[2]);
-
-    if (FindFileDataA == NULL)
-    {
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-
-        while (hFindA = readdir(FindFileDataA))
-        {
-            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                //strcpy(FullPathChar,FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-
-            }
-
-            if (hFindA->d_type == isFile)
-            {
-                string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
-
-                string FileName = hFindA->d_name;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".txt") == 0)
-                {
-                    //if extention matches txt
-                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
-                    string FileNamePart1 = argv[3];
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
-
-                    string MkDirStr = "mkdir \"";
-                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
-
-                    system(MkDirStr.c_str());
-                    system(CopyCmdString.c_str());
-                }
-            }
-
-
-        }
-    }
-
-    return 0;
-
-#elif defined(__POWERPC__)
-
-    unsigned char isFile = 0x8;
-    unsigned char isFolder = 0x4;
-
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-                "    <Output Directory>\n"
-               );
-        return 0;
-    }
-
-
-    string InputStr = argv[2];
-    int BaseInputStrLength = InputStr.length();
-    char GetFirstFileChar[256];
-    strcpy(GetFirstFileChar, InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    DIR *FindFileDataA;
-    struct dirent *hFindA;
-    string FileNameA;
-
-    FindFileDataA = opendir(argv[2]);
-
-    if (FindFileDataA == NULL)
-    {
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-
-        while (hFindA = readdir(FindFileDataA))
-        {
-            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                //strcpy(FullPathChar,FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-
-            }
-
-            if (hFindA->d_type == isFile)
-            {
-                string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
-
-                string FileName = hFindA->d_name;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".txt") == 0)
-                {
-                    //if extention matches txt
-                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
-                    string FileNamePart1 = argv[3];
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
-
-                    string MkDirStr = "mkdir \"";
-                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
-
-                    system(MkDirStr.c_str());
-                    system(CopyCmdString.c_str());
-                }
-            }
-
-
-        }
-    }
-
-    return 0;
-
-#elif defined(__APPLE__)
-
-    unsigned char isFile = 0x8;
-    unsigned char isFolder = 0x4;
-
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-                "    <Output Directory>\n"
-               );
-        return 0;
-    }
-
-
-    string InputStr = argv[2];
-    int BaseInputStrLength = InputStr.length();
-    char GetFirstFileChar[255];
-    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    DIR *FindFileDataA;
-    struct dirent *hFindA;
-    string FileNameA;
-
-    FindFileDataA = opendir(argv[2]);
-
-    if (FindFileDataA == NULL)
-    {
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-
-        while (hFindA = readdir(FindFileDataA))
-        {
-
-            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-
-            }
-
-            if (hFindA->d_type == isFile)
-            {
-                string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
-
-                string FileName = hFindA->d_name;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".txt") == 0)
-                {
-                    //if extention matches txt
-                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
-                    string FileNamePart1 = argv[3];
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
-
-                    string MkDirStr = "mkdir \"";
-                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
-
-                    system(MkDirStr.c_str());
-                    system(CopyCmdString.c_str());
-                }
-            }
-
-
-        }
-    }
-
-    return 0;
-
-#elif defined(_WIN32)
-
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input Directory>\n"
-                "    <Output Directory>\n"
-               );
-        return 0;
-    }
-
-    cout << "\n";
-
-    string InputStr = argv[2];
-    int BaseInputStrLength = InputStr.length();
-    InputStr.append("\\*");
-    char GetFirstFileChar[255];
-    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
-
-    string doubledot = "..";
-    string singledot = ".";
-
-    WIN32_FIND_DATA FindFileData;
-    HANDLE hFind;
-
-    hFind = FindFirstFile(GetFirstFileChar, &FindFileData);
-
-    if (hFind == INVALID_HANDLE_VALUE)
-    {
-        tprintf(PRINT_STD, "\nFindFirstFile failed (%d)\n", GetLastError());
-        tprintf(PRINT_STD, "Could not open first file.\n");
-        return 0;
-    }
-    else
-    {
-        if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-        {
-            string FullPathName = argv[2];
-            FullPathName.append("\\");
-            FullPathName.append(FindFileData.cFileName);
-            char FullPathChar[255];
-            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-            TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-        }
-        else
-        {
-            if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-            {
-                string outputString = argv[2];
-                outputString.append("\\");
-                outputString.append(FindFileData.cFileName);
-
-                string FileName = FindFileData.cFileName;
-                string extention = FileName.substr(FileName.length() - 4, 4);
-
-                if (extention.compare(".txt") == 0)
-                {
-                    //if extention matches txt
-                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
-                    string FileNamePart1 = argv[3];
-                    FileNamePart1.append("\\");
-                    FileNamePart1.append(FileNamePart2);
-                    string CopyCmdString = "copy \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
-
-                    string MkDirStr = "mkdir \"";
-                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
-
-                    system(MkDirStr.c_str());
-                    system(CopyCmdString.c_str());
-                }
-            }
-        }
-
-        while (FindNextFile(hFind, &FindFileData) != 0)
-        {
-            if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-            {
-                string FullPathName = argv[2];
-                FullPathName.append("\\");
-                FullPathName.append(FindFileData.cFileName);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-            }
-            else
-            {
-                if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
-                {
-                    string outputString = argv[2];
-                    outputString.append("\\");
-                    outputString.append(FindFileData.cFileName);
-
-                    string FileName = FindFileData.cFileName;
-                    string extention = FileName.substr(FileName.length() - 4, 4);
-
-                    if (extention.compare(".txt") == 0)
-                    {
-                        //if extention matches txt
-                        string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
-                        string FileNamePart1 = argv[3];
-                        FileNamePart1.append("\\");
-                        FileNamePart1.append(FileNamePart2);
-                        string CopyCmdString = "copy \"";
-                        CopyCmdString.append(outputString);
-                        CopyCmdString.append("\" \"");
-                        CopyCmdString.append(FileNamePart1);
-                        CopyCmdString.append("\"");
-
-                        string MkDirStr = "mkdir \"";
-                        string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
-                        MkDirStr.append(DirName);
-                        MkDirStr.append("\"");
-
-                        system(MkDirStr.c_str());
-                        system(CopyCmdString.c_str());
-
-                    }
-                }
-            }
-        }
-
-        FindClose(hFind);
-    }
-
-    return 0;
-#endif
-    return 0;
-}
-int tool_side_by_side_text(int argc, char *argv[])
-{
-    if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
-                "    <Input File 1>\n"
-                "    <Input File 2>\n"
-                "    <Output File>\n"
-               );
-        return 0;
-    }
-
-    char InputCharFormatChar[9999];
-    char InputChar1[9999];
-    char InputChar2[9999];
-    string InputCharFormatStr;
-    string InputCharStr1;
-    string InputCharStr2;
-    int MaxLength = 0;
-
-    string InputStr1 = argv[2];
-    string InputStr2 = argv[3];
-    string OutputStr = argv[4];
-
-    ifstream InfileFormat(InputStr1.c_str());
-
-    while (!InfileFormat.eof())
-    {
-        InfileFormat.getline(InputCharFormatChar, 9999);
-        InputCharFormatStr = InputCharFormatChar;
-
-        if (InputCharFormatStr.length() > MaxLength)
-        {
-            MaxLength = InputCharFormatStr.length();
-        }
-    }
-
-    cout << "MaxLength: " << MaxLength << "\n";
-
-    InfileFormat.close();
-    ifstream Infile1(InputStr1.c_str());
-    ifstream Infile2(InputStr2.c_str());
-    fstream  Outfile;
-    Outfile.open(OutputStr.c_str(), fstream::in | fstream::out | fstream::app);
-
-    while (!(Infile1.eof() && Infile2.eof()))
-    {
-        if (!(Infile1.eof()))
-        {
-            Infile1.getline(InputChar1, 9999);
-            InputCharStr1 = InputChar1;
-        }
-        else
-        {
-            InputCharStr1 = "";
-        }
-
-        if (!(Infile2.eof()))
-        {
-            Infile2.getline(InputChar2, 9999);
-            InputCharStr2 = InputChar2;
-        }
-        else
-        {
-            InputCharStr2 = "";
-        }
-
-        Outfile << InputCharStr1;
-
-        int n = 0;
-
-        while (InputCharStr1.length() + n < MaxLength + 10)
-        {
-            Outfile << " ";
-            n++;
-        }
-
-        Outfile << InputCharStr2 << "\n";
-
-    }
-
-    Infile1.close();
-    Infile2.close();
-    Outfile.close();
-
-    return 0;
-
-}
-int tool_compression_equiv(int argc, char *argv[], string WorkingDir)
-{
-
-    char *CompressString = "Allow DF";
-
-    if (argc < 6 || argc > 7)
-    {
-        tprintf(PRINT_STD,
-                "\n  Compress IVF to IVF \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Bit Rate>\n"
-                "    <Mode>\n"
-                "    <Optional - Parameter File>\n"
-                "\n");
-
-        return 0;
-    }
-
-    string input = argv[2];
-    string output = argv[3];
-    int BitRate = atoi(argv[4]);
-    int Mode = atoi(argv[5]);
-
-    int speed = 0;
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-    opt.target_bandwidth = BitRate;
-
-    if (argc == 7)
-    {
-        opt = vpxt_input_settings(argv[6]);
-    }
-
-    string output1 = output;
-    string output2 = output;
-    string output3 = output;
-
-    output1.append("_CompressIVFtoIVF.ivf");
-    output2.append("_CompressIVFtoIVFNoErrorOutput.ivf");
-    output3.append("_TimeCompressIVFtoIVF.ivf");
-
-    int CompressInt = opt.allow_df;
-
-    if (Mode == 0)
-    {
-        opt.Mode = MODE_REALTIME;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *)output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-    }
-
-    if (Mode == 1)
-    {
-        opt.Mode = MODE_GOODQUALITY;
-
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-
-    }
-
-    if (Mode == 2)
-    {
-        opt.Mode = MODE_BESTQUALITY;
-
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-        unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-    }
-
-    if (Mode == 3)
-    {
-
-    }
-
-    if (Mode == 4)
-    {
-        opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-
-        opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-
-        opt.Mode = MODE_SECONDPASS;
-        unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-    }
-
-    if (Mode == 5)
-    {
-        opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-
-        opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-
-        opt.Mode = MODE_SECONDPASS_BEST;
-        unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
-    }
-
-    if (vpxt_compare_ivf((char *)output1.c_str(), (char *)output2.c_str()) == -1)
-    {
-        cout << "Pass - No Error Output and standard Do match \n";
-
-        if (vpxt_compare_ivf((char *)output2.c_str(), (char *)output3.c_str()) == -1)
-        {
-            cout << "Pass - Time Compress and No Error Output match\n\n";
-            cout << "\nAll compressions are equal. - Pass\n\n";
-        }
-        else
-        {
-            cout << "Fail - Time Compress Does not match No Error Output\n";
-            return 0;
-        }
-    }
-    else
-    {
-        cout << "Fail - No Error Output and standard Do not match \n";
-        return 0;
-    }
-
-    string output1DEC = output;
-    string output2DEC = output;
-    string output3DEC = output;
-    string output4DEC = output;
-    string output5DEC = output;
-
-    output1DEC.append("_DecompressIVFtoIVF.ivf");
-    output2DEC.append("_DecompressIVFtoIVFNoOutput.ivf");
-    output3DEC.append("_TimeDecompressIVFtoIVF.ivf");
-    output4DEC.append("_DecompressIVFtoIVFTimeAndOutput.ivf");
-
-    cout << "DecompressIVFtoIVF\n";
-    vpxt_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output1DEC.c_str());
-    cout << "\nDecompressIVFtoIVFNoOutput\n";
-    vpxt_decompress_ivf_to_ivf_no_output((char *)output1.c_str(), (char *) output2DEC.c_str());
-    cout << "\nTimeDecompressIVFtoIVF\n";
-    unsigned int CPUTick1 = 0;
-    vpxt_time_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick1);
-    cout << "\nDecompressIVFtoIVFTimeAndOutput\n";
-    unsigned int CPUTick2 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2);
-    cout << "\n\n";
-
-    if (vpxt_compare_ivf((char *) output1DEC.c_str(), (char *) output2DEC.c_str()) == -1)
-    {
-        cout << "Pass DecompressIVFtoIVF == DecompressIVFtoIVFNoOutput\n";
-    }
-    else
-    {
-        cout << "Fail DecompressIVFtoIVF != DecompressIVFtoIVFNoOutput\n";
-        return 0;
-    }
-
-    return 0;
-}
-
-int tool_comp_matches_ivfenc(int argc, char *argv[])
-{
-    char *CompressString = "Allow DF";
-
-    if (argc < 6 || argc > 7)
-    {
-        tprintf(PRINT_STD,
-                "\n  Compress IVF to IVF \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Bit Rate>\n"
-                "    <Mode>\n"
-                "    <Optional - Parameter File>\n"
-                "\n");
-
-        return 0;
-    }
-
-    char *input = argv[2];
-    char *output = argv[3];
-    int BitRate = atoi(argv[4]);
-    int Mode = atoi(argv[5]);
-
-    char FileNameChar[256];
-    vpxt_file_name(input, FileNameChar, 0);
-
-    /////////////////////Tester Par File//////////////////
-    string OutputsettingsFile = output;
-    OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-    string OutputsettingsFile2 = OutputsettingsFile;
-    OutputsettingsFile.append("_paramaters_core.txt");
-    /////////////////////IVFenc Par File//////////////////
-    OutputsettingsFile2.append("_IVFEnc_Paramaters.txt");
-    /////////////////////Tester IVF Comp//////////////////
-    /////////////////////IVFENC IVF Comp//////////////////
-    string IVFEncOutput1STR = input;
-    string IVFEncOutput2STR = input;
-    IVFEncOutput1STR.erase(IVFEncOutput1STR.length() - 4, 4);
-    IVFEncOutput2STR.erase(IVFEncOutput2STR.length() - 4, 4);
-    IVFEncOutput1STR.append("_IVFENC.ivf");
-    IVFEncOutput2STR.append("_IVFENC.yuv");
-    /////////////////////IVF Source to Raw///////////////
-    string RawInput = input;
-    string RawInputNameOnly = FileNameChar;
-
-    RawInput.erase(RawInput.length() - 4, 4);
-    RawInput.append("_Raw.yuv");
-    RawInputNameOnly.append("_Raw.yuv");
-    //////////////////////////////////////////////////////
-
-
-    char ParameterFileTesterFP[255];    // Full path of tester parm file
-    char ParameterFileIVFEncFP[255];    // Full path of ivfenc parm file
-    char RawInputFP[255];               // Full path of raw ivfenc file
-    char IVFEncOutput1FP[255];          // Full Path of IVFENC ivf Output
-    char IVFEncOutput2FP[255];          // Full Path of IVFENC yuv Output
-    char RawInputNO[255];               // Name only part of raw input file for ivfenc
-    char ParameterFileIVFEncNO[255];    // Name only of IVFENC Par file
-    char IVFEncOutput1NO[255];          // Name only of IVFENC ivf Output
-    char IVFEncOutput2NO[255];          // Name only of IVFENC yuv Output
-
-
-    snprintf(ParameterFileTesterFP, 255, "%s", OutputsettingsFile.c_str());
-    snprintf(ParameterFileIVFEncFP, 255, "%s", OutputsettingsFile2.c_str());
-    snprintf(RawInputNO, 255, "%s", RawInputNameOnly.c_str());
-    snprintf(RawInputFP, 255, "%s", RawInput.c_str());
-    snprintf(IVFEncOutput1FP, 255, "%s", IVFEncOutput1STR.c_str());
-    snprintf(IVFEncOutput2FP, 255, "%s", IVFEncOutput2STR.c_str());
-
-    vpxt_file_name(ParameterFileIVFEncFP, ParameterFileIVFEncNO, 0); // name only part of parm file for ivfenc
-    vpxt_file_name(IVFEncOutput1FP, IVFEncOutput1NO, 0);
-    vpxt_file_name(IVFEncOutput2FP, IVFEncOutput2NO, 0);
-
-    cout << "\n\n";
-    cout << "ParameterFileTesterFP: " << ParameterFileTesterFP << "\n";
-    cout << "ParameterFileIVFEncFP: " << ParameterFileIVFEncFP << "\n";
-    cout << "RawInputFP: " << RawInputFP << "\n";
-    cout << "IVFEncOutput1FP: " << IVFEncOutput1FP << "\n";
-    cout << "IVFEncOutput2FP: " << IVFEncOutput2FP << "\n";
-    cout << "RawInputNO: " << RawInputNO << "\n";
-    cout << "ParameterFileIVFEncNO: " << ParameterFileIVFEncNO << "\n";
-    cout << "IVFEncOutput1NO: " << IVFEncOutput1NO << "\n";
-    cout << "IVFEncOutput2NO: " << IVFEncOutput2NO << "\n";
-
-    // name only part of parm file for ivfenc - ParameterFileIVFEncNameOnly
-    // name only part of raw input file for ivfenc - RawInputNameOnlyChar
-
-    int speed = 0;
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-    opt.target_bandwidth = BitRate;
-
-    if (argc == 7)
-    {
-        opt = vpxt_input_settings(argv[6]);
-    }
-
-    int CompressInt = opt.allow_df;
-
-    if (Mode == 0)
-    {
-        opt.Mode = MODE_REALTIME;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-    }
-
-    if (Mode == 1)
-    {
-        opt.Mode = MODE_GOODQUALITY;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-    }
-
-    if (Mode == 2)
-    {
-        opt.Mode = MODE_BESTQUALITY;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-    }
-
-    if (Mode == 3)
-    {
-    }
-
-    if (Mode == 4)
-    {
-        opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-    }
-
-    if (Mode == 5)
-    {
-        opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf_no_error_output(input, output, speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
-    }
-
-    ConvertParmFileToIVFenc(ParameterFileTesterFP, ParameterFileIVFEncFP);  //Make IVFENC Parameter file from Tester Parameter File
-    IVF2Raw(input, RawInputFP);                                             //Make Raw YUV File from IVF Input
-
-    int Width = opt.Width;
-    int Height = opt.Height;
-    int FrameRate = opt.frame_rate;
-    char ConversionHolder[256];
-
-    //Make System Exe string for IVFENC to Create Compression
-    string Program = "ivfenc ";
-    Program.append(RawInputNO);
-    Program.append(" ");
-    memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpxt_itoa_custom(Width, ConversionHolder, 10));
-    Program.append(" ");
-    memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpxt_itoa_custom(Height, ConversionHolder, 10));
-    Program.append(" ");
-    memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpxt_itoa_custom(FrameRate, ConversionHolder, 10));
-    Program.append(" ");
-    Program.append(IVFEncOutput1NO);
-    Program.append(" ");
-    Program.append(IVFEncOutput2NO);
-    Program.append(" ");
-    Program.append(ParameterFileIVFEncNO);
-    Program.append(" \" \" ");
-
-    cout << "\n" << Program << "\n\n";
-
-    system(Program.c_str());
-
-    int CompResult = vpxt_compare_ivf(IVFEncOutput1FP, output);
-
-    if (CompResult == -1)
-    {
-        cout << "\n\n FILES ARE IDENTICAL - PASSED\n";
-        return 1;
-    }
-
-    cout << "\n\n FILES ARE NOT IDENTICAL - FAILED\n";
-
-
-    return 0;
-}
-int tool_compare_code_coverage(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n Compare Code Coverage\n\n"
-                "    <Current Code Coverage Dir>\n"
-                "    <New Code Coverage Dir>\n"
-                "    <Updated Code Coverage Dir>\n"
-                "\n");
-
-        return 0;
-    }
-
-    tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
-
-    string currentFile = "";
-    int x = 1;
-
-    while (x <= 30)
-    {
-        if (x == 1)
-        {
-            currentFile = "\\alloccommon.c.gcov.txt";
-        }
-
-        if (x == 2)
-        {
-            currentFile = "\\blockd.c.gcov.txt";
-        }
-
-        if (x == 3)
-        {
-            currentFile = "\\dboolhuff.c.gcov.txt";
-        }
-
-        if (x == 4)
-        {
-            currentFile = "\\decodemv.c.gcov.txt";
-        }
-
-        if (x == 5)
-        {
-            currentFile = "\\decodframe.c.gcov.txt";
-        }
-
-        if (x == 6)
-        {
-            currentFile = "\\demode.c.gcov.txt";
-        }
-
-        if (x == 7)
-        {
-            currentFile = "\\dequantize.c.gcov.txt";
-        }
-
-        if (x == 8)
-        {
-            currentFile = "\\detokenize.c.gcov.txt";
-        }
-
-        if (x == 9)
-        {
-            currentFile = "\\dsystemdependent.c.gcov.txt";
-        }
-
-        if (x == 10)
-        {
-            currentFile = "\\entropy.c.gcov.txt";
-        }
-
-        if (x == 11)
-        {
-            currentFile = "\\entropymode.c.gcov.txt";
-        }
-
-        if (x == 12)
-        {
-            currentFile = "\\extend.c.gcov.txt";
-        }
-
-        if (x == 13)
-        {
-            currentFile = "\\filter_c.c.gcov.txt";
-        }
-
-        if (x == 14)
-        {
-            currentFile = "\\findnearmv.c.gcov.txt";
-        }
-
-        //if( x == 15){currentFile = "\\getproc.c.gcov.txt";}
-        if (x == 15)
-        {
-            currentFile = "\\idctllm.c.gcov.txt";
-        }
-
-        if (x == 16)
-        {
-            currentFile = "\\loopfilter.c.gcov.txt";
-        }
-
-        if (x == 17)
-        {
-            currentFile = "\\mbpitch.c.gcov.txt";
-        }
-
-        if (x == 18)
-        {
-            currentFile = "\\onyxd_if.c.gcov.txt";
-        }
-
-        if (x == 19)
-        {
-            currentFile = "\\postproc.c.gcov.txt";
-        }
-
-        if (x == 20)
-        {
-            currentFile = "\\quant_common.c.gcov.txt";
-        }
-
-        if (x == 21)
-        {
-            currentFile = "\\recon.c.gcov.txt";
-        }
-
-        if (x == 22)
-        {
-            currentFile = "\\reconinter.c.gcov.txt";
-        }
-
-        if (x == 23)
-        {
-            currentFile = "\\reconintra.c.gcov.txt";
-        }
-
-        if (x == 24)
-        {
-            currentFile = "\\reconintra4x4.c.gcov.txt";
-        }
-
-        if (x == 25)
-        {
-            currentFile = "\\Segmentation_common.c.gcov.txt";
-        }
-
-        if (x == 26)
-        {
-            currentFile = "\\swapyv12buffer.c.gcov.txt";
-        }
-
-        if (x == 27)
-        {
-            currentFile = "\\systemdependent.c.gcov.txt";
-        }
-
-        if (x == 28)
-        {
-            currentFile = "\\textblit.c.gcov.txt";
-        }
-
-        if (x == 39)
-        {
-            currentFile = "\\threading.c.gcov.txt";
-        }
-
-        if (x == 30)
-        {
-            currentFile = "\\treecoder.c.gcov.txt";
-        }
-
-        //if( x == 32){currentFile = "\\treereader.c.gcov.txt";}
-        //if( x == 33){currentFile = "\\yv12config.c.gcov.txt";}
-        //if( x == 34){currentFile = "\\yv12extend.c.gcov.txt";}
-
-        string CurCC = argv[2];
-        string NewCC = argv[3];
-        string UpdCC = argv[4];
-        string UniqueCC = argv[3];
-
-        CurCC.append(currentFile);
-        NewCC.append(currentFile);
-        UpdCC.append(currentFile);
-
-        UniqueCC.append("\\UniqueActivations\\");
-        string SysStr = "md \"";
-        SysStr.append(UniqueCC);
-        SysStr.append("\"");
-        system(SysStr.c_str());
-
-        UniqueCC.append(currentFile);
-        UniqueCC.erase(UniqueCC.length() - 4, 4);
-        UniqueCC.append("_UniqueActivations.txt");
-
-        ifstream CurCCFile(CurCC.c_str());
-        ifstream NewCCFile(NewCC.c_str());
-        ofstream UpdCCFile(UpdCC.c_str());
-        ofstream UnqCCFile(UniqueCC.c_str());
-
-        if (!CurCCFile.good())
-        {
-            cout << "\nCannot open " << CurCC.c_str() << "\n";
-            CurCCFile.close();
-            NewCCFile.close();
-            UpdCCFile.close();
-            return 0;
-        }
-
-        if (!NewCCFile.good())
-        {
-            cout << "\nCannot open " << NewCC.c_str() << "\n";
-            CurCCFile.close();
-            NewCCFile.close();
-            UpdCCFile.close();
-            return 0;
-        }
-
-        tprintf(PRINT_STD, "\nChecking: %s", currentFile.c_str());
-        int line = 0;
-
-        while (!CurCCFile.eof())
-        {
-            if (line != 0)
-            {
-                UpdCCFile << "\n";
-            }
-
-            line++;
-            char CurCCBuffer[9999];
-            CurCCFile.getline(CurCCBuffer, 9999);
-
-            char NewCCBuffer[9999];
-            NewCCFile.getline(NewCCBuffer, 9999);
-
-            string CurCCStr = CurCCBuffer;
-            string NewCCStr = NewCCBuffer;
-
-            if (CurCCStr.compare(0, 10, "    #####:") == 0)
-            {
-                if (NewCCStr.compare(0, 10, "    #####:") != 0)
-                {
-                    tprintf(PRINT_STD, "\nNew Activation: %s\n     %s", NewCC.c_str(), NewCCStr.c_str());
-                    UpdCCFile << NewCCStr.c_str();
-                    UnqCCFile << NewCCStr.c_str() << "\n";
-                }
-                else
-                {
-                    UpdCCFile << CurCCStr.c_str();
-                }
-            }
-            else
-            {
-                UpdCCFile << CurCCStr.c_str();
-            }
-        }
-
-        CurCCFile.close();
-        NewCCFile.close();
-        UpdCCFile.close();
-        UnqCCFile.close();
-
-        char UniqueCCChar[255];
-        snprintf(UniqueCCChar, 255, "%s", UniqueCC.c_str());
-
-        if (vpxt_file_size(UniqueCCChar, 0) == 0)
-        {
-            string SysStr2 = "del \"";
-            SysStr2.append(UniqueCC);
-            SysStr2.append("\"");
-            system(SysStr2.c_str());
-        }
-
-        x++;
-    }
-
-    return 0;
-}
-int tool_format_code_coverage_file(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n Format Code Coverage Files\n\n"
-                "    <Current Code Coverage Dir>\n"
-                "    <New Code Coverage Dir>\n"
-                "\n");
-
-        return 0;
-    }
-
-    tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
-
-    string currentFile = "";
-    int x = 1;
-
-    while (x <= 34)
-    {
-        if (x == 1)
-        {
-            currentFile = "\\alloccommon.c.gcov.txt";
-        }
-
-        if (x == 2)
-        {
-            currentFile = "\\blockd.c.gcov.txt";
-        }
-
-        if (x == 3)
-        {
-            currentFile = "\\dboolhuff.c.gcov.txt";
-        }
-
-        if (x == 4)
-        {
-            currentFile = "\\decodemv.c.gcov.txt";
-        }
-
-        if (x == 5)
-        {
-            currentFile = "\\decodframe.c.gcov.txt";
-        }
-
-        if (x == 6)
-        {
-            currentFile = "\\demode.c.gcov.txt";
-        }
-
-        if (x == 7)
-        {
-            currentFile = "\\dequantize.c.gcov.txt";
-        }
-
-        if (x == 8)
-        {
-            currentFile = "\\detokenize.c.gcov.txt";
-        }
-
-        if (x == 9)
-        {
-            currentFile = "\\dsystemdependent.c.gcov.txt";
-        }
-
-        if (x == 10)
-        {
-            currentFile = "\\entropy.c.gcov.txt";
-        }
-
-        if (x == 11)
-        {
-            currentFile = "\\entropymode.c.gcov.txt";
-        }
-
-        if (x == 12)
-        {
-            currentFile = "\\extend.c.gcov.txt";
-        }
-
-        if (x == 13)
-        {
-            currentFile = "\\filter_c.c.gcov.txt";
-        }
-
-        if (x == 14)
-        {
-            currentFile = "\\findnearmv.c.gcov.txt";
-        }
-
-        if (x == 15)
-        {
-            currentFile = "\\getproc.c.gcov.txt";
-        }
-
-        if (x == 16)
-        {
-            currentFile = "\\idctllm.c.gcov.txt";
-        }
-
-        if (x == 17)
-        {
-            currentFile = "\\loopfilter.c.gcov.txt";
-        }
-
-        if (x == 18)
-        {
-            currentFile = "\\mbpitch.c.gcov.txt";
-        }
-
-        if (x == 19)
-        {
-            currentFile = "\\onyxd_if.c.gcov.txt";
-        }
-
-        if (x == 20)
-        {
-            currentFile = "\\postproc.c.gcov.txt";
-        }
-
-        if (x == 21)
-        {
-            currentFile = "\\quant_common.c.gcov.txt";
-        }
-
-        if (x == 22)
-        {
-            currentFile = "\\recon.c.gcov.txt";
-        }
-
-        if (x == 23)
-        {
-            currentFile = "\\reconinter.c.gcov.txt";
-        }
-
-        if (x == 24)
-        {
-            currentFile = "\\reconintra.c.gcov.txt";
-        }
-
-        if (x == 25)
-        {
-            currentFile = "\\reconintra4x4.c.gcov.txt";
-        }
-
-        if (x == 26)
-        {
-            currentFile = "\\Segmentation_common.c.gcov.txt";
-        }
-
-        if (x == 27)
-        {
-            currentFile = "\\swapyv12buffer.c.gcov.txt";
-        }
-
-        if (x == 28)
-        {
-            currentFile = "\\systemdependent.c.gcov.txt";
-        }
-
-        if (x == 29)
-        {
-            currentFile = "\\textblit.c.gcov.txt";
-        }
-
-        if (x == 30)
-        {
-            currentFile = "\\threading.c.gcov.txt";
-        }
-
-        if (x == 31)
-        {
-            currentFile = "\\treecoder.c.gcov.txt";
-        }
-
-        if (x == 32)
-        {
-            currentFile = "\\treereader.c.gcov.txt";
-        }
-
-        if (x == 33)
-        {
-            currentFile = "\\yv12config.c.gcov.txt";
-        }
-
-        if (x == 34)
-        {
-            currentFile = "\\yv12extend.c.gcov.txt";
-        }
-
-        string CurCC = argv[2];
-        string NewCC = argv[3];
-
-        CurCC.append(currentFile);
-        NewCC.append(currentFile);
-
-        ifstream CurCCFile(CurCC.c_str());
-        ofstream NewCCFile(NewCC.c_str());
-
-
-        if (!CurCCFile.good())
-        {
-            cout << "\nCannot open " << CurCC.c_str() << "\n";
-            CurCCFile.close();
-            NewCCFile.close();
-            return 0;
-        }
-
-        tprintf(PRINT_STD, "\nFormatting: %s", currentFile.c_str());
-        int line = 0;
-        int Function = 0;
-
-        while (!CurCCFile.eof())
-        {
-            if (line != 0 && Function == 0)
-            {
-                NewCCFile << "\n";   //keeps from adding an endline to the last line of file or where a "function" occurs
-            }
-
-            line++;
-            char CurCCBuffer[9999];
-            CurCCFile.getline(CurCCBuffer, 9999);
-
-            string CurCCStr = CurCCBuffer;
-
-            if (CurCCStr.compare(0, 8, "function") == 0)
-            {
-                Function = 1;
-            }
-            else
-            {
-                NewCCFile << CurCCStr.c_str();
-                Function = 0;
-            }
-        }
-
-        CurCCFile.close();
-        NewCCFile.close();
-
-        x++;
-    }
-
-    return 0;
-}
-int tool_test_vector_index(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n Test Vector Index\n\n"
-                "    <Current Code Coverage Dir>\n"
-                "    <File to Check>\n"
-                "    <Line Number to Check>\n"
-                "\n");
-
-        return 0;
-    }
-
-    tprintf(PRINT_STD, "\n Searching for %s Line %i Coverage.\n\n", argv[3], atoi(argv[4]));
-
-    string currentFile = "";
-    int x = 1;
-    int y = 1;
-
-    while (x < 6)
-    {
-        while (y < 15)
-        {
-
-            string CurCC = argv[2];
-            string currentFile = argv[3];
-
-            char Charx[32];
-            vpxt_itoa_custom(x, Charx, 10);
-            char Chary[32];
-            vpxt_itoa_custom(y, Chary, 10);
-
-            if (x == 1 && y == 1)
-            {
-                CurCC.append("\\VP8REF");
-                CurCC.append(Charx);
-                CurCC.append("\\");
-                CurCC.append(Chary);
-                CurCC.append("\\summary");
-                CurCC.append("\\");
-                CurCC.append(currentFile);
-                CurCC.append(".c.gcov.txt");
-            }
-            else
-            {
-                CurCC.append("\\VP8REF");
-                CurCC.append(Charx);
-                CurCC.append("\\");
-                CurCC.append(Chary);
-                CurCC.append("\\summary");
-                CurCC.append("\\UniqueActivations\\");
-                CurCC.append(currentFile);
-                CurCC.append(".c.gcov_UniqueActivations.txt");
-            }
-
-            ifstream CurCCFile(CurCC.c_str());
-
-            if (CurCCFile.good())
-            {
-                int line = 0;
-
-                while (!CurCCFile.eof())
-                {
-                    line++;
-                    char CurCCBuffer[9999];
-                    CurCCFile.getline(CurCCBuffer, 9999); //Get Line
-                    string CurCCStr = CurCCBuffer;       //Turn into string
-
-                    int Colfound1 = 0;
-                    int Colfound2 = 0;
-                    Colfound1 = CurCCStr.find(":");
-                    Colfound2 = CurCCStr.find(":", Colfound1 + 1);
-
-                    if (Colfound2 > 0)
-                    {
-                        string LineNumChar = CurCCStr.substr(Colfound1, Colfound2 - Colfound1);
-
-                        int LastSPaceFound = LineNumChar.find_last_of(" ");
-                        string LineNumCharNoSpace = LineNumChar.substr(LastSPaceFound + 1);
-
-                        if (atoi(LineNumCharNoSpace.c_str()) == atoi(argv[4]))
-                        {
-
-                            if (CurCCStr.substr(Colfound1 - 5, 5).compare("#####") != 0)
-                            {
-                                cout << "          " << CurCCStr << "\n";
-                                cout << "  Found\n";
-                                tprintf(PRINT_STD, "          Line Covered by Test Vector %i ", y);
-
-                                if (x == 1)
-                                {
-                                    tprintf(PRINT_STD, "Under Normal Conditions\n");
-                                }
-
-                                if (x == 2)
-                                {
-                                    tprintf(PRINT_STD, "When run using Multiple Cores\n");
-                                }
-
-                                if (x == 3)
-                                {
-                                    tprintf(PRINT_STD, "When run using Add Noise\n");
-                                }
-
-                                if (x == 4)
-                                {
-                                    tprintf(PRINT_STD, "When run using Deblock\n");
-                                }
-
-                                if (x == 5)
-                                {
-                                    tprintf(PRINT_STD, "When run using Demarcoblock\n");
-                                }
-
-                                return 0;
-                            }
-                        }
-                    }
-                }
-            }
-
-            CurCCFile.close();
-            y++;
-        }
-
-        x++;
-        y = 1;
-    }
-
-    cout << "\n  Line Coverage Not Found.\n";
-    return 0;
-}
-
-int tool_api_compress(int argc, char *argv[])
-{
-#ifdef API
-
-    if (argc != 7)
-    {
-        tprintf(PRINT_STD,
-                "\n  APICompress \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <width>\n"
-                "    <height>\n"
-                "    <frame rate>\n"
-               );
-
-        return 0;
-    }
-
-    char *input = argv[2];
-    char *output = argv[3];
-    int width = atoi(argv[4]);
-    int height = atoi(argv[5]);
-    double framerate = (double)atoi(argv[6]);
-
-    VP8_CONFIG testname;
-    vpxt_default_parameters(testname);
-
-    testname = vpxt_input_settings("C:\\Users\\jberry\\Desktop\\AllowDFOnOutput_Paramaters.txt");
-    API20Encoder(width, height, input, output);
-
-#else
-    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
-#endif
-
-    return 0;
-}
-int tool_api_decompress(int argc, char *argv[])
-{
-
-#ifdef API
-
-    if (argc != 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  APIDecompress \n\n"
-                "    <Input File>\n"
-                "    <Codec - vp8>\n"
-                "    <outputfile>\n"
-               );
-        return 0;
-    }
-
-    char *input = argv[2];
-    char *codec = argv[3];
-    char *output = argv[4];
-
-    API20Decoder(input , output);
-#else
-    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
-#endif
-
-    return 0;
-}
-
-int tool_ivf_dec_test_vector_check(int argc, char *argv[])
-{
-    return 0;
-}
-int tool_array_cov_fail_list_to_full_list(int argc, char *argv[])
+int tool_array_cov_fail_list_to_full_list(int argc, const char *const *argv)
 {
     //This Function Takes an input file from a code coverage run that summarizes failure
     //and formats it to display Passes and Fails.
@@ -7055,7 +3821,7 @@ int tool_array_cov_fail_list_to_full_list(int argc, char *argv[])
     string InputChar1Str = InputChar1;
 
 
-    cout << "\nCreating Text File" << "\n";
+    tprintf(PRINT_STD, "\nCreating Text File\n");
 
     while (x < 2785)
     {
@@ -7092,13 +3858,13 @@ int tool_array_cov_fail_list_to_full_list(int argc, char *argv[])
         x++;
     }
 
-    cout << "Text File Created" << "\n";
+    tprintf(PRINT_STD, "Text File Created\n");
 
     Infile1.close();
     Outfile.close();
     return 0;
 }
-int tool_array_cov_summary_file(int argc, char *argv[])
+int tool_array_cov_summary_file(int argc, const char *const *argv)
 {
     if (!(argc == 6))
     {
@@ -7124,14 +3890,12 @@ int tool_array_cov_summary_file(int argc, char *argv[])
     string InputCharStr1;
     string InputCharStr2;
 
-
-
     ifstream Infile1(InputStr1.c_str());
     ifstream Infile2(InputStr2.c_str());
     fstream  Outfile;
     Outfile.open(OutputStr.c_str(), fstream::in | fstream::out | fstream::app);
 
-    cout << "\n";
+    tprintf(PRINT_STD, "\n");
 
     int z = 0;
 
@@ -7173,7 +3937,3210 @@ int tool_array_cov_summary_file(int argc, char *argv[])
 
     return 0;
 }
-int tool_win_mem_mon_format(int argc, char *argv[])
+int tool_api_compress(int argc, const char *const *argv)
+{
+#ifdef API
+
+    if (argc != 7)
+    {
+        tprintf(PRINT_STD,
+                "\n  APICompress \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <width>\n"
+                "    <height>\n"
+                "    <frame rate>\n"
+               );
+
+        return 0;
+    }
+
+    string input = argv[2];
+    string output = argv[3];
+    int width = atoi(argv[4]);
+    int height = atoi(argv[5]);
+    double framerate = (double)atoi(argv[6]);
+
+    VP8_CONFIG testname;
+    vpxt_default_parameters(testname);
+
+    testname = vpxt_input_settings("C:\\Users\\jberry\\Desktop\\AllowDFOnOutput_Paramaters.txt");
+    API20Encoder(width, height, input.c_str(), output.c_str());
+
+#else
+    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
+#endif
+
+    return 0;
+}
+int tool_api_decompress(int argc, const char *const *argv)
+{
+
+#ifdef API
+
+    if (argc != 5)
+    {
+        tprintf(PRINT_STD,
+                "\n  APIDecompress \n\n"
+                "    <Input File>\n"
+                "    <Codec - vp8>\n"
+                "    <outputfile>\n"
+               );
+        return 0;
+    }
+
+    string input = argv[2];
+    string codec = argv[3];
+    string output = argv[4];
+
+    API20Decoder(input.c_str(), output.c_str());
+#else
+    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
+#endif
+
+    return 0;
+}
+
+int tool_combine_indv_frames(int argc, const char *const *argv)
+{
+    if (argc != 8)
+    {
+        tprintf(PRINT_STD,
+                "\n  MakeRawFromIndvFrames\n\n"
+                "    <Input Director>\n"
+                "    <Namebase>\n"
+                "    <File Extension - include .>\n"
+                "    <First Frame - Include preceding zeros>\n"
+                "    <Last  Frame - Include preceding zeros>\n"
+                "    <Output File>\n"
+               );
+        return 0;
+    }
+
+    string inputDir = argv[2];
+    string namebase = argv[3];
+    string extension = argv[4];
+    int FirstFrame = atoi(argv[5]);
+    int LastFrame = atoi(argv[6]);
+    string outputfile = argv[7];
+
+
+    int x = 0;
+    int StaticZeroCount = 0;
+
+    while (argv[6][x] != NULL)
+    {
+        char ZeroCheck[2];
+        ZeroCheck[0] = argv[6][x];
+        ZeroCheck[1] = '\0';
+
+        //cout << "\n" << argv[6][x] << "\n";
+        if (atoi(ZeroCheck) == 0)
+        {
+            StaticZeroCount++;
+            //cout << "zero++";
+        }
+        else
+        {
+            break;
+        }
+
+        x++;
+    }
+
+    string CurIndividualFrameFileName = "";
+    int InputDecPlaces = vpxt_decimal_places(LastFrame);//find out how many dec places due to increasing frames
+    int CurrentFrame = FirstFrame;
+
+    FILE *out = fopen(outputfile.c_str(), "wb");
+
+    if (out == NULL)
+    {
+        tprintf(PRINT_STD, "\nOutput file does not exist");
+        return 0;
+    }
+
+    cout << "\n\n";
+
+    while (CurrentFrame <= LastFrame)
+    {
+        //printf("%i ",CurrentFrame);
+        CurIndividualFrameFileName = inputDir;
+        CurIndividualFrameFileName.append(slashCharStr());
+        CurIndividualFrameFileName.append(namebase);
+
+        int AddedStaticZeros = 0;
+
+        while (AddedStaticZeros < StaticZeroCount) //add static zeros
+        {
+            CurIndividualFrameFileName.append("0");
+            AddedStaticZeros++;
+        }
+
+        int CurNumDecPlaces = vpxt_decimal_places(CurrentFrame);
+
+        while (CurNumDecPlaces < InputDecPlaces) //add zeros for increasing frames
+        {
+            //printf("%i < %i ", CurNumDecPlaces,InputDecPlaces);
+            CurIndividualFrameFileName.append("0");
+            CurNumDecPlaces++;
+        }
+
+        char CurrentFrameChar[512];
+        vpxt_itoa_custom(CurrentFrame, CurrentFrameChar, 10);
+        CurIndividualFrameFileName.append(CurrentFrameChar);
+        CurIndividualFrameFileName.append(extension);
+
+
+
+        char CurIndividualFrameFileNameChar[255];
+        char CurIndividualFrameFileNameOnly[255];
+        snprintf(CurIndividualFrameFileNameChar, 255, "%s", CurIndividualFrameFileName.c_str());
+        vpxt_file_name(CurIndividualFrameFileNameChar, CurIndividualFrameFileNameOnly, 0);
+
+        int fileSize = vpxt_file_size(CurIndividualFrameFileNameChar, 0);
+
+        FILE *in = fopen(CurIndividualFrameFileName.c_str(), "rb");
+
+        if (in != NULL && fileSize > 0)
+        {
+
+            tprintf(PRINT_STD, "%s\n", CurIndividualFrameFileNameOnly);
+            char *inputBuffer = new char[fileSize*2];
+            fread(inputBuffer, 1, fileSize, in);
+            fwrite(inputBuffer, 1, fileSize, out);
+            delete [] inputBuffer;
+            fclose(in);
+        }
+        else
+        {
+            tprintf(PRINT_STD, "%s - Skiped\n", CurIndividualFrameFileNameOnly);
+        }
+
+        CurrentFrame++;
+    }
+
+    fclose(out);
+    return 0;
+}
+int tool_compare_ivf(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  CompareIVF\n\n"
+                "     <inputfile1>\n"
+                "     <inputfile2>\n"
+               );
+        return 0;
+    }
+
+    string Output1 = argv[2];
+    string Output2 = argv[3];
+
+    tprintf(PRINT_STD, "\nComparing Files:\n\n");
+    tprintf(PRINT_STD, "%s\n", Output1);
+    tprintf(PRINT_STD, "%s\n", Output2);
+
+    int CompIVFOutput = vpxt_compare_ivf(Output1.c_str(), Output2.c_str());
+
+    if (CompIVFOutput == -1)
+    {
+        tprintf(PRINT_STD, "\n Files Contain Identical Video Data\n");
+    }
+
+    if (CompIVFOutput == -2)
+    {
+        tprintf(PRINT_STD, "\n\nFail: File 2 ends before File 1.\n");
+    }
+
+    if (CompIVFOutput == -3)
+    {
+        tprintf(PRINT_STD, "\n\nFail: File 1 ends before File 2.\n");
+    }
+
+    if (CompIVFOutput != -1 && CompIVFOutput != -2 && CompIVFOutput != -3)
+    {
+        tprintf(PRINT_STD, "\nFILES DIFFER AT FRAME: %i\n", CompIVFOutput);
+    }
+
+    return 0;
+}
+int tool_compare_code_coverage(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n Compare Code Coverage\n\n"
+                "    <Current Code Coverage Dir>\n"
+                "    <New Code Coverage Dir>\n"
+                "    <Updated Code Coverage Dir>\n"
+                "\n");
+
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
+
+    string currentFile = "";
+    int x = 1;
+
+    while (x <= 30)
+    {
+        if (x == 1)
+        {
+            currentFile = "\\alloccommon.c.gcov.txt";
+        }
+
+        if (x == 2)
+        {
+            currentFile = "\\blockd.c.gcov.txt";
+        }
+
+        if (x == 3)
+        {
+            currentFile = "\\dboolhuff.c.gcov.txt";
+        }
+
+        if (x == 4)
+        {
+            currentFile = "\\decodemv.c.gcov.txt";
+        }
+
+        if (x == 5)
+        {
+            currentFile = "\\decodframe.c.gcov.txt";
+        }
+
+        if (x == 6)
+        {
+            currentFile = "\\demode.c.gcov.txt";
+        }
+
+        if (x == 7)
+        {
+            currentFile = "\\dequantize.c.gcov.txt";
+        }
+
+        if (x == 8)
+        {
+            currentFile = "\\detokenize.c.gcov.txt";
+        }
+
+        if (x == 9)
+        {
+            currentFile = "\\dsystemdependent.c.gcov.txt";
+        }
+
+        if (x == 10)
+        {
+            currentFile = "\\entropy.c.gcov.txt";
+        }
+
+        if (x == 11)
+        {
+            currentFile = "\\entropymode.c.gcov.txt";
+        }
+
+        if (x == 12)
+        {
+            currentFile = "\\extend.c.gcov.txt";
+        }
+
+        if (x == 13)
+        {
+            currentFile = "\\filter_c.c.gcov.txt";
+        }
+
+        if (x == 14)
+        {
+            currentFile = "\\findnearmv.c.gcov.txt";
+        }
+
+        //if( x == 15){currentFile = "\\getproc.c.gcov.txt";}
+        if (x == 15)
+        {
+            currentFile = "\\idctllm.c.gcov.txt";
+        }
+
+        if (x == 16)
+        {
+            currentFile = "\\loopfilter.c.gcov.txt";
+        }
+
+        if (x == 17)
+        {
+            currentFile = "\\mbpitch.c.gcov.txt";
+        }
+
+        if (x == 18)
+        {
+            currentFile = "\\onyxd_if.c.gcov.txt";
+        }
+
+        if (x == 19)
+        {
+            currentFile = "\\postproc.c.gcov.txt";
+        }
+
+        if (x == 20)
+        {
+            currentFile = "\\quant_common.c.gcov.txt";
+        }
+
+        if (x == 21)
+        {
+            currentFile = "\\recon.c.gcov.txt";
+        }
+
+        if (x == 22)
+        {
+            currentFile = "\\reconinter.c.gcov.txt";
+        }
+
+        if (x == 23)
+        {
+            currentFile = "\\reconintra.c.gcov.txt";
+        }
+
+        if (x == 24)
+        {
+            currentFile = "\\reconintra4x4.c.gcov.txt";
+        }
+
+        if (x == 25)
+        {
+            currentFile = "\\Segmentation_common.c.gcov.txt";
+        }
+
+        if (x == 26)
+        {
+            currentFile = "\\swapyv12buffer.c.gcov.txt";
+        }
+
+        if (x == 27)
+        {
+            currentFile = "\\systemdependent.c.gcov.txt";
+        }
+
+        if (x == 28)
+        {
+            currentFile = "\\textblit.c.gcov.txt";
+        }
+
+        if (x == 39)
+        {
+            currentFile = "\\threading.c.gcov.txt";
+        }
+
+        if (x == 30)
+        {
+            currentFile = "\\treecoder.c.gcov.txt";
+        }
+
+        //if( x == 32){currentFile = "\\treereader.c.gcov.txt";}
+        //if( x == 33){currentFile = "\\yv12config.c.gcov.txt";}
+        //if( x == 34){currentFile = "\\yv12extend.c.gcov.txt";}
+
+        string CurCC = argv[2];
+        string NewCC = argv[3];
+        string UpdCC = argv[4];
+        string UniqueCC = argv[3];
+
+        CurCC.append(currentFile);
+        NewCC.append(currentFile);
+        UpdCC.append(currentFile);
+
+        UniqueCC.append("\\UniqueActivations\\");
+        string SysStr = "md \"";
+        SysStr.append(UniqueCC);
+        SysStr.append("\"");
+        system(SysStr.c_str());
+
+        UniqueCC.append(currentFile);
+        UniqueCC.erase(UniqueCC.length() - 4, 4);
+        UniqueCC.append("_UniqueActivations.txt");
+
+        ifstream CurCCFile(CurCC.c_str());
+        ifstream NewCCFile(NewCC.c_str());
+        ofstream UpdCCFile(UpdCC.c_str());
+        ofstream UnqCCFile(UniqueCC.c_str());
+
+        if (!CurCCFile.good())
+        {
+            cout << "\nCannot open " << CurCC.c_str() << "\n";
+            CurCCFile.close();
+            NewCCFile.close();
+            UpdCCFile.close();
+            return 0;
+        }
+
+        if (!NewCCFile.good())
+        {
+            cout << "\nCannot open " << NewCC.c_str() << "\n";
+            CurCCFile.close();
+            NewCCFile.close();
+            UpdCCFile.close();
+            return 0;
+        }
+
+        tprintf(PRINT_STD, "\nChecking: %s", currentFile.c_str());
+        int line = 0;
+
+        while (!CurCCFile.eof())
+        {
+            if (line != 0)
+            {
+                UpdCCFile << "\n";
+            }
+
+            line++;
+            char CurCCBuffer[9999];
+            CurCCFile.getline(CurCCBuffer, 9999);
+
+            char NewCCBuffer[9999];
+            NewCCFile.getline(NewCCBuffer, 9999);
+
+            string CurCCStr = CurCCBuffer;
+            string NewCCStr = NewCCBuffer;
+
+            if (CurCCStr.compare(0, 10, "    #####:") == 0)
+            {
+                if (NewCCStr.compare(0, 10, "    #####:") != 0)
+                {
+                    tprintf(PRINT_STD, "\nNew Activation: %s\n     %s", NewCC.c_str(), NewCCStr.c_str());
+                    UpdCCFile << NewCCStr.c_str();
+                    UnqCCFile << NewCCStr.c_str() << "\n";
+                }
+                else
+                {
+                    UpdCCFile << CurCCStr.c_str();
+                }
+            }
+            else
+            {
+                UpdCCFile << CurCCStr.c_str();
+            }
+        }
+
+        CurCCFile.close();
+        NewCCFile.close();
+        UpdCCFile.close();
+        UnqCCFile.close();
+
+        char UniqueCCChar[255];
+        snprintf(UniqueCCChar, 255, "%s", UniqueCC.c_str());
+
+        if (vpxt_file_size(UniqueCCChar, 0) == 0)
+        {
+            string SysStr2 = "del \"";
+            SysStr2.append(UniqueCC);
+            SysStr2.append("\"");
+            system(SysStr2.c_str());
+        }
+
+        x++;
+    }
+
+    return 0;
+}
+int tool_compression_equiv(int argc, const char *const *argv, string WorkingDir)
+{
+    char *CompressString = "Allow DF";
+
+    if (argc < 6 || argc > 7)
+    {
+        tprintf(PRINT_STD,
+                "\n  Compress IVF to IVF \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Bit Rate>\n"
+                "    <Mode>\n"
+                "    <Optional - Parameter File>\n"
+                "\n");
+
+        return 0;
+    }
+
+    string input = argv[2];
+    string output = argv[3];
+    int BitRate = atoi(argv[4]);
+    int Mode = atoi(argv[5]);
+
+    int speed = 0;
+
+    VP8_CONFIG opt;
+    vpxt_default_parameters(opt);
+
+    opt.target_bandwidth = BitRate;
+
+    if (argc == 7)
+    {
+        opt = vpxt_input_settings(argv[6]);
+    }
+
+    string output1 = output;
+    string output2 = output;
+    string output3 = output;
+
+    output1.append("_CompressIVFtoIVF.ivf");
+    output2.append("_CompressIVFtoIVFNoErrorOutput.ivf");
+    output3.append("_TimeCompressIVFtoIVF.ivf");
+
+    int CompressInt = opt.allow_df;
+
+    if (Mode == 0)
+    {
+        opt.Mode = MODE_REALTIME;
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        unsigned int CPUTick = 0;
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *)output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
+    }
+
+    if (Mode == 1)
+    {
+        opt.Mode = MODE_GOODQUALITY;
+
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        unsigned int CPUTick = 0;
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
+
+    }
+
+    if (Mode == 2)
+    {
+        opt.Mode = MODE_BESTQUALITY;
+
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+        unsigned int CPUTick = 0;
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
+    }
+
+    if (Mode == 3)
+    {
+
+    }
+
+    if (Mode == 4)
+    {
+        opt.Mode = MODE_SECONDPASS;
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+
+        opt.Mode = MODE_SECONDPASS;
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+
+        opt.Mode = MODE_SECONDPASS;
+        unsigned int CPUTick = 0;
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
+    }
+
+    if (Mode == 5)
+    {
+        opt.Mode = MODE_SECONDPASS_BEST;
+        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+
+        opt.Mode = MODE_SECONDPASS_BEST;
+        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+
+        opt.Mode = MODE_SECONDPASS_BEST;
+        unsigned int CPUTick = 0;
+        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
+    }
+
+    if (vpxt_compare_ivf((char *)output1.c_str(), (char *)output2.c_str()) == -1)
+    {
+        cout << "Pass - No Error Output and standard Do match \n";
+
+        if (vpxt_compare_ivf((char *)output2.c_str(), (char *)output3.c_str()) == -1)
+        {
+            cout << "Pass - Time Compress and No Error Output match\n\n";
+            cout << "\nAll compressions are equal. - Pass\n\n";
+        }
+        else
+        {
+            cout << "Fail - Time Compress Does not match No Error Output\n";
+            return 0;
+        }
+    }
+    else
+    {
+        cout << "Fail - No Error Output and standard Do not match \n";
+        return 0;
+    }
+
+    string output1DEC = output;
+    string output2DEC = output;
+    string output3DEC = output;
+    string output4DEC = output;
+    string output5DEC = output;
+
+    output1DEC.append("_DecompressIVFtoIVF.ivf");
+    output2DEC.append("_DecompressIVFtoIVFNoOutput.ivf");
+    output3DEC.append("_TimeDecompressIVFtoIVF.ivf");
+    output4DEC.append("_DecompressIVFtoIVFTimeAndOutput.ivf");
+
+    cout << "DecompressIVFtoIVF\n";
+    vpxt_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output1DEC.c_str());
+    cout << "\nDecompressIVFtoIVFNoOutput\n";
+    vpxt_decompress_ivf_to_ivf_no_output((char *)output1.c_str(), (char *) output2DEC.c_str());
+    cout << "\nTimeDecompressIVFtoIVF\n";
+    unsigned int CPUTick1 = 0;
+    vpxt_time_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick1);
+    cout << "\nDecompressIVFtoIVFTimeAndOutput\n";
+    unsigned int CPUTick2 = 0;
+    vpxt_decompress_ivf_to_ivf_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2);
+    cout << "\n\n";
+
+    if (vpxt_compare_ivf((char *) output1DEC.c_str(), (char *) output2DEC.c_str()) == -1)
+    {
+        cout << "Pass DecompressIVFtoIVF == DecompressIVFtoIVFNoOutput\n";
+    }
+    else
+    {
+        cout << "Fail DecompressIVFtoIVF != DecompressIVFtoIVFNoOutput\n";
+        return 0;
+    }
+
+    return 0;
+}
+
+int tool_compr_ivf_to_ivf(int argc, const char *const *argv, string WorkingDir)
+{
+    char *CompressString = "Allow DF";
+
+    if (argc < 7 || argc > 8)
+    {
+        tprintf(PRINT_STD,
+                "\n  Compress IVF to IVF \n\n"
+                "    <(1)Normal Compress |(2)TimeCompress>\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Bit Rate>\n"
+                "    <Mode>\n"
+                "    <Optional - Parameter File>\n"
+                "\n");
+
+        return 0;
+    }
+
+    int CompressionType = atoi(argv[2]);
+    string input = argv[3];
+    string output = argv[4];
+    int BitRate = atoi(argv[5]);
+    int Mode = atoi(argv[6]);
+
+    int speed = 0;
+
+    VP8_CONFIG opt;
+    vpxt_default_parameters(opt);
+
+    opt.target_bandwidth = BitRate;
+
+    if (argc == 8)
+    {
+        opt = vpxt_input_settings(argv[7]);
+    }
+
+    int CompressInt = opt.allow_df;
+
+    ////////////Track Mem Usage//////////
+    //string MemLeakCheckTXT2Str = output;
+    //MemLeakCheckTXT2Str.append("_MemOut.txt");
+    //char MemLeakCheckTXT2[255];
+    //snprintf(MemLeakCheckTXT2, 255, "%s", MemLeakCheckTXT2Str.c_str());
+    //on2_MemoryTrackerSetLogType(0, MemLeakCheckTXT2);
+    //cout << "\nMemory Tracking to file: " << MemLeakCheckTXT2 << "\n";
+    /////////////////////////////////////
+
+    opt.Mode = Mode;
+
+    if (CompressionType == 1)
+    {
+        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+    }
+
+    if (CompressionType == 2)
+    {
+        unsigned int CPUTick = 0;
+        vpxt_time_compress_ivf_to_ivf(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, 0, 3, 3);
+    }
+
+    ////////////Track Mem Usage//////////
+    //on2_MemoryTrackerDump();
+    /////////////////////////////////////
+    return 0;
+}
+int tool_comp_matches_ivfenc(int argc, const char *const *argv)
+{
+    char *CompressString = "Allow DF";
+
+    if (argc < 6 || argc > 7)
+    {
+        tprintf(PRINT_STD,
+                "\n  Compress IVF to IVF \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Bit Rate>\n"
+                "    <Mode>\n"
+                "    <Optional - Parameter File>\n"
+                "\n");
+
+        return 0;
+    }
+
+    string input = argv[2];
+    string output = argv[3];
+    int BitRate = atoi(argv[4]);
+    int Mode = atoi(argv[5]);
+
+    char FileNameChar[256];
+    vpxt_file_name(input.c_str(), FileNameChar, 0);
+
+    /////////////////////Tester Par File//////////////////
+    string OutputsettingsFile = output;
+    OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
+    string OutputsettingsFile2 = OutputsettingsFile;
+    OutputsettingsFile.append("_paramaters_core.txt");
+    /////////////////////IVFenc Par File//////////////////
+    OutputsettingsFile2.append("_IVFEnc_Paramaters.txt");
+    /////////////////////Tester IVF Comp//////////////////
+    /////////////////////IVFENC IVF Comp//////////////////
+    string IVFEncOutput1STR = input;
+    string IVFEncOutput2STR = input;
+    IVFEncOutput1STR.erase(IVFEncOutput1STR.length() - 4, 4);
+    IVFEncOutput2STR.erase(IVFEncOutput2STR.length() - 4, 4);
+    IVFEncOutput1STR.append("_IVFENC.ivf");
+    IVFEncOutput2STR.append("_IVFENC.yuv");
+    /////////////////////IVF Source to Raw///////////////
+    string RawInput = input;
+    string RawInputNameOnly = FileNameChar;
+
+    RawInput.erase(RawInput.length() - 4, 4);
+    RawInput.append("_Raw.yuv");
+    RawInputNameOnly.append("_Raw.yuv");
+    //////////////////////////////////////////////////////
+
+
+    char ParameterFileTesterFP[255];    // Full path of tester parm file
+    char ParameterFileIVFEncFP[255];    // Full path of ivfenc parm file
+    char RawInputFP[255];               // Full path of raw ivfenc file
+    char IVFEncOutput1FP[255];          // Full Path of IVFENC ivf Output
+    char IVFEncOutput2FP[255];          // Full Path of IVFENC yuv Output
+    char RawInputNO[255];               // Name only part of raw input file for ivfenc
+    char ParameterFileIVFEncNO[255];    // Name only of IVFENC Par file
+    char IVFEncOutput1NO[255];          // Name only of IVFENC ivf Output
+    char IVFEncOutput2NO[255];          // Name only of IVFENC yuv Output
+
+
+    snprintf(ParameterFileTesterFP, 255, "%s", OutputsettingsFile.c_str());
+    snprintf(ParameterFileIVFEncFP, 255, "%s", OutputsettingsFile2.c_str());
+    snprintf(RawInputNO, 255, "%s", RawInputNameOnly.c_str());
+    snprintf(RawInputFP, 255, "%s", RawInput.c_str());
+    snprintf(IVFEncOutput1FP, 255, "%s", IVFEncOutput1STR.c_str());
+    snprintf(IVFEncOutput2FP, 255, "%s", IVFEncOutput2STR.c_str());
+
+    vpxt_file_name(ParameterFileIVFEncFP, ParameterFileIVFEncNO, 0); // name only part of parm file for ivfenc
+    vpxt_file_name(IVFEncOutput1FP, IVFEncOutput1NO, 0);
+    vpxt_file_name(IVFEncOutput2FP, IVFEncOutput2NO, 0);
+
+    cout << "\n\n";
+    cout << "ParameterFileTesterFP: " << ParameterFileTesterFP << "\n";
+    cout << "ParameterFileIVFEncFP: " << ParameterFileIVFEncFP << "\n";
+    cout << "RawInputFP: " << RawInputFP << "\n";
+    cout << "IVFEncOutput1FP: " << IVFEncOutput1FP << "\n";
+    cout << "IVFEncOutput2FP: " << IVFEncOutput2FP << "\n";
+    cout << "RawInputNO: " << RawInputNO << "\n";
+    cout << "ParameterFileIVFEncNO: " << ParameterFileIVFEncNO << "\n";
+    cout << "IVFEncOutput1NO: " << IVFEncOutput1NO << "\n";
+    cout << "IVFEncOutput2NO: " << IVFEncOutput2NO << "\n";
+
+    // name only part of parm file for ivfenc - ParameterFileIVFEncNameOnly
+    // name only part of raw input file for ivfenc - RawInputNameOnlyChar
+
+    int speed = 0;
+
+    VP8_CONFIG opt;
+    vpxt_default_parameters(opt);
+
+    opt.target_bandwidth = BitRate;
+
+    if (argc == 7)
+    {
+        opt = vpxt_input_settings(argv[6]);
+    }
+
+    int CompressInt = opt.allow_df;
+
+    if (Mode == 0)
+    {
+        opt.Mode = MODE_REALTIME;
+        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+    }
+
+    if (Mode == 1)
+    {
+        opt.Mode = MODE_GOODQUALITY;
+        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+    }
+
+    if (Mode == 2)
+    {
+        opt.Mode = MODE_BESTQUALITY;
+        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+    }
+
+    if (Mode == 3)
+    {
+    }
+
+    if (Mode == 4)
+    {
+        opt.Mode = MODE_SECONDPASS;
+        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+    }
+
+    if (Mode == 5)
+    {
+        opt.Mode = MODE_SECONDPASS_BEST;
+        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3);
+    }
+
+    vpxt_convert_par_file_to_ivfenc(ParameterFileTesterFP, ParameterFileIVFEncFP);  //Make IVFENC Parameter file from Tester Parameter File
+    IVF2Raw(input.c_str(), RawInputFP);                                             //Make Raw YUV File from IVF Input
+
+    int Width = opt.Width;
+    int Height = opt.Height;
+    int FrameRate = opt.frame_rate;
+    char ConversionHolder[256];
+
+    //Make System Exe string for IVFENC to Create Compression
+    string Program = "ivfenc ";
+    Program.append(RawInputNO);
+    Program.append(" ");
+    memset(ConversionHolder, 0, sizeof(ConversionHolder));
+    Program.append(vpxt_itoa_custom(Width, ConversionHolder, 10));
+    Program.append(" ");
+    memset(ConversionHolder, 0, sizeof(ConversionHolder));
+    Program.append(vpxt_itoa_custom(Height, ConversionHolder, 10));
+    Program.append(" ");
+    memset(ConversionHolder, 0, sizeof(ConversionHolder));
+    Program.append(vpxt_itoa_custom(FrameRate, ConversionHolder, 10));
+    Program.append(" ");
+    Program.append(IVFEncOutput1NO);
+    Program.append(" ");
+    Program.append(IVFEncOutput2NO);
+    Program.append(" ");
+    Program.append(ParameterFileIVFEncNO);
+    Program.append(" \" \" ");
+
+    cout << "\n" << Program << "\n\n";
+
+    system(Program.c_str());
+
+    int CompResult = vpxt_compare_ivf(IVFEncOutput1FP, output.c_str());
+
+    if (CompResult == -1)
+    {
+        cout << "\n\n FILES ARE IDENTICAL - PASSED\n";
+        return 1;
+    }
+
+    cout << "\n\n FILES ARE NOT IDENTICAL - FAILED\n";
+
+
+    return 0;
+}
+int tool_convert_par_file_to_ivfenc(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Convert Parameter File\n\n"
+                "     <input Par File>\n"
+                "     <output Par File>\n"
+                "\n");
+        exit(0);
+    }
+
+    vpxt_convert_par_file_to_ivfenc(argv[2], argv[3]);
+    return 0;
+}
+int tool_create_rand_par_file(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  RandomParFile\n\n"
+                "    <Output Par File>\n"
+               );
+        return 0;
+    }
+
+    string output = argv[2];
+
+    VP8_CONFIG opt = vpxt_random_parameters(opt, "", 0);
+    vpxt_output_settings(output.c_str(), opt);
+
+    tprintf(PRINT_STD, "\nSaved to: %s\n", output.c_str());
+
+    return 0;
+}
+int tool_crop_raw_ivf(int argc, const char *const *argv)
+{
+    if (argc < 8)
+    {
+        tprintf(PRINT_STD,
+                "\n  CropRawIVF\n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <xoffset>\n"
+                "    <yoffset>\n"
+                "    <New Frame Width>\n"
+                "    <New Frame Height>\n"
+                "    <Raw/IVF 0-Raw 1-IVF>\n"
+               );
+        return 0;
+    }
+
+    string inputFile = argv[2];
+    string outputFile = argv[3];
+    int xoffset = atoi(argv[4]);
+    int yoffset = atoi(argv[5]);
+    int newFrameWidth = atoi(argv[6]);
+    int newFrameHeight = atoi(argv[7]);
+    int FileIsIVF  = atoi(argv[8]);
+
+    vpxt_crop_raw_ivf(inputFile.c_str(), outputFile.c_str(), xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF, 0);
+    return 0;
+}
+int tool_copy_all_txt_files(int argc, const char *const *argv)
+{
+#if defined(linux)
+
+    unsigned char isFile = 0x8;
+    unsigned char isFolder = 0x4;
+
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
+        return 0;
+    }
+
+
+    string InputStr = argv[2];
+    int BaseInputStrLength = InputStr.length();
+    char GetFirstFileChar[255];
+    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
+    //strcpy(GetFirstFileChar,InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    DIR *FindFileDataA;
+    struct dirent *hFindA;
+    string FileNameA;
+
+    FindFileDataA = opendir(argv[2]);
+
+    if (FindFileDataA == NULL)
+    {
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+
+        while (hFindA = readdir(FindFileDataA))
+        {
+            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("/");
+                FullPathName.append(hFindA->d_name);
+                char FullPathChar[255];
+                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+                //strcpy(FullPathChar,FullPathName.c_str());
+                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
+
+            }
+
+            if (hFindA->d_type == isFile)
+            {
+                string outputString = argv[2];
+                outputString.append("/");
+                outputString.append(hFindA->d_name);
+
+                string FileName = hFindA->d_name;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".txt") == 0)
+                {
+                    //if extention matches txt
+                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
+                    string FileNamePart1 = argv[3];
+                    FileNamePart1.append("/");
+                    FileNamePart1.append(FileNamePart2);
+                    string CopyCmdString = "cp \"";
+                    CopyCmdString.append(outputString);
+                    CopyCmdString.append("\" \"");
+                    CopyCmdString.append(FileNamePart1);
+                    CopyCmdString.append("\"");
+
+                    string MkDirStr = "mkdir \"";
+                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
+                    MkDirStr.append(DirName);
+                    MkDirStr.append("\"");
+
+                    system(MkDirStr.c_str());
+                    system(CopyCmdString.c_str());
+                }
+            }
+
+
+        }
+    }
+
+    return 0;
+
+#elif defined(__POWERPC__)
+
+    unsigned char isFile = 0x8;
+    unsigned char isFolder = 0x4;
+
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
+        return 0;
+    }
+
+
+    string InputStr = argv[2];
+    int BaseInputStrLength = InputStr.length();
+    char GetFirstFileChar[256];
+    strcpy(GetFirstFileChar, InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    DIR *FindFileDataA;
+    struct dirent *hFindA;
+    string FileNameA;
+
+    FindFileDataA = opendir(argv[2]);
+
+    if (FindFileDataA == NULL)
+    {
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+
+        while (hFindA = readdir(FindFileDataA))
+        {
+            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("/");
+                FullPathName.append(hFindA->d_name);
+                char FullPathChar[255];
+                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+                //strcpy(FullPathChar,FullPathName.c_str());
+                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
+
+            }
+
+            if (hFindA->d_type == isFile)
+            {
+                string outputString = argv[2];
+                outputString.append("/");
+                outputString.append(hFindA->d_name);
+
+                string FileName = hFindA->d_name;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".txt") == 0)
+                {
+                    //if extention matches txt
+                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
+                    string FileNamePart1 = argv[3];
+                    FileNamePart1.append("/");
+                    FileNamePart1.append(FileNamePart2);
+                    string CopyCmdString = "cp \"";
+                    CopyCmdString.append(outputString);
+                    CopyCmdString.append("\" \"");
+                    CopyCmdString.append(FileNamePart1);
+                    CopyCmdString.append("\"");
+
+                    string MkDirStr = "mkdir \"";
+                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
+                    MkDirStr.append(DirName);
+                    MkDirStr.append("\"");
+
+                    system(MkDirStr.c_str());
+                    system(CopyCmdString.c_str());
+                }
+            }
+
+
+        }
+    }
+
+    return 0;
+
+#elif defined(__APPLE__)
+
+    unsigned char isFile = 0x8;
+    unsigned char isFolder = 0x4;
+
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
+        return 0;
+    }
+
+
+    string InputStr = argv[2];
+    int BaseInputStrLength = InputStr.length();
+    char GetFirstFileChar[255];
+    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    DIR *FindFileDataA;
+    struct dirent *hFindA;
+    string FileNameA;
+
+    FindFileDataA = opendir(argv[2]);
+
+    if (FindFileDataA == NULL)
+    {
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+
+        while (hFindA = readdir(FindFileDataA))
+        {
+
+            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("/");
+                FullPathName.append(hFindA->d_name);
+                char FullPathChar[255];
+                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
+
+            }
+
+            if (hFindA->d_type == isFile)
+            {
+                string outputString = argv[2];
+                outputString.append("/");
+                outputString.append(hFindA->d_name);
+
+                string FileName = hFindA->d_name;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".txt") == 0)
+                {
+                    //if extention matches txt
+                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
+                    string FileNamePart1 = argv[3];
+                    FileNamePart1.append("/");
+                    FileNamePart1.append(FileNamePart2);
+                    string CopyCmdString = "cp \"";
+                    CopyCmdString.append(outputString);
+                    CopyCmdString.append("\" \"");
+                    CopyCmdString.append(FileNamePart1);
+                    CopyCmdString.append("\"");
+
+                    string MkDirStr = "mkdir \"";
+                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
+                    MkDirStr.append(DirName);
+                    MkDirStr.append("\"");
+
+                    system(MkDirStr.c_str());
+                    system(CopyCmdString.c_str());
+                }
+            }
+
+
+        }
+    }
+
+    return 0;
+
+#elif defined(_WIN32)
+
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+                "    <Output Directory>\n"
+               );
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\n");
+
+    string InputStr = argv[2];
+    int BaseInputStrLength = InputStr.length();
+    InputStr.append("\\*");
+    char GetFirstFileChar[255];
+    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    WIN32_FIND_DATA FindFileData;
+    HANDLE hFind;
+
+    hFind = FindFirstFile(GetFirstFileChar, &FindFileData);
+
+    if (hFind == INVALID_HANDLE_VALUE)
+    {
+        tprintf(PRINT_STD, "\nFindFirstFile failed (%d)\n", GetLastError());
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+        if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+        {
+            string FullPathName = argv[2];
+            FullPathName.append("\\");
+            FullPathName.append(FindFileData.cFileName);
+            char FullPathChar[255];
+            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+            TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
+        }
+        else
+        {
+            if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+            {
+                string outputString = argv[2];
+                outputString.append("\\");
+                outputString.append(FindFileData.cFileName);
+
+                string FileName = FindFileData.cFileName;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".txt") == 0)
+                {
+                    //if extention matches txt
+                    string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
+                    string FileNamePart1 = argv[3];
+                    FileNamePart1.append("\\");
+                    FileNamePart1.append(FileNamePart2);
+                    string CopyCmdString = "copy \"";
+                    CopyCmdString.append(outputString);
+                    CopyCmdString.append("\" \"");
+                    CopyCmdString.append(FileNamePart1);
+                    CopyCmdString.append("\"");
+
+                    string MkDirStr = "mkdir \"";
+                    string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
+                    MkDirStr.append(DirName);
+                    MkDirStr.append("\"");
+
+                    system(MkDirStr.c_str());
+                    system(CopyCmdString.c_str());
+                }
+            }
+        }
+
+        while (FindNextFile(hFind, &FindFileData) != 0)
+        {
+            if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("\\");
+                FullPathName.append(FindFileData.cFileName);
+                char FullPathChar[255];
+                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
+            }
+            else
+            {
+                if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+                {
+                    string outputString = argv[2];
+                    outputString.append("\\");
+                    outputString.append(FindFileData.cFileName);
+
+                    string FileName = FindFileData.cFileName;
+                    string extention = FileName.substr(FileName.length() - 4, 4);
+
+                    if (extention.compare(".txt") == 0)
+                    {
+                        //if extention matches txt
+                        string FileNamePart2 = outputString.substr(BaseInputStrLength + 1, outputString.length() - BaseInputStrLength - 1);
+                        string FileNamePart1 = argv[3];
+                        FileNamePart1.append("\\");
+                        FileNamePart1.append(FileNamePart2);
+                        string CopyCmdString = "copy \"";
+                        CopyCmdString.append(outputString);
+                        CopyCmdString.append("\" \"");
+                        CopyCmdString.append(FileNamePart1);
+                        CopyCmdString.append("\"");
+
+                        string MkDirStr = "mkdir \"";
+                        string DirName = FileNamePart1.substr(0, FileNamePart1.length() - FileName.length());
+                        MkDirStr.append(DirName);
+                        MkDirStr.append("\"");
+
+                        system(MkDirStr.c_str());
+                        system(CopyCmdString.c_str());
+
+                    }
+                }
+            }
+        }
+
+        FindClose(hFind);
+    }
+
+    return 0;
+#endif
+    return 0;
+}
+int tool_cut_ivf(int argc, const char *const *argv)
+{
+    if (argc < 5)
+    {
+        tprintf(PRINT_STD,
+                "\n  CutIVF\n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <Starting Frame>\n"
+                "    <Ending Frame>\n"
+               );
+        return 0;
+    }
+
+    string inputFile = argv[2];
+    string outputFile = argv[3];
+    int StartingFrame = atoi(argv[4]);
+    int EndingFrame = atoi(argv[5]);
+
+    vpxt_cut_ivf(inputFile.c_str(), outputFile.c_str(), StartingFrame, EndingFrame);
+
+    return 0;
+}
+int tool_dec_ivf_to_ivf(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Decompress IVF to IVF \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "\n");
+
+        return 0;
+    }
+
+    string inputFile = argv[2];
+    string outputFile = argv[3];
+
+    vpxt_decompress_ivf_to_ivf_no_output(inputFile.c_str(), outputFile.c_str());
+
+    return 0;
+}
+int tool_dec_ivf_to_raw(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Decompress IVF to Raw \n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "\n");
+
+        return 0;
+    }
+
+    string inputFile = argv[2];
+    string outputFile = argv[3];
+
+    vpxt_decompress_ivf_to_raw(inputFile.c_str(), outputFile.c_str());
+
+    return 0;
+}
+int tool_delete_all_ivf_files(int argc, const char *const *argv)
+{
+#if defined(linux)
+
+    unsigned char isFile = 0x8;
+    unsigned char isFolder = 0x4;
+
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
+        return 0;
+    }
+
+    string continueSTR;
+    string DoNotLetAllIVFsBeDeleted = argv[2];
+
+    if (DoNotLetAllIVFsBeDeleted.length() == 0)
+    {
+        cout << "\nEmpty input directory detected function aborted\n";
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    cin >> continueSTR;
+
+    if (continueSTR.compare("YES") != 0)
+    {
+        cout << "\nFunction Aborted\n";
+        return 0;
+    }
+
+    cout << "\n";
+
+    string InputStr = argv[2];
+    char GetFirstFileChar[255];
+    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
+    //strcpy(GetFirstFileChar,InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    DIR *FindFileDataA;
+    struct dirent *hFindA;
+    string FileNameA;
+    vector<string> SourceFileVectorA;
+
+    FindFileDataA = opendir(argv[2]);
+
+    if (FindFileDataA == NULL)
+    {
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+
+        while (hFindA = readdir(FindFileDataA))
+        {
+            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("/");
+                FullPathName.append(hFindA->d_name);
+                char FullPathChar[255];
+                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+                //strcpy(FullPathChar,FullPathName.c_str());
+                IVFParseandDelete(FullPathChar);
+
+            }
+
+            if (hFindA->d_type == isFile)
+            {
+                string outputString = argv[2];
+                outputString.append("/");
+                outputString.append(hFindA->d_name);
+
+                string FileName = hFindA->d_name;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".ivf") == 0)
+                {
+                    if (remove(outputString.c_str()) == 0)
+                    {
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
+                    }
+                    else
+                    {
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
+                    }
+                }
+            }
+
+
+        }
+    }
+
+    return 0;
+
+#elif defined(__POWERPC__)
+
+    unsigned char isFile = 0x8;
+    unsigned char isFolder = 0x4;
+
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
+        return 0;
+    }
+
+    string continueSTR;
+    string DoNotLetAllIVFsBeDeleted = argv[2];
+
+    if (DoNotLetAllIVFsBeDeleted.length() == 0)
+    {
+        cout << "\nEmpty input directory detected function aborted\n";
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    cin >> continueSTR;
+
+    if (continueSTR.compare("YES") != 0)
+    {
+        cout << "\nFunction Aborted\n";
+        return 0;
+    }
+
+    cout << "\n";
+
+    string InputStr = argv[2];
+    char GetFirstFileChar[255];
+    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    DIR *FindFileDataA;
+    struct dirent *hFindA;
+    string FileNameA;
+    vector<string> SourceFileVectorA;
+
+    FindFileDataA = opendir(argv[2]);
+
+    if (FindFileDataA == NULL)
+    {
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+
+        while (hFindA = readdir(FindFileDataA))
+        {
+            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("/");
+                FullPathName.append(hFindA->d_name);
+                char FullPathChar[255];
+                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+                IVFParseandDelete(FullPathChar);
+
+            }
+
+            if (hFindA->d_type == isFile)
+            {
+                string outputString = argv[2];
+                outputString.append("/");
+                outputString.append(hFindA->d_name);
+
+                string FileName = hFindA->d_name;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".ivf") == 0)
+                {
+                    if (remove(outputString.c_str()) == 0)
+                    {
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
+                    }
+                    else
+                    {
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
+                    }
+                }
+            }
+
+
+        }
+    }
+
+    return 0;
+
+#elif defined(__APPLE__)
+
+    unsigned char isFile = 0x8;
+    unsigned char isFolder = 0x4;
+
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
+        return 0;
+    }
+
+    string continueSTR;
+    string DoNotLetAllIVFsBeDeleted = argv[2];
+
+    if (DoNotLetAllIVFsBeDeleted.length() == 0)
+    {
+        cout << "\nEmpty input directory detected function aborted\n";
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    cin >> continueSTR;
+
+    if (continueSTR.compare("YES") != 0)
+    {
+        cout << "\nFunction Aborted\n";
+        return 0;
+    }
+
+    cout << "\n";
+
+    string InputStr = argv[2];
+    char GetFirstFileChar[256];
+    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    DIR *FindFileDataA;
+    struct dirent *hFindA;
+    string FileNameA;
+    vector<string> SourceFileVectorA;
+
+    FindFileDataA = opendir(argv[2]);
+
+    if (FindFileDataA == NULL)
+    {
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+
+        while (hFindA = readdir(FindFileDataA))
+        {
+            if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name) != 0 && singledot.compare(hFindA->d_name) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("/");
+                FullPathName.append(hFindA->d_name);
+                char FullPathChar[256];
+                IVFParseandDelete(FullPathChar);
+
+            }
+
+            if (hFindA->d_type == isFile)
+            {
+                string outputString = argv[2];
+                outputString.append("/");
+                outputString.append(hFindA->d_name);
+
+                string FileName = hFindA->d_name;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".ivf") == 0)
+                {
+                    if (remove(outputString.c_str()) == 0)
+                    {
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
+                    }
+                    else
+                    {
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
+                    }
+                }
+            }
+
+
+        }
+    }
+
+    return 0;
+
+#elif defined(_WIN32)
+
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input Directory>\n"
+               );
+        return 0;
+    }
+
+    string continueSTR;
+    string DoNotLetAllIVFsBeDeleted = argv[2];
+
+    if (DoNotLetAllIVFsBeDeleted.length() == 0)
+    {
+        cout << "\nEmpty input directory detected function aborted\n";
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\nWARNING: This will permenently remove all .ivf files from the input directory:\n %s  Do you wish to continue - (YES)(NO): ", argv[2]);
+    cin >> continueSTR;
+
+    if (continueSTR.compare("YES") != 0)
+    {
+        cout << "\nFunction Aborted\n";
+        return 0;
+    }
+
+    cout << "\n";
+
+    string InputStr = argv[2];
+    InputStr.append("\\*");
+    char GetFirstFileChar[255];
+    snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
+
+    string doubledot = "..";
+    string singledot = ".";
+
+    WIN32_FIND_DATA FindFileData;
+    HANDLE hFind;
+
+    hFind = FindFirstFile(GetFirstFileChar, &FindFileData);
+
+    if (hFind == INVALID_HANDLE_VALUE)
+    {
+        tprintf(PRINT_STD, "\nFindFirstFile failed (%d)\n", GetLastError());
+        tprintf(PRINT_STD, "Could not open first file.\n");
+        return 0;
+    }
+    else
+    {
+        if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+        {
+            string FullPathName = argv[2];
+            FullPathName.append("\\");
+            FullPathName.append(FindFileData.cFileName);
+            char FullPathChar[255];
+            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+            IVFParseandDelete(FullPathChar);
+        }
+        else
+        {
+            if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+            {
+                string outputString = argv[2];
+                outputString.append("\\");
+                outputString.append(FindFileData.cFileName);
+
+                string FileName = FindFileData.cFileName;
+                string extention = FileName.substr(FileName.length() - 4, 4);
+
+                if (extention.compare(".ivf") == 0)
+                {
+                    if (remove(outputString.c_str()) == 0)
+                    {
+                        tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
+                    }
+                    else
+                    {
+                        tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
+                    }
+                }
+            }
+        }
+
+        while (FindNextFile(hFind, &FindFileData) != 0)
+        {
+            if (FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+            {
+                string FullPathName = argv[2];
+                FullPathName.append("\\");
+                FullPathName.append(FindFileData.cFileName);
+                char FullPathChar[255];
+                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
+                IVFParseandDelete(FullPathChar);
+            }
+            else
+            {
+                if (doubledot.compare(FindFileData.cFileName) != 0 && singledot.compare(FindFileData.cFileName) != 0)
+                {
+                    string outputString = argv[2];
+                    outputString.append("\\");
+                    outputString.append(FindFileData.cFileName);
+
+                    string FileName = FindFileData.cFileName;
+                    string extention = FileName.substr(FileName.length() - 4, 4);
+
+                    if (extention.compare(".ivf") == 0)
+                    {
+                        if (remove(outputString.c_str()) == 0)
+                        {
+                            tprintf(PRINT_STD, "%s Successfully Deleted\n\n", outputString.c_str());
+                        }
+                        else
+                        {
+                            tprintf(PRINT_STD, "Error: %s Not Deleted\n\n", outputString.c_str());
+                        }
+                    }
+                }
+            }
+        }
+
+        FindClose(hFind);
+    }
+
+    return 0;
+#endif
+    return 0;
+}
+
+int tool_disp_alt_ref_frames(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  DisplayAltRefFrames \n\n"
+                "    <Input IVF File>\n"
+                "    <Write to file 0 | 1 Print to screen>\n"
+                "\n");
+        return 0;
+    }
+
+    int altrefframes = vpxt_display_alt_ref_frames(argv[2], atoi(argv[3]));
+    tprintf(PRINT_STD, "\nAlternate Reference Frames Found: %i\n", altrefframes);
+    return 0;
+}
+int tool_disp_droped_frames(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  DisplayDroppedFrames \n\n"
+                "    <Input IVF File>\n"
+                "    <Write to file 1 | 0 Print to screen>\n"
+                "\n");
+        return 0;
+    }
+
+    int droppedframes = vpxt_display_droped_frames(argv[2], atoi(argv[3]));
+    tprintf(PRINT_STD, "\nDropped Frames Counted: %i \n\n (Num is aprox as any frame droped after last encoded frame cannot be counted)\n", droppedframes);
+    return 0;
+}
+int tool_disp_frame_data(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  DispFrameData \n\n"
+                "    <Input IVF File>\n"
+                "\n");
+        return 0;
+    }
+
+    vpxt_display_alt_ref_frames(argv[2], 0);
+    return 0;
+}
+int tool_disp_key_frames(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  DispKeyFrames \n\n"
+                "    <Input IVF File>\n"
+                "    <Write to file 0 | 1 Print to screen>\n"
+                "\n");
+        return 0;
+    }
+
+    int keyframecount = vpxt_display_key_frames(argv[2], atoi(argv[3]));
+    tprintf(PRINT_STD, "\nKey Frames Found: %i\n", keyframecount);
+    return 0;
+}
+
+int tool_disp_resized_frames(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  DisplayResizedFrames \n\n"
+                "    <Input IVF File>\n"
+                "    <Write to file 1 | 0 Print to screen>\n"
+                "\n");
+        return 0;
+    }
+
+    int resizedframes = vpxt_display_resized_frames(argv[2], atoi(argv[3]));
+    tprintf(PRINT_STD, "\nResized Frames Found: %i\n", resizedframes);
+    return 0;
+}
+int tool_disp_visible_frames(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  DisplayVisibleFrames \n\n"
+                "    <Input IVF File>\n"
+                "    <Write to file 0 | 1 Print to screen>\n"
+                "\n");
+        return 0;
+    }
+
+    int visframenum = vpxt_display_visible_frames(argv[2], atoi(argv[3]));
+    tprintf(PRINT_STD, "\nVisible Frames Found: %i\n", visframenum);
+
+    return 0;
+}
+int tool_format_code_coverage_file(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n Format Code Coverage Files\n\n"
+                "    <Current Code Coverage Dir>\n"
+                "    <New Code Coverage Dir>\n"
+                "\n");
+
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
+
+    string currentFile = "";
+    int x = 1;
+
+    while (x <= 34)
+    {
+        if (x == 1)
+        {
+            currentFile = "\\alloccommon.c.gcov.txt";
+        }
+
+        if (x == 2)
+        {
+            currentFile = "\\blockd.c.gcov.txt";
+        }
+
+        if (x == 3)
+        {
+            currentFile = "\\dboolhuff.c.gcov.txt";
+        }
+
+        if (x == 4)
+        {
+            currentFile = "\\decodemv.c.gcov.txt";
+        }
+
+        if (x == 5)
+        {
+            currentFile = "\\decodframe.c.gcov.txt";
+        }
+
+        if (x == 6)
+        {
+            currentFile = "\\demode.c.gcov.txt";
+        }
+
+        if (x == 7)
+        {
+            currentFile = "\\dequantize.c.gcov.txt";
+        }
+
+        if (x == 8)
+        {
+            currentFile = "\\detokenize.c.gcov.txt";
+        }
+
+        if (x == 9)
+        {
+            currentFile = "\\dsystemdependent.c.gcov.txt";
+        }
+
+        if (x == 10)
+        {
+            currentFile = "\\entropy.c.gcov.txt";
+        }
+
+        if (x == 11)
+        {
+            currentFile = "\\entropymode.c.gcov.txt";
+        }
+
+        if (x == 12)
+        {
+            currentFile = "\\extend.c.gcov.txt";
+        }
+
+        if (x == 13)
+        {
+            currentFile = "\\filter_c.c.gcov.txt";
+        }
+
+        if (x == 14)
+        {
+            currentFile = "\\findnearmv.c.gcov.txt";
+        }
+
+        if (x == 15)
+        {
+            currentFile = "\\getproc.c.gcov.txt";
+        }
+
+        if (x == 16)
+        {
+            currentFile = "\\idctllm.c.gcov.txt";
+        }
+
+        if (x == 17)
+        {
+            currentFile = "\\loopfilter.c.gcov.txt";
+        }
+
+        if (x == 18)
+        {
+            currentFile = "\\mbpitch.c.gcov.txt";
+        }
+
+        if (x == 19)
+        {
+            currentFile = "\\onyxd_if.c.gcov.txt";
+        }
+
+        if (x == 20)
+        {
+            currentFile = "\\postproc.c.gcov.txt";
+        }
+
+        if (x == 21)
+        {
+            currentFile = "\\quant_common.c.gcov.txt";
+        }
+
+        if (x == 22)
+        {
+            currentFile = "\\recon.c.gcov.txt";
+        }
+
+        if (x == 23)
+        {
+            currentFile = "\\reconinter.c.gcov.txt";
+        }
+
+        if (x == 24)
+        {
+            currentFile = "\\reconintra.c.gcov.txt";
+        }
+
+        if (x == 25)
+        {
+            currentFile = "\\reconintra4x4.c.gcov.txt";
+        }
+
+        if (x == 26)
+        {
+            currentFile = "\\Segmentation_common.c.gcov.txt";
+        }
+
+        if (x == 27)
+        {
+            currentFile = "\\swapyv12buffer.c.gcov.txt";
+        }
+
+        if (x == 28)
+        {
+            currentFile = "\\systemdependent.c.gcov.txt";
+        }
+
+        if (x == 29)
+        {
+            currentFile = "\\textblit.c.gcov.txt";
+        }
+
+        if (x == 30)
+        {
+            currentFile = "\\threading.c.gcov.txt";
+        }
+
+        if (x == 31)
+        {
+            currentFile = "\\treecoder.c.gcov.txt";
+        }
+
+        if (x == 32)
+        {
+            currentFile = "\\treereader.c.gcov.txt";
+        }
+
+        if (x == 33)
+        {
+            currentFile = "\\yv12config.c.gcov.txt";
+        }
+
+        if (x == 34)
+        {
+            currentFile = "\\yv12extend.c.gcov.txt";
+        }
+
+        string CurCC = argv[2];
+        string NewCC = argv[3];
+
+        CurCC.append(currentFile);
+        NewCC.append(currentFile);
+
+        ifstream CurCCFile(CurCC.c_str());
+        ofstream NewCCFile(NewCC.c_str());
+
+
+        if (!CurCCFile.good())
+        {
+            cout << "\nCannot open " << CurCC.c_str() << "\n";
+            CurCCFile.close();
+            NewCCFile.close();
+            return 0;
+        }
+
+        tprintf(PRINT_STD, "\nFormatting: %s", currentFile.c_str());
+        int line = 0;
+        int Function = 0;
+
+        while (!CurCCFile.eof())
+        {
+            if (line != 0 && Function == 0)
+            {
+                NewCCFile << "\n";   //keeps from adding an endline to the last line of file or where a "function" occurs
+            }
+
+            line++;
+            char CurCCBuffer[9999];
+            CurCCFile.getline(CurCCBuffer, 9999);
+
+            string CurCCStr = CurCCBuffer;
+
+            if (CurCCStr.compare(0, 8, "function") == 0)
+            {
+                Function = 1;
+            }
+            else
+            {
+                NewCCFile << CurCCStr.c_str();
+                Function = 0;
+            }
+        }
+
+        CurCCFile.close();
+        NewCCFile.close();
+
+        x++;
+    }
+
+    return 0;
+}
+int tool_format_summary(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  FormatSummaryByTestandResult \n\n"
+                "    <Text File to Format>\n"
+                "\n");
+
+        return 0;
+    }
+
+    format_summary(argv[2]);
+    return 0;
+}
+
+int tool_ivf_check_pbm_run(int argc, const char *const *argv)
+{
+    if (argc < 6)
+    {
+        tprintf(PRINT_STD,
+                "\n  IVFCheckPBM\n\n"
+                "     <input>\n"
+                "     <bitrate>\n"
+                "     <bufferSize>\n"
+                "     <prebuffer>\n"
+                "\n");
+        exit(0);
+    }
+
+    string inputFile = argv[2];
+    int bitRate = atoi(argv[3]);
+    int maxBuffer = atoi(argv[4]);
+    int preBuffer = atoi(argv[5]);
+    int outputme;
+
+    outputme = vpxt_ivf_check_pbm(inputFile.c_str(), bitRate, maxBuffer, preBuffer);
+
+    if (outputme == -11)
+    {
+        tprintf(PRINT_STD, "CheckPBM Passed\n");
+    }
+    else
+    {
+        tprintf(PRINT_STD, "CheckPBM failed at: %i\n", outputme);
+    }
+
+    return 0;
+}
+int tool_ivf_data_rate(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  IVF DataRate \n\n"
+                "    <Input File>\n"
+                "\n");
+        return 0;
+    }
+
+    vpxt_ivf_data_rate(argv[2], 2);
+
+    return 1;
+}
+int tool_ivf_dec_test_vector_check(int argc, const char *const *argv)
+{
+    return 0;
+}
+int tool_ivf_psnr_run(int argc, const char *const *argv)
+{
+    if (argc < 5)
+    {
+        tprintf(PRINT_STD,
+                "\n  IVFPSNR\n\n"
+                "     <Raw IVF File>\n"
+                "     <Comp IVF File>\n"
+                "     <Run SSIM 0 no 1 yes>\n"
+                "\n");
+        exit(0);
+    }
+
+    double runssim = 1;
+    string Raw = argv[2];
+    string Comp = argv[3];
+
+    if (atoi(argv[4]) == 1)
+    {
+        vpxt_ivf_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, &runssim);
+    }
+    else
+    {
+        vpxt_ivf_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, NULL);
+    }
+
+    tprintf(PRINT_STD, "\n");
+
+    return 0;
+}
+int tool_ivf_to_raw(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  IVF2Raw \n\n"
+                "    <Input File>\n"
+                "    <Output File>\n"
+                "\n");
+
+        return 0;
+    }
+
+    IVF2Raw(argv[2], argv[3]);
+    return 0;
+}
+int tool_ivf_to_raw_frames(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  IVF2RawFrames\n\n"
+                "    <Input File>\n"
+                "    <OutPutDir>\n"
+               );
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\nConverting to Raw and Individual Frames.\n");
+    vpxt_ivf_to_raw_frames(argv[2], argv[3]);
+    return 0;
+}
+
+int tool_paste_ivf(int argc, const char *const *argv)
+{
+    if (argc < 5)
+    {
+        tprintf(PRINT_STD,
+                "\n  PasteIVF\n\n"
+                "    <Inputfile1>\n"
+                "    <Inputfile2>\n"
+                "    <Outputfile>\n"
+                "    <First Paste Frame>\n"
+               );
+        return 0;
+    }
+
+    string inputFile1 = argv[2];
+    string inputFile2 = argv[3];
+    string outputFile = argv[4];
+    int StartingFrame = atoi(argv[5]);
+
+    vpxt_paste_ivf(inputFile1.c_str(), inputFile2.c_str(), outputFile.c_str(), StartingFrame);
+
+    return 0;
+}
+
+int tool_play_comp_ivf(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  PlayCompIVF\n\n"
+                "    <Input File>\n"
+               );
+        return 0;
+    }
+
+#if defined(__APPLE__)
+    {
+        //printf("\nError - Not Yet Implemented for Mac.\n");
+        //return 0;
+    }
+#endif
+#if defined(__POWERPC__)
+    {
+        //printf("\nError - Not Yet Implemented for Mac.\n");
+        //return 0;
+    }
+#endif
+#if defined(linux)
+    {
+        //if(!vpxt_file_exists_check("/usr/bin/mplayer"))
+        //{
+        // tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
+        //  return 0;
+        //}
+    }
+#endif
+#if defined(_WIN32)
+    {
+        if (!vpxt_file_exists_check("c:\\bin\\tmnplay.exe"))
+        {
+            tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
+            return 0;
+        }
+    }
+#endif
+
+    string input = argv[2];
+    string output = argv[2];
+    output.append("_DEC.ivf.raw");
+
+    tprintf(PRINT_STD, "\n\nAPI - Decompressing VP8 IVF File to Raw File: \n");
+    vpxt_decompress_ivf_to_raw_no_error_output(input.c_str(), output.c_str());
+
+    /////////////////////Read In Data From IVF File/////////////////////
+    FILE *in = fopen(input.c_str(), "rb");
+
+    if (in == NULL)
+    {
+        tprintf(PRINT_BTH, "\nInput file does not exist");
+        return 0;
+    }
+
+    IVF_HEADER ivfhRaw;
+
+    InitIVFHeader(&ivfhRaw);
+    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
+
+    char WidthChar[256];
+    char HeightChar[256];
+    char FrameRateChar[256];
+    char YUVChar[256];
+
+    int Width = ivfhRaw.width;
+    int Height = ivfhRaw.height;
+    int FrameRate = (ivfhRaw.rate / ivfhRaw.scale);
+    int YUV = 0;
+
+    vpxt_itoa_custom(Width, WidthChar, 10);
+    vpxt_itoa_custom(Height, HeightChar, 10);
+    vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
+    vpxt_itoa_custom(YUV, YUVChar, 10);
+    fclose(in);
+    ////////////////////////////////////////////////////////////////////
+
+    string Program;
+
+#if defined(_WIN32)
+    Program = "\"c:\\bin\\tmnplay.exe";
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" ");
+    Program.append(WidthChar);
+    Program.append(" ");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(FrameRateChar);
+    Program.append(" \"");
+    Program.append(YUVChar);
+
+#elif defined(linux)
+    Program = "mplayer -demuxer rawvideo -rawvideo w=";
+    Program.append(WidthChar);
+    Program.append(":h=");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" -loop 1000");
+#elif defined(__APPLE__)
+    Program = "mplayer -demuxer rawvideo -rawvideo w=";
+    Program.append(WidthChar);
+    Program.append(":h=");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" -loop 1000");
+#elif defined(__POWERPC__)
+    Program = "mplayer -demuxer rawvideo -rawvideo w=";
+    Program.append(WidthChar);
+    Program.append(":h=");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" -loop 1000");
+#endif
+
+    tprintf(PRINT_STD, "\n\n");
+
+    int SysRet = system(Program.c_str());
+
+    if (!SysRet == 0)
+    {
+#if defined(_WIN32)
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    Make sure tmnplay is located in your c:\\bin directory.\n"
+                "    tmnplay can be found in the TestClips directory.\n"
+               );
+#else
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    make sure that mplayer is installed correctly.  mplayer\n"
+                "    can be installed by typing:\n"
+                "\n"
+                "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
+                "    cd mplayer\n"
+                "    ./configure\n"
+                "    make\n"
+                "    make install\n"
+                "\n"
+                "    from a command Prompt."
+               );
+#endif
+    }
+
+
+    if (remove(output.c_str()) != 0)
+        tprintf(PRINT_STD, "\nError deleting file: %s\n", output.c_str());
+    else
+        tprintf(PRINT_STD, "\n\nFile successfully deleted: %s\n", output.c_str());
+
+    return 0;
+
+}
+int tool_play_dec_ivf(int argc, const char *const *argv)
+{
+    if (argc < 3)
+    {
+        tprintf(PRINT_STD,
+                "\n  PlayDecIVF\n\n"
+                "    <Input File>\n"
+               );
+        return 0;
+    }
+
+#if defined(linux)
+    {
+        if (!vpxt_file_exists_check("/usr/bin/mplayer"))
+        {
+            //printf("\nError - /usr/bin/mplayer not found.\n");
+            //return 0;
+        }
+    }
+#endif
+#if defined(__APPLE__)
+    {
+        //printf("\nError - Not Yet Implemented for Mac\n");
+        //return 0;
+    }
+#endif
+#if defined(__POWERPC__)
+    {
+        //printf("\nError - Not Yet Implemented for Mac\n");
+        //return 0;
+    }
+#endif
+#if defined(_WIN32)
+    {
+        if (!vpxt_file_exists_check("c:\\bin\\tmnplay.exe"))
+        {
+            tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
+            return 0;
+        }
+    }
+#endif
+
+    string input = argv[2];
+    string output = argv[2];
+    output.append(".raw");
+
+    tprintf(PRINT_STD, "\n\nConvereting to Raw.");
+
+    vpxt_ivf_to_raw(input.c_str(), output.c_str());
+
+    /////////////////////Read In Data From IVF File/////////////////////
+    FILE *in = fopen(input.c_str(), "rb");
+
+    if (!in)
+    {
+        tprintf(PRINT_BTH, "\nInput file does not exist");
+        return 0;
+    }
+
+    IVF_HEADER ivfhRaw;
+
+    InitIVFHeader(&ivfhRaw);
+    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
+
+    char WidthChar[256];
+    char HeightChar[256];
+    char FrameRateChar[256];
+    char YUVChar[256];
+
+    int Width = ivfhRaw.width;
+    int Height = ivfhRaw.height;
+    int FrameRate = (ivfhRaw.rate / ivfhRaw.scale);
+    int YUV = 1;
+
+    if (ivfhRaw.four_cc == 808596553)//I420
+    {
+        YUV = 0;
+    }
+
+    vpxt_itoa_custom(Width, WidthChar, 10);
+    vpxt_itoa_custom(Height, HeightChar, 10);
+    vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
+    vpxt_itoa_custom(YUV, YUVChar, 10);
+
+    fclose(in);
+    ////////////////////////////////////////////////////////////////////
+
+    string Program;
+
+#if defined(_WIN32)
+    Program = "\"c:\\bin\\tmnplay.exe";
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" ");
+    Program.append(WidthChar);
+    Program.append(" ");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(FrameRateChar);
+    Program.append(" \"");
+    Program.append(YUVChar);
+#elif defined(linux)
+    Program = "mplayer -demuxer rawvideo -rawvideo w=";
+    Program.append(WidthChar);
+    Program.append(":h=");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" -loop 1000");
+#elif defined(__APPLE__)
+    Program = "mplayer -demuxer rawvideo -rawvideo w=";
+    Program.append(WidthChar);
+    Program.append(":h=");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" -loop 1000");
+#elif defined(__POWERPC__)
+    Program = "mplayer -demuxer rawvideo -rawvideo w=";
+    Program.append(WidthChar);
+    Program.append(":h=");
+    Program.append(HeightChar);
+    Program.append(" ");
+    Program.append(" \"");
+    Program.append(output.c_str());
+    Program.append("\"");
+    Program.append(" -loop 1000");
+#endif
+
+    tprintf(PRINT_STD, "\n\n");
+
+    int SysRet = system(Program.c_str());
+
+    if (!SysRet == 0)
+    {
+#if defined(_WIN32)
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    Make sure tmnplay is located in your c:\\bin directory.\n"
+                "    tmnplay can be found in the TestClips directory.\n"
+               );
+#else
+        tprintf(PRINT_STD, "\n"
+                "    An error occured when trying to play the file.  Please\n"
+                "    make sure that mplayer is installed correctly.  mplayer\n"
+                "    can be installed by typing:\n"
+                "\n"
+                "    svn checkout svn://svn.mplayerhq.hu/mplayer/trunk mplayer\n"
+                "    cd mplayer\n"
+                "    ./configure\n"
+                "    make\n"
+                "    make install\n"
+                "\n"
+                "    from a command Prompt."
+               );
+#endif
+    }
+
+    if (remove(output.c_str()) != 0)
+        tprintf(PRINT_STD, "\nError deleting file: %s\n", output.c_str());
+    else
+        tprintf(PRINT_STD, "\n\nFile successfully deleted: %s\n", output.c_str());
+
+    return 0;
+}
+
+int tool_print_cpu_info()
+{
+    int Simd_Caps = x86_simd_caps();
+
+    //printf("\nSimd_Caps = %i\n",Simd_Caps);
+
+    tprintf(PRINT_STD, "\nDetected CPU capabilities:\n");
+
+    if ((Simd_Caps & HAS_MMX)    == HAS_MMX)   tprintf(PRINT_STD, "\n     MMX    Detected");
+
+    if ((Simd_Caps & HAS_SSE)    == HAS_SSE)   tprintf(PRINT_STD, "\n     SSE    Detected");
+
+    if ((Simd_Caps & HAS_SSE2)   == HAS_SSE2)  tprintf(PRINT_STD, "\n     SSE2   Detected");
+
+    if ((Simd_Caps & HAS_SSE3)   == HAS_SSE3)  tprintf(PRINT_STD, "\n     SSE3   Detected");
+
+    if ((Simd_Caps & HAS_SSSE3)  == HAS_SSSE3) tprintf(PRINT_STD, "\n     SSSE3  Detected");
+
+    if ((Simd_Caps & HAS_SSE4_1) == HAS_SSE4_1)tprintf(PRINT_STD, "\n     SSE4_1 Detected");
+
+    tprintf(PRINT_STD, "\n");
+
+    return 0;
+}
+
+int tool_raw_to_ivf(int argc, const char *const *argv)
+{
+    if (argc < 8)
+    {
+        tprintf(PRINT_STD,
+                "\n  Raw2IVF\n\n"
+                "    <Input File>\n"
+                "    <OutPutDir>\n"
+                "    <Width>\n"
+                "    <Height>\n"
+                "    <FrameRate>\n"
+                "    <FourCC>\n"
+               );
+        return 0;
+    }
+
+    string inputFile = argv[2];
+    string outputDir = argv[3];
+    int Width = atoi(argv[4]);
+    int Height = atoi(argv[5]);
+    int FrameRate = atoi(argv[6]);
+    string FourCC = argv[7];
+
+    FILE *in = fopen(inputFile.c_str(), "rb");
+    FILE *out2 = fopen(outputDir.c_str(), "wb");
+    ///////////////////////////////////
+
+    if (in == NULL)
+    {
+        tprintf(PRINT_BTH, "\nInput file does not exist");
+        return 0;
+    }
+
+    int currentVideoFrame = 0;
+    int frameCount = 0;
+    int byteRec = 0;
+
+    IVF_HEADER ivfhRaw;
+    InitIVFHeader(&ivfhRaw);
+
+    if (FourCC.compare("I420") == 0)
+    {
+        ivfhRaw.four_cc    = MAKEFOURCC('I', '4', '2', '0');
+    }
+
+    if (FourCC.compare("YV12") == 0)
+    {
+        ivfhRaw.four_cc    = MAKEFOURCC('Y', 'V', '1', '2');
+
+    }
+
+    ivfhRaw.headersize  = 32;
+    ivfhRaw.height      = Height;
+    ivfhRaw.length      = 0;
+    ivfhRaw.rate        = FrameRate;
+    ivfhRaw.scale       = 1;
+    ivfhRaw.version     = 0;
+    ivfhRaw.width       = Width;
+
+    vpxt_format_ivf_header_write(ivfhRaw);
+    fwrite(&ivfhRaw, 1, 32, out2);
+
+    tprintf(PRINT_STD, "IVF DataRate\n\n"
+            "FILE HEADER \n\n"
+            "File Header            - %c%c%c%c \n"
+            "File Format Version    - %i \n"
+            "File Header Size       - %i \n"
+            "Video Data FourCC      - %i \n"
+            "Video Image Width      - %i \n"
+            "Video Image Height     - %i \n"
+            "Frame Rate Rate        - %i \n"
+            "Frame Rate Scale       - %i \n"
+            "Video Length in Frames - %i \n"
+            "Unused                 - %c \n"
+            "\n\n"
+            , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
+            , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
+            , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
+
+    IVF_FRAME_HEADER ivf_fhRaw;
+    ivf_fhRaw.frameSize = ivfhRaw.width * ivfhRaw.height * 3 / 2;
+    ivf_fhRaw.timeStamp = 0;
+
+
+    long nSamples = frameCount;
+    long lRateNum = ivfhRaw.rate;
+    long lRateDenom = ivfhRaw.scale;
+
+    long nSamplesPerBlock = 1;
+
+    long nBytes = 0;
+    long nBytesMin = 999999;
+    long nBytesMax = 0;
+
+    cout << "\n Convereting to IVF.\n";
+
+    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
+    int CharCount = 0;
+
+    while (!feof(in))
+    {
+        if (CharCount == 79)
+        {
+            cout << "\n";
+            CharCount = 0;
+        }
+
+        cout << ".";
+        memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
+        fread(inbuff, 1, ivf_fhRaw.frameSize, in);
+
+        if (feof(in))
+            break;
+
+        vpxt_format_frame_header_write(ivf_fhRaw);
+        fwrite(&ivf_fhRaw, 1, sizeof(ivf_fhRaw), out2);
+        fwrite(inbuff, 1, ivf_fhRaw.frameSize, out2);
+        currentVideoFrame ++;
+    }
+
+    ivfhRaw.length = currentVideoFrame;
+    fseek(out2 , 0 , SEEK_SET);
+    vpxt_format_ivf_header_write(ivfhRaw);
+    fwrite(&ivfhRaw, 1, 32, out2);
+
+    fclose(in);
+    fclose(out2);
+
+    return 0;
+}
+
+
+int tool_run_ivfdec(int argc, const char *const *argv)
+{
+    int dummyargc = argc - 1;
+
+    const char *DummyArgv[999];
+    DummyArgv[0] = argv[0];
+
+    int i = 2;
+
+    while (i < argc)
+    {
+        //cout << "DummyArgv[" << i-1 << "] = argv[" << i << "] = " << argv[i] << "\n";
+        DummyArgv[i-1] = argv[i];
+        i++;
+    }
+
+    ivfdec(dummyargc, (const char **) DummyArgv);
+
+    return 0;
+}
+int tool_run_ivfenc(int argc, const char *const *argv)
+{
+    int dummyargc = argc - 1;
+
+    const char *DummyArgv[999];
+    DummyArgv[0] = argv[0];
+
+    int i = 2;
+
+    while (i < argc)
+    {
+
+        //cout << "DummyArgv[" << i-1 << "] = argv[" << i << "] = " << argv[i] << "\n";
+        DummyArgv[i-1] = argv[i];
+        i++;
+    }
+
+    ivfenc(dummyargc, (const char **) DummyArgv);
+
+    return 0;
+}
+int tool_run_thresh(int argc, const char *const *argv)
+{
+    if (argc < 8)
+    {
+        tprintf(PRINT_STD, "\n"
+                "  DisplayResizedFrames \n\n"
+                "    <Input IVF File>\n"
+                "    <bitRate>\n"
+                "    <maxBuffer>\n"
+                "    <preBuffer>\n"
+                "    <optBuffer>\n"
+                "    <Threshold>\n"
+                "\n");
+        return 0;
+    }
+
+    vpxt_ivf_check_pbm_threshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
+
+    return 0;
+}
+
+
+
+int tool_side_by_side_text(int argc, const char *const *argv)
+{
+    if (argc < 5)
+    {
+        tprintf(PRINT_STD,
+                "\n  Delete IVF Files\n\n"
+                "    <Input File 1>\n"
+                "    <Input File 2>\n"
+                "    <Output File>\n"
+               );
+        return 0;
+    }
+
+    string InputCharFormatStr;
+    string InputCharStr1;
+    string InputCharStr2;
+    int MaxLength = 0;
+
+    string InputStr1 = argv[2];
+    string InputStr2 = argv[3];
+    string OutputStr = argv[4];
+
+    ifstream InfileFormat(InputStr1.c_str());
+
+    while (!InfileFormat.eof())
+    {
+        getline(InfileFormat, InputCharFormatStr);
+
+        if (InputCharFormatStr.length() > MaxLength)
+        {
+            MaxLength = InputCharFormatStr.length();
+        }
+    }
+
+    tprintf(PRINT_STD, "MaxLength: %i\n", MaxLength);
+
+    InfileFormat.close();
+    ifstream Infile1(InputStr1.c_str());
+    ifstream Infile2(InputStr2.c_str());
+    fstream  Outfile;
+    Outfile.open(OutputStr.c_str(), fstream::in | fstream::out | fstream::app);
+
+    while (!(Infile1.eof() && Infile2.eof()))
+    {
+        if (!(Infile1.eof()))
+        {
+            getline(InfileFormat, InputCharStr1);
+        }
+        else
+        {
+            InputCharStr1 = "";
+        }
+
+        if (!(Infile2.eof()))
+        {
+            getline(InfileFormat, InputCharStr2);
+        }
+        else
+        {
+            InputCharStr2 = "";
+        }
+
+        Outfile << InputCharStr1;
+
+        int n = 0;
+
+        while (InputCharStr1.length() + n < MaxLength + 10)
+        {
+            Outfile << " ";
+            n++;
+        }
+
+        Outfile << InputCharStr2 << "\n";
+
+    }
+
+    Infile1.close();
+    Infile2.close();
+    Outfile.close();
+
+    return 0;
+
+}
+
+int tool_solve_quad()
+{
+    float X1 = 0;
+    float X2 = 0;
+    float X3 = 0;
+
+    float Y1 = 0;
+    float Y2 = 0;
+    float Y3 = 0;
+
+    float A = 0;
+    float B = 0;
+    float C = 0;
+
+    tprintf(PRINT_STD, "\nIntput X1: ");
+    cin >> X1;
+    tprintf(PRINT_STD, "Intput X2: ");
+    cin >> X2;
+    tprintf(PRINT_STD, "Intput X3: ");
+    cin >> X3;
+
+    tprintf(PRINT_STD, "Intput Y1: ");
+    cin >> Y1;
+    tprintf(PRINT_STD, "Intput Y2: ");
+    cin >> Y2;
+    tprintf(PRINT_STD, "Intput Y3: ");
+    cin >> Y3;
+
+
+    A = ((Y2 - Y1) * (X1 - X3) + (Y3 - Y1) * (X2 - X1)) / ((X1 - X3) * ((X2 * X2) - (X1 * X1)) + (X2 - X1) * ((X3 * X3) - (X1 * X1)));
+    B = ((Y2 - Y1) - A * ((X2 * X2) - (X1 * X1))) / (X2 - X1);
+    C = Y1 - A * (X1 * X1) - B * X1;
+
+    cout << "\nA = " << A;
+    cout << "\nB = " << B;
+    cout << "\nC = " << C;
+
+    tprintf(PRINT_STD, "\n\ny = %.2fx^2 + %.2fx + %.2f\n\n", A, B, C);
+
+    return 0;
+}
+
+int tool_test_print()
+{
+    cout << "\n";
+    vpxt_formated_print(HLPPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
+    cout << "\n";
+    vpxt_formated_print(TOLPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
+    cout << "\n";
+    vpxt_formated_print(FUNPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
+    cout << "\n";
+    vpxt_formated_print(OTRPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
+    cout << "\n\n";
+    vpxt_formated_print(RESPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
+    cout << "\n\n";
+    return 0;
+}
+int tool_test_vector_index(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n Test Vector Index\n\n"
+                "    <Current Code Coverage Dir>\n"
+                "    <File to Check>\n"
+                "    <Line Number to Check>\n"
+                "\n");
+
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\n Searching for %s Line %i Coverage.\n\n", argv[3], atoi(argv[4]));
+
+    string currentFile = "";
+    int x = 1;
+    int y = 1;
+
+    while (x < 6)
+    {
+        while (y < 15)
+        {
+
+            string CurCC = argv[2];
+            string currentFile = argv[3];
+
+            char Charx[32];
+            vpxt_itoa_custom(x, Charx, 10);
+            char Chary[32];
+            vpxt_itoa_custom(y, Chary, 10);
+
+            if (x == 1 && y == 1)
+            {
+                CurCC.append("\\VP8REF");
+                CurCC.append(Charx);
+                CurCC.append("\\");
+                CurCC.append(Chary);
+                CurCC.append("\\summary");
+                CurCC.append("\\");
+                CurCC.append(currentFile);
+                CurCC.append(".c.gcov.txt");
+            }
+            else
+            {
+                CurCC.append("\\VP8REF");
+                CurCC.append(Charx);
+                CurCC.append("\\");
+                CurCC.append(Chary);
+                CurCC.append("\\summary");
+                CurCC.append("\\UniqueActivations\\");
+                CurCC.append(currentFile);
+                CurCC.append(".c.gcov_UniqueActivations.txt");
+            }
+
+            ifstream CurCCFile(CurCC.c_str());
+
+            if (CurCCFile.good())
+            {
+                int line = 0;
+
+                while (!CurCCFile.eof())
+                {
+                    line++;
+                    char CurCCBuffer[9999];
+                    CurCCFile.getline(CurCCBuffer, 9999); //Get Line
+                    string CurCCStr = CurCCBuffer;       //Turn into string
+
+                    int Colfound1 = 0;
+                    int Colfound2 = 0;
+                    Colfound1 = CurCCStr.find(":");
+                    Colfound2 = CurCCStr.find(":", Colfound1 + 1);
+
+                    if (Colfound2 > 0)
+                    {
+                        string LineNumChar = CurCCStr.substr(Colfound1, Colfound2 - Colfound1);
+
+                        int LastSPaceFound = LineNumChar.find_last_of(" ");
+                        string LineNumCharNoSpace = LineNumChar.substr(LastSPaceFound + 1);
+
+                        if (atoi(LineNumCharNoSpace.c_str()) == atoi(argv[4]))
+                        {
+
+                            if (CurCCStr.substr(Colfound1 - 5, 5).compare("#####") != 0)
+                            {
+                                cout << "          " << CurCCStr << "\n";
+                                cout << "  Found\n";
+                                tprintf(PRINT_STD, "          Line Covered by Test Vector %i ", y);
+
+                                if (x == 1)
+                                {
+                                    tprintf(PRINT_STD, "Under Normal Conditions\n");
+                                }
+
+                                if (x == 2)
+                                {
+                                    tprintf(PRINT_STD, "When run using Multiple Cores\n");
+                                }
+
+                                if (x == 3)
+                                {
+                                    tprintf(PRINT_STD, "When run using Add Noise\n");
+                                }
+
+                                if (x == 4)
+                                {
+                                    tprintf(PRINT_STD, "When run using Deblock\n");
+                                }
+
+                                if (x == 5)
+                                {
+                                    tprintf(PRINT_STD, "When run using Demarcoblock\n");
+                                }
+
+                                return 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            CurCCFile.close();
+            y++;
+        }
+
+        x++;
+        y = 1;
+    }
+
+    cout << "\n  Line Coverage Not Found.\n";
+    return 0;
+}
+
+int tool_win_mem_mon_format(int argc, const char *const *argv)
 {
     //Useful for formatting data output by Memmonitor for windows piped to a text file
     //Use in combination with WinMemMonGraph to get data in a format condusive to graphing
@@ -7187,12 +7154,7 @@ int tool_win_mem_mon_format(int argc, char *argv[])
         return 0;
     }
 
-    char InputCharFormatChar[9999];
-    char InputChar1[999999];
-    char InputChar2[9999];
-    string InputCharFormatStr;
     string InputCharStr1;
-    string InputCharStr2;
     int MaxLength = 0;
 
     string InputStr1 = argv[2];
@@ -7204,8 +7166,7 @@ int tool_win_mem_mon_format(int argc, char *argv[])
 
     while (!Infile1.eof())
     {
-        Infile1.getline(InputChar1, 999999);
-        InputCharStr1 = InputChar1;
+        getline(Infile1, InputCharStr1);
 
         //parse through string find "memmon" if there isnt a return char before it put one there
         int MemMonPosCur = 0;
@@ -7251,7 +7212,7 @@ int tool_win_mem_mon_format(int argc, char *argv[])
     return 0;
 
 }
-int tool_win_mem_mon_graph(int argc, char *argv[])
+int tool_win_mem_mon_graph(int argc, const char *const *argv)
 {
     //Use on WinMemMonFormat formatted material to obtain a minute to memusage graph
     //of a programs usage for memmonitor gathered data
@@ -7266,12 +7227,8 @@ int tool_win_mem_mon_graph(int argc, char *argv[])
         return 0;
     }
 
-    char InputCharFormatChar[9999];
-    char InputChar1[9999];
-    char InputChar2[9999];
-    string InputCharFormatStr;
     string InputCharStr1;
-    string InputCharStr2;
+
     int MaxLength = 0;
 
     string InputStr1 = argv[2];
@@ -7288,8 +7245,7 @@ int tool_win_mem_mon_graph(int argc, char *argv[])
 
     while (!Infile1.eof())
     {
-        Infile1.getline(InputChar1, 9999);
-        InputCharStr1 = InputChar1;
+        getline(Infile1, InputCharStr1);
 
         char MemUsage[999];
 
@@ -7325,330 +7281,4 @@ int tool_win_mem_mon_graph(int argc, char *argv[])
 
     return 0;
 
-}
-int tool_create_rand_par_file(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  RandomParFile\n\n"
-                "    <Output Par File>\n"
-               );
-        return 0;
-    }
-
-    char *output = argv[2];
-
-    VP8_CONFIG opt = vpxt_random_parameters(opt, "", 0);
-    vpxt_output_settings(output, opt);
-
-    tprintf(PRINT_STD, "\nSaved to: %s\n", output);
-
-    return 0;
-}
-int tool_run_ivfdec(int argc, char *argv[])
-{
-    int dummyargc = argc - 1;
-
-    const char *DummyArgv[999];
-    DummyArgv[0] = argv[0];
-
-    int i = 2;
-
-    //cout << "\n";
-    while (i < argc)
-    {
-
-        //cout << "DummyArgv[" << i-1 << "] = argv[" << i << "] = " << argv[i] << "\n";
-        DummyArgv[i-1] = argv[i];
-        i++;
-    }
-
-    //cout << "\n";
-    ivfdec(dummyargc, (const char **) DummyArgv);
-
-    return 0;
-}
-int tool_run_ivfenc(int argc, char *argv[])
-{
-    int dummyargc = argc - 1;
-
-    const char *DummyArgv[999];
-    DummyArgv[0] = argv[0];
-
-    int i = 2;
-
-    //cout << "\n";
-    while (i < argc)
-    {
-
-        //cout << "DummyArgv[" << i-1 << "] = argv[" << i << "] = " << argv[i] << "\n";
-        DummyArgv[i-1] = argv[i];
-        i++;
-    }
-
-    //cout << "\n";
-    ivfenc(dummyargc, (const char **) DummyArgv);
-
-    return 0;
-}
-int tool_solve_quad()
-{
-    float X1 = 0;
-    float X2 = 0;
-    float X3 = 0;
-
-    float Y1 = 0;
-    float Y2 = 0;
-    float Y3 = 0;
-
-    float A = 0;
-    float B = 0;
-    float C = 0;
-
-    tprintf(PRINT_STD, "\nIntput X1: ");
-    cin >> X1;
-    tprintf(PRINT_STD, "Intput X2: ");
-    cin >> X2;
-    tprintf(PRINT_STD, "Intput X3: ");
-    cin >> X3;
-
-    tprintf(PRINT_STD, "Intput Y1: ");
-    cin >> Y1;
-    tprintf(PRINT_STD, "Intput Y2: ");
-    cin >> Y2;
-    tprintf(PRINT_STD, "Intput Y3: ");
-    cin >> Y3;
-
-
-    A = ((Y2 - Y1) * (X1 - X3) + (Y3 - Y1) * (X2 - X1)) / ((X1 - X3) * ((X2 * X2) - (X1 * X1)) + (X2 - X1) * ((X3 * X3) - (X1 * X1)));
-    B = ((Y2 - Y1) - A * ((X2 * X2) - (X1 * X1))) / (X2 - X1);
-    C = Y1 - A * (X1 * X1) - B * X1;
-
-    cout << "\nA = " << A;
-    cout << "\nB = " << B;
-    cout << "\nC = " << C;
-
-    tprintf(PRINT_STD, "\n\ny = %.2fx^2 + %.2fx + %.2f\n\n", A, B, C);
-
-    return 0;
-}
-
-int tool_print_cpu_info()
-{
-    int Simd_Caps = x86_simd_caps();
-
-    //printf("\nSimd_Caps = %i\n",Simd_Caps);
-
-    tprintf(PRINT_STD, "\nDetected CPU capabilities:\n");
-
-    if ((Simd_Caps & HAS_MMX)    == HAS_MMX)   tprintf(PRINT_STD, "\n     MMX    Detected");
-
-    if ((Simd_Caps & HAS_SSE)    == HAS_SSE)   tprintf(PRINT_STD, "\n     SSE    Detected");
-
-    if ((Simd_Caps & HAS_SSE2)   == HAS_SSE2)  tprintf(PRINT_STD, "\n     SSE2   Detected");
-
-    if ((Simd_Caps & HAS_SSE3)   == HAS_SSE3)  tprintf(PRINT_STD, "\n     SSE3   Detected");
-
-    if ((Simd_Caps & HAS_SSSE3)  == HAS_SSSE3) tprintf(PRINT_STD, "\n     SSSE3  Detected");
-
-    if ((Simd_Caps & HAS_SSE4_1) == HAS_SSE4_1)tprintf(PRINT_STD, "\n     SSE4_1 Detected");
-
-    tprintf(PRINT_STD, "\n");
-
-    return 0;
-}
-
-int tool_test_print()
-{
-    cout << "\n";
-    vpxt_formated_print(HLPPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-    cout << "\n";
-    vpxt_formated_print(TOLPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-    cout << "\n";
-    vpxt_formated_print(FUNPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-    cout << "\n";
-    vpxt_formated_print(OTRPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-    cout << "\n\n";
-    vpxt_formated_print(RESPRT, "This is some text i wanted to try to see how it would look if formated via the standard formatting that exists currently with the tester.  I wonder how it will look though i dont think it will server my purposes i think i can make a modified version that may.");
-    cout << "\n\n";
-    return 0;
-}
-int tool_run_thresh(int argc, char *argv[])
-{
-    if (argc < 8)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayResizedFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <bitRate>\n"
-                "    <maxBuffer>\n"
-                "    <preBuffer>\n"
-                "    <optBuffer>\n"
-                "    <Threshold>\n"
-                "\n");
-        return 0;
-    }
-
-    vpxt_ivf_check_pbm_threshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
-
-    return 0;
-}
-int tool_disp_resized_frames(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayResizedFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 1 | 0 Print to screen>\n"
-                "\n");
-        return 0;
-    }
-
-    int resizedframes = vpxt_display_resized_frames(argv[2], atoi(argv[3]));
-    tprintf(PRINT_STD, "\nResized Frames Found: %i\n", resizedframes);
-    return 0;
-}
-int tool_disp_droped_frames(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayDroppedFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 1 | 0 Print to screen>\n"
-                "\n");
-        return 0;
-    }
-
-    int droppedframes = vpxt_display_droped_frames(argv[2], atoi(argv[3]));
-    tprintf(PRINT_STD, "\nDropped Frames Counted: %i \n\n (Num is aprox as any frame droped after last encoded frame cannot be counted)\n", droppedframes);
-    return 0;
-}
-int tool_disp_visible_frames(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayVisibleFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n"
-                "\n");
-        return 0;
-    }
-
-    int visframenum = vpxt_display_visible_frames(argv[2], atoi(argv[3]));
-    tprintf(PRINT_STD, "\nVisible Frames Found: %i\n", visframenum);
-
-    return 0;
-}
-int tool_disp_alt_ref_frames(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayAltRefFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n"
-                "\n");
-        return 0;
-    }
-
-    int altrefframes = vpxt_display_alt_ref_frames(argv[2], atoi(argv[3]));
-    tprintf(PRINT_STD, "\nAlternate Reference Frames Found: %i\n", altrefframes);
-    return 0;
-}
-int tool_disp_frame_data(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DispFrameData \n\n"
-                "    <Input IVF File>\n"
-                "\n");
-        return 0;
-    }
-
-    vpxt_display_alt_ref_frames(argv[2], 0);
-    return 0;
-}
-int tool_disp_key_frames(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DispKeyFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n"
-                "\n");
-        return 0;
-    }
-
-    int keyframecount = vpxt_display_key_frames(argv[2], atoi(argv[3]));
-    tprintf(PRINT_STD, "\nKey Frames Found: %i\n", keyframecount);
-    return 0;
-}
-
-int tool_format_summary(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  FormatSummaryByTestandResult \n\n"
-                "    <Text File to Format>\n"
-                "\n");
-
-        return 0;
-    }
-
-    format_summary(argv[2]);
-    return 0;
-}
-int tool_ivf_to_raw(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  IVF2Raw \n\n"
-                "    <Input File>\n"
-                "    <Output File>\n"
-                "\n");
-
-        return 0;
-    }
-
-    IVF2Raw(argv[2], argv[3]);
-    return 0;
-}
-int tool_convert_par_file_to_ivfenc(int argc, char *argv[])
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Convert Parameter File\n\n"
-                "     <input Par File>\n"
-                "     <output Par File>\n"
-                "\n");
-        exit(0);
-    }
-
-    ConvertParmFileToIVFenc(argv[2], argv[3]);
-    return 0;
-}
-int tool_ivf_to_raw_frames(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVF2RawFrames\n\n"
-                "    <Input File>\n"
-                "    <OutPutDir>\n"
-               );
-        return 0;
-    }
-
-    argv[4] = "1";
-    WriteIndividualFramesOut(argc, argv);
-    return 0;
 }

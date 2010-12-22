@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_win_lin_mac_match(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_win_lin_mac_match(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "WinLinMacMatch";
     char *MyDir = "test_win_lin_mac_match";
@@ -26,7 +26,7 @@ int test_win_lin_mac_match(int argc, char *argv[], const string &WorkingDir, str
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     string basefolder = argv[5];
@@ -171,7 +171,7 @@ int test_win_lin_mac_match(int argc, char *argv[], const string &WorkingDir, str
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input, FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

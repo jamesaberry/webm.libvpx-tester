@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_frame_size(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_frame_size(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Frame Size";
     char *MyDir = "test_frame_size";
@@ -28,7 +28,7 @@ int test_frame_size(int argc, char *argv[], const string &WorkingDir, string Fil
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int StartingWidth = atoi(argv[5]);
@@ -46,7 +46,7 @@ int test_frame_size(int argc, char *argv[], const string &WorkingDir, string Fil
         return 11;
 
     char InputFileName[256] = "";
-    vpxt_file_name(input, InputFileName, 1);
+    vpxt_file_name(input.c_str(), InputFileName, 1);
 
     string FrameSizeBase = CurTestDirStr;
     FrameSizeBase.append(slashCharStr());
@@ -225,7 +225,7 @@ int test_frame_size(int argc, char *argv[], const string &WorkingDir, string Fil
         while (x < 16)
         {
             tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
-            vpxt_crop_raw_ivf(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
+            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
             x++;
             RawCropNum++;
             //return 0;
@@ -236,7 +236,7 @@ int test_frame_size(int argc, char *argv[], const string &WorkingDir, string Fil
         while (x < 16)
         {
             tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
-            vpxt_crop_raw_ivf(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
+            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
             x++;
             RawCropNum++;
         }
@@ -246,7 +246,7 @@ int test_frame_size(int argc, char *argv[], const string &WorkingDir, string Fil
         while (x < 16)
         {
             tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
-            vpxt_crop_raw_ivf(input, RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
+            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
             x++;
             RawCropNum++;
         }

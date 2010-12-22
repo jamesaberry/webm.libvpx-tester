@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak2(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_mem_leak2(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak2";
@@ -22,7 +22,7 @@ int test_mem_leak2(int argc, char *argv[], const string &WorkingDir, string File
     snprintf(MemLeakExe, 255, "%s", argv[2]);
     snprintf(DecInFile, 255, "%s", argv[3]);
 
-    char *input = "Blank";
+    string input = "Blank";
     int Mode = 1;
     int BitRate = 128;
 

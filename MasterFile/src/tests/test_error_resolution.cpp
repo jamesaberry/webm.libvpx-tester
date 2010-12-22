@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_error_resolution(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_error_resolution(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Error Resilient Mode";
     char *MyDir = "test_error_resolution";
@@ -24,7 +24,7 @@ int test_error_resolution(int argc, char *argv[], const string &WorkingDir, stri
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -99,7 +99,7 @@ int test_error_resolution(int argc, char *argv[], const string &WorkingDir, stri
 
         opt.error_resilient_mode = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input, ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -108,7 +108,7 @@ int test_error_resolution(int argc, char *argv[], const string &WorkingDir, stri
 
         opt.error_resilient_mode = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -128,8 +128,8 @@ int test_error_resolution(int argc, char *argv[], const string &WorkingDir, stri
     double PSNRon;
     double PSNRoff;
 
-    PSNRon = vpxt_ivf_psnr(input, ErrorOnOutFile.c_str(), 0, 0, 1, NULL);
-    PSNRoff = vpxt_ivf_psnr(input, ErrorOffOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRon = vpxt_ivf_psnr(input.c_str(), ErrorOnOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRoff = vpxt_ivf_psnr(input.c_str(), ErrorOffOutFile.c_str(), 0, 0, 1, NULL);
 
     float PSRNPerc = 100 * vpxt_abs_float((PSNRon - PSNRoff) / PSNRoff);
 

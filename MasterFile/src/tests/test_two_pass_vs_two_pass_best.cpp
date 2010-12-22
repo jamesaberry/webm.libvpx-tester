@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_two_pass_vs_two_pass_best";
@@ -18,7 +18,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int BitRate = atoi(argv[3]);
 
     int speed = 0;
@@ -130,7 +130,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
         opt.Mode = MODE_SECONDPASS;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,7 +139,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -148,7 +148,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -158,7 +158,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
         opt.Mode = MODE_SECONDPASS_BEST;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassBestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,7 +167,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassBestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -176,7 +176,7 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, TwoPassBestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -209,12 +209,12 @@ int test_two_pass_vs_two_pass_best(int argc, char *argv[], const string &Working
     double PSNRG3;
     double PSNRB3;
 
-    PSNRG1 = vpxt_ivf_psnr(input, TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRB1 = vpxt_ivf_psnr(input, TwoPassBestOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRG2 = vpxt_ivf_psnr(input, TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRB2 = vpxt_ivf_psnr(input, TwoPassBestOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRG3 = vpxt_ivf_psnr(input, TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNRB3 = vpxt_ivf_psnr(input, TwoPassBestOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRG1 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRB1 = vpxt_ivf_psnr(input.c_str(), TwoPassBestOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRG2 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRB2 = vpxt_ivf_psnr(input.c_str(), TwoPassBestOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRG3 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRB3 = vpxt_ivf_psnr(input.c_str(), TwoPassBestOutFile3.c_str(), 1, 0, 1, NULL);
 
     float GoodA = 0;
     float GoodB = 0;

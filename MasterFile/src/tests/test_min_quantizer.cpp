@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_min_quantizer(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_min_quantizer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Min Quantizer";
     char *MyDir = "test_min_quantizer";
@@ -25,7 +25,7 @@ int test_min_quantizer(int argc, char *argv[], const string &WorkingDir, string 
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -119,7 +119,7 @@ int test_min_quantizer(int argc, char *argv[], const string &WorkingDir, string 
 
         opt.best_allowed_q = 10;
 
-        if (vpxt_compress_ivf_to_ivf(input, Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -128,7 +128,7 @@ int test_min_quantizer(int argc, char *argv[], const string &WorkingDir, string 
 
         opt.best_allowed_q = 60;
 
-        if (vpxt_compress_ivf_to_ivf(input, Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -145,8 +145,8 @@ int test_min_quantizer(int argc, char *argv[], const string &WorkingDir, string 
         return 10;
     }
 
-    PSNRArr[0] = vpxt_ivf_psnr(input, Min10QuantOutFile.c_str(), 0, 0, 1, NULL);
-    PSNRArr[1] = vpxt_ivf_psnr(input, Min60QuantOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRArr[0] = vpxt_ivf_psnr(input.c_str(), Min10QuantOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRArr[1] = vpxt_ivf_psnr(input.c_str(), Min60QuantOutFile.c_str(), 0, 0, 1, NULL);
 
     tprintf(PRINT_BTH, "\n");
     int Min10Q = vpxt_check_min_quantizer(Min10QuantOutFile.c_str(), 10);

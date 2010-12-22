@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_reconstruct_buffer(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_reconstruct_buffer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_reconstruct_buffer";
@@ -25,7 +25,7 @@ int test_reconstruct_buffer(int argc, char *argv[], const string &WorkingDir, st
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -117,7 +117,7 @@ int test_reconstruct_buffer(int argc, char *argv[], const string &WorkingDir, st
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input, ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

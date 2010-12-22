@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_fixed_quantizer(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_fixed_quantizer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Fixed Quantizer";
     char *MyDir = "test_fixed_quantizer";
@@ -27,7 +27,7 @@ int test_fixed_quantizer(int argc, char *argv[], const string &WorkingDir, strin
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int FixedQ1Int = atoi(argv[5]);
@@ -137,7 +137,7 @@ int test_fixed_quantizer(int argc, char *argv[], const string &WorkingDir, strin
 
         opt.fixed_q = FixedQ1Int;
 
-        if (vpxt_compress_ivf_to_ivf(input, FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -146,7 +146,7 @@ int test_fixed_quantizer(int argc, char *argv[], const string &WorkingDir, strin
 
         opt.fixed_q = FixedQ2Int;
 
-        if (vpxt_compress_ivf_to_ivf(input, FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_mem_leak(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak";
@@ -26,7 +26,7 @@ int test_mem_leak(int argc, char *argv[], const string &WorkingDir, string Files
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     char MemLeakExe[255];
@@ -83,7 +83,7 @@ int test_mem_leak(int argc, char *argv[], const string &WorkingDir, string Files
         ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
         ProgramEncMemLeakCheckStr.append(MemLeakExe);         // Exe Name
         ProgramEncMemLeakCheckStr.append("\" memcompress \"");
-        ProgramEncMemLeakCheckStr.append(input);              // Input
+        ProgramEncMemLeakCheckStr.append(input.c_str());              // Input
         ProgramEncMemLeakCheckStr.append("\" \"");
         ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
         ProgramEncMemLeakCheckStr.append("\" 8 \"");
@@ -110,7 +110,7 @@ int test_mem_leak(int argc, char *argv[], const string &WorkingDir, string Files
         ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
         ProgramEncMemLeakCheckStr.append(MemLeakExe);         // Exe Name
         ProgramEncMemLeakCheckStr.append("\" memcompress \"");
-        ProgramEncMemLeakCheckStr.append(input);              // Input
+        ProgramEncMemLeakCheckStr.append(input.c_str());              // Input
         ProgramEncMemLeakCheckStr.append("\" \"");
         ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
         ProgramEncMemLeakCheckStr.append("\" 8 \"");

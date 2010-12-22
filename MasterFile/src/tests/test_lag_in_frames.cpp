@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_lag_in_frames(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_lag_in_frames(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Lag In Frames";
     char *MyDir = "test_lag_in_frames";
@@ -27,7 +27,7 @@ int test_lag_in_frames(int argc, char *argv[], const string &WorkingDir, string 
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);;
     int LagInFrames1Val = atoi(argv[5]);
@@ -146,7 +146,7 @@ int test_lag_in_frames(int argc, char *argv[], const string &WorkingDir, string 
         opt.allow_lag = 0;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -156,7 +156,7 @@ int test_lag_in_frames(int argc, char *argv[], const string &WorkingDir, string 
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -166,7 +166,7 @@ int test_lag_in_frames(int argc, char *argv[], const string &WorkingDir, string 
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames2Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -181,9 +181,9 @@ int test_lag_in_frames(int argc, char *argv[], const string &WorkingDir, string 
         return 10;
     }
 
-    double LagInFrames0PSNR = vpxt_ivf_psnr(input, LagInFrames0.c_str(), 0, 0, 1, NULL);
-    double LagInFrames1PSNR = vpxt_ivf_psnr(input, LagInFrames1.c_str(), 0, 0, 1, NULL);
-    double LagInFrames2PSNR = vpxt_ivf_psnr(input, LagInFrames2.c_str(), 0, 0, 1, NULL);
+    double LagInFrames0PSNR = vpxt_ivf_psnr(input.c_str(), LagInFrames0.c_str(), 0, 0, 1, NULL);
+    double LagInFrames1PSNR = vpxt_ivf_psnr(input.c_str(), LagInFrames1.c_str(), 0, 0, 1, NULL);
+    double LagInFrames2PSNR = vpxt_ivf_psnr(input.c_str(), LagInFrames2.c_str(), 0, 0, 1, NULL);
 
     double TenPer0 = LagInFrames0PSNR / 10;
     double TenPer1 = LagInFrames1PSNR / 10;

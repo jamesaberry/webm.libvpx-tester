@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_post_processor(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_post_processor(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_post_processor";
@@ -25,7 +25,7 @@ int test_post_processor(int argc, char *argv[], const string &WorkingDir, string
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -114,7 +114,7 @@ int test_post_processor(int argc, char *argv[], const string &WorkingDir, string
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input, PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,19 +139,19 @@ int test_post_processor(int argc, char *argv[], const string &WorkingDir, string
     double ssim = 0;
 
     tprintf(PRINT_BTH, "\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-    PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
+    PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
     countme++;
 
     flags++;
     tprintf(PRINT_BTH, "\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-    PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+    PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
     countme++;
     flags++;
 
     while (deblock_level != 16)
     {
         tprintf(PRINT_BTH, "\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
+        PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
         countme++;
         deblock_level++;
     }
@@ -163,7 +163,7 @@ int test_post_processor(int argc, char *argv[], const string &WorkingDir, string
     while (noise_level != 8)
     {
         tprintf(PRINT_BTH, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input, PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+        PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
         countme++;
 
         noise_level++;

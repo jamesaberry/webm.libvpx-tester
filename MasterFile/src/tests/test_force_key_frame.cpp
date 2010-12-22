@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_force_key_frame(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_force_key_frame(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Key Frame Frequency";
     char *MyDir = "test_force_key_frame";
@@ -26,7 +26,7 @@ int test_force_key_frame(int argc, char *argv[], const string &WorkingDir, strin
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int ForceKeyFrameInt = atoi(argv[5]);
@@ -119,7 +119,7 @@ int test_force_key_frame(int argc, char *argv[], const string &WorkingDir, strin
         opt.Mode = Mode;
         opt.key_freq = 0;//ForceKeyFrameInt;
 
-        if (vpxt_compress_ivf_to_ivf_force_key_frame(input, ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf_force_key_frame(input.c_str(), ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

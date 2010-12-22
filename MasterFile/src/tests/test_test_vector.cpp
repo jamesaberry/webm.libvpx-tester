@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_vector_test(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_vector_test(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Test Vector Check";
     char *MyDir = "test_test_vector";
@@ -16,7 +16,7 @@ int test_vector_test(int argc, char *argv[], const string &WorkingDir, string Fi
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
 
     int CurTestVector = 1;
     int LastTestVector = 102;
@@ -31,7 +31,7 @@ int test_vector_test(int argc, char *argv[], const string &WorkingDir, string Fi
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string TestVectorFolder = argv[2];
+    string TestVectorFolder = input;
     string TestVectorOutFolder = CurTestDirStr.c_str();
 
     int TestVectorNum = 0;

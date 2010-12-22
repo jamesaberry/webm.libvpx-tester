@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_encoder_break_out(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Encoder Break Out";
     char *MyDir = "test_encoder_break_out";
@@ -25,7 +25,7 @@ int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, str
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -153,7 +153,7 @@ int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, str
 
         opt.encode_breakout = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -162,7 +162,7 @@ int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, str
 
         opt.encode_breakout = 100;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -171,7 +171,7 @@ int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, str
 
         opt.encode_breakout = 500;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -180,7 +180,7 @@ int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, str
 
         opt.encode_breakout = 1000;
 
-        if (vpxt_compress_ivf_to_ivf(input, EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -239,7 +239,7 @@ int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, str
     long EncBreakOut1000_Dec_FileSize = 0;
 
     tprintf(PRINT_BTH, "\n\n");
-    SourceFileSize = vpxt_file_size(input, 1);
+    SourceFileSize = vpxt_file_size(input.c_str(), 1);
     tprintf(PRINT_BTH, "\n");
     EncBreakOut0_Dec_FileSize = vpxt_file_size(EncBreakOut0_Dec.c_str(), 1);
     tprintf(PRINT_BTH, "\n");
@@ -255,10 +255,10 @@ int test_encoder_break_out(int argc, char *argv[], const string &WorkingDir, str
     double PSNR500;
     double PSNR1000;
 
-    PSNR0 = vpxt_ivf_psnr(input, EncBreakOut0.c_str(), 0, 0, 1, NULL);
-    PSNR100 = vpxt_ivf_psnr(input, EncBreakOut100.c_str(), 0, 0, 1, NULL);
-    PSNR500 = vpxt_ivf_psnr(input, EncBreakOut500.c_str(), 0, 0, 1, NULL);
-    PSNR1000 = vpxt_ivf_psnr(input, EncBreakOut1000.c_str(), 0, 0, 1, NULL);
+    PSNR0 = vpxt_ivf_psnr(input.c_str(), EncBreakOut0.c_str(), 0, 0, 1, NULL);
+    PSNR100 = vpxt_ivf_psnr(input.c_str(), EncBreakOut100.c_str(), 0, 0, 1, NULL);
+    PSNR500 = vpxt_ivf_psnr(input.c_str(), EncBreakOut500.c_str(), 0, 0, 1, NULL);
+    PSNR1000 = vpxt_ivf_psnr(input.c_str(), EncBreakOut1000.c_str(), 0, 0, 1, NULL);
 
     double dB1 = vpxt_abs_double(10 * log(PSNR0 / PSNR100));
     double dB2 = vpxt_abs_double(10 * log(PSNR100 / PSNR500));

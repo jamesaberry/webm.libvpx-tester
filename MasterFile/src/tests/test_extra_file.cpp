@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_extra_file(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_extra_file(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_extra_file";
@@ -17,7 +17,7 @@ int test_extra_file(int argc, char *argv[], const string &WorkingDir, string Fil
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
 
     ////////////Formatting Test Specific Directory////////////
     string CurTestDirStr = "";
@@ -231,7 +231,7 @@ int test_extra_file(int argc, char *argv[], const string &WorkingDir, string Fil
     {
         opt.Mode = MODE_SECONDPASS_BEST;
 
-        if (vpxt_compress_ivf_to_ivf(input, ExtraFileCheckStr.c_str(), opt.multi_threaded, BitRate, opt, CompressString, 1, 0, 0, 3, 3/*opt.DeleteFirstPassFile*/) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), ExtraFileCheckStr.c_str(), opt.multi_threaded, BitRate, opt, CompressString, 1, 0, 0, 3, 3/*opt.DeleteFirstPassFile*/) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_play_alternate(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_play_alternate(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Play Alternate";
     char *MyDir = "test_play_alternate";
@@ -25,7 +25,7 @@ int test_play_alternate(int argc, char *argv[], const string &WorkingDir, string
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -131,7 +131,7 @@ int test_play_alternate(int argc, char *argv[], const string &WorkingDir, string
         opt.Mode = Mode;
         opt.play_alternate = PlayAlternate1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -140,7 +140,7 @@ int test_play_alternate(int argc, char *argv[], const string &WorkingDir, string
 
         opt.play_alternate = PlayAlternate2Val;
 
-        if (vpxt_compress_ivf_to_ivf(input, PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

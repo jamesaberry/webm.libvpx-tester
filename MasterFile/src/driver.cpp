@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 //CodeCoverage
-extern int tool_array_coverage(int argc, char *argv[], const string &WorkingDir, string FilesAr[]);
+extern int tool_array_coverage(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[]);
 
 int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 {
@@ -627,7 +627,7 @@ void write_64bit_quick_test(string WorkingDir)
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-int print_quick_test_files(string WorkingDir)
+int  print_quick_test_files(string WorkingDir)
 {
     write_32bit_quick_test(WorkingDir);//32BitQuickRun
     write_64bit_quick_test(WorkingDir);//64BitQuickRun
@@ -1775,7 +1775,7 @@ int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if st
 
     return 0;
 }
-void format_summary(char *InputFileNameCharAr)
+void format_summary(const char *InputFileNameCharAr)
 {
     tprintf(PRINT_STD, "\n Formating Summary file.\n");
 
@@ -2259,7 +2259,7 @@ void format_summary(char *InputFileNameCharAr)
     fclose(fp);
     return;
 }
-int show_hidden_cmds()
+int  show_hidden_cmds()
 {
     tprintf(PRINT_STD, "\n\n"
             "    Hidden Commands \n"

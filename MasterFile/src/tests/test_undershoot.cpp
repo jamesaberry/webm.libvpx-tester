@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_undershoot(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_undershoot(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Undershoot";
     char *MyDir = "test_undershoot";
@@ -25,7 +25,7 @@ int test_undershoot(int argc, char *argv[], const string &WorkingDir, string Fil
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -116,7 +116,7 @@ int test_undershoot(int argc, char *argv[], const string &WorkingDir, string Fil
 
         opt.under_shoot_pct = 10;
 
-        if (vpxt_compress_ivf_to_ivf(input, UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -125,7 +125,7 @@ int test_undershoot(int argc, char *argv[], const string &WorkingDir, string Fil
 
         opt.under_shoot_pct = 100;
 
-        if (vpxt_compress_ivf_to_ivf(input, UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

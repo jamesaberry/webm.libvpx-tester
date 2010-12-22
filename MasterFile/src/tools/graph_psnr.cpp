@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int tool_graph_psnr(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int tool_graph_psnr(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     if (argc < 6 || argc > 8)
     {
@@ -83,16 +83,16 @@ int tool_graph_psnr(int argc, char *argv[], const string &WorkingDir, string Fil
 
     tprintf(PRINT_BTH, "Graph PSNR\n");
 
-    char *input = argv[2];
+    string input = argv[2];
     int FirstBitRate = atoi(argv[3]);
     int LastBitRate = atoi(argv[4]);
     int BitRateStep = atoi(argv[5]);
-    char *ParFile = argv[6];
+    string ParFile = argv[6];
 
     int speed = 0;
 
     char  FileNameChar[255];
-    vpxt_file_name(input, FileNameChar, 0);
+    vpxt_file_name(input.c_str(), FileNameChar, 0);
     string InputName = FileNameChar;
     InputName.resize(InputName.length() - 4, ' ');
     OutPutStr.append(InputName.c_str());
@@ -113,7 +113,7 @@ int tool_graph_psnr(int argc, char *argv[], const string &WorkingDir, string Fil
 
     if (argc > 6)
     {
-        opt = vpxt_input_settings(ParFile);
+        opt = vpxt_input_settings(ParFile.c_str());
     }
 
     opt.target_bandwidth = FirstBitRate;
@@ -151,7 +151,7 @@ int tool_graph_psnr(int argc, char *argv[], const string &WorkingDir, string Fil
         snprintf(outputChar2, 255, "%s", OutPutStr3.c_str());
 
         unsigned int cpu_tick1 = 0;
-        EncTimeArr[x] = vpxt_time_compress_ivf_to_ivf(input, outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1, 0, 3, 3);
+        EncTimeArr[x] = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1, 0, 3, 3);
 
         if (EncTimeArr[x] == -1)
         {
@@ -171,7 +171,7 @@ int tool_graph_psnr(int argc, char *argv[], const string &WorkingDir, string Fil
         }
 
         double ssimnumber = 0;
-        PSNRArr[x] = vpxt_ivf_psnr(input, outputChar, 0, 2, 1, &ssimnumber);
+        PSNRArr[x] = vpxt_ivf_psnr(input.c_str(), outputChar, 0, 2, 1, &ssimnumber);
         SSIMArr[x] = ssimnumber;
         DataRateArr[x] = vpxt_ivf_data_rate(outputChar, 1);
         x++;

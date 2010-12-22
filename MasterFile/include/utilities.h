@@ -23,12 +23,13 @@ char slashChar();
 //-----------------------------------------------------VP8 Settings-------------------------------------------------------------------
 void vpxt_default_parameters(VP8_CONFIG &opt);
 int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg);
-VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, char *inputfile, int display);
-VP8_CONFIG vpxt_input_settings(char *inputFile);
+VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int display);
+VP8_CONFIG vpxt_input_settings(const char *inputFile);
 int vpxt_output_settings(const char *outputFile, VP8_CONFIG opt);
 int vpxt_output_compatable_settings(const char *outputFile, VP8_CONFIG opt, int ParVersionNum);
 int vpxt_output_settings_api(char *outputFile, vpx_codec_enc_cfg_t cfg);
 int vpxt_output_settings_ivfenc(char *outputFile, VP8_CONFIG opt);
+int vpxt_convert_par_file_to_ivfenc(const char *input, const char *output);
 //---------------------------------------------------IVF Header Data------------------------------------------------------------------
 int vpxt_print_ivf_file_header(IVF_HEADER ivf);
 int vpxt_format_ivf_header_read(IVF_HEADER *ivf);
@@ -72,20 +73,20 @@ int vpxt_find_non_ignored_files_in_dir(vector<string> IgnoredFiles, vector<strin
 //---------------------------------------------------------IVF------------------------------------------------------------------------
 int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12);
 double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
-double vpxt_post_proc_ivf_psnr(char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
+double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
 double vpxt_ivf_data_rate(const char *inputFile, int DROuputSel);
 int vpxt_ivf_check_pbm(const char *inputFile, int bitRate, int maxBuffer, int preBuffer);
 int vpxt_ivf_check_pbm_threshold(const char *inputFile, double bitRate, int maxBuffer, int preBuffer, int optimalbuffer, int Threshold);
 int vpxt_faux_compress();
 int vpxt_faux_decompress(char *inputChar);
 //---------------------------------------------------Test Functions-------------------------------------------------------------------
-int initialize_test_directory(int argc, char *argv[], int TestType, const string &WorkingDir, char *MyDir, string &WorkingDirString, string &MainDirString, char WorkingDir3[255], char File1[255], string FilesAr[]);
+int initialize_test_directory(int argc, const char *const *argv, int TestType, const string &WorkingDir, char *MyDir, string &WorkingDirString, string &MainDirString, char WorkingDir3[255], char File1[255], string FilesAr[]);
 void record_test_complete(string MainDirString, const char *FileIndexOutputChar, int TestType);
 int print_version();
 void print_header_info();
-void print_header_full_test(int argc, char *argv[], string WorkingDir3);
-void print_header_compression_only(int argc, char *argv[], string WorkingDir3);
-void print_header_test_only(int argc, char *argv[], string  WorkingDir3);
+void print_header_full_test(int argc, const char *const *argv, string WorkingDir3);
+void print_header_compression_only(int argc, const char *const *argv, string WorkingDir3);
+void print_header_test_only(int argc, const char *const *argv, string  WorkingDir3);
 void check_time_stamp(int SelectorArInt, string *SelectorAr, string *SelectorAr2, string TimeStampPrevious, int &identicalFileVar, string *TimeStampAr2);
 void vpxt_formated_print(int selector, const char *fmt, ...);
 void vpxt_cap_string_print(int selector, const char *fmt, ...);
@@ -93,26 +94,28 @@ int  vpxt_lower_case_string(string &input);
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
 int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
-int vpxt_compress_ivf_to_ivf_no_error_output(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
-unsigned int vpxt_time_compress_ivf_to_ivf(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick, int arnr_max_frames, int arnr_strength, int arnr_type);
-int vpxt_compress_ivf_to_ivf_force_key_frame(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, int arnr_max_frames, int arnr_strength, int arnr_type);
-int vpxt_compress_ivf_to_ivf_recon_buffer_check(char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
+int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
+unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick, int arnr_max_frames, int arnr_strength, int arnr_type);
+int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, int arnr_max_frames, int arnr_strength, int arnr_type);
+int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
 int vpxt_decompress_ivf_to_ivf(const char *inputchar, const char *outputchar);
 int vpxt_decompress_ivf_to_raw(const char *inputchar, const char *outputchar);
-int vpxt_decompress_ivf_to_raw_no_error_output(char *inputchar, char *outputchar);
-int vpxt_decompress_ivf_to_ivf_no_output(char *inputchar, char *outputchar);
+int vpxt_decompress_ivf_to_raw_no_error_output(const char *inputchar, const char *outputchar);
+int vpxt_decompress_ivf_to_ivf_no_output(const char *inputchar, const char *outputchar);
 unsigned int vpxt_time_decompress_ivf_to_ivf(const char *inputchar, const char *outputchar, unsigned int &CPUTick);
 unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, const char *outputchar, unsigned int &CPUTick);
 int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar);
 #endif
 //--------------------------------------------------------IVF Tools-------------------------------------------------------------------------
-int vpxt_cut_ivf(char *inputFile, char *outputFile, int StartingFrame, int EndingFrame);
-int vpxt_crop_raw_ivf(char *inputFile, const char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
-int vpxt_paste_ivf(char *inputFile1, char *inputFile2, char *outputFile, int StartingFrame);
+int vpxt_cut_ivf(const char *inputFile, const char *outputFile, int StartingFrame, int EndingFrame);
+int vpxt_crop_raw_ivf(const char *inputFile, const char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
+int vpxt_paste_ivf(const char *inputFile1, const char *inputFile2, const char *outputFile, int StartingFrame);
+int vpxt_ivf_to_raw(string inputFile, string outputDir);
+int vpxt_ivf_to_raw_frames(string inputFile, string outputDir);
 int vpxt_display_ivf_header_info(int argc, char *argv[]);
 int vpxt_compare_ivf_header_info(int argc, char *argv[]);
 int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2);
-double vpxt_display_droped_frames(char *inputchar, int PrintSwitch);
+double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch);
 double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch);
 double vpxt_display_visible_frames(const char *inputFile, int Selector);
 double vpxt_display_alt_ref_frames(const char *inputFile, int Selector);
@@ -130,8 +133,8 @@ int vpxt_check_mem_state(string FileName, string &bufferString);
 int vpxt_print_compare_ivf_results(int lngRC);
 double vpxt_get_psnr(const char *compFileName);
 //-----------------------------------------------------------IVF Enc------------------------------------------------------
-int API20Encoder(long width, long height, char *infilechar, char *outfilechar);
+int API20Encoder(long width, long height, const char *infilechar, const char *outfilechar);
 int API20EncoderIVF2IVF(char *inputFile, char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt);
-int API20Decoder(char *inputchar, char *outputchar);
-int API20DecoderIVF2IVF(char *inputchar, char *outputchar);
+int API20Decoder(const char *inputchar, const char *outputchar);
+int API20DecoderIVF2IVF(const char *inputchar, const char *outputchar);
 #endif

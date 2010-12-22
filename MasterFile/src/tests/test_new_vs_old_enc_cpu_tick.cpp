@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
 
     char *MyDir = "test_new_vs_old_enc_cpu_tick";
@@ -27,7 +27,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], const string &WorkingDi
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     char ExeInput[255];
@@ -77,7 +77,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], const string &WorkingDi
         Program.insert(0, "\"");
         Program.insert(0, "\"");
         Program.append("\" compress \"");
-        Program.append(input);
+        Program.append(input.c_str());
         Program.append("\" \"");
         Program.append(outputVP8Old);
         Program.append("\" 8");
@@ -91,7 +91,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], const string &WorkingDi
     {
         Program.insert(0, "\'./");
         Program.append("\' compress \'");
-        Program.append(input);
+        Program.append(input.c_str());
         Program.append("\' \'");
         Program.append(outputVP8Old);
         Program.append("\' 8");
@@ -182,7 +182,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, char *argv[], const string &WorkingDi
     {
 
         opt.Mode = Mode;
-        unsigned int Time = vpxt_time_compress_ivf_to_ivf(input, outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, 0, 3, 3);
+        unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, 0, 3, 3);
 
         if (Time == -1)
         {

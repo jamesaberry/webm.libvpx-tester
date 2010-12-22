@@ -713,7 +713,6 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                 {
                     if (TestType == 1)
                     {
-                        //run_multiple_tests(DummyArgvVar, (char **)DummyArgv, WorkingDir,);
                         tprintf(PRINT_STD, "Not Implemented Yet.\n");
                     }
                 }

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_good_vs_best(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_good_vs_best";
@@ -17,7 +17,7 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int BitRate = atoi(argv[3]);
 
     int speed = 0;
@@ -131,7 +131,7 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_GOODQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), GoodOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -140,7 +140,7 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), GoodOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -149,7 +149,7 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, GoodOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), GoodOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -159,7 +159,7 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_BESTQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input, BestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), BestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -168,7 +168,7 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input, BestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), BestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -177,7 +177,7 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input, BestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), BestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -209,12 +209,12 @@ int test_good_vs_best(int argc, char *argv[], const string &WorkingDir, string F
     double PSNRG3;
     double PSNRB3;
 
-    PSNRG1 = vpxt_ivf_psnr(input, GoodOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRB1 = vpxt_ivf_psnr(input, BestOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRG2 = vpxt_ivf_psnr(input, GoodOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRB2 = vpxt_ivf_psnr(input, BestOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRG3 = vpxt_ivf_psnr(input, GoodOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNRB3 = vpxt_ivf_psnr(input, BestOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRG1 = vpxt_ivf_psnr(input.c_str(), GoodOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRB1 = vpxt_ivf_psnr(input.c_str(), BestOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRG2 = vpxt_ivf_psnr(input.c_str(), GoodOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRB2 = vpxt_ivf_psnr(input.c_str(), BestOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRG3 = vpxt_ivf_psnr(input.c_str(), GoodOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRB3 = vpxt_ivf_psnr(input.c_str(), BestOutFile3.c_str(), 1, 0, 1, NULL);
 
     float GoodA = 0;
     float GoodB = 0;

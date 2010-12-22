@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_change_cpu_enc(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_change_cpu_enc(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     char *CompressString = "Arnr Maxframes:";
     char *MyDir = "test_change_cpu_enc";
@@ -26,7 +26,7 @@ int test_change_cpu_enc(int argc, char *argv[], const string &WorkingDir, string
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int ArnrMaxframes = atoi(argv[5]);
@@ -220,7 +220,7 @@ int test_change_cpu_enc(int argc, char *argv[], const string &WorkingDir, string
         OutputStr.append("none.ivf");
 
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
-        unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input, OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1, ArnrMaxframes, 3, 3);
+        unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1, ArnrMaxframes, 3, 3);
         CompressonVector.push_back(OutputStr);
 
         if (Time1 == -1)
@@ -306,7 +306,7 @@ int test_change_cpu_enc(int argc, char *argv[], const string &WorkingDir, string
                 ChangedCPUDecNOutCurrent.append(".ivf");
 
                 opt.Mode = Mode;
-                unsigned int Time2 = vpxt_time_compress_ivf_to_ivf(input, ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2, 0, 3, 3);
+                unsigned int Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2, 0, 3, 3);
                 CompressonVector.push_back(ChangedCPUDecNOutCurrent);
 
                 if (Time2 == -1)

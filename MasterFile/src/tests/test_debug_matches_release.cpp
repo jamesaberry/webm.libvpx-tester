@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_debug_matches_release(int argc, char *argv[], const string &WorkingDir, string FilesAr[], int TestType)
+int test_debug_matches_release(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
 {
     //Needs Debug.exe and Release.exe
     char *MyDir = "test_debug_matches_release";
@@ -27,10 +27,10 @@ int test_debug_matches_release(int argc, char *argv[], const string &WorkingDir,
         return 0;
     }
 
-    char *input = argv[2];
+    string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
-    char *ExeInputDebug = argv[5];
+    const char *ExeInputDebug = argv[5];
     char ExeInputRelease[255];
     snprintf(ExeInputRelease, 255, "%s", argv[6]);
 
@@ -93,7 +93,7 @@ int test_debug_matches_release(int argc, char *argv[], const string &WorkingDir,
         ProgramDebugEnc.insert(0, "\"\"");
         ProgramDebugEnc.append(ExeInputRelease);
         ProgramDebugEnc.append("\" compress \"");
-        ProgramDebugEnc.append(input);
+        ProgramDebugEnc.append(input.c_str());
         ProgramDebugEnc.append("\" \"");
         ProgramDebugEnc.append(DebugOutputEnc);
         ProgramDebugEnc.append("\" 8");
@@ -114,7 +114,7 @@ int test_debug_matches_release(int argc, char *argv[], const string &WorkingDir,
         ProgramReleaseEnc.insert(0, "\"\"");
         ProgramReleaseEnc.append(ExeInputDebug);
         ProgramReleaseEnc.append("\" compress \"");
-        ProgramReleaseEnc.append(input);
+        ProgramReleaseEnc.append(input.c_str());
         ProgramReleaseEnc.append("\" \"");
         ProgramReleaseEnc.append(ReleaseOutputEnc);
         ProgramReleaseEnc.append("\" 8");
@@ -137,7 +137,7 @@ int test_debug_matches_release(int argc, char *argv[], const string &WorkingDir,
         ProgramDebugEnc.insert(0, "\'");
         ProgramDebugEnc.append(ExeInputRelease);
         ProgramDebugEnc.append("\' compress \'");
-        ProgramDebugEnc.append(input);
+        ProgramDebugEnc.append(input.c_str());
         ProgramDebugEnc.append("\' \'");
         ProgramDebugEnc.append(DebugOutputEnc);
         ProgramDebugEnc.append("\' 8");
@@ -157,7 +157,7 @@ int test_debug_matches_release(int argc, char *argv[], const string &WorkingDir,
         ProgramReleaseEnc.insert(0, "\'");
         ProgramReleaseEnc.append(ExeInputDebug);
         ProgramReleaseEnc.append("\' compress \'");
-        ProgramReleaseEnc.append(input);
+        ProgramReleaseEnc.append(input.c_str());
         ProgramReleaseEnc.append("\' \'");
         ProgramReleaseEnc.append(ReleaseOutputEnc);
         ProgramReleaseEnc.append("\' 8");

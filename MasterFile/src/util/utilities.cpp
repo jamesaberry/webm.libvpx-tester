@@ -276,11 +276,11 @@ int stats_open_mem(stats_io_t *stats, int pass)
 }
 
 
-void stats_close(stats_io_t *stats)
+void stats_close(stats_io_t *stats, int last_pass)
 {
     if (stats->file)
     {
-        if (stats->pass == 1)
+        if (stats->pass == last_pass)
         {
 #if 0
 #elif USE_POSIX_MMAP
@@ -295,7 +295,7 @@ void stats_close(stats_io_t *stats)
     }
     else
     {
-        if (stats->pass == 1)
+        if (stats->pass == last_pass)
             free(stats->buf.buf);
     }
 }

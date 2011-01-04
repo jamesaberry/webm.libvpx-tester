@@ -10890,12 +10890,12 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
     //-3 if file 1 ends before File 2
     //and >= 0 where the number the function returns is the frame that they differ first on.
 
-    FILE *in = fopen(inputFile1, "rb");
+    FILE *in1 = fopen(inputFile1, "rb");
 
 
     int returnval = -1;
 
-    if (in == NULL)
+    if (in1 == NULL)
     {
         tprintf(PRINT_BTH, "\nFile 1 does not exist");
         return 0;
@@ -10906,7 +10906,7 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
     if (in2 == NULL)
     {
         tprintf(PRINT_BTH, "\nFile 2 does not exist");
-        fclose(in);
+        fclose(in1);
         return 0;
     }
 
@@ -10915,7 +10915,7 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
     IVF_HEADER ivfhRaw;
 
     InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, 32, in);
+    fread(&ivfhRaw, 1, 32, in1);
     vpxt_format_ivf_header_read(&ivfhRaw);
 
     IVF_HEADER ivfhRaw2;
@@ -10924,10 +10924,10 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
     fread(&ivfhRaw2, 1, 32, in2);
     vpxt_format_ivf_header_read(&ivfhRaw2);
 
-    unsigned char *inputVideoBuffer = new unsigned char [ivfhRaw.width * ivfhRaw.height*3];
-    unsigned char *inputVideo2Buffer = new unsigned char [ivfhRaw2.width * ivfhRaw2.height*3];
-    memset(inputVideoBuffer, 0, ivfhRaw.width * ivfhRaw.height * 3);
-    memset(inputVideo2Buffer, 0, ivfhRaw2.width * ivfhRaw2.height * 3);
+    unsigned char *inputVideoBuffer1 = new unsigned char [ivfhRaw.width * ivfhRaw.height*3];
+    unsigned char *inputVideoBuffer2 = new unsigned char [ivfhRaw2.width * ivfhRaw2.height*3];
+    memset(inputVideoBuffer1, 0, ivfhRaw.width * ivfhRaw.height * 3);
+    memset(inputVideoBuffer2, 0, ivfhRaw2.width * ivfhRaw2.height * 3);
 
     //////////////////////////////////OutPut////////////////////////////////
     //printf( "        FILE HEADER1                        FILE HEADER2\n\n"
@@ -10957,95 +10957,119 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
 
     if (ivfhRaw.signature[0] != ivfhRaw2.signature[0])
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.signature[1] != ivfhRaw2.signature[1])
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.signature[2] != ivfhRaw2.signature[2])
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.signature[3] != ivfhRaw2.signature[3])
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.version != ivfhRaw2.version)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.headersize != ivfhRaw2.headersize)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.four_cc != ivfhRaw2.four_cc)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.width != ivfhRaw2.width)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.height != ivfhRaw2.height)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.rate != ivfhRaw2.rate)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.scale != ivfhRaw2.scale)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     if (ivfhRaw.length != ivfhRaw2.length)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
     IVF_FRAME_HEADER ivf_fhRaw1;
 
-    fread(&ivf_fhRaw1.frameSize, 1, 4, in);
-    fread(&ivf_fhRaw1.timeStamp, 1, 8, in);
+    fread(&ivf_fhRaw1.frameSize, 1, 4, in1);
+    fread(&ivf_fhRaw1.timeStamp, 1, 8, in1);
     vpxt_format_frame_header_read(ivf_fhRaw1);
 
-    fread(inputVideoBuffer, 1, ivf_fhRaw1.frameSize, in);
+    fread(inputVideoBuffer1, 1, ivf_fhRaw1.frameSize, in1);
 
     IVF_FRAME_HEADER ivf_fhRaw2;
 
@@ -11053,7 +11077,7 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
     fread(&ivf_fhRaw2.timeStamp, 1, 8, in2);
     vpxt_format_frame_header_read(ivf_fhRaw2);
 
-    fread(inputVideo2Buffer, 1, ivf_fhRaw2.frameSize, in2);
+    fread(inputVideoBuffer2, 1, ivf_fhRaw2.frameSize, in2);
 
     //////////////////////////////////OutPut////////////////////////////////
     //tprintf(  PRINT_STD, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
@@ -11071,8 +11095,10 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
 
     if (ivf_fhRaw2.frameSize != ivf_fhRaw1.frameSize)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
@@ -11081,27 +11107,33 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
         returnval = -2;
     }
 
-    if (memcmp(inputVideoBuffer, inputVideo2Buffer, ivf_fhRaw1.frameSize) != 0)
+    if (memcmp(inputVideoBuffer1, inputVideoBuffer2, ivf_fhRaw1.frameSize) != 0)
     {
-        fclose(in);
+        fclose(in1);
         fclose(in2);
+        delete [] inputVideoBuffer1;
+        delete [] inputVideoBuffer2;
         return currentVideoFrame;
     }
 
-    while (!feof(in) || !feof(in2))
+    while (!feof(in1) || !feof(in2))
     {
         // if one file ends and the other doesnt exit
-        if (feof(in) && !feof(in2))
+        if (feof(in1) && !feof(in2))
         {
-            fclose(in);
+            fclose(in1);
             fclose(in2);
+            delete [] inputVideoBuffer1;
+            delete [] inputVideoBuffer2;
             return -2;
         }
 
-        if (!feof(in) && feof(in2))
+        if (!feof(in1) && feof(in2))
         {
-            fclose(in);
+            fclose(in1);
             fclose(in2);
+            delete [] inputVideoBuffer1;
+            delete [] inputVideoBuffer2;
             return -3;
         }
 
@@ -11110,18 +11142,18 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
             break;
         }
 
-        memset(inputVideoBuffer, 0, ivfhRaw.width * ivfhRaw.height * 3);
-        memset(inputVideo2Buffer, 0, ivfhRaw2.width * ivfhRaw2.height * 3);
+        memset(inputVideoBuffer1, 0, ivfhRaw.width * ivfhRaw.height * 3);
+        memset(inputVideoBuffer2, 0, ivfhRaw2.width * ivfhRaw2.height * 3);
 
-        fread(&ivf_fhRaw1.frameSize, 1, 4, in);
-        fread(&ivf_fhRaw1.timeStamp, 1, 8, in);
+        fread(&ivf_fhRaw1.frameSize, 1, 4, in1);
+        fread(&ivf_fhRaw1.timeStamp, 1, 8, in1);
         vpxt_format_frame_header_read(ivf_fhRaw1);
-        fread(inputVideoBuffer, 1, ivf_fhRaw1.frameSize, in);
+        fread(inputVideoBuffer1, 1, ivf_fhRaw1.frameSize, in1);
 
         fread(&ivf_fhRaw2.frameSize, 1, 4, in2);
         fread(&ivf_fhRaw2.timeStamp, 1, 8, in2);
         vpxt_format_frame_header_read(ivf_fhRaw2);
-        fread(inputVideo2Buffer, 1, ivf_fhRaw2.frameSize, in2);
+        fread(inputVideoBuffer2, 1, ivf_fhRaw2.frameSize, in2);
 
         //////////////////////////////////OutPut////////////////////////////////
         //tprintf(  PRINT_STD, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
@@ -11136,9 +11168,11 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
 
         if (ivf_fhRaw2.frameSize != ivf_fhRaw1.frameSize)
         {
-            fclose(in);
+            fclose(in1);
             fclose(in2);
             cout << "Frame Size not equal";
+            delete [] inputVideoBuffer1;
+            delete [] inputVideoBuffer2;
             return currentVideoFrame + 1;
         }
 
@@ -11147,21 +11181,23 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
             returnval = -2;
         }
 
-        if (memcmp(inputVideoBuffer, inputVideo2Buffer, ivf_fhRaw1.frameSize) != 0)
+        if (memcmp(inputVideoBuffer1, inputVideoBuffer2, ivf_fhRaw1.frameSize) != 0)
         {
 
-            fclose(in);
+            fclose(in1);
             fclose(in2);
+            delete [] inputVideoBuffer1;
+            delete [] inputVideoBuffer2;
             return currentVideoFrame + 1;
         }
 
         currentVideoFrame++;
     }
 
-    fclose(in);
+    fclose(in1);
     fclose(in2);
-    delete [] inputVideoBuffer;
-    delete [] inputVideo2Buffer;
+    delete [] inputVideoBuffer1;
+    delete [] inputVideoBuffer2;
 
     return returnval;
 }

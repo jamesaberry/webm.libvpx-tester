@@ -209,6 +209,22 @@ int test_multithreaded(int argc, const char *const *argv, const string &WorkingD
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
+    if (Time1 == 0 || Time2 == 0)
+    {
+        if (Time1 == 0)
+            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed", Time1FileName, Time1);
+
+        if (Time2 == 0)
+            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed", Time2FileName, Time2);
+
+        tprintf(PRINT_BTH, "\n\nFailed\n");
+
+        fclose(fp);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        return 0;
+
+    }
+
     if (Time1 < Time2)
     {
         vpxt_formated_print(RESPRT, "%s time: %u < %s time2: %u - Passed", Time1FileName, Time1, Time2FileName, Time2);

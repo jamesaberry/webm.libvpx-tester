@@ -5890,7 +5890,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
 
         fclose(outfile);
-        stats_close(&stats);
+        stats_close(&stats, arg_passes - 1);
         tprintf(PRINT_BTH, "\n");
     }
 
@@ -6269,7 +6269,7 @@ int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *
             write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
 
         fclose(outfile);
-        stats_close(&stats);
+        stats_close(&stats, arg_passes - 1);
         tprintf(PRINT_STD, "\n");
     }
 
@@ -6638,7 +6638,7 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
             write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
 
         fclose(outfile);
-        stats_close(&stats);
+        stats_close(&stats, arg_passes - 1);
         tprintf(PRINT_STD, "\n");
         framesoutrec = frames_out;
     }
@@ -7127,7 +7127,7 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *
             write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
 
         fclose(outfile);
-        stats_close(&stats);
+        stats_close(&stats, arg_passes - 1);
         tprintf(PRINT_BTH, "\n");
     }
 
@@ -7853,7 +7853,7 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
 
         fclose(infile);
         fclose(outfile);
-        stats_close(&stats);
+        stats_close(&stats, arg_passes - 1);
 
         out_close(out, out_fn2STR.c_str(), 0);
         out_close(out2, out_fn2STR.c_str(), 0);
@@ -12972,7 +12972,7 @@ int API20Encoder(long width, long height, const char *infilechar, const char *ou
             write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
 
         fclose(outfile);
-        stats_close(&stats);
+        stats_close(&stats, arg_passes - 1);
         tprintf(PRINT_STD, "\n");
     }
 
@@ -13275,7 +13275,7 @@ int API20EncoderIVF2IVF(char *inputFile, char *outputFile2, int speed, int BitRa
             write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
 
         fclose(outfile);
-        stats_close(&stats);
+        stats_close(&stats, arg_passes - 1);
         tprintf(PRINT_STD, "\n");
     }
 

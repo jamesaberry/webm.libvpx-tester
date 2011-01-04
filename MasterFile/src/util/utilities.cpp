@@ -3668,6 +3668,7 @@ double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUV
     if (CompFile == NULL)
     {
         tprintf(PRINT_BTH, "\nError Opening Compressed File: %s\n", inputFile2);
+        vpx_img_free(&raw_img);
         fclose(RawFile);
         return 0;
     }
@@ -3744,6 +3745,11 @@ double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUV
     if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, 0))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(RawFile);
+        fclose(CompFile);
+        delete timeStamp2;
+        delete timeEndStamp2;
+        vpx_img_free(&raw_img);
         return EXIT_FAILURE;
     }
 
@@ -3776,7 +3782,7 @@ double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUV
             delete timeStamp2;
             delete timeEndStamp2;
             vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
-
+            vpx_img_free(&raw_img);
             return 0;
         }
 
@@ -3796,6 +3802,7 @@ double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUV
             delete timeEndStamp2;
             delete [] CompBuff;
             vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+            vpx_img_free(&raw_img);
             return 0;
         }
 
@@ -3839,6 +3846,7 @@ double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUV
                 delete timeStamp2;
                 delete timeEndStamp2;
                 vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+                vpx_img_free(&raw_img);
                 return 0;
             }
 
@@ -3991,6 +3999,7 @@ double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUV
     delete timeStamp2;
     delete timeEndStamp2;
     vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+    vpx_img_free(&raw_img);
 
     return totalPsnr;
 }
@@ -4080,6 +4089,7 @@ double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, i
     if (CompFile == NULL)
     {
         tprintf(PRINT_BTH, "\nError Opening Compressed File: %s\n", inputFile2);
+        vpx_img_free(&raw_img);
         fclose(RawFile);
         return 0;
     }
@@ -4101,8 +4111,7 @@ double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, i
     ////////Printing////////
     if (printvar != 0)
     {
-        tprintf(PRINT_STD, "\n\n                        ---------Computing PSNR---------");
-        fprintf(stderr, "\n\n                        ---------Computing PSNR---------");
+        tprintf(PRINT_BTH, "\n\n                        ---------Computing PSNR---------");
     }
 
     if (printvar == 0)
@@ -4173,6 +4182,11 @@ double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, i
     if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, VPX_CODEC_USE_POSTPROC))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(RawFile);
+        fclose(CompFile);
+        delete timeStamp2;
+        delete timeEndStamp2;
+        vpx_img_free(&raw_img);
         return EXIT_FAILURE;
     }
 
@@ -4210,6 +4224,7 @@ double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, i
             delete timeStamp2;
             delete timeEndStamp2;
             vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+            vpx_img_free(&raw_img);
             return 0;
         }
 
@@ -4229,6 +4244,7 @@ double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, i
             delete timeEndStamp2;
             delete [] CompBuff;
             vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+            vpx_img_free(&raw_img);
             return 0;
         }
 
@@ -4272,6 +4288,7 @@ double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, i
                 delete timeStamp2;
                 delete timeEndStamp2;
                 vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+                vpx_img_free(&raw_img);
                 return 0;
             }
 
@@ -4424,6 +4441,7 @@ double vpxt_post_proc_ivf_psnr(const char *inputFile1, const char *inputFile2, i
     delete timeStamp2;
     delete timeEndStamp2;
     vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
+    vpx_img_free(&raw_img);
 
     return totalPsnr;
 }

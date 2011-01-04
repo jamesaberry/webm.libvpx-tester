@@ -139,10 +139,6 @@ int test_version(int argc, const char *const *argv, const string &WorkingDir, st
     float PSNRArr[4];
     unsigned int Deccpu_tick[4];
 
-    //Test Type 1 = Mode 1 = Run Test Compressions and Tests.
-    //Test Type 2 = Mode 3 = Run tests from Pre-existing Compressed file
-    //Test Type 3 = Mode 2 =Run Test Compressions
-
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == TEST_ONLY)
     {

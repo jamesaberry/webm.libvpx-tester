@@ -158,8 +158,6 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const string &Work
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
     ///////////////////Use Custom Settings///////////////////
-    //If Mode == 0 (Create Files) Then if input settings is listed use it
-    //If Mode == 1 (run Test) Then input settings from test file
 
     BitRate = opt.target_bandwidth;
 

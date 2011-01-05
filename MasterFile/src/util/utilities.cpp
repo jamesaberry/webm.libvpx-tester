@@ -7,18 +7,23 @@
 #include "onyx.h"
 #include "ivf.h"
 #include "vp8.h"
+#include "args.h"
+#include "vpx_decoder.h"
+#include "vpx_timer.h"
+#include "vp8dx.h"
 #include <math.h>
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <string.h>
 #include <algorithm>
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
 #include <ctype.h>
-using namespace std;
+#include <stdlib.h>
+
+#define ON2_CODEC_DISABLE_COMPAT 1
 
 typedef unsigned char BYTE;
 #define HEADER_SIZE 32
@@ -53,6 +58,8 @@ typedef unsigned int  DWORD;
 #if CONFIG_MD5
 #include "md5_utils.h"
 #endif
+
+using namespace std;
 
 /////////////////////////////////////////////Endian Conversions////////////////////////////////////////////
 #ifdef __POWERPC__
@@ -267,7 +274,7 @@ int stats_open_mem(stats_io_t *stats, int pass)
     {
         stats->buf.sz = 0;
         stats->buf_alloc_sz = 64 * 1024;
-        stats->buf.buf = malloc(stats->buf_alloc_sz);
+        stats->buf.buf = malloc(stats->buf_alloc_sz); //valgrind keeps saying possible mem leak
     }
 
     stats->buf_ptr = (char *)stats->buf.buf;
@@ -416,7 +423,7 @@ const vpx_codec_cx_pkt_t *pkt)
     fwrite(header, 1, 12, outfile);
 }
 
-#include "args.h"
+
 
 static const arg_def_t use_yv12 = ARG_DEF(NULL, "yv12", 0,
 "Input file is YV12 ");
@@ -586,15 +593,7 @@ static void usage_exit()
 * using the new interface. Decoded frames are output as YV12 raw
 * YV12 images.
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#define ON2_CODEC_DISABLE_COMPAT 1
-#include "vpx_decoder.h"
-#include "vpx_timer.h"
 
-#include "vp8dx.h"
 
 void ivf_write_headerDec(FILE *outfile, unsigned int width, unsigned short height, unsigned int rate, unsigned int scale, unsigned int length)
 {
@@ -634,7 +633,7 @@ static const struct
     {"vp8",  &vpx_codec_vp8_dx_algo,   0x00385056, 0x00FFFFFF},
 };
 
-#include "args.h"
+
 static const arg_def_t prefixarg = ARG_DEF("p", "prefix", 1,
                                    "Prefix to use when saving frames");
 static const arg_def_t flipuvarg = ARG_DEF(NULL, "flipuv", 0,
@@ -1424,8 +1423,8 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile)
     infile2 >> Garbage;
 
     //not included in default settings file
-    infile2 >> firstPFile;
-    infile2 >> Garbage;
+    //infile2 >> firstPFile;
+    //infile2 >> Garbage;
     infile2 >> opt.Height;
     infile2 >> Garbage;
     infile2 >> opt.Width;
@@ -1588,6 +1587,100 @@ int vpxt_output_settings_api(char *outputFile, vpx_codec_enc_cfg_t cfg)
     return 0;
 }
 
+int vpxt_input_settings_api(const char *inputFile, vpx_codec_enc_cfg_t &cfg)
+{
+    //Saves all vpx_codec_enc_cfg_t settings to a settings file
+
+    ifstream infile(inputFile);
+    string Garbage;
+    int IntValue;
+
+    infile >> cfg.g_usage;
+    infile >> Garbage;
+    infile >> cfg.g_threads;
+    infile >> Garbage;
+    infile >> cfg.g_profile;
+    infile >> Garbage;
+    infile >> cfg.g_w;
+    infile >> Garbage;
+    infile >> cfg.g_h;
+    infile >> Garbage;
+    infile >> cfg.g_timebase.num;
+    infile >> Garbage;
+    infile >> cfg.g_timebase.den;
+    infile >> Garbage;
+    infile >> cfg.g_error_resilient;
+    infile >> Garbage;
+    infile >> IntValue;
+
+    if (IntValue == 0)
+        cfg.g_pass = VPX_RC_ONE_PASS;
+
+    if (IntValue == 1)
+        cfg.g_pass = VPX_RC_FIRST_PASS;
+
+    if (IntValue == 2)
+        cfg.g_pass = VPX_RC_LAST_PASS;
+
+    infile >> Garbage;
+    infile >> cfg.g_lag_in_frames;
+    infile >> Garbage;
+    infile >> cfg.rc_dropframe_thresh;
+    infile >> Garbage;
+    infile >> cfg.rc_resize_allowed;
+    infile >> Garbage;
+    infile >> cfg.rc_resize_up_thresh;
+    infile >> Garbage;
+    infile >> cfg.rc_resize_down_thresh;
+    infile >> Garbage;
+    infile >> IntValue;
+
+    if (IntValue == 0)
+        cfg.rc_end_usage = VPX_VBR;
+
+    if (IntValue == 1)
+        cfg.rc_end_usage = VPX_CBR;
+
+    infile >> Garbage;
+    infile >> cfg.rc_target_bitrate;
+    infile >> Garbage;
+    infile >> cfg.rc_min_quantizer;
+    infile >> Garbage;
+    infile >> cfg.rc_max_quantizer;
+    infile >> Garbage;
+    infile >> cfg.rc_undershoot_pct;
+    infile >> Garbage;
+    infile >> cfg.rc_overshoot_pct;
+    infile >> Garbage;
+    infile >> cfg.rc_buf_sz;
+    infile >> Garbage;
+    infile >> cfg.rc_buf_initial_sz;
+    infile >> Garbage;
+    infile >> cfg.rc_buf_optimal_sz;
+    infile >> Garbage;
+    infile >> cfg.rc_2pass_vbr_bias_pct;
+    infile >> Garbage;
+    infile >> cfg.rc_2pass_vbr_minsection_pct;
+    infile >> Garbage;
+    infile >> cfg.rc_2pass_vbr_maxsection_pct;
+    infile >> Garbage;
+    infile >> IntValue;
+
+    if (IntValue == 0)
+        cfg.kf_mode = VPX_KF_FIXED;
+
+    if (IntValue == 1)
+        cfg.kf_mode = VPX_KF_AUTO;
+
+    infile >> Garbage;
+    infile >> cfg.kf_min_dist;
+    infile >> Garbage;
+    infile >> cfg.kf_max_dist;
+    infile >> Garbage;
+
+    infile.close();
+    return 0;
+}
 int vpxt_output_settings_ivfenc(const char *outputFile, VP8_CONFIG opt)
 {
     //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
@@ -1638,6 +1731,113 @@ int vpxt_convert_par_file_to_ivfenc(const char *input, const char *output)
 
     opt = vpxt_input_settings(input);
     vpxt_output_settings_ivfenc(output, opt);
+
+    return 0;
+}
+int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_api)
+{
+    VP8_CONFIG opt;
+    opt = vpxt_input_settings(input_core);
+
+    vpx_codec_enc_cfg_t    cfg;
+    const struct codec_item  *codec = codecs;
+    vpx_codec_enc_config_default(codec->iface, &cfg, 0);
+    vpxt_input_settings_api(input_api, cfg);
+
+    //--debug                                                                           //Debug mode (makes output deterministic)
+    //--output=<arg>                                                                    //Output filename
+    //--codec=<arg>                                                                     //Codec to use
+    if (opt.Mode > 2)
+        tprintf(PRINT_STD, "--passes=2 ");                                          //Number of passes (1/2)
+
+    //--pass=<arg>                                                                      //Pass to execute (1/2)
+    //--fpf=<arg>                                                                       //First pass statistics file name
+    //--limit=<arg>                                                                     //Stop encoding after n input frames
+    //--deadline=<arg>                                                                  //Deadline per frame (usec)
+    if (opt.Mode == 2 || opt.Mode == 5)
+        tprintf(PRINT_STD, "--best ");                                              //Use Best Quality Deadline
+
+    if (opt.Mode == 1 || opt.Mode == 4)
+        tprintf(PRINT_STD, "--good ");                                              //Use Good Quality Deadline
+
+    if (opt.Mode == 0)
+        tprintf(PRINT_STD, "--rt ");                                                //Use Realtime Quality Deadline
+
+    tprintf(PRINT_STD, "--verbose ");                                                   //Show encoder parameters
+    //--psnr                                                                            //Show PSNR in status line
+    tprintf(PRINT_STD, "--ivf ");                                                       //Output IVF (default is WebM)
+
+//Encoder Global Options:
+    //--yv12                                                                            //Input file is YV12
+    //--i420                                                                            //Input file is I420 (default)
+    tprintf(PRINT_STD, "--usage=%i ", cfg.g_usage);                                     //Usage profile number to use
+    tprintf(PRINT_STD, "--threads=%i ", opt.multi_threaded);                            //Max number of threads to use
+    tprintf(PRINT_STD, "--profile=%i ", opt.Version);                                   //Bitstream profile number to use
+    tprintf(PRINT_STD, "--width=%i ", opt.Width);                                       //Frame width
+    tprintf(PRINT_STD, "--height=%i ", opt.Height);                                     //Frame height
+    tprintf(PRINT_STD, "--timebase=%i/%i ", cfg.g_timebase.num, cfg.g_timebase.den);    //Stream timebase (frame duration)
+    tprintf(PRINT_STD, "--fps=%i/%i ", cfg.g_timebase.den / 2, cfg.g_timebase.num);      //Stream frame rate (rate/scale)
+    tprintf(PRINT_STD, "--error-resilient=%i ", opt.error_resilient_mode);              //Enable error resiliency features
+
+    if (opt.allow_lag == 0)
+        tprintf(PRINT_STD, "--lag-in-frames=%i ", 0);                                   //Max number of frames to lag
+    else
+        tprintf(PRINT_STD, "--lag-in-frames=%i ", opt.lag_in_frames);                   //Max number of frames to lag
+
+//Rate Control Options:
+    if (opt.allow_df == 0)
+        tprintf(PRINT_STD, "--drop-frame=%i ", 0);                                      //Temporal resampling threshold (buf %)
+    else
+        tprintf(PRINT_STD, "--drop-frame=%i ", opt.drop_frames_water_mark);             //Temporal resampling threshold (buf %)
+
+    tprintf(PRINT_STD, "--resize-allowed=%i ", opt.allow_spatial_resampling);           //Spatial resampling enabled (bool)
+    tprintf(PRINT_STD, "--resize-up=%i ", opt.resample_up_water_mark);                  //Upscale threshold (buf %)
+    tprintf(PRINT_STD, "--resize-down=%i ", opt.resample_down_water_mark);              //Downscale threshold (buf %)
+
+    if (opt.end_usage == USAGE_LOCAL_FILE_PLAYBACK)
+        tprintf(PRINT_STD, "--end-usage=%i ", VPX_VBR);                                 //VBR=0 | CBR=1
+    else if (opt.end_usage == USAGE_STREAM_FROM_SERVER)
+        tprintf(PRINT_STD, "--end-usage=%i ", VPX_CBR);                                 //VBR=0 | CBR=1
+
+    tprintf(PRINT_STD, "--target-bitrate=%i ", opt.target_bandwidth);                   //Bitrate (kbps)
+    tprintf(PRINT_STD, "--min-q=%i ", opt.best_allowed_q);                              //Minimum (best) quantizer
+    tprintf(PRINT_STD, "--max-q=%i ", opt.worst_allowed_q);                             //Maximum (worst) quantizer
+
+    if (opt.fixed_q != -1)
+    {
+        tprintf(PRINT_STD, "--min-q=%i ", opt.fixed_q);                                 //Minimum (best) quantizer
+        tprintf(PRINT_STD, "--max-q=%i ", opt.fixed_q);                                 //Maximum (worst) quantizer
+    }
+
+    tprintf(PRINT_STD, "--undershoot-pct=%i ", opt.under_shoot_pct);                    //Datarate undershoot (min) target (%)
+    tprintf(PRINT_STD, "--overshoot-pct=%i ", cfg.rc_overshoot_pct);                    //Datarate overshoot (max) target (%)
+    tprintf(PRINT_STD, "--buf-sz=%i ", opt.maximum_buffer_size * 1000);                 //Client buffer size (ms)
+    tprintf(PRINT_STD, "--buf-initial-sz=%i ", opt.starting_buffer_level * 1000);       //Client initial buffer size (ms)
+    tprintf(PRINT_STD, "--buf-optimal-sz=%i ", opt.optimal_buffer_level * 1000);        //Client optimal buffer size (ms)
+
+//Twopass Rate Control Options:
+    //--bias-pct=<arg>                                                                 //CBR/VBR bias (0=CBR, 100=VBR)
+    //--minsection-pct=<arg>                                                           //GOP min bitrate (% of target)
+    //--maxsection-pct=<arg>                                                           //GOP max bitrate (% of target)
+
+//Keyframe Placement Options:
+    tprintf(PRINT_STD, "--kf-min-dist=%i ", cfg.kf_min_dist);                           //Minimum keyframe interval (frames)
+    tprintf(PRINT_STD, "--kf-max-dist=%i ", opt.key_freq);                              //Maximum keyframe interval (frames)
+
+    if (opt.auto_key == 0)
+        tprintf(PRINT_STD, "--disable-kf ");                                            //Disable keyframe placement
+
+//VP8 Specific Options:
+    tprintf(PRINT_STD, "--cpu-used=%i ", opt.cpu_used);                                 //CPU Used (-16..16)
+    tprintf(PRINT_STD, "--auto-alt-ref=%i ", opt.play_alternate);                       //Enable automatic alt reference frames
+    tprintf(PRINT_STD, "--noise-sensitivity=%i ", opt.noise_sensitivity);               //Noise sensitivity (frames to blur)
+    tprintf(PRINT_STD, "--sharpness=%i ", opt.Sharpness);                               //Filter sharpness (0-7)
+    tprintf(PRINT_STD, "--static-thresh=%i ", opt.encode_breakout);                     //Motion detection threshold
+    tprintf(PRINT_STD, "--token-parts=%i ", opt.token_partitions);                      //Number of token partitions to use, log2
+    //--arnr-maxframes=<arg>                                                            //AltRef Max Frames
+    //--arnr-strength=<arg>                                                             //AltRef Strength
+    //--arnr-type=<arg>                                                                 //AltRef Type
+    //--tune=<arg>                                                                      //Material to favor - psnr, ssim
 
     return 0;
 }
@@ -3854,11 +4054,6 @@ double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUV
 
             bytes1 = ivf_fhRaw.frameSize;
             sumBytes += bytes1;
-
-
-
-
-
 
             read_frame_enc(RawFile, &raw_img, ivf_fhRaw.frameSize);
 
@@ -10909,7 +11104,6 @@ int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2)
     //and >= 0 where the number the function returns is the frame that they differ first on.
 
     FILE *in1 = fopen(inputFile1, "rb");
-
 
     int returnval = -1;
 

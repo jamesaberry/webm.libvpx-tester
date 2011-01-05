@@ -28,8 +28,10 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile);
 int vpxt_output_settings(const char *outputFile, VP8_CONFIG opt);
 int vpxt_output_compatable_settings(const char *outputFile, VP8_CONFIG opt, int ParVersionNum);
 int vpxt_output_settings_api(char *outputFile, vpx_codec_enc_cfg_t cfg);
+int vpxt_input_settings_api(char *inputFile, vpx_codec_enc_cfg_t &cfg);
 int vpxt_output_settings_ivfenc(char *outputFile, VP8_CONFIG opt);
 int vpxt_convert_par_file_to_ivfenc(const char *input, const char *output);
+int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_api);
 //---------------------------------------------------IVF Header Data------------------------------------------------------------------
 int vpxt_print_ivf_file_header(IVF_HEADER ivf);
 int vpxt_format_ivf_header_read(IVF_HEADER *ivf);

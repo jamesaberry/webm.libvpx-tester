@@ -4868,6 +4868,23 @@ int tool_convert_par_file_to_ivfenc(int argc, const char *const *argv)
     vpxt_convert_par_file_to_ivfenc(argv[2], argv[3]);
     return 0;
 }
+int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv)
+{
+    if (argc < 4)
+    {
+        tprintf(PRINT_STD,
+                "\n  Convert Parameter File to vpxenc settings\n\n"
+                "     <input core file>\n"
+                "     <input api file>\n"
+                "\n");
+        return 0;
+    }
+
+    tprintf(PRINT_STD, "\n\nequivalent vpxenc settings:\n");
+    vpxt_convert_par_file_to_vpxenc(argv[2], argv[3]);
+    tprintf(PRINT_STD, "\n\n");
+    return 0;
+}
 int tool_create_rand_par_file(int argc, const char *const *argv)
 {
     if (argc < 3)

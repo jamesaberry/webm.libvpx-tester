@@ -18,6 +18,7 @@ int tool_compression_equiv(int argc, const char *const *argv, string WorkingDir)
 int tool_compr_ivf_to_ivf(int argc, const char *const *argv, string WorkingDir);
 int tool_comp_matches_ivfenc(int argc, const char *const *argv);
 int tool_convert_par_file_to_ivfenc(int argc, const char *const *argv);
+int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv);
 int tool_create_rand_par_file(int argc, const char *const *argv);
 int tool_crop_raw_ivf(int argc, const char *const *argv);
 int tool_copy_all_txt_files(int argc, const char *const *argv);

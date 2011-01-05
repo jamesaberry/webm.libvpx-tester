@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sstream>
-using namespace std;
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -23,6 +22,8 @@ using namespace std;
 #include <sys/types.h>
 #include <dirent.h>
 #endif
+
+using namespace std;
 
 //CodeCoverage
 extern int tool_array_coverage(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[]);
@@ -219,11 +220,11 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "  (31) test_resample_down_watermark         CreateSampleTextFiles\n");
     tprintf(PRINT_STD, "  (32) test_speed                           PrintVersion\n");
     tprintf(PRINT_STD, "  (33) test_test_vector                     \n");
-    tprintf(PRINT_STD, "  (34) test_two_pass_vs_two_pass_best       RandParFile\n");
-    tprintf(PRINT_STD, "  (35) test_undershoot                      RandIVFComp\n");
-    tprintf(PRINT_STD, "  (36) test_version                         GraphPSNR\n");
-    tprintf(PRINT_STD, "  (37) test_win_lin_mac_match               Help\n");
-    tprintf(PRINT_STD, "                                            \n");
+    tprintf(PRINT_STD, "  (34) test_two_pass_vs_two_pass_best       VPXEncPar\n");
+    tprintf(PRINT_STD, "  (35) test_undershoot                      RandParFile\n");
+    tprintf(PRINT_STD, "  (36) test_version                         RandIVFComp\n");
+    tprintf(PRINT_STD, "  (37) test_win_lin_mac_match               GraphPSNR\n");
+    tprintf(PRINT_STD, "                                            Help\n");
 
     return;
 }
@@ -2578,6 +2579,9 @@ int  main(int argc, char *argv[])
 
     if (TestInputString.compare("playdecivf") == 0)                         // Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
         return tool_play_dec_ivf(argc, argv);
+
+    if (TestInputString.compare("vpxencpar") == 0)             //converts Tester Parameter file to a vpxenc ParFile
+        return tool_convert_par_file_to_vpxenc(argc, argv);
 
     ////////////////////Hidden Commands/////////////////////////
     if (TestInputString.compare("showhidden") == 0)                         //Shows Hidden Commands

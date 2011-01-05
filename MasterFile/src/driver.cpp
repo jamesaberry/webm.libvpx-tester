@@ -194,37 +194,37 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "   (5) test_buffer_level                    \n");
     tprintf(PRINT_STD, "   (6) test_change_cpu_dec                  IVFDataRate\n");
     tprintf(PRINT_STD, "   (7) test_change_cpu_enc                  IVFPSNR\n");
-    tprintf(PRINT_STD, "   (8) test_data_rate                       IVFCheckPBM\n");
-    tprintf(PRINT_STD, "   (9) test_debug_matches_release           \n");
-    tprintf(PRINT_STD, "  (10) test_drop_frame_watermark            Raw2IVF\n");
-    tprintf(PRINT_STD, "  (11) test_encoder_break_out               IVF2Raw\n");
-    tprintf(PRINT_STD, "  (12) test_error_resolution                IVF2RawFrames\n");
-    tprintf(PRINT_STD, "  (13) test_extra_file                      CombineIndvFrames\n");
-    tprintf(PRINT_STD, "  (14) test_fixed_quantizer                 \n");
-    tprintf(PRINT_STD, "  (15) test_force_key_frame                 CompareIVF\n");
-    tprintf(PRINT_STD, "  (16) test_frame_size                      CompIVFHeader\n");
-    tprintf(PRINT_STD, "  (17) test_good_vs_best                    DispIVFHeader\n");
-    tprintf(PRINT_STD, "  (18) test_lag_in_frames                   \n");
-    tprintf(PRINT_STD, "  (19) test_max_quantizer                   DispKeyFrames\n");
-    tprintf(PRINT_STD, "  (20) test_mem_leak                        DispResizedFrames\n");
-    tprintf(PRINT_STD, "  (21) test_mem_leak2                       DispVisibleFrames\n");
-    tprintf(PRINT_STD, "  (22) test_min_quantizer                   DispAltRefFrames\n");
-    tprintf(PRINT_STD, "  (23) test_multithreaded                   \n");
-    tprintf(PRINT_STD, "  (24) test_new_vs_old_enc_cpu_tick         CropRawIVF\n");
-    tprintf(PRINT_STD, "  (25) test_new_vs_old_psnr                 CutIVF\n");
-    tprintf(PRINT_STD, "  (26) test_noise_sensitivity               PasteIVF\n");
-    tprintf(PRINT_STD, "  (27) test_one_pass_vs_two_pass            \n");
-    tprintf(PRINT_STD, "  (28) test_play_alternate                  PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (29) test_post_processor                  PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (30) test_reconstruct_buffer              \n");
-    tprintf(PRINT_STD, "  (31) test_resample_down_watermark         CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (32) test_speed                           PrintVersion\n");
-    tprintf(PRINT_STD, "  (33) test_test_vector                     \n");
-    tprintf(PRINT_STD, "  (34) test_two_pass_vs_two_pass_best       VPXEncPar\n");
-    tprintf(PRINT_STD, "  (35) test_undershoot                      RandParFile\n");
-    tprintf(PRINT_STD, "  (36) test_version                         RandIVFComp\n");
-    tprintf(PRINT_STD, "  (37) test_win_lin_mac_match               GraphPSNR\n");
-    tprintf(PRINT_STD, "                                            Help\n");
+    tprintf(PRINT_STD, "   (8) test_constrained_quality             IVFCheckPBM\n");
+    tprintf(PRINT_STD, "   (9) test_data_rate                       \n");
+    tprintf(PRINT_STD, "  (10) test_debug_matches_release           Raw2IVF\n");
+    tprintf(PRINT_STD, "  (11) test_drop_frame_watermark            IVF2Raw\n");
+    tprintf(PRINT_STD, "  (12) test_encoder_break_out               IVF2RawFrames\n");
+    tprintf(PRINT_STD, "  (13) test_error_resolution                CombineIndvFrames\n");
+    tprintf(PRINT_STD, "  (14) test_extra_file                      \n");
+    tprintf(PRINT_STD, "  (15) test_fixed_quantizer                 CompareIVF\n");
+    tprintf(PRINT_STD, "  (16) test_force_key_frame                 CompIVFHeader\n");
+    tprintf(PRINT_STD, "  (17) test_frame_size                      DispIVFHeader\n");
+    tprintf(PRINT_STD, "  (18) test_good_vs_best                    \n");
+    tprintf(PRINT_STD, "  (19) test_lag_in_frames                   DispKeyFrames\n");
+    tprintf(PRINT_STD, "  (20) test_max_quantizer                   DispResizedFrames\n");
+    tprintf(PRINT_STD, "  (21) test_mem_leak                        DispVisibleFrames\n");
+    tprintf(PRINT_STD, "  (22) test_mem_leak2                       DispAltRefFrames\n");
+    tprintf(PRINT_STD, "  (23) test_min_quantizer                   \n");
+    tprintf(PRINT_STD, "  (24) test_multithreaded                   CropRawIVF\n");
+    tprintf(PRINT_STD, "  (25) test_new_vs_old_enc_cpu_tick         CutIVF\n");
+    tprintf(PRINT_STD, "  (26) test_new_vs_old_psnr                 PasteIVF\n");
+    tprintf(PRINT_STD, "  (27) test_noise_sensitivity               \n");
+    tprintf(PRINT_STD, "  (28) test_one_pass_vs_two_pass            PlayDecIVF\n");
+    tprintf(PRINT_STD, "  (29) test_play_alternate                  PlayCompIVF\n");
+    tprintf(PRINT_STD, "  (30) test_post_processor                  \n");
+    tprintf(PRINT_STD, "  (31) test_reconstruct_buffer              CreateSampleTextFiles\n");
+    tprintf(PRINT_STD, "  (32) test_resample_down_watermark         PrintVersion\n");
+    tprintf(PRINT_STD, "  (33) test_speed                           \n");
+    tprintf(PRINT_STD, "  (34) test_test_vector                     VPXEncPar\n");
+    tprintf(PRINT_STD, "  (35) test_two_pass_vs_two_pass_best       RandParFile\n");
+    tprintf(PRINT_STD, "  (36) test_undershoot                      RandIVFComp\n");
+    tprintf(PRINT_STD, "  (37) test_version                         GraphPSNR\n");
+    tprintf(PRINT_STD, "  (38) test_win_lin_mac_match               Help\n");
 
     return;
 }
@@ -2709,6 +2709,9 @@ int  main(int argc, char *argv[])
 
     if (selector == CHGWRNUM)
         return test_change_cpu_enc(argc, argv, WorkingDir, EmptyAr, 1);
+
+    if (selector == CONQUNUM)
+        return test_constrained_quality(argc, argv, WorkingDir, EmptyAr, 1);
 
     if (selector == DFWMWNUM)
         return test_drop_frame_watermark(argc, argv, WorkingDir, EmptyAr, 1);

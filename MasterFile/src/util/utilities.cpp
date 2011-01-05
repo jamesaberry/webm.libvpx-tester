@@ -2185,6 +2185,9 @@ int vpxt_identify_test(const char *test_char)
         if (id_test_str.compare("test_change_cpu_enc") == 0)
             return CHGWRNUM;
 
+        if (id_test_str.compare("test_constrained_quality") == 0)
+            return CONQUNUM;
+
         if (id_test_str.compare("test_data_rate") == 0)
             return DTARTNUM;
 

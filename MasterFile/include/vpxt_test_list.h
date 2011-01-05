@@ -10,6 +10,7 @@ extern int test_auto_key_frame(int argc, const char *const *argv, const string &
 extern int test_buffer_level(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType);
 extern int test_change_cpu_dec(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType);
 extern int test_change_cpu_enc(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType);
+extern int test_constrained_quality(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType);
 extern int test_drop_frame_watermark(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType);
 extern int test_data_rate(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType);
 extern int test_debug_matches_release(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType);

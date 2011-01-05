@@ -241,6 +241,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_constrained_quality.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_data_rate.cpp"
 					>
 				</File>

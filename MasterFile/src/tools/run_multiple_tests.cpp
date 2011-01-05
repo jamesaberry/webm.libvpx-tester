@@ -871,6 +871,28 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                     TestsRun++;
                 }
 
+                if (selector == CONQUNUM)
+                {
+                    SelectorAr[SelectorArInt] = "Test_Constrained_Quality";
+                    check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
+                    SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = vpxt_get_time();
+                    }
+
+                    PassFail[PassFailInt] = test_constrained_quality(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = vpxt_get_time();
+                        RunTimeRecAr[SelectorArInt] = vpxt_get_time_in_micro_sec(RunTime1, RunTime2);
+                    }
+
+                    TestsRun++;
+                }
+
                 if (selector == DTARTNUM)
                 {
                     SelectorAr[SelectorArInt] = "Test_Data_Rate";

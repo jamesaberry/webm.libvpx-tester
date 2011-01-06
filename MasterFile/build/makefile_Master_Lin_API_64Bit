@@ -22,6 +22,7 @@ SRC = \
    $(TestsDir)/test_buffer_level.cpp  \
    $(TestsDir)/test_change_cpu_dec.cpp  \
    $(TestsDir)/test_change_cpu_enc.cpp  \
+   $(TestsDir)/test_constrained_quality.cpp  \
    $(TestsDir)/test_data_rate.cpp  \
    $(TestsDir)/test_debug_matches_release.cpp  \
    $(TestsDir)/test_drop_frame_watermark.cpp  \
@@ -77,6 +78,7 @@ SRCOBJ = \
    $(OBJDIR)/test_buffer_level.o  \
    $(OBJDIR)/test_change_cpu_dec.o  \
    $(OBJDIR)/test_change_cpu_enc.o  \
+   $(OBJDIR)/test_constrained_quality.o  \
    $(OBJDIR)/test_data_rate.o  \
    $(OBJDIR)/test_debug_matches_release.o  \
    $(OBJDIR)/test_drop_frame_watermark.o  \
@@ -165,6 +167,9 @@ $(OBJDIR)/test_change_cpu_dec.o: $(TestsDir)/test_change_cpu_dec.cpp
 
 $(OBJDIR)/test_change_cpu_enc.o: $(TestsDir)/test_change_cpu_enc.cpp
 	$(GPP) -c $(TestsDir)/test_change_cpu_enc.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_change_cpu_enc.o
+
+$(OBJDIR)/test_constrained_quality.o: $(TestsDir)/test_constrained_quality.cpp
+	$(GPP) -c $(TestsDir)/test_constrained_quality.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_constrained_quality.o
 
 $(OBJDIR)/test_data_rate.o: $(TestsDir)/test_data_rate.cpp
 	$(GPP) -c $(TestsDir)/test_data_rate.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_data_rate.o

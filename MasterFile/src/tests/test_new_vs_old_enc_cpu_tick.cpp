@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
 
     char *MyDir = "test_new_vs_old_enc_cpu_tick";
@@ -27,7 +27,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const string
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     char ExeInput[255];
@@ -40,36 +40,36 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const string
     unsigned int Time3 = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
-    string ExeString = "";
+    std::string CurTestDirStr = "";
+    std::string ExeString = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string outputVP8New = CurTestDirStr;
+    std::string outputVP8New = CurTestDirStr;
     outputVP8New.append(slashCharStr());
     outputVP8New.append(MyDir);
     outputVP8New.append("_compression_new.ivf");
 
-    string outputVP8Old = CurTestDirStr;
+    std::string outputVP8Old = CurTestDirStr;
     outputVP8Old.append(slashCharStr());
     outputVP8Old.append(MyDir);
     outputVP8Old.append("_compression_old.ivf");
 
-    string outputVP8Old2 = CurTestDirStr;
+    std::string outputVP8Old2 = CurTestDirStr;
     outputVP8Old2.append(slashCharStr());
     outputVP8Old2.append(MyDir);
     outputVP8Old2.append("_compression_old.ivf");
 
-    string ParFile = CurTestDirStr;
+    std::string ParFile = CurTestDirStr;
     ParFile.append(slashCharStr());
     ParFile.append(MyDir);
     ParFile.append("_parameter_file.txt");
 
-    string Program = ExeString;
+    std::string Program = ExeString;
     Program.append(ExeInput);
 
 #if defined(_WIN32)
@@ -103,7 +103,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const string
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

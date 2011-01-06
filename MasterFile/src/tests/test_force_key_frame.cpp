@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_force_key_frame(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_force_key_frame(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Key Frame Frequency";
     char *MyDir = "test_force_key_frame";
@@ -26,7 +26,7 @@ int test_force_key_frame(int argc, const char *const *argv, const string &Workin
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int ForceKeyFrameInt = atoi(argv[5]);
@@ -34,26 +34,26 @@ int test_force_key_frame(int argc, const char *const *argv, const string &Workin
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string ForceKeyFrame = CurTestDirStr;
+    std::string ForceKeyFrame = CurTestDirStr;
     ForceKeyFrame.append(slashCharStr());
     ForceKeyFrame.append(MyDir);
     ForceKeyFrame.append("_compression.ivf");
 
-    string KeyFrameoutputfile = CurTestDirStr;
+    std::string KeyFrameoutputfile = CurTestDirStr;
     KeyFrameoutputfile.append(slashCharStr());
     KeyFrameoutputfile.append(MyDir);
     KeyFrameoutputfile.append("_compression_key_frames.txt");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

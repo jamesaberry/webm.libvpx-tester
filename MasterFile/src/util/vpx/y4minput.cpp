@@ -10,8 +10,8 @@
 *  Based on code from the OggTheora software codec source code,
 *  Copyright (C) 2002-2010 The Xiph.Org Foundation and contributors.
 */
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include "y4minput.h"
 
 static int y4m_parse_tags(y4m_input *_y4m, char *_tags)

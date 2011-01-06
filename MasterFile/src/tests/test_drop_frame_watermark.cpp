@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_drop_frame_watermark(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_drop_frame_watermark(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Drop Frames Watermark";
     char *MyDir = "test_drop_frame_watermark";
@@ -25,28 +25,28 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const string &W
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string DFWMOutFileBase = CurTestDirStr;
+    std::string DFWMOutFileBase = CurTestDirStr;
     DFWMOutFileBase.append(slashCharStr());
     DFWMOutFileBase.append(MyDir);
     DFWMOutFileBase.append("_compression_");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -118,7 +118,7 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const string &W
             ///////Update File Name///////
             char num[20];
             vpxt_itoa_custom(n, num, 10);
-            string DFWMOutFile = DFWMOutFileBase;
+            std::string DFWMOutFile = DFWMOutFileBase;
             DFWMOutFile.append(num);
             DFWMOutFile.append(".ivf");
 
@@ -143,7 +143,7 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const string &W
             ///////Update File Name///////
             char num[20];
             vpxt_itoa_custom(n, num, 10);
-            string DFWMOutFile = DFWMOutFileBase;
+            std::string DFWMOutFile = DFWMOutFileBase;
             DFWMOutFile.append(num);
             DFWMOutFile.append(".ivf");
 

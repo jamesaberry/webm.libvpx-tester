@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_auto_key_frame(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_auto_key_frame(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Auto Key Frame";
     char *MyDir = "test_auto_key_frame";
@@ -26,7 +26,7 @@ int test_auto_key_frame(int argc, const char *const *argv, const string &Working
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int AutoKeyFramingInt = atoi(argv[5]);
@@ -34,36 +34,36 @@ int test_auto_key_frame(int argc, const char *const *argv, const string &Working
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string AutoKeyFramingWorks1 = CurTestDirStr;
+    std::string AutoKeyFramingWorks1 = CurTestDirStr;
     AutoKeyFramingWorks1.append(slashCharStr());
     AutoKeyFramingWorks1.append(MyDir);
     AutoKeyFramingWorks1.append("_compression_1.ivf");
 
-    string AutoKeyFramingWorks2 = CurTestDirStr;
+    std::string AutoKeyFramingWorks2 = CurTestDirStr;
     AutoKeyFramingWorks2.append(slashCharStr());
     AutoKeyFramingWorks2.append(MyDir);
     AutoKeyFramingWorks2.append("_compression_2.ivf");
 
-    string KeyFrameTxtOut1 = CurTestDirStr;
+    std::string KeyFrameTxtOut1 = CurTestDirStr;
     KeyFrameTxtOut1.append(slashCharStr());
     KeyFrameTxtOut1.append(MyDir);
     KeyFrameTxtOut1.append("_compression_1_key_frames.txt");
 
-    string KeyFrameTxtOut2 = CurTestDirStr;
+    std::string KeyFrameTxtOut2 = CurTestDirStr;
     KeyFrameTxtOut2.append(slashCharStr());
     KeyFrameTxtOut2.append(MyDir);
     KeyFrameTxtOut2.append("_compression_2_key_frames.txt");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -154,8 +154,8 @@ int test_auto_key_frame(int argc, const char *const *argv, const string &Working
     vpxt_display_key_frames(AutoKeyFramingWorks1.c_str(), 1);
     vpxt_display_key_frames(AutoKeyFramingWorks2.c_str(), 1);
 
-    ifstream inFileIndexOutputChar(KeyFrameTxtOut1.c_str());
-    ifstream infile2(KeyFrameTxtOut2.c_str());
+    std::ifstream inFileIndexOutputChar(KeyFrameTxtOut1.c_str());
+    std::ifstream infile2(KeyFrameTxtOut2.c_str());
 
     if (!inFileIndexOutputChar.good())
     {
@@ -211,7 +211,7 @@ int test_auto_key_frame(int argc, const char *const *argv, const string &Working
 
     //////////////////////////////////////////////////////////////////////////////////
     int fail2 = 0;
-    ifstream infile(KeyFrameTxtOut1.c_str());
+    std::ifstream infile(KeyFrameTxtOut1.c_str());
 
     if (!infile.good())
     {

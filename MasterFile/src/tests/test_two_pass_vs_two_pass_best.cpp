@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_two_pass_vs_two_pass_best";
@@ -18,52 +18,52 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const stri
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int BitRate = atoi(argv[3]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string TwoPassOutFile1 = CurTestDirStr;
+    std::string TwoPassOutFile1 = CurTestDirStr;
     TwoPassOutFile1.append(slashCharStr());
     TwoPassOutFile1.append(MyDir);
     TwoPassOutFile1.append("_compression_two_pass_1.ivf");
 
-    string TwoPassOutFile2 = CurTestDirStr;
+    std::string TwoPassOutFile2 = CurTestDirStr;
     TwoPassOutFile2.append(slashCharStr());
     TwoPassOutFile2.append(MyDir);
     TwoPassOutFile2.append("_compression_two_pass_2.ivf");
 
-    string TwoPassOutFile3 = CurTestDirStr;
+    std::string TwoPassOutFile3 = CurTestDirStr;
     TwoPassOutFile3.append(slashCharStr());
     TwoPassOutFile3.append(MyDir);
     TwoPassOutFile3.append("_compression_two_pass_3.ivf");
 
-    string TwoPassBestOutFile1 = CurTestDirStr;
+    std::string TwoPassBestOutFile1 = CurTestDirStr;
     TwoPassBestOutFile1.append(slashCharStr());
     TwoPassBestOutFile1.append(MyDir);
     TwoPassBestOutFile1.append("_compression_two_pass_best_1.ivf");
 
-    string TwoPassBestOutFile2 = CurTestDirStr;
+    std::string TwoPassBestOutFile2 = CurTestDirStr;
     TwoPassBestOutFile2.append(slashCharStr());
     TwoPassBestOutFile2.append(MyDir);
     TwoPassBestOutFile2.append("_compression_two_pass_best_2.ivf");
 
-    string TwoPassBestOutFile3 = CurTestDirStr;
+    std::string TwoPassBestOutFile3 = CurTestDirStr;
     TwoPassBestOutFile3.append(slashCharStr());
     TwoPassBestOutFile3.append(MyDir);
     TwoPassBestOutFile3.append("_compression_two_pass_best_3.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -193,7 +193,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const stri
         return 10;
     }
 
-    cout << "\n";
+    tprintf(PRINT_STD, "\n");
 
     float GoodSize1 = vpxt_ivf_data_rate(TwoPassOutFile1.c_str(), 1);
     float BestSize1 = vpxt_ivf_data_rate(TwoPassBestOutFile1.c_str(), 1);

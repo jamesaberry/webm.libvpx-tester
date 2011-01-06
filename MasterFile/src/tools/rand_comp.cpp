@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int tool_rand_comp(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int tool_rand_comp(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
 
     char *CompressString = "RandomInput";
@@ -14,13 +14,13 @@ int tool_rand_comp(int argc, const char *const *argv, const string &WorkingDir, 
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
 
     ////////////Formatting Test Specific Directory////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *MyDir = "RandComp";
-    string MainDirString = "";
+    std::string MainDirString = "";
     char File1[255] = "";
 
     snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
@@ -35,24 +35,24 @@ int tool_rand_comp(int argc, const char *const *argv, const string &WorkingDir, 
 
     WorkingDir3[v] = slashChar();
     WorkingDir3[v+1] = '\0';
-    string WorkingDirString = WorkingDir3;
+    std::string WorkingDirString = WorkingDir3;
     WorkingDirString.append(MyDir);
     WorkingDirString.append(slashCharStr());
     WorkingDirString.append(FilesAr[0]);
     WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
-    string CreateDir2 = WorkingDirString;
+    std::string CreateDir2 = WorkingDirString;
     CreateDir2.insert(0, "md \"");
     vpxt_make_dir_vpx(CreateDir2.c_str());
 
-    string WorkingDir4 = WorkingDirString;
-    string WorkingDir5 = WorkingDirString;
+    std::string WorkingDir4 = WorkingDirString;
+    std::string WorkingDir5 = WorkingDirString;
 
     WorkingDir4.append(slashCharStr());
 
     char InputFileName[255];
     vpxt_file_name(input.c_str(), InputFileName, 0);
-    string InputFileNameStr = InputFileName;
+    std::string InputFileNameStr = InputFileName;
 
     if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 4).compare(".ivf") == 0) //if file extension is present remove it
         WorkingDir4.append(InputFileNameStr.substr(0, InputFileNameStr.length() - 4));
@@ -70,7 +70,7 @@ int tool_rand_comp(int argc, const char *const *argv, const string &WorkingDir, 
     snprintf(RandCompParOut, 255, "%s", WorkingDir5.c_str());
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    std::string TextfileString = WorkingDirString;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
     TextfileString.append(".txt");

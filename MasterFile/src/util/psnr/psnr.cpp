@@ -1,5 +1,5 @@
 #include "yv12config.h"
-#include <math.h>
+#include <cmath>
 
 #define MAX_PSNR 60
 

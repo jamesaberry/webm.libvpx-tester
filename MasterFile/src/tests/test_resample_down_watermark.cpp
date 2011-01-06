@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_resample_down_watermark(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_resample_down_watermark(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Resample Down Watermark";
     char *MyDir = "test_resample_down_watermark";
@@ -25,33 +25,33 @@ int test_resample_down_watermark(int argc, const char *const *argv, const string
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string DownWaterSamp90OutFile = CurTestDirStr;
+    std::string DownWaterSamp90OutFile = CurTestDirStr;
     DownWaterSamp90OutFile.append(slashCharStr());
     DownWaterSamp90OutFile.append(MyDir);
     DownWaterSamp90OutFile.append("_compression_90.ivf");
 
-    string DownWaterSamp10OutFile = CurTestDirStr;
+    std::string DownWaterSamp10OutFile = CurTestDirStr;
     DownWaterSamp10OutFile.append(slashCharStr());
     DownWaterSamp10OutFile.append(MyDir);
     DownWaterSamp10OutFile.append("_compression_10.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

@@ -9,7 +9,7 @@
 ***************************************************************************/
 
 #include "ivf.h"
-#include <string.h>
+#include <cstring>
 
 void InitIVFHeader(IVF_HEADER *ivf)
 {

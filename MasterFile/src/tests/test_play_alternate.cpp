@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_play_alternate(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_play_alternate(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Play Alternate";
     char *MyDir = "test_play_alternate";
@@ -25,7 +25,7 @@ int test_play_alternate(int argc, const char *const *argv, const string &Working
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -34,8 +34,8 @@ int test_play_alternate(int argc, const char *const *argv, const string &Working
     int PlayAlternate2Val = 1;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = ""; // <- All Options need to set a value for this
-    string FileIndexStr = "";
+    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
@@ -44,14 +44,14 @@ int test_play_alternate(int argc, const char *const *argv, const string &Working
 
     char playaltbuff[255];
 
-    string PlayAlternate1 = CurTestDirStr;
+    std::string PlayAlternate1 = CurTestDirStr;
     PlayAlternate1.append(slashCharStr());
     PlayAlternate1.append(MyDir);
     PlayAlternate1.append("_compression_");
     PlayAlternate1.append(vpxt_itoa_custom(PlayAlternate1Val, playaltbuff, 10));
     PlayAlternate1.append(".ivf");
 
-    string PlayAlternate2 = CurTestDirStr;
+    std::string PlayAlternate2 = CurTestDirStr;
     PlayAlternate2.append(slashCharStr());
     PlayAlternate2.append(MyDir);
     PlayAlternate2.append("_compression_");
@@ -59,7 +59,7 @@ int test_play_alternate(int argc, const char *const *argv, const string &Working
     PlayAlternate2.append(".ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

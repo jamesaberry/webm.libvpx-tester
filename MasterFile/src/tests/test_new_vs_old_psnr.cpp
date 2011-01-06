@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_psnr(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
 
     char *MyDir = "test_new_vs_old_psnr";
@@ -27,7 +27,7 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const string &Workin
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     char ExeInput[255];
@@ -37,10 +37,10 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const string &Workin
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
-    string ExeString = "";
+    std::string CurTestDirStr = "";
+    std::string ExeString = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
@@ -60,23 +60,23 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const string &Workin
 #endif
 
     //////////////////////////////////////////////
-    string NewEncFile = CurTestDirStr;
+    std::string NewEncFile = CurTestDirStr;
     NewEncFile.append(slashCharStr());
     NewEncFile.append(MyDir);
     NewEncFile.append("_compression_new.ivf");
 
-    string OldEncFile = CurTestDirStr;
+    std::string OldEncFile = CurTestDirStr;
     OldEncFile.append(slashCharStr());
     OldEncFile.append(MyDir);
     OldEncFile.append("_compression_old.ivf");
 
-    string ParFile = CurTestDirStr;
+    std::string ParFile = CurTestDirStr;
     ParFile.append(slashCharStr());
     ParFile.append(MyDir);
     ParFile.append("_parameter_file.txt");
 
-    string Program = ExeString;
-    string FPF_Program = "";
+    std::string Program = ExeString;
+    std::string FPF_Program = "";
 
 #if defined(_WIN32)
     {
@@ -113,7 +113,7 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const string &Workin
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

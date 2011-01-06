@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_debug_matches_release(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_debug_matches_release(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     //Needs Debug.exe and Release.exe
     char *MyDir = "test_debug_matches_release";
@@ -27,7 +27,7 @@ int test_debug_matches_release(int argc, const char *const *argv, const string &
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     const char *ExeInputDebug = argv[5];
@@ -35,9 +35,9 @@ int test_debug_matches_release(int argc, const char *const *argv, const string &
     snprintf(ExeInputRelease, 255, "%s", argv[6]);
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
@@ -45,48 +45,48 @@ int test_debug_matches_release(int argc, const char *const *argv, const string &
 
     char ExeCharDebugRelease[1024];
     vpxt_folder_name(argv[0], ExeCharDebugRelease);
-    string ExeCharDebugReleaseString = ExeCharDebugRelease;
+    std::string ExeCharDebugReleaseString = ExeCharDebugRelease;
 
-    string DebugExeLoc = ExeCharDebugReleaseString;
+    std::string DebugExeLoc = ExeCharDebugReleaseString;
     DebugExeLoc.append(ExeInputDebug);
 
-    string ReleaseExeLoc = ExeCharDebugReleaseString;
+    std::string ReleaseExeLoc = ExeCharDebugReleaseString;
     ReleaseExeLoc.append(ExeInputRelease);
 
-    string DebugOutputEnc = CurTestDirStr;
+    std::string DebugOutputEnc = CurTestDirStr;
     DebugOutputEnc.append(slashCharStr());
     DebugOutputEnc.append(MyDir);
     DebugOutputEnc.append("_compression_debug.ivf");
 
-    string ReleaseOutputEnc = CurTestDirStr;
+    std::string ReleaseOutputEnc = CurTestDirStr;
     ReleaseOutputEnc.append(slashCharStr());
     ReleaseOutputEnc.append(MyDir);
     ReleaseOutputEnc.append("_compression_release.ivf");
 
-    string DebugOutputDec = CurTestDirStr;
+    std::string DebugOutputDec = CurTestDirStr;
     DebugOutputDec.append(slashCharStr());
     DebugOutputDec.append(MyDir);
     DebugOutputDec.append("_decompression_debug.ivf");
 
-    string ReleaseOutputDec = CurTestDirStr;
+    std::string ReleaseOutputDec = CurTestDirStr;
     ReleaseOutputDec.append(slashCharStr());
     ReleaseOutputDec.append(MyDir);
     ReleaseOutputDec.append("_decompression_release.ivf");
 
-    string ParFileDebug = CurTestDirStr;
+    std::string ParFileDebug = CurTestDirStr;
     ParFileDebug.append(slashCharStr());
     ParFileDebug.append(MyDir);
     ParFileDebug.append("_parameter_file_debug.txt");
 
-    string ParFileRelease = CurTestDirStr;
+    std::string ParFileRelease = CurTestDirStr;
     ParFileRelease.append(slashCharStr());
     ParFileRelease.append(MyDir);
     ParFileRelease.append("_parameter_file_release.txt");
 
-    string ProgramDebugEnc = ExeCharDebugReleaseString;
-    string ProgramReleaseEnc = ExeCharDebugReleaseString;
-    string ProgramDebugDec = ExeCharDebugReleaseString;
-    string ProgramReleaseDec = ExeCharDebugReleaseString;
+    std::string ProgramDebugEnc = ExeCharDebugReleaseString;
+    std::string ProgramReleaseEnc = ExeCharDebugReleaseString;
+    std::string ProgramDebugDec = ExeCharDebugReleaseString;
+    std::string ProgramReleaseDec = ExeCharDebugReleaseString;
 
 #if defined(_WIN32)
     {
@@ -177,7 +177,7 @@ int test_debug_matches_release(int argc, const char *const *argv, const string &
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

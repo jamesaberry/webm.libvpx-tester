@@ -12,10 +12,10 @@ IvfDir = ../../../../MasterFile/src/util/vpx
 # source files
 SRC = \
 	$(SourceDir)/supportingdebug.cpp \
-	$(PsnrDir)/psnr.c \
+	$(PsnrDir)/psnr.cpp \
 	$(PsnrDir)/ssim.cpp \
 	$(UtlSrcDir)/utilities.cpp \
-	$(IvfDir)/ivf.c \
+	$(IvfDir)/ivf.cpp \
 	$(IvfDir)/md5_utils.cpp \
 
 # source object files
@@ -40,11 +40,11 @@ INCLUDE = -I ../../../../MasterFile/include -I ../include/release-new-arm6 -D AP
 $(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe: $(SRCOBJ)
 	$(GPP) $(INCLUDE) -o "$(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm6.exe" $(SRCOBJ) $(LFLAGS)
 
-$(OBJDIR)/ivf.o: $(IvfDir)/ivf.c
-	$(GCC) -c $(IvfDir)/ivf.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
+$(OBJDIR)/ivf.o: $(IvfDir)/ivf.cpp
+	$(GPP) -c $(IvfDir)/ivf.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
 
-$(OBJDIR)/psnr.o: $(PsnrDir)/psnr.c
-	$(GCC) -c $(PsnrDir)/psnr.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/psnr.o
+$(OBJDIR)/psnr.o: $(PsnrDir)/psnr.cpp
+	$(GPP) -c $(PsnrDir)/psnr.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/psnr.o
 
 $(OBJDIR)/ssim.o: $(PsnrDir)/ssim.cpp
 	$(GPP) -c $(PsnrDir)/ssim.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ssim.o

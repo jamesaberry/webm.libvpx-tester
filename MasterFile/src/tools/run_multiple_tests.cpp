@@ -1,8 +1,8 @@
 #include "vpxt_test_declarations.h"
 #include "vpxt_test_list.h"
-#include "driver.h"
+#include "vpxt_driver.h"
 
-int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofTests)
+int run_multiple_tests(int argc, char *argv[], std::string WorkingDir,  int NumberofTests)
 {
     if (argc < 5)
     {
@@ -37,16 +37,16 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     int *PassFail = new int[NumberofTests+2];
 
-    string SummCompAndTest = "";
-    string SummComp = "";
-    string SummTest = "";
+    std::string SummCompAndTest = "";
+    std::string SummComp = "";
+    std::string SummTest = "";
 
     char *input = argv[3];
 
-    string StringAr[20];
-    string TimeStampAr2[2];
-    string SelectorAr[999];
-    string SelectorAr2[999];
+    std::string StringAr[20];
+    std::string TimeStampAr2[2];
+    std::string SelectorAr[999];
+    std::string SelectorAr2[999];
 
     unsigned long RunTimeRecAr[999];
     /////////////////////////////Record Time it took to run test/////////////////////////////
@@ -75,10 +75,10 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     long FilePositionTracker = 0;
     long FilePositionTracker2 = 0;
 
-    string TimeStampPrevious = "";
+    std::string TimeStampPrevious = "";
 
-    string WorkDirFileStr = "";
-    string WorkingTextFilestr = "";
+    std::string WorkDirFileStr = "";
+    std::string WorkingTextFilestr = "";
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *MyDir = "Summary";
@@ -110,15 +110,15 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         int TestRunning = 0;
 
-        fstream SummCompAndTestFile;
-        SummCompAndTestFile.open(SummCompAndTest.c_str(), fstream::in);
+        std::fstream SummCompAndTestFile;
+        SummCompAndTestFile.open(SummCompAndTest.c_str(), std::fstream::in);
 
         if (SummCompAndTestFile.good())
         {
             TestRunning = 1;
         }
 
-        fstream SummTestFile;
+        std::fstream SummTestFile;
         SummTestFile.open(SummTest.c_str());
 
         if (SummTestFile.good())
@@ -126,7 +126,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             TestRunning = 3;
         }
 
-        fstream SummCompFile;
+        std::fstream SummCompFile;
         SummCompFile.open(SummComp.c_str());
 
         if (SummCompFile.good())
@@ -150,7 +150,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         }
 
         ///Sets Correct input file
-        string PriorResultInput;
+        std::string PriorResultInput;
 
         if (TestRunning == 1)
         {
@@ -167,7 +167,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             PriorResultInput = SummTest;
         }
 
-        fstream PriorResultInputFile;
+        std::fstream PriorResultInputFile;
         PriorResultInputFile.open(PriorResultInput.c_str());
 
         int TestsrunCount = 0;
@@ -186,7 +186,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         while (!PriorResultInputFile.eof())
         {
             PriorResultInputFile.getline(buffer, 1024);
-            string bufferStr = buffer;
+            std::string bufferStr = buffer;
             int u = 0;
 
             //0 number not read yet|1 TestType not read yet|2 TestFolder not read yet|3 Status not read yet
@@ -214,7 +214,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                         }
 
                         buffer[u] = '\0';
-                        string PassFailStr = buffer3;
+                        std::string PassFailStr = buffer3;
 
                         if (PassFailStr.compare("Passed") == 0)
                         {
@@ -363,14 +363,14 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
                     if (TestRunning == 2)
                     {
-                        cout << "\nAll compressions have already been created.\n";
+                        std::cout << "\nAll compressions have already been created.\n";
                         PriorResultInputFile.close();
                         exit(0);
                     }
 
                     if (TestRunning == 3)
                     {
-                        cout << "\nAll tests on compressions have already been run.\n";
+                        std::cout << "\nAll tests on compressions have already been run.\n";
                         PriorResultInputFile.close();
                         exit(0);
                     }
@@ -476,7 +476,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     if (TestType != 3 && MakeNewTestrun == 1)
     {
         //This copies original driving text file over to a new formated one not used for Mode 4 or 3
-        fstream infile;
+        std::fstream infile;
         infile.open(input);
 
         if (!infile.good())
@@ -486,12 +486,12 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             return 0;
         }
 
-        string CreateDir2(WorkingDir);
+        std::string CreateDir2(WorkingDir);
         CreateDir2.insert(0, "md \"");
         CreateDir2.erase(CreateDir2.end() - 1);
         vpxt_make_dir_vpx(CreateDir2);
 
-        ofstream outfile(WorkingTextFilestr.c_str());
+        std::ofstream outfile(WorkingTextFilestr.c_str());
 
         while (!infile.eof())
         {
@@ -531,7 +531,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingDir.append("\"");
 
         //Need to go through and replace all '+' from input file with '-' so that test can keep track of "Tests Only" run
-        fstream WorkingTextFilePrep;
+        std::fstream WorkingTextFilePrep;
         WorkingTextFilePrep.open(WorkingTextFilestr.c_str());
 
         while (!WorkingTextFilePrep.eof())
@@ -540,7 +540,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
             WorkingTextFilePrep.getline(buffer, 1024);
             FilePositionTracker2 = WorkingTextFilePrep.tellg();
 
-            string bufferstring = buffer;
+            std::string bufferstring = buffer;
             bufferstring.erase(0);
 
             if (buffer[0] == '+')
@@ -555,11 +555,11 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
         WorkingTextFilePrep.close();
 
-        string SummComp = argv[3];
+        std::string SummComp = argv[3];
         SummComp.append(slashCharStr());
         SummComp.append("compression_results.txt");
 
-        fstream PriorResultInputFile2;
+        std::fstream PriorResultInputFile2;
         PriorResultInputFile2.open(SummComp.c_str());
 
         if (!PriorResultInputFile2.good())
@@ -615,7 +615,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
     }
 
     //////////////////////////////////////////////////////////////////////
-    fstream WorkingTextFile;
+    std::fstream WorkingTextFile;
     WorkingTextFile.open(WorkingTextFilestr.c_str());
 
     if (!WorkingTextFile.good())
@@ -637,7 +637,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         WorkingTextFile.getline(buffer, 1024);
         FilePositionTracker2 = WorkingTextFile.tellg();
 
-        string bufferString = buffer;
+        std::string bufferString = buffer;
 
         trackthis1++;
 
@@ -702,7 +702,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
                 TimeStampAr2[0] = date_string();
 
                 //set the correct tester type dir string input
-                string TestDir = WorkingDir;
+                std::string TestDir = WorkingDir;
 
                 if (TestType == 3)
                 {
@@ -1652,7 +1652,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
 
                 WorkingTextFile.seekg(FilePositionTracker);
-                string bufferstring = buffer;
+                std::string bufferstring = buffer;
                 bufferstring.erase(0);
 
                 if (TestType == 3)
@@ -1684,7 +1684,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
 
     if (TestsRun == 0)
     {
-        cout << "Test file specified contains no tests.\n";
+        std::cout << "Test file specified contains no tests.\n";
         delete [] PassFail;
         return 0;
     }
@@ -2029,7 +2029,7 @@ int run_multiple_tests(int argc, char *argv[], string WorkingDir,  int NumberofT
         /////////////////////////////Output Time it took to run test/////////////////////////////
         if (RecordRunTimes == 1)
         {
-            string TimeoutputStr = WorkDirFileStr;
+            std::string TimeoutputStr = WorkDirFileStr;
             TimeoutputStr.erase(TimeoutputStr.length() - 4, 4);
             TimeoutputStr.append("_Times.txt");
 

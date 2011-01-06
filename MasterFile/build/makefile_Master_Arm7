@@ -11,8 +11,8 @@ TestsDir = ../src/tests
 # source files
 SRC = \
    $(SrcDir)/driver.cpp \
-   $(IvfDir)/ivf.c \
-   $(PsnrDir)/psnr.c \
+   $(IvfDir)/ivf.cpp \
+   $(PsnrDir)/psnr.cpp \
    $(PsnrDir)/ssim.cpp \
    $(TestsDir)/test_allow_drop_frames.cpp  \
    $(TestsDir)/test_allow_lag.cpp  \
@@ -137,11 +137,11 @@ $(OBJDIR)/driver.o: $(SrcDir)/driver.cpp
 	-mkdir $(OBJDIR)
 	$(GPP) -c $(SrcDir)/driver.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/driver.o
 
-$(OBJDIR)/ivf.o: $(IvfDir)/ivf.c
-	$(GPP) -c $(IvfDir)/ivf.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ivf.o
+$(OBJDIR)/ivf.o: $(IvfDir)/ivf.cpp
+	$(GPP) -c $(IvfDir)/ivf.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ivf.o
 
-$(OBJDIR)/psnr.o: $(PsnrDir)/psnr.c
-	$(GCC) -c $(PsnrDir)/psnr.c $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/psnr.o
+$(OBJDIR)/psnr.o: $(PsnrDir)/psnr.cpp
+	$(GPP) -c $(PsnrDir)/psnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/psnr.o
 
 $(OBJDIR)/ssim.o: $(PsnrDir)/ssim.cpp
 	$(GPP) -c $(PsnrDir)/ssim.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ssim.o

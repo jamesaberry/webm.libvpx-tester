@@ -205,10 +205,6 @@
 				RelativePath=".\src\driver.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\src\tests\test_new_vs_old_enc_cpu_tick.cpp"
-				>
-			</File>
 			<Filter
 				Name="tests"
 				>
@@ -309,6 +305,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_new_vs_old_enc_cpu_tick.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_new_vs_old_psnr.cpp"
 					>
 				</File>
@@ -400,7 +400,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\src\util\vpx\ivf.c"
+						RelativePath=".\src\util\vpx\ivf.cpp"
 						>
 					</File>
 					<File
@@ -424,7 +424,7 @@
 					Name="psnr"
 					>
 					<File
-						RelativePath=".\src\util\psnr\psnr.c"
+						RelativePath=".\src\util\psnr\psnr.cpp"
 						>
 					</File>
 					<File

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_reconstruct_buffer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_reconstruct_buffer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_reconstruct_buffer";
@@ -25,7 +25,7 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const string &Wor
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -33,21 +33,21 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const string &Wor
 
     ////////////Formatting Test Specific Directory////////////
 
-    string CurTestDirStr = ""; // <- All Options need to set a value for this
-    string FileIndexStr = "";
+    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string ReconBufferCompression = CurTestDirStr;
+    std::string ReconBufferCompression = CurTestDirStr;
     ReconBufferCompression.append(slashCharStr());
     ReconBufferCompression.append(MyDir);
     ReconBufferCompression.append("_compression.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -132,8 +132,8 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const string &Wor
 
     int fail = 0;
 
-    ifstream ReconOutFile;
-    string ReconOutStr = ReconBufferCompression;
+    std::ifstream ReconOutFile;
+    std::string ReconOutStr = ReconBufferCompression;
     ReconOutStr.erase(ReconOutStr.length() - 4, 4);
     ReconOutStr.append("_ReconFrameState.txt");
 

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_extra_file(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_extra_file(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_extra_file";
@@ -17,21 +17,21 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
     ////////compression directory////////
-    string CompressionDir = CurTestDirStr;
+    std::string CompressionDir = CurTestDirStr;
     CompressionDir.append(slashCharStr());
-    string CompressionDirAllFiles = CompressionDir;
+    std::string CompressionDirAllFiles = CompressionDir;
 #if defined(_WIN32)
     CompressionDirAllFiles.append("*");
 #endif
@@ -39,15 +39,15 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
     ////////tester directory////////
     char TesterDirChar[255];
     vpxt_folder_name(argv[0], TesterDirChar);
-    string TesterDirAllFiles = TesterDirChar;
+    std::string TesterDirAllFiles = TesterDirChar;
 #if defined(_WIN32)
     TesterDirAllFiles.append("*");
 #endif
 
     ////////current directory////////
-    string CurrentDir;
+    std::string CurrentDir;
     vpxt_get_cur_dir(CurrentDir);
-    string CurrentDirAllFiles = CurrentDir;
+    std::string CurrentDirAllFiles = CurrentDir;
     CurrentDirAllFiles.append(slashCharStr());
 #if defined(_WIN32)
     CurrentDirAllFiles.append("*");
@@ -55,19 +55,19 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
 
     ////////////////////////////////////////////////////////////////
 
-    string ExtraFileCheckStr = CurTestDirStr;
+    std::string ExtraFileCheckStr = CurTestDirStr;
     ExtraFileCheckStr.append(slashCharStr());
     ExtraFileCheckStr.append(MyDir);
     ExtraFileCheckStr.append("_compression.ivf");
 
     //This is to record state for compression only run
-    string ExtraFileCheckResultStr = CurTestDirStr;
+    std::string ExtraFileCheckResultStr = CurTestDirStr;
     ExtraFileCheckResultStr.append(slashCharStr());
     ExtraFileCheckResultStr.append(MyDir);
     ExtraFileCheckResultStr.append("_result.txt");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -102,7 +102,7 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
     /////////////////////////////////////////////////Delete opsnr.stt////////////////////////////////////////////
 
     //check Current Directory
-    string CurrentDirOPSNR = CurrentDir;
+    std::string CurrentDirOPSNR = CurrentDir;
 
     CurrentDirOPSNR.append(slashCharStr());
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", CurrentDirOPSNR.c_str());
@@ -120,7 +120,7 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
     }
 
     //check Tester Dirctory
-    string TesterDirOPSNR = TesterDirChar;
+    std::string TesterDirOPSNR = TesterDirChar;
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", TesterDirOPSNR.c_str());
     TesterDirOPSNR.append("opsnr.stt");
 
@@ -136,7 +136,7 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
     }
 
     //check Compression Directory
-    string CompDirOPSNR = CompressionDir;
+    std::string CompDirOPSNR = CompressionDir;
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", CompDirOPSNR.c_str());
     CompDirOPSNR.append("opsnr.stt");
 
@@ -178,15 +178,15 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
     int Fail = 0;
 
     //Record all files in the executable directory
-    vector<string> IgnoreTesterDir;
+    std::vector<std::string> IgnoreTesterDir;
     vpxt_add_dir_files_to_ignore(IgnoreTesterDir, TesterDirAllFiles);
 
     //Record all files in the current directory.
-    vector<string> IgnoreCurrentDir;
+    std::vector<std::string> IgnoreCurrentDir;
     vpxt_add_dir_files_to_ignore(IgnoreCurrentDir, CurrentDirAllFiles);
 
     //There are no files in comp dir but we need to ignore compression files
-    vector<string> IgnoreCompressionDir;
+    std::vector<std::string> IgnoreCompressionDir;
     IgnoreCompressionDir.push_back(".");
     IgnoreCompressionDir.push_back("..");
     IgnoreCompressionDir.push_back("test_extra_file.txt");
@@ -198,7 +198,7 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
     {
         tprintf(PRINT_BTH, "\nExtraFileCheck Test Run Previously Retreiveing Result\n");
 
-        ifstream infile(ExtraFileCheckResultStr.c_str());
+        std::ifstream infile(ExtraFileCheckResultStr.c_str());
 
         if (!infile.is_open())
         {
@@ -244,9 +244,9 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
     tprintf(PRINT_BTH, "\n\nChecking: %s", TesterDirAllFiles.c_str());
     tprintf(PRINT_BTH, "\n\nChecking: %s\n\n", CurrentDirAllFiles.c_str());
 
-    vector<string> FoundTesterDir;
-    vector<string> FoundCurrentDir;
-    vector<string> FoundCompressionDir;
+    std::vector<std::string> FoundTesterDir;
+    std::vector<std::string> FoundCurrentDir;
+    std::vector<std::string> FoundCompressionDir;
 
     int CurDirFail = vpxt_find_non_ignored_files_in_dir(IgnoreCurrentDir, FoundCurrentDir, CurrentDirAllFiles);
     int CompDirFail = vpxt_find_non_ignored_files_in_dir(IgnoreCompressionDir, FoundCompressionDir, CompressionDirAllFiles);
@@ -257,7 +257,7 @@ int test_extra_file(int argc, const char *const *argv, const string &WorkingDir,
 
     if (TestType == COMP_ONLY)
     {
-        ofstream outfile(ExtraFileCheckResultStr.c_str());
+        std::ofstream outfile(ExtraFileCheckResultStr.c_str());
 
         if (CurDirFail == 0 && CompDirFail == 0 && TesterDirFail == 0)
         {

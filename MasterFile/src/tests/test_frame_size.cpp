@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_frame_size(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_frame_size(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Frame Size";
     char *MyDir = "test_frame_size";
@@ -28,7 +28,7 @@ int test_frame_size(int argc, const char *const *argv, const string &WorkingDir,
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int StartingWidth = atoi(argv[5]);
@@ -37,8 +37,8 @@ int test_frame_size(int argc, const char *const *argv, const string &WorkingDir,
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = ""; // <- All Options need to set a value for this
-    string FileIndexStr = "";
+    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
@@ -48,13 +48,13 @@ int test_frame_size(int argc, const char *const *argv, const string &WorkingDir,
     char InputFileName[256] = "";
     vpxt_file_name(input.c_str(), InputFileName, 1);
 
-    string FrameSizeBase = CurTestDirStr;
+    std::string FrameSizeBase = CurTestDirStr;
     FrameSizeBase.append(slashCharStr());
     FrameSizeBase.append(InputFileName);
 
     char NewWidth[20];
     char NewHeight[20];
-    string RawCrop[47];
+    std::string RawCrop[47];
 
     //height
     int counter = 0;
@@ -113,7 +113,7 @@ int test_frame_size(int argc, const char *const *argv, const string &WorkingDir,
 
     //encoded file names
     FileNum = 1;
-    string EncCrop[47];
+    std::string EncCrop[47];
 
     while (FileNum < 47)
     {
@@ -123,7 +123,7 @@ int test_frame_size(int argc, const char *const *argv, const string &WorkingDir,
         FileNum++;
     }
 
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

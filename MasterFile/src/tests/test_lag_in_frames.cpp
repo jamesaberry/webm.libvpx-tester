@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_lag_in_frames(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_lag_in_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Lag In Frames";
     char *MyDir = "test_lag_in_frames";
@@ -27,7 +27,7 @@ int test_lag_in_frames(int argc, const char *const *argv, const string &WorkingD
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);;
     int LagInFrames1Val = atoi(argv[5]);
@@ -37,8 +37,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const string &WorkingD
 
     ////////////Formatting Test Specific Directory////////////
 
-    string CurTestDirStr = ""; // <- All Options need to set a value for this
-    string FileIndexStr = "";
+    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
@@ -47,18 +47,18 @@ int test_lag_in_frames(int argc, const char *const *argv, const string &WorkingD
 
     char laginframesbuff[255];
 
-    string LagInFrames0 = CurTestDirStr;
+    std::string LagInFrames0 = CurTestDirStr;
     LagInFrames0.append(slashCharStr());
     LagInFrames0.append("test_lag_in_frames_compression_0.ivf");
 
-    string LagInFrames1 = CurTestDirStr;
+    std::string LagInFrames1 = CurTestDirStr;
     LagInFrames1.append(slashCharStr());
     LagInFrames1.append(MyDir);
     LagInFrames1.append("_compression_");
     LagInFrames1.append(vpxt_itoa_custom(LagInFrames1Val, laginframesbuff, 10));
     LagInFrames1.append(".ivf");
 
-    string LagInFrames2 = CurTestDirStr;
+    std::string LagInFrames2 = CurTestDirStr;
     LagInFrames2.append(slashCharStr());
     LagInFrames2.append(MyDir);
     LagInFrames2.append("_compression_");
@@ -66,7 +66,7 @@ int test_lag_in_frames(int argc, const char *const *argv, const string &WorkingD
     LagInFrames2.append(".ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -188,17 +188,17 @@ int test_lag_in_frames(int argc, const char *const *argv, const string &WorkingD
     int lngRC1 = vpxt_compare_ivf(LagInFrames0.c_str(), LagInFrames1.c_str());
     int lngRC2 = vpxt_compare_ivf(LagInFrames1.c_str(), LagInFrames2.c_str());
 
-    string QuantInStr0 = LagInFrames0;
+    std::string QuantInStr0 = LagInFrames0;
     QuantInStr0.erase(QuantInStr0.length() - 4, 4);
     QuantInStr0.append("_quantizers.txt");
     int LagInFramesFound0 = vpxt_lag_in_frames_check(QuantInStr0.c_str());
 
-    string QuantInStr1 = LagInFrames1;
+    std::string QuantInStr1 = LagInFrames1;
     QuantInStr1.erase(QuantInStr1.length() - 4, 4);
     QuantInStr1.append("_quantizers.txt");
     int LagInFramesFound1 = vpxt_lag_in_frames_check(QuantInStr1.c_str());
 
-    string QuantInStr2 = LagInFrames2;
+    std::string QuantInStr2 = LagInFrames2;
     QuantInStr2.erase(QuantInStr2.length() - 4, 4);
     QuantInStr2.append("_quantizers.txt");
     int LagInFramesFound2 = vpxt_lag_in_frames_check(QuantInStr2.c_str());

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak2(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_mem_leak2(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak2";
@@ -22,16 +22,16 @@ int test_mem_leak2(int argc, const char *const *argv, const string &WorkingDir, 
     snprintf(MemLeakExe, 255, "%s", argv[2]);
     snprintf(DecInFile, 255, "%s", argv[3]);
 
-    string input = "Blank";
+    std::string input = "Blank";
     int Mode = 1;
     int BitRate = 128;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
     char ExeCharMemLeak[1024] = "";
 
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
@@ -39,20 +39,20 @@ int test_mem_leak2(int argc, const char *const *argv, const string &WorkingDir, 
 
     //Get the exe's parent folder From argv[0] Paths for both exes will be the same
     vpxt_folder_name(argv[0], ExeCharMemLeak);
-    string ExeCharMemLeakStr = ExeCharMemLeak;
+    std::string ExeCharMemLeakStr = ExeCharMemLeak;
 
-    string MemLeakCheckTXTBase = CurTestDirStr;
+    std::string MemLeakCheckTXTBase = CurTestDirStr;
     MemLeakCheckTXTBase.append(slashCharStr());
     MemLeakCheckTXTBase.append(MyDir);
 
-    string MemLeakCheckTXT1Str = MemLeakCheckTXTBase;
+    std::string MemLeakCheckTXT1Str = MemLeakCheckTXTBase;
     MemLeakCheckTXT1Str.append("_compression_memory_summary.txt");
 
-    string MemLeakCheckTXT2Str = MemLeakCheckTXTBase;
+    std::string MemLeakCheckTXT2Str = MemLeakCheckTXTBase;
     MemLeakCheckTXT2Str.append("_decompression_memory_summary.txt");
 
-    string ProgramMemLeakCheckEncStr;
-    string ProgramMemLeakCheckDecStr;
+    std::string ProgramMemLeakCheckEncStr;
+    std::string ProgramMemLeakCheckDecStr;
 
 #if defined(_WIN32)
     //Faux Compress
@@ -91,7 +91,7 @@ int test_mem_leak2(int argc, const char *const *argv, const string &WorkingDir, 
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -220,7 +220,7 @@ int test_mem_leak2(int argc, const char *const *argv, const string &WorkingDir, 
         fgets(buffer4 , 256 , infile4);
         fgets(buffer4 , 256 , infile4);
 
-        string bufferString4 = buffer4;
+        std::string bufferString4 = buffer4;
 
         if (bufferString4.compare(0, 24, "_currently Allocated= 0;") == 0)
         {
@@ -254,7 +254,7 @@ int test_mem_leak2(int argc, const char *const *argv, const string &WorkingDir, 
         fgets(buffer5 , 256 , infile5);
         fgets(buffer5 , 256 , infile5);
 
-        string bufferString5 = buffer5;
+        std::string bufferString5 = buffer5;
 
         if (bufferString5.compare(0, 24, "_currently Allocated= 0;") == 0)
         {

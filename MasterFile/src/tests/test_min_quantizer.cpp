@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_min_quantizer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_min_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Min Quantizer";
     char *MyDir = "test_min_quantizer";
@@ -25,33 +25,33 @@ int test_min_quantizer(int argc, const char *const *argv, const string &WorkingD
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string Min10QuantOutFile = CurTestDirStr;
+    std::string Min10QuantOutFile = CurTestDirStr;
     Min10QuantOutFile.append(slashCharStr());
     Min10QuantOutFile.append(MyDir);
     Min10QuantOutFile.append("_compression_10.ivf");
 
-    string Min60QuantOutFile = CurTestDirStr;
+    std::string Min60QuantOutFile = CurTestDirStr;
     Min60QuantOutFile.append(slashCharStr());
     Min60QuantOutFile.append(MyDir);
     Min60QuantOutFile.append("_compression_60.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

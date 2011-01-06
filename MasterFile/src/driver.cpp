@@ -1,32 +1,27 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "vpxt_test_definitions.h"
 #include "vpxt_test_list.h"
-#include "utilities.h"
-#include "driver.h"
-#include "tools.h"
+#include "vpxt_utilities.h"
+#include "vpxt_driver.h"
+#include "vpxt_tools.h"
 #include <iostream>
 #include <fstream>
-#include <time.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctime>
+#include <cstdlib>
+#include <string>
 #include <sstream>
 
 #if defined(_WIN32)
-#include <windows.h>
-#include <tchar.h>
-#include <direct.h>
 #define snprintf _snprintf
 #else
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <dirent.h>
+//#include <dirent.h>
 #endif
 
-using namespace std;
-
 //CodeCoverage
-extern int tool_array_coverage(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[]);
+extern int tool_array_coverage(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[]);
 
 int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 {
@@ -37,7 +32,7 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
     struct tm *timeinfo;
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    string DateAndTime = asctime(timeinfo);
+    std::string DateAndTime = asctime(timeinfo);
 
     //remove colons in time string
     char DateAndTimeCharArray[255];
@@ -58,7 +53,7 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
     }
 
     DateAndTimeCharArray[w] = '\0';
-    string DateAndTime3 = DateAndTimeCharArray;
+    std::string DateAndTime3 = DateAndTimeCharArray;
 
     //Get Dir Folder
     char Folder3[255];
@@ -66,13 +61,13 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 
     vpxt_folder_name(argv[0], Folder3);
     snprintf(Folder2, 255, "%s", Folder3);
-    string Folder = Folder2;
+    std::string Folder = Folder2;
 
     //add Date and Time
     int number = 0;
 
     Folder.append(DateAndTime3);
-    string FolderCheck = Folder;
+    std::string FolderCheck = Folder;
 
     while (vpxt_folder_exist_check(FolderCheck)) //Make sure folder doesnt already exist
     {
@@ -100,13 +95,13 @@ int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
 
     return 0;
 }
-string date_string()
+std::string date_string()
 {
     time_t rawtime;
     struct tm *timeinfo;
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    string DateAndTime = asctime(timeinfo);
+    std::string DateAndTime = asctime(timeinfo);
 
     //remove colons in time string
     char DateAndTimeCharArray[255];
@@ -128,7 +123,7 @@ string date_string()
 
     DateAndTimeCharArray[w] = '\"';
     DateAndTimeCharArray[w+1] = '\0';
-    string DateAndTime3(DateAndTimeCharArray);
+    std::string DateAndTime3(DateAndTimeCharArray);
 
     return DateAndTime3;
 
@@ -228,11 +223,11 @@ void vpxt_on_error_output()
 
     return;
 }
-void write_32bit_quick_test(string WorkingDir)
+void write_32bit_quick_test(std::string WorkingDir)
 {
     char FolderNameChar[255];
     vpxt_folder_name(WorkingDir.c_str(), FolderNameChar);
-    string TextfileString5 = FolderNameChar;
+    std::string TextfileString5 = FolderNameChar;
     TextfileString5.append("QuickTest_32Bit.txt");
 
     FILE *fp5;
@@ -243,7 +238,7 @@ void write_32bit_quick_test(string WorkingDir)
         exit(1);
     }
 
-    string OSStr = "";
+    std::string OSStr = "";
 
 #if defined(_WIN32)
     OSStr = "Win";
@@ -428,11 +423,11 @@ void write_32bit_quick_test(string WorkingDir)
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-void write_64bit_quick_test(string WorkingDir)
+void write_64bit_quick_test(std::string WorkingDir)
 {
     char FolderNameChar[255];
     vpxt_folder_name(WorkingDir.c_str(), FolderNameChar);
-    string TextfileString5 = FolderNameChar;
+    std::string TextfileString5 = FolderNameChar;
     TextfileString5.append("QuickTest_64Bit.txt");
 
     FILE *fp5;
@@ -443,7 +438,7 @@ void write_64bit_quick_test(string WorkingDir)
         exit(1);
     }
 
-    string OSStr = "";
+    std::string OSStr = "";
 
 #if defined(_WIN32)
     OSStr = "Win";
@@ -628,16 +623,16 @@ void write_64bit_quick_test(string WorkingDir)
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-int  print_quick_test_files(string WorkingDir)
+int  print_quick_test_files(std::string WorkingDir)
 {
     write_32bit_quick_test(WorkingDir);//32BitQuickRun
     write_64bit_quick_test(WorkingDir);//64BitQuickRun
 
     return 0;
 }
-void vpxt_test_help(int argc, char *argv[], string WorkingDir)
+void vpxt_test_help(int argc, char *argv[], std::string WorkingDir)
 {
-    string TestInputString = argv[1];
+    std::string TestInputString = argv[1];
     int selector = vpxt_identify_test(argv[1]);
 
     if (TestInputString.compare("0") == 0)
@@ -1332,7 +1327,7 @@ void vpxt_test_help(int argc, char *argv[], string WorkingDir)
 
     return;
 }
-int  vpxt_tool_help(string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
+int  vpxt_tool_help(std::string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
 {
     if (InputString.compare("ivf2ivfcompr") == 0)
     {
@@ -1780,15 +1775,15 @@ void format_summary(const char *InputFileNameCharAr)
 {
     tprintf(PRINT_STD, "\n Formating Summary file.\n");
 
-    string InputFileName = InputFileNameCharAr;
-    string SummaryByTestOutput = InputFileName;
+    std::string InputFileName = InputFileNameCharAr;
+    std::string SummaryByTestOutput = InputFileName;
 
     SummaryByTestOutput.erase(SummaryByTestOutput.end() - 4, SummaryByTestOutput.end());
     SummaryByTestOutput.append("_expanded.txt");
 
     char TestsRunChar[255];
     vpxt_folder_name(InputFileNameCharAr, TestsRunChar);
-    string TestsRun = TestsRunChar;
+    std::string TestsRun = TestsRunChar;
     TestsRun.append("tests_run.txt");
 
     FILE *fp;
@@ -1799,9 +1794,9 @@ void format_summary(const char *InputFileNameCharAr)
         return;
     }
 
-    string LineBuffer = "";
-    string TestTrackerName = "";
-    string TestTrackerResult = "";
+    std::string LineBuffer = "";
+    std::string TestTrackerName = "";
+    std::string TestTrackerResult = "";
 
     int TestTracker = 1;
     int ResultTracker = 0;
@@ -1979,12 +1974,12 @@ void format_summary(const char *InputFileNameCharAr)
             if (ResultTracker == 12)
                 TestTrackerResult = "TestNotSupported";
 
-            fstream FormatSummaryByTestFile;
+            std::fstream FormatSummaryByTestFile;
             FormatSummaryByTestFile.open(InputFileName.c_str());
 
             if (!FormatSummaryByTestFile)
             {
-                cout << "Cannot open input file.";
+                tprintf(PRINT_STD, "Cannot open input file.");
                 return;
             }
 
@@ -2010,14 +2005,14 @@ void format_summary(const char *InputFileNameCharAr)
                     while (n < 39 && LineBuffer[n] != ' ')
                         n = n + 1;
 
-                    string TestReadString = LineBuffer.substr(5, n - 5);
+                    std::string TestReadString = LineBuffer.substr(5, n - 5);
 
                     n = 62;
 
                     while (n < 194 && LineBuffer[n] != ' ' != 0 && n < LineBuffer.length())
                         n = n + 1;
 
-                    string TestResultString = LineBuffer.substr(62, n - 62);
+                    std::string TestResultString = LineBuffer.substr(62, n - 62);
 
                     //check to see if names and states match up
                     if (TestReadString.compare(TestTrackerName) == 0 && TestResultString.compare(TestTrackerResult) == 0)
@@ -2086,8 +2081,8 @@ void format_summary(const char *InputFileNameCharAr)
                         fprintf(stderr, "%s ", LineBuffer.c_str());
 
                         ///////////////////Get the correct Test Input settings and output them to summary.//////////////
-                        fstream TestsRunFile;
-                        TestsRunFile.open(TestsRun.c_str(), fstream::in);
+                        std::fstream TestsRunFile;
+                        TestsRunFile.open(TestsRun.c_str(), std::fstream::in);
 
                         if (!TestsRunFile)
                         {
@@ -2099,16 +2094,16 @@ void format_summary(const char *InputFileNameCharAr)
                         }
 
                         int TestRunNumInt = 0;
-                        stringstream TestRunNum(LineBuffer.substr(0, 4));
+                        std::stringstream TestRunNum(LineBuffer.substr(0, 4));
                         TestRunNum >> TestRunNumInt;
 
                         int TestNumberCur = -1;
 
                         while (!TestsRunFile.eof() && TestNumberCur != TestRunNumInt)
                         {
-                            string TestsRunString = "";
+                            std::string TestsRunString = "";
                             getline(TestsRunFile, TestsRunString);
-                            string test = TestsRunString.substr(0, 1);
+                            std::string test = TestsRunString.substr(0, 1);
 
                             if (TestsRunString[0] == '+')
                                 TestNumberCur = TestNumberCur + 1;
@@ -2301,7 +2296,7 @@ int  show_hidden_cmds()
     return 0;
 
 }
-int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
+int  vpxt_run_multi(int argc, char *argv[], std::string WorkingDir)
 {
     if (argc < 4)
     {
@@ -2335,7 +2330,7 @@ int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
     }
     else
     {
-        string inputCheck = "";
+        std::string inputCheck = "";
         inputCheck.append(argv[3]);
         inputCheck.append(slashCharStr().c_str());
         inputCheck.append("tests_run.txt");
@@ -2350,7 +2345,7 @@ int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
 
     run_multiple_tests(argc, argv, WorkingDir.c_str(), VaildInput);
 
-    string SummaryFile = WorkingDir;
+    std::string SummaryFile = WorkingDir;
 
     if (atoi(argv[2]) == 1)
     {
@@ -2377,9 +2372,9 @@ int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
 
     if (atoi(argv[2]) == 4)
     {
-        string SummCompAndTest = "";
-        string SummComp = "";
-        string SummTest = "";
+        std::string SummCompAndTest = "";
+        std::string SummComp = "";
+        std::string SummTest = "";
 
         SummCompAndTest = argv[3];
         SummCompAndTest.append(slashCharStr());
@@ -2392,7 +2387,7 @@ int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
         SummTest.append("compression_test_results.txt");// Mode 3
 
         int TestRunning = 0;
-        fstream SummCompAndTestFile;
+        std::fstream SummCompAndTestFile;
         SummCompAndTestFile.open(SummCompAndTest.c_str());
 
         if (SummCompAndTestFile)
@@ -2400,7 +2395,7 @@ int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
             TestRunning = 1;
         }
 
-        fstream SummTestFile;
+        std::fstream SummTestFile;
         SummTestFile.open(SummTest.c_str());
 
         if (SummTestFile)
@@ -2408,7 +2403,7 @@ int  vpxt_run_multi(int argc, char *argv[], string WorkingDir)
             TestRunning = 3;
         }
 
-        fstream SummCompFile;
+        std::fstream SummCompFile;
         SummCompFile.open(SummComp.c_str());
 
         if (SummCompFile)
@@ -2457,13 +2452,13 @@ int  main(int argc, char *argv[])
         return 0;
     }
 
-    string EmptyAr[1];
+    std::string EmptyAr[1];
     char WorkingDirChar[256]  = "";
     create_working_folder(argc, argv, WorkingDirChar);
-    string WorkingDir = "";
+    std::string WorkingDir = "";
     WorkingDir.append(WorkingDirChar);
-    string TestInputString(argv[1]);
-    string TestInputString2 = "";
+    std::string TestInputString(argv[1]);
+    std::string TestInputString2 = "";
 
     if (argc > 2)
         TestInputString2 =  argv[2];

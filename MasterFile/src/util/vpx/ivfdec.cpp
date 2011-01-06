@@ -1,34 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-////////////////////////
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
-#include <vector>
-/////VP8////////////////
-#include <map>
-#include <iomanip>
-#include <sstream>
-#include <stdarg.h>
-/////VP8 IVF PSNR///////
-#include <cassert>
-/////PSNR///
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <string.h>
-#include "vpx_image.h"
-using namespace std;
-////////////////////////
-#include <stdio.h>
-#include <sys/stat.h>
-////////////////////////
-///////////itoa_custom/////////
-#include <algorithm>
-////////////////////////
-
-#include <cstdio>
-
 /*
 *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
 *
@@ -43,27 +12,38 @@ using namespace std;
 /* This is a simple program that reads ivf files and decodes them
 * using the new interface. Decoded frames are output as YV12 raw.
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
+
+#define _CRT_SECURE_NO_WARNINGS
+#include "vpx_decoder.h"
+#include "vpx_timer.h"
+#include "vpx_image.h"
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
+#include <vector>
+#include <map>
+#include <iomanip>
+#include <sstream>
+#include <cstdarg>
+#include <cassert>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <cstdio>
+#include <algorithm>
+#include <cstdio>
+
 #define VPX_CODEC_DISABLE_COMPAT 1
 #if defined(_WIN32)
 #include "vpx_config.h"
 #endif
-#include "vpx_decoder.h"
-#include "vpx_timer.h"
 #if CONFIG_VP8_DECODER
 #include "vp8dx.h"
 #endif
 #if CONFIG_MD5
 #include "md5_utils.h"
 #endif
-
-//extern void MD5Init(struct MD5Context *context);
-//extern void MD5Update(struct MD5Context *context, md5byte const *buf, unsigned len);
-//extern void MD5Final(unsigned char digest[16], struct MD5Context *context);
-//extern void MD5Transform(UWORD32 buf[4], UWORD32 const in[16]);
 
 static const char *exec_name;
 

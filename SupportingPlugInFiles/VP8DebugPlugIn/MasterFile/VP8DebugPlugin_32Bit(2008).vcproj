@@ -214,7 +214,7 @@
 					Name="psnr"
 					>
 					<File
-						RelativePath="..\..\..\MasterFile\src\util\psnr\psnr.c"
+						RelativePath="..\..\..\MasterFile\src\util\psnr\psnr.cpp"
 						>
 					</File>
 					<File
@@ -226,7 +226,7 @@
 					Name="vpx"
 					>
 					<File
-						RelativePath="..\..\..\MasterFile\src\util\vpx\ivf.c"
+						RelativePath="..\..\..\MasterFile\src\util\vpx\ivf.cpp"
 						>
 					</File>
 					<File

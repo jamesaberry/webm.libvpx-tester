@@ -398,7 +398,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\src\util\vpx\ivf.c"
+						RelativePath=".\src\util\vpx\ivf.cpp"
 						>
 					</File>
 					<File
@@ -422,7 +422,7 @@
 					Name="psnr"
 					>
 					<File
-						RelativePath=".\src\util\psnr\psnr.c"
+						RelativePath=".\src\util\psnr\psnr.cpp"
 						>
 					</File>
 					<File

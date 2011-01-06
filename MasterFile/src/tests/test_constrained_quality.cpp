@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_constrained_quality(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_constrained_quality(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Constrained Quality";
     char *MyDir = "test_constrained_quality";
@@ -25,33 +25,33 @@ int test_constrained_quality(int argc, const char *const *argv, const string &Wo
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
-    string FileIndexStr = "";
+    std::string CurTestDirStr = "";
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string ConstrainedQon = CurTestDirStr;
+    std::string ConstrainedQon = CurTestDirStr;
     ConstrainedQon.append(slashCharStr());
     ConstrainedQon.append(MyDir);
     ConstrainedQon.append("_compression_1.ivf");
 
-    string ConstrainedQoff = CurTestDirStr;
+    std::string ConstrainedQoff = CurTestDirStr;
     ConstrainedQoff.append(slashCharStr());
     ConstrainedQoff.append(MyDir);
     ConstrainedQoff.append("_compression_0.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

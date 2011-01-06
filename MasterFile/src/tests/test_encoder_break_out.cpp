@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_encoder_break_out(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_encoder_break_out(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Encoder Break Out";
     char *MyDir = "test_encoder_break_out";
@@ -25,7 +25,7 @@ int test_encoder_break_out(int argc, const char *const *argv, const string &Work
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -33,57 +33,57 @@ int test_encoder_break_out(int argc, const char *const *argv, const string &Work
 
     ////////////Formatting Test Specific Directory////////////
 
-    string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
 
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string EncBreakOut0 = CurTestDirStr;
+    std::string EncBreakOut0 = CurTestDirStr;
     EncBreakOut0.append(slashCharStr());
     EncBreakOut0.append(MyDir);
     EncBreakOut0.append("_compression_0.ivf");
 
-    string EncBreakOut100 = CurTestDirStr;
+    std::string EncBreakOut100 = CurTestDirStr;
     EncBreakOut100.append(slashCharStr());
     EncBreakOut100.append(MyDir);
     EncBreakOut100.append("_compression_100.ivf");
 
-    string EncBreakOut500 = CurTestDirStr;
+    std::string EncBreakOut500 = CurTestDirStr;
     EncBreakOut500.append(slashCharStr());
     EncBreakOut500.append(MyDir);
     EncBreakOut500.append("_compression_500.ivf");
 
-    string EncBreakOut1000 = CurTestDirStr;
+    std::string EncBreakOut1000 = CurTestDirStr;
     EncBreakOut1000.append(slashCharStr());
     EncBreakOut1000.append(MyDir);
     EncBreakOut1000.append("_compression_1000.ivf");
 
-    string EncBreakOut0_Dec = CurTestDirStr;
+    std::string EncBreakOut0_Dec = CurTestDirStr;
     EncBreakOut0_Dec.append(slashCharStr());
     EncBreakOut0_Dec.append(MyDir);
     EncBreakOut0_Dec.append("_decompression_0.ivf");
 
-    string EncBreakOut100_Dec = CurTestDirStr;
+    std::string EncBreakOut100_Dec = CurTestDirStr;
     EncBreakOut100_Dec.append(slashCharStr());
     EncBreakOut100_Dec.append(MyDir);
     EncBreakOut100_Dec.append("_decompression_100.ivf");
 
-    string EncBreakOut500_Dec = CurTestDirStr;
+    std::string EncBreakOut500_Dec = CurTestDirStr;
     EncBreakOut500_Dec.append(slashCharStr());
     EncBreakOut500_Dec.append(MyDir);
     EncBreakOut500_Dec.append("_decompression_500.ivf");
 
-    string EncBreakOut1000_Dec = CurTestDirStr;
+    std::string EncBreakOut1000_Dec = CurTestDirStr;
     EncBreakOut1000_Dec.append(slashCharStr());
     EncBreakOut1000_Dec.append(MyDir);
     EncBreakOut1000_Dec.append("_decompression_1000.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

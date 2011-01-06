@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_change_cpu_dec(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_change_cpu_dec(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Version";
     char *MyDir = "test_change_cpu_dec";
@@ -26,7 +26,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int VersionNum = atoi(argv[5]);
@@ -40,26 +40,26 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
     int ModesRun = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string CPUDecOnlyWorksOutFile = CurTestDirStr;
+    std::string CPUDecOnlyWorksOutFile = CurTestDirStr;
     CPUDecOnlyWorksOutFile.append(slashCharStr());
     CPUDecOnlyWorksOutFile.append(MyDir);
     CPUDecOnlyWorksOutFile.append("_compression.ivf");
 
-    string CPUDecOnlyWorksOut_CPU = CurTestDirStr;
+    std::string CPUDecOnlyWorksOut_CPU = CurTestDirStr;
     CPUDecOnlyWorksOut_CPU.append(slashCharStr());
     CPUDecOnlyWorksOut_CPU.append(MyDir);
     CPUDecOnlyWorksOut_CPU.append("_decompression");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -122,21 +122,21 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == TEST_ONLY)
     {
-        vector<string> DecompressonVector;
+        std::vector<std::string> DecompressonVector;
 
-        string OutputStr0 = CPUDecOnlyWorksOut_CPU;
+        std::string OutputStr0 = CPUDecOnlyWorksOut_CPU;
         OutputStr0.append("none.ivf");
-        string OutputStr1 = CPUDecOnlyWorksOut_CPU;
+        std::string OutputStr1 = CPUDecOnlyWorksOut_CPU;
         OutputStr1.append("mmx.ivf");
-        string OutputStr2 = CPUDecOnlyWorksOut_CPU;
+        std::string OutputStr2 = CPUDecOnlyWorksOut_CPU;
         OutputStr2.append("sse.ivf");
-        string OutputStr3 = CPUDecOnlyWorksOut_CPU;
+        std::string OutputStr3 = CPUDecOnlyWorksOut_CPU;
         OutputStr3.append("sse2.ivf");
-        string OutputStr4 = CPUDecOnlyWorksOut_CPU;
+        std::string OutputStr4 = CPUDecOnlyWorksOut_CPU;
         OutputStr4.append("sse3.ivf");
-        string OutputStr5 = CPUDecOnlyWorksOut_CPU;
+        std::string OutputStr5 = CPUDecOnlyWorksOut_CPU;
         OutputStr5.append("ssse3.ivf");
-        string OutputStr6 = CPUDecOnlyWorksOut_CPU;
+        std::string OutputStr6 = CPUDecOnlyWorksOut_CPU;
         OutputStr6.append("sse4_1.ivf");
 
         if (vpxt_file_exists_check(OutputStr0))
@@ -215,7 +215,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
     }
     else
     {
-        vector<string> DecompressonVector;
+        std::vector<std::string> DecompressonVector;
         opt.Mode = Mode;
 
         if (vpxt_compress_ivf_to_ivf(input.c_str(), CPUDecOnlyWorksOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
@@ -227,7 +227,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
 
         putenv("ON2_SIMD_CAPS=0");
 
-        string Output2Str = CPUDecOnlyWorksOut_CPU;
+        std::string Output2Str = CPUDecOnlyWorksOut_CPU;
         Output2Str.append("NONE.ivf");
 
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
@@ -275,7 +275,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
 
             if (CPUFound == 1)
             {
-                string CPUStr = "";
+                std::string CPUStr = "";
                 tprintf(PRINT_BTH, "\nDetected CPU capability: ");
 
                 if ((Simd_Caps & HAS_MMX)    == Has_Check)
@@ -298,7 +298,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
 
                 tprintf(PRINT_BTH, "%s", CPUStr.c_str());
 
-                string CPUIDSTRING = "ON2_SIMD_CAPS=";
+                std::string CPUIDSTRING = "ON2_SIMD_CAPS=";
                 char CounterChar[10];
                 vpxt_itoa_custom(counter, CounterChar, 10);
                 CPUIDSTRING.append(CounterChar);
@@ -310,8 +310,8 @@ int test_change_cpu_dec(int argc, const char *const *argv, const string &Working
                 //////////////////////////////////
                 ///////Compresion and Time ///////
 
-                string ChangedCPUDecOutFileStr1 = CPUDecOnlyWorksOut_CPU;
-                string ChangedCPUDecOutFileStr2 = CPUDecOnlyWorksOut_CPU;
+                std::string ChangedCPUDecOutFileStr1 = CPUDecOnlyWorksOut_CPU;
+                std::string ChangedCPUDecOutFileStr2 = CPUDecOnlyWorksOut_CPU;
 
                 char count[20];
                 vpxt_itoa_custom(counter, count, 10);

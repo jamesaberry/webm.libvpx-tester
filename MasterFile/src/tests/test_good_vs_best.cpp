@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_good_vs_best(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_good_vs_best(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_good_vs_best";
@@ -17,53 +17,53 @@ int test_good_vs_best(int argc, const char *const *argv, const string &WorkingDi
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int BitRate = atoi(argv[3]);
 
     int speed = 0;
 
     /////////////////Might want to see if you can make a function to do this so its a bit cleaner/////////////////
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string GoodOutFile1 = CurTestDirStr;
+    std::string GoodOutFile1 = CurTestDirStr;
     GoodOutFile1.append(slashCharStr());
     GoodOutFile1.append(MyDir);
     GoodOutFile1.append("_compression_good_1.ivf");
 
-    string GoodOutFile2 = CurTestDirStr;
+    std::string GoodOutFile2 = CurTestDirStr;
     GoodOutFile2.append(slashCharStr());
     GoodOutFile2.append(MyDir);
     GoodOutFile2.append("_compression_good_2.ivf");
 
-    string GoodOutFile3 = CurTestDirStr;
+    std::string GoodOutFile3 = CurTestDirStr;
     GoodOutFile3.append(slashCharStr());
     GoodOutFile3.append(MyDir);
     GoodOutFile3.append("_compression_good_3.ivf");
 
-    string BestOutFile1 = CurTestDirStr;
+    std::string BestOutFile1 = CurTestDirStr;
     BestOutFile1.append(slashCharStr());
     BestOutFile1.append(MyDir);
     BestOutFile1.append("_compression_best_1.ivf");
 
-    string BestOutFile2 = CurTestDirStr;
+    std::string BestOutFile2 = CurTestDirStr;
     BestOutFile2.append(slashCharStr());
     BestOutFile2.append(MyDir);
     BestOutFile2.append("_compression_best_2.ivf");
 
-    string BestOutFile3 = CurTestDirStr;
+    std::string BestOutFile3 = CurTestDirStr;
     BestOutFile3.append(slashCharStr());
     BestOutFile3.append(MyDir);
     BestOutFile3.append("_compression_best_3.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_speed(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_speed(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Cpu Used";
     char *MyDir = "test_speed";
@@ -22,7 +22,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int LagInFramesInput = atoi(argv[5]);
@@ -49,26 +49,26 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
     }
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string SpeedTestGoodQBase = CurTestDirStr;
+    std::string SpeedTestGoodQBase = CurTestDirStr;
     SpeedTestGoodQBase.append(slashCharStr());
     SpeedTestGoodQBase.append(MyDir);
     SpeedTestGoodQBase.append("_compression_cpu_used_");
 
-    string SpeedTestRealTimeBase = CurTestDirStr;
+    std::string SpeedTestRealTimeBase = CurTestDirStr;
     SpeedTestRealTimeBase.append(slashCharStr());
     SpeedTestRealTimeBase.append(MyDir);
     SpeedTestRealTimeBase.append("_compression_cpu_used_");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -146,7 +146,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
                 char CounterChar[4];
                 vpxt_itoa_custom(counter, CounterChar, 10);
 
-                string SpeedTestGoodQ = SpeedTestGoodQBase;
+                std::string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
                 SpeedTestGoodQ.append(".ivf");
 
@@ -166,7 +166,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
                 char CounterChar[4];
                 vpxt_itoa_custom(counter, CounterChar, 10);
 
-                string SpeedTestRealTime = SpeedTestRealTimeBase;
+                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
                 SpeedTestRealTime.append(".ivf");
 
@@ -183,7 +183,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
                 char CounterChar[4];
                 vpxt_itoa_custom(counter, CounterChar, 10);
 
-                string SpeedTestRealTime = SpeedTestRealTimeBase;
+                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
                 SpeedTestRealTime.append(".ivf");
 
@@ -205,7 +205,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
                 char CounterChar[4];
                 vpxt_itoa_custom(counter, CounterChar, 10);
 
-                string SpeedTestGoodQ = SpeedTestGoodQBase;
+                std::string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
                 SpeedTestGoodQ.append(".ivf");
 
@@ -240,7 +240,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
                 char CounterChar[4];
                 vpxt_itoa_custom(counter, CounterChar, 10);
 
-                string SpeedTestRealTime = SpeedTestRealTimeBase;
+                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
                 SpeedTestRealTime.append(".ivf");
 
@@ -272,7 +272,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
                 char CounterChar[4];
                 vpxt_itoa_custom(counter, CounterChar, 10);
 
-                string SpeedTestRealTime = SpeedTestRealTimeBase;
+                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
                 SpeedTestRealTime.append(".ivf");
 
@@ -307,8 +307,7 @@ int test_speed(int argc, const char *const *argv, const string &WorkingDir, stri
         return 10;
     }
 
-    cout << "\n";
-    cerr << "\n";
+    tprintf(PRINT_BTH, "\n");
 
     int counter = 1;
     int pass = 1;

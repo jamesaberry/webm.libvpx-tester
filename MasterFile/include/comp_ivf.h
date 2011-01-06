@@ -5,7 +5,6 @@
 
 namespace COMPIVF_NAMESPACE
 {
-using namespace std;
 
 class CompIVF
 {

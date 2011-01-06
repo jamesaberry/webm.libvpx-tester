@@ -1,8 +1,7 @@
-#include <string>
-#include <vector>
 #include "onyx.h"
 #include "ivf.h"
-using namespace std;
+#include <string>
+#include <vector>
 
 #ifndef UTILITIES_H_GUARD
 #define UTILITIES_H_GUARD
@@ -18,7 +17,7 @@ using namespace std;
 #define RESPRT 5
 
 void tprintf(int PrintSelection, const char *fmt, ...);
-string slashCharStr();
+std::string slashCharStr();
 char slashChar();
 //-----------------------------------------------------VP8 Settings-------------------------------------------------------------------
 void vpxt_default_parameters(VP8_CONFIG &opt);
@@ -43,12 +42,12 @@ long vpxt_file_size(const char *inFile, int printbool);
 void vpxt_file_name(const char *input, char *FileName, int removeExt);
 void vpxt_folder_name(const char *input, char *output);
 void vpxt_remove_file_extension(const char *DirIn, char *DirOut);
-string vpxt_extract_date_time(string InputStr);
-int vpxt_timestamp_compare(string TimeStampNow, string TimeStampPrevious);
+std::string vpxt_extract_date_time(const std::string InputStr);
+int vpxt_timestamp_compare(const std::string TimeStampNow, const std::string TimeStampPrevious);
 int vpxt_identify_test(const char *test_char);
 int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo);
-int vpxt_file_exists_check(string input);
-int vpxt_folder_exist_check(string FolderName);
+int vpxt_file_exists_check(const std::string input);
+int vpxt_folder_exist_check(const std::string FolderName);
 void vpxt_subfolder_name(char *input, char *FileName);
 void vpxt_test_name(char *input, char *FileName);
 int vpxt_remove_char_spaces(const char *input, char *output, int maxsize);
@@ -66,12 +65,12 @@ unsigned int vpxt_get_high_res_timer_tick();
 unsigned int vpxt_get_time_in_micro_sec(unsigned int startTick, unsigned int stopTick);
 unsigned int vpxt_get_cpu_tick();
 unsigned int vpxt_get_time();
-int vpxt_get_cur_dir(string &CurrentDir);
-int vpxt_make_dir(string CreateDir);
-int vpxt_make_dir_vpx(string CreateDir2);
-void vpxt_run_exe(string RunExe);
-int vpxt_add_dir_files_to_ignore(vector<string> &IgnoredFiles, string Directory);
-int vpxt_find_non_ignored_files_in_dir(vector<string> IgnoredFiles, vector<string> &FilesFound, string Directory);
+int vpxt_get_cur_dir(std::string &CurrentDir);
+int vpxt_make_dir(std::string CreateDir);
+int vpxt_make_dir_vpx(std::string CreateDir2);
+void vpxt_run_exe(std::string RunExe);
+int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles, std::string Directory);
+int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles, std::vector<std::string> &FilesFound, std::string Directory);
 //---------------------------------------------------------IVF------------------------------------------------------------------------
 int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12);
 double vpxt_ivf_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
@@ -82,17 +81,17 @@ int vpxt_ivf_check_pbm_threshold(const char *inputFile, double bitRate, int maxB
 int vpxt_faux_compress();
 int vpxt_faux_decompress(char *inputChar);
 //---------------------------------------------------Test Functions-------------------------------------------------------------------
-int initialize_test_directory(int argc, const char *const *argv, int TestType, const string &WorkingDir, char *MyDir, string &WorkingDirString, string &MainDirString, char WorkingDir3[255], char File1[255], string FilesAr[]);
-void record_test_complete(string MainDirString, const char *FileIndexOutputChar, int TestType);
+int initialize_test_directory(int argc, const char *const *argv, int TestType, const std::string &WorkingDir, char *MyDir, std::string &WorkingDirstring, std::string &MainDirstring, char WorkingDir3[255], char File1[255], std::string FilesAr[]);
+void record_test_complete(std::string MainDirstring, const char *FileIndexOutputChar, int TestType);
 int print_version();
 void print_header_info();
-void print_header_full_test(int argc, const char *const *argv, string WorkingDir3);
-void print_header_compression_only(int argc, const char *const *argv, string WorkingDir3);
-void print_header_test_only(int argc, const char *const *argv, string  WorkingDir3);
-void check_time_stamp(int SelectorArInt, string *SelectorAr, string *SelectorAr2, string TimeStampPrevious, int &identicalFileVar, string *TimeStampAr2);
+void print_header_full_test(int argc, const char *const *argv, std::string WorkingDir3);
+void print_header_compression_only(int argc, const char *const *argv, std::string WorkingDir3);
+void print_header_test_only(int argc, const char *const *argv, std::string  WorkingDir3);
+void check_time_stamp(int SelectorArInt, std::string *SelectorAr, std::string *SelectorAr2, std::string TimeStampPrevious, int &identicalFileVar, std::string *TimeStampAr2);
 void vpxt_formated_print(int selector, const char *fmt, ...);
 void vpxt_cap_string_print(int selector, const char *fmt, ...);
-int  vpxt_lower_case_string(string &input);
+int  vpxt_lower_case_string(std::string &input);
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
 int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type);
@@ -112,8 +111,8 @@ int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar);
 int vpxt_cut_ivf(const char *inputFile, const char *outputFile, int StartingFrame, int EndingFrame);
 int vpxt_crop_raw_ivf(const char *inputFile, const char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
 int vpxt_paste_ivf(const char *inputFile1, const char *inputFile2, const char *outputFile, int StartingFrame);
-int vpxt_ivf_to_raw(string inputFile, string outputDir);
-int vpxt_ivf_to_raw_frames(string inputFile, string outputDir);
+int vpxt_ivf_to_raw(std::string inputFile, std::string outputDir);
+int vpxt_ivf_to_raw_frames(std::string inputFile, std::string outputDir);
 int vpxt_display_ivf_header_info(int argc, char *argv[]);
 int vpxt_compare_ivf_header_info(int argc, char *argv[]);
 int vpxt_compare_ivf(const char *inputFile1, const char *inputFile2);
@@ -131,7 +130,7 @@ int vpxt_time_return(const char *infile, int FileType);
 int vpxt_cpu_tick_return(const char *infile, int FileType);
 int vpxt_get_number_of_frames(const char *inputFile);
 int vpxt_check_force_key_frames(const char *KeyFrameoutputfile, int ForceKeyFrameInt, const char *ForceKeyFrame);
-int vpxt_check_mem_state(string FileName, string &bufferString);
+int vpxt_check_mem_state(std::string FileName, std::string &bufferString);
 int vpxt_print_compare_ivf_results(int lngRC);
 double vpxt_get_psnr(const char *compFileName);
 //-----------------------------------------------------------IVF Enc------------------------------------------------------

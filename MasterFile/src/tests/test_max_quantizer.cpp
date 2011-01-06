@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_max_quantizer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_max_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Max Quantizer";
     char *MyDir = "test_max_quantizer";
@@ -25,28 +25,28 @@ int test_max_quantizer(int argc, const char *const *argv, const string &WorkingD
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string QuantOutBase = CurTestDirStr;
+    std::string QuantOutBase = CurTestDirStr;
     QuantOutBase.append(slashCharStr());
     QuantOutBase.append(MyDir);
     QuantOutBase.append("_compression_");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -116,7 +116,7 @@ int test_max_quantizer(int argc, const char *const *argv, const string &WorkingD
             char num[20];
             vpxt_itoa_custom(n, num, 10);
 
-            string QuantOutFile = QuantOutBase;
+            std::string QuantOutFile = QuantOutBase;
             QuantOutFile.append(num);
             QuantOutFile.append(".ivf");
 
@@ -144,7 +144,7 @@ int test_max_quantizer(int argc, const char *const *argv, const string &WorkingD
             char num[20];
             vpxt_itoa_custom(n, num, 10);
 
-            string QuantOutFile = QuantOutBase;
+            std::string QuantOutFile = QuantOutBase;
             QuantOutFile.append(num);
             QuantOutFile.append(".ivf");
 

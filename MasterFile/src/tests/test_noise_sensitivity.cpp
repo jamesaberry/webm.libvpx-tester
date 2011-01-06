@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_noise_sensitivity(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_noise_sensitivity(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     //This test looks a lot like NoiseSensitivityWorks but has a different purpose.  This test ensures
     //That different noise sensitivities have an effect for each possible noise sensitivity value and
@@ -28,28 +28,28 @@ int test_noise_sensitivity(int argc, const char *const *argv, const string &Work
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string NoiseSenseBase = CurTestDirStr;
+    std::string NoiseSenseBase = CurTestDirStr;
     NoiseSenseBase.append(slashCharStr());
     NoiseSenseBase.append(MyDir);
     NoiseSenseBase.append("_compression_");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -117,7 +117,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const string &Work
             char num[20];
             vpxt_itoa_custom(Noise, num, 10);
 
-            string NoiseSenseOut = NoiseSenseBase;
+            std::string NoiseSenseOut = NoiseSenseBase;
             NoiseSenseOut.append(num);
             NoiseSenseOut.append(".ivf");
 
@@ -146,7 +146,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const string &Work
             char num[20];
             vpxt_itoa_custom(Noise, num, 10);
 
-            string NoiseSenseOut = NoiseSenseBase;
+            std::string NoiseSenseOut = NoiseSenseBase;
             NoiseSenseOut.append(num);
             NoiseSenseOut.append(".ivf");
 

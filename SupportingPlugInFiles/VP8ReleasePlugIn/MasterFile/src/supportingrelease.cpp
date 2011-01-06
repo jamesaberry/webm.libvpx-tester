@@ -1,4 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include "vpxt_utilities.h"
+#include "vp8cx.h"
+#include "vp8dx.h"
 #include "onyx.h"
 #include "ivf.h"
 #include <map>
@@ -7,15 +10,11 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdarg>
 #include <cstdio>
-#include "vp8cx.h"
-#include "vp8dx.h"
-#include "utilities.h"
-using namespace std;
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
 
 #if defined(_WIN32)
 #define snprintf _snprintf
@@ -82,9 +81,9 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     fpos_t position;
     fgetpos(in, &position);
-    cout << "\n";
+    std::cout << "\n";
 
-    string OutputDirStrwithQuotes = outputDir;
+    std::string OutputDirStrwithQuotes = outputDir;
 
     if (WriteIndFrames != 5)
     {
@@ -95,7 +94,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
 
-    string outputDirStr2 = outputDir;
+    std::string outputDirStr2 = outputDir;
     char outputDirChar2[255];
 
     if (WriteIndFrames != 5)
@@ -111,15 +110,15 @@ int IVF2Raw(char *inputFile, char *outputDir)
 
     FILE *out2 = fopen(outputDirChar2, "wb");
 
-    cout << "\n\nConverting to Raw\n";
+    std::cout << "\n\nConverting to Raw\n";
 
     while (currentVideoFrame < frameCount)
     {
-        cout << ".";
+        std::cout << ".";
         memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
         fread(inbuff, 1, ivf_fhRaw.frameSize, in);
 
-        string outputDirStr = outputDir;
+        std::string outputDirStr = outputDir;
         char currentVideoFrameStr[10];
         vpxt_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
         outputDirStr.append(slashCharStr());
@@ -152,7 +151,7 @@ int IVF2Raw(char *inputFile, char *outputDir)
     fclose(in);
     fclose(out2);
 
-    cout << "\n";
+    std::cout << "\n";
 
     return 0;
 }
@@ -182,7 +181,7 @@ void supportingReleaseOnError()
 int supportingFileRunPSNR(char *inputFile, char *outputFile)
 {
     double totalPsnr;
-    cout << "\n\n";
+    std::cout << "\n\n";
     double ssimDummyVar = 0;
     totalPsnr = vpxt_ivf_psnr(inputFile, outputFile, 0, 0, 1, NULL);
 
@@ -191,7 +190,7 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
 
     char *FullName = strcat(TextFilechar1, "psnr.txt");
 
-    ofstream outfile2(FullName);
+    std::ofstream outfile2(FullName);
     outfile2 << totalPsnr;
     outfile2.close();
 
@@ -199,8 +198,8 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
 }
 int main(int argc, char *argv[])
 {
-    string Compress = "compress";
-    string Decompress = "decompress";
+    std::string Compress = "compress";
+    std::string Decompress = "decompress";
 
     if (argc < 3)
     {
@@ -227,7 +226,7 @@ int main(int argc, char *argv[])
         unsigned int CPUTick = 0;
 
         if (ParVer == 7)
-            cout << "\n\nNot Yet Supported\n\n";
+            std::cout << "\n\nNot Yet Supported\n\n";
 
         if (ParVer == 8)
             opt = vpxt_input_settings(parfile);

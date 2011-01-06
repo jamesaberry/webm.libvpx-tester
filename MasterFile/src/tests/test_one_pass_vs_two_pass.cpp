@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_one_pass_vs_two_pass(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_one_pass_vs_two_pass";
@@ -17,52 +17,52 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const string &W
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int BitRate = atoi(argv[3]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string OnePassOutFile1 = CurTestDirStr;
+    std::string OnePassOutFile1 = CurTestDirStr;
     OnePassOutFile1.append(slashCharStr());
     OnePassOutFile1.append(MyDir);
     OnePassOutFile1.append("_compression_one_pass_1.ivf");
 
-    string OnePassOutFile2 = CurTestDirStr;
+    std::string OnePassOutFile2 = CurTestDirStr;
     OnePassOutFile2.append(slashCharStr());
     OnePassOutFile2.append(MyDir);
     OnePassOutFile2.append("_compression_one_pass_2.ivf");
 
-    string OnePassOutFile3 = CurTestDirStr;
+    std::string OnePassOutFile3 = CurTestDirStr;
     OnePassOutFile3.append(slashCharStr());
     OnePassOutFile3.append(MyDir);
     OnePassOutFile3.append("_compression_one_pass_3.ivf");
 
-    string TwoPassOutFile1 = CurTestDirStr;
+    std::string TwoPassOutFile1 = CurTestDirStr;
     TwoPassOutFile1.append(slashCharStr());
     TwoPassOutFile1.append(MyDir);
     TwoPassOutFile1.append("_compression_two_pass_1.ivf");
 
-    string TwoPassOutFile2 = CurTestDirStr;
+    std::string TwoPassOutFile2 = CurTestDirStr;
     TwoPassOutFile2.append(slashCharStr());
     TwoPassOutFile2.append(MyDir);
     TwoPassOutFile2.append("_compression_two_pass_2.ivf");
 
-    string TwoPassOutFile3 = CurTestDirStr;
+    std::string TwoPassOutFile3 = CurTestDirStr;
     TwoPassOutFile3.append(slashCharStr());
     TwoPassOutFile3.append(MyDir);
     TwoPassOutFile3.append("_compression_two_pass_3.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

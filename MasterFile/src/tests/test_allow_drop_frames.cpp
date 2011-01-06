@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_drop_frames(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_allow_drop_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_allow_drop_frames";
@@ -25,33 +25,33 @@ int test_allow_drop_frames(int argc, const char *const *argv, const string &Work
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
-    string FileIndexStr = "";
+    std::string CurTestDirStr = "";
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string AllowDFon = CurTestDirStr;
+    std::string AllowDFon = CurTestDirStr;
     AllowDFon.append(slashCharStr());
     AllowDFon.append(MyDir);
     AllowDFon.append("_compression_1.ivf");
 
-    string AllowDFoff = CurTestDirStr;
+    std::string AllowDFoff = CurTestDirStr;
     AllowDFoff.append(slashCharStr());
     AllowDFoff.append(MyDir);
     AllowDFoff.append("_compression_0.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

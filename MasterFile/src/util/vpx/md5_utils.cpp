@@ -21,8 +21,7 @@
 */
 
 #include <sys/types.h>    /* for stupid systems */
-
-#include <string.h>   /* for memcpy() */
+#include <cstring>   /* for memcpy() */
 
 #include "md5_utils.h"
 

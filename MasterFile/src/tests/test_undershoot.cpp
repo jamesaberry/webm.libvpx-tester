@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_undershoot(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_undershoot(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Undershoot";
     char *MyDir = "test_undershoot";
@@ -25,33 +25,33 @@ int test_undershoot(int argc, const char *const *argv, const string &WorkingDir,
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string UnderShoot10 = CurTestDirStr;
+    std::string UnderShoot10 = CurTestDirStr;
     UnderShoot10.append(slashCharStr());
     UnderShoot10.append(MyDir);
     UnderShoot10.append("_compression_10.ivf");
 
-    string UnderShoot100 = CurTestDirStr;
+    std::string UnderShoot100 = CurTestDirStr;
     UnderShoot100.append(slashCharStr());
     UnderShoot100.append(MyDir);
     UnderShoot100.append("_compression_100.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

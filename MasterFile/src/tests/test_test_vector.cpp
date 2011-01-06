@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_vector_test(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_vector_test(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Test Vector Check";
     char *MyDir = "test_test_vector";
@@ -16,26 +16,26 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
 
     int CurTestVector = 1;
     int LastTestVector = 102;
 
     ////////////Formatting Test Specific Directory////////////
 
-    string CurTestDirStr = ""; // <- All Options need to set a value for this
-    string FileIndexStr = "";
+    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string TestVectorFolder = input;
-    string TestVectorOutFolder = CurTestDirStr.c_str();
+    std::string TestVectorFolder = input;
+    std::string TestVectorOutFolder = CurTestDirStr.c_str();
 
     int TestVectorNum = 0;
-    string TestVector[102];
+    std::string TestVector[102];
 
     while (TestVectorNum < 102)
     {
@@ -44,7 +44,7 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
     }
 
     TestVectorNum = 0;
-    string TestVector_Raw[102];
+    std::string TestVector_Raw[102];
 
     while (TestVectorNum < 102)
     {
@@ -459,7 +459,7 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
     TestVector_Raw[101].append("vp80-06-cropping-045.raw");
 
     TestVectorNum = 0;
-    string TestVector_Text[102];
+    std::string TestVector_Text[102];
 
     while (TestVectorNum < 102)
     {
@@ -469,7 +469,7 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
         TestVectorNum++;
     }
 
-    string MD5Key[101];
+    std::string MD5Key[101];
 
     //New Test Vectors 2.0.0 MD5 Checksums
     MD5Key[0].assign("fad126074e1bd5363d43b9d1cadddb71");   /*vp80-00-comprehensive-001.raw*/
@@ -578,7 +578,7 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
     int DeleteTV = 0; // if = 1 will delete decompressed tesetvectors if 0 will not
 
     /////////////OutPutfile////////////
-    string TextfileString(CurTestDirStr.c_str());
+    std::string TextfileString(CurTestDirStr.c_str());
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -633,7 +633,7 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
         }
     }
 
-    vector<int> FailVector;
+    std::vector<int> FailVector;
 
     if (TestType == COMP_ONLY)
     {
@@ -684,7 +684,7 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
         vpxt_file_name(TestVector[CurTestVector].c_str(), TestVectFileName, 1);
 
         char buffer[1024];
-        fstream infile;
+        std::fstream infile;
         infile.open(TextInput);
         infile.getline(buffer, 1024);
         infile.close();
@@ -729,7 +729,7 @@ int test_vector_test(int argc, const char *const *argv, const string &WorkingDir
     }
     else
     {
-        string FailStr = "Not all decoded test vectors match expected MD5 checksum's.";
+        std::string FailStr = "Not all decoded test vectors match expected MD5 checksum's.";
 
         int q = 0;
 

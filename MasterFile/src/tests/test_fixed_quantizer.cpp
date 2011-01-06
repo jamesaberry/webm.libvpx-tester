@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_fixed_quantizer(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_fixed_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Fixed Quantizer";
     char *MyDir = "test_fixed_quantizer";
@@ -27,7 +27,7 @@ int test_fixed_quantizer(int argc, const char *const *argv, const string &Workin
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int FixedQ1Int = atoi(argv[5]);
@@ -36,22 +36,22 @@ int test_fixed_quantizer(int argc, const char *const *argv, const string &Workin
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string FixedQ1 = CurTestDirStr;
+    std::string FixedQ1 = CurTestDirStr;
     FixedQ1.append(slashCharStr());
     FixedQ1.append(MyDir);
     FixedQ1.append("_compression_");
     FixedQ1.append(argv[5]);
     FixedQ1.append(".ivf");
 
-    string FixedQ2 = CurTestDirStr;
+    std::string FixedQ2 = CurTestDirStr;
     FixedQ2.append(slashCharStr());
     FixedQ2.append(MyDir);
     FixedQ2.append("_compression_");
@@ -59,7 +59,7 @@ int test_fixed_quantizer(int argc, const char *const *argv, const string &Workin
     FixedQ2.append(".ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

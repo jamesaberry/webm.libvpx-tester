@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_post_processor(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_post_processor(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_post_processor";
@@ -25,28 +25,28 @@ int test_post_processor(int argc, const char *const *argv, const string &Working
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string PostProcOutFile = CurTestDirStr;
+    std::string PostProcOutFile = CurTestDirStr;
     PostProcOutFile.append(slashCharStr());
     PostProcOutFile.append(MyDir);
     PostProcOutFile.append("_compression.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -170,7 +170,7 @@ int test_post_processor(int argc, const char *const *argv, const string &Working
     }
 
     int x = 0;
-    cout << "\n";
+    tprintf(PRINT_STD, "\n");
 
     int TestFail = 0;
     int TenPercent = 0;

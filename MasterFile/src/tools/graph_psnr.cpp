@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int tool_graph_psnr(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int tool_graph_psnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     if (argc < 6 || argc > 8)
     {
@@ -20,7 +20,7 @@ int tool_graph_psnr(int argc, const char *const *argv, const string &WorkingDir,
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *MyDir = "GraphPSNR";
-    string MainDirString = "";
+    std::string MainDirString = "";
     char File1[255] = "";
 
     snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
@@ -35,22 +35,22 @@ int tool_graph_psnr(int argc, const char *const *argv, const string &WorkingDir,
 
     WorkingDir3[v] = slashChar();
     WorkingDir3[v+1] = '\0';
-    string WorkingDirString = WorkingDir3;
+    std::string WorkingDirString = WorkingDir3;
     WorkingDirString.append(MyDir);
     WorkingDirString.append(slashCharStr());
     WorkingDirString.append(FilesAr[0]);
     WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
-    string CreateDir2 = WorkingDirString;
+    std::string CreateDir2 = WorkingDirString;
     CreateDir2.insert(0, "md \"");
     vpxt_make_dir_vpx(CreateDir2.c_str());
 
     /////////////OutPutfile////////////
-    string TextfileString = WorkingDirString;
+    std::string TextfileString = WorkingDirString;
 
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
-    string OutPutStr = TextfileString;
+    std::string OutPutStr = TextfileString;
     TextfileString.append(".txt");
 
     OutPutStr.append("_");
@@ -83,20 +83,20 @@ int tool_graph_psnr(int argc, const char *const *argv, const string &WorkingDir,
 
     tprintf(PRINT_BTH, "Graph PSNR\n");
 
-    string input = argv[2];
+    std::string input = argv[2];
     int FirstBitRate = atoi(argv[3]);
     int LastBitRate = atoi(argv[4]);
     int BitRateStep = atoi(argv[5]);
-    string ParFile = argv[6];
+    std::string ParFile = argv[6];
 
     int speed = 0;
 
     char  FileNameChar[255];
     vpxt_file_name(input.c_str(), FileNameChar, 0);
-    string InputName = FileNameChar;
+    std::string InputName = FileNameChar;
     InputName.resize(InputName.length() - 4, ' ');
     OutPutStr.append(InputName.c_str());
-    string ParFileOut = OutPutStr;
+    std::string ParFileOut = OutPutStr;
     OutPutStr.append("_TBR");
 
     VP8_CONFIG opt;
@@ -135,11 +135,11 @@ int tool_graph_psnr(int argc, const char *const *argv, const string &WorkingDir,
             DoONce = 1;
         }
 
-        string OutPutStr2 = OutPutStr;
+        std::string OutPutStr2 = OutPutStr;
         char TBChar[8];
         vpxt_itoa_custom(opt.target_bandwidth, TBChar, 10);
         OutPutStr2.append(TBChar);
-        string OutPutStr3 = OutPutStr2;
+        std::string OutPutStr3 = OutPutStr2;
         OutPutStr3.append("_Dec");
         OutPutStr2.append(".ivf");
         OutPutStr3.append(".ivf");

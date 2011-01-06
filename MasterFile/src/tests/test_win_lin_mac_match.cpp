@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_win_lin_mac_match(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_win_lin_mac_match(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "WinLinMacMatch";
     char *MyDir = "test_win_lin_mac_match";
@@ -26,15 +26,15 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const string &Work
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
-    string basefolder = argv[5];
-    string ParameterFile = argv[6];
+    std::string basefolder = argv[5];
+    std::string ParameterFile = argv[6];
 
     int speed = 0;
 
-    string arch = "Unknown";
+    std::string arch = "Unknown";
 #if ARCH_X86
     arch = "-32Bit";
 #elif ARCH_X86_64
@@ -46,7 +46,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const string &Work
 #endif
 
     basefolder.append(slashCharStr().c_str());
-    string versionstring = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    std::string versionstring = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
     size_t versionPos = versionstring.find("v");
     versionstring.substr(versionPos);
     basefolder.append(versionstring.substr(versionPos));
@@ -59,38 +59,38 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const string &Work
     int TestMode = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string FiletoEnc = "";
-    string FiletoDec = "";
+    std::string FiletoEnc = "";
+    std::string FiletoDec = "";
 
-    string WinEnc = basefolder;
+    std::string WinEnc = basefolder;
     WinEnc.append(MyDir);
     WinEnc.append("_compression_win.ivf");
 
-    string LinEnc = basefolder;
+    std::string LinEnc = basefolder;
     LinEnc.append(MyDir);
     LinEnc.append("_compression_lin.ivf");
 
-    string MacEnc = basefolder;
+    std::string MacEnc = basefolder;
     MacEnc.append(MyDir);
     MacEnc.append("_compression_mac.ivf");
 
-    string WinDec = basefolder;
+    std::string WinDec = basefolder;
     WinDec.append(MyDir);
     WinDec.append("_decompression_win.ivf");
 
-    string LinDec = basefolder;
+    std::string LinDec = basefolder;
     LinDec.append(MyDir);
     LinDec.append("_decompression_lin.ivf");
 
-    string MacDec = basefolder;
+    std::string MacDec = basefolder;
     MacDec.append(MyDir);
     MacDec.append("_decompression_mac.ivf");
 
@@ -124,7 +124,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const string &Work
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

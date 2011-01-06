@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak";
@@ -26,18 +26,18 @@ int test_mem_leak(int argc, const char *const *argv, const string &WorkingDir, s
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     char MemLeakExe[255];
-    string MemLeakExeStr = argv[5];
+    std::string MemLeakExeStr = argv[5];
     snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
 
     ////////////Formatting Test Specific Directory////////////
-    string CurTestDirStr = "";
+    std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
     char ExeCharMemLeak[1024] = "";
-    string FileIndexStr = "";
+    std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
@@ -47,34 +47,34 @@ int test_mem_leak(int argc, const char *const *argv, const string &WorkingDir, s
     vpxt_folder_name(argv[0], ExeCharMemLeak);
 
     /////////////////////////////////////////////////
-    string MemLeakCheckIVFDECStr = CurTestDirStr;
+    std::string MemLeakCheckIVFDECStr = CurTestDirStr;
     MemLeakCheckIVFDECStr.append(slashCharStr());
     MemLeakCheckIVFDECStr.append(MyDir);
     MemLeakCheckIVFDECStr.append("_decompression.ivf");
     /////////////////////////////////////////////////
 
-    string MemLeakCheckIVFStr = CurTestDirStr;
+    std::string MemLeakCheckIVFStr = CurTestDirStr;
     MemLeakCheckIVFStr.append(slashCharStr());
     MemLeakCheckIVFStr.append(MyDir);
     MemLeakCheckIVFStr.append("_compression.ivf");
 
-    string EncMemLeakCheckTxtStr = CurTestDirStr;
+    std::string EncMemLeakCheckTxtStr = CurTestDirStr;
     EncMemLeakCheckTxtStr.append(slashCharStr());
     EncMemLeakCheckTxtStr.append(MyDir);
     EncMemLeakCheckTxtStr.append("_compression_memory_summary.txt");
 
-    string DecMemLeakCheckTxtStr = CurTestDirStr;
+    std::string DecMemLeakCheckTxtStr = CurTestDirStr;
     DecMemLeakCheckTxtStr.append(slashCharStr());
     DecMemLeakCheckTxtStr.append(MyDir);
     DecMemLeakCheckTxtStr.append("_decompression_memory_summary.txt");
 
-    string MemLeakCheckParFileStr = CurTestDirStr;
+    std::string MemLeakCheckParFileStr = CurTestDirStr;
     MemLeakCheckParFileStr.append(slashCharStr());
     MemLeakCheckParFileStr.append(MyDir);
     MemLeakCheckParFileStr.append("_compression_parameter_file.txt");
 
-    string ProgramEncMemLeakCheckStr = "";
-    string ProgramDecMemLeakCheckStr = "";
+    std::string ProgramEncMemLeakCheckStr = "";
+    std::string ProgramDecMemLeakCheckStr = "";
 
 #if defined(_WIN32)
     {
@@ -133,7 +133,7 @@ int test_mem_leak(int argc, const char *const *argv, const string &WorkingDir, s
 #endif
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 
@@ -243,8 +243,8 @@ int test_mem_leak(int argc, const char *const *argv, const string &WorkingDir, s
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    string MemCompressResults = "";
-    string MemDecompressResults = "";
+    std::string MemCompressResults = "";
+    std::string MemDecompressResults = "";
 
     if (vpxt_check_mem_state(EncMemLeakCheckTxtStr, MemCompressResults) == -1)
     {

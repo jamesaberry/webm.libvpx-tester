@@ -1,39 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-////////////////////////
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
-#include <vector>
-/////VP8////////////////
-#include <map>
-#include <iomanip>
-#include <sstream>
-#include <stdarg.h>
-/////VP8 IVF PSNR///////
-#include <cassert>
-/////PSNR///
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <string.h>
-using namespace std;
-////////////////////////
-#include <stdio.h>
-#include <sys/stat.h>
-////////////////////////
-///////////itoa_custom/////////
-#include <algorithm>
-////////////////////////
-
-#if defined(_WIN32)
-#include <windows.h>
-#include "on2vpplugin.h"
-#define snprintf _snprintf
-#endif
-#include <cstdio>
-
-
 /*
 *  Copyright (c) 2010 The VP8 project authors. All Rights Reserved.
 *
@@ -48,18 +12,39 @@ using namespace std;
 /* This is a simple program that encodes YV12 files and generates ivf
 * files using the new interface.
 */
+
+#define _CRT_SECURE_NO_WARNINGS
+#include "vpx_encoder.h"
+#include "vp8cx.h"
+#include "mem_ops.h"
+#include "vpx_timer.h"
+#include "y4minput.h"
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
+#include <vector>
+#include <map>
+#include <iomanip>
+#include <sstream>
+#include <cstdarg>
+#include <cassert>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <algorithm>
+
+#if defined(_WIN32)
+#include "on2vpplugin.h"
+#define snprintf _snprintf
+#endif
 #define CONFIG_VP8_ENCODER 1
 #if defined(_WIN32)
 #define USE_POSIX_MMAP 0
 #else
 #define USE_POSIX_MMAP 1
 #endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include "vpx_encoder.h"
 #if USE_POSIX_MMAP
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -67,12 +52,6 @@ using namespace std;
 #include <fcntl.h>
 #include <unistd.h>
 #endif
-
-#include "vp8cx.h"
-#include "mem_ops.h"
-#include "vpx_timer.h"
-#include "y4minput.h"
-
 
 static const char *exec_name;
 

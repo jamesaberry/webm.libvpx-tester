@@ -9,9 +9,9 @@
 */
 
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#include <cstdlib>
+#include <cstring>
+#include <climits>
 #include "args.h"
 
 #ifdef _MSC_VER

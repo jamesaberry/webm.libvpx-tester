@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_version(int argc, const char *const *argv, const string &WorkingDir, string FilesAr[], int TestType)
+int test_version(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
 {
     char *CompressString = "Version";
     char *MyDir = "test_version";
@@ -25,7 +25,7 @@ int test_version(int argc, const char *const *argv, const string &WorkingDir, st
         return 0;
     }
 
-    string input = argv[2];
+    std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
 
@@ -33,56 +33,56 @@ int test_version(int argc, const char *const *argv, const string &WorkingDir, st
 
     ////////////Formatting Test Specific Directory////////////
 
-    string CurTestDirStr = ""; // <- All Options need to set a value for this
-    string FileIndexStr = "";
+    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
     if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    string Version0 = CurTestDirStr;
+    std::string Version0 = CurTestDirStr;
     Version0.append(slashCharStr());
     Version0.append(MyDir);
     Version0.append("_compression_0.ivf");
 
-    string Version1 = CurTestDirStr;
+    std::string Version1 = CurTestDirStr;
     Version1.append(slashCharStr());
     Version1.append(MyDir);
     Version1.append("_compression_1.ivf");
 
-    string Version2 = CurTestDirStr;
+    std::string Version2 = CurTestDirStr;
     Version2.append(slashCharStr());
     Version2.append(MyDir);
     Version2.append("_compression_2.ivf");
 
-    string Version3 = CurTestDirStr;
+    std::string Version3 = CurTestDirStr;
     Version3.append(slashCharStr());
     Version3.append(MyDir);
     Version3.append("_compression_3.ivf");
 
-    string Version0_Dec = CurTestDirStr;
+    std::string Version0_Dec = CurTestDirStr;
     Version0_Dec.append(slashCharStr());
     Version0_Dec.append(MyDir);
     Version0_Dec.append("_decompression_0.ivf");
 
-    string Version1_Dec = CurTestDirStr;
+    std::string Version1_Dec = CurTestDirStr;
     Version1_Dec.append(slashCharStr());
     Version1_Dec.append(MyDir);
     Version1_Dec.append("_decompression_1.ivf");
 
-    string Version2_Dec = CurTestDirStr;
+    std::string Version2_Dec = CurTestDirStr;
     Version2_Dec.append(slashCharStr());
     Version2_Dec.append(MyDir);
     Version2_Dec.append("_decompression_2.ivf");
 
-    string Version3_Dec = CurTestDirStr;
+    std::string Version3_Dec = CurTestDirStr;
     Version3_Dec.append(slashCharStr());
     Version3_Dec.append(MyDir);
     Version3_Dec.append("_decompression_3.ivf");
 
     /////////////OutPutfile////////////
-    string TextfileString = CurTestDirStr;
+    std::string TextfileString = CurTestDirStr;
     TextfileString.append(slashCharStr());
     TextfileString.append(MyDir);
 

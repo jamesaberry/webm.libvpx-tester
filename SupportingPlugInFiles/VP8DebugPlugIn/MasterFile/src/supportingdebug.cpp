@@ -231,6 +231,12 @@ int main(int argc, char *argv[])
     string memDecompress = "memdecompress";
     string fauxDecompress = "fauxdecompress";
 
+    if (argc < 2)
+    {
+        supportingDebugOnError();
+        return 0;
+    }
+
     //If Faux Compress
     if (fauxCompress.compare(argv[1]) == 0)
     {

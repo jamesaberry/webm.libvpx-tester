@@ -119,7 +119,7 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
 
         opt.best_allowed_q = 10;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -128,7 +128,7 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
 
         opt.best_allowed_q = 60;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

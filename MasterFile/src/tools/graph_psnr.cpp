@@ -151,7 +151,7 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         snprintf(outputChar2, 255, "%s", OutPutStr3.c_str());
 
         unsigned int cpu_tick1 = 0;
-        EncTimeArr[x] = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1, 0, 3, 3);
+        EncTimeArr[x] = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1);
 
         if (EncTimeArr[x] == -1)
         {

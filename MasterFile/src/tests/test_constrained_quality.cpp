@@ -5,7 +5,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     char *CompressString = "Constrained Quality";
     char *MyDir = "test_constrained_quality";
 
-    if (!(argc == 6 || argc == 5))
+    if (!(argc == 7 || argc == 6))
     {
         vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
         tprintf(PRINT_STD,
@@ -19,6 +19,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
+                "    <Constrained Quantizer>\n"
                 "    <Optional Settings File>\n"
                 "\n"
                );
@@ -28,8 +29,11 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    int ConstrainedQ = atoi(argv[5]);
 
     int speed = 0;
+    unsigned int Time1 = 0;
+    unsigned int Time2 = 0;
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -86,7 +90,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (argc == 7)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -113,15 +117,25 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     else
     {
         opt.Mode = Mode;
+        opt.end_usage = 1;
+        unsigned int cpu_tick1_conq_off = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), ConstrainedQoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
+        Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, cpu_tick1_conq_off);
+
+        if (Time1 == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), ConstrainedQon.c_str(), speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        opt.end_usage = 2;
+        opt.cq_level = ConstrainedQ;
+        unsigned int cpu_tick1_conq_on = 0;
+
+        Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQon.c_str(), speed, BitRate, opt, CompressString, 1, 0, cpu_tick1_conq_on);
+
+        if (Time2 == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -142,32 +156,37 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     double ConstrainedQonDataRate = vpxt_ivf_data_rate(ConstrainedQon.c_str(), 1);
     double ConstrainedQoffDataRate = vpxt_ivf_data_rate(ConstrainedQoff.c_str(), 1);
 
+    tprintf(PRINT_BTH, "\nConstrained Q on  PSNR: %f Constrained Q on  Data Rate: %f\n", ConstrainedQonPSNR, ConstrainedQonDataRate);
+    tprintf(PRINT_BTH, "Constrained Q off PSNR: %f Constrained Q off Data Rate: %f\n", ConstrainedQoffPSNR, ConstrainedQoffDataRate);
+    tprintf(PRINT_BTH, "\nConstrained Q on  Time: %i microseconds\n", Time2);
+    tprintf(PRINT_BTH, "Constrained Q off Time: %i microseconds\n", Time1);
+
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     int fail = 0;
 
     if ((ConstrainedQonPSNR / ConstrainedQonDataRate) > (ConstrainedQoffPSNR / ConstrainedQoffDataRate))
     {
-        vpxt_formated_print(RESPRT, "Constrained quality density: %f > nonconstrained quality density  %f - Passed", (ConstrainedQonPSNR / ConstrainedQonDataRate), (ConstrainedQoffPSNR / ConstrainedQoffDataRate));
+        vpxt_formated_print(RESPRT, "Constrained quality density: %f > non-constrained quality density:  %f - Passed", (ConstrainedQonPSNR / ConstrainedQonDataRate), (ConstrainedQoffPSNR / ConstrainedQoffDataRate));
         tprintf(PRINT_BTH, "\n");
     }
 
     if ((ConstrainedQonPSNR / ConstrainedQonDataRate) <= (ConstrainedQoffPSNR / ConstrainedQoffDataRate))
     {
-        vpxt_formated_print(RESPRT, "Constrained quality density: %f <= nonconstrained quality density  %f - Failed", (ConstrainedQonPSNR / ConstrainedQonDataRate), (ConstrainedQoffPSNR / ConstrainedQoffDataRate));
+        vpxt_formated_print(RESPRT, "Constrained quality density: %f <= non-constrained quality density:  %f - Failed", (ConstrainedQonPSNR / ConstrainedQonDataRate), (ConstrainedQoffPSNR / ConstrainedQoffDataRate));
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (ConstrainedQonPSNR > 25.0)
     {
-        vpxt_formated_print(RESPRT, "Constrained quality PSNR > 25 - Passed");
+        vpxt_formated_print(RESPRT, "Constrained quality PSNR: %f > 25 - Passed", ConstrainedQonPSNR);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (ConstrainedQonPSNR <= 25.0)
     {
-        vpxt_formated_print(RESPRT, "Constrained quality PSNR <= 25 - Failed");
+        vpxt_formated_print(RESPRT, "Constrained quality PSNR: %f <= 25 - Failed", ConstrainedQonPSNR);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }

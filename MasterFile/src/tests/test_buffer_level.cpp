@@ -123,7 +123,7 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

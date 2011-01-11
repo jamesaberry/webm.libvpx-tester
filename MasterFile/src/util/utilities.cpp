@@ -108,17 +108,22 @@ extern "C"
 /////////////////////////////////////////////////////////API 2.0//////////////////////////////////////////////////////
 struct vp8_extracfg
 {
-    struct on2_codec__pkt_list *pkt_list;
-    vp8e_encoding_mode          EncodingMode;               /** best, good, realtime            */
-    int                         CpuUsed;                    /** available cpu percentage in 1/16*/
-    unsigned int                EnableAutoAltRef;           /** if encoder decides to uses alternate reference frame */
-    unsigned int                NoiseSensitivity;
+    struct vpx_codec_pkt_list *pkt_list;
+    vp8e_encoding_mode      encoding_mode;               /** best, good, realtime            */
+    int                         cpu_used;                    /** available cpu percentage in 1/16*/
+    unsigned int                enable_auto_alt_ref;           /** if encoder decides to uses alternate reference frame */
+    unsigned int                noise_sensitivity;
     unsigned int                Sharpness;
-    unsigned int                StaticThresh;
-    unsigned int                TokenPartitions;
+    unsigned int                static_thresh;
+    unsigned int                token_partitions;
+    unsigned int                arnr_max_frames;    /* alt_ref Noise Reduction Max Frame Count */
+    unsigned int                arnr_strength;    /* alt_ref Noise Reduction Strength */
+    unsigned int                arnr_type;        /* alt_ref filter type */
+    vp8e_tuning                 tuning;
+    unsigned int                cq_level;         /* constrained quality level */
 
 };
-struct on2_codec_alg_priv
+struct vpx_codec_alg_priv
 {
     vpx_codec_priv_t        base;
     vpx_codec_enc_cfg_t     cfg;
@@ -130,7 +135,7 @@ struct on2_codec_alg_priv
     vpx_image_t             preview_img;
     unsigned int            next_frame_flag;
     vp8_postproc_cfg_t      preview_ppcfg;
-    vpx_codec_pkt_list_decl(26) pkt_list;              // changed to accomendate the maximum number of lagged frames allowed
+    vpx_codec_pkt_list_decl(64) pkt_list;              // changed to accomendate the maximum number of lagged frames allowed
     int                         deprecated_mode;
     unsigned int                fixed_kf_cntr;
 };
@@ -1031,7 +1036,10 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     opt.token_partitions = 0;
     opt.error_resilient_mode = 0;
 
-
+    opt.cq_level = 10;
+    opt.arnr_max_frames = 0;
+    opt.arnr_strength = 3;
+    opt.arnr_type = 3;
 }
 int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
 {
@@ -1104,9 +1112,15 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
     {
         cfg->rc_end_usage = VPX_VBR;
     }
-    else if (coreCfg.end_usage == USAGE_STREAM_FROM_SERVER)
+
+    if (coreCfg.end_usage == USAGE_STREAM_FROM_SERVER)
     {
         cfg->rc_end_usage = VPX_CBR;
+    }
+
+    if (coreCfg.end_usage == USAGE_CONSTRAINED_QUALITY)
+    {
+        cfg->rc_end_usage = VPX_CQ;
     }
 
     return 0;
@@ -1185,12 +1199,14 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
         opt.fixed_q = rand() % 64; //valid Range: 0 to 63 or -1 (-1 = fixedQ off)
         opt.best_allowed_q = opt.fixed_q; //valid Range: 0 to 63
         opt.worst_allowed_q   = opt.fixed_q; //valid Range: 0 to 63
+        opt.cq_level   = rand() % 64; //valid Range: 0 to 63
     }
     else
     {
         opt.fixed_q = -1; //valid Range: 0 to 63 or -1 (-1 = fixedQ off)
         opt.best_allowed_q = rand() % 64; //valid Range: 0 to 63
         opt.worst_allowed_q   = rand() % 64; //valid Range: 0 to 63
+        opt.cq_level   = rand() % 64; //valid Range: 0 to 63
     }
 
     opt.auto_key = rand() % 2; //valid Range: 0 to 1
@@ -1208,15 +1224,19 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     opt.resample_down_water_mark = rand() % 101; //valid Range:  0 to 100
     opt.two_pass_vbrbias = rand() % 101; //valid Range: 0 to 100
     opt.encode_breakout = rand() % 101; //valid Range:
-    opt.end_usage = rand() % 2; //valid Range: 0 to 1
+    opt.end_usage = rand() % 3; //valid Range: 0 to 2
     opt.Version = rand() % 4; //valid Range: 0 to 3
     opt.Sharpness = rand() % 8; //valid Range: 0 to 7
     opt.play_alternate = rand() % 2; //valid Range: 0 to 1
     opt.token_partitions = rand() % 4; //valid Range: 0 to 3
-    opt.error_resilient_mode = rand() % 101; //valid Range: 0-100
+    opt.error_resilient_mode = rand() % 101; //valid Range: 0 to 100
 
     opt.target_bandwidth = rand() % ((w * h) / (320 * 240) * 2048); //valid Range: No Max so based on resolution
     opt.key_freq = rand() % length + 2; //valid Range: No Max so based on number of frames
+
+    opt.arnr_max_frames = rand() % 16; //valid Range: 0 to 15
+    opt.arnr_strength = rand() % 7; //valid Range: 6
+    opt.arnr_type = rand() % 4;//valid Range: 1 to 3
 
     ////////////////////////////////No Range Documentation////////////////////////////////
     //opt.maximum_buffer_size  = rand()% 101; //valid Range:
@@ -1424,6 +1444,15 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile)
     infile2 >> opt.Width;
     infile2 >> Garbage;
 
+    infile2 >> opt.cq_level;
+    infile2 >> Garbage;
+    infile2 >> opt.arnr_max_frames;
+    infile2 >> Garbage;
+    infile2 >> opt.arnr_strength;
+    infile2 >> Garbage;
+    infile2 >> opt.arnr_type;
+    infile2 >> Garbage;
+
     infile2.close();
 
     return opt;
@@ -1473,6 +1502,11 @@ int vpxt_output_settings(const char *outputFile, VP8_CONFIG opt)
     //not included in default settings file
     outfile << opt.Height << " Height\n";
     outfile << opt.Width << " Width\n";
+
+    outfile << opt.cq_level << " CQLevel\n";
+    outfile << opt.arnr_max_frames << " ArnrMaxFrames\n";
+    outfile << opt.arnr_strength << " ArnrStr\n";
+    outfile << opt.arnr_type << " ArnrType\n";
 
     outfile.close();
     return 0;
@@ -1537,6 +1571,7 @@ int vpxt_output_compatable_settings(const char *outputFile, VP8_CONFIG opt, int 
 
     outfile << opt.Height << " Height\n";
     outfile << opt.Width << " Width\n";
+    outfile << opt.cq_level << " CQLevel\n";
 
     outfile.close();
     return 0;
@@ -1790,8 +1825,12 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
 
     if (opt.end_usage == USAGE_LOCAL_FILE_PLAYBACK)
         tprintf(PRINT_STD, "--end-usage=%i ", VPX_VBR);                                 //VBR=0 | CBR=1
-    else if (opt.end_usage == USAGE_STREAM_FROM_SERVER)
+
+    if (opt.end_usage == USAGE_STREAM_FROM_SERVER)
         tprintf(PRINT_STD, "--end-usage=%i ", VPX_CBR);                                 //VBR=0 | CBR=1
+
+    if (opt.end_usage == USAGE_CONSTRAINED_QUALITY)
+        tprintf(PRINT_STD, "--end-usage=%i ", VPX_CQ);                                  //VBR=0 | CBR=1
 
     tprintf(PRINT_STD, "--target-bitrate=%i ", opt.target_bandwidth);                   //Bitrate (kbps)
     tprintf(PRINT_STD, "--min-q=%i ", opt.best_allowed_q);                              //Minimum (best) quantizer
@@ -1828,10 +1867,11 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     tprintf(PRINT_STD, "--sharpness=%i ", opt.Sharpness);                               //Filter sharpness (0-7)
     tprintf(PRINT_STD, "--static-thresh=%i ", opt.encode_breakout);                     //Motion detection threshold
     tprintf(PRINT_STD, "--token-parts=%i ", opt.token_partitions);                      //Number of token partitions to use, log2
-    //--arnr-maxframes=<arg>                                                            //AltRef Max Frames
-    //--arnr-strength=<arg>                                                             //AltRef Strength
-    //--arnr-type=<arg>                                                                 //AltRef Type
+    tprintf(PRINT_STD, "--arnr-maxframes=%i ", opt.arnr_max_frames);                   //AltRef Max Frames
+    tprintf(PRINT_STD, "--arnr-strength=%i ", opt.arnr_strength);                    //AltRef Strength
+    tprintf(PRINT_STD, "--arnr-type=%i ", opt.arnr_type);                        //AltRef Type
     //--tune=<arg>                                                                      //Material to favor - psnr, ssim
+    tprintf(PRINT_STD, "--cq-level=%i ", opt.cq_level);
 
     return 0;
 }
@@ -2169,7 +2209,7 @@ int vpxt_identify_test(const char *test_char)
             return CPUDENUM;
 
         if (id_test_str.compare("test_change_cpu_enc") == 0)
-            return CHGWRNUM;
+            return CPUENNUM;
 
         if (id_test_str.compare("test_constrained_quality") == 0)
             return CONQUNUM;
@@ -2566,12 +2606,27 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 }
                 }*/
 
-                if (selector == CHGWRNUM)
+                if (selector == CPUENNUM)
                 {
                     if (!(DummyArgvVar == 7 || DummyArgvVar == 6))
                     {
                         SelectorAr[SelectorArInt].append(buffer);
                         SelectorAr2[SelectorArInt] = "ChangeCPUWorks";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
+                if (selector == CONQUNUM)
+                {
+                    if (!(DummyArgvVar == 7 || DummyArgvVar == 6))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "ConstrainQuality";
                         PassFail[PassFailInt] = trackthis1;
                     }
                     else
@@ -3050,7 +3105,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                 //Make sure that all tests input are vaild tests by checking the list (make sure to add new tests here!)
                 if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM && selector != FRSZTNUM &&
-                    selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CHGWRNUM &&
+                    selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CPUENNUM && selector != CONQUNUM &&
                     selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
                     selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTTNUM &&
@@ -5613,7 +5668,7 @@ int  vpxt_lower_case_string(std::string &input)
 }
 //----------------------------------------------------------IVF API-------------------------------------------------------------------------
 #ifdef API
-int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type)
+int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -5645,20 +5700,8 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ////////////check arnr values///////////////////
-    if (arnr_max_frames < 0 || arnr_max_frames > 15)
-        return -1;
-
-    if (arnr_strength > 6)
-        return -1;
-
-    if (arnr_type < 1 || arnr_type > 3)
-        return -1;
-
-    ////////////////////////////////////////////////
-
     vpx_codec_ctx_t        encoder;
-    const char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
+    const char             *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
     FILE                  *infile, *outfile;
     vpx_codec_enc_cfg_t    cfg;
     vpx_codec_err_t        res;
@@ -5910,9 +5953,10 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, oxcf.arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -6103,7 +6147,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
 
     return 0;
 }
-int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type)
+int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
@@ -6112,17 +6156,6 @@ int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////check arnr values///////////////////
-    if (arnr_max_frames < 0 || arnr_max_frames > 15)
-        return -1;
-
-    if (arnr_strength > 6)
-        return -1;
-
-    if (arnr_type < 1 || arnr_type > 3)
-        return -1;
-
-    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
     const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -6343,9 +6376,10 @@ int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, oxcf.arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -6382,7 +6416,7 @@ int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *
         {
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
-            clock_t start, end;
+            clock_t start = 0, end = 0;
             struct vpx_usec_timer timer;
             int64_t frame_start, next_frame_start;
 
@@ -6476,7 +6510,7 @@ int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *
     vpx_img_free(&raw);
     return 0;
 }
-unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick, int arnr_max_frames, int arnr_strength, int arnr_type)
+unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick)
 {
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
@@ -6485,17 +6519,6 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////check arnr values///////////////////
-    if (arnr_max_frames < 0 || arnr_max_frames > 15)
-        return -1;
-
-    if (arnr_strength > 6)
-        return -1;
-
-    if (arnr_type < 1 || arnr_type > 3)
-        return -1;
-
-    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
     const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -6715,9 +6738,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, oxcf.arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -6871,7 +6895,7 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
     CPUTick = total_cpu_time_used;
     return cx_time;
 }
-int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, int arnr_max_frames, int arnr_strength, int arnr_type)
+int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -6902,17 +6926,6 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////check arnr values///////////////////
-    if (arnr_max_frames < 0 || arnr_max_frames > 15)
-        return -1;
-
-    if (arnr_strength > 6)
-        return -1;
-
-    if (arnr_type < 1 || arnr_type > 3)
-        return -1;
-
-    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t        encoder;
     const char                  *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -7169,9 +7182,10 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, oxcf.arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -7340,7 +7354,7 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *
 
     return 0;
 }
-int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck, int arnr_max_frames, int arnr_strength, int arnr_type)
+int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, char *CompressString, int CompressInt, int RunQCheck)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -7371,17 +7385,6 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////check arnr values///////////////////
-    if (arnr_max_frames < 0 || arnr_max_frames > 15)
-        return -1;
-
-    if (arnr_strength > 6)
-        return -1;
-
-    if (arnr_type < 1 || arnr_type > 3)
-        return -1;
-
-    ////////////////////////////////////////////////
 
     vpx_codec_ctx_t       encoder;
     const char            *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
@@ -7692,9 +7695,10 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
         vpx_codec_control(&encoder, VP8E_SET_SHARPNESS, oxcf.Sharpness);
         vpx_codec_control(&encoder, VP8E_SET_TOKEN_PARTITIONS, (vp8e_token_partitions) oxcf.token_partitions);
 
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, arnr_max_frames);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, arnr_strength);
-        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_MAXFRAMES, oxcf.arnr_max_frames);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
+        vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
+        vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)

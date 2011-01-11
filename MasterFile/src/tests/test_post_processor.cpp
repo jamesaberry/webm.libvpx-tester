@@ -114,7 +114,7 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

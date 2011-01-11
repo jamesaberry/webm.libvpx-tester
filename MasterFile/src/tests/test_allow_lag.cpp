@@ -116,7 +116,7 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
         opt.Mode = Mode;
         opt.allow_lag = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -125,7 +125,7 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
 
         opt.allow_lag = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

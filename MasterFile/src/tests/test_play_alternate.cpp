@@ -127,7 +127,7 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
         opt.Mode = Mode;
         opt.play_alternate = PlayAlternate1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -136,7 +136,7 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
 
         opt.play_alternate = PlayAlternate2Val;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -11,34 +11,28 @@
 
 #ifndef VPX_PORTS_X86_H
 #define VPX_PORTS_X86_H
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include <stdlib.h>
 #include "config.h"
 
-    typedef enum
-    {
-        VPX_CPU_UNKNOWN = -1,
-        VPX_CPU_AMD,
-        VPX_CPU_AMD_OLD,
-        VPX_CPU_CENTAUR,
-        VPX_CPU_CYRIX,
-        VPX_CPU_INTEL,
-        VPX_CPU_NEXGEN,
-        VPX_CPU_NSC,
-        VPX_CPU_RISE,
-        VPX_CPU_SIS,
-        VPX_CPU_TRANSMETA,
-        VPX_CPU_TRANSMETA_OLD,
-        VPX_CPU_UMC,
-        VPX_CPU_VIA,
+typedef enum
+{
+    VPX_CPU_UNKNOWN = -1,
+    VPX_CPU_AMD,
+    VPX_CPU_AMD_OLD,
+    VPX_CPU_CENTAUR,
+    VPX_CPU_CYRIX,
+    VPX_CPU_INTEL,
+    VPX_CPU_NEXGEN,
+    VPX_CPU_NSC,
+    VPX_CPU_RISE,
+    VPX_CPU_SIS,
+    VPX_CPU_TRANSMETA,
+    VPX_CPU_TRANSMETA_OLD,
+    VPX_CPU_UMC,
+    VPX_CPU_VIA,
 
-        VPX_CPU_LAST
-    }
-    vpx_cpu_t;
+    VPX_CPU_LAST
+}  vpx_cpu_t;
 
 #if defined(__GNUC__) && __GNUC__
 #if ARCH_X86_64
@@ -58,7 +52,7 @@ extern "C"
 #endif
 #else
 #if ARCH_X86_64
-    void __cpuid(int CPUInfo[4], int info_type);
+void __cpuid(int CPUInfo[4], int info_type);
 #pragma intrinsic(__cpuid)
 #define cpuid(func,a,b,c,d) do{\
         int regs[4];\
@@ -85,60 +79,71 @@ extern "C"
 #define BIT(n) (1<<n)
 #endif
 
-    static int
-    x86_simd_caps(void)
-    {
-        unsigned int flags = 0;
-        unsigned int mask = ~0;
-        unsigned int reg_eax, reg_ebx, reg_ecx, reg_edx;
-        char *env;
-        (void)reg_ebx;
+static int
+x86_simd_caps(void)
+{
+    unsigned int flags = 0;
+    unsigned int mask = ~0;
+    unsigned int reg_eax, reg_ebx, reg_ecx, reg_edx;
+    char *env;
+    (void)reg_ebx;
 
-        /* Ensure that the CPUID instruction supports extended features */
-        cpuid(0, reg_eax, reg_ebx, reg_ecx, reg_edx);
+    /* See if the CPU capabilities are being overridden by the environment */
+    env = getenv("VPX_SIMD_CAPS");
 
-        if (reg_eax < 1)
-            return 0;
+    if (env && *env)
+        return (int)strtol(env, NULL, 0);
 
-        /* Get the standard feature flags */
-        cpuid(1, reg_eax, reg_ebx, reg_ecx, reg_edx);
+    env = getenv("VPX_SIMD_CAPS_MASK");
 
-        if (reg_edx & BIT(23)) flags |= HAS_MMX;
+    if (env && *env)
+        mask = strtol(env, NULL, 0);
 
-        if (reg_edx & BIT(25)) flags |= HAS_SSE; /* aka xmm */
+    /* Ensure that the CPUID instruction supports extended features */
+    cpuid(0, reg_eax, reg_ebx, reg_ecx, reg_edx);
 
-        if (reg_edx & BIT(26)) flags |= HAS_SSE2; /* aka wmt */
+    if (reg_eax < 1)
+        return 0;
 
-        if (reg_ecx & BIT(0))  flags |= HAS_SSE3;
+    /* Get the standard feature flags */
+    cpuid(1, reg_eax, reg_ebx, reg_ecx, reg_edx);
 
-        if (reg_ecx & BIT(9))  flags |= HAS_SSSE3;
+    if (reg_edx & BIT(23)) flags |= HAS_MMX;
 
-        if (reg_ecx & BIT(19)) flags |= HAS_SSE4_1;
+    if (reg_edx & BIT(25)) flags |= HAS_SSE; /* aka xmm */
 
-        return flags & mask;
-    }
+    if (reg_edx & BIT(26)) flags |= HAS_SSE2; /* aka wmt */
 
-    vpx_cpu_t vpx_x86_vendor(void);
+    if (reg_ecx & BIT(0))  flags |= HAS_SSE3;
+
+    if (reg_ecx & BIT(9))  flags |= HAS_SSSE3;
+
+    if (reg_ecx & BIT(19)) flags |= HAS_SSE4_1;
+
+    return flags & mask;
+}
+
+vpx_cpu_t vpx_x86_vendor(void);
 
 #if ARCH_X86_64 && defined(_MSC_VER)
-    unsigned __int64 __rdtsc(void);
+unsigned __int64 __rdtsc(void);
 #pragma intrinsic(__rdtsc)
 #endif
-    static unsigned int
-    x86_readtsc(void)
-    {
+static unsigned int
+x86_readtsc(void)
+{
 #if defined(__GNUC__) && __GNUC__
-        unsigned int tsc;
-        __asm__ __volatile__("rdtsc\n\t":"=a"(tsc):);
-        return tsc;
+    unsigned int tsc;
+    __asm__ __volatile__("rdtsc\n\t":"=a"(tsc):);
+    return tsc;
 #else
 #if ARCH_X86_64
-        return __rdtsc();
+    return __rdtsc();
 #else
-        __asm  rdtsc;
+    __asm  rdtsc;
 #endif
 #endif
-    }
+}
 
 
 #if defined(__GNUC__) && __GNUC__
@@ -146,7 +151,7 @@ extern "C"
     __asm__ __volatile__ ("pause \n\t")
 #else
 #if ARCH_X86_64
-    /* No pause intrinsic for windows x64 */
+/* No pause intrinsic for windows x64 */
 #define x86_pause_hint()
 #else
 #define x86_pause_hint()\
@@ -155,52 +160,48 @@ extern "C"
 #endif
 
 #if defined(__GNUC__) && __GNUC__
-    static void
-    x87_set_control_word(unsigned short mode)
-    {
-        __asm__ __volatile__("fldcw %0" : : "m"(*&mode));
-    }
-    static unsigned short
-    x87_get_control_word(void)
-    {
-        unsigned short mode;
-        __asm__ __volatile__("fstcw %0\n\t":"=m"(*&mode):);
-        return mode;
-    }
+static void
+x87_set_control_word(unsigned short mode)
+{
+    __asm__ __volatile__("fldcw %0" : : "m"(*&mode));
+}
+static unsigned short
+x87_get_control_word(void)
+{
+    unsigned short mode;
+    __asm__ __volatile__("fstcw %0\n\t":"=m"(*&mode):);
+    return mode;
+}
 #elif ARCH_X86_64
-    /* No fldcw intrinsics on Windows x64, punt to external asm */
-    extern void           vpx_winx64_fldcw(unsigned short mode);
-    extern unsigned short vpx_winx64_fstcw(void);
+/* No fldcw intrinsics on Windows x64, punt to external asm */
+extern void           vpx_winx64_fldcw(unsigned short mode);
+extern unsigned short vpx_winx64_fstcw(void);
 #define x87_set_control_word vpx_winx64_fldcw
 #define x87_get_control_word vpx_winx64_fstcw
 #else
-    static void
-    x87_set_control_word(unsigned short mode)
-    {
-        __asm { fldcw mode }
-    }
-    static unsigned short
-    x87_get_control_word(void)
-    {
-        unsigned short mode;
-        __asm { fstcw mode }
-        return mode;
-    }
-#endif
-
-    static unsigned short
-    x87_set_double_precision(void)
-    {
-        unsigned short mode = x87_get_control_word();
-        x87_set_control_word((mode&~0x300) | 0x200);
-        return mode;
-    }
-
-
-    extern void vpx_reset_mmx_state(void);
-#ifdef __cplusplus
+static void
+x87_set_control_word(unsigned short mode)
+{
+    __asm { fldcw mode }
+}
+static unsigned short
+x87_get_control_word(void)
+{
+    unsigned short mode;
+    __asm { fstcw mode }
+    return mode;
 }
 #endif
 
+static unsigned short
+x87_set_double_precision(void)
+{
+    unsigned short mode = x87_get_control_word();
+    x87_set_control_word((mode&~0x300) | 0x200);
+    return mode;
+}
+
+
+extern void vpx_reset_mmx_state(void);
 #endif
 

@@ -126,7 +126,7 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
         opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -135,7 +135,7 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
         opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

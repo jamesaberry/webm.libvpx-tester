@@ -130,7 +130,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
         opt.Mode = MODE_SECONDPASS;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,7 +139,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -148,7 +148,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -158,7 +158,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
         opt.Mode = MODE_SECONDPASS_BEST;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,7 +167,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -176,7 +176,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

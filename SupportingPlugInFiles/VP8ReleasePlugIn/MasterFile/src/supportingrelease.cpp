@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
             opt = vpxt_input_settings(parfile);
 
         tprintf(PRINT_BTH, "\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-        vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick, 0, 3, 3);
+        vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick);
 
         if (ExtraCommand == 1 || ExtraCommand == 3)
             supportingFileRunPSNR(inputFile, outputFile);

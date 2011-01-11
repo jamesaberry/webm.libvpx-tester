@@ -353,13 +353,13 @@ int main(int argc, char *argv[])
 
             char *MemLeakCheckTXT = argv[7];
             vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
-            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, opt.multi_threaded, opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick, 0, 3, 3);
+            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, opt.multi_threaded, opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick);
             vpx_memory_tracker_dump();
         }
 
         //If Compress
         if (Compress.compare(argv[1]) == 0)
-            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick, 0, 3, 3);
+            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick);
 
         if (ExtraCommand == 1 || ExtraCommand == 3)
             supportingFileRunPSNR(inputFile, outputFile);

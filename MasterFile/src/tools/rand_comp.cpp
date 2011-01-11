@@ -113,7 +113,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -128,7 +128,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -143,7 +143,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -162,7 +162,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         opt.Mode = MODE_SECONDPASS_BEST;
 
         //vpxt_output_settings(RandCompParOut,opt);
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);

@@ -171,7 +171,7 @@ extern "C" {
     {
         VPX_RC_ONE_PASS,   /**< Single pass mode */
         VPX_RC_FIRST_PASS, /**< First pass of multi-pass mode */
-        VPX_RC_LAST_PASS,  /**< Final pass of multi-pass mode */
+        VPX_RC_LAST_PASS   /**< Final pass of multi-pass mode */
     };
 
 
@@ -179,7 +179,8 @@ extern "C" {
     enum vpx_rc_mode
     {
         VPX_VBR, /**< Variable Bit Rate (VBR) mode */
-        VPX_CBR  /**< Constant Bit Rate (CBR) mode */
+        VPX_CBR,  /**< Constant Bit Rate (CBR) mode */
+        VPX_CQ   /**< Constant Quality  (CQ)  mode */
     };
 
 

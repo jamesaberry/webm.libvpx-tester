@@ -150,7 +150,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             opt.Mode = Mode;
 
-            if (vpxt_compress_ivf_to_ivf(input.c_str(), QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

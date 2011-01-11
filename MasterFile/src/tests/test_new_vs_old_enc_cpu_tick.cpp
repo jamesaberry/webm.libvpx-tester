@@ -182,7 +182,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     {
 
         opt.Mode = Mode;
-        unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, 0, 3, 3);
+        unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1);
 
         if (Time == -1)
         {

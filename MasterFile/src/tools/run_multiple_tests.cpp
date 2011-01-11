@@ -849,7 +849,7 @@ int run_multiple_tests(int argc, char *argv[], std::string WorkingDir,  int Numb
                     TestsRun++;
                 }
 
-                if (selector == CHGWRNUM)
+                if (selector == CPUENNUM)
                 {
                     SelectorAr[SelectorArInt] = "Test_Change_Cpu_Enc";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);

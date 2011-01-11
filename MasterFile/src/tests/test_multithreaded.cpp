@@ -142,7 +142,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.multi_threaded = CoreCount;
             opt.cpu_used = -1;
             unsigned int cpu_tick1 = 0;
-            Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1, 0, 3, 3);
+            Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1);
 
             if (Time1 == -1)
             {
@@ -154,7 +154,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.Mode = MODE_REALTIME;
             opt.multi_threaded = 0;
             unsigned int cpu_tick2 = 0;
-            Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2, 0, 3, 3);
+            Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2);
 
             if (Time2 == -1)
             {
@@ -169,7 +169,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.Mode = MODE_GOODQUALITY;
             opt.multi_threaded = CoreCount;
             unsigned int cpu_tick1 = 0;
-            Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1, 0, 3, 3);
+            Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1);
 
             if (Time1 == -1)
             {
@@ -181,7 +181,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.Mode = MODE_GOODQUALITY;
             opt.multi_threaded = 0;
             unsigned int cpu_tick2 = 0;
-            Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2, 0, 3, 3);
+            Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2);
 
             if (Time2 == -1)
             {

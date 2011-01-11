@@ -60,6 +60,7 @@
 
 typedef struct vpx_codec_alg_priv  vpx_codec_alg_priv_t;
 
+
 /*!\brief init function pointer prototype
  *
  * Performs algorithm-specific initialization of the decoder context. This

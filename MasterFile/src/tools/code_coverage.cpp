@@ -404,20 +404,20 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, 0, 3, 3);
+            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
         }
 
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, 0, 3, 3);
+            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
         }
 
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, 0, 3, 3);
+            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
         }
 
         if (Mode == 3)
@@ -427,13 +427,13 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         if (Mode == 4)
         {
             opt.Mode = MODE_SECONDPASS;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, 0, 3, 3);
+            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
         }
 
         if (Mode == 5)
         {
             opt.Mode = MODE_SECONDPASS_BEST;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, 0, 3, 3);
+            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
         }
     }
 

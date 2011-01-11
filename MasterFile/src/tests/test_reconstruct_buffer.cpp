@@ -113,7 +113,7 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

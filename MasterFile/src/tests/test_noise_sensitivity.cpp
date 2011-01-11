@@ -157,7 +157,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
 
             opt.noise_sensitivity = Noise;
 
-            if (vpxt_compress_ivf_to_ivf(input.c_str(), NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0, 0, 3, 3) == -1)
+            if (vpxt_compress_ivf_to_ivf(input.c_str(), NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

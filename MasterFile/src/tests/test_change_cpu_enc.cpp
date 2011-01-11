@@ -219,8 +219,10 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
         std::string OutputStr = ChangedCPUDecNOutBase;
         OutputStr.append("none.ivf");
 
+        opt.arnr_max_frames = ArnrMaxframes;
+
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
-        unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1, ArnrMaxframes, 3, 3);
+        unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1);
         CompressonVector.push_back(OutputStr);
 
         if (Time1 == -1)
@@ -306,7 +308,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
                 ChangedCPUDecNOutCurrent.append(".ivf");
 
                 opt.Mode = Mode;
-                unsigned int Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2, 0, 3, 3);
+                unsigned int Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2);
                 CompressonVector.push_back(ChangedCPUDecNOutCurrent);
 
                 if (Time2 == -1)

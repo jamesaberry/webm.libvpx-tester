@@ -116,7 +116,7 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
         opt.under_shoot_pct = 10;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -125,7 +125,7 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
         opt.under_shoot_pct = 100;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0, 0, 3, 3) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -272,6 +272,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%%%%Mode0%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_encoder_break_out", slashChar(), slashChar());
@@ -302,6 +303,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0@..%cTestClips%cspecial-case-par-files%c1-test_change_cpu_enc-cpuused-4.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", "test_data_rate", slashChar(), slashChar());
@@ -332,6 +334,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
@@ -362,6 +365,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
@@ -394,6 +398,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
@@ -472,6 +477,7 @@ void write_64bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%%%%Mode0%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_buffer_level", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128\n", "test_encoder_break_out", slashChar(), slashChar());
@@ -502,6 +508,7 @@ void write_64bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0@..%cTestClips%cspecial-case-par-files%c1-test_change_cpu_enc-cpuused-4.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048\n", "test_data_rate", slashChar(), slashChar());
@@ -532,6 +539,7 @@ void write_64bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
@@ -562,6 +570,7 @@ void write_64bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
@@ -594,6 +603,7 @@ void write_64bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@1\n", "test_change_cpu_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@0@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@1@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@10\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe\n", "test_debug_matches_release", slashChar(), slashChar());
@@ -769,7 +779,7 @@ void vpxt_test_help(int argc, char *argv[], std::string WorkingDir)
 
     }
 
-    if (selector == CHGWRNUM)
+    if (selector == CPUENNUM)
     {
         tprintf(PRINT_STD, "\nUse:\n\n"
                 "%2i ChangeCPUWorks \n\n"
@@ -784,7 +794,7 @@ void vpxt_test_help(int argc, char *argv[], std::string WorkingDir)
                 "    <Target Bit Rate>\n"
                 "    <Version>\n"
                 "     <Optional Settings File>\n"
-                , CHGWRNUM);
+                , CPUENNUM);
 
         vpxt_formated_print(HLPPRT, "The test creates compressions of the user input version (0-3) for ON2_SIMD_CAPS values ranging from 0 to 63 in ((x+1)*2)-1 increments for all supported instruction sets (NONE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1).  If all compressions are identical, compression times are not, and all instruction sets are run; the test passes.");
     }
@@ -1828,8 +1838,11 @@ void format_summary(const char *InputFileNameCharAr)
         if (TestTracker == CPUDENUM)
             TestTrackerName = "Test_Change_Cpu_Dec";
 
-        if (TestTracker == CHGWRNUM)
+        if (TestTracker == CPUENNUM)
             TestTrackerName = "Test_Change_Cpu_Enc";
+
+        if (TestTracker == CONQUNUM)
+            TestTrackerName = "Test_Constrained_Quality";
 
         if (TestTracker == DTARTNUM)
             TestTrackerName = "Test_Data_Rate";
@@ -2702,7 +2715,7 @@ int  main(int argc, char *argv[])
     if (selector == CPUDENUM)
         return test_change_cpu_dec(argc, argv, WorkingDir, EmptyAr, 1);
 
-    if (selector == CHGWRNUM)
+    if (selector == CPUENNUM)
         return test_change_cpu_enc(argc, argv, WorkingDir, EmptyAr, 1);
 
     if (selector == CONQUNUM)

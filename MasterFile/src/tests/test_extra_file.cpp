@@ -231,7 +231,7 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     {
         opt.Mode = MODE_SECONDPASS_BEST;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), ExtraFileCheckStr.c_str(), opt.multi_threaded, BitRate, opt, CompressString, 1, 0, 0, 3, 3/*opt.DeleteFirstPassFile*/) == -1)
+        if (vpxt_compress_ivf_to_ivf(input.c_str(), ExtraFileCheckStr.c_str(), opt.multi_threaded, BitRate, opt, CompressString, 1, 0/*opt.DeleteFirstPassFile*/) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -23,7 +23,7 @@
 //CodeCoverage
 extern int tool_array_coverage(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[]);
 
-int create_working_folder(int argc, char *argv[], char *WorkingDirChar)
+int create_working_folder(int argc, const char *argv[], char *WorkingDirChar)
 {
     ///////////////////////////////////////////Create Working Folder////////////////////////////////////
 
@@ -101,31 +101,26 @@ std::string date_string()
     struct tm *timeinfo;
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    std::string DateAndTime = asctime(timeinfo);
+    char *DateAndTime = asctime(timeinfo);
 
     //remove colons in time string
     char DateAndTimeCharArray[255];
     int w = 0;
 
-    while (DateAndTime.c_str()[w] != '\n')
+    while (DateAndTime[w] != '\n')
     {
-        if (DateAndTime.c_str()[w] == ':' || DateAndTime.c_str()[w] == ' ')
-        {
+        if (DateAndTime[w] == ':' || DateAndTime[w] == ' ')
             DateAndTimeCharArray[w] = '_';
-        }
         else
-        {
-            DateAndTimeCharArray[w] = DateAndTime.c_str()[w];
-        }
+            DateAndTimeCharArray[w] = DateAndTime[w];
 
         w = w + 1;
     }
 
     DateAndTimeCharArray[w] = '\"';
     DateAndTimeCharArray[w+1] = '\0';
-    std::string DateAndTime3(DateAndTimeCharArray);
 
-    return DateAndTime3;
+    return DateAndTimeCharArray;
 
 }
 void vpxt_on_error_output()
@@ -185,45 +180,49 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "   (1) test_allow_drop_frames               VPXDec\n");
     tprintf(PRINT_STD, "   (2) test_allow_lag                       IVF2IVFCompr\n");
     tprintf(PRINT_STD, "   (3) test_allow_spatial_resampling        IVF2IVFDec\n");
-    tprintf(PRINT_STD, "   (4) test_auto_key_frame                  IVF2RawDec\n");
-    tprintf(PRINT_STD, "   (5) test_buffer_level                    \n");
-    tprintf(PRINT_STD, "   (6) test_change_cpu_dec                  IVFDataRate\n");
-    tprintf(PRINT_STD, "   (7) test_change_cpu_enc                  IVFPSNR\n");
-    tprintf(PRINT_STD, "   (8) test_constrained_quality             IVFCheckPBM\n");
-    tprintf(PRINT_STD, "   (9) test_data_rate                       \n");
-    tprintf(PRINT_STD, "  (10) test_debug_matches_release           Raw2IVF\n");
-    tprintf(PRINT_STD, "  (11) test_drop_frame_watermark            IVF2Raw\n");
-    tprintf(PRINT_STD, "  (12) test_encoder_break_out               IVF2RawFrames\n");
-    tprintf(PRINT_STD, "  (13) test_error_resolution                CombineIndvFrames\n");
-    tprintf(PRINT_STD, "  (14) test_extra_file                      \n");
-    tprintf(PRINT_STD, "  (15) test_fixed_quantizer                 CompareIVF\n");
-    tprintf(PRINT_STD, "  (16) test_force_key_frame                 CompIVFHeader\n");
-    tprintf(PRINT_STD, "  (17) test_frame_size                      DispIVFHeader\n");
-    tprintf(PRINT_STD, "  (18) test_good_vs_best                    \n");
-    tprintf(PRINT_STD, "  (19) test_lag_in_frames                   DispKeyFrames\n");
-    tprintf(PRINT_STD, "  (20) test_max_quantizer                   DispResizedFrames\n");
-    tprintf(PRINT_STD, "  (21) test_mem_leak                        DispVisibleFrames\n");
-    tprintf(PRINT_STD, "  (22) test_mem_leak2                       DispAltRefFrames\n");
-    tprintf(PRINT_STD, "  (23) test_min_quantizer                   \n");
-    tprintf(PRINT_STD, "  (24) test_multithreaded                   CropRawIVF\n");
-    tprintf(PRINT_STD, "  (25) test_new_vs_old_enc_cpu_tick         CutIVF\n");
-    tprintf(PRINT_STD, "  (26) test_new_vs_old_psnr                 PasteIVF\n");
-    tprintf(PRINT_STD, "  (27) test_noise_sensitivity               \n");
-    tprintf(PRINT_STD, "  (28) test_one_pass_vs_two_pass            PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (29) test_play_alternate                  PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (30) test_post_processor                  \n");
-    tprintf(PRINT_STD, "  (31) test_reconstruct_buffer              CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (32) test_resample_down_watermark         PrintVersion\n");
-    tprintf(PRINT_STD, "  (33) test_speed                           \n");
-    tprintf(PRINT_STD, "  (34) test_test_vector                     VPXEncPar\n");
-    tprintf(PRINT_STD, "  (35) test_two_pass_vs_two_pass_best       RandParFile\n");
-    tprintf(PRINT_STD, "  (36) test_undershoot                      RandIVFComp\n");
-    tprintf(PRINT_STD, "  (37) test_version                         GraphPSNR\n");
-    tprintf(PRINT_STD, "  (38) test_win_lin_mac_match               Help\n");
+    tprintf(PRINT_STD, "   (4) test_arnr                            IVF2RawDec\n");
+    tprintf(PRINT_STD, "   (5) test_auto_key_frame                  \n");
+    tprintf(PRINT_STD, "   (6) test_buffer_level                    IVFDataRate\n");
+    tprintf(PRINT_STD, "   (7) test_change_cpu_dec                  IVFPSNR\n");
+    tprintf(PRINT_STD, "   (8) test_change_cpu_enc                  IVFCheckPBM\n");
+    tprintf(PRINT_STD, "   (9) test_constrained_quality             \n");
+    tprintf(PRINT_STD, "  (10) test_data_rate                       Raw2IVF\n");
+    tprintf(PRINT_STD, "  (11) test_debug_matches_release           IVF2Raw\n");
+    tprintf(PRINT_STD, "  (12) test_drop_frame_watermark            IVF2RawFrames\n");
+    tprintf(PRINT_STD, "  (13) test_encoder_break_out               CombineIndvFrames\n");
+    tprintf(PRINT_STD, "  (14) test_error_resolution                \n");
+    tprintf(PRINT_STD, "  (15) test_extra_file                      CompareIVF\n");
+    tprintf(PRINT_STD, "  (16) test_fixed_quantizer                 CompIVFHeader\n");
+    tprintf(PRINT_STD, "  (17) test_force_key_frame                 DispIVFHeader\n");
+    tprintf(PRINT_STD, "  (18) test_frame_size                      \n");
+    tprintf(PRINT_STD, "  (19) test_good_vs_best                    DispKeyFrames\n");
+    tprintf(PRINT_STD, "  (20) test_lag_in_frames                   DispResizedFrames\n");
+    tprintf(PRINT_STD, "  (21) test_max_quantizer                   DispVisibleFrames\n");
+    tprintf(PRINT_STD, "  (22) test_mem_leak                        DispAltRefFrames\n");
+    tprintf(PRINT_STD, "  (23) test_mem_leak2                       \n");
+    tprintf(PRINT_STD, "  (24) test_min_quantizer                   CropRawIVF\n");
+    tprintf(PRINT_STD, "  (25) test_multithreaded                   CutIVF\n");
+    tprintf(PRINT_STD, "  (26) test_new_vs_old_enc_cpu_tick         PasteIVF\n");
+    tprintf(PRINT_STD, "  (27) test_new_vs_old_psnr                 \n");
+    tprintf(PRINT_STD, "  (28) test_noise_sensitivity               PlayDecIVF\n");
+    tprintf(PRINT_STD, "  (29) test_one_pass_vs_two_pass            PlayCompIVF\n");
+    tprintf(PRINT_STD, "  (30) test_play_alternate                  \n");
+    tprintf(PRINT_STD, "  (31) test_post_processor                  CreateSampleTextFiles\n");
+    tprintf(PRINT_STD, "  (32) test_reconstruct_buffer              PrintVersion\n");
+    tprintf(PRINT_STD, "  (33) test_resample_down_watermark         \n");
+    tprintf(PRINT_STD, "  (34) test_speed                           VPXEncPar\n");
+    tprintf(PRINT_STD, "  (35) test_test_vector                     RandParFile\n");
+    tprintf(PRINT_STD, "  (36) test_two_pass_vs_two_pass_best       RandIVFComp\n");
+    tprintf(PRINT_STD, "  (37) test_undershoot                      GraphPSNR\n");
+    tprintf(PRINT_STD, "  (38) test_version                         Help\n");
+    tprintf(PRINT_STD, "  (39) test_win_lin_mac_match               \n");
+#if !defined(_WIN32)
+    tprintf(PRINT_STD, "\n");
+#endif
 
     return;
 }
-void write_32bit_quick_test(std::string WorkingDir)
+void write_32bit_quick_test(const std::string WorkingDir)
 {
     char FolderNameChar[255];
     vpxt_folder_name(WorkingDir.c_str(), FolderNameChar);
@@ -359,6 +358,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%%%%Mode4%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_allow_lag", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_arnr", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_buffer_level", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
@@ -392,6 +392,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%%%%Mode5%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_allow_lag", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_arnr", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_buffer_level", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
@@ -428,7 +429,7 @@ void write_32bit_quick_test(std::string WorkingDir)
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-void write_64bit_quick_test(std::string WorkingDir)
+void write_64bit_quick_test(const std::string WorkingDir)
 {
     char FolderNameChar[255];
     vpxt_folder_name(WorkingDir.c_str(), FolderNameChar);
@@ -564,6 +565,7 @@ void write_64bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%%%%Mode4%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_allow_lag", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_arnr", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_buffer_level", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
@@ -597,6 +599,7 @@ void write_64bit_quick_test(std::string WorkingDir)
     fprintf(fp5, "%%%%Mode5%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_allow_lag", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128\n", "test_allow_spatial_resampling", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_arnr", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@6\n", "test_auto_key_frame", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128\n", "test_buffer_level", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@0\n", "test_change_cpu_dec", slashChar(), slashChar());
@@ -633,14 +636,14 @@ void write_64bit_quick_test(std::string WorkingDir)
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n", TextfileString5.c_str());
     fclose(fp5);
 }
-int  print_quick_test_files(std::string WorkingDir)
+int  print_quick_test_files(const std::string WorkingDir)
 {
     write_32bit_quick_test(WorkingDir);//32BitQuickRun
     write_64bit_quick_test(WorkingDir);//64BitQuickRun
 
     return 0;
 }
-void vpxt_test_help(int argc, char *argv[], std::string WorkingDir)
+void vpxt_test_help(int argc, const char *argv[], const std::string WorkingDir)
 {
     std::string TestInputString = argv[1];
     int selector = vpxt_identify_test(argv[1]);
@@ -1337,7 +1340,7 @@ void vpxt_test_help(int argc, char *argv[], std::string WorkingDir)
 
     return;
 }
-int  vpxt_tool_help(std::string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
+int  vpxt_tool_help(const std::string InputString)//return 1 if string found return 0 if string not found if string not found TestHelp will be run through.
 {
     if (InputString.compare("ivf2ivfcompr") == 0)
     {
@@ -1829,6 +1832,9 @@ void format_summary(const char *InputFileNameCharAr)
         if (TestTracker == ALWSRNUM)
             TestTrackerName = "Test_Allow_Spatial_Resampling";
 
+        if (TestTracker == ARNRTNUM)
+            TestTrackerName = "Test_Arnr";
+
         if (TestTracker == AUTKFNUM)
             TestTrackerName = "Test_Auto_Key_Frame";
 
@@ -2309,7 +2315,7 @@ int  show_hidden_cmds()
     return 0;
 
 }
-int  vpxt_run_multi(int argc, char *argv[], std::string WorkingDir)
+int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
 {
     if (argc < 4)
     {
@@ -2457,7 +2463,7 @@ int  vpxt_run_multi(int argc, char *argv[], std::string WorkingDir)
 
     return 0;
 }
-int  main(int argc, char *argv[])
+int  main(int argc, const char *argv[])
 {
     if (argc < 2)
     {
@@ -2705,6 +2711,9 @@ int  main(int argc, char *argv[])
 
     if (selector == ALWSRNUM)
         return test_allow_spatial_resampling(argc, argv, WorkingDir, EmptyAr, 1);
+
+    if (selector == ARNRTNUM)
+        return test_arnr(argc, argv, WorkingDir, EmptyAr, 1);
 
     if (selector == AUTKFNUM)
         return test_auto_key_frame(argc, argv, WorkingDir, EmptyAr, 1);

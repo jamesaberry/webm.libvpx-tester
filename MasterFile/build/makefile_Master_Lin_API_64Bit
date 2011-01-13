@@ -18,6 +18,7 @@ SRC = \
    $(TestsDir)/test_allow_drop_frames.cpp  \
    $(TestsDir)/test_allow_lag.cpp  \
    $(TestsDir)/test_allow_spatial_resampling.cpp  \
+   $(TestsDir)/test_arnr.cpp  \
    $(TestsDir)/test_auto_key_frame.cpp  \
    $(TestsDir)/test_buffer_level.cpp  \
    $(TestsDir)/test_change_cpu_dec.cpp  \
@@ -74,6 +75,7 @@ SRCOBJ = \
    $(OBJDIR)/test_allow_drop_frames.o  \
    $(OBJDIR)/test_allow_lag.o  \
    $(OBJDIR)/test_allow_spatial_resampling.o  \
+   $(OBJDIR)/test_arnr.o  \
    $(OBJDIR)/test_auto_key_frame.o  \
    $(OBJDIR)/test_buffer_level.o  \
    $(OBJDIR)/test_change_cpu_dec.o  \
@@ -155,6 +157,9 @@ $(OBJDIR)/test_allow_lag.o: $(TestsDir)/test_allow_lag.cpp
 
 $(OBJDIR)/test_allow_spatial_resampling.o: $(TestsDir)/test_allow_spatial_resampling.cpp
 	$(GPP) -c $(TestsDir)/test_allow_spatial_resampling.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_allow_spatial_resampling.o
+	
+$(OBJDIR)/test_arnr.o: $(TestsDir)/test_arnr.cpp
+	$(GPP) -c $(TestsDir)/test_arnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_arnr.o
 
 $(OBJDIR)/test_auto_key_frame.o: $(TestsDir)/test_auto_key_frame.cpp
 	$(GPP) -c $(TestsDir)/test_auto_key_frame.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_auto_key_frame.o

@@ -32,7 +32,7 @@ extern int ivfdec(int argc, const char **argv_);
 extern int ivfenc(int argc, const char **argv_);
 
 
-int RawDataIVF(char *input, char *output)
+int RawDataIVF(const char *input, const char *output)
 {
     FILE *in = fopen(input, "rb");
     FILE *out = fopen(output, "wb");
@@ -456,7 +456,7 @@ int DecoderCheck(int argc, const char *const *argv)
 
     return 0;
 }
-int IVFParseandDelete(char *DirName)
+int IVFParseandDelete(const char *DirName)
 {
 
 #if defined(linux)

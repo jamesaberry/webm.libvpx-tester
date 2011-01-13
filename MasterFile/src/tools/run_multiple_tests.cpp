@@ -2,7 +2,7 @@
 #include "vpxt_test_list.h"
 #include "vpxt_driver.h"
 
-int run_multiple_tests(int argc, char *argv[], std::string WorkingDir,  int NumberofTests)
+int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  int NumberofTests)
 {
     if (argc < 5)
     {
@@ -41,7 +41,8 @@ int run_multiple_tests(int argc, char *argv[], std::string WorkingDir,  int Numb
     std::string SummComp = "";
     std::string SummTest = "";
 
-    char *input = argv[3];
+    char input[256] = "";
+    strncpy(input, argv[3], 256);
 
     std::string StringAr[20];
     std::string TimeStampAr2[2];
@@ -783,6 +784,28 @@ int run_multiple_tests(int argc, char *argv[], std::string WorkingDir,  int Numb
                     TestsRun++;
                 }
 
+                if (selector == ARNRTNUM)
+                {
+                    SelectorAr[SelectorArInt] = "Test_Arnr";
+                    check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
+                    SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = vpxt_get_time();
+                    }
+
+                    PassFail[PassFailInt] = test_arnr(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = vpxt_get_time();
+                        RunTimeRecAr[SelectorArInt] = vpxt_get_time_in_micro_sec(RunTime1, RunTime2);
+                    }
+
+                    TestsRun++;
+                }
+
                 if (selector == AUTKFNUM)
                 {
                     SelectorAr[SelectorArInt] = "Test_Auto_Key_Frame";
@@ -1269,7 +1292,7 @@ int run_multiple_tests(int argc, char *argv[], std::string WorkingDir,  int Numb
 
                 if (selector == NVOECPTK)
                 {
-                    SelectorAr[SelectorArInt] = "test_new_vs_old_enc_cpu_tick";
+                    SelectorAr[SelectorArInt] = "Test_New_Vs_Old_Enc_Cpu_Tick";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 

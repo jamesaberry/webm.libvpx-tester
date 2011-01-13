@@ -1,10 +1,11 @@
 #include <string>
 
 /////Tests
-extern int run_multiple_tests(int argc, char *argv[], std::string WorkingDir,  int NumberofTests);
+extern int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  int NumberofTests);
 extern int test_allow_drop_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType);
 extern int test_allow_lag(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType);
 extern int test_allow_spatial_resampling(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType);
+extern int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType);
 extern int test_auto_key_frame(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType);
 extern int test_buffer_level(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType);
 extern int test_change_cpu_dec(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType);

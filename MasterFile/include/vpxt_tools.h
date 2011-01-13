@@ -2,10 +2,10 @@
 #ifndef TOOLS_H_GUARD
 #define TOOLS_H_GUARD
 
-int RawDataIVF(char *input, char *output);
+int RawDataIVF(const char *input, const char *output);
 int IVF2Raw(const char *inputFile, const char *outputDir);
 int DecoderCheck(int argc, const char *const *argv);
-int IVFParseandDelete(char *DirName);
+int IVFParseandDelete(const char *DirName);
 int TxtParseandCopy(const char *DirName, const char *BaseOutputDir, int BaseInputStrLength);
 int tool_array_cov_fail_list_to_full_list(int argc, const char *const *argv);
 int tool_array_cov_summary_file(int argc, const char *const *argv);

@@ -221,6 +221,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_arnr.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_auto_key_frame.cpp"
 					>
 				</File>

@@ -9128,7 +9128,7 @@ unsigned int vpxt_decompress_ivf_to_ivf_time_and_output(const char *inputchar, c
 
         if (!noblit)
         {
-            if (vpx_codec_get_frame(&decoder, &iter))
+            if (img = vpx_codec_get_frame(&decoder, &iter))
             {
                 unsigned int y;
                 char out_fn[128+24];

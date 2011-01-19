@@ -1796,7 +1796,7 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     //--psnr                                                                            //Show PSNR in status line
     tprintf(PRINT_STD, "--ivf ");                                                       //Output IVF (default is WebM)
 
-//Encoder Global Options:
+    //Encoder Global Options:
     //--yv12                                                                            //Input file is YV12
     //--i420                                                                            //Input file is I420 (default)
     tprintf(PRINT_STD, "--usage=%i ", cfg.g_usage);                                     //Usage profile number to use
@@ -1813,7 +1813,7 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     else
         tprintf(PRINT_STD, "--lag-in-frames=%i ", opt.lag_in_frames);                   //Max number of frames to lag
 
-//Rate Control Options:
+    //Rate Control Options:
     if (opt.allow_df == 0)
         tprintf(PRINT_STD, "--drop-frame=%i ", 0);                                      //Temporal resampling threshold (buf %)
     else
@@ -1848,19 +1848,19 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     tprintf(PRINT_STD, "--buf-initial-sz=%i ", opt.starting_buffer_level * 1000);       //Client initial buffer size (ms)
     tprintf(PRINT_STD, "--buf-optimal-sz=%i ", opt.optimal_buffer_level * 1000);        //Client optimal buffer size (ms)
 
-//Twopass Rate Control Options:
+    //Twopass Rate Control Options:
     //--bias-pct=<arg>                                                                 //CBR/VBR bias (0=CBR, 100=VBR)
     //--minsection-pct=<arg>                                                           //GOP min bitrate (% of target)
     //--maxsection-pct=<arg>                                                           //GOP max bitrate (% of target)
 
-//Keyframe Placement Options:
+    //Keyframe Placement Options:
     tprintf(PRINT_STD, "--kf-min-dist=%i ", cfg.kf_min_dist);                           //Minimum keyframe interval (frames)
     tprintf(PRINT_STD, "--kf-max-dist=%i ", opt.key_freq);                              //Maximum keyframe interval (frames)
 
     if (opt.auto_key == 0)
         tprintf(PRINT_STD, "--disable-kf ");                                            //Disable keyframe placement
 
-//VP8 Specific Options:
+    //VP8 Specific Options:
     tprintf(PRINT_STD, "--cpu-used=%i ", opt.cpu_used);                                 //CPU Used (-16..16)
     tprintf(PRINT_STD, "--auto-alt-ref=%i ", opt.play_alternate);                       //Enable automatic alt reference frames
     tprintf(PRINT_STD, "--noise-sensitivity=%i ", opt.noise_sensitivity);               //Noise sensitivity (frames to blur)
@@ -4762,7 +4762,7 @@ double vpxt_ivf_data_rate(const char *inputFile, int DROuputSel)
 
     fpos_t position;
     fgetpos(in, &position);
-    std::cout << "\n";
+    tprintf(PRINT_STD, "\n");
 
     while (currentVideoFrame < frameCount)
     {
@@ -5705,9 +5705,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
     if (oxcf.Mode == 3) //Real Time Mode
     {
         if (RunQCheck == 1)
-        {
             QuantOutFile.close();
-        }
 
         return 0;
     }
@@ -5741,9 +5739,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
         tprintf(PRINT_STD, "Failed to get config: %s\n", vpx_codec_err_to_string(res));
 
         if (RunQCheck == 1)
-        {
             QuantOutFile.close();
-        }
 
         return -1;
     }
@@ -5759,9 +5755,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
         tprintf(PRINT_BTH, "Input File not found: %s\n", in_fn);
 
         if (RunQCheck == 1)
-        {
             QuantOutFile.close();
-        }
 
         return -1;
     }
@@ -5882,9 +5876,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             tprintf(PRINT_BTH, "Failed to open input file: %s", in_fn);
 
             if (RunQCheck == 1)
-            {
                 QuantOutFile.close();
-            }
 
             return -1;
         }
@@ -5900,9 +5892,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             fclose(infile);
 
             if (RunQCheck == 1)
-            {
                 QuantOutFile.close();
-            }
 
             return -1;
         }
@@ -5916,9 +5906,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                {
                     QuantOutFile.close();
-                }
 
                 return -1;
             }
@@ -5932,9 +5920,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                {
                     QuantOutFile.close();
-                }
 
                 return -1;
             }
@@ -5979,9 +5965,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             fclose(outfile);
 
             if (RunQCheck == 1)
-            {
                 QuantOutFile.close();
-            }
 
             return -1;
         }
@@ -6155,9 +6139,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
     vpx_img_free(&raw);
 
     if (RunQCheck == 1)
-    {
         QuantOutFile.close();
-    }
 
     return 0;
 }
@@ -6526,9 +6508,25 @@ int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *
 }
 unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick)
 {
+    std::ofstream QuantOutFile;
+
+    if (RunQCheck == 1)
+    {
+        std::string QuantOutStr = outputFile2;
+        QuantOutStr.erase(QuantOutStr.length() - 4, 4);
+        QuantOutStr.append("_quantizers.txt");
+        char QuantOutChar[255];
+        snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
+
+        QuantOutFile.open(QuantOutChar);
+    }
+
     //////////////////////////////////////////DELETE ME TEMP MEASURE//////////////////////////////////////////
     if (oxcf.Mode == 3) //Real Time Mode
     {
+        if (RunQCheck == 1)
+            QuantOutFile.close();
+
         return 0;
     }
 
@@ -6561,6 +6559,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
     if (res)
     {
         tprintf(PRINT_STD, "Failed to get config: %s\n", vpx_codec_err_to_string(res));
+
+        if (RunQCheck == 1)
+            QuantOutFile.close();
+
         return -1;
     }
 
@@ -6573,6 +6575,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
     if (GetWHinfile == NULL)
     {
         tprintf(PRINT_BTH, "Input File not found: %s\n", in_fn);
+
+        if (RunQCheck == 1)
+            QuantOutFile.close();
+
         return -1;
     }
 
@@ -6689,6 +6695,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
         if (!infile)
         {
             tprintf(PRINT_STD, "Failed to open input file");
+
+            if (RunQCheck == 1)
+                QuantOutFile.close();
+
             return EXIT_FAILURE;
         }
 
@@ -6701,6 +6711,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
         {
             tprintf(PRINT_STD, "Failed to open output file");
             fclose(infile);
+
+            if (RunQCheck == 1)
+                QuantOutFile.close();
+
             return -1;
         }
 
@@ -6711,6 +6725,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
                 tprintf(PRINT_STD, "Failed to open statistics store\n");
                 fclose(infile);
                 fclose(outfile);
+
+                if (RunQCheck == 1)
+                    QuantOutFile.close();
+
                 return -1;
             }
         }
@@ -6721,6 +6739,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
                 tprintf(PRINT_STD, "Failed to open statistics store\n");
                 fclose(infile);
                 fclose(outfile);
+
+                if (RunQCheck == 1)
+                    QuantOutFile.close();
+
                 return -1;
             }
         }
@@ -6762,6 +6784,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
         {
             fclose(infile);
             fclose(outfile);
+
+            if (RunQCheck == 1)
+                QuantOutFile.close();
+
             return -1;
         }
 
@@ -6835,6 +6861,24 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
             ctx_exit_on_error_tester(&encoder, "Failed to encode frame");
             got_data = 0;
 
+            if (RunQCheck == 1)
+            {
+                if ((arg_passes == 2 && pass == 1) || arg_passes == 1)
+                {
+                    int lastQuantizerValue = 0;
+                    vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64, &lastQuantizerValue);
+                    QuantOutFile << frames_out << " " << lastQuantizerValue << "\n";
+                }
+            }
+
+            if (RunQCheck == 2)
+            {
+                //Print Quantizers
+                int lastQuantizerValue = 0;
+                vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64, &lastQuantizerValue);
+                tprintf(PRINT_STD, "frame %i Quantizer: %i\n", frames_out, lastQuantizerValue);
+            }
+
             total_cpu_time_used = total_cpu_time_used + (end - start);
 
             while ((pkt = vpx_codec_get_cx_data(&encoder, &iter)))
@@ -6907,6 +6951,10 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
     FullNameCpuFile.close();
 
     CPUTick = total_cpu_time_used;
+
+    if (RunQCheck == 1)
+        QuantOutFile.close();
+
     return cx_time;
 }
 int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame)
@@ -11506,9 +11554,7 @@ double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
         while (ivf_fhRaw.timeStamp != priorTimeStamp + 2 && !feof(in))
         {
             if (PrintSwitch == 1)
-            {
                 fprintf(out, "%i\n", currentVideoFrame);
-            }
 
             priorTimeStamp = priorTimeStamp + 2;
             dropedframecount++;
@@ -11520,9 +11566,7 @@ double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
     }
 
     if (PrintSwitch == 1)
-    {
         fclose(out);
-    }
 
     fclose(in);
 
@@ -11714,217 +11758,129 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
 
     int VisableCount = 0;
 
-    if (Selector == 0)
-    {
-        FILE *in = fopen(inputFile, "rb");
-        ///////////////////////////////////
-        long PosSize = vpxt_file_size(inputFile, 0);
-
-        if (in == NULL)
-        {
-            tprintf(PRINT_BTH, "\nInput file does not exist");
-            return 0;
-        }
-
-        int currentVideoFrame = 0;
-        int frameCount = 0;
-        int byteRec = 0;
-
-        IVF_HEADER ivfhRaw;
-
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        vpxt_format_ivf_header_read(&ivfhRaw);
-
-        /*printf( "IVF DataRate\n\n"
-        "FILE HEADER \n\n"
-        "File Header            - %c%c%c%c \n"
-        "File Format Version    - %i \n"
-        "File Header Size       - %i \n"
-        "Video Data FourCC      - %i \n"
-        "Video Image Width      - %i \n"
-        "Video Image Height     - %i \n"
-        "Frame Rate Rate        - %i \n"
-        "Frame Rate Scale       - %i \n"
-        "Video Length in Frames - %i \n"
-        "Unused                 - %c \n"
-        "\n\n"
-        ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-        ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-        ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
-
-        IVF_FRAME_HEADER ivf_fhRaw;
-
-        fread(&ivf_fhRaw.frameSize, 1, 4, in);
-        fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-        vpxt_format_frame_header_read(ivf_fhRaw);
-
-        frameCount = ivfhRaw.length;
-
-        long nSamples = frameCount;
-        long lRateNum = ivfhRaw.rate;
-        long lRateDenom = ivfhRaw.scale;
-
-        long nSamplesPerBlock = 1;
-
-        long nBytes = 0;
-        long nBytesMin = 999999;
-        long nBytesMax = 0;
-
-        fpos_t position;
-        fgetpos(in, &position);
-        std::cout << "\n";
-
-        char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-
-        while (currentVideoFrame < frameCount)
-        {
-            //check to see if key frame
-            VP8_HEADER oz;
-            //VP8_COMMON pc;
-
-            fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-#if defined(__POWERPC__)
-            {
-                int v = ((int *)inbuff)[0];
-                v = swap4(v);
-                oz.type = v & 1;
-                oz.version = (v >> 1) & 7;
-                oz.showFrame = (v >> 4) & 1;
-                oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
-            }
-#else
-            memcpy(&oz, inbuff, 3); // copy 3 bytes;
-#endif
-
-            unsigned int type = oz.type;
-            unsigned int showFrame = oz.show_frame;
-            unsigned int version = oz.version;
-
-            if (showFrame == 1)
-            {
-                VisableCount++;
-                std::cout << "\n" << currentVideoFrame << "\n";
-            }
-
-            fread(&ivf_fhRaw.frameSize, 1, 4, in);
-            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-            vpxt_format_frame_header_read(ivf_fhRaw);
-
-            currentVideoFrame ++;
-        }
-
-        fclose(in);
-        delete[] inbuff;
-    }
+    std::ofstream outfile;
+    FILE *in = fopen(inputFile, "rb");
 
     if (Selector == 1)
     {
-        FILE *in = fopen(inputFile, "rb");
-        std::ofstream outfile(outputFile);
+        outfile.open(outputFile);
 
-        ///////////////////////////////////
-        long PosSize = vpxt_file_size(inputFile, 0);
-
-        if (in == NULL)
+        if (!outfile.good())
         {
-            tprintf(PRINT_BTH, "\nInput file does not exist");
+            tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n", outputFile);
             return 0;
         }
+    }
 
-        int currentVideoFrame = 0;
-        int frameCount = 0;
-        int byteRec = 0;
+    ///////////////////////////////////
+    long PosSize = vpxt_file_size(inputFile, 0);
 
-        IVF_HEADER ivfhRaw;
+    if (in == NULL)
+    {
+        tprintf(PRINT_BTH, "\nInput file does not exist");
+        return 0;
+    }
 
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        vpxt_format_ivf_header_read(&ivfhRaw);
+    int currentVideoFrame = 0;
+    int frameCount = 0;
+    int byteRec = 0;
 
-        /*printf( "IVF DataRate\n\n"
-        "FILE HEADER \n\n"
-        "File Header            - %c%c%c%c \n"
-        "File Format Version    - %i \n"
-        "File Header Size       - %i \n"
-        "Video Data FourCC      - %i \n"
-        "Video Image Width      - %i \n"
-        "Video Image Height     - %i \n"
-        "Frame Rate Rate        - %i \n"
-        "Frame Rate Scale       - %i \n"
-        "Video Length in Frames - %i \n"
-        "Unused                 - %c \n"
-        "\n\n"
-        ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-        ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-        ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
+    IVF_HEADER ivfhRaw;
 
-        IVF_FRAME_HEADER ivf_fhRaw;
+    InitIVFHeader(&ivfhRaw);
+    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
+    vpxt_format_ivf_header_read(&ivfhRaw);
+
+    /*printf( "IVF DataRate\n\n"
+    "FILE HEADER \n\n"
+    "File Header            - %c%c%c%c \n"
+    "File Format Version    - %i \n"
+    "File Header Size       - %i \n"
+    "Video Data FourCC      - %i \n"
+    "Video Image Width      - %i \n"
+    "Video Image Height     - %i \n"
+    "Frame Rate Rate        - %i \n"
+    "Frame Rate Scale       - %i \n"
+    "Video Length in Frames - %i \n"
+    "Unused                 - %c \n"
+    "\n\n"
+    ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
+    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
+    ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
+
+    IVF_FRAME_HEADER ivf_fhRaw;
+
+    fread(&ivf_fhRaw.frameSize, 1, 4, in);
+    fread(&ivf_fhRaw.timeStamp, 1, 8, in);
+    vpxt_format_frame_header_read(ivf_fhRaw);
+
+    frameCount = ivfhRaw.length;
+
+    long nSamples = frameCount;
+    long lRateNum = ivfhRaw.rate;
+    long lRateDenom = ivfhRaw.scale;
+
+    long nSamplesPerBlock = 1;
+
+    long nBytes = 0;
+    long nBytesMin = 999999;
+    long nBytesMax = 0;
+
+    fpos_t position;
+    fgetpos(in, &position);
+
+    if (Selector == 0)
+        tprintf(PRINT_STD, "\n");
+
+    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
+
+    while (currentVideoFrame < frameCount)
+    {
+        //check to see if key frame
+        VP8_HEADER oz;
+
+        fread(inbuff, 1, ivf_fhRaw.frameSize, in);
+
+#if defined(__POWERPC__)
+        {
+            int v = ((int *)inbuff)[0];
+            v = swap4(v);
+            oz.type = v & 1;
+            oz.version = (v >> 1) & 7;
+            oz.showFrame = (v >> 4) & 1;
+            oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
+        }
+#else
+        memcpy(&oz, inbuff, 3); // copy 3 bytes;
+#endif
+        unsigned int type = oz.type;
+        unsigned int showFrame = oz.show_frame;
+        unsigned int version = oz.version;
+
+        if (showFrame == 1)
+        {
+            VisableCount++;
+
+            if (Selector == 0)
+                tprintf(PRINT_STD, "\n%i\n", currentVideoFrame);
+
+            if (Selector == 1)
+                outfile << currentVideoFrame << "\n";
+        }
 
         fread(&ivf_fhRaw.frameSize, 1, 4, in);
         fread(&ivf_fhRaw.timeStamp, 1, 8, in);
         vpxt_format_frame_header_read(ivf_fhRaw);
 
-        frameCount = ivfhRaw.length;
-
-        long nSamples = frameCount;
-        long lRateNum = ivfhRaw.rate;
-        long lRateDenom = ivfhRaw.scale;
-
-        long nSamplesPerBlock = 1;
-
-        long nBytes = 0;
-        long nBytesMin = 999999;
-        long nBytesMax = 0;
-
-        fpos_t position;
-        fgetpos(in, &position);
-        //std::cout << "\n";
-
-        char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-
-        while (currentVideoFrame < frameCount)
-        {
-            //check to see if key frame
-            VP8_HEADER oz;
-
-            fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-#if defined(__POWERPC__)
-            {
-                int v = ((int *)inbuff)[0];
-                v = swap4(v);
-                oz.type = v & 1;
-                oz.version = (v >> 1) & 7;
-                oz.showFrame = (v >> 4) & 1;
-                oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
-            }
-#else
-            memcpy(&oz, inbuff, 3); // copy 3 bytes;
-#endif
-            unsigned int type = oz.type;
-            unsigned int showFrame = oz.show_frame;
-            unsigned int version = oz.version;
-
-            if (showFrame == 1)
-            {
-                VisableCount++;
-                outfile << currentVideoFrame << "\n";
-            }
-
-            fread(&ivf_fhRaw.frameSize, 1, 4, in);
-            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-            vpxt_format_frame_header_read(ivf_fhRaw);
-
-            currentVideoFrame ++;
-        }
-
-        outfile.close();
-        fclose(in);
-        delete[] inbuff;
-
+        currentVideoFrame ++;
     }
+
+    if (Selector == 1)
+        outfile.close();
+
+    fclose(in);
+    delete[] inbuff;
+
 
     return VisableCount;
 
@@ -11942,217 +11898,128 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
 
     int AltRefCount = 0;
 
-    if (Selector == 0)
-    {
-        FILE *in = fopen(inputFile, "rb");
-        ///////////////////////////////////
-        long PosSize = vpxt_file_size(inputFile, 0);
-
-        if (in == NULL)
-        {
-            tprintf(PRINT_BTH, "\nInput file does not exist");
-            return 0;
-        }
-
-        int currentVideoFrame = 0;
-        int frameCount = 0;
-        int byteRec = 0;
-
-        IVF_HEADER ivfhRaw;
-
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        vpxt_format_ivf_header_read(&ivfhRaw);
-
-        /*printf( "IVF DataRate\n\n"
-        "FILE HEADER \n\n"
-        "File Header            - %c%c%c%c \n"
-        "File Format Version    - %i \n"
-        "File Header Size       - %i \n"
-        "Video Data FourCC      - %i \n"
-        "Video Image Width      - %i \n"
-        "Video Image Height     - %i \n"
-        "Frame Rate Rate        - %i \n"
-        "Frame Rate Scale       - %i \n"
-        "Video Length in Frames - %i \n"
-        "Unused                 - %c \n"
-        "\n\n"
-        ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-        ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-        ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
-
-        IVF_FRAME_HEADER ivf_fhRaw;
-
-        fread(&ivf_fhRaw.frameSize, 1, 4, in);
-        fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-        vpxt_format_frame_header_read(ivf_fhRaw);
-
-        frameCount = ivfhRaw.length;
-
-        long nSamples = frameCount;
-        long lRateNum = ivfhRaw.rate;
-        long lRateDenom = ivfhRaw.scale;
-
-        long nSamplesPerBlock = 1;
-
-        long nBytes = 0;
-        long nBytesMin = 999999;
-        long nBytesMax = 0;
-
-        fpos_t position;
-        fgetpos(in, &position);
-        std::cout << "\n";
-
-        char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-
-        while (currentVideoFrame < frameCount)
-        {
-            //check to see if key frame
-            VP8_HEADER oz;
-            //VP8_COMMON pc;
-
-            fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-#if defined(__POWERPC__)
-            {
-                int v = ((int *)inbuff)[0];
-                v = swap4(v);
-                oz.type = v & 1;
-                oz.version = (v >> 1) & 7;
-                oz.showFrame = (v >> 4) & 1;
-                oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
-            }
-#else
-            memcpy(&oz, inbuff, 3); // copy 3 bytes;
-#endif
-
-            unsigned int type = oz.type;
-            unsigned int showFrame = oz.show_frame;
-            unsigned int version = oz.version;
-
-            if (showFrame == 0)
-            {
-                AltRefCount++;
-                std::cout << "\n" << currentVideoFrame << "\n";
-            }
-
-            fread(&ivf_fhRaw.frameSize, 1, 4, in);
-            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-            vpxt_format_frame_header_read(ivf_fhRaw);
-
-            currentVideoFrame ++;
-        }
-
-        fclose(in);
-        delete[] inbuff;
-    }
+    std::ofstream outfile;
+    FILE *in = fopen(inputFile, "rb");
 
     if (Selector == 1)
     {
-        FILE *in = fopen(inputFile, "rb");
-        std::ofstream outfile(outputFile);
+        outfile.open(outputFile);
 
-        ///////////////////////////////////
-        long PosSize = vpxt_file_size(inputFile, 0);
-
-        if (in == NULL)
+        if (!outfile.good())
         {
-            tprintf(PRINT_BTH, "\nInput file does not exist");
+            tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n", outputFile);
             return 0;
         }
+    }
 
-        int currentVideoFrame = 0;
-        int frameCount = 0;
-        int byteRec = 0;
+    ///////////////////////////////////
+    long PosSize = vpxt_file_size(inputFile, 0);
 
-        IVF_HEADER ivfhRaw;
+    if (in == NULL)
+    {
+        tprintf(PRINT_BTH, "\nInput file does not exist");
+        return 0;
+    }
 
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        vpxt_format_ivf_header_read(&ivfhRaw);
+    int currentVideoFrame = 0;
+    int frameCount = 0;
+    int byteRec = 0;
 
-        /*printf( "IVF DataRate\n\n"
-        "FILE HEADER \n\n"
-        "File Header            - %c%c%c%c \n"
-        "File Format Version    - %i \n"
-        "File Header Size       - %i \n"
-        "Video Data FourCC      - %i \n"
-        "Video Image Width      - %i \n"
-        "Video Image Height     - %i \n"
-        "Frame Rate Rate        - %i \n"
-        "Frame Rate Scale       - %i \n"
-        "Video Length in Frames - %i \n"
-        "Unused                 - %c \n"
-        "\n\n"
-        ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-        ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-        ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
+    IVF_HEADER ivfhRaw;
 
-        IVF_FRAME_HEADER ivf_fhRaw;
+    InitIVFHeader(&ivfhRaw);
+    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
+    vpxt_format_ivf_header_read(&ivfhRaw);
+
+    /*printf( "IVF DataRate\n\n"
+    "FILE HEADER \n\n"
+    "File Header            - %c%c%c%c \n"
+    "File Format Version    - %i \n"
+    "File Header Size       - %i \n"
+    "Video Data FourCC      - %i \n"
+    "Video Image Width      - %i \n"
+    "Video Image Height     - %i \n"
+    "Frame Rate Rate        - %i \n"
+    "Frame Rate Scale       - %i \n"
+    "Video Length in Frames - %i \n"
+    "Unused                 - %c \n"
+    "\n\n"
+    ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
+    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
+    ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
+
+    IVF_FRAME_HEADER ivf_fhRaw;
+
+    fread(&ivf_fhRaw.frameSize, 1, 4, in);
+    fread(&ivf_fhRaw.timeStamp, 1, 8, in);
+    vpxt_format_frame_header_read(ivf_fhRaw);
+
+    frameCount = ivfhRaw.length;
+
+    long nSamples = frameCount;
+    long lRateNum = ivfhRaw.rate;
+    long lRateDenom = ivfhRaw.scale;
+
+    long nSamplesPerBlock = 1;
+
+    long nBytes = 0;
+    long nBytesMin = 999999;
+    long nBytesMax = 0;
+
+    fpos_t position;
+    fgetpos(in, &position);
+
+    if (Selector == 0)
+        tprintf(PRINT_STD, "\n");
+
+    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
+
+    while (currentVideoFrame < frameCount)
+    {
+        //check to see if key frame
+        VP8_HEADER oz;
+
+        fread(inbuff, 1, ivf_fhRaw.frameSize, in);
+
+#if defined(__POWERPC__)
+        {
+            int v = ((int *)inbuff)[0];
+            v = swap4(v);
+            oz.type = v & 1;
+            oz.version = (v >> 1) & 7;
+            oz.showFrame = (v >> 4) & 1;
+            oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
+        }
+#else
+        memcpy(&oz, inbuff, 3); // copy 3 bytes;
+#endif
+        unsigned int type = oz.type;
+        unsigned int showFrame = oz.show_frame;
+        unsigned int version = oz.version;
+
+        if (showFrame == 0)
+        {
+            AltRefCount++;
+
+            if (Selector == 0)
+                tprintf(PRINT_STD, "\n%i\n", currentVideoFrame);
+
+            if (Selector == 1)
+                outfile << currentVideoFrame << "\n";
+        }
 
         fread(&ivf_fhRaw.frameSize, 1, 4, in);
         fread(&ivf_fhRaw.timeStamp, 1, 8, in);
         vpxt_format_frame_header_read(ivf_fhRaw);
 
-        frameCount = ivfhRaw.length;
-
-        long nSamples = frameCount;
-        long lRateNum = ivfhRaw.rate;
-        long lRateDenom = ivfhRaw.scale;
-
-        long nSamplesPerBlock = 1;
-
-        long nBytes = 0;
-        long nBytesMin = 999999;
-        long nBytesMax = 0;
-
-        fpos_t position;
-        fgetpos(in, &position);
-        //std::cout << "\n";
-
-        char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-
-        while (currentVideoFrame < frameCount)
-        {
-            //check to see if key frame
-            VP8_HEADER oz;
-
-            fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-#if defined(__POWERPC__)
-            {
-                int v = ((int *)inbuff)[0];
-                v = swap4(v);
-                oz.type = v & 1;
-                oz.version = (v >> 1) & 7;
-                oz.showFrame = (v >> 4) & 1;
-                oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
-            }
-#else
-            memcpy(&oz, inbuff, 3); // copy 3 bytes;
-#endif
-            unsigned int type = oz.type;
-            unsigned int showFrame = oz.show_frame;
-            unsigned int version = oz.version;
-
-            if (showFrame == 0)
-            {
-                AltRefCount++;
-                outfile << currentVideoFrame << "\n";
-            }
-
-            fread(&ivf_fhRaw.frameSize, 1, 4, in);
-            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-            vpxt_format_frame_header_read(ivf_fhRaw);
-
-            currentVideoFrame ++;
-        }
-
-        outfile.close();
-        fclose(in);
-        delete[] inbuff;
-
+        currentVideoFrame ++;
     }
+
+    fclose(in);
+    delete[] inbuff;
+
+    if (Selector == 1)
+        outfile.close();
 
     return AltRefCount;
 
@@ -12167,216 +12034,130 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", KeyInStr.c_str());
 
-    if (Selector == 0)
-    {
-        FILE *in = fopen(inputFile, "rb");
-        ///////////////////////////////////
-        long PosSize = vpxt_file_size(inputFile, 0);
-
-        if (in == NULL)
-        {
-            tprintf(PRINT_BTH, "\nInput file does not exist");
-            return 0;
-        }
-
-        int currentVideoFrame = 0;
-        int frameCount = 0;
-        int byteRec = 0;
-
-        IVF_HEADER ivfhRaw;
-
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        vpxt_format_ivf_header_read(&ivfhRaw);
-
-        /*printf( "IVF DataRate\n\n"
-        "FILE HEADER \n\n"
-        "File Header            - %c%c%c%c \n"
-        "File Format Version    - %i \n"
-        "File Header Size       - %i \n"
-        "Video Data FourCC      - %i \n"
-        "Video Image Width      - %i \n"
-        "Video Image Height     - %i \n"
-        "Frame Rate Rate        - %i \n"
-        "Frame Rate Scale       - %i \n"
-        "Video Length in Frames - %i \n"
-        "Unused                 - %c \n"
-        "\n\n"
-        ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-        ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-        ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
-
-        IVF_FRAME_HEADER ivf_fhRaw;
-
-        fread(&ivf_fhRaw.frameSize, 1, 4, in);
-        fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-        vpxt_format_frame_header_read(ivf_fhRaw);
-
-        frameCount = ivfhRaw.length;
-
-        long nSamples = frameCount;
-        long lRateNum = ivfhRaw.rate;
-        long lRateDenom = ivfhRaw.scale;
-
-        long nSamplesPerBlock = 1;
-
-        long nBytes = 0;
-        long nBytesMin = 999999;
-        long nBytesMax = 0;
-
-        fpos_t position;
-        fgetpos(in, &position);
-        std::cout << "\n";
-
-        char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-
-        while (currentVideoFrame < frameCount)
-        {
-            //check to see if key frame
-            VP8_HEADER oz;
-
-            fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-#if defined(__POWERPC__)
-            {
-                int v = ((int *)inbuff)[0];
-                v = swap4(v);
-                oz.type = v & 1;
-                oz.version = (v >> 1) & 7;
-                oz.showFrame = (v >> 4) & 1;
-                oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
-            }
-#else
-            memcpy(&oz, inbuff, 3); // copy 3 bytes;
-#endif
-
-            unsigned int type = oz.type;
-            unsigned int showFrame = oz.show_frame;
-            unsigned int version = oz.version;
-
-            if (type == 0)
-            {
-                keyframecount++;
-                std::cout << "\n" << currentVideoFrame << "\n";
-            }
-
-            fread(&ivf_fhRaw.frameSize, 1, 4, in);
-            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-            vpxt_format_frame_header_read(ivf_fhRaw);
-
-            currentVideoFrame ++;
-        }
-
-        fclose(in);
-        delete[] inbuff;
-    }
+    std::ofstream outfile;
+    FILE *in = fopen(inputFile, "rb");
 
     if (Selector == 1)
     {
-        FILE *in = fopen(inputFile, "rb");
-        std::ofstream outfile(outputFile);
+        outfile.open(outputFile);
 
-        ///////////////////////////////////
-        long PosSize = vpxt_file_size(inputFile, 0);
-
-        if (in == NULL)
+        if (!outfile.good())
         {
-            tprintf(PRINT_BTH, "\nInput file does not exist");
+            tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n", outputFile);
             return 0;
         }
+    }
 
-        int currentVideoFrame = 0;
-        int frameCount = 0;
-        int byteRec = 0;
+    ///////////////////////////////////
+    long PosSize = vpxt_file_size(inputFile, 0);
 
-        IVF_HEADER ivfhRaw;
+    if (in == NULL)
+    {
+        tprintf(PRINT_BTH, "\nInput file does not exist");
+        return 0;
+    }
 
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        vpxt_format_ivf_header_read(&ivfhRaw);
+    int currentVideoFrame = 0;
+    int frameCount = 0;
+    int byteRec = 0;
 
-        /*printf( "IVF DataRate\n\n"
-        "FILE HEADER \n\n"
-        "File Header            - %c%c%c%c \n"
-        "File Format Version    - %i \n"
-        "File Header Size       - %i \n"
-        "Video Data FourCC      - %i \n"
-        "Video Image Width      - %i \n"
-        "Video Image Height     - %i \n"
-        "Frame Rate Rate        - %i \n"
-        "Frame Rate Scale       - %i \n"
-        "Video Length in Frames - %i \n"
-        "Unused                 - %c \n"
-        "\n\n"
-        ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-        ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-        ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
+    IVF_HEADER ivfhRaw;
 
-        IVF_FRAME_HEADER ivf_fhRaw;
+    InitIVFHeader(&ivfhRaw);
+    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
+    vpxt_format_ivf_header_read(&ivfhRaw);
+
+    /*printf( "IVF DataRate\n\n"
+    "FILE HEADER \n\n"
+    "File Header            - %c%c%c%c \n"
+    "File Format Version    - %i \n"
+    "File Header Size       - %i \n"
+    "Video Data FourCC      - %i \n"
+    "Video Image Width      - %i \n"
+    "Video Image Height     - %i \n"
+    "Frame Rate Rate        - %i \n"
+    "Frame Rate Scale       - %i \n"
+    "Video Length in Frames - %i \n"
+    "Unused                 - %c \n"
+    "\n\n"
+    ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
+    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.four_cc,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
+    ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
+
+    IVF_FRAME_HEADER ivf_fhRaw;
+
+    fread(&ivf_fhRaw.frameSize, 1, 4, in);
+    fread(&ivf_fhRaw.timeStamp, 1, 8, in);
+    vpxt_format_frame_header_read(ivf_fhRaw);
+
+    frameCount = ivfhRaw.length;
+
+    long nSamples = frameCount;
+    long lRateNum = ivfhRaw.rate;
+    long lRateDenom = ivfhRaw.scale;
+
+    long nSamplesPerBlock = 1;
+
+    long nBytes = 0;
+    long nBytesMin = 999999;
+    long nBytesMax = 0;
+
+    fpos_t position;
+    fgetpos(in, &position);
+
+    if (Selector == 0)
+        tprintf(PRINT_STD, "\n");
+
+    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
+
+    while (currentVideoFrame < frameCount)
+    {
+        //check to see if key frame
+        VP8_HEADER oz;
+
+        fread(inbuff, 1, ivf_fhRaw.frameSize, in);
+
+#if defined(__POWERPC__)
+        {
+            int v = ((int *)inbuff)[0];
+            v = swap4(v);
+            oz.type = v & 1;
+            oz.version = (v >> 1) & 7;
+            oz.showFrame = (v >> 4) & 1;
+            oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
+        }
+#else
+        memcpy(&oz, inbuff, 3); // copy 3 bytes;
+#endif
+
+        unsigned int type = oz.type;
+        unsigned int showFrame = oz.show_frame;
+        unsigned int version = oz.version;
+
+        if (type == 0)
+        {
+            keyframecount++;
+
+            if (Selector == 0)
+                tprintf(PRINT_STD, "\n%i\n", currentVideoFrame);
+
+            if (Selector == 1)
+                outfile << currentVideoFrame << "\n";
+        }
 
         fread(&ivf_fhRaw.frameSize, 1, 4, in);
         fread(&ivf_fhRaw.timeStamp, 1, 8, in);
         vpxt_format_frame_header_read(ivf_fhRaw);
 
-        frameCount = ivfhRaw.length;
-
-        long nSamples = frameCount;
-        long lRateNum = ivfhRaw.rate;
-        long lRateDenom = ivfhRaw.scale;
-
-        long nSamplesPerBlock = 1;
-
-        long nBytes = 0;
-        long nBytesMin = 999999;
-        long nBytesMax = 0;
-
-        fpos_t position;
-        fgetpos(in, &position);
-        //std::cout << "\n";
-
-        char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
-
-        while (currentVideoFrame < frameCount)
-        {
-            //check to see if key frame
-            VP8_HEADER oz;
-
-            fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-#if defined(__POWERPC__)
-            {
-                int v = ((int *)inbuff)[0];
-                v = swap4(v);
-                oz.type = v & 1;
-                oz.version = (v >> 1) & 7;
-                oz.showFrame = (v >> 4) & 1;
-                oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
-            }
-#else
-            memcpy(&oz, inbuff, 3); // copy 3 bytes;
-#endif
-            unsigned int type = oz.type;
-            unsigned int showFrame = oz.show_frame;
-            unsigned int version = oz.version;
-
-            if (type == 0)
-            {
-                keyframecount++;
-                outfile << currentVideoFrame << "\n";
-            }
-
-            fread(&ivf_fhRaw.frameSize, 1, 4, in);
-            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-            vpxt_format_frame_header_read(ivf_fhRaw);
-
-            currentVideoFrame ++;
-        }
-
-        outfile.close();
-        fclose(in);
-        delete[] inbuff;
-
+        currentVideoFrame ++;
     }
+
+    if (Selector == 1)
+        outfile.close();
+
+    fclose(in);
+    delete[] inbuff;
+
 
     return keyframecount;
 }

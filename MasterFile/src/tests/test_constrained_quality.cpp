@@ -120,7 +120,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
         opt.end_usage = 1;
         unsigned int cpu_tick1_conq_off = 0;
 
-        Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, cpu_tick1_conq_off);
+        Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, cpu_tick1_conq_off);
 
         if (Time1 == -1)
         {
@@ -133,7 +133,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
         opt.cq_level = ConstrainedQ;
         unsigned int cpu_tick1_conq_on = 0;
 
-        Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQon.c_str(), speed, BitRate, opt, CompressString, 1, 0, cpu_tick1_conq_on);
+        Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQon.c_str(), speed, BitRate, opt, CompressString, 1, 1, cpu_tick1_conq_on);
 
         if (Time2 == -1)
         {
@@ -156,8 +156,13 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     double ConstrainedQonDataRate = vpxt_ivf_data_rate(ConstrainedQon.c_str(), 1);
     double ConstrainedQoffDataRate = vpxt_ivf_data_rate(ConstrainedQoff.c_str(), 1);
 
-    tprintf(PRINT_BTH, "\nConstrained Q on  PSNR: %f Constrained Q on  Data Rate: %f\n", ConstrainedQonPSNR, ConstrainedQonDataRate);
-    tprintf(PRINT_BTH, "Constrained Q off PSNR: %f Constrained Q off Data Rate: %f\n", ConstrainedQoffPSNR, ConstrainedQoffDataRate);
+    vpxt_display_alt_ref_frames(ConstrainedQon.c_str(), 1);
+    vpxt_display_alt_ref_frames(ConstrainedQoff.c_str(), 1);
+    vpxt_display_key_frames(ConstrainedQon.c_str(), 1);
+    vpxt_display_key_frames(ConstrainedQoff.c_str(), 1);
+
+    tprintf(PRINT_BTH, "\nCQ on  PSNR: %.2f CQ on  Data Rate: %.2f CQ on  linearized PSNR: %.2f\n", ConstrainedQonPSNR, ConstrainedQonDataRate, pow(10.0, (ConstrainedQonPSNR / 10.0)));
+    tprintf(PRINT_BTH, "CQ off PSNR: %.2f CQ off Data Rate: %.2f CQ off linearized PSNR: %.2f\n", ConstrainedQoffPSNR, ConstrainedQoffDataRate, pow(10.0, (ConstrainedQoffPSNR / 10.0)));
     tprintf(PRINT_BTH, "\nConstrained Q on  Time: %i microseconds\n", Time2);
     tprintf(PRINT_BTH, "Constrained Q off Time: %i microseconds\n", Time1);
 
@@ -165,15 +170,14 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
 
     int fail = 0;
 
-    if ((ConstrainedQonPSNR / ConstrainedQonDataRate) > (ConstrainedQoffPSNR / ConstrainedQoffDataRate))
+    if (pow(10.0, (ConstrainedQonPSNR / 10.0)) / ConstrainedQonDataRate > pow(10.0, (ConstrainedQoffPSNR / 10.0)) / ConstrainedQoffDataRate)
     {
-        vpxt_formated_print(RESPRT, "Constrained quality density: %f > non-constrained quality density:  %f - Passed", (ConstrainedQonPSNR / ConstrainedQonDataRate), (ConstrainedQoffPSNR / ConstrainedQoffDataRate));
+        vpxt_formated_print(RESPRT, "CQ on lineraized psnr / data rate: %f > CQ off lineraized psnr / data rate: %f - Passed", pow(10.0, (ConstrainedQonPSNR / 10.0)) / ConstrainedQonDataRate, pow(10.0, (ConstrainedQoffPSNR / 10.0)) / ConstrainedQoffDataRate);
         tprintf(PRINT_BTH, "\n");
     }
-
-    if ((ConstrainedQonPSNR / ConstrainedQonDataRate) <= (ConstrainedQoffPSNR / ConstrainedQoffDataRate))
+    else
     {
-        vpxt_formated_print(RESPRT, "Constrained quality density: %f <= non-constrained quality density:  %f - Failed", (ConstrainedQonPSNR / ConstrainedQonDataRate), (ConstrainedQoffPSNR / ConstrainedQoffDataRate));
+        vpxt_formated_print(RESPRT, "CQ on lineraized psnr / data rate: %f <= CQ off lineraized psnr / data rate: %f - Failed", pow(10.0, (ConstrainedQonPSNR / 10.0)) / ConstrainedQonDataRate, pow(10.0, (ConstrainedQoffPSNR / 10.0)) / ConstrainedQoffDataRate);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }

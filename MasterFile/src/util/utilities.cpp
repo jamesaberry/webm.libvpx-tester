@@ -5328,6 +5328,145 @@ void print_header_info()
 
     tprintf(PRINT_BTH, "%s", TestMachineInfo.c_str());
 }
+void print_header_info_to_file(const char *FileName)
+{
+    FILE *outfile;
+    outfile = fopen(FileName, "a");
+
+    std::string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
+    std::string arch = "Unknown";
+#if ARCH_X86
+    arch = "32 bit";
+#else if ARCH_X86_64
+    arch = "64 bit";
+#endif
+
+#if defined(_WIN32)
+    TestMachineInfo = "";
+    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+
+    TestMachineInfo.append("\n");
+    std::string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" Windows");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
+
+#endif
+#if defined(linux)
+    TestMachineInfo = "";
+    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+
+    TestMachineInfo.append("\n");
+    std::string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" Linux");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
+#endif
+#if defined(__APPLE__)
+    TestMachineInfo = "";
+    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+
+    TestMachineInfo.append("\n");
+    std::string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" Intel Mac");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
+#endif
+#if defined(__POWERPC__)
+    TestMachineInfo = "";
+    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+
+    TestMachineInfo.append("\n");
+    std::string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" PowerPC");
+
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
+#endif
+
+    fprintf(outfile, "%s", TestMachineInfo.c_str());
+
+    fclose(outfile);
+}
 void print_header_full_test(int argc, const char *const *argv, std::string WorkingDir3)
 {
     //Full Test Header Output
@@ -6091,8 +6230,8 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
                     break;
                 case VPX_CODEC_STATS_PKT:
                     frames_out++;
-                    fprintf(stderr, " %6luS",
-                            (unsigned long)pkt->data.twopass_stats.sz);
+                    /*fprintf(stderr, " %6luS",
+                            (unsigned long)pkt->data.twopass_stats.sz);*/
                     stats_write(&stats,
                                 pkt->data.twopass_stats.buf,
                                 pkt->data.twopass_stats.sz);

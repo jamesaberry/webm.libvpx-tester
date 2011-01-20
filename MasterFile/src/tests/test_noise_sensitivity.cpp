@@ -198,14 +198,14 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     {
         if (PSNRArr[n] == PSNRArr[n+1] && File2bytes[n] == File2bytes[n+1])
         {
-            vpxt_formated_print(RESPRT, "Noise %i PSNR %.2f == Noise %i PSNR %.2f - Failed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
+            vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f == Noise %i PSNR %.4f - Failed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
 
         }
         else
         {
-            vpxt_formated_print(RESPRT, "Noise %i PSNR %.2f != Noise %i PSNR %.2f - Passed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
+            vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f != Noise %i PSNR %.4f - Passed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
             tprintf(PRINT_BTH, "\n");
         }
 
@@ -214,13 +214,13 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
 
     if (PSNRArr[0] <= PSNRArr[6])
     {
-        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.2f <= Noise 6 PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[6]);
+        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f <= Noise 6 PSNR: %.4f - Failed", PSNRArr[0], PSNRArr[6]);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.2f > Noise 6 PSNR: %.2f - Passed", PSNRArr[0], PSNRArr[6]);
+        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f > Noise 6 PSNR: %.4f - Passed", PSNRArr[0], PSNRArr[6]);
         tprintf(PRINT_BTH, "\n");
     }
 

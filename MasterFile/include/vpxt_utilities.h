@@ -85,6 +85,7 @@ int initialize_test_directory(int argc, const char *const *argv, int TestType, c
 void record_test_complete(const std::string MainDirstring, const char *FileIndexOutputChar, int TestType);
 int print_version();
 void print_header_info();
+void print_header_info_to_file(const char *FileName);
 void print_header_full_test(int argc, const char *const *argv, std::string WorkingDir3);
 void print_header_compression_only(int argc, const char *const *argv, std::string WorkingDir3);
 void print_header_test_only(int argc, const char *const *argv, std::string  WorkingDir3);
@@ -110,6 +111,7 @@ int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar);
 //--------------------------------------------------------IVF Tools-------------------------------------------------------------------------
 int vpxt_cut_ivf(const char *inputFile, const char *outputFile, int StartingFrame, int EndingFrame);
 int vpxt_crop_raw_ivf(const char *inputFile, const char *outputFile, int xoffset, int yoffset, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
+int vpxt_pad_raw_ivf(const char *inputFile, const char *outputFile, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile);
 int vpxt_paste_ivf(const char *inputFile1, const char *inputFile2, const char *outputFile, int StartingFrame);
 int vpxt_ivf_to_raw(const std::string inputFile, const std::string outputDir);
 int vpxt_ivf_to_raw_frames(std::string inputFile, std::string outputDir);

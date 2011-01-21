@@ -10087,6 +10087,297 @@ int vpxt_crop_raw_ivf(const char *inputFile, const char *outputFile, int xoffset
 
     return(0);
 }
+int vpxt_pad_raw_ivf(const char *inputFile, const char *outputFile, int newFrameWidth, int newFrameHeight, int FileIsIVF, int OutputToFile)
+{
+    bool verbose = 1;
+
+    if (OutputToFile != 1)
+        OutputToFile = 0;
+
+    FILE *in = fopen(inputFile, "rb");
+
+    if (in == NULL)
+    {
+        tprintf(PRINT_STD, "\nInput file does not exist");
+
+        if (OutputToFile)
+            fprintf(stderr, "\nInput file does not exist");
+
+        return 0;
+    }
+
+    FILE *out = fopen(outputFile, "wb");
+
+    if (out == NULL)
+    {
+        tprintf(PRINT_STD, "\nOutput file does not exist");
+
+        if (OutputToFile)
+            fprintf(stderr, "\nOutput file does not exist");
+
+        fclose(in);
+        return 0;
+    }
+
+    int currentVideoFrame = 0;
+    int CharCount = 0;
+
+    IVF_HEADER ivfhRaw;
+
+    InitIVFHeader(&ivfhRaw);
+    memset(&ivfhRaw, 0, sizeof(ivfhRaw));
+    int storage;
+    fread(&ivfhRaw.signature, 1, 4, in);
+    fread(&ivfhRaw.version, 1, 2, in);
+    fread(&ivfhRaw.headersize, 1, 2, in);
+    fread(&ivfhRaw.four_cc, 1, 4, in);
+    fread(&ivfhRaw.width, 1, 2, in);
+    fread(&ivfhRaw.height, 1, 2, in);
+    fread(&ivfhRaw.rate, 1, 4, in);
+    fread(&ivfhRaw.scale, 1, 4, in);
+    fread(&ivfhRaw.length, 1, 4, in);
+    fread(&storage, 1, 4, in);
+    vpxt_format_ivf_header_read(&ivfhRaw);
+
+    img_fmt_t vidFormat = IMG_FMT_NONE;
+
+    int flipuv = 0;
+    vidFormat = IMG_FMT_I420;
+
+    if (vidFormat == IMG_FMT_NONE)
+    {
+        tprintf(PRINT_STD, "\n Video Format not found.  Currently supported: I420 and YV12.\n");
+
+        if (OutputToFile)
+            fprintf(stderr, "\n Video Format not found.  Currently supported: I420 and YV12.\n");
+
+        return 0;
+    }
+
+    IVF_FRAME_HEADER ivf_fhRaw;
+
+    IVF_HEADER  ivfhCropped;
+    InitIVFHeader(& ivfhCropped);
+    memset(& ivfhCropped, 0, sizeof(ivfhCropped));
+    ivfhCropped = ivfhRaw;
+    ivfhCropped.width = newFrameWidth;
+    ivfhCropped.height = newFrameHeight;
+
+    IVF_FRAME_HEADER ivf_fhCropped;
+    vpxt_format_ivf_header_write(ivfhCropped);
+
+    if (FileIsIVF == 1)
+        fwrite((char *)& ivfhCropped, 1, 32, out);
+
+    vpxt_format_ivf_header_read(& ivfhCropped);
+    tprintf(PRINT_STD, "\nPad IVF file to ");
+
+    if (OutputToFile)
+        fprintf(stderr, "\nPad IVF file to ");
+
+    if (FileIsIVF == 0)
+    {
+        tprintf(PRINT_STD, "RAW file: \n");
+
+        if (OutputToFile)
+            fprintf(stderr, "RAW file: \n");
+    }
+
+    if (FileIsIVF == 1)
+    {
+        tprintf(PRINT_STD, "IVF file: \n");
+
+        if (OutputToFile)
+            fprintf(stderr, "IVF file: \n");
+    }
+
+    int frameCount = ivfhRaw.length;
+    currentVideoFrame = 0;
+    int WrittenoutVideoFrames = 0;
+    int NewTimeStamp = 0;
+
+    while (currentVideoFrame < frameCount)
+    {
+        vpx_image_t img;
+        vpx_img_alloc(&img, IMG_FMT_I420, ivfhRaw.width, ivfhRaw.height, 1);
+
+        if (!feof(in))
+        {
+            fread(&ivf_fhRaw.frameSize, 1, 4, in);
+            fread(&ivf_fhRaw.timeStamp, 1, 8, in);
+            vpxt_format_frame_header_read(ivf_fhRaw);
+            read_frame_enc(in, &img, ivf_fhRaw.frameSize);
+        }
+        else
+        {
+            break;
+        }
+
+        ivfhCropped.height = newFrameHeight;
+        ivfhCropped.width = newFrameWidth;
+
+        ivf_fhRaw.frameSize = newFrameWidth * newFrameHeight + ((newFrameWidth + 1) / 2) * ((newFrameHeight + 1) / 2) + ((newFrameWidth + 1) / 2) * ((newFrameHeight + 1) / 2);
+
+        memset(&ivf_fhCropped, 0, sizeof(ivf_fhCropped));
+
+        unsigned int FrameSizeStorage = ivf_fhRaw.frameSize;
+        ivf_fhCropped.frameSize = ivf_fhRaw.frameSize;
+        ivf_fhCropped.timeStamp = NewTimeStamp;
+
+        vpxt_format_frame_header_write(ivf_fhCropped);
+
+        unsigned int y;
+        unsigned int z;
+        char out_fn[128+24];
+        uint8_t *buf;
+        const char *sfx = 0;
+        int do_md5 = 0;
+
+        if (FileIsIVF == 1)
+        {
+            ivf_write_frameAPI(out, ivf_fhCropped.timeStamp, ivf_fhCropped.frameSize);
+        }
+
+        int size = 0;
+        int offset = 0;
+
+        int FrameSizeTrack = 0;
+
+        buf = img.planes[PLANE_Y];
+
+        for (y = 0; y < img.d_h; y++)
+        {
+            out_put(out, buf, img.d_w, do_md5);
+            buf += img.stride[PLANE_Y];
+
+            for (z = img.d_w; z < ivfhCropped.width; z++)
+            {
+                char padchar = 'a';
+                uint8_t padbuf = padchar;
+                out_put(out, &padbuf, 1, do_md5);
+            }
+        }
+
+        for (y = img.d_h; y < ivfhCropped.height; y++)
+        {
+            char padchar = 'a';
+            uint8_t padbuf = padchar;
+
+            for (z = 0; z < ivfhCropped.width; z++)
+            {
+                char padchar = 'a';
+                uint8_t padbuf = padchar;
+                out_put(out, &padbuf, 1, do_md5);
+            }
+        }
+
+        buf = img.planes[flipuv?PLANE_V:PLANE_U];
+
+        for (y = 0; y < (1 + img.d_h) / 2; y++)
+        {
+            out_put(out, buf, (1 + img.d_w) / 2, do_md5);
+            buf += img.stride[PLANE_U];
+
+            for (z = (1 + img.d_w) / 2; z < (1 + ivfhCropped.width) / 2; z++)
+            {
+                char padchar = 'a';
+                uint8_t padbuf = padchar;
+                out_put(out, &padbuf, 1, do_md5);
+            }
+        }
+
+        for (y = (1 + img.d_h) / 2; y < (1 + ivfhCropped.height) / 2; y++)
+        {
+            char padchar = 'a';
+            uint8_t padbuf = padchar;
+
+            for (z = 0 / 2; z < (1 + ivfhCropped.width) / 2; z++)
+            {
+                char padchar = 'a';
+                uint8_t padbuf = padchar;
+                out_put(out, &padbuf, 1, do_md5);
+            }
+        }
+
+        buf = img.planes[flipuv?PLANE_U:PLANE_V];
+
+        for (y = 0; y < (1 + img.d_h) / 2; y++)
+        {
+            out_put(out, buf, (1 + img.d_w) / 2, do_md5);
+            buf += img.stride[PLANE_V];
+
+            for (z = (1 + img.d_w) / 2; z < (1 + ivfhCropped.width) / 2; z++)
+            {
+                char padchar = 'a';
+                uint8_t padbuf = padchar;
+                out_put(out, &padbuf, 1, do_md5);
+            }
+        }
+
+        for (y = (1 + img.d_h) / 2; y < (1 + ivfhCropped.height) / 2; y++)
+        {
+            char padchar = 'a';
+            uint8_t padbuf = padchar;
+
+            for (z = 0; z < (1 + ivfhCropped.width) / 2; z++)
+            {
+                char padchar = 'a';
+                uint8_t padbuf = padchar;
+                out_put(out, &padbuf, 1, do_md5);
+            }
+        }
+
+        if (CharCount == 79)
+        {
+            tprintf(PRINT_STD, "\n");
+
+            if (OutputToFile)
+            {
+                fprintf(stderr, "\n");
+            }
+
+            CharCount = 0;
+        }
+
+        tprintf(PRINT_STD, ".");
+
+        if (OutputToFile)
+        {
+            fprintf(stderr, ".");
+        }
+
+        ++currentVideoFrame;
+        WrittenoutVideoFrames++;
+        CharCount++;
+        NewTimeStamp = NewTimeStamp + 2;
+
+        ivf_fhRaw.frameSize = 0;
+        ivf_fhRaw.timeStamp = 0;
+
+        vpx_img_free(&img);
+    }
+
+    tprintf(PRINT_STD, "\n");
+
+    if (OutputToFile)
+    {
+        fprintf(stderr, "\n");
+    }
+
+    ivfhCropped.length = WrittenoutVideoFrames;
+
+    if (FileIsIVF == 1)
+    {
+        fseek(out , 0 , SEEK_SET);
+        vpxt_format_ivf_header_write(ivfhCropped);
+        fwrite(& ivfhCropped, 1, 32, out);
+    }
+
+    fclose(in);
+    fclose(out);
+
+    return(0);
+}
 int vpxt_paste_ivf(const char *inputFile1, const char *inputFile2, const char *outputFile, int StartingFrame)
 {
     bool verbose = 1;

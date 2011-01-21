@@ -21,6 +21,7 @@ int tool_convert_par_file_to_ivfenc(int argc, const char *const *argv);
 int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv);
 int tool_create_rand_par_file(int argc, const char *const *argv);
 int tool_crop_raw_ivf(int argc, const char *const *argv);
+int tool_pad_raw_ivf(int argc, const char *const *argv);
 int tool_copy_all_txt_files(int argc, const char *const *argv);
 int tool_cut_ivf(int argc, const char *const *argv);
 int tool_dec_ivf_to_ivf(int argc, const char *const *argv);

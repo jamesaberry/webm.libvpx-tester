@@ -201,21 +201,21 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "  (22) test_mem_leak                        DispAltRefFrames\n");
     tprintf(PRINT_STD, "  (23) test_mem_leak2                       \n");
     tprintf(PRINT_STD, "  (24) test_min_quantizer                   CropRawIVF\n");
-    tprintf(PRINT_STD, "  (25) test_multithreaded                   CutIVF\n");
-    tprintf(PRINT_STD, "  (26) test_new_vs_old_enc_cpu_tick         PasteIVF\n");
-    tprintf(PRINT_STD, "  (27) test_new_vs_old_psnr                 \n");
-    tprintf(PRINT_STD, "  (28) test_noise_sensitivity               PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (29) test_one_pass_vs_two_pass            PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (30) test_play_alternate                  \n");
-    tprintf(PRINT_STD, "  (31) test_post_processor                  CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (32) test_reconstruct_buffer              PrintVersion\n");
-    tprintf(PRINT_STD, "  (33) test_resample_down_watermark         \n");
-    tprintf(PRINT_STD, "  (34) test_speed                           VPXEncPar\n");
-    tprintf(PRINT_STD, "  (35) test_test_vector                     RandParFile\n");
-    tprintf(PRINT_STD, "  (36) test_two_pass_vs_two_pass_best       RandIVFComp\n");
-    tprintf(PRINT_STD, "  (37) test_undershoot                      GraphPSNR\n");
-    tprintf(PRINT_STD, "  (38) test_version                         Help\n");
-    tprintf(PRINT_STD, "  (39) test_win_lin_mac_match               \n");
+    tprintf(PRINT_STD, "  (25) test_multithreaded                   PadRawIVF\n");
+    tprintf(PRINT_STD, "  (26) test_new_vs_old_enc_cpu_tick         CutIVF\n");
+    tprintf(PRINT_STD, "  (27) test_new_vs_old_psnr                 PasteIVF\n");
+    tprintf(PRINT_STD, "  (28) test_noise_sensitivity               \n");
+    tprintf(PRINT_STD, "  (29) test_one_pass_vs_two_pass            PlayDecIVF\n");
+    tprintf(PRINT_STD, "  (30) test_play_alternate                  PlayCompIVF\n");
+    tprintf(PRINT_STD, "  (31) test_post_processor                  \n");
+    tprintf(PRINT_STD, "  (32) test_reconstruct_buffer              CreateSampleTextFiles\n");
+    tprintf(PRINT_STD, "  (33) test_resample_down_watermark         PrintVersion\n");
+    tprintf(PRINT_STD, "  (34) test_speed                           \n");
+    tprintf(PRINT_STD, "  (35) test_test_vector                     VPXEncPar\n");
+    tprintf(PRINT_STD, "  (36) test_two_pass_vs_two_pass_best       RandParFile\n");
+    tprintf(PRINT_STD, "  (37) test_undershoot                      RandIVFComp\n");
+    tprintf(PRINT_STD, "  (38) test_version                         GraphPSNR\n");
+    tprintf(PRINT_STD, "  (39) test_win_lin_mac_match               Help\n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -2560,6 +2560,9 @@ int  main(int argc, const char *argv[])
 
     if (TestInputString.compare("croprawivf") == 0)                         //Modifies an ivf files size
         return tool_crop_raw_ivf(argc, argv);
+
+    if (TestInputString.compare("padrawivf") == 0)                         //Modifies an ivf files size
+        return tool_pad_raw_ivf(argc, argv);
 
     if (TestInputString.compare("pasteivf") == 0)                           //Modifies an ivf files size
         return tool_paste_ivf(argc, argv);

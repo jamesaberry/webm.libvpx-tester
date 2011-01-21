@@ -4909,6 +4909,29 @@ int tool_crop_raw_ivf(int argc, const char *const *argv)
     vpxt_crop_raw_ivf(inputFile.c_str(), outputFile.c_str(), xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF, 0);
     return 0;
 }
+int tool_pad_raw_ivf(int argc, const char *const *argv)
+{
+    if (argc < 8)
+    {
+        tprintf(PRINT_STD,
+                "\n  PadRawIVF\n\n"
+                "    <Input File>\n"
+                "    <outputfile>\n"
+                "    <New Frame Width>\n"
+                "    <New Frame Height>\n"
+                "    <Raw/IVF 0-Raw 1-IVF>\n"
+               );
+        return 0;
+    }
+
+    std::string inputFile = argv[2];
+    std::string outputFile = argv[3];
+    int newFrameWidth = atoi(argv[4]);
+    int newFrameHeight = atoi(argv[5]);
+    int FileIsIVF  = atoi(argv[6]);
+    vpxt_pad_raw_ivf(inputFile.c_str(), outputFile.c_str(), newFrameWidth, newFrameHeight, FileIsIVF, 0);
+    return 0;
+}
 int tool_copy_all_txt_files(int argc, const char *const *argv)
 {
 #if defined(linux)

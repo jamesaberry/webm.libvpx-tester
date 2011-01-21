@@ -350,12 +350,12 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
 
     if (PercentFail == 0)
     {
-        vpxt_formated_print(RESPRT, "All PSNRs are within 3%% of %.2f - Passed", PSNRAr[0]);
+        vpxt_formated_print(RESPRT, "All PSNRs are within 5%% of %.2f - Passed", PSNRAr[0]);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Not all PSNRs are within 3%% of %.2f - Failed", PSNRAr[0]);
+        vpxt_formated_print(RESPRT, "Not all PSNRs are within 5%% of %.2f - Failed", PSNRAr[0]);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }

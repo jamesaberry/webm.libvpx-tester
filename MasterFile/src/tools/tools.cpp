@@ -6886,7 +6886,7 @@ int tool_side_by_side_text(int argc, const char *const *argv)
     if (argc < 5)
     {
         tprintf(PRINT_STD,
-                "\n  Delete IVF Files\n\n"
+                "\n  Side By Side Text\n\n"
                 "    <Input File 1>\n"
                 "    <Input File 2>\n"
                 "    <Output File>\n"
@@ -6927,7 +6927,7 @@ int tool_side_by_side_text(int argc, const char *const *argv)
     {
         if (!(Infile1.eof()))
         {
-            getline(InfileFormat, InputCharStr1);
+            getline(Infile1, InputCharStr1);
         }
         else
         {
@@ -6936,7 +6936,7 @@ int tool_side_by_side_text(int argc, const char *const *argv)
 
         if (!(Infile2.eof()))
         {
-            getline(InfileFormat, InputCharStr2);
+            getline(Infile2, InputCharStr2);
         }
         else
         {
@@ -6950,7 +6950,7 @@ int tool_side_by_side_text(int argc, const char *const *argv)
         while (InputCharStr1.length() + n < MaxLength + 10)
         {
             Outfile << " ";
-            n++;
+            n = n + 1;
         }
 
         Outfile << InputCharStr2 << "\n";

@@ -6117,14 +6117,14 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             std::string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_paramaters_core.txt");
+            OutputsettingsFile.append("_parameters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
-            OutputsettingsFile.append("_paramaters_vpx.txt");
+            OutputsettingsFile.append("_parameters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -6532,14 +6532,14 @@ int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             std::string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_paramaters_core.txt");
+            OutputsettingsFile.append("_parameters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
-            OutputsettingsFile.append("_paramaters_vpx.txt");
+            OutputsettingsFile.append("_parameters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -6938,14 +6938,14 @@ unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *ou
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             std::string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_paramaters_core.txt");
+            OutputsettingsFile.append("_parameters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
-            OutputsettingsFile.append("_paramaters_vpx.txt");
+            OutputsettingsFile.append("_parameters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -7410,14 +7410,14 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             std::string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_paramaters_core.txt");
+            OutputsettingsFile.append("_parameters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
-            OutputsettingsFile.append("_paramaters_vpx.txt");
+            OutputsettingsFile.append("_parameters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
@@ -7926,14 +7926,14 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
             /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
             std::string OutputsettingsFile = outputFile2;
             OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
-            OutputsettingsFile.append("_paramaters_core.txt");
+            OutputsettingsFile.append("_parameters_core.txt");
             char OutputsettingsFileChar[255];
 
             snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
             vpxt_output_settings(OutputsettingsFileChar,  oxcf);
             ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
-            OutputsettingsFile.append("_paramaters_vpx.txt");
+            OutputsettingsFile.append("_parameters_vpx.txt");
             char OutputsettingsFileChar2[255];
 
             snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());

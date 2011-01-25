@@ -374,6 +374,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@24\n", "test_force_key_frame", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@176@144@..%cTestClips%cspecial-case-par-files%c5-test_frame_size_settings.txt\n", "test_frame_size", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@10@24\n", "test_lag_in_frames", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_max_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe\n", "test_mem_leak", slashChar(), slashChar());
@@ -582,6 +583,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@20@60\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@24\n", "test_force_key_frame", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@176@144\n", "test_frame_size", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@176@144@..%cTestClips%cspecial-case-par-files%c5-test_frame_size_settings.txt\n", "test_frame_size", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@10@24\n", "test_lag_in_frames", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128\n", "test_max_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe\n", "test_mem_leak", slashChar(), slashChar());

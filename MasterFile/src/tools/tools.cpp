@@ -4911,7 +4911,7 @@ int tool_crop_raw_ivf(int argc, const char *const *argv)
 }
 int tool_pad_raw_ivf(int argc, const char *const *argv)
 {
-    if (argc < 8)
+    if (argc < 6)
     {
         tprintf(PRINT_STD,
                 "\n  PadRawIVF\n\n"

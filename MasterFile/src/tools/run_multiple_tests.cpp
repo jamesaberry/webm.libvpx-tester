@@ -286,6 +286,14 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                         }
 
+                        if (buffer[u] == '_')
+                        {
+                            buffer3[a] = buffer[u];
+                            u++;
+                            a++;
+                            buffer3[a] = buffer[u];
+                        }
+
                         SelectorAr2[TestsrunCount] = buffer3;
                         SelectorAr2[TestsrunCount].append("\"");
 

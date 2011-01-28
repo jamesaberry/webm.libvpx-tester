@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_lag_in_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_lag_in_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Lag In Frames";
     char *MyDir = "test_lag_in_frames";
@@ -319,6 +319,9 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(3, LagInFrames0.c_str(), LagInFrames1.c_str(), LagInFrames2.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -326,6 +329,9 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(3, LagInFrames0.c_str(), LagInFrames1.c_str(), LagInFrames2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

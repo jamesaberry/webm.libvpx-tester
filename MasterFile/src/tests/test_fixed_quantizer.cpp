@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_fixed_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_fixed_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Fixed Quantizer";
     char *MyDir = "test_fixed_quantizer";
@@ -245,6 +245,9 @@ int test_fixed_quantizer(int argc, const char *const *argv, const std::string &W
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, FixedQ1.c_str(), FixedQ2.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -252,6 +255,9 @@ int test_fixed_quantizer(int argc, const char *const *argv, const std::string &W
     else
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, FixedQ1.c_str(), FixedQ2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

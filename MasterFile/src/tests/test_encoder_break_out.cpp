@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_encoder_break_out(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_encoder_break_out(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Encoder Break Out";
     char *MyDir = "test_encoder_break_out";
@@ -382,6 +382,10 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
         {
             tprintf(PRINT_BTH, "\nPassed\n");
 
+            if (DeleteIVF)
+                vpxt_delete_files(8, EncBreakOut0.c_str(), EncBreakOut100.c_str(), EncBreakOut500.c_str(), EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(), EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(), EncBreakOut1000_Dec.c_str());
+
+
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 1;
@@ -389,6 +393,10 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
         else
         {
             tprintf(PRINT_BTH, "\nIndeterminate\n");
+
+            if (DeleteIVF)
+                vpxt_delete_files(8, EncBreakOut0.c_str(), EncBreakOut100.c_str(), EncBreakOut500.c_str(), EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(), EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(), EncBreakOut1000_Dec.c_str());
+
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -398,6 +406,9 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(8, EncBreakOut0.c_str(), EncBreakOut100.c_str(), EncBreakOut500.c_str(), EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(), EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(), EncBreakOut1000_Dec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

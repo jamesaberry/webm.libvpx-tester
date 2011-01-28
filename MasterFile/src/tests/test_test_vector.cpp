@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_vector_test(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_vector_test(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Test Vector Check";
     char *MyDir = "test_test_vector";
@@ -723,6 +723,17 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
+        if (DeleteIVF)
+        {
+            int z = 1;
+
+            while (z < 102)
+            {
+                vpxt_delete_files(1, TestVector_Raw[z].c_str());
+                z++;
+            }
+        }
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -773,6 +784,17 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
         vpxt_formated_print(RESPRT, FailStr.c_str());
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
+
+        if (DeleteIVF)
+        {
+            int z = 1;
+
+            while (z < 102)
+            {
+                vpxt_delete_files(1, TestVector_Raw[z].c_str());
+                z++;
+            }
+        }
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

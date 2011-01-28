@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_min_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_min_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Min Quantizer";
     char *MyDir = "test_min_quantizer";
@@ -204,6 +204,9 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, Min10QuantOutFile.c_str(), Min60QuantOutFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -211,6 +214,9 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     else
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, Min10QuantOutFile.c_str(), Min60QuantOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

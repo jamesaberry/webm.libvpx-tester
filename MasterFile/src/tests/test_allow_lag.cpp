@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_lag(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_allow_lag(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Allow Lag";
     char *MyDir = "test_allow_lag";
@@ -216,6 +216,10 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     if (fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, AllowLagon.c_str(), AllowLagoff.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -223,6 +227,10 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, AllowLagon.c_str(), AllowLagoff.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;

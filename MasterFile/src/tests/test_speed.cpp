@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_speed(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_speed(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Cpu Used";
     char *MyDir = "test_speed";
@@ -66,6 +66,35 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     SpeedTestRealTimeBase.append(slashCharStr());
     SpeedTestRealTimeBase.append(MyDir);
     SpeedTestRealTimeBase.append("_compression_cpu_used_");
+
+    int speedCounter = 0;
+    std::string SpeedTestRealAR[34];
+
+    while (speedCounter < 33)
+    {
+        if (speedCounter < 17)
+        {
+            char CounterChar[4];
+            vpxt_itoa_custom(speedCounter, CounterChar, 10);
+
+            SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
+            SpeedTestRealAR[speedCounter].append(CounterChar);
+            SpeedTestRealAR[speedCounter].append(".ivf");
+        }
+        else
+        {
+            int counter = speedCounter - 16;
+            char CounterChar[4];
+            vpxt_itoa_custom(counter, CounterChar, 10);
+
+            SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
+            SpeedTestRealAR[speedCounter].append("-");
+            SpeedTestRealAR[speedCounter].append(CounterChar);
+            SpeedTestRealAR[speedCounter].append(".ivf");
+        }
+
+        speedCounter++;
+    }
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -527,6 +556,17 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+        {
+            int z = 0;
+
+            while (z < 33)
+            {
+                vpxt_delete_files(1, SpeedTestRealAR[z].c_str());
+                z++;
+            }
+        }
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -536,6 +576,17 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+        {
+            int z = 0;
+
+            while (z < 33)
+            {
+                vpxt_delete_files(1, SpeedTestRealAR[z].c_str());
+                z++;
+            }
+        }
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -543,6 +594,17 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     else
     {
         tprintf(PRINT_BTH, "\nMin Passed\n");
+
+        if (DeleteIVF)
+        {
+            int z = 0;
+
+            while (z < 33)
+            {
+                vpxt_delete_files(1, SpeedTestRealAR[z].c_str());
+                z++;
+            }
+        }
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

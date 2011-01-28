@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_data_rate(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_data_rate(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_data_rate";
@@ -156,6 +156,9 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(1, TargetBitRate1.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -174,8 +177,10 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
             tprintf(PRINT_BTH, "\n");
         }
 
-        tprintf(PRINT_STD, "\nFailed\n");
-        fprintf(stderr, "\nFailed\n");
+        tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(1, TargetBitRate1.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

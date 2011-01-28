@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_resample_down_watermark(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_resample_down_watermark(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Resample Down Watermark";
     char *MyDir = "test_resample_down_watermark";
@@ -279,6 +279,9 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -287,6 +290,9 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     if (fail == 3)
     {
         tprintf(PRINT_BTH, "\nMin Passed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -297,6 +303,9 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     {
         tprintf(PRINT_BTH, "\nIndeterminate\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
@@ -304,6 +313,9 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

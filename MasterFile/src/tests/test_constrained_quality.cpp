@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_constrained_quality(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_constrained_quality(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Constrained Quality";
     char *MyDir = "test_constrained_quality";
@@ -198,6 +198,10 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     if (fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, ConstrainedQon.c_str(), ConstrainedQoff.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -205,6 +209,10 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, ConstrainedQon.c_str(), ConstrainedQoff.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;

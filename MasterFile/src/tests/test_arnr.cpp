@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Arnr Type";
     char *MyDir = "test_arnr";
@@ -403,6 +403,10 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     if (fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(4, CompArnr1AltRef0.c_str(), CompArnr1.c_str(), CompArnr2.c_str(), CompArnr3.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -410,6 +414,10 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(4, CompArnr1AltRef0.c_str(), CompArnr1.c_str(), CompArnr2.c_str(), CompArnr3.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;

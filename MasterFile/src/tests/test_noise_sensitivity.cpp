@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_noise_sensitivity(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_noise_sensitivity(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     //This test looks a lot like NoiseSensitivityWorks but has a different purpose.  This test ensures
     //That different noise sensitivities have an effect for each possible noise sensitivity value and
@@ -47,6 +47,21 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     NoiseSenseBase.append(slashCharStr());
     NoiseSenseBase.append(MyDir);
     NoiseSenseBase.append("_compression_");
+
+    std::string NoiseSense0 = NoiseSenseBase;
+    NoiseSense0.append("0.ivf");
+    std::string NoiseSense1 = NoiseSenseBase;
+    NoiseSense1.append("1.ivf");
+    std::string NoiseSense2 = NoiseSenseBase;
+    NoiseSense2.append("2.ivf");
+    std::string NoiseSense3 = NoiseSenseBase;
+    NoiseSense3.append("3.ivf");
+    std::string NoiseSense4 = NoiseSenseBase;
+    NoiseSense4.append("4.ivf");
+    std::string NoiseSense5 = NoiseSenseBase;
+    NoiseSense5.append("5.ivf");
+    std::string NoiseSense6 = NoiseSenseBase;
+    NoiseSense6.append("6.ivf");
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -107,7 +122,6 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     long File2bytes[7];
     double PSNRArr[7];
     int doOnce = 1;
-    int PSNRToggle;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == TEST_ONLY)
@@ -228,6 +242,9 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(), NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(), NoiseSense5.c_str(), NoiseSense6.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -235,6 +252,9 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(), NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(), NoiseSense5.c_str(), NoiseSense6.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

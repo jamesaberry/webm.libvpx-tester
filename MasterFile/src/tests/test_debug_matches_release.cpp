@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_debug_matches_release(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_debug_matches_release(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     //Needs Debug.exe and Release.exe
     char *MyDir = "test_debug_matches_release";
@@ -342,6 +342,9 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(4, DebugOutputEnc.c_str(), ReleaseOutputEnc.c_str(), DebugOutputDec.c_str(), ReleaseOutputDec.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -349,6 +352,9 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(4, DebugOutputEnc.c_str(), ReleaseOutputEnc.c_str(), DebugOutputDec.c_str(), ReleaseOutputDec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_max_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_max_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Max Quantizer";
     char *MyDir = "test_max_quantizer";
@@ -44,6 +44,23 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     QuantOutBase.append(slashCharStr());
     QuantOutBase.append(MyDir);
     QuantOutBase.append("_compression_");
+
+    std::string QuantOut3 = QuantOutBase;
+    QuantOut3.append("3.ivf");
+    std::string QuantOut11 = QuantOutBase;
+    QuantOut11.append("11.ivf");
+    std::string QuantOut19 = QuantOutBase;
+    QuantOut19.append("19.ivf");
+    std::string QuantOut27 = QuantOutBase;
+    QuantOut27.append("27.ivf");
+    std::string QuantOut35 = QuantOutBase;
+    QuantOut35.append("35.ivf");
+    std::string QuantOut43 = QuantOutBase;
+    QuantOut43.append("43.ivf");
+    std::string QuantOut51 = QuantOutBase;
+    QuantOut51.append("51.ivf");
+    std::string QuantOut59 = QuantOutBase;
+    QuantOut59.append("59.ivf");
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -233,6 +250,9 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(), QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(), QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -240,6 +260,9 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(), QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(), QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

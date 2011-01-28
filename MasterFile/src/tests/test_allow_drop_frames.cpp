@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_drop_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_allow_drop_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_allow_drop_frames";
@@ -169,6 +169,10 @@ int test_allow_drop_frames(int argc, const char *const *argv, const std::string 
     if (fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, AllowDFon.c_str(), AllowDFoff.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -176,6 +180,10 @@ int test_allow_drop_frames(int argc, const char *const *argv, const std::string 
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, AllowDFon.c_str(), AllowDFoff.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;

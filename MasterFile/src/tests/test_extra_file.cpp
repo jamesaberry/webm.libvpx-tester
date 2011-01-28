@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_extra_file(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_extra_file(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_extra_file";
@@ -191,8 +191,8 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     IgnoreCompressionDir.push_back("..");
     IgnoreCompressionDir.push_back("test_extra_file.txt");
     IgnoreCompressionDir.push_back("test_extra_file_compression.ivf");
-    IgnoreCompressionDir.push_back("test_extra_file_compression_paramaters_core.txt");
-    IgnoreCompressionDir.push_back("test_extra_file_compression_paramaters_vpx.txt");
+    IgnoreCompressionDir.push_back("test_extra_file_compression_parameters_core.txt");
+    IgnoreCompressionDir.push_back("test_extra_file_compression_parameters_vpx.txt");
 
     if (TestType == TEST_ONLY)
     {
@@ -331,6 +331,9 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(1, ExtraFileCheckStr.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -339,6 +342,9 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     if (Fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(1, ExtraFileCheckStr.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

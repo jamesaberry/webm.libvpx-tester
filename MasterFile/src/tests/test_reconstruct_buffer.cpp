@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_reconstruct_buffer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_reconstruct_buffer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_reconstruct_buffer";
@@ -113,7 +113,7 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, DeleteIVF) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -169,6 +169,9 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(1, ReconBufferCompression.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -176,6 +179,9 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(1, ReconBufferCompression.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

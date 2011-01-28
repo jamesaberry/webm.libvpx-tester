@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
 
     char *MyDir = "test_new_vs_old_enc_cpu_tick";
@@ -58,11 +58,6 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     outputVP8Old.append(slashCharStr());
     outputVP8Old.append(MyDir);
     outputVP8Old.append("_compression_old.ivf");
-
-    std::string outputVP8Old2 = CurTestDirStr;
-    outputVP8Old2.append(slashCharStr());
-    outputVP8Old2.append(MyDir);
-    outputVP8Old2.append("_compression_old.ivf");
 
     std::string ParFile = CurTestDirStr;
     ParFile.append(slashCharStr());
@@ -173,7 +168,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     if (TestType == TEST_ONLY)
     {
         cpu_tick1 = vpxt_cpu_tick_return(outputVP8New.c_str(), 0);
-        cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old2.c_str(), 0);
+        cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old.c_str(), 0);
 
         tprintf(PRINT_BTH, "\ncpu_tick1: %i\n", cpu_tick1);
         tprintf(PRINT_BTH, "\ncpu_tick2: %i\n", cpu_tick2);
@@ -205,8 +200,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         fprintf(stderr, " ");
 
         vpxt_run_exe(Program);
-        unsigned int Time2 = vpxt_time_return(outputVP8Old2.c_str(), 0);
-        cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old2.c_str(), 0);
+        unsigned int Time2 = vpxt_time_return(outputVP8Old.c_str(), 0);
+        cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old.c_str(), 0);
 
         tprintf(PRINT_BTH, "\n\nFile completed: Time in Microseconds: %i", Time2);
         tprintf(PRINT_BTH, "\n Total CPU Ticks: %u\n", cpu_tick2);
@@ -229,6 +224,9 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, outputVP8New.c_str(), outputVP8Old.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -240,6 +238,9 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, outputVP8New.c_str(), outputVP8Old.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -249,6 +250,9 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         vpxt_formated_print(RESPRT, "Files Took the same amount of time - Indeterminate");
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, outputVP8New.c_str(), outputVP8Old.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

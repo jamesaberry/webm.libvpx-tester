@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_good_vs_best(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_good_vs_best(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_good_vs_best";
@@ -307,6 +307,9 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(6, GoodOutFile2.c_str(), GoodOutFile3.c_str(), GoodOutFile1.c_str(), BestOutFile1.c_str(), BestOutFile2.c_str(), BestOutFile3.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -314,6 +317,9 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(6, GoodOutFile2.c_str(), GoodOutFile3.c_str(), GoodOutFile1.c_str(), BestOutFile1.c_str(), BestOutFile2.c_str(), BestOutFile3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

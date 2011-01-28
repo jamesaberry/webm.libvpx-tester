@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_version(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_version(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Version";
     char *MyDir = "test_version";
@@ -348,6 +348,9 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
     {
         tprintf(PRINT_BTH, "\nMin Passed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(8, Version0.c_str(), Version1.c_str(), Version2.c_str(), Version3.c_str(), Version0_Dec.c_str(), Version1_Dec.c_str(), Version2_Dec.c_str(), Version3_Dec.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 8;
@@ -357,6 +360,9 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(8, Version0.c_str(), Version1.c_str(), Version2.c_str(), Version3.c_str(), Version0_Dec.c_str(), Version1_Dec.c_str(), Version2_Dec.c_str(), Version3_Dec.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -364,6 +370,9 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
     else
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(8, Version0.c_str(), Version1.c_str(), Version2.c_str(), Version3.c_str(), Version0_Dec.c_str(), Version1_Dec.c_str(), Version2_Dec.c_str(), Version3_Dec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

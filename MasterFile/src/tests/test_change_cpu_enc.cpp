@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_change_cpu_enc(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_change_cpu_enc(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Arnr Maxframes:";
     char *MyDir = "test_change_cpu_enc";
@@ -55,6 +55,21 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     ChangedCPUDecNOutBase.append(slashCharStr());
     ChangedCPUDecNOutBase.append(MyDir);
     ChangedCPUDecNOutBase.append("_compression_");
+
+    std::string OutputStr0 = ChangedCPUDecNOutBase;
+    OutputStr0.append("none.ivf");
+    std::string OutputStr1 = ChangedCPUDecNOutBase;
+    OutputStr1.append("mmx.ivf");
+    std::string OutputStr2 = ChangedCPUDecNOutBase;
+    OutputStr2.append("sse.ivf");
+    std::string OutputStr3 = ChangedCPUDecNOutBase;
+    OutputStr3.append("sse2.ivf");
+    std::string OutputStr4 = ChangedCPUDecNOutBase;
+    OutputStr4.append("sse3.ivf");
+    std::string OutputStr5 = ChangedCPUDecNOutBase;
+    OutputStr5.append("ssse3.ivf");
+    std::string OutputStr6 = ChangedCPUDecNOutBase;
+    OutputStr6.append("sse4_1.ivf");
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -121,21 +136,6 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     if (TestType == TEST_ONLY)
     {
         std::vector<std::string> CompressonVector;
-
-        std::string OutputStr0 = ChangedCPUDecNOutBase;
-        OutputStr0.append("none.ivf");
-        std::string OutputStr1 = ChangedCPUDecNOutBase;
-        OutputStr1.append("mmx.ivf");
-        std::string OutputStr2 = ChangedCPUDecNOutBase;
-        OutputStr2.append("sse.ivf");
-        std::string OutputStr3 = ChangedCPUDecNOutBase;
-        OutputStr3.append("sse2.ivf");
-        std::string OutputStr4 = ChangedCPUDecNOutBase;
-        OutputStr4.append("sse3.ivf");
-        std::string OutputStr5 = ChangedCPUDecNOutBase;
-        OutputStr5.append("ssse3.ivf");
-        std::string OutputStr6 = ChangedCPUDecNOutBase;
-        OutputStr6.append("sse4_1.ivf");
 
         if (vpxt_file_exists_check(OutputStr0))
             CompressonVector.push_back(OutputStr0);
@@ -430,6 +430,9 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(8, ChangedCPUDec0OutFile.c_str(), OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(), OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(), OutputStr6.c_str());
+
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -438,6 +441,9 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(8, ChangedCPUDec0OutFile.c_str(), OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(), OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(), OutputStr6.c_str());
 
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");

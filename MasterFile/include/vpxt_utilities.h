@@ -61,6 +61,7 @@ int vpxt_solve_quadradic(float X1, float X2, float X3, float Y1, float Y2, float
 float vpxt_area_under_quadradic(float A, float B, float C, float X1, float X2);
 char *vpxt_itoa_custom(int value, char *result, int base);
 //----------------------------------------------------Cross Plat----------------------------------------------------------------------
+void vpxt_delete_files(int argcount, ...);
 unsigned int vpxt_get_high_res_timer_tick();
 unsigned int vpxt_get_time_in_micro_sec(unsigned int startTick, unsigned int stopTick);
 unsigned int vpxt_get_cpu_tick();
@@ -69,6 +70,7 @@ int vpxt_get_cur_dir(std::string &CurrentDir);
 int vpxt_make_dir(std::string CreateDir);
 int vpxt_make_dir_vpx(std::string CreateDir2);
 void vpxt_run_exe(std::string RunExe);
+int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector, std::string Directory);
 int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles, std::string Directory);
 int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles, std::vector<std::string> &FilesFound, std::string Directory);
 //---------------------------------------------------------IVF------------------------------------------------------------------------
@@ -99,7 +101,7 @@ int vpxt_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int
 int vpxt_compress_ivf_to_ivf_no_error_output(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck);
 unsigned int vpxt_time_compress_ivf_to_ivf(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick);
 int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame);
-int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck);
+int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int OutputRaw);
 int vpxt_decompress_ivf_to_ivf(const char *inputchar, const char *outputchar);
 int vpxt_decompress_ivf_to_raw(const char *inputchar, const char *outputchar);
 int vpxt_decompress_ivf_to_raw_no_error_output(const char *inputchar, const char *outputchar);

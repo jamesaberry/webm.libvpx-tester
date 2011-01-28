@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak";
@@ -290,6 +290,9 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, MemLeakCheckIVFDECStr.c_str(), MemLeakCheckIVFStr.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -297,6 +300,9 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, MemLeakCheckIVFDECStr.c_str(), MemLeakCheckIVFStr.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

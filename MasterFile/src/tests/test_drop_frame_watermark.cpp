@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_drop_frame_watermark(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_drop_frame_watermark(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Drop Frames Watermark";
     char *MyDir = "test_drop_frame_watermark";
@@ -44,6 +44,19 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
     DFWMOutFileBase.append(slashCharStr());
     DFWMOutFileBase.append(MyDir);
     DFWMOutFileBase.append("_compression_");
+
+    std::string DFWMOutFile0   = DFWMOutFileBase;
+    DFWMOutFile0.append("0.ivf");
+    std::string DFWMOutFile20  = DFWMOutFileBase;
+    DFWMOutFile20.append("20.ivf");
+    std::string DFWMOutFile40  = DFWMOutFileBase;
+    DFWMOutFile40.append("40.ivf");
+    std::string DFWMOutFile60  = DFWMOutFileBase;
+    DFWMOutFile60.append("60.ivf");
+    std::string DFWMOutFile80  = DFWMOutFileBase;
+    DFWMOutFile80.append("80.ivf");
+    std::string DFWMOutFile100 = DFWMOutFileBase;
+    DFWMOutFile100.append("100.ivf");
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -237,6 +250,9 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(6, DFWMOutFile0.c_str(), DFWMOutFile20.c_str(), DFWMOutFile40.c_str(), DFWMOutFile60.c_str(), DFWMOutFile80.c_str(), DFWMOutFile100.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -247,6 +263,9 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
         {
             tprintf(PRINT_BTH, "\n\nUnknown: Drop-Frames-Watermark has no effect, try different parameters \n");
 
+            if (DeleteIVF)
+                vpxt_delete_files(6, DFWMOutFile0.c_str(), DFWMOutFile20.c_str(), DFWMOutFile40.c_str(), DFWMOutFile60.c_str(), DFWMOutFile80.c_str(), DFWMOutFile100.c_str());
+
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
@@ -254,6 +273,9 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
         else
         {
             tprintf(PRINT_BTH, "\nPassed\n");
+
+            if (DeleteIVF)
+                vpxt_delete_files(6, DFWMOutFile0.c_str(), DFWMOutFile20.c_str(), DFWMOutFile40.c_str(), DFWMOutFile60.c_str(), DFWMOutFile80.c_str(), DFWMOutFile100.c_str());
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

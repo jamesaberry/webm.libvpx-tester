@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
 
     char *MyDir = "test_new_vs_old_psnr";
@@ -440,6 +440,9 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, NewEncFile.c_str(), OldEncFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -451,6 +454,9 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
         tprintf(PRINT_BTH, "\n\nMin Passed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, NewEncFile.c_str(), OldEncFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 8;
@@ -460,6 +466,9 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
         vpxt_formated_print(RESPRT, "New PSNR: %.2f < Old PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[1]);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, NewEncFile.c_str(), OldEncFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

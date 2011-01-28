@@ -2328,12 +2328,15 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
                 "    <Test Type>\n"
                 "      <1 - Create Files and Run Tests>\n"
                 "        <Input Text File>\n"
+                "        <Delete IVF Files| 0=no 1=yes>\n"
                 "      <2 - Create Files only>\n"
                 "        <Input Text File>\n"
                 "      <3 - Run Tests For Existing Files>\n"
                 "        <Input Test Directory>\n"
+                "        <Delete IVF Files| 0=no 1=yes>\n"
                 "      <4 - Resume Test>\n"
                 "        <Input Test Directory>\n"
+                "        <Delete IVF Files| 0=no 1=yes>\n"
                 "\n");
 
         return 0;
@@ -2366,7 +2369,12 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
         }
     }
 
-    run_multiple_tests(argc, argv, WorkingDir.c_str(), VaildInput);
+    int DeleteIVFFiles = 0;
+
+    if (argc > 4)
+        DeleteIVFFiles = atoi(argv[4]);
+
+    run_multiple_tests(argc, argv, WorkingDir.c_str(), VaildInput, DeleteIVFFiles);
 
     std::string SummaryFile = WorkingDir;
 
@@ -2695,6 +2703,9 @@ int  main(int argc, const char *argv[])
     if (TestInputString.compare("printcpuinfo") == 0)                       //
         return tool_print_cpu_info();
 
+    if (TestInputString.compare("randommultitest") == 0)
+        return tool_random_multi_test(argc, argv);
+
     tprintf(PRINT_STD, "\n");
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2711,121 +2722,121 @@ int  main(int argc, const char *argv[])
         return vpxt_run_multi(argc, argv, WorkingDir);
 
     if (selector == AlWDFNUM)
-        return test_allow_drop_frames(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_allow_drop_frames(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ALWLGNUM)
-        return test_allow_lag(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_allow_lag(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ALWSRNUM)
-        return test_allow_spatial_resampling(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_allow_spatial_resampling(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ARNRTNUM)
-        return test_arnr(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_arnr(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == AUTKFNUM)
-        return test_auto_key_frame(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_auto_key_frame(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == BUFLVNUM)
-        return test_buffer_level(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_buffer_level(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == CPUDENUM)
-        return test_change_cpu_dec(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_change_cpu_dec(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == CPUENNUM)
-        return test_change_cpu_enc(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_change_cpu_enc(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == CONQUNUM)
-        return test_constrained_quality(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_constrained_quality(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == DFWMWNUM)
-        return test_drop_frame_watermark(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_drop_frame_watermark(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == DTARTNUM)
-        return test_data_rate(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_data_rate(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == DBMRLNUM)
-        return test_debug_matches_release(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_debug_matches_release(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ENCBONUM)
-        return test_encoder_break_out(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_encoder_break_out(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ERRMWNUM)
-        return test_error_resolution(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_error_resolution(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == EXTFINUM)
-        return test_extra_file(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_extra_file(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == FIXDQNUM)
-        return test_fixed_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_fixed_quantizer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == FKEFRNUM)
-        return test_force_key_frame(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_force_key_frame(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == FRSZTNUM)
-        return test_frame_size(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_frame_size(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == GQVBQNUM)
-        return test_good_vs_best(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_good_vs_best(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == LGIFRNUM)
-        return test_lag_in_frames(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_lag_in_frames(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MAXQUNUM)
-        return test_max_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_max_quantizer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MEML1NUM)
-        return test_mem_leak(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_mem_leak(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MEML2NUM)
-        return test_mem_leak2(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_mem_leak2(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MINQUNUM)
-        return test_min_quantizer(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_min_quantizer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MULTTNUM)
-        return test_multithreaded(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_multithreaded(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == NVOPSNUM)
-        return test_new_vs_old_psnr(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_new_vs_old_psnr(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == NVOECPTK)
-        return test_new_vs_old_enc_cpu_tick(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_new_vs_old_enc_cpu_tick(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == NOISENUM)
-        return test_noise_sensitivity(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_noise_sensitivity(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == OV2PSNUM)
-        return test_one_pass_vs_two_pass(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_one_pass_vs_two_pass(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == PLYALNUM)
-        return test_play_alternate(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_play_alternate(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == POSTPNUM)
-        return test_post_processor(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_post_processor(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == RECBFNUM)
-        return test_reconstruct_buffer(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_reconstruct_buffer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == RSDWMNUM)
-        return test_resample_down_watermark(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_resample_down_watermark(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == SPEEDNUM)
-        return test_speed(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_speed(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TVECTNUM)
-        return test_vector_test(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_vector_test(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TV2BTNUM)
-        return test_two_pass_vs_two_pass_best(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_two_pass_vs_two_pass_best(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == UNDSHNUM)
-        return test_undershoot(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_undershoot(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == VERSINUM)
-        return test_version(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_version(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == WMLMMNUM)
-        return test_win_lin_mac_match(argc, argv, WorkingDir, EmptyAr, 1);
+        return test_win_lin_mac_match(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     vpxt_on_error_output();
     return 0;

@@ -1135,7 +1135,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     int w = 0;
     int h = 0;
     int fr  = 0;
-    int length = 0;
+    int length = 1;
 
 
     FILE *GetWHinfile = fopen(inputfile, "rb");
@@ -1159,8 +1159,23 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
         fr      = (ivfhRaw.rate / ivfhRaw.scale);
         length  = ivfhRaw.length;
 
+        if (length == 0)
+            length = 1;
+
+        if (fr == 0)
+            fr = 1;
+
+        if (h == 0)
+            h = 1;
+
+        if (w == 0)
+            w = 1;
+
         fclose(GetWHinfile);
     }
+
+    opt.Width = w;
+    opt.Height = h;
 
     opt.Mode = rand() % 5;              //valid Range: (0 to 4)
 
@@ -1207,6 +1222,12 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
         opt.best_allowed_q = rand() % 64; //valid Range: 0 to 63
         opt.worst_allowed_q   = rand() % 64; //valid Range: 0 to 63
         opt.cq_level   = rand() % 64; //valid Range: 0 to 63
+
+        while (opt.best_allowed_q > opt.worst_allowed_q)
+        {
+            opt.best_allowed_q = rand() % 64;
+            opt.worst_allowed_q   = rand() % 64;
+        }
     }
 
     opt.auto_key = rand() % 2; //valid Range: 0 to 1
@@ -1231,12 +1252,18 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     opt.token_partitions = rand() % 4; //valid Range: 0 to 3
     opt.error_resilient_mode = rand() % 101; //valid Range: 0 to 100
 
-    opt.target_bandwidth = rand() % ((w * h) / (320 * 240) * 2048); //valid Range: No Max so based on resolution
+    float TBUpperBoundFloat = ((w * h) / (320 * 240) * 2048);
+    int TBUpperBound = TBUpperBoundFloat;
+
+    if (TBUpperBound == 0)
+        TBUpperBound = 1;
+
+    opt.target_bandwidth = rand() %  TBUpperBound + 1;//valid Range: No Max so based on resolution
     opt.key_freq = rand() % length + 2; //valid Range: No Max so based on number of frames
 
     opt.arnr_max_frames = rand() % 16; //valid Range: 0 to 15
     opt.arnr_strength = rand() % 7; //valid Range: 6
-    opt.arnr_type = rand() % 4;//valid Range: 1 to 3
+    opt.arnr_type = rand() % 3+1;//valid Range: 1 to 3
 
     ////////////////////////////////No Range Documentation////////////////////////////////
     //opt.maximum_buffer_size  = rand()% 101; //valid Range:
@@ -1271,43 +1298,46 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     opt.gold_q = 28;
     opt.key_q = 12;
 
-    tprintf(PRINT_STD, "\nRandom Parameters Generated:");
-    std::cout << "\n\n";
-    std::cout << "TargetBandwidth " << opt.target_bandwidth << "\n";
-    std::cout << "NoiseSensitivity " << opt.noise_sensitivity << "\n";
-    std::cout << "Sharpness " << opt.Sharpness << "\n";
-    std::cout << "CpuUsed " << opt.cpu_used << "\n";
-    std::cout << "Mode " << opt.Mode << "\n";
-    std::cout << "AutoKey " << opt.auto_key << "\n";
-    std::cout << "KeyFreq " << opt.key_freq << "\n";
-    std::cout << "EndUsage " << opt.end_usage << "\n";
-    std::cout << "UnderShootPct " << opt.under_shoot_pct << "\n";
-    std::cout << "StartingBufferLevel " << opt.starting_buffer_level << "\n";
-    std::cout << "OptimalBufferLevel " << opt.optimal_buffer_level << "\n";
-    std::cout << "MaximumBufferSize " << opt.maximum_buffer_size << "\n";
-    std::cout << "FixedQ " << opt.fixed_q << "\n";
-    std::cout << "WorstAllowedQ " << opt.worst_allowed_q  << "\n";
-    std::cout << "BestAllowedQ " << opt.best_allowed_q << "\n";
-    std::cout << "AllowSpatialResampling " << opt.allow_spatial_resampling << "\n";
-    std::cout << "ResampleDownWaterMark " << opt.resample_down_water_mark << "\n";
-    std::cout << "ResampleUpWaterMark " << opt.resample_up_water_mark << "\n";
-    std::cout << "AllowDF " << opt.allow_df << "\n";
-    std::cout << "DropFramesWaterMark " << opt.drop_frames_water_mark << "\n";
-    std::cout << "AllowLag " << opt.allow_lag << "\n";
-    std::cout << "PlayAlternate " << opt.play_alternate << "\n";
-    std::cout << "AltQ " << opt.alt_q << "\n";
-    std::cout << "AltFreq " << opt.alt_freq << "\n";
-    std::cout << "GoldQ " << opt.gold_q << "\n";
-    std::cout << "KeyQ " << opt.key_q << "\n";
-    std::cout << "Version " << opt.Version << "\n";
-    std::cout << "LagInFrames " << opt.lag_in_frames << "\n";
-    std::cout << "TwoPassVBRBias " << opt.two_pass_vbrbias << "\n";
-    std::cout << "TwoPassVBRMinSection " << opt.two_pass_vbrmin_section << "\n";
-    std::cout << "TwoPassVBRMaxSection " << opt.two_pass_vbrmax_section << "\n";
-    std::cout << "EncodeBreakout " << opt.encode_breakout << "\n";
-    std::cout << "TokenPartitions " << opt.token_partitions << "\n";
-    std::cout << "MultiThreaded " << opt.multi_threaded << "\n";
-    std::cout << "ErrorResilientMode " << opt.error_resilient_mode << "\n";
+    if (display != 2)
+    {
+        tprintf(PRINT_STD, "\nRandom Parameters Generated:");
+        std::cout << "\n\n";
+        std::cout << "TargetBandwidth " << opt.target_bandwidth << "\n";
+        std::cout << "NoiseSensitivity " << opt.noise_sensitivity << "\n";
+        std::cout << "Sharpness " << opt.Sharpness << "\n";
+        std::cout << "CpuUsed " << opt.cpu_used << "\n";
+        std::cout << "Mode " << opt.Mode << "\n";
+        std::cout << "AutoKey " << opt.auto_key << "\n";
+        std::cout << "KeyFreq " << opt.key_freq << "\n";
+        std::cout << "EndUsage " << opt.end_usage << "\n";
+        std::cout << "UnderShootPct " << opt.under_shoot_pct << "\n";
+        std::cout << "StartingBufferLevel " << opt.starting_buffer_level << "\n";
+        std::cout << "OptimalBufferLevel " << opt.optimal_buffer_level << "\n";
+        std::cout << "MaximumBufferSize " << opt.maximum_buffer_size << "\n";
+        std::cout << "FixedQ " << opt.fixed_q << "\n";
+        std::cout << "WorstAllowedQ " << opt.worst_allowed_q  << "\n";
+        std::cout << "BestAllowedQ " << opt.best_allowed_q << "\n";
+        std::cout << "AllowSpatialResampling " << opt.allow_spatial_resampling << "\n";
+        std::cout << "ResampleDownWaterMark " << opt.resample_down_water_mark << "\n";
+        std::cout << "ResampleUpWaterMark " << opt.resample_up_water_mark << "\n";
+        std::cout << "AllowDF " << opt.allow_df << "\n";
+        std::cout << "DropFramesWaterMark " << opt.drop_frames_water_mark << "\n";
+        std::cout << "AllowLag " << opt.allow_lag << "\n";
+        std::cout << "PlayAlternate " << opt.play_alternate << "\n";
+        std::cout << "AltQ " << opt.alt_q << "\n";
+        std::cout << "AltFreq " << opt.alt_freq << "\n";
+        std::cout << "GoldQ " << opt.gold_q << "\n";
+        std::cout << "KeyQ " << opt.key_q << "\n";
+        std::cout << "Version " << opt.Version << "\n";
+        std::cout << "LagInFrames " << opt.lag_in_frames << "\n";
+        std::cout << "TwoPassVBRBias " << opt.two_pass_vbrbias << "\n";
+        std::cout << "TwoPassVBRMinSection " << opt.two_pass_vbrmin_section << "\n";
+        std::cout << "TwoPassVBRMaxSection " << opt.two_pass_vbrmax_section << "\n";
+        std::cout << "EncodeBreakout " << opt.encode_breakout << "\n";
+        std::cout << "TokenPartitions " << opt.token_partitions << "\n";
+        std::cout << "MultiThreaded " << opt.multi_threaded << "\n";
+        std::cout << "ErrorResilientMode " << opt.error_resilient_mode << "\n";
+    }
 
     if (display == 1)
     {
@@ -1849,9 +1879,9 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     tprintf(PRINT_STD, "--buf-optimal-sz=%i ", opt.optimal_buffer_level * 1000);        //Client optimal buffer size (ms)
 
     //Twopass Rate Control Options:
-    //--bias-pct=<arg>                                                                 //CBR/VBR bias (0=CBR, 100=VBR)
-    //--minsection-pct=<arg>                                                           //GOP min bitrate (% of target)
-    //--maxsection-pct=<arg>                                                           //GOP max bitrate (% of target)
+    tprintf(PRINT_STD, "--bias-pct==%i ", opt.two_pass_vbrbias);                        //CBR/VBR bias (0=CBR, 100=VBR)
+    tprintf(PRINT_STD, "--minsection-pct=%i ", opt.two_pass_vbrmin_section);            //GOP min bitrate (% of target)
+    tprintf(PRINT_STD, "--maxsection-pct=%i ", opt.two_pass_vbrmax_section);            //GOP max bitrate (% of target)
 
     //Keyframe Placement Options:
     tprintf(PRINT_STD, "--kf-min-dist=%i ", cfg.kf_min_dist);                           //Minimum keyframe interval (frames)
@@ -3526,6 +3556,25 @@ char *vpxt_itoa_custom(int value, char *result, int base)
     return result;
 }
 //----------------------------------------------------Cross Plat----------------------------------------------------------------------
+void vpxt_delete_files(int argcount, ...)
+{
+    va_list vl;
+    va_start(vl, argcount);
+    tprintf(PRINT_BTH, "\n");
+    int i;
+
+    for (i = 0; i < argcount; ++i)
+    {
+        std::string FileToDelete = va_arg(vl, const char *);
+
+        if (remove(FileToDelete.c_str()) == 0)
+            tprintf(PRINT_BTH, "* %s - Successfully Deleted\n\n", FileToDelete.c_str());
+        else
+            tprintf(PRINT_BTH, "- Error: %s - Not Deleted\n\n", FileToDelete.c_str());
+    }
+
+    va_end(vl);
+}
 unsigned int vpxt_get_high_res_timer_tick()
 {
 #if defined(_WIN32)
@@ -3686,6 +3735,49 @@ void vpxt_run_exe(std::string RunExe)
 #endif
 
     return;
+}
+int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector, std::string Directory)
+{
+#if defined(_WIN32)
+    std::string RawDirectory = Directory;
+    RawDirectory.append("\\");
+    Directory.append("\\*");
+    WIN32_FIND_DATA FileData;
+    HANDLE hFind;
+    std::string FileName;
+    hFind = FindFirstFile(Directory.c_str(), &FileData);
+
+    while (FileName.compare(FileData.cFileName) != 0)
+    {
+        std::string FullFileName = RawDirectory;
+        FileName = FileData.cFileName;
+        FullFileName.append(FileName);
+        FileNameVector.push_back(FullFileName);
+        FindNextFile(hFind, &FileData);
+    }
+
+#else
+    DIR *FileData;
+    struct dirent *hFind;
+    std::string FileName;
+    FileData = opendir(Directory.c_str());
+    hFind = readdir(FileData);
+
+    while (FileName.compare(hFind->d_name) != 0)
+    {
+        FileName = hFind->d_name;
+        FileNameVector.push_back(FileName);
+        hFind = readdir(FileData);
+
+        if (hFind == NULL)
+        {
+            break;
+        }
+    }
+
+    closedir(FileData);
+#endif
+    return 0;
 }
 int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles, std::string Directory)
 {
@@ -7555,7 +7647,7 @@ int vpxt_compress_ivf_to_ivf_force_key_frame(const char *inputFile, const char *
 
     return 0;
 }
-int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck)
+int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int OutputRaw)
 {
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values
@@ -7806,11 +7898,16 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
         /////////////////////////DELETEME//////////////////////////////////
         std::string out_fn2STR = out_fn;
         out_fn2STR.append("_Preview.raw");
-        out = out_open(out_fn2STR.c_str(), 0);
+
+        if (!OutputRaw)
+            out = out_open(out_fn2STR.c_str(), 0);
 
         std::string out_fn3STR = out_fn;
         out_fn3STR.append("_Decode.raw");
-        out2 = out_open(out_fn3STR.c_str(), 0);
+
+        if (!OutputRaw)
+            out2 = out_open(out_fn3STR.c_str(), 0);
+
         ///////////////////////////////////////////////////////////////////
 
         if (!outfile)
@@ -8082,7 +8179,9 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
                         vpxt_itoa_custom(frames_out, intchar, 10);
                         out_fn3STR.append(intchar);
                         out_fn3STR.append(".raw");
-                        out3 = out_open(out_fn3STR.c_str(), 0);
+
+                        if (!OutputRaw)
+                            out3 = out_open(out_fn3STR.c_str(), 0);
 
                         std::string out_fn4STR = out_fn;
                         out_fn4STR.erase(out_fn4STR.length() - 4, 4);
@@ -8093,7 +8192,9 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
                         vpxt_itoa_custom(frames_out, intchar2, 10);
                         out_fn4STR.append(intchar2);
                         out_fn4STR.append(".raw");
-                        out4 = out_open(out_fn4STR.c_str(), 0);
+
+                        if (!OutputRaw)
+                            out4 = out_open(out_fn4STR.c_str(), 0);
 
                         unsigned int y;
                         char out_fn[128+24];
@@ -8105,10 +8206,14 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
 
                         for (y = 0; y < imgPreview->d_h; y++)
                         {
-                            out_put(out3, bufPreview, imgPreview->d_w, 0);
+                            if (!OutputRaw)
+                                out_put(out3, bufPreview, imgPreview->d_w, 0);
+
                             bufPreview += imgPreview->stride[PLANE_Y];
 
-                            out_put(out4, bufDecode, imgDecode->d_w, 0);
+                            if (!OutputRaw)
+                                out_put(out4, bufDecode, imgDecode->d_w, 0);
+
                             bufDecode += imgDecode->stride[PLANE_Y];
 
                             MemCheckY |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_Y]);
@@ -8119,10 +8224,14 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
 
                         for (y = 0; y < imgPreview->d_h / 2; y++)
                         {
-                            out_put(out3, bufPreview, imgPreview->d_w / 2, 0);
+                            if (!OutputRaw)
+                                out_put(out3, bufPreview, imgPreview->d_w / 2, 0);
+
                             bufPreview += imgPreview->stride[PLANE_U];
 
-                            out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+                            if (!OutputRaw)
+                                out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+
                             bufDecode += imgDecode->stride[PLANE_U];
 
                             MemCheckU |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_U]);
@@ -8133,10 +8242,14 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
 
                         for (y = 0; y < imgPreview->d_h / 2; y++)
                         {
-                            out_put(out3, bufPreview, imgPreview->d_w / 2, 0);
+                            if (!OutputRaw)
+                                out_put(out3, bufPreview, imgPreview->d_w / 2, 0);
+
                             bufPreview += imgPreview->stride[PLANE_V];
 
-                            out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+                            if (!OutputRaw)
+                                out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+
                             bufDecode += imgDecode->stride[PLANE_V];
 
                             MemCheckV |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_V]);
@@ -8170,11 +8283,14 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
                             ReconOutFile << frames_out << " V " << 1 << "\n";
                         }
 
-                        out_close(out3, out_fn3STR.c_str(), 0);
-                        out_close(out4, out_fn4STR.c_str(), 0);
+                        if (!OutputRaw)
+                        {
+                            out_close(out3, out_fn3STR.c_str(), 0);
+                            out_close(out4, out_fn4STR.c_str(), 0);
+                        }
                     }
 
-                    if (imgPreview)
+                    if (imgPreview && !OutputRaw)
                     {
                         unsigned int y;
                         char out_fn[128+24];
@@ -8205,7 +8321,7 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
                         }
                     }
 
-                    if (imgDecode)
+                    if (imgDecode && !OutputRaw)
                     {
                         unsigned int y;
                         char out_fn[128+24];
@@ -8260,8 +8376,11 @@ int vpxt_compress_ivf_to_ivf_recon_buffer_check(const char *inputFile, const cha
         fclose(outfile);
         stats_close(&stats, arg_passes - 1);
 
-        out_close(out, out_fn2STR.c_str(), 0);
-        out_close(out2, out_fn2STR.c_str(), 0);
+        if (!OutputRaw)
+        {
+            out_close(out, out_fn2STR.c_str(), 0);
+            out_close(out2, out_fn2STR.c_str(), 0);
+        }
 
         tprintf(PRINT_BTH, "\n");
     }

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_error_resolution(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_error_resolution(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Error Resilient Mode";
     char *MyDir = "test_error_resolution";
@@ -142,6 +142,9 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, ErrorOnOutFile.c_str(), ErrorOffOutFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -152,6 +155,9 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, ErrorOnOutFile.c_str(), ErrorOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

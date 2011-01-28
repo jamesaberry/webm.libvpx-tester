@@ -45,6 +45,7 @@ int tool_paste_ivf(int argc, const char *const *argv);
 int tool_play_comp_ivf(int argc, const char *const *argv);
 int tool_play_dec_ivf(int argc, const char *const *argv);
 int tool_print_cpu_info();
+int tool_random_multi_test(int argc, const char *const *argv);
 int tool_raw_to_ivf(int argc, const char *const *argv);
 int tool_run_ivfdec(int argc, const char *const *argv);
 int tool_run_ivfenc(int argc, const char *const *argv);

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_undershoot(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_undershoot(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Undershoot";
     char *MyDir = "test_undershoot";
@@ -158,6 +158,9 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, UnderShoot10.c_str(), UnderShoot100.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -169,6 +172,9 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, UnderShoot10.c_str(), UnderShoot100.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
@@ -178,6 +184,9 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
         vpxt_formated_print(RESPRT, "File size 1:%i > File size 2:%i - Failed", FileIndexOutputCharbytes , File2bytes);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, UnderShoot10.c_str(), UnderShoot100.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

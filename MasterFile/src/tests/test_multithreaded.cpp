@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_multithreaded(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_multithreaded(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Multithreaded";
     char *MyDir = "test_multithreaded";
@@ -219,6 +219,9 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -231,6 +234,9 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -242,6 +248,9 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
@@ -252,6 +261,9 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
         vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed", Time1FileName, Time1, Time2FileName, Time2);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

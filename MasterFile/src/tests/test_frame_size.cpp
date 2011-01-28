@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_frame_size(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_frame_size(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Frame Size";
     char *MyDir = "test_frame_size";
@@ -205,55 +205,33 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
     /////////////////////////////////////////////////////////
 
     opt.target_bandwidth = BitRate;
+    double PSNRAr[46];
+    int RawCropNum = 1;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == TEST_ONLY)
     {
-        //This test requires no preperation before a Test Only Run
+        //Get Prexisting psnr values
+        while (RawCropNum < 47)
+        {
+            PSNRAr[RawCropNum-1] = vpxt_get_psnr(EncCrop[RawCropNum].c_str());
+            RawCropNum++;
+        }
     }
     else
     {
 
         //Create Raw Crops
         int x = 0;
-        int RawCropNum = 1;
-
-        while (x < 16)
-        {
-            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
-            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
-            x++;
-            RawCropNum++;
-            //return 0;
-        }
-
-        x = 1;
-
-        while (x < 16)
-        {
-            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
-            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
-            x++;
-            RawCropNum++;
-        }
-
-        x = 1;
-
-        while (x < 16)
-        {
-            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
-            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
-            x++;
-            RawCropNum++;
-        }
-
         opt.Mode = Mode;
 
-        //Create Compressions
-        RawCropNum = 1;
-
-        while (RawCropNum < 47)
+        while (x < 16)
         {
+            //Crop
+            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
+            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
+
+            //Comp
             char FileNameChar[256];
             char FileNameChar2[256];
             snprintf(FileNameChar, 256, RawCrop[RawCropNum].c_str());
@@ -268,6 +246,115 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
                 return 2;
             }
 
+            //PSNR
+            PSNRAr[RawCropNum-1] = vpxt_ivf_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+
+            char PSNROutFile[255];
+            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
+            char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+
+            std::ofstream outfilePSNR(PSNROutFileFull);
+            outfilePSNR << PSNRAr[RawCropNum-1];
+            outfilePSNR.close();
+
+            //Delete(file deletions are done here due to the number of files that need to be generated)
+            if (DeleteIVF)
+            {
+                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
+                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
+            }
+
+            x++;
+            RawCropNum++;
+        }
+
+        x = 1;
+
+        while (x < 16)
+        {
+            //Crop
+            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
+            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
+
+            //Comp
+            char FileNameChar[256];
+            char FileNameChar2[256];
+            snprintf(FileNameChar, 256, EncCrop[RawCropNum].c_str());
+            vpxt_file_name(FileNameChar, FileNameChar2, 1);
+
+            tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
+
+            if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+            {
+                fclose(fp);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                return 2;
+            }
+
+            //PSNR
+            PSNRAr[RawCropNum-1] = vpxt_ivf_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+
+            char PSNROutFile[255];
+            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
+            char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+
+            std::ofstream outfilePSNR(PSNROutFileFull);
+            outfilePSNR << PSNRAr[RawCropNum-1];
+            outfilePSNR.close();
+
+            //Delete
+            if (DeleteIVF)
+            {
+                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
+                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
+            }
+
+            x++;
+            RawCropNum++;
+        }
+
+        x = 1;
+
+        while (x < 16)
+        {
+            //Crop
+            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
+            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
+
+            //Comp
+            char FileNameChar[256];
+            char FileNameChar2[256];
+            snprintf(FileNameChar, 256, RawCrop[RawCropNum].c_str());
+            vpxt_file_name(FileNameChar, FileNameChar2, 1);
+
+            tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
+
+            if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+            {
+                fclose(fp);
+                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                return 2;
+            }
+
+            //PSNR
+            PSNRAr[RawCropNum-1] = vpxt_ivf_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+
+            char PSNROutFile[255];
+            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
+            char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+
+            std::ofstream outfilePSNR(PSNROutFileFull);
+            outfilePSNR << PSNRAr[RawCropNum-1];
+            outfilePSNR.close();
+
+            //Delete
+            if (DeleteIVF)
+            {
+                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
+                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
+            }
+
+            x++;
             RawCropNum++;
         }
     }
@@ -281,15 +368,6 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
 
     int PercentFail = 0;
     int MinPSNRFail = 0;
-    double PSNRAr[46];
-
-    int RawCropNum = 1;
-
-    while (RawCropNum < 47)
-    {
-        PSNRAr[RawCropNum-1] = vpxt_ivf_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
-        RawCropNum++;
-    }
 
     RawCropNum = 1;
     double FivePercentPSNR = (5 * PSNRAr[0]) / 100;

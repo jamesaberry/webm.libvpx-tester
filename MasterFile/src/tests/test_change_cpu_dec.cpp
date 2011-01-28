@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_change_cpu_dec(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_change_cpu_dec(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Version";
     char *MyDir = "test_change_cpu_dec";
@@ -57,6 +57,21 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
     CPUDecOnlyWorksOut_CPU.append(slashCharStr());
     CPUDecOnlyWorksOut_CPU.append(MyDir);
     CPUDecOnlyWorksOut_CPU.append("_decompression");
+
+    std::string OutputStr0 = CPUDecOnlyWorksOut_CPU;
+    OutputStr0.append("none.ivf");
+    std::string OutputStr1 = CPUDecOnlyWorksOut_CPU;
+    OutputStr1.append("mmx.ivf");
+    std::string OutputStr2 = CPUDecOnlyWorksOut_CPU;
+    OutputStr2.append("sse.ivf");
+    std::string OutputStr3 = CPUDecOnlyWorksOut_CPU;
+    OutputStr3.append("sse2.ivf");
+    std::string OutputStr4 = CPUDecOnlyWorksOut_CPU;
+    OutputStr4.append("sse3.ivf");
+    std::string OutputStr5 = CPUDecOnlyWorksOut_CPU;
+    OutputStr5.append("ssse3.ivf");
+    std::string OutputStr6 = CPUDecOnlyWorksOut_CPU;
+    OutputStr6.append("sse4_1.ivf");
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -123,21 +138,6 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
     if (TestType == TEST_ONLY)
     {
         std::vector<std::string> DecompressonVector;
-
-        std::string OutputStr0 = CPUDecOnlyWorksOut_CPU;
-        OutputStr0.append("none.ivf");
-        std::string OutputStr1 = CPUDecOnlyWorksOut_CPU;
-        OutputStr1.append("mmx.ivf");
-        std::string OutputStr2 = CPUDecOnlyWorksOut_CPU;
-        OutputStr2.append("sse.ivf");
-        std::string OutputStr3 = CPUDecOnlyWorksOut_CPU;
-        OutputStr3.append("sse2.ivf");
-        std::string OutputStr4 = CPUDecOnlyWorksOut_CPU;
-        OutputStr4.append("sse3.ivf");
-        std::string OutputStr5 = CPUDecOnlyWorksOut_CPU;
-        OutputStr5.append("ssse3.ivf");
-        std::string OutputStr6 = CPUDecOnlyWorksOut_CPU;
-        OutputStr6.append("sse4_1.ivf");
 
         if (vpxt_file_exists_check(OutputStr0))
             DecompressonVector.push_back(OutputStr0);
@@ -443,6 +443,10 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
     if (overallfail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(8, CPUDecOnlyWorksOutFile.c_str(), OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(), OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(), OutputStr6.c_str());
+
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -451,6 +455,10 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(8, CPUDecOnlyWorksOutFile.c_str(), OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(), OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(), OutputStr6.c_str());
+
         fclose(fp);
         putenv("ON2_SIMD_CAPS=");
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

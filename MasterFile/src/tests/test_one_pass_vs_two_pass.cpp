@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_one_pass_vs_two_pass";
@@ -310,6 +310,9 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(6, OnePassOutFile1.c_str(), OnePassOutFile2.c_str(), OnePassOutFile3.c_str(), TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(), TwoPassOutFile3.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
@@ -317,6 +320,9 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(6, OnePassOutFile1.c_str(), OnePassOutFile2.c_str(), OnePassOutFile3.c_str(), TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(), TwoPassOutFile3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

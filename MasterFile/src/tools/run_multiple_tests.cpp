@@ -2,7 +2,7 @@
 #include "vpxt_test_list.h"
 #include "vpxt_driver.h"
 
-int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  int NumberofTests)
+int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  int NumberofTests, int DeleteIVFFiles)
 {
     if (argc < 5)
     {
@@ -737,7 +737,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_allow_drop_frames(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_allow_drop_frames(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -759,7 +759,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_allow_lag(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_allow_lag(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -781,7 +781,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_allow_spatial_resampling(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_allow_spatial_resampling(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -803,7 +803,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_arnr(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_arnr(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -825,7 +825,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_auto_key_frame(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_auto_key_frame(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -847,7 +847,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_buffer_level(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_buffer_level(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -869,7 +869,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_change_cpu_dec(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_change_cpu_dec(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -891,7 +891,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_change_cpu_enc(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_change_cpu_enc(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -913,7 +913,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_constrained_quality(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_constrained_quality(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -935,7 +935,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_data_rate(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_data_rate(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -957,7 +957,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_debug_matches_release(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_debug_matches_release(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -979,7 +979,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_drop_frame_watermark(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_drop_frame_watermark(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1001,7 +1001,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_encoder_break_out(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_encoder_break_out(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1023,7 +1023,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_error_resolution(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_error_resolution(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1045,7 +1045,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_extra_file(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_extra_file(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1067,7 +1067,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_fixed_quantizer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_fixed_quantizer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1089,7 +1089,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_force_key_frame(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_force_key_frame(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1111,7 +1111,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_frame_size(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_frame_size(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1133,7 +1133,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_good_vs_best(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_good_vs_best(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1155,7 +1155,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_lag_in_frames(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_lag_in_frames(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1177,7 +1177,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_max_quantizer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_max_quantizer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1199,7 +1199,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_mem_leak(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_mem_leak(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1221,7 +1221,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_mem_leak2(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_mem_leak2(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1243,7 +1243,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_min_quantizer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_min_quantizer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1265,7 +1265,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_multithreaded(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_multithreaded(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1287,7 +1287,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_new_vs_old_psnr(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_new_vs_old_psnr(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1309,7 +1309,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_new_vs_old_enc_cpu_tick(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_new_vs_old_enc_cpu_tick(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1331,7 +1331,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_noise_sensitivity(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_noise_sensitivity(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1353,7 +1353,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_one_pass_vs_two_pass(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_one_pass_vs_two_pass(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1375,7 +1375,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_play_alternate(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_play_alternate(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1397,7 +1397,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_post_processor(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_post_processor(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1419,7 +1419,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_reconstruct_buffer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_reconstruct_buffer(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1441,7 +1441,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_resample_down_watermark(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_resample_down_watermark(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1463,7 +1463,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_speed(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_speed(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1485,7 +1485,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_vector_test(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_vector_test(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1507,7 +1507,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_two_pass_vs_two_pass_best(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_two_pass_vs_two_pass_best(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1529,7 +1529,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_undershoot(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_undershoot(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1551,7 +1551,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_version(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_version(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1573,7 +1573,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_win_lin_mac_match(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType);
+                    PassFail[PassFailInt] = test_win_lin_mac_match(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {
@@ -1604,7 +1604,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 if (PrintMe == 1)
                 {
 
-                    fprintf(fp_html, "\n<html>\n<body\n><p>\n<PRE>");
+                    fprintf(fp_html, "\n<html>\n<body\n><p>\n<PRE><META HTTP-EQUIV=\"REFRESH\" CONTENT=\"60\">");
                     fclose(fp_html);
                     print_header_info_to_file(Test_Results_Html.c_str());
                     fp_html = fopen(Test_Results_Html.c_str() , "a");

@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_force_key_frame(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int test_force_key_frame(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Key Frame Frequency";
     char *MyDir = "test_force_key_frame";
@@ -143,6 +143,9 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+            vpxt_delete_files(2, ForceKeyFrame.c_str(), KeyFrameoutputfile.c_str());
+
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -153,6 +156,9 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nPassed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(2, ForceKeyFrame.c_str(), KeyFrameoutputfile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

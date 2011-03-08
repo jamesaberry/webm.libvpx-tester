@@ -207,14 +207,17 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
     double totalPsnr;
     std::cout << "\n\n";
     double ssimDummyVar = 0;
-    totalPsnr = vpxt_ivf_psnr(inputFile, outputFile, 0, 0, 1, NULL);
+    totalPsnr = vpxt_psnr(inputFile, outputFile, 0, 0, 1, NULL);
 
-    char TextFilechar1[255];
+    //char TextFilechar1[255];
+    std::string TextFilechar1 = "";
     vpxt_remove_file_extension(outputFile, TextFilechar1);
+    TextFilechar1.append("psnr.txt");
 
-    char *FullName = strcat(TextFilechar1, "psnr.txt");
+    //char *FullName = strcat(TextFilechar1, "psnr.txt");
 
-    std::ofstream outfile2(FullName);
+    //std::ofstream outfile2(FullName);
+    std::ofstream outfile2(TextFilechar1.c_str());
     outfile2 << totalPsnr;
     outfile2.close();
 
@@ -341,6 +344,11 @@ int main(int argc, char *argv[])
         if (ParVer == 8)
             opt = vpxt_input_settings(parfile);
 
+        //check output type
+        std::string EncExt;
+        vpxt_get_file_extension(outputFile, EncExt);
+        EncExt.erase(0, 1); //remove period
+
         //If Mem Leak Check
         if (memCompress.compare(argv[1]) == 0)
         {
@@ -352,14 +360,15 @@ int main(int argc, char *argv[])
             }
 
             char *MemLeakCheckTXT = argv[7];
+            //printf("\n Outputfile: %s\n",MemLeakCheckTXT);
             vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
-            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, opt.multi_threaded, opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick);
+            vpxt_time_compress(inputFile, outputFile, opt.multi_threaded, opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick, EncExt);
             vpx_memory_tracker_dump();
         }
 
         //If Compress
         if (Compress.compare(argv[1]) == 0)
-            vpxt_time_compress_ivf_to_ivf(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick);
+            vpxt_time_compress(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick, EncExt);
 
         if (ExtraCommand == 1 || ExtraCommand == 3)
             supportingFileRunPSNR(inputFile, outputFile);
@@ -382,6 +391,11 @@ int main(int argc, char *argv[])
         char *outputFile = argv[3];
         unsigned int CPUTick = 0;
 
+        //check output type
+        std::string DecExt;
+        vpxt_get_file_extension(outputFile, DecExt);
+        DecExt.erase(0, 1); //remove period
+
         if (memDecompress.compare(argv[1]) == 0)
         {
             //This handles the Mem Leak Check Test.
@@ -392,13 +406,14 @@ int main(int argc, char *argv[])
             }
 
             char *MemLeakCheckTXT = argv[4];
+            printf("\n Outputfile: %s\n", MemLeakCheckTXT);
             vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
-            vpxt_decompress_ivf_to_ivf_time_and_output(inputFile, outputFile, CPUTick);
+            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt);
             vpx_memory_tracker_dump();
         }
 
         if (Decompress.compare(argv[1]) == 0)
-            vpxt_decompress_ivf_to_ivf_time_and_output(inputFile, outputFile, CPUTick);
+            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt);
 
         return 0;
     }

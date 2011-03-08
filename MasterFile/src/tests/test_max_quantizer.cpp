@@ -4,30 +4,15 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 {
     char *CompressString = "Max Quantizer";
     char *MyDir = "test_max_quantizer";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -46,21 +31,29 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     QuantOutBase.append("_compression_");
 
     std::string QuantOut3 = QuantOutBase;
-    QuantOut3.append("3.ivf");
+    QuantOut3.append("3");
+    vpxt_enc_format_append(QuantOut3, EncForm);
     std::string QuantOut11 = QuantOutBase;
-    QuantOut11.append("11.ivf");
+    QuantOut11.append("11");
+    vpxt_enc_format_append(QuantOut11, EncForm);
     std::string QuantOut19 = QuantOutBase;
-    QuantOut19.append("19.ivf");
+    QuantOut19.append("19");
+    vpxt_enc_format_append(QuantOut19, EncForm);
     std::string QuantOut27 = QuantOutBase;
-    QuantOut27.append("27.ivf");
+    QuantOut27.append("27");
+    vpxt_enc_format_append(QuantOut27, EncForm);
     std::string QuantOut35 = QuantOutBase;
-    QuantOut35.append("35.ivf");
+    QuantOut35.append("35");
+    vpxt_enc_format_append(QuantOut35, EncForm);
     std::string QuantOut43 = QuantOutBase;
-    QuantOut43.append("43.ivf");
+    QuantOut43.append("43");
+    vpxt_enc_format_append(QuantOut43, EncForm);
     std::string QuantOut51 = QuantOutBase;
-    QuantOut51.append("51.ivf");
+    QuantOut51.append("51");
+    vpxt_enc_format_append(QuantOut51, EncForm);
     std::string QuantOut59 = QuantOutBase;
-    QuantOut59.append("59.ivf");
+    QuantOut59.append("59");
+    vpxt_enc_format_append(QuantOut59, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -100,7 +93,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -120,7 +113,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     opt.target_bandwidth = BitRate;
     int PSNRToggle = 0;
 
-    int n = 3;
+    int n = 4;
     double PSNRArr[10];
     int MaxQArr[10];
     int i = 0;
@@ -135,13 +128,13 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             std::string QuantOutFile = QuantOutBase;
             QuantOutFile.append(num);
-            QuantOutFile.append(".ivf");
+            vpxt_enc_format_append(QuantOutFile, EncForm);
 
             tprintf(PRINT_BTH, "\n");
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_ivf_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
+                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
@@ -163,11 +156,11 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             std::string QuantOutFile = QuantOutBase;
             QuantOutFile.append(num);
-            QuantOutFile.append(".ivf");
+            vpxt_enc_format_append(QuantOutFile, EncForm);
 
             opt.Mode = Mode;
 
-            if (vpxt_compress_ivf_to_ivf(input.c_str(), QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1) == -1)
+            if (vpxt_compress(input.c_str(), QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1, EncForm) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -178,7 +171,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_ivf_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
+                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
@@ -202,7 +195,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     tprintf(PRINT_BTH, "\n");
 
     i = 0;
-    int MaxQDisplayValue = 3;
+    int MaxQDisplayValue = 4;
     int fail = 0;
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
@@ -226,7 +219,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     }
 
     i = 0;
-    MaxQDisplayValue = 3;
+    MaxQDisplayValue = 4;
 
     while (i < 8)
     {

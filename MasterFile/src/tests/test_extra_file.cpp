@@ -4,20 +4,13 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_extra_file";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 3 || argc == 4))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
+    std::string EncForm = argv[3];
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -58,7 +51,8 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     std::string ExtraFileCheckStr = CurTestDirStr;
     ExtraFileCheckStr.append(slashCharStr());
     ExtraFileCheckStr.append(MyDir);
-    ExtraFileCheckStr.append("_compression.ivf");
+    ExtraFileCheckStr.append("_compression");
+    vpxt_enc_format_append(ExtraFileCheckStr, EncForm);
 
     //This is to record state for compression only run
     std::string ExtraFileCheckResultStr = CurTestDirStr;
@@ -158,7 +152,7 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 4)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -191,6 +185,7 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     IgnoreCompressionDir.push_back("..");
     IgnoreCompressionDir.push_back("test_extra_file.txt");
     IgnoreCompressionDir.push_back("test_extra_file_compression.ivf");
+    IgnoreCompressionDir.push_back("test_extra_file_compression.webm");
     IgnoreCompressionDir.push_back("test_extra_file_compression_parameters_core.txt");
     IgnoreCompressionDir.push_back("test_extra_file_compression_parameters_vpx.txt");
 
@@ -231,7 +226,7 @@ int test_extra_file(int argc, const char *const *argv, const std::string &Workin
     {
         opt.Mode = MODE_SECONDPASS_BEST;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), ExtraFileCheckStr.c_str(), opt.multi_threaded, BitRate, opt, CompressString, 1, 0/*opt.DeleteFirstPassFile*/) == -1)
+        if (vpxt_compress(input.c_str(), ExtraFileCheckStr.c_str(), opt.multi_threaded, BitRate, opt, CompressString, 1, 0, EncForm/*opt.DeleteFirstPassFile*/) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

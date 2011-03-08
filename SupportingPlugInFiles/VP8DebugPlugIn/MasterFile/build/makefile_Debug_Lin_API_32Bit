@@ -17,6 +17,12 @@ SRC = \
 	$(UtlSrcDir)/utilities.cpp \
 	$(IvfDir)/ivf.cpp \
 	$(IvfDir)/md5_utils.cpp \
+	$(IvfDir)/args.cpp \
+	$(IvfDir)/EbmlWriter.cpp \
+        $(IvfDir)/halloc.c \
+	$(IvfDir)/nestegg.c \
+        $(IvfDir)/tools_common.cpp \
+	$(IvfDir)/y4minput.cpp \
 
 # source object files
 SRCOBJ = \
@@ -26,7 +32,13 @@ SRCOBJ = \
    $(OBJDIR)/ssim.o \
    $(OBJDIR)/utilities.o \
    $(OBJDIR)/md5_utils.o\
-
+   $(OBJDIR)/args.o \
+   $(OBJDIR)/EbmlWriter.o \
+   $(OBJDIR)/halloc.o \
+   $(OBJDIR)/nestegg.o \
+   $(OBJDIR)/tools_common.o \
+   $(OBJDIR)/y4minput.o \
+   
 # compiler
 GPP = g++ -g -m32
 GCC = gcc -g -m32
@@ -58,6 +70,24 @@ $(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
 
 $(OBJDIR)/md5_utils.o: $(IvfDir)/md5_utils.cpp
 	$(GPP) -c $(IvfDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+	
+$(OBJDIR)/args.o: $(IvfDir)/args.cpp
+	$(GCC) -c $(IvfDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+	
+$(OBJDIR)/EbmlWriter.o: $(IvfDir)/EbmlWriter.cpp
+	$(GPP) -c $(IvfDir)/EbmlWriter.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/EbmlWriter.o
+
+$(OBJDIR)/halloc.o: $(IvfDir)/halloc.c
+	$(GCC) -c $(IvfDir)/halloc.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/halloc.o
+
+$(OBJDIR)/nestegg.o: $(IvfDir)/nestegg.c
+	$(GCC) -c $(IvfDir)/nestegg.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/nestegg.o
+
+$(OBJDIR)/tools_common.o: $(IvfDir)/tools_common.cpp
+	$(GPP) -c $(IvfDir)/tools_common.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/tools_common.o
+
+$(OBJDIR)/y4minput.o: $(IvfDir)/y4minput.cpp
+	$(GPP) -c $(IvfDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o
 
 clean:
 	rm -f $(SRCOBJ) $(OBJDIR)/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe

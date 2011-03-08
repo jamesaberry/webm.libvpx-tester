@@ -4,28 +4,10 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 {
 
     char *MyDir = "test_new_vs_old_enc_cpu_tick";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 8 || argc == 7))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Exe File To Compare>\n"
-                "    <Parameter Version-1=1.0.4|2=2.0.0>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
@@ -33,6 +15,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     char ExeInput[255];
     snprintf(ExeInput, 255, "%s", argv[5]);
     int ParFileNum = atoi(argv[6]);
+    std::string EncForm = argv[7];
 
     int speed = 0;
     unsigned int cpu_tick1 = 0;
@@ -52,13 +35,14 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     std::string outputVP8New = CurTestDirStr;
     outputVP8New.append(slashCharStr());
     outputVP8New.append(MyDir);
-    outputVP8New.append("_compression_new.ivf");
+    outputVP8New.append("_compression_new");
+    vpxt_enc_format_append(outputVP8New, EncForm);
 
     std::string outputVP8Old = CurTestDirStr;
     outputVP8Old.append(slashCharStr());
     outputVP8Old.append(MyDir);
-    outputVP8Old.append("_compression_old.ivf");
-
+    outputVP8Old.append("_compression_old");
+    vpxt_enc_format_append(outputVP8Old, EncForm);
     std::string ParFile = CurTestDirStr;
     ParFile.append(slashCharStr());
     ParFile.append(MyDir);
@@ -133,7 +117,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 8)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -177,7 +161,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     {
 
         opt.Mode = Mode;
-        unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1);
+        unsigned int Time = vpxt_time_compress(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, EncForm);
 
         if (Time == -1)
         {

@@ -4,30 +4,15 @@ int test_allow_drop_frames(int argc, const char *const *argv, const std::string 
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_allow_drop_frames";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -43,12 +28,14 @@ int test_allow_drop_frames(int argc, const char *const *argv, const std::string 
     std::string AllowDFon = CurTestDirStr;
     AllowDFon.append(slashCharStr());
     AllowDFon.append(MyDir);
-    AllowDFon.append("_compression_1.ivf");
+    AllowDFon.append("_compression_1");
+    vpxt_enc_format_append(AllowDFon, EncForm);
 
     std::string AllowDFoff = CurTestDirStr;
     AllowDFoff.append(slashCharStr());
     AllowDFoff.append(MyDir);
-    AllowDFoff.append("_compression_0.ivf");
+    AllowDFoff.append("_compression_0");
+    vpxt_enc_format_append(AllowDFoff, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -86,7 +73,7 @@ int test_allow_drop_frames(int argc, const char *const *argv, const std::string 
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -115,7 +102,7 @@ int test_allow_drop_frames(int argc, const char *const *argv, const std::string 
         opt.Mode = Mode;
         opt.allow_df = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress(input.c_str(), AllowDFoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -124,7 +111,7 @@ int test_allow_drop_frames(int argc, const char *const *argv, const std::string 
 
         opt.allow_df = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress(input.c_str(), AllowDFon.c_str(), speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

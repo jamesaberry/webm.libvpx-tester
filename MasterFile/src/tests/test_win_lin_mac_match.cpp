@@ -4,33 +4,18 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 {
     char *CompressString = "WinLinMacMatch";
     char *MyDir = "test_win_lin_mac_match";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 8 || argc == 7))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Common Base Folder>\n"
-                "    <Common Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     std::string basefolder = argv[5];
     std::string ParameterFile = argv[6];
+    std::string EncForm = argv[7];
+    std::string DecForm = argv[8];
 
     int speed = 0;
 
@@ -72,27 +57,33 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     std::string WinEnc = basefolder;
     WinEnc.append(MyDir);
-    WinEnc.append("_compression_win.ivf");
+    WinEnc.append("_compression_win");
+    vpxt_enc_format_append(WinEnc, EncForm);
 
     std::string LinEnc = basefolder;
     LinEnc.append(MyDir);
-    LinEnc.append("_compression_lin.ivf");
+    LinEnc.append("_compression_lin");
+    vpxt_enc_format_append(LinEnc, EncForm);
 
     std::string MacEnc = basefolder;
     MacEnc.append(MyDir);
-    MacEnc.append("_compression_mac.ivf");
+    MacEnc.append("_compression_mac");
+    vpxt_enc_format_append(MacEnc, EncForm);
 
     std::string WinDec = basefolder;
     WinDec.append(MyDir);
-    WinDec.append("_decompression_win.ivf");
+    WinDec.append("_decompression_win");
+    vpxt_dec_format_append(WinDec, DecForm);
 
     std::string LinDec = basefolder;
     LinDec.append(MyDir);
-    LinDec.append("_decompression_lin.ivf");
+    LinDec.append("_decompression_lin");
+    vpxt_dec_format_append(LinDec, DecForm);
 
     std::string MacDec = basefolder;
     MacDec.append(MyDir);
-    MacDec.append("_decompression_mac.ivf");
+    MacDec.append("_decompression_mac");
+    vpxt_dec_format_append(MacDec, DecForm);
 
 #if defined(linux)
     FiletoEnc = LinEnc;
@@ -169,7 +160,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0) == -1)
+        if (vpxt_compress(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -179,7 +170,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
-        if (vpxt_decompress_ivf_to_ivf(FiletoEnc.c_str(), FiletoDec.c_str()) == -1)
+        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -214,7 +205,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     int DECFAIL = 0;
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
-    int WinEncVsLinEnc = vpxt_compare_ivf(WinEnc.c_str(), LinEnc.c_str());
+    int WinEncVsLinEnc = vpxt_compare_enc(WinEnc.c_str(), LinEnc.c_str());
 
     if (WinEncVsLinEnc == -1)
     {
@@ -240,7 +231,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
-    int LinEncVsMacEnc = vpxt_compare_ivf(LinEnc.c_str(), MacEnc.c_str());
+    int LinEncVsMacEnc = vpxt_compare_enc(LinEnc.c_str(), MacEnc.c_str());
 
     if (LinEncVsMacEnc == -1)
     {
@@ -266,7 +257,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
-    int WinEncVsMacEnc = vpxt_compare_ivf(WinEnc.c_str(), MacEnc.c_str());
+    int WinEncVsMacEnc = vpxt_compare_enc(WinEnc.c_str(), MacEnc.c_str());
 
     if (WinEncVsMacEnc == -1)
     {
@@ -292,7 +283,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
-    int WinDecVsLinDec = vpxt_compare_ivf(WinDec.c_str(), LinDec.c_str());
+    int WinDecVsLinDec = vpxt_compare_enc(WinDec.c_str(), LinDec.c_str());
 
     if (WinDecVsLinDec == -1)
     {
@@ -318,7 +309,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
-    int LinDecVsMacDec = vpxt_compare_ivf(LinDec.c_str(), MacDec.c_str());
+    int LinDecVsMacDec = vpxt_compare_enc(LinDec.c_str(), MacDec.c_str());
 
     if (LinDecVsMacDec == -1)
     {
@@ -344,7 +335,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
-    int WinDecVsMacDec = vpxt_compare_ivf(WinDec.c_str(), MacDec.c_str());
+    int WinDecVsMacDec = vpxt_compare_enc(WinDec.c_str(), MacDec.c_str());
 
     if (WinDecVsMacDec == -1)
     {

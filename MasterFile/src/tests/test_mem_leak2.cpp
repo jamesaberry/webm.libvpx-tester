@@ -4,18 +4,10 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak2";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 4 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Mem Leak Check Exe>\n"
-                "    <Decode Test File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     char MemLeakExe[255];
     char DecInFile[255];
@@ -126,7 +118,7 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {

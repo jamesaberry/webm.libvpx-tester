@@ -10,7 +10,9 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
                 "    <Starting Bit Rate>\n"
                 "    <Ending Bit Rate>\n"
                 "    <Bit Rate Step>\n"
-                "    <Optional - Par Input>\n"
+                "    <Encode Format - webm/ivf>\n"
+                "    <Decode Format - y4m/ivf>\n"
+                "     <Optional - Par Input>\n"
 
                 "\n");
         return 0;
@@ -87,7 +89,9 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
     int FirstBitRate = atoi(argv[3]);
     int LastBitRate = atoi(argv[4]);
     int BitRateStep = atoi(argv[5]);
-    std::string ParFile = argv[6];
+    std::string EncForm = argv[6];
+    std::string DecForm = argv[7];
+    std::string ParFile = argv[8];
 
     int speed = 0;
 
@@ -141,8 +145,8 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         OutPutStr2.append(TBChar);
         std::string OutPutStr3 = OutPutStr2;
         OutPutStr3.append("_Dec");
-        OutPutStr2.append(".ivf");
-        OutPutStr3.append(".ivf");
+        vpxt_enc_format_append(OutPutStr2, EncForm);
+        vpxt_dec_format_append(OutPutStr3, DecForm);
 
         char outputChar[255];
         snprintf(outputChar, 255, "%s", OutPutStr2.c_str());
@@ -151,7 +155,7 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         snprintf(outputChar2, 255, "%s", OutPutStr3.c_str());
 
         unsigned int cpu_tick1 = 0;
-        EncTimeArr[x] = vpxt_time_compress_ivf_to_ivf(input.c_str(), outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1);
+        EncTimeArr[x] = vpxt_time_compress(input.c_str(), outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1, EncForm);
 
         if (EncTimeArr[x] == -1)
         {
@@ -161,7 +165,7 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         }
 
         unsigned int cpu_tick2 = 0;
-        DecTimeArr[x] = vpxt_time_decompress_ivf_to_ivf(outputChar, outputChar2, cpu_tick2);
+        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick2, DecForm);
 
         if (DecTimeArr[x] == -1)
         {
@@ -171,9 +175,9 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         }
 
         double ssimnumber = 0;
-        PSNRArr[x] = vpxt_ivf_psnr(input.c_str(), outputChar, 0, 2, 1, &ssimnumber);
+        PSNRArr[x] = vpxt_psnr(input.c_str(), outputChar, 0, 2, 1, &ssimnumber);
         SSIMArr[x] = ssimnumber;
-        DataRateArr[x] = vpxt_ivf_data_rate(outputChar, 1);
+        DataRateArr[x] = vpxt_data_rate(outputChar, 1);
         x++;
 
 

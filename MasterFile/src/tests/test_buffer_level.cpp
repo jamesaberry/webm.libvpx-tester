@@ -4,30 +4,15 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_buffer_level";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
     int StartingBufferLvl = 4;
@@ -53,7 +38,8 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
     std::string BufferLevelWorksOut = CurTestDirStr;
     BufferLevelWorksOut.append(slashCharStr());
     BufferLevelWorksOut.append(MyDir);
-    BufferLevelWorksOut.append("_compression.ivf");
+    BufferLevelWorksOut.append("_compression");
+    vpxt_enc_format_append(BufferLevelWorksOut, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -91,7 +77,7 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -123,7 +109,7 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), BufferLevelWorksOut.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -138,7 +124,7 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
         return 10;
     }
 
-    int PassFail = vpxt_ivf_check_pbm(BufferLevelWorksOut.c_str(), BitRate, MaximumBufferLevel * 1000, StartingBufferLvl * 1000);
+    int PassFail = vpxt_check_pbm(BufferLevelWorksOut.c_str(), BitRate, MaximumBufferLevel * 1000, StartingBufferLvl * 1000);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 

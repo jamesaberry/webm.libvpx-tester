@@ -4,30 +4,15 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
 {
     char *CompressString = "Drop Frames Watermark";
     char *MyDir = "test_drop_frame_watermark";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -46,17 +31,23 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
     DFWMOutFileBase.append("_compression_");
 
     std::string DFWMOutFile0   = DFWMOutFileBase;
-    DFWMOutFile0.append("0.ivf");
+    DFWMOutFile0.append("0");
+    vpxt_enc_format_append(DFWMOutFile0, EncForm);
     std::string DFWMOutFile20  = DFWMOutFileBase;
-    DFWMOutFile20.append("20.ivf");
+    DFWMOutFile20.append("20");
+    vpxt_enc_format_append(DFWMOutFile20, EncForm);
     std::string DFWMOutFile40  = DFWMOutFileBase;
-    DFWMOutFile40.append("40.ivf");
+    DFWMOutFile40.append("40");
+    vpxt_enc_format_append(DFWMOutFile40, EncForm);
     std::string DFWMOutFile60  = DFWMOutFileBase;
-    DFWMOutFile60.append("60.ivf");
+    DFWMOutFile60.append("60");
+    vpxt_enc_format_append(DFWMOutFile60, EncForm);
     std::string DFWMOutFile80  = DFWMOutFileBase;
-    DFWMOutFile80.append("80.ivf");
+    DFWMOutFile80.append("80");
+    vpxt_enc_format_append(DFWMOutFile80, EncForm);
     std::string DFWMOutFile100 = DFWMOutFileBase;
-    DFWMOutFile100.append("100.ivf");
+    DFWMOutFile100.append("100");
+    vpxt_enc_format_append(DFWMOutFile100, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -94,7 +85,7 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -133,7 +124,7 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
             vpxt_itoa_custom(n, num, 10);
             std::string DFWMOutFile = DFWMOutFileBase;
             DFWMOutFile.append(num);
-            DFWMOutFile.append(".ivf");
+            vpxt_enc_format_append(DFWMOutFile, EncForm);
 
             tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
@@ -158,11 +149,11 @@ int test_drop_frame_watermark(int argc, const char *const *argv, const std::stri
             vpxt_itoa_custom(n, num, 10);
             std::string DFWMOutFile = DFWMOutFileBase;
             DFWMOutFile.append(num);
-            DFWMOutFile.append(".ivf");
+            vpxt_enc_format_append(DFWMOutFile, EncForm);
 
             opt.Mode = Mode;
 
-            if (vpxt_compress_ivf_to_ivf(input.c_str(), DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0) == -1)
+            if (vpxt_compress(input.c_str(), DFWMOutFile.c_str(), speed, BitRate, opt, CompressString, n, 0, EncForm) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

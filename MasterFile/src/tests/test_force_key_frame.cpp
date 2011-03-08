@@ -4,32 +4,16 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
 {
     char *CompressString = "Key Frame Frequency";
     char *MyDir = "test_force_key_frame";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 7))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <ForceKeyFrame>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int ForceKeyFrameInt = atoi(argv[5]);
+    std::string EncForm = argv[6];
 
     int speed = 0;
 
@@ -45,7 +29,8 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
     std::string ForceKeyFrame = CurTestDirStr;
     ForceKeyFrame.append(slashCharStr());
     ForceKeyFrame.append(MyDir);
-    ForceKeyFrame.append("_compression.ivf");
+    ForceKeyFrame.append("_compression");
+    vpxt_enc_format_append(ForceKeyFrame, EncForm);
 
     std::string KeyFrameoutputfile = CurTestDirStr;
     KeyFrameoutputfile.append(slashCharStr());
@@ -89,7 +74,7 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -119,7 +104,7 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
         opt.Mode = Mode;
         opt.key_freq = 0;//ForceKeyFrameInt;
 
-        if (vpxt_compress_ivf_to_ivf_force_key_frame(input.c_str(), ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt) == -1)
+        if (vpxt_compress_force_key_frame(input.c_str(), ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

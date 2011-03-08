@@ -4,34 +4,17 @@ int test_fixed_quantizer(int argc, const char *const *argv, const std::string &W
 {
     char *CompressString = "Fixed Quantizer";
     char *MyDir = "test_fixed_quantizer";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 7 || argc == 8))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <FixedQ 1>\n"
-                "    <FixedQ 2>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int FixedQ1Int = atoi(argv[5]);
     int FixedQ2Int = atoi(argv[6]);
+    std::string EncForm = argv[7];
 
     int speed = 0;
 
@@ -49,14 +32,14 @@ int test_fixed_quantizer(int argc, const char *const *argv, const std::string &W
     FixedQ1.append(MyDir);
     FixedQ1.append("_compression_");
     FixedQ1.append(argv[5]);
-    FixedQ1.append(".ivf");
+    vpxt_enc_format_append(FixedQ1, EncForm);
 
     std::string FixedQ2 = CurTestDirStr;
     FixedQ2.append(slashCharStr());
     FixedQ2.append(MyDir);
     FixedQ2.append("_compression_");
     FixedQ2.append(argv[6]);
-    FixedQ2.append(".ivf");
+    vpxt_enc_format_append(FixedQ2, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -94,7 +77,7 @@ int test_fixed_quantizer(int argc, const char *const *argv, const std::string &W
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 8)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -137,7 +120,7 @@ int test_fixed_quantizer(int argc, const char *const *argv, const std::string &W
 
         opt.fixed_q = FixedQ1Int;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1) == -1)
+        if (vpxt_compress(input.c_str(), FixedQ1.c_str(), speed, BitRate, opt, CompressString, FixedQ1Int, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -146,7 +129,7 @@ int test_fixed_quantizer(int argc, const char *const *argv, const std::string &W
 
         opt.fixed_q = FixedQ2Int;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1) == -1)
+        if (vpxt_compress(input.c_str(), FixedQ2.c_str(), speed, BitRate, opt, CompressString, FixedQ2Int, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

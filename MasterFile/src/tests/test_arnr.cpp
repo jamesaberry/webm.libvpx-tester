@@ -4,31 +4,16 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 {
     char *CompressString = "Arnr Type";
     char *MyDir = "test_arnr";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     //int Arnr = atoi(argv[5]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
     unsigned int Time0 = 0;
@@ -48,22 +33,26 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     std::string CompArnr1AltRef0 = CurTestDirStr;
     CompArnr1AltRef0.append(slashCharStr());
     CompArnr1AltRef0.append(MyDir);
-    CompArnr1AltRef0.append("_compression_1_altref_0.ivf");
+    CompArnr1AltRef0.append("_compression_1_altref_0");
+    vpxt_enc_format_append(CompArnr1AltRef0, EncForm);
 
     std::string CompArnr1 = CurTestDirStr;
     CompArnr1.append(slashCharStr());
     CompArnr1.append(MyDir);
-    CompArnr1.append("_compression_1.ivf");
+    CompArnr1.append("_compression_1");
+    vpxt_enc_format_append(CompArnr1, EncForm);
 
     std::string CompArnr2 = CurTestDirStr;
     CompArnr2.append(slashCharStr());
     CompArnr2.append(MyDir);
-    CompArnr2.append("_compression_2.ivf");
+    CompArnr2.append("_compression_2");
+    vpxt_enc_format_append(CompArnr2, EncForm);
 
     std::string CompArnr3 = CurTestDirStr;
     CompArnr3.append(slashCharStr());
     CompArnr3.append(MyDir);
-    CompArnr3.append("_compression_3.ivf");
+    CompArnr3.append("_compression_3");
+    vpxt_enc_format_append(CompArnr3, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -101,7 +90,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -136,7 +125,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 1;
         unsigned int cpu_tick0 = 0;
 
-        Time0 = vpxt_time_compress_ivf_to_ivf(input.c_str(), CompArnr1AltRef0.c_str(), speed, BitRate, opt, "Play Alternate", opt.arnr_type, 0, cpu_tick0);
+        Time0 = vpxt_time_compress(input.c_str(), CompArnr1AltRef0.c_str(), speed, BitRate, opt, "Play Alternate", opt.arnr_type, 0, cpu_tick0, EncForm);
 
         if (Time1 == -1)
         {
@@ -149,7 +138,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 1;
         unsigned int cpu_tick1 = 0;
 
-        Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), CompArnr1.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick1);
+        Time1 = vpxt_time_compress(input.c_str(), CompArnr1.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick1, EncForm);
 
         if (Time1 == -1)
         {
@@ -161,7 +150,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 2;
         unsigned int cpu_tick2 = 0;
 
-        Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), CompArnr2.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick2);
+        Time2 = vpxt_time_compress(input.c_str(), CompArnr2.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick2, EncForm);
 
         if (Time2 == -1)
         {
@@ -173,7 +162,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 3;
         unsigned int cpu_tick3 = 0;
 
-        Time3 = vpxt_time_compress_ivf_to_ivf(input.c_str(), CompArnr3.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick3);
+        Time3 = vpxt_time_compress(input.c_str(), CompArnr3.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick3, EncForm);
 
         if (Time3 == -1)
         {
@@ -190,15 +179,15 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         return 10;
     }
 
-    double CompArnr0PSNR = vpxt_ivf_psnr(input.c_str(), CompArnr1AltRef0.c_str(), 0, 0, 1, NULL);
-    double CompArnr1PSNR = vpxt_ivf_psnr(input.c_str(), CompArnr1.c_str(), 0, 0, 1, NULL);
-    double CompArnr2PSNR = vpxt_ivf_psnr(input.c_str(), CompArnr2.c_str(), 0, 0, 1, NULL);
-    double CompArnr3PSNR = vpxt_ivf_psnr(input.c_str(), CompArnr3.c_str(), 0, 0, 1, NULL);
+    double CompArnr0PSNR = vpxt_psnr(input.c_str(), CompArnr1AltRef0.c_str(), 0, 0, 1, NULL);
+    double CompArnr1PSNR = vpxt_psnr(input.c_str(), CompArnr1.c_str(), 0, 0, 1, NULL);
+    double CompArnr2PSNR = vpxt_psnr(input.c_str(), CompArnr2.c_str(), 0, 0, 1, NULL);
+    double CompArnr3PSNR = vpxt_psnr(input.c_str(), CompArnr3.c_str(), 0, 0, 1, NULL);
 
-    double CompArnr0DataRate = vpxt_ivf_data_rate(CompArnr1AltRef0.c_str(), 1);
-    double CompArnr1DataRate = vpxt_ivf_data_rate(CompArnr1.c_str(), 1);
-    double CompArnr2DataRate = vpxt_ivf_data_rate(CompArnr2.c_str(), 1);
-    double CompArnr3DataRate = vpxt_ivf_data_rate(CompArnr3.c_str(), 1);
+    double CompArnr0DataRate = vpxt_data_rate(CompArnr1AltRef0.c_str(), 1);
+    double CompArnr1DataRate = vpxt_data_rate(CompArnr1.c_str(), 1);
+    double CompArnr2DataRate = vpxt_data_rate(CompArnr2.c_str(), 1);
+    double CompArnr3DataRate = vpxt_data_rate(CompArnr3.c_str(), 1);
 
     char CompArnr1AltRef0Name[256];
     char CompArnr1Name[256];
@@ -211,7 +200,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     vpxt_file_name(CompArnr3.c_str(), CompArnr3Name, 0);
 
     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr1AltRef0Name, CompArnr1Name);
-    int Compare1 = vpxt_compare_ivf(CompArnr1AltRef0.c_str(), CompArnr1.c_str());
+    int Compare1 = vpxt_compare_enc(CompArnr1AltRef0.c_str(), CompArnr1.c_str());
 
     if (Compare1 >= 0)
         tprintf(PRINT_BTH, "\n Files differ at frame: %i\n", Compare1);
@@ -219,7 +208,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         tprintf(PRINT_BTH, "\n Files are identical\n");
 
     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr1Name, CompArnr2Name);
-    int Compare2 = vpxt_compare_ivf(CompArnr1.c_str(), CompArnr2.c_str());
+    int Compare2 = vpxt_compare_enc(CompArnr1.c_str(), CompArnr2.c_str());
 
     if (Compare2 >= 0)
         tprintf(PRINT_BTH, "\n Files differ at frame: %i\n", Compare2);
@@ -227,7 +216,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         tprintf(PRINT_BTH, "\n Files are identical\n");
 
     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr2Name, CompArnr3Name);
-    int Compare3 = vpxt_compare_ivf(CompArnr2.c_str(), CompArnr3.c_str());
+    int Compare3 = vpxt_compare_enc(CompArnr2.c_str(), CompArnr3.c_str());
 
     if (Compare3 >= 0)
         tprintf(PRINT_BTH, "\n Files differ at frame: %i\n", Compare3);

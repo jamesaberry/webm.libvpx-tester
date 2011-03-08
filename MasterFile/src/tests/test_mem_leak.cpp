@@ -4,27 +4,10 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 7))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Mem Leak Check Exe>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
@@ -32,6 +15,8 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     char MemLeakExe[255];
     std::string MemLeakExeStr = argv[5];
     snprintf(MemLeakExe, 255, "%s", MemLeakExeStr.c_str());
+    std::string EncForm = argv[6];
+    std::string DecForm = argv[7];
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -50,13 +35,15 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     std::string MemLeakCheckIVFDECStr = CurTestDirStr;
     MemLeakCheckIVFDECStr.append(slashCharStr());
     MemLeakCheckIVFDECStr.append(MyDir);
-    MemLeakCheckIVFDECStr.append("_decompression.ivf");
+    MemLeakCheckIVFDECStr.append("_decompression");
+    vpxt_dec_format_append(MemLeakCheckIVFDECStr, DecForm);
     /////////////////////////////////////////////////
 
     std::string MemLeakCheckIVFStr = CurTestDirStr;
     MemLeakCheckIVFStr.append(slashCharStr());
     MemLeakCheckIVFStr.append(MyDir);
-    MemLeakCheckIVFStr.append("_compression.ivf");
+    MemLeakCheckIVFStr.append("_compression");
+    vpxt_enc_format_append(MemLeakCheckIVFStr, EncForm);
 
     std::string EncMemLeakCheckTxtStr = CurTestDirStr;
     EncMemLeakCheckTxtStr.append(slashCharStr());
@@ -168,7 +155,7 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {

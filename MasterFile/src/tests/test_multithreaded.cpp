@@ -4,47 +4,23 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
 {
     char *CompressString = "Multithreaded";
     char *MyDir = "test_multithreaded";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 7 || argc == 6))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Number of Cores to Use>\n"
-                "     <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     unsigned int CoreCount = atoi(argv[5]);
+    std::string EncForm = argv[6];
 
     int MultiThreaded = 0;
     unsigned int Time1;
     unsigned int Time2;
 
     if (Mode != 0 && Mode != 1)
-    {
-        tprintf(PRINT_STD,
-                "  test_multithreaded \n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Number of Cores to Use>\n"
-                "     <Optional Settings File>\n"
-               );
-        return 0;
-    }
+        return vpxt_test_help(argv[1], 0);
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -58,12 +34,14 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
     std::string MultiThreadedOnOutFile = CurTestDirStr;
     MultiThreadedOnOutFile.append(slashCharStr());
     MultiThreadedOnOutFile.append(MyDir);
-    MultiThreadedOnOutFile.append("_compression_1.ivf");
+    MultiThreadedOnOutFile.append("_compression_1");
+    vpxt_enc_format_append(MultiThreadedOnOutFile, EncForm);
 
     std::string MultiThreadedOffOutFile = CurTestDirStr;
     MultiThreadedOffOutFile.append(slashCharStr());
     MultiThreadedOffOutFile.append(MyDir);
-    MultiThreadedOffOutFile.append("_compression_0.ivf");
+    MultiThreadedOffOutFile.append("_compression_0");
+    vpxt_enc_format_append(MultiThreadedOffOutFile, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -108,7 +86,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -142,7 +120,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.multi_threaded = CoreCount;
             opt.cpu_used = -1;
             unsigned int cpu_tick1 = 0;
-            Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1);
+            Time1 = vpxt_time_compress(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1, EncForm);
 
             if (Time1 == -1)
             {
@@ -154,7 +132,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.Mode = MODE_REALTIME;
             opt.multi_threaded = 0;
             unsigned int cpu_tick2 = 0;
-            Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2);
+            Time2 = vpxt_time_compress(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2, EncForm);
 
             if (Time2 == -1)
             {
@@ -169,7 +147,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.Mode = MODE_GOODQUALITY;
             opt.multi_threaded = CoreCount;
             unsigned int cpu_tick1 = 0;
-            Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1);
+            Time1 = vpxt_time_compress(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1, EncForm);
 
             if (Time1 == -1)
             {
@@ -181,7 +159,7 @@ int test_multithreaded(int argc, const char *const *argv, const std::string &Wor
             opt.Mode = MODE_GOODQUALITY;
             opt.multi_threaded = 0;
             unsigned int cpu_tick2 = 0;
-            Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2);
+            Time2 = vpxt_time_compress(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2, EncForm);
 
             if (Time2 == -1)
             {

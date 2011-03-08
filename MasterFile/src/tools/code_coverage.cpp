@@ -218,13 +218,13 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
                 "          (3)Two Pass - First Pass\n"
                 "          (4)Two Pass\n"
                 "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n "
-                "    <Compress Input File or Decode>\n "
+                "    <Target Bit Rate>\n"
+                "    <Compress Input File or Decode>\n"
                 "          (NoCompress)Decode Input File\n"
                 "          (MakeCompression)Compress Input File\n"
-                "    <Array To Test 1 - 3 >\n "
-                "    <First Varriable in Array To Test>\n "
-                "    <Second Varriable in Array To Test - For 2 Dimensional Arrays>\n "
+                "    <Array To Test 1 - 3 >\n"
+                "    <First Varriable in Array To Test>\n"
+                "    <Second Varriable in Array To Test - For 2 Dimensional Arrays>\n"
 
                );
 
@@ -404,20 +404,20 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
         }
 
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
         }
 
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
         }
 
         if (Mode == 3)
@@ -427,13 +427,13 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         if (Mode == 4)
         {
             opt.Mode = MODE_SECONDPASS;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
         }
 
         if (Mode == 5)
         {
             opt.Mode = MODE_SECONDPASS_BEST;
-            vpxt_time_compress_ivf_to_ivf(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
         }
     }
 
@@ -1624,7 +1624,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    //vpxt_time_decompress_ivf_to_ivf(CodeCoverageCompression, CodeCoverageDecCorrect);
+    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecCorrect, DecForm);
     vpxt_dec_compute_md5(CodeCoverageCompression, CodeCoverageDecCorrect);
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -2700,7 +2700,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
 
 
     //////////////////////////////////////////////////////////////////////////////////////
-    //vpxt_time_decompress_ivf_to_ivf(CodeCoverageCompression, CodeCoverageDecModified);
+    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecModified, DecForm);
     vpxt_dec_compute_md5(CodeCoverageCompression, CodeCoverageDecModified);
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -3687,7 +3687,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     std::string bufferCorrectSTR = bufferCorrect;
     //snprintf(bufferCorrectSTR,1024,"%s",bufferCorrect);
 
-    //if(vpxt_compare_ivf(CodeCoverageDecCorrect,CodeCoverageDecModified) == -1)
+    //if(vpxt_compare_enc(CodeCoverageDecCorrect,CodeCoverageDecModified) == -1)
     if (bufferCorrectSTR.compare(bufferModified) == 0)
     {
         std::cout << "\nMD5 Checksums Identical for variable number: " << x << " - Fail\n";

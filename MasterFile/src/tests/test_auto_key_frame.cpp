@@ -4,32 +4,16 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
 {
     char *CompressString = "Auto Key Frame";
     char *MyDir = "test_auto_key_frame";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 7 || argc == 6))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Key Frame Frequency>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int AutoKeyFramingInt = atoi(argv[5]);
+    std::string EncForm = argv[6];
 
     int speed = 0;
 
@@ -45,12 +29,14 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     std::string AutoKeyFramingWorks1 = CurTestDirStr;
     AutoKeyFramingWorks1.append(slashCharStr());
     AutoKeyFramingWorks1.append(MyDir);
-    AutoKeyFramingWorks1.append("_compression_1.ivf");
+    AutoKeyFramingWorks1.append("_compression_1");
+    vpxt_enc_format_append(AutoKeyFramingWorks1, EncForm);
 
     std::string AutoKeyFramingWorks2 = CurTestDirStr;
     AutoKeyFramingWorks2.append(slashCharStr());
     AutoKeyFramingWorks2.append(MyDir);
-    AutoKeyFramingWorks2.append("_compression_2.ivf");
+    AutoKeyFramingWorks2.append("_compression_2");
+    vpxt_enc_format_append(AutoKeyFramingWorks2, EncForm);
 
     std::string KeyFrameTxtOut1 = CurTestDirStr;
     KeyFrameTxtOut1.append(slashCharStr());
@@ -98,7 +84,7 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -128,14 +114,14 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

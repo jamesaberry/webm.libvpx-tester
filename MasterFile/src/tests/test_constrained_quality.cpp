@@ -4,32 +4,16 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
 {
     char *CompressString = "Constrained Quality";
     char *MyDir = "test_constrained_quality";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 7 || argc == 6))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Constrained Quantizer>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int ConstrainedQ = atoi(argv[5]);
+    std::string EncForm = argv[6];
 
     int speed = 0;
     unsigned int Time1 = 0;
@@ -47,12 +31,14 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     std::string ConstrainedQon = CurTestDirStr;
     ConstrainedQon.append(slashCharStr());
     ConstrainedQon.append(MyDir);
-    ConstrainedQon.append("_compression_1.ivf");
+    ConstrainedQon.append("_compression_1");
+    vpxt_enc_format_append(ConstrainedQon, EncForm);
 
     std::string ConstrainedQoff = CurTestDirStr;
     ConstrainedQoff.append(slashCharStr());
     ConstrainedQoff.append(MyDir);
-    ConstrainedQoff.append("_compression_0.ivf");
+    ConstrainedQoff.append("_compression_0");
+    vpxt_enc_format_append(ConstrainedQoff, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -90,7 +76,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -120,7 +106,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
         opt.end_usage = 1;
         unsigned int cpu_tick1_conq_off = 0;
 
-        Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, cpu_tick1_conq_off);
+        Time1 = vpxt_time_compress(input.c_str(), ConstrainedQoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, cpu_tick1_conq_off, EncForm);
 
         if (Time1 == -1)
         {
@@ -133,7 +119,7 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
         opt.cq_level = ConstrainedQ;
         unsigned int cpu_tick1_conq_on = 0;
 
-        Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ConstrainedQon.c_str(), speed, BitRate, opt, CompressString, 1, 1, cpu_tick1_conq_on);
+        Time2 = vpxt_time_compress(input.c_str(), ConstrainedQon.c_str(), speed, BitRate, opt, CompressString, 1, 1, cpu_tick1_conq_on, EncForm);
 
         if (Time2 == -1)
         {
@@ -150,11 +136,11 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
         return 10;
     }
 
-    double ConstrainedQonPSNR = vpxt_ivf_psnr(input.c_str(), ConstrainedQon.c_str(), 0, 0, 1, NULL);
-    double ConstrainedQoffPSNR = vpxt_ivf_psnr(input.c_str(), ConstrainedQoff.c_str(), 0, 0, 1, NULL);
+    double ConstrainedQonPSNR = vpxt_psnr(input.c_str(), ConstrainedQon.c_str(), 0, 0, 1, NULL);
+    double ConstrainedQoffPSNR = vpxt_psnr(input.c_str(), ConstrainedQoff.c_str(), 0, 0, 1, NULL);
 
-    double ConstrainedQonDataRate = vpxt_ivf_data_rate(ConstrainedQon.c_str(), 1);
-    double ConstrainedQoffDataRate = vpxt_ivf_data_rate(ConstrainedQoff.c_str(), 1);
+    double ConstrainedQonDataRate = vpxt_data_rate(ConstrainedQon.c_str(), 1);
+    double ConstrainedQoffDataRate = vpxt_data_rate(ConstrainedQoff.c_str(), 1);
 
     vpxt_display_alt_ref_frames(ConstrainedQon.c_str(), 1);
     vpxt_display_alt_ref_frames(ConstrainedQoff.c_str(), 1);

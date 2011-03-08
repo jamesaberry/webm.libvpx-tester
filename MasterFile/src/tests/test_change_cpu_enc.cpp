@@ -4,32 +4,17 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 {
     char *CompressString = "Arnr Maxframes:";
     char *MyDir = "test_change_cpu_enc";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 7 || argc == 6))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Arnr Maxframes>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int ArnrMaxframes = atoi(argv[5]);
+    std::string EncForm = argv[6];
+    std::string DecForm = argv[7];
 
     int speed = 0;
     int Fail = 0;
@@ -49,7 +34,8 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
     std::string ChangedCPUDec0OutFile = CurTestDirStr;
     ChangedCPUDec0OutFile.append(slashCharStr());
-    ChangedCPUDec0OutFile.append("test_change_cpu_enc_compression_none.ivf");
+    ChangedCPUDec0OutFile.append("test_change_cpu_enc_compression_none");
+    vpxt_enc_format_append(ChangedCPUDec0OutFile, EncForm);
 
     std::string ChangedCPUDecNOutBase = CurTestDirStr;
     ChangedCPUDecNOutBase.append(slashCharStr());
@@ -57,19 +43,26 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     ChangedCPUDecNOutBase.append("_compression_");
 
     std::string OutputStr0 = ChangedCPUDecNOutBase;
-    OutputStr0.append("none.ivf");
+    OutputStr0.append("none");
+    vpxt_enc_format_append(OutputStr0, EncForm);
     std::string OutputStr1 = ChangedCPUDecNOutBase;
-    OutputStr1.append("mmx.ivf");
+    OutputStr1.append("mmx");
+    vpxt_enc_format_append(OutputStr1, EncForm);
     std::string OutputStr2 = ChangedCPUDecNOutBase;
-    OutputStr2.append("sse.ivf");
+    OutputStr2.append("sse");
+    vpxt_enc_format_append(OutputStr2, EncForm);
     std::string OutputStr3 = ChangedCPUDecNOutBase;
-    OutputStr3.append("sse2.ivf");
+    OutputStr3.append("sse2");
+    vpxt_enc_format_append(OutputStr3, EncForm);
     std::string OutputStr4 = ChangedCPUDecNOutBase;
-    OutputStr4.append("sse3.ivf");
+    OutputStr4.append("sse3");
+    vpxt_enc_format_append(OutputStr4, EncForm);
     std::string OutputStr5 = ChangedCPUDecNOutBase;
-    OutputStr5.append("ssse3.ivf");
+    OutputStr5.append("ssse3");
+    vpxt_enc_format_append(OutputStr5, EncForm);
     std::string OutputStr6 = ChangedCPUDecNOutBase;
-    OutputStr6.append("sse4_1.ivf");
+    OutputStr6.append("sse4_1");
+    vpxt_enc_format_append(OutputStr6, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -107,7 +100,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -180,7 +173,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
                 tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
-                int lngRC = vpxt_compare_ivf(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str());
+                int lngRC = vpxt_compare_enc(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str());
 
                 if (lngRC >= 0)
                 {
@@ -217,12 +210,13 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
         putenv("ON2_SIMD_CAPS=0");
         std::string OutputStr = ChangedCPUDecNOutBase;
-        OutputStr.append("none.ivf");
+        OutputStr.append("none");
+        vpxt_dec_format_append(OutputStr, DecForm);
 
         opt.arnr_max_frames = ArnrMaxframes;
 
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
-        unsigned int Time1 = vpxt_time_compress_ivf_to_ivf(input.c_str(), OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1);
+        unsigned int Time1 = vpxt_time_compress(input.c_str(), OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1, EncForm);
         CompressonVector.push_back(OutputStr);
 
         if (Time1 == -1)
@@ -305,10 +299,10 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
                 char count[20];
                 vpxt_itoa_custom(counter, count, 10);
                 ChangedCPUDecNOutCurrent.append(CPUStr.c_str());
-                ChangedCPUDecNOutCurrent.append(".ivf");
+                vpxt_dec_format_append(ChangedCPUDecNOutCurrent, DecForm);
 
                 opt.Mode = Mode;
-                unsigned int Time2 = vpxt_time_compress_ivf_to_ivf(input.c_str(), ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2);
+                unsigned int Time2 = vpxt_time_compress(input.c_str(), ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2, EncForm);
                 CompressonVector.push_back(ChangedCPUDecNOutCurrent);
 
                 if (Time2 == -1)
@@ -328,7 +322,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
                     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
-                    int lngRC = vpxt_compare_ivf(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str());
+                    int lngRC = vpxt_compare_enc(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str());
 
                     if (lngRC >= 0)
                     {

@@ -2,35 +2,18 @@
 
 int test_noise_sensitivity(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
-    //This test looks a lot like NoiseSensitivityWorks but has a different purpose.  This test ensures
-    //That different noise sensitivities have an effect for each possible noise sensitivity value and
-    //passes only if that is the case.
+
     char *CompressString = "Noise Sensitivity";
     char *MyDir = "test_noise_sensitivity";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -49,19 +32,26 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     NoiseSenseBase.append("_compression_");
 
     std::string NoiseSense0 = NoiseSenseBase;
-    NoiseSense0.append("0.ivf");
+    NoiseSense0.append("0");
+    vpxt_enc_format_append(NoiseSense0, EncForm);
     std::string NoiseSense1 = NoiseSenseBase;
-    NoiseSense1.append("1.ivf");
+    NoiseSense1.append("1");
+    vpxt_enc_format_append(NoiseSense1, EncForm);
     std::string NoiseSense2 = NoiseSenseBase;
-    NoiseSense2.append("2.ivf");
+    NoiseSense2.append("2");
+    vpxt_enc_format_append(NoiseSense2, EncForm);
     std::string NoiseSense3 = NoiseSenseBase;
-    NoiseSense3.append("3.ivf");
+    NoiseSense3.append("3");
+    vpxt_enc_format_append(NoiseSense3, EncForm);
     std::string NoiseSense4 = NoiseSenseBase;
-    NoiseSense4.append("4.ivf");
+    NoiseSense4.append("4");
+    vpxt_enc_format_append(NoiseSense4, EncForm);
     std::string NoiseSense5 = NoiseSenseBase;
-    NoiseSense5.append("5.ivf");
+    NoiseSense5.append("5");
+    vpxt_enc_format_append(NoiseSense5, EncForm);
     std::string NoiseSense6 = NoiseSenseBase;
-    NoiseSense6.append("6.ivf");
+    NoiseSense6.append("6");
+    vpxt_enc_format_append(NoiseSense6, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -99,7 +89,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -133,7 +123,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
 
             std::string NoiseSenseOut = NoiseSenseBase;
             NoiseSenseOut.append(num);
-            NoiseSenseOut.append(".ivf");
+            vpxt_enc_format_append(NoiseSenseOut, EncForm);
 
             //char NoiseSenseOut[255];
             //snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
@@ -144,7 +134,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
             }
 
             tprintf(PRINT_BTH, "\n");
-            PSNRArr[Noise] = vpxt_ivf_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
+            PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
             tprintf(PRINT_BTH, "\n");
             File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
             tprintf(PRINT_BTH, "\n");
@@ -162,7 +152,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
 
             std::string NoiseSenseOut = NoiseSenseBase;
             NoiseSenseOut.append(num);
-            NoiseSenseOut.append(".ivf");
+            vpxt_enc_format_append(NoiseSenseOut, EncForm);
 
             //char NoiseSenseOut[255];
             //snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
@@ -171,7 +161,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
 
             opt.noise_sensitivity = Noise;
 
-            if (vpxt_compress_ivf_to_ivf(input.c_str(), NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0) == -1)
+            if (vpxt_compress(input.c_str(), NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0, EncForm) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -182,7 +172,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
             {
 
                 tprintf(PRINT_BTH, "\n");
-                PSNRArr[Noise] = vpxt_ivf_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
+                PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
                 tprintf(PRINT_BTH, "\n");

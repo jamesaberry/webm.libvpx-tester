@@ -4,21 +4,14 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_one_pass_vs_two_pass";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 4 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int BitRate = atoi(argv[3]);
+    std::string EncForm = argv[4];
 
     int speed = 0;
 
@@ -34,32 +27,38 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     std::string OnePassOutFile1 = CurTestDirStr;
     OnePassOutFile1.append(slashCharStr());
     OnePassOutFile1.append(MyDir);
-    OnePassOutFile1.append("_compression_one_pass_1.ivf");
+    OnePassOutFile1.append("_compression_one_pass_1");
+    vpxt_enc_format_append(OnePassOutFile1, EncForm);
 
     std::string OnePassOutFile2 = CurTestDirStr;
     OnePassOutFile2.append(slashCharStr());
     OnePassOutFile2.append(MyDir);
-    OnePassOutFile2.append("_compression_one_pass_2.ivf");
+    OnePassOutFile2.append("_compression_one_pass_2");
+    vpxt_enc_format_append(OnePassOutFile2, EncForm);
 
     std::string OnePassOutFile3 = CurTestDirStr;
     OnePassOutFile3.append(slashCharStr());
     OnePassOutFile3.append(MyDir);
-    OnePassOutFile3.append("_compression_one_pass_3.ivf");
+    OnePassOutFile3.append("_compression_one_pass_3");
+    vpxt_enc_format_append(OnePassOutFile3, EncForm);
 
     std::string TwoPassOutFile1 = CurTestDirStr;
     TwoPassOutFile1.append(slashCharStr());
     TwoPassOutFile1.append(MyDir);
-    TwoPassOutFile1.append("_compression_two_pass_1.ivf");
+    TwoPassOutFile1.append("_compression_two_pass_1");
+    vpxt_enc_format_append(TwoPassOutFile1, EncForm);
 
     std::string TwoPassOutFile2 = CurTestDirStr;
     TwoPassOutFile2.append(slashCharStr());
     TwoPassOutFile2.append(MyDir);
-    TwoPassOutFile2.append("_compression_two_pass_2.ivf");
+    TwoPassOutFile2.append("_compression_two_pass_2");
+    vpxt_enc_format_append(TwoPassOutFile2, EncForm);
 
     std::string TwoPassOutFile3 = CurTestDirStr;
     TwoPassOutFile3.append(slashCharStr());
     TwoPassOutFile3.append(MyDir);
-    TwoPassOutFile3.append("_compression_two_pass_3.ivf");
+    TwoPassOutFile3.append("_compression_two_pass_3");
+    vpxt_enc_format_append(TwoPassOutFile3, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -97,7 +96,7 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 5)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -130,7 +129,7 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
         opt.Mode = 5;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,7 +138,7 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -148,7 +147,7 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -158,7 +157,7 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
         opt.Mode = 2;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), OnePassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), OnePassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,7 +166,7 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), OnePassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), OnePassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -176,7 +175,7 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), OnePassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), OnePassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -195,12 +194,12 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
     tprintf(PRINT_STD, "\n");
 
-    float SizeTwoPass1 = vpxt_ivf_data_rate(TwoPassOutFile1.c_str(), 1);
-    float SizeOnePass1 = vpxt_ivf_data_rate(OnePassOutFile1.c_str(), 1);
-    float SizeTwoPass2 = vpxt_ivf_data_rate(TwoPassOutFile2.c_str(), 1);
-    float SizeOnePass2 = vpxt_ivf_data_rate(OnePassOutFile2.c_str(), 1);
-    float SizeTwoPass3 = vpxt_ivf_data_rate(TwoPassOutFile3.c_str(), 1);
-    float SizeOnePass3 = vpxt_ivf_data_rate(OnePassOutFile3.c_str(), 1);
+    float SizeTwoPass1 = vpxt_data_rate(TwoPassOutFile1.c_str(), 1);
+    float SizeOnePass1 = vpxt_data_rate(OnePassOutFile1.c_str(), 1);
+    float SizeTwoPass2 = vpxt_data_rate(TwoPassOutFile2.c_str(), 1);
+    float SizeOnePass2 = vpxt_data_rate(OnePassOutFile2.c_str(), 1);
+    float SizeTwoPass3 = vpxt_data_rate(TwoPassOutFile3.c_str(), 1);
+    float SizeOnePass3 = vpxt_data_rate(OnePassOutFile3.c_str(), 1);
 
     double PSNRTwoPass1;
     double PSNRTwoPass2;
@@ -210,12 +209,12 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     double PSNROnePass2;
     double PSNROnePass3;
 
-    PSNRTwoPass1 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRTwoPass2 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRTwoPass3 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNROnePass1 = vpxt_ivf_psnr(input.c_str(), OnePassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNROnePass2 = vpxt_ivf_psnr(input.c_str(), OnePassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNROnePass3 = vpxt_ivf_psnr(input.c_str(), OnePassOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRTwoPass1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRTwoPass2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRTwoPass3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNROnePass1 = vpxt_psnr(input.c_str(), OnePassOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNROnePass2 = vpxt_psnr(input.c_str(), OnePassOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNROnePass3 = vpxt_psnr(input.c_str(), OnePassOutFile3.c_str(), 1, 0, 1, NULL);
 
     //    double PSRNPerc = vpxt_abs_double(((PSNR2 - PSNR1) / PSNR1) * 100.00);
     //    double BRPerc = vpxt_abs_double(((Size2 - Size1) / Size1) * 100.00);

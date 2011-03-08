@@ -4,22 +4,14 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_two_pass_vs_two_pass_best";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 4 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int BitRate = atoi(argv[3]);
+    std::string EncForm = argv[4];
 
     int speed = 0;
 
@@ -35,32 +27,38 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
     std::string TwoPassOutFile1 = CurTestDirStr;
     TwoPassOutFile1.append(slashCharStr());
     TwoPassOutFile1.append(MyDir);
-    TwoPassOutFile1.append("_compression_two_pass_1.ivf");
+    TwoPassOutFile1.append("_compression_two_pass_1");
+    vpxt_enc_format_append(TwoPassOutFile1, EncForm);
 
     std::string TwoPassOutFile2 = CurTestDirStr;
     TwoPassOutFile2.append(slashCharStr());
     TwoPassOutFile2.append(MyDir);
-    TwoPassOutFile2.append("_compression_two_pass_2.ivf");
+    TwoPassOutFile2.append("_compression_two_pass_2");
+    vpxt_enc_format_append(TwoPassOutFile2, EncForm);
 
     std::string TwoPassOutFile3 = CurTestDirStr;
     TwoPassOutFile3.append(slashCharStr());
     TwoPassOutFile3.append(MyDir);
-    TwoPassOutFile3.append("_compression_two_pass_3.ivf");
+    TwoPassOutFile3.append("_compression_two_pass_3");
+    vpxt_enc_format_append(TwoPassOutFile3, EncForm);
 
     std::string TwoPassBestOutFile1 = CurTestDirStr;
     TwoPassBestOutFile1.append(slashCharStr());
     TwoPassBestOutFile1.append(MyDir);
-    TwoPassBestOutFile1.append("_compression_two_pass_best_1.ivf");
+    TwoPassBestOutFile1.append("_compression_two_pass_best_1");
+    vpxt_enc_format_append(TwoPassBestOutFile1, EncForm);
 
     std::string TwoPassBestOutFile2 = CurTestDirStr;
     TwoPassBestOutFile2.append(slashCharStr());
     TwoPassBestOutFile2.append(MyDir);
-    TwoPassBestOutFile2.append("_compression_two_pass_best_2.ivf");
+    TwoPassBestOutFile2.append("_compression_two_pass_best_2");
+    vpxt_enc_format_append(TwoPassBestOutFile2, EncForm);
 
     std::string TwoPassBestOutFile3 = CurTestDirStr;
     TwoPassBestOutFile3.append(slashCharStr());
     TwoPassBestOutFile3.append(MyDir);
-    TwoPassBestOutFile3.append("_compression_two_pass_best_3.ivf");
+    TwoPassBestOutFile3.append("_compression_two_pass_best_3");
+    vpxt_enc_format_append(TwoPassBestOutFile3, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -98,7 +96,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 5)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -130,7 +128,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
         opt.Mode = MODE_SECONDPASS;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,7 +137,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -148,7 +146,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -158,7 +156,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
         opt.Mode = MODE_SECONDPASS_BEST;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassBestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -167,7 +165,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassBestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -176,7 +174,7 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), TwoPassBestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassBestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -195,12 +193,12 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
 
     tprintf(PRINT_STD, "\n");
 
-    float GoodSize1 = vpxt_ivf_data_rate(TwoPassOutFile1.c_str(), 1);
-    float BestSize1 = vpxt_ivf_data_rate(TwoPassBestOutFile1.c_str(), 1);
-    float GoodSize2 = vpxt_ivf_data_rate(TwoPassOutFile2.c_str(), 1);
-    float BestSize2 = vpxt_ivf_data_rate(TwoPassBestOutFile2.c_str(), 1);
-    float GoodSize3 = vpxt_ivf_data_rate(TwoPassOutFile3.c_str(), 1);
-    float BestSize3 = vpxt_ivf_data_rate(TwoPassBestOutFile3.c_str(), 1);
+    float GoodSize1 = vpxt_data_rate(TwoPassOutFile1.c_str(), 1);
+    float BestSize1 = vpxt_data_rate(TwoPassBestOutFile1.c_str(), 1);
+    float GoodSize2 = vpxt_data_rate(TwoPassOutFile2.c_str(), 1);
+    float BestSize2 = vpxt_data_rate(TwoPassBestOutFile2.c_str(), 1);
+    float GoodSize3 = vpxt_data_rate(TwoPassOutFile3.c_str(), 1);
+    float BestSize3 = vpxt_data_rate(TwoPassBestOutFile3.c_str(), 1);
 
     double PSNRG1;
     double PSNRB1;
@@ -209,12 +207,12 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
     double PSNRG3;
     double PSNRB3;
 
-    PSNRG1 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRB1 = vpxt_ivf_psnr(input.c_str(), TwoPassBestOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRG2 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRB2 = vpxt_ivf_psnr(input.c_str(), TwoPassBestOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRG3 = vpxt_ivf_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNRB3 = vpxt_ivf_psnr(input.c_str(), TwoPassBestOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRG1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRB1 = vpxt_psnr(input.c_str(), TwoPassBestOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRG2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRB2 = vpxt_psnr(input.c_str(), TwoPassBestOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRG3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRB3 = vpxt_psnr(input.c_str(), TwoPassBestOutFile3.c_str(), 1, 0, 1, NULL);
 
     float GoodA = 0;
     float GoodB = 0;

@@ -19,6 +19,12 @@
 #include "mem_ops.h"
 #include "vpx_timer.h"
 #include "y4minput.h"
+#include "vpx_version.h"
+#include "vp8cx.h"
+#include "vpx_timer.h"
+#include "tools_common.h"
+#include "EbmlWriter.h"
+#include "EbmlIDs.h"
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -45,6 +51,11 @@
 #else
 #define USE_POSIX_MMAP 1
 #endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <limits.h>
 #if USE_POSIX_MMAP
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -53,8 +64,36 @@
 #include <unistd.h>
 #endif
 
+
+#if defined(_MSC_VER)
+//typedef __int64 off_t;
+#define fseeko _fseeki64
+#define ftello _ftelli64
+#elif defined(_WIN32)
+#define fseeko fseeko64
+#define ftello ftello64
+#endif
+
+#if defined(_MSC_VER)
+#define LITERALU64(n) n
+#else
+#define LITERALU64(n) n##LLU
+#endif
+
+/* These pointers are to the start of an element */
+#if !CONFIG_OS_SUPPORT
+typedef long off_t;
+#define fseeko fseek
+#define ftello ftell
+#endif
+/* This pointer is to a specific element to be serialized */
+
+/* These pointers are to the size field of the element */
+
+
 static const char *exec_name;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static const struct codec_item
 {
     char const              *name;
@@ -67,7 +106,7 @@ static const struct codec_item
 #endif
 };
 
-static void usage_exit();
+static void usage_exit_ivfenc();
 
 void die_ivfenc(const char *fmt, ...)
 {
@@ -75,7 +114,7 @@ void die_ivfenc(const char *fmt, ...)
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
     fprintf(stderr, "\n");
-    usage_exit();
+    usage_exit_ivfenc();
 }
 
 static void ctx_exit_on_error(vpx_codec_ctx_t *ctx, const char *s)
@@ -181,11 +220,11 @@ int stats_open_mem_ivfenc(stats_io_t *stats, int pass)
 }
 
 
-void stats_close_ivfenc(stats_io_t *stats)
+void stats_close_ivfenc(stats_io_t *stats, int last_pass)
 {
     if (stats->file)
     {
-        if (stats->pass == 1)
+        if (stats->pass == last_pass)
         {
 #if 0
 #elif USE_POSIX_MMAP
@@ -200,7 +239,7 @@ void stats_close_ivfenc(stats_io_t *stats)
     }
     else
     {
-        if (stats->pass == 1)
+        if (stats->pass == last_pass)
             free(stats->buf.buf);
     }
 }
@@ -247,20 +286,27 @@ enum video_file_type
 struct detect_buffer
 {
     char buf[4];
-    int  valid;
+    size_t buf_read;
+    size_t position;
 };
 
 
 #define IVF_FRAME_HDR_SZ (4+8) /* 4 byte size + 8 byte timestamp */
-static int read_frame(FILE *f, vpx_image_t *img, unsigned int file_type,
-                      y4m_input *y4m, struct detect_buffer *detect)
+static int read_frame_vpxenc(FILE *f, vpx_image_t *img, unsigned int file_type,
+                             y4m_input *y4m, struct detect_buffer *detect)
 {
     int plane = 0;
+    int shortread = 0;
+
+    int test = 0;
 
     if (file_type == FILE_TYPE_Y4M)
     {
-        if (y4m_input_fetch_frame(y4m, f, img) < 0)
+        if (y4m_input_fetch_frame(y4m, f, img) < 1)
+        {
+            test = 1;
             return 0;
+        }
     }
     else
     {
@@ -272,7 +318,7 @@ static int read_frame(FILE *f, vpx_image_t *img, unsigned int file_type,
             * write_ivf_frame_header() for documentation on the frame header
             * layout.
             */
-            fread(junk, 1, IVF_FRAME_HDR_SZ, f);
+            if (fread(junk, 1, IVF_FRAME_HDR_SZ, f));
         }
 
         for (plane = 0; plane < 3; plane++)
@@ -300,27 +346,36 @@ static int read_frame(FILE *f, vpx_image_t *img, unsigned int file_type,
 
             for (r = 0; r < h; r++)
             {
-                if (detect->valid)
+                size_t needed = w;
+                size_t buf_position = 0;
+                const size_t left = detect->buf_read - detect->position;
+
+                if (left > 0)
                 {
-                    memcpy(ptr, detect->buf, 4);
-                    fread(ptr + 4, 1, w - 4, f);
-                    detect->valid = 0;
+                    const size_t more = (left < needed) ? left : needed;
+                    memcpy(ptr, detect->buf + detect->position, more);
+                    buf_position = more;
+                    needed -= more;
+                    detect->position += more;
                 }
-                else
-                    fread(ptr, 1, w, f);
+
+                if (needed > 0)
+                {
+                    shortread |= (fread(ptr + buf_position, 1, needed, f) < needed);
+                }
 
                 ptr += img->stride[plane];
             }
         }
     }
 
-    return !feof(f);
+    return !shortread;
 }
 
 
-unsigned int file_is_y4m(FILE      *infile,
-                         y4m_input *y4m,
-                         char       detect[4])
+unsigned int file_is_y4m_ivfenc(FILE      *infile,
+                                y4m_input *y4m,
+                                char       detect[4])
 {
     if (memcmp(detect, "YUV4", 4) == 0)
     {
@@ -331,16 +386,16 @@ unsigned int file_is_y4m(FILE      *infile,
 }
 
 #define IVF_FILE_HDR_SZ (32)
-unsigned int file_is_ivf(FILE *infile,
-                         unsigned int *fourcc,
-                         unsigned int *width,
-                         unsigned int *height,
-                         char          detect[4])
+unsigned int file_is_ivf_ivfenc(FILE *infile,
+                                unsigned int *fourcc,
+                                unsigned int *width,
+                                unsigned int *height,
+                                struct detect_buffer *detect)
 {
     char raw_hdr[IVF_FILE_HDR_SZ];
     int is_ivf = 0;
 
-    if (memcmp(detect, "DKIF", 4) != 0)
+    if (memcmp(detect->buf, "DKIF", 4) != 0)
         return 0;
 
     /* See write_ivf_file_header() for more documentation on the file header
@@ -364,6 +419,7 @@ unsigned int file_is_ivf(FILE *infile,
     {
         *width = mem_get_le16(raw_hdr + 12);
         *height = mem_get_le16(raw_hdr + 14);
+        detect->position = 4;
     }
 
     return is_ivf;
@@ -394,7 +450,7 @@ static void write_ivf_file_header(FILE *outfile,
     mem_put_le32(header + 24, frame_cnt);         /* length */
     mem_put_le32(header + 28, 0);                 /* unused */
 
-    fwrite(header, 1, 32, outfile);
+    if (fwrite(header, 1, 32, outfile));
 }
 
 
@@ -412,11 +468,342 @@ static void write_ivf_frame_header(FILE *outfile,
     mem_put_le32(header + 4, pts & 0xFFFFFFFF);
     mem_put_le32(header + 8, pts >> 32);
 
-    fwrite(header, 1, 12, outfile);
+    if (fwrite(header, 1, 12, outfile));
 }
 
+typedef off_t EbmlLoc;
+struct cue_entry
+{
+    unsigned int time;
+    uint64_t     loc;
+};
+struct EbmlGlobal
+{
+    int debug;
+    FILE    *stream;
+    int64_t last_pts_ms;
+    vpx_rational_t  framerate;
+    off_t    position_reference;
+    off_t    seek_info_pos;
+    off_t    segment_info_pos;
+    off_t    track_pos;
+    off_t    cue_pos;
+    off_t    cluster_pos;
+    off_t    track_id_pos;
+    EbmlLoc  startSegment;
+    EbmlLoc  startCluster;
+    uint32_t cluster_timecode;
+    int      cluster_open;
+    struct cue_entry *cue_list;
+    unsigned int      cues;
+};
+void Ebml_Write_ivfenc(EbmlGlobal *glob, const void *buffer_in, unsigned long len)
+{
+    if (fwrite(buffer_in, 1, len, glob->stream));
+}
+void Ebml_Serialize_ivfenc(EbmlGlobal *glob, const void *buffer_in, unsigned long len)
+{
+    const unsigned char *q = (const unsigned char *)buffer_in + len - 1;
+
+    for (; len; len--)
+        Ebml_Write_ivfenc(glob, q--, 1);
+}
+static void Ebml_SerializeUnsigned32(EbmlGlobal *glob, unsigned long class_id, uint64_t ui)
+{
+    unsigned char sizeSerialized = 4 | 0x80;
+    Ebml_WriteID(glob, class_id);
+    Ebml_Serialize_ivfenc(glob, &sizeSerialized, 1);
+    Ebml_Serialize_ivfenc(glob, &ui, 4);
+}
+static void
+Ebml_StartSubElement(EbmlGlobal *glob, EbmlLoc *ebmlLoc,
+                     unsigned long class_id)
+{
+    unsigned long long unknownLen =  LITERALU64(0x01FFFFFFFFFFFFFF);
+    Ebml_WriteID(glob, class_id);
+    *ebmlLoc = ftello(glob->stream);
+    Ebml_Serialize_ivfenc(glob, &unknownLen, 8);
+}
+static void
+Ebml_EndSubElement(EbmlGlobal *glob, EbmlLoc *ebmlLoc)
+{
+    off_t pos;
+    uint64_t size;
+    pos = ftello(glob->stream);
+    size = pos - *ebmlLoc - 8;
+    size |=  LITERALU64(0x0100000000000000);
+    fseeko(glob->stream, *ebmlLoc, SEEK_SET);
+    Ebml_Serialize_ivfenc(glob, &size, 8);
+    fseeko(glob->stream, pos, SEEK_SET);
+}
+static void
+write_webm_seek_element(EbmlGlobal *ebml, unsigned long id, off_t pos)
+{
+    uint64_t offset = pos - ebml->position_reference;
+    EbmlLoc start;
+    Ebml_StartSubElement(ebml, &start, Seek);
+    Ebml_SerializeBinary(ebml, SeekID, id);
+    Ebml_SerializeUnsigned64(ebml, SeekPosition, offset);
+    Ebml_EndSubElement(ebml, &start);
+}
+static void
+write_webm_seek_info(EbmlGlobal *ebml)
+{
+    off_t pos;
+    pos = ftello(ebml->stream);
+
+    if (ebml->seek_info_pos)
+        fseeko(ebml->stream, ebml->seek_info_pos, SEEK_SET);
+    else
+        ebml->seek_info_pos = pos;
+
+    {
+        EbmlLoc start;
+        Ebml_StartSubElement(ebml, &start, SeekHead);
+        write_webm_seek_element(ebml, Tracks, ebml->track_pos);
+        write_webm_seek_element(ebml, Cues,   ebml->cue_pos);
+        write_webm_seek_element(ebml, Info,   ebml->segment_info_pos);
+        Ebml_EndSubElement(ebml, &start);
+    }
+    {
+        EbmlLoc startInfo;
+        uint64_t frame_time;
+        frame_time = (uint64_t)1000 * ebml->framerate.den
+                     / ebml->framerate.num;
+        ebml->segment_info_pos = ftello(ebml->stream);
+        Ebml_StartSubElement(ebml, &startInfo, Info);
+        Ebml_SerializeUnsigned(ebml, TimecodeScale, 1000000);
+        Ebml_SerializeFloat(ebml, Segment_Duration,
+                            ebml->last_pts_ms + frame_time);
+        Ebml_SerializeString(ebml, 0x4D80,
+                             ebml->debug ? "vpxenc" : "vpxenc" VERSION_STRING);
+        Ebml_SerializeString(ebml, 0x5741,
+                             ebml->debug ? "vpxenc" : "vpxenc" VERSION_STRING);
+        Ebml_EndSubElement(ebml, &startInfo);
+    }
+}
+static void
+write_webm_file_header(EbmlGlobal                *glob,
+                       const vpx_codec_enc_cfg_t *cfg,
+                       const struct vpx_rational *fps)
+{
+    {
+        EbmlLoc start;
+        Ebml_StartSubElement(glob, &start, EBML);
+        Ebml_SerializeUnsigned(glob, EBMLVersion, 1);
+        Ebml_SerializeUnsigned(glob, EBMLReadVersion, 1); //EBML Read Version
+        Ebml_SerializeUnsigned(glob, EBMLMaxIDLength, 4); //EBML Max ID Length
+        Ebml_SerializeUnsigned(glob, EBMLMaxSizeLength, 8); //EBML Max Size Length
+        Ebml_SerializeString(glob, DocType, "webm"); //Doc Type
+        Ebml_SerializeUnsigned(glob, DocTypeVersion, 2); //Doc Type Version
+        Ebml_SerializeUnsigned(glob, DocTypeReadVersion, 2); //Doc Type Read Version
+        Ebml_EndSubElement(glob, &start);
+    }
+    {
+        Ebml_StartSubElement(glob, &glob->startSegment, Segment); //segment
+        glob->position_reference = ftello(glob->stream);
+        glob->framerate = *fps;
+        write_webm_seek_info(glob);
+        {
+            EbmlLoc trackStart;
+            glob->track_pos = ftello(glob->stream);
+            Ebml_StartSubElement(glob, &trackStart, Tracks);
+            {
+                unsigned int trackNumber = 1;
+                uint64_t     trackID = 0;
+                EbmlLoc start;
+                Ebml_StartSubElement(glob, &start, TrackEntry);
+                Ebml_SerializeUnsigned(glob, TrackNumber, trackNumber);
+                glob->track_id_pos = ftello(glob->stream);
+                Ebml_SerializeUnsigned32(glob, TrackUID, trackID);
+                Ebml_SerializeUnsigned(glob, TrackType, 1); //video is always 1
+                Ebml_SerializeString(glob, CodecID, "V_VP8");
+                {
+                    unsigned int pixelWidth = cfg->g_w;
+                    unsigned int pixelHeight = cfg->g_h;
+                    float        frameRate   = (float)fps->num / (float)fps->den;
+                    EbmlLoc videoStart;
+                    Ebml_StartSubElement(glob, &videoStart, Video);
+                    Ebml_SerializeUnsigned(glob, PixelWidth, pixelWidth);
+                    Ebml_SerializeUnsigned(glob, PixelHeight, pixelHeight);
+                    Ebml_SerializeFloat(glob, FrameRate, frameRate);
+                    Ebml_EndSubElement(glob, &videoStart); //Video
+                }
+                Ebml_EndSubElement(glob, &start); //Track Entry
+            }
+            Ebml_EndSubElement(glob, &trackStart);
+        }
+    }
+}
+static void
+write_webm_block(EbmlGlobal                *glob,
+                 const vpx_codec_enc_cfg_t *cfg,
+                 const vpx_codec_cx_pkt_t  *pkt)
+{
+    unsigned long  block_length;
+    unsigned char  track_number;
+    unsigned short block_timecode = 0;
+    unsigned char  flags;
+    int64_t        pts_ms;
+    int            start_cluster = 0, is_keyframe;
+    pts_ms = pkt->data.frame.pts * 1000
+             * (uint64_t)cfg->g_timebase.num / (uint64_t)cfg->g_timebase.den;
+
+    if (pts_ms <= glob->last_pts_ms)
+        pts_ms = glob->last_pts_ms + 1;
+
+    glob->last_pts_ms = pts_ms;
+
+    if (pts_ms - glob->cluster_timecode > SHRT_MAX)
+        start_cluster = 1;
+    else
+        block_timecode = pts_ms - glob->cluster_timecode;
+
+    is_keyframe = (pkt->data.frame.flags & VPX_FRAME_IS_KEY);
+
+    if (start_cluster || is_keyframe)
+    {
+        if (glob->cluster_open)
+            Ebml_EndSubElement(glob, &glob->startCluster);
+
+        block_timecode = 0;
+        glob->cluster_open = 1;
+        glob->cluster_timecode = pts_ms;
+        glob->cluster_pos = ftello(glob->stream);
+        Ebml_StartSubElement(glob, &glob->startCluster, Cluster); //cluster
+        Ebml_SerializeUnsigned(glob, Timecode, glob->cluster_timecode);
+
+        if (is_keyframe)
+        {
+            struct cue_entry *cue;
+            glob->cue_list = (cue_entry *)realloc(glob->cue_list,
+                                                  (glob->cues + 1) * sizeof(struct cue_entry));
+            cue = &glob->cue_list[glob->cues];
+            cue->time = glob->cluster_timecode;
+            cue->loc = glob->cluster_pos;
+            glob->cues++;
+        }
+    }
+
+    Ebml_WriteID(glob, SimpleBlock);
+    block_length = pkt->data.frame.sz + 4;
+    block_length |= 0x10000000;
+    Ebml_Serialize_ivfenc(glob, &block_length, 4);
+    track_number = 1;
+    track_number |= 0x80;
+    Ebml_Write_ivfenc(glob, &track_number, 1);
+    Ebml_Serialize_ivfenc(glob, &block_timecode, 2);
+    flags = 0;
+
+    if (is_keyframe)
+        flags |= 0x80;
+
+    if (pkt->data.frame.flags & VPX_FRAME_IS_INVISIBLE)
+        flags |= 0x08;
+
+    Ebml_Write_ivfenc(glob, &flags, 1);
+    Ebml_Write_ivfenc(glob, pkt->data.frame.buf, pkt->data.frame.sz);
+}
+static void
+write_webm_file_footer(EbmlGlobal *glob, long hash)
+{
+    if (glob->cluster_open)
+        Ebml_EndSubElement(glob, &glob->startCluster);
+
+    {
+        EbmlLoc start;
+        int i;
+        glob->cue_pos = ftello(glob->stream);
+        Ebml_StartSubElement(glob, &start, Cues);
+
+        for (i = 0; i < glob->cues; i++)
+        {
+            struct cue_entry *cue = &glob->cue_list[i];
+            EbmlLoc start;
+            Ebml_StartSubElement(glob, &start, CuePoint);
+            {
+                EbmlLoc start;
+                Ebml_SerializeUnsigned(glob, CueTime, cue->time);
+                Ebml_StartSubElement(glob, &start, CueTrackPositions);
+                Ebml_SerializeUnsigned(glob, CueTrack, 1);
+                Ebml_SerializeUnsigned64(glob, CueClusterPosition,
+                                         cue->loc - glob->position_reference);
+                Ebml_EndSubElement(glob, &start);
+            }
+            Ebml_EndSubElement(glob, &start);
+        }
+
+        Ebml_EndSubElement(glob, &start);
+    }
+    Ebml_EndSubElement(glob, &glob->startSegment);
+    write_webm_seek_info(glob);
+    fseeko(glob->stream, glob->track_id_pos, SEEK_SET);
+    Ebml_SerializeUnsigned32(glob, TrackUID, glob->debug ? 0xDEADBEEF : hash);
+    fseeko(glob->stream, 0, SEEK_END);
+}
+static unsigned int murmur(const void *key, int len, unsigned int seed)
+{
+    const unsigned int m = 0x5bd1e995;
+    const int r = 24;
+    unsigned int h = seed ^ len;
+    const unsigned char *data = (const unsigned char *)key;
+
+    while (len >= 4)
+    {
+        unsigned int k;
+        k  = data[0];
+        k |= data[1] << 8;
+        k |= data[2] << 16;
+        k |= data[3] << 24;
+        k *= m;
+        k ^= k >> r;
+        k *= m;
+        h *= m;
+        h ^= k;
+        data += 4;
+        len -= 4;
+    }
+
+    switch (len)
+    {
+    case 3:
+        h ^= data[2] << 16;
+    case 2:
+        h ^= data[1] << 8;
+    case 1:
+        h ^= data[0];
+        h *= m;
+    };
+
+    h ^= h >> 13;
+
+    h *= m;
+
+    h ^= h >> 15;
+
+    return h;
+}
+#include "math.h"
+static double vp8_mse2psnr(double Samples, double Peak, double Mse)
+{
+    double psnr;
+
+    if ((double)Mse > 0.0)
+        psnr = 10.0 * log10(Peak * Peak * Samples / Mse);
+    else
+        psnr = 60;      // Limit to prevent / 0
+
+    if (psnr > 60)
+        psnr = 60;
+
+    return psnr;
+}
 #include "args.h"
 
+static const arg_def_t debugmode = ARG_DEF("D", "debug", 0,
+                                   "Debug mode (makes output deterministic)");
+static const arg_def_t outputfile = ARG_DEF("o", "output", 1,
+                                    "Output filename");
 static const arg_def_t use_yv12 = ARG_DEF(NULL, "yv12", 0,
                                   "Input file is YV12 ");
 static const arg_def_t use_i420 = ARG_DEF(NULL, "i420", 0,
@@ -443,10 +830,16 @@ static const arg_def_t verbosearg       = ARG_DEF("v", "verbose", 0,
         "Show encoder parameters");
 static const arg_def_t psnrarg          = ARG_DEF(NULL, "psnr", 0,
         "Show PSNR in status line");
+static const arg_def_t framerate        = ARG_DEF(NULL, "fps", 1,
+        "Stream frame rate (rate/scale)");
+static const arg_def_t use_ivf          = ARG_DEF(NULL, "ivf", 0,
+        "Output IVF (default is WebM)");
 static const arg_def_t *main_args[] =
 {
-    &codecarg, &passes, &pass_arg, &fpf_name, &limit, &deadline, &best_dl, &good_dl, &rt_dl,
-    &verbosearg, &psnrarg,
+    &debugmode,
+    &outputfile, &codecarg, &passes, &pass_arg, &fpf_name, &limit, &deadline,
+    &best_dl, &good_dl, &rt_dl,
+    &verbosearg, &psnrarg, &use_ivf, &framerate,
     NULL
 };
 
@@ -470,7 +863,7 @@ static const arg_def_t lag_in_frames    = ARG_DEF(NULL, "lag-in-frames", 1,
 static const arg_def_t *global_args[] =
 {
     &use_yv12, &use_i420, &usage, &threads, &profile,
-    &width, &height, &timebase, &error_resilient,
+    &width, &height, &timebase, &framerate, &error_resilient,
     &lag_in_frames, NULL
 };
 
@@ -483,7 +876,7 @@ static const arg_def_t resize_up_thresh   = ARG_DEF(NULL, "resize-up", 1,
 static const arg_def_t resize_down_thresh = ARG_DEF(NULL, "resize-down", 1,
         "Downscale threshold (buf %)");
 static const arg_def_t end_usage          = ARG_DEF(NULL, "end-usage", 1,
-        "VBR=0 | CBR=1");
+        "VBR=0 | CBR=1 | CQ=2");
 static const arg_def_t target_bitrate     = ARG_DEF(NULL, "target-bitrate", 1,
         "Bitrate (kbps)");
 static const arg_def_t min_quantizer      = ARG_DEF(NULL, "min-q", 1,
@@ -525,9 +918,11 @@ static const arg_def_t kf_min_dist = ARG_DEF(NULL, "kf-min-dist", 1,
                                      "Minimum keyframe interval (frames)");
 static const arg_def_t kf_max_dist = ARG_DEF(NULL, "kf-max-dist", 1,
                                      "Maximum keyframe interval (frames)");
+static const arg_def_t kf_disabled = ARG_DEF(NULL, "disable-kf", 0,
+                                     "Disable keyframe placement");
 static const arg_def_t *kf_args[] =
 {
-    &kf_min_dist, &kf_max_dist, NULL
+    &kf_min_dist, &kf_max_dist, &kf_disabled, NULL
 };
 
 
@@ -552,46 +947,59 @@ static const arg_def_t token_parts = ARG_DEF(NULL, "token-parts", 1,
 static const arg_def_t auto_altref = ARG_DEF(NULL, "auto-alt-ref", 1,
                                      "Enable automatic alt reference frames");
 static const arg_def_t arnr_maxframes = ARG_DEF(NULL, "arnr-maxframes", 1,
-                                        "alt_ref Max Frames");
+                                        "AltRef Max Frames");
 static const arg_def_t arnr_strength = ARG_DEF(NULL, "arnr-strength", 1,
-                                       "alt_ref Strength");
+                                       "AltRef Strength");
 static const arg_def_t arnr_type = ARG_DEF(NULL, "arnr-type", 1,
-                                   "alt_ref Type");
+                                   "AltRef Type");
+static const struct arg_enum_list tuning_enum[] =
+{
+    {"psnr", VP8_TUNE_PSNR},
+    {"ssim", VP8_TUNE_SSIM},
+    {NULL, 0}
+};
+static const arg_def_t tune_ssim = ARG_DEF_ENUM(NULL, "tune", 1,
+                                   "Material to favor", tuning_enum);
+static const arg_def_t cq_level = ARG_DEF(NULL, "cq-level", 1,
+                                  "Constrained Quality Level");
 
 static const arg_def_t *vp8_args[] =
 {
     &cpu_used, &auto_altref, &noise_sens, &sharpness, &static_thresh,
-    &token_parts, &arnr_maxframes, &arnr_strength, &arnr_type, NULL
+    &token_parts, &arnr_maxframes, &arnr_strength, &arnr_type,
+    &tune_ssim, &cq_level, NULL
 };
 static const int vp8_arg_ctrl_map[] =
 {
     VP8E_SET_CPUUSED, VP8E_SET_ENABLEAUTOALTREF,
     VP8E_SET_NOISE_SENSITIVITY, VP8E_SET_SHARPNESS, VP8E_SET_STATIC_THRESHOLD,
     VP8E_SET_TOKEN_PARTITIONS,
-    VP8E_SET_ARNR_MAXFRAMES, VP8E_SET_ARNR_STRENGTH , VP8E_SET_ARNR_TYPE, 0
+    VP8E_SET_ARNR_MAXFRAMES, VP8E_SET_ARNR_STRENGTH , VP8E_SET_ARNR_TYPE,
+    VP8E_SET_TUNING, VP8E_SET_CQ_LEVEL, 0
 };
 #endif
 
 static const arg_def_t *no_args[] = { NULL };
 
-static void usage_exit()
+static void usage_exit_ivfenc()
 {
     int i;
 
-    fprintf(stderr, "Usage: %s <options> src_filename dst_filename\n", exec_name);
+    fprintf(stderr, "Usage: %s <options> -o dst_filename src_filename \n",
+            exec_name);
 
-    fprintf(stderr, "\n_options:\n");
+    fprintf(stderr, "\nOptions:\n");
     arg_show_usage(stdout, main_args);
-    fprintf(stderr, "\n_encoder Global Options:\n");
+    fprintf(stderr, "\nEncoder Global Options:\n");
     arg_show_usage(stdout, global_args);
-    fprintf(stderr, "\n_rate Control Options:\n");
+    fprintf(stderr, "\nRate Control Options:\n");
     arg_show_usage(stdout, rc_args);
-    fprintf(stderr, "\n_twopass Rate Control Options:\n");
+    fprintf(stderr, "\nTwopass Rate Control Options:\n");
     arg_show_usage(stdout, rc_twopass_args);
-    fprintf(stderr, "\n_keyframe Placement Options:\n");
+    fprintf(stderr, "\nKeyframe Placement Options:\n");
     arg_show_usage(stdout, kf_args);
 #if CONFIG_VP8_ENCODER
-    fprintf(stderr, "\n_vp8 Specific Options:\n");
+    fprintf(stderr, "\nVP8 Specific Options:\n");
     arg_show_usage(stdout, vp8_args);
 #endif
     fprintf(stderr, "\n"
@@ -632,15 +1040,24 @@ int ivfenc(int argc, const char **argv_)
     static const int        *ctrl_args_map = NULL;
     int                      verbose = 0, show_psnr = 0;
     int                      arg_use_i420 = 1;
-    int                      arg_have_timebase = 0;
     unsigned long            cx_time = 0;
     unsigned int             file_type, fourcc;
     y4m_input                y4m;
+    struct vpx_rational      arg_framerate = {30, 1};
+    int                      arg_have_framerate = 0;
+    int                      write_webm = 1;
+    EbmlGlobal               ebml = {0};
+    uint32_t                 hash = 0;
+    uint64_t                 psnr_sse_total = 0;
+    uint64_t                 psnr_samples_total = 0;
+    double                   psnr_totals[4] = {0, 0, 0, 0};
+    int                      psnr_count = 0;
 
     exec_name = argv_[0];
+    ebml.last_pts_ms = -1;
 
     if (argc < 3)
-        usage_exit();
+        usage_exit_ivfenc();
 
 
     /* First parse the codec and usage values, because we want to apply other
@@ -707,6 +1124,17 @@ int ivfenc(int argc, const char **argv_)
             arg_limit = arg_parse_uint(&arg);
         else if (arg_match(&arg, &psnrarg, argi))
             show_psnr = 1;
+        else if (arg_match(&arg, &framerate, argi))
+        {
+            arg_framerate = arg_parse_rational(&arg);
+            arg_have_framerate = 1;
+        }
+        else if (arg_match(&arg, &use_ivf, argi))
+            write_webm = 0;
+        else if (arg_match(&arg, &outputfile, argi))
+            out_fn = arg.val;
+        else if (arg_match(&arg, &debugmode, argi))
+            ebml.debug = 1;
         else
             argj++;
     }
@@ -738,6 +1166,10 @@ int ivfenc(int argc, const char **argv_)
         return EXIT_FAILURE;
     }
 
+    cfg.g_timebase.den = 1000;
+    cfg.g_w = 0;
+    cfg.g_h = 0;
+
     /* Now parse the remainder of the parameters. */
     for (argi = argj = argv; (*argj = *argi); argi += arg.argv_step)
     {
@@ -753,10 +1185,7 @@ int ivfenc(int argc, const char **argv_)
         else if (arg_match(&arg, &height, argi))
             cfg.g_h = arg_parse_uint(&arg);
         else if (arg_match(&arg, &timebase, argi))
-        {
             cfg.g_timebase = arg_parse_rational(&arg);
-            arg_have_timebase = 1;
-        }
         else if (arg_match(&arg, &error_resilient, argi))
             cfg.g_error_resilient = arg_parse_uint(&arg);
         else if (arg_match(&arg, &lag_in_frames, argi))
@@ -772,7 +1201,7 @@ int ivfenc(int argc, const char **argv_)
         else if (arg_match(&arg, &resize_down_thresh, argi))
             cfg.rc_resize_down_thresh = arg_parse_uint(&arg);
         else if (arg_match(&arg, &end_usage, argi))
-            cfg.rc_end_usage = (vpx_rc_mode) arg_parse_uint(&arg);
+            cfg.rc_end_usage = (vpx_rc_mode)arg_parse_uint(&arg);
         else if (arg_match(&arg, &target_bitrate, argi))
             cfg.rc_target_bitrate = arg_parse_uint(&arg);
         else if (arg_match(&arg, &min_quantizer, argi))
@@ -820,6 +1249,8 @@ int ivfenc(int argc, const char **argv_)
             cfg.kf_min_dist = arg_parse_uint(&arg);
         else if (arg_match(&arg, &kf_max_dist, argi))
             cfg.kf_max_dist = arg_parse_uint(&arg);
+        else if (arg_match(&arg, &kf_disabled, argi))
+            cfg.kf_mode = VPX_KF_DISABLED;
         else
             argj++;
     }
@@ -850,7 +1281,7 @@ int ivfenc(int argc, const char **argv_)
                 if (arg_ctrl_cnt < ARG_CTRL_CNT_MAX)
                 {
                     arg_ctrls[arg_ctrl_cnt][0] = ctrl_args_map[i];
-                    arg_ctrls[arg_ctrl_cnt][1] = arg_parse_int(&arg);
+                    arg_ctrls[arg_ctrl_cnt][1] = arg_parse_enum_or_int(&arg);
                     arg_ctrl_cnt++;
                 }
             }
@@ -867,10 +1298,12 @@ int ivfenc(int argc, const char **argv_)
 
     /* Handle non-option arguments */
     in_fn = argv[0];
-    out_fn = argv[1];
 
-    if (!in_fn || !out_fn)
-        usage_exit();
+    if (!in_fn)
+        usage_exit_ivfenc();
+
+    if (!out_fn)
+        die_ivfenc("Error: Output file is required (specify with -o)\n");
 
     memset(&stats, 0, sizeof(stats));
 
@@ -881,7 +1314,7 @@ int ivfenc(int argc, const char **argv_)
         struct detect_buffer detect;
 
         /* Parse certain options from the input file, if possible */
-        infile = strcmp(in_fn, "-") ? fopen(in_fn, "rb") : stdin;
+        infile = strcmp(in_fn, "-") ? fopen(in_fn, "rb") : set_binary_mode(stdin);
 
         if (!infile)
         {
@@ -889,10 +1322,10 @@ int ivfenc(int argc, const char **argv_)
             return EXIT_FAILURE;
         }
 
-        fread(detect.buf, 1, 4, infile);
-        detect.valid = 0;
+        detect.buf_read = fread(detect.buf, 1, 4, infile);
+        detect.position = 0;
 
-        if (file_is_y4m(infile, &y4m, detect.buf))
+        if (detect.buf_read == 4 && file_is_y4m_ivfenc(infile, &y4m, detect.buf))
         {
             if (y4m_input_open(&y4m, infile, detect.buf, 4) >= 0)
             {
@@ -903,10 +1336,10 @@ int ivfenc(int argc, const char **argv_)
                 /* Use the frame rate from the file only if none was specified
                 * on the command-line.
                 */
-                if (!arg_have_timebase)
+                if (!arg_have_framerate)
                 {
-                    cfg.g_timebase.num = y4m.fps_d;
-                    cfg.g_timebase.den = y4m.fps_n;
+                    arg_framerate.num = y4m.fps_n;
+                    arg_framerate.den = y4m.fps_d;
                 }
 
                 arg_use_i420 = 0;
@@ -917,7 +1350,8 @@ int ivfenc(int argc, const char **argv_)
                 return EXIT_FAILURE;
             }
         }
-        else if (file_is_ivf(infile, &fourcc, &cfg.g_w, &cfg.g_h, detect.buf))
+        else if (detect.buf_read == 4 &&
+                 file_is_ivf_ivfenc(infile, &fourcc, &cfg.g_w, &cfg.g_h, &detect))
         {
             file_type = FILE_TYPE_IVF;
 
@@ -937,7 +1371,13 @@ int ivfenc(int argc, const char **argv_)
         else
         {
             file_type = FILE_TYPE_RAW;
-            detect.valid = 1;
+        }
+
+        if (!cfg.g_w || !cfg.g_h)
+        {
+            fprintf(stderr, "Specify stream dimensions with --width (-w) "
+                    " and --height (-h).\n");
+            return EXIT_FAILURE;
         }
 
 #define SHOW(field) fprintf(stderr, "    %-28s = %d\n", #field, cfg.field)
@@ -989,7 +1429,7 @@ int ivfenc(int argc, const char **argv_)
                 frames.*/
                 memset(&raw, 0, sizeof(raw));
             else
-                vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
+                vpx_img_alloc(&raw, arg_use_i420 ? VPX_IMG_FMT_I420 : VPX_IMG_FMT_YV12,
                               cfg.g_w, cfg.g_h, 1);
 
             // This was added so that ivfenc will create monotically increasing
@@ -997,14 +1437,19 @@ int ivfenc(int argc, const char **argv_)
             // we need to make room in the series of timestamps.  Since there can
             // only be 1 alt-ref frame ( current bitstream) multiplying by 2
             // gives us enough room.
-            cfg.g_timebase.den *= 2;
         }
 
-        outfile = strcmp(out_fn, "-") ? fopen(out_fn, "wb") : stdout;
+        outfile = strcmp(out_fn, "-") ? fopen(out_fn, "wb") : set_binary_mode(stdout);
 
         if (!outfile)
         {
             fprintf(stderr, "Failed to open output file\n");
+            return EXIT_FAILURE;
+        }
+
+        if (write_webm && fseek(outfile, 0, SEEK_CUR))
+        {
+            fprintf(stderr, "WebM output to pipes not supported.\n");
             return EXIT_FAILURE;
         }
 
@@ -1037,12 +1482,16 @@ int ivfenc(int argc, const char **argv_)
 
 #endif
 
-        write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);
+        if (write_webm)
+        {
+            ebml.stream = outfile;
+            write_webm_file_header(&ebml, &cfg, &arg_framerate);
+        }
+        else
+            write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);
 
 
         /* Construct Encoder Context */
-        if (cfg.kf_min_dist == cfg.kf_max_dist)
-            cfg.kf_mode = VPX_KF_FIXED;
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg,
                            show_psnr ? VPX_CODEC_USE_PSNR : 0);
@@ -1069,14 +1518,15 @@ int ivfenc(int argc, const char **argv_)
             vpx_codec_iter_t iter = NULL;
             const vpx_codec_cx_pkt_t *pkt;
             struct vpx_usec_timer timer;
+            int64_t frame_start, next_frame_start;
 
             if (!arg_limit || frames_in < arg_limit)
             {
-                frame_avail = read_frame(infile, &raw, file_type, &y4m,
-                                         &detect);
+                frame_avail = read_frame_vpxenc(infile, &raw, file_type, &y4m,
+                                                &detect);
 
                 if (frame_avail)
-                    frames_in++;
+                    frames_in = frames_in + 1;
 
                 fprintf(stderr,
                         "\rPass %d/%d frame %4d/%-4d %7ldB \033[K", pass + 1,
@@ -1087,10 +1537,14 @@ int ivfenc(int argc, const char **argv_)
 
             vpx_usec_timer_start(&timer);
 
-            // since we halved our timebase we need to double the timestamps
-            // and duration we pass in.
-            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, (frames_in - 1) * 2,
-                             2, 0, arg_deadline);
+            frame_start = (cfg.g_timebase.den * (int64_t)(frames_in - 1)
+                           * arg_framerate.den) / cfg.g_timebase.num / arg_framerate.num;
+            next_frame_start = (cfg.g_timebase.den * (int64_t)(frames_in)
+                                * arg_framerate.den)
+                               / cfg.g_timebase.num / arg_framerate.num;
+            vpx_codec_encode(&encoder, frame_avail ? &raw : NULL, frame_start,
+                             next_frame_start - frame_start,
+                             0, arg_deadline);
             vpx_usec_timer_mark(&timer);
             cx_time += vpx_usec_timer_elapsed(&timer);
             ctx_exit_on_error(&encoder, "Failed to encode frame");
@@ -1106,8 +1560,23 @@ int ivfenc(int argc, const char **argv_)
                     frames_out++;
                     fprintf(stderr, " %6luF",
                             (unsigned long)pkt->data.frame.sz);
-                    write_ivf_frame_header(outfile, pkt);
-                    fwrite(pkt->data.frame.buf, 1, pkt->data.frame.sz, outfile);
+
+                    if (write_webm)
+                    {
+                        if (!ebml.debug)
+                            hash = murmur(pkt->data.frame.buf,
+                                          pkt->data.frame.sz, hash);
+
+                        write_webm_block(&ebml, &cfg, pkt);
+                    }
+                    else
+                    {
+                        write_ivf_frame_header(outfile, pkt);
+
+                        if (fwrite(pkt->data.frame.buf, 1,
+                                   pkt->data.frame.sz, outfile));
+                    }
+
                     nbytes += pkt->data.raw.sz;
                     break;
                 case VPX_CODEC_STATS_PKT:
@@ -1125,8 +1594,16 @@ int ivfenc(int argc, const char **argv_)
                     {
                         int i;
 
+                        psnr_sse_total += pkt->data.psnr.sse[0];
+                        psnr_samples_total += pkt->data.psnr.samples[0];
+
                         for (i = 0; i < 4; i++)
+                        {
                             fprintf(stderr, "%.3lf ", pkt->data.psnr.psnr[i]);
+                            psnr_totals[i] += pkt->data.psnr.psnr[i];
+                        }
+
+                        psnr_count++;
                     }
 
                     break;
@@ -1145,20 +1622,41 @@ int ivfenc(int argc, const char **argv_)
                 "\rPass %d/%d frame %4d/%-4d %7ldB %7ldb/f %7"PRId64"b/s"
                 " %7lu %s (%.2f fps)\033[K", pass + 1,
                 arg_passes, frames_in, frames_out, nbytes, nbytes * 8 / frames_in,
-                nbytes * 8 *(int64_t)cfg.g_timebase.den / 2 / cfg.g_timebase.num / frames_in,
+                nbytes * 8 *(int64_t)arg_framerate.num / arg_framerate.den / frames_in,
                 cx_time > 9999999 ? cx_time / 1000 : cx_time,
                 cx_time > 9999999 ? "ms" : "us",
                 (float)frames_in * 1000000.0 / (float)cx_time);
+
+        if ((show_psnr) && (psnr_count > 0))
+        {
+            int i;
+            double ovpsnr = vp8_mse2psnr(psnr_samples_total, 255.0,
+                                         psnr_sse_total);
+            fprintf(stderr, "\nPSNR (Overall/Avg/Y/U/V)");
+            fprintf(stderr, " %.3lf", ovpsnr);
+
+            for (i = 0; i < 4; i++)
+            {
+                fprintf(stderr, " %.3lf", psnr_totals[i] / psnr_count);
+            }
+        }
 
         vpx_codec_destroy(&encoder);
 
         fclose(infile);
 
-        if (!fseek(outfile, 0, SEEK_SET))
-            write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
+        if (write_webm)
+        {
+            write_webm_file_footer(&ebml, hash);
+        }
+        else
+        {
+            if (!fseek(outfile, 0, SEEK_SET))
+                write_ivf_file_header(outfile, &cfg, codec->fourcc, frames_out);
+        }
 
         fclose(outfile);
-        stats_close_ivfenc(&stats);
+        stats_close_ivfenc(&stats, arg_passes - 1);
         fprintf(stderr, "\n");
 
         if (one_pass_only)

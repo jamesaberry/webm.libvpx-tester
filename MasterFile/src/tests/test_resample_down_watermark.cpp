@@ -4,30 +4,15 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 {
     char *CompressString = "Resample Down Watermark";
     char *MyDir = "test_resample_down_watermark";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -43,12 +28,14 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     std::string DownWaterSamp90OutFile = CurTestDirStr;
     DownWaterSamp90OutFile.append(slashCharStr());
     DownWaterSamp90OutFile.append(MyDir);
-    DownWaterSamp90OutFile.append("_compression_90.ivf");
+    DownWaterSamp90OutFile.append("_compression_90");
+    vpxt_enc_format_append(DownWaterSamp90OutFile, EncForm);
 
     std::string DownWaterSamp10OutFile = CurTestDirStr;
     DownWaterSamp10OutFile.append(slashCharStr());
     DownWaterSamp10OutFile.append(MyDir);
-    DownWaterSamp10OutFile.append("_compression_10.ivf");
+    DownWaterSamp10OutFile.append("_compression_20");
+    vpxt_enc_format_append(DownWaterSamp10OutFile, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -86,7 +73,7 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -126,7 +113,7 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
         opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+        if (vpxt_compress(input.c_str(), DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -135,7 +122,7 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
         opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0) == -1)
+        if (vpxt_compress(input.c_str(), DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -159,7 +146,7 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     int DispKeyFrames10int = vpxt_display_key_frames(DownWaterSamp10OutFile.c_str(), 1);
     int DispResized10int = vpxt_display_resized_frames(DownWaterSamp10OutFile.c_str(), 1);
-    int DispCheckPBMThr10int = vpxt_ivf_check_pbm_threshold(DownWaterSamp10OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkLow);
+    int DispCheckPBMThr10int = vpxt_check_pbm_threshold(DownWaterSamp10OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkLow);
     int RDWMCheck10int = 0;
 
     if (DispResized10int > 0)
@@ -174,7 +161,7 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     int DispKeyFrames90int = vpxt_display_key_frames(DownWaterSamp90OutFile.c_str(), 1);
     int DispResized90int = vpxt_display_resized_frames(DownWaterSamp90OutFile.c_str(), 1);
-    int DispCheckPBMThr90int = vpxt_ivf_check_pbm_threshold(DownWaterSamp90OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkHigh);
+    int DispCheckPBMThr90int = vpxt_check_pbm_threshold(DownWaterSamp90OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkHigh);
     int RDWMCheck90int = -3;
 
     if (DispResized90int > 0)

@@ -4,31 +4,17 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
 {
     char *CompressString = "Allow Spatial Resampling";
     char *MyDir = "test_allow_spatial_resampling";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
-    int speed = 0;
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
+
+    int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -42,12 +28,14 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
     std::string Spatialon = CurTestDirStr;
     Spatialon.append(slashCharStr());
     Spatialon.append(MyDir);
-    Spatialon.append("_compression_1.ivf");
+    Spatialon.append("_compression_1");
+    vpxt_enc_format_append(Spatialon, EncForm);
 
     std::string Spatialoff = CurTestDirStr;
     Spatialoff.append(slashCharStr());
     Spatialoff.append(MyDir);
-    Spatialoff.append("_compression_0.ivf");
+    Spatialoff.append("_compression_0");
+    vpxt_enc_format_append(Spatialoff, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -85,7 +73,7 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -117,7 +105,7 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
         opt.Mode = Mode;
         opt.allow_spatial_resampling = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress(input.c_str(), Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -126,7 +114,7 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
 
         opt.allow_spatial_resampling = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress(input.c_str(), Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -142,7 +130,7 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
         return 10;
     }
 
-    double SpatialResampPSNR = vpxt_ivf_psnr(input.c_str(), Spatialon.c_str(), 0, 0, 1, NULL);
+    double SpatialResampPSNR = vpxt_psnr(input.c_str(), Spatialon.c_str(), 0, 0, 1, NULL);
 
     char SpatialonFileName[255];
     vpxt_file_name(Spatialon.c_str(), SpatialonFileName, 0);

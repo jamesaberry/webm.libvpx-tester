@@ -4,30 +4,15 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
 {
     char *CompressString = "Allow Lag";
     char *MyDir = "test_allow_lag";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -43,12 +28,14 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     std::string AllowLagon = CurTestDirStr;
     AllowLagon.append(slashCharStr());
     AllowLagon.append(MyDir);
-    AllowLagon.append("_compression_1.ivf");
+    AllowLagon.append("_compression_1");
+    vpxt_enc_format_append(AllowLagon, EncForm);
 
     std::string AllowLagoff = CurTestDirStr;
     AllowLagoff.append(slashCharStr());
     AllowLagoff.append(MyDir);
-    AllowLagoff.append("_compression_0.ivf");
+    AllowLagoff.append("_compression_0");
+    vpxt_enc_format_append(AllowLagoff, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -86,7 +73,7 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -116,7 +103,7 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
         opt.Mode = Mode;
         opt.allow_lag = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
+        if (vpxt_compress(input.c_str(), AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -125,7 +112,7 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
 
         opt.allow_lag = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1) == -1)
+        if (vpxt_compress(input.c_str(), AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -141,9 +128,11 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     }
 
     ////////////Make Sure That Frames are lagged////////////
-    std::string QuantInStr = AllowLagon;
-    QuantInStr.erase(QuantInStr.length() - 4, 4);
-    QuantInStr.append("_quantizers.txt");
+    std::string QuantInStr;;
+    vpxt_remove_file_extension(AllowLagon.c_str(), QuantInStr);
+    //std::string QuantInStr = AllowLagon;
+    //QuantInStr.erase(QuantInStr.length() - 4, 4);
+    QuantInStr.append("quantizers.txt");
     char QuantInChar[255] = "";
     snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
 
@@ -158,7 +147,7 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     char AllowLagoffFilename[255];
     vpxt_file_name(AllowLagoff.c_str(), AllowLagoffFilename, 0);
 
-    int lngRC = vpxt_compare_ivf(AllowLagoff.c_str(), AllowLagon.c_str());
+    int lngRC = vpxt_compare_enc(AllowLagoff.c_str(), AllowLagon.c_str());
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 

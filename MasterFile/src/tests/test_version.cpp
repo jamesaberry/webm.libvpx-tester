@@ -4,30 +4,16 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 {
     char *CompressString = "Version";
     char *MyDir = "test_version";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n "
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
+    std::string DecForm = argv[6];
 
     int speed = 0;
 
@@ -44,42 +30,50 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
     std::string Version0 = CurTestDirStr;
     Version0.append(slashCharStr());
     Version0.append(MyDir);
-    Version0.append("_compression_0.ivf");
+    Version0.append("_compression_0");
+    vpxt_enc_format_append(Version0, EncForm);
 
     std::string Version1 = CurTestDirStr;
     Version1.append(slashCharStr());
     Version1.append(MyDir);
-    Version1.append("_compression_1.ivf");
+    Version1.append("_compression_1");
+    vpxt_enc_format_append(Version1, EncForm);
 
     std::string Version2 = CurTestDirStr;
     Version2.append(slashCharStr());
     Version2.append(MyDir);
-    Version2.append("_compression_2.ivf");
+    Version2.append("_compression_2");
+    vpxt_enc_format_append(Version2, EncForm);
 
     std::string Version3 = CurTestDirStr;
     Version3.append(slashCharStr());
     Version3.append(MyDir);
-    Version3.append("_compression_3.ivf");
+    Version3.append("_compression_3");
+    vpxt_enc_format_append(Version3, EncForm);
 
     std::string Version0_Dec = CurTestDirStr;
     Version0_Dec.append(slashCharStr());
     Version0_Dec.append(MyDir);
-    Version0_Dec.append("_decompression_0.ivf");
+    Version0_Dec.append("_decompression_0");
+    vpxt_dec_format_append(Version0_Dec, DecForm);
 
     std::string Version1_Dec = CurTestDirStr;
     Version1_Dec.append(slashCharStr());
     Version1_Dec.append(MyDir);
-    Version1_Dec.append("_decompression_1.ivf");
+    Version1_Dec.append("_decompression_1");
+    vpxt_dec_format_append(Version1_Dec, DecForm);
 
     std::string Version2_Dec = CurTestDirStr;
     Version2_Dec.append(slashCharStr());
     Version2_Dec.append(MyDir);
-    Version2_Dec.append("_decompression_2.ivf");
+    Version2_Dec.append("_decompression_2");
+    vpxt_dec_format_append(Version2_Dec, DecForm);
 
     std::string Version3_Dec = CurTestDirStr;
     Version3_Dec.append(slashCharStr());
     Version3_Dec.append(MyDir);
-    Version3_Dec.append("_decompression_3.ivf");
+    Version3_Dec.append("_decompression_3");
+    vpxt_dec_format_append(Version3_Dec, DecForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -117,7 +111,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -153,7 +147,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         opt.Version = 0;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+        if (vpxt_compress(input.c_str(), Version0.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -162,7 +156,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         opt.Version = 1;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress(input.c_str(), Version1.c_str(), speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -171,7 +165,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         opt.Version = 2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0) == -1)
+        if (vpxt_compress(input.c_str(), Version2.c_str(), speed, BitRate, opt, CompressString, 2, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -180,7 +174,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         opt.Version = 3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0) == -1)
+        if (vpxt_compress(input.c_str(), Version3.c_str(), speed, BitRate, opt, CompressString, 3, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -188,8 +182,8 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
         }
 
         tprintf(PRINT_STD, "\n\n");
-        fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time1 = vpxt_time_decompress_ivf_to_ivf(Version0.c_str(), Version0_Dec.c_str(), Deccpu_tick[0]);
+        //fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time1 = vpxt_time_decompress(Version0.c_str(), Version0_Dec.c_str(), Deccpu_tick[0], DecForm);
 
         if (Time1 == -1)
         {
@@ -199,8 +193,8 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
         }
 
         tprintf(PRINT_STD, "\n");
-        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time2 = vpxt_time_decompress_ivf_to_ivf(Version1.c_str(), Version1_Dec.c_str(), Deccpu_tick[1]);
+        //fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time2 = vpxt_time_decompress(Version1.c_str(), Version1_Dec.c_str(), Deccpu_tick[1], DecForm);
 
         if (Time2 == -1)
         {
@@ -210,8 +204,8 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
         }
 
         tprintf(PRINT_STD, "\n");
-        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time3 = vpxt_time_decompress_ivf_to_ivf(Version2.c_str(), Version2_Dec.c_str(), Deccpu_tick[2]);
+        //fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time3 = vpxt_time_decompress(Version2.c_str(), Version2_Dec.c_str(), Deccpu_tick[2], DecForm);
 
         if (Time3 == -1)
         {
@@ -221,8 +215,8 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
         }
 
         tprintf(PRINT_STD, "\n");
-        fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time4 = vpxt_time_decompress_ivf_to_ivf(Version3.c_str(), Version3_Dec.c_str(), Deccpu_tick[3]);
+        //fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
+        unsigned int Time4 = vpxt_time_decompress(Version3.c_str(), Version3_Dec.c_str(), Deccpu_tick[3], DecForm);
 
         if (Time4 == -1)
         {
@@ -241,10 +235,10 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
         return 10;
     }
 
-    PSNRArr[0] = vpxt_ivf_psnr(input.c_str(), Version0.c_str(), 0, 0, 1, NULL);
-    PSNRArr[1] = vpxt_ivf_psnr(input.c_str(), Version1.c_str(), 0, 0, 1, NULL);
-    PSNRArr[2] = vpxt_ivf_psnr(input.c_str(), Version2.c_str(), 0, 0, 1, NULL);
-    PSNRArr[3] = vpxt_ivf_psnr(input.c_str(), Version3.c_str(), 0, 0, 1, NULL);
+    PSNRArr[0] = vpxt_psnr(input.c_str(), Version0.c_str(), 0, 0, 1, NULL);
+    PSNRArr[1] = vpxt_psnr(input.c_str(), Version1.c_str(), 0, 0, 1, NULL);
+    PSNRArr[2] = vpxt_psnr(input.c_str(), Version2.c_str(), 0, 0, 1, NULL);
+    PSNRArr[3] = vpxt_psnr(input.c_str(), Version3.c_str(), 0, 0, 1, NULL);
 
     tprintf(PRINT_BTH, "\n");
 

@@ -31,7 +31,13 @@ typedef unsigned char       BYTE;
 //ivfdec ivfenc
 extern int ivfdec(int argc, const char **argv_);
 extern int ivfenc(int argc, const char **argv_);
-
+extern void out_put(void *out, const uint8_t *buf, unsigned int len, int do_md5);
+enum video_file_type
+{
+    FILE_TYPE_RAW,
+    FILE_TYPE_IVF,
+    FILE_TYPE_Y4M
+};
 
 int RawDataIVF(const char *input, const char *output)
 {
@@ -87,142 +93,6 @@ int RawDataIVF(const char *input, const char *output)
     fclose(out);
 
     std::cout << "\nFrame Count>: " << Framecount << "\n";
-
-    return 0;
-}
-int IVF2Raw(const char *inputFile, const char *outputDir)
-{
-    int WriteIndFrames = 5;
-
-    FILE *in = fopen(inputFile, "rb");
-    ///////////////////////////////////
-
-    if (in == NULL)
-    {
-        tprintf(PRINT_BTH, "\nInput file does not exist");
-        return 0;
-    }
-
-    int currentVideoFrame = 0;
-    int frameCount = 0;
-    int byteRec = 0;
-
-    IVF_HEADER ivfhRaw;
-
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-    vpxt_format_ivf_header_read(&ivfhRaw);
-
-    /*printf( "IVF DataRate\n\n"
-    "FILE HEADER \n\n"
-    "File Header            - %c%c%c%c \n"
-    "File Format Version    - %i \n"
-    "File Header Size       - %i \n"
-    "Video Data FourCC      - %i \n"
-    "Video Image Width      - %i \n"
-    "Video Image Height     - %i \n"
-    "Frame Rate Rate        - %i \n"
-    "Frame Rate Scale       - %i \n"
-    "Video Length in Frames - %i \n"
-    "Unused                 - %c \n"
-    "\n\n"
-    ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.fourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-    ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
-
-    IVF_FRAME_HEADER ivf_fhRaw;
-
-    fread(&ivf_fhRaw.frameSize, 1, 4, in);
-    fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-    vpxt_format_frame_header_read(ivf_fhRaw);
-
-    frameCount = ivfhRaw.length;
-
-    long nSamples = frameCount;
-    long lRateNum = ivfhRaw.rate;
-    long lRateDenom = ivfhRaw.scale;
-
-    long nSamplesPerBlock = 1;
-
-    long nBytes = 0;
-    long nBytesMin = 999999;
-    long nBytesMax = 0;
-
-    fpos_t position;
-    fgetpos(in, &position);
-    std::cout << "\n";
-
-    std::string OutputDirStrwithQuotes = outputDir;
-
-    if (WriteIndFrames != 5)
-    {
-        OutputDirStrwithQuotes.append("\"");
-        OutputDirStrwithQuotes.insert(0, "md \"");
-        vpxt_make_dir_vpx(OutputDirStrwithQuotes);
-    }
-
-    char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 2];
-
-
-    std::string outputDirStr2 = outputDir;
-    char outputDirChar2[255];
-
-    if (WriteIndFrames != 5)
-    {
-        outputDirStr2.append(slashCharStr());
-        outputDirStr2.append("AllFrames.raw");
-        snprintf(outputDirChar2, 255, "%s", outputDirStr2.c_str());
-    }
-    else
-    {
-        snprintf(outputDirChar2, 255, "%s", outputDirStr2.c_str());
-    }
-
-    FILE *out2 = fopen(outputDirChar2, "wb");
-
-    std::cout << "\n\nConverting to Raw\n";
-
-    while (currentVideoFrame < frameCount)
-    {
-        std::cout << ".";
-        memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 2);
-        //memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
-        fread(inbuff, 1, ivf_fhRaw.frameSize, in);
-
-        std::string outputDirStr = outputDir;
-        char currentVideoFrameStr[10];
-        vpxt_itoa_custom(currentVideoFrame, currentVideoFrameStr, 10);
-        outputDirStr.append(slashCharStr());
-        outputDirStr.append("Frame_");
-        outputDirStr.append(currentVideoFrameStr);
-
-        char outputDirChar[255];
-        snprintf(outputDirChar, 255, "%s", outputDirStr.c_str());
-
-        if (WriteIndFrames == 0 || WriteIndFrames == 5)
-        {
-            fwrite(inbuff, 1, ivf_fhRaw.frameSize, out2);
-        }
-
-        if (WriteIndFrames == 1)
-        {
-            FILE *out = fopen(outputDirChar, "wb");
-            fwrite(inbuff, 1, ivf_fhRaw.frameSize, out);
-            fwrite(inbuff, 1, ivf_fhRaw.frameSize, out2);
-            fclose(out);
-        }
-
-        fread(&ivf_fhRaw.frameSize, 1, 4, in);
-        fread(&ivf_fhRaw.timeStamp, 1, 8, in);
-        vpxt_format_frame_header_read(ivf_fhRaw);
-
-        currentVideoFrame ++;
-    }
-
-    fclose(in);
-    fclose(out2);
-
-    std::cout << "\n";
 
     return 0;
 }
@@ -321,13 +191,13 @@ int DecoderCheck(int argc, const char *const *argv)
 
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput1Char);
     unsigned int CPUTick1 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput1Char, CPUTick1);
+    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput1Char, CPUTick1, "ivf");
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput2Char);
     unsigned int CPUTick2 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput2Char, CPUTick2);
+    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput2Char, CPUTick2, "ivf");
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput3Char);
     unsigned int CPUTick3 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, BeforeCompressionDecOutput3Char, CPUTick3);
+    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput3Char, CPUTick3, "ivf");
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     int speed = 0;
@@ -344,7 +214,7 @@ int DecoderCheck(int argc, const char *const *argv)
     {
         opt.Mode = MODE_GOODQUALITY;
         tprintf(PRINT_STD, "\n\nCompressing %s to %s\n", CompressionInput, CompressionOutput);
-        vpxt_compress_ivf_to_ivf_no_error_output(CompressionInput, CompressionOutput, speed, BitRate, opt, "", 0, 0);
+        vpxt_compress_no_error_output(CompressionInput, CompressionOutput, speed, BitRate, opt, "", 0, 0, "webm");
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -352,107 +222,107 @@ int DecoderCheck(int argc, const char *const *argv)
 
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput1Char);
     unsigned int CPUTick4 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput1Char, CPUTick4);
+    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput1Char, CPUTick4, "ivf");
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput2Char);
     unsigned int CPUTick5 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput2Char, CPUTick5);
+    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput2Char, CPUTick5, "ivf");
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput3Char);
     unsigned int CPUTick6 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output(DecodeInput, AfterCompressionDecOutput3Char, CPUTick6);
+    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput3Char, CPUTick6, "ivf");
 
     std::cout << "\n\n";
 
-    if (vpxt_compare_ivf(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char) == -1)
     {
         std::cout << "\nBefore Compression Files 1 and 2 are identical";
     }
     else
     {
         std::cout << "\nBefore Compression Files 1 and 2 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char);
     }
 
-    if (vpxt_compare_ivf(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char) == -1)
     {
         std::cout << "\nBefore Compression Files 1 and 3 are identical";
     }
     else
     {
         std::cout << "\nBefore Compression Files 1 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char);
     }
 
-    if (vpxt_compare_ivf(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char) == -1)
     {
         std::cout << "\nBefore Compression Files 2 and 3 are identical";
     }
     else
     {
         std::cout << "\nBefore Compression Files 2 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char);
     }
 
     //////////////////////////After//////////////////////////
 
-    if (vpxt_compare_ivf(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char) == -1)
+    if (vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char) == -1)
     {
         std::cout << "\nAfter Compression Files 1 and 2 are identical";
     }
     else
     {
         std::cout << "\nAfter Compression Files 1 and 2 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char);
     }
 
-    if (vpxt_compare_ivf(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char) == -1)
     {
         std::cout << "\nAfter Compression Files 1 and 3 are identical";
     }
     else
     {
         std::cout << "\nAfter Compression Files 1 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char);
     }
 
-    if (vpxt_compare_ivf(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char) == -1)
     {
         std::cout << "\nAfter Compression Files 2 and 3 are identical ";
     }
     else
     {
         std::cout << "\nAfter Compression Files 2 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char);
     }
 
 
-    if (vpxt_compare_ivf(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char) == -1)
     {
         std::cout << "\nBefore Compression File 1 and After Compression File 1 are identical ";
     }
     else
     {
         std::cout << "\nBefore Compression File 1 and After Compression File 1 are not identical : ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char);
     }
 
-    if (vpxt_compare_ivf(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char) == -1)
     {
         std::cout << "\nBefore Compression File 2 and After Compression File 2 are identical ";
     }
     else
     {
         std::cout << "\nBefore Compression File 2 and After Compression File 2 are not identical : ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char);
     }
 
-    if (vpxt_compare_ivf(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char) == -1)
     {
         std::cout << "\nBefore Compression File 3 and After Compression File 3 are identical ";
     }
     else
     {
         std::cout << "\nBefore Compression File 3 and After Compression File 3 are not identical : ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_ivf(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char);
     }
 
     return 0;
@@ -3824,8 +3694,11 @@ int tool_array_cov_fail_list_to_full_list(int argc, const char *const *argv)
         {
             if (!(x >= 1412 && x <= 1431) && !(x >= 1728 && x <= 1735) && !(x >= 1744 && x <= 1749) && !(x >= 1778 && x <= 1800) && !(x >= 1885 && x <= 1959) && !(x >= 2530 && x <= 2544) && !(x >= 2773 && x <= 2784))
             {
-                std::string TempBuffer = FullPossibleRes[x];
-                TempBuffer.erase(TempBuffer.length() - 4, 4);
+                std::string TempBuffer;
+                vpxt_remove_file_extension(FullPossibleRes[x].c_str(), TempBuffer);
+                //std::string TempBuffer = FullPossibleRes[x];
+                //TempBuffer.erase(TempBuffer.length() - 4, 4);
+                TempBuffer.erase(TempBuffer.length() - 1, 1);
                 TempBuffer.append("Pass");
                 std::string OutputStr = TempBuffer.substr(28, TempBuffer.length() - 28);
                 Outfile << OutputStr << "\n";
@@ -3914,85 +3787,10 @@ int tool_array_cov_summary_file(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_api_compress(int argc, const char *const *argv)
-{
-#ifdef API
-
-    if (argc != 7)
-    {
-        tprintf(PRINT_STD,
-                "\n  APICompress \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <width>\n"
-                "    <height>\n"
-                "    <frame rate>\n"
-               );
-
-        return 0;
-    }
-
-    std::string input = argv[2];
-    std::string output = argv[3];
-    int width = atoi(argv[4]);
-    int height = atoi(argv[5]);
-    double framerate = (double)atoi(argv[6]);
-
-    VP8_CONFIG testname;
-    vpxt_default_parameters(testname);
-
-    testname = vpxt_input_settings("C:\\Users\\jberry\\Desktop\\AllowDFOnOutput_Paramaters.txt");
-    API20Encoder(width, height, input.c_str(), output.c_str());
-
-#else
-    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
-#endif
-
-    return 0;
-}
-int tool_api_decompress(int argc, const char *const *argv)
-{
-
-#ifdef API
-
-    if (argc != 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  APIDecompress \n\n"
-                "    <Input File>\n"
-                "    <Codec - vp8>\n"
-                "    <outputfile>\n"
-               );
-        return 0;
-    }
-
-    std::string input = argv[2];
-    std::string codec = argv[3];
-    std::string output = argv[4];
-
-    API20Decoder(input.c_str(), output.c_str());
-#else
-    tprintf(PRINT_STD, "\n Function Not supported in current build \n");
-#endif
-
-    return 0;
-}
-
 int tool_combine_indv_frames(int argc, const char *const *argv)
 {
     if (argc != 8)
-    {
-        tprintf(PRINT_STD,
-                "\n  MakeRawFromIndvFrames\n\n"
-                "    <Input Director>\n"
-                "    <Namebase>\n"
-                "    <File Extension - include .>\n"
-                "    <First Frame - Include preceding zeros>\n"
-                "    <Last  Frame - Include preceding zeros>\n"
-                "    <Output File>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     std::string inputDir = argv[2];
     std::string namebase = argv[3];
@@ -4100,26 +3898,19 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
     fclose(out);
     return 0;
 }
-int tool_compare_ivf(int argc, const char *const *argv)
+int tool_compare_enc(int argc, const char *const *argv)
 {
     if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  CompareIVF\n\n"
-                "     <inputfile1>\n"
-                "     <inputfile2>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     std::string Output1 = argv[2];
     std::string Output2 = argv[3];
 
     tprintf(PRINT_STD, "\nComparing Files:\n\n");
-    tprintf(PRINT_STD, "%s\n", Output1);
-    tprintf(PRINT_STD, "%s\n", Output2);
+    tprintf(PRINT_STD, "%s\n", Output1.c_str());
+    tprintf(PRINT_STD, "%s\n", Output2.c_str());
 
-    int CompIVFOutput = vpxt_compare_ivf(Output1.c_str(), Output2.c_str());
+    int CompIVFOutput = vpxt_compare_enc(Output1.c_str(), Output2.c_str());
 
     if (CompIVFOutput == -1)
     {
@@ -4136,7 +3927,43 @@ int tool_compare_ivf(int argc, const char *const *argv)
         tprintf(PRINT_STD, "\n\nFail: File 1 ends before File 2.\n");
     }
 
-    if (CompIVFOutput != -1 && CompIVFOutput != -2 && CompIVFOutput != -3)
+    if (CompIVFOutput != -1 && CompIVFOutput != -2 && CompIVFOutput != -3 && CompIVFOutput != -5)
+    {
+        tprintf(PRINT_STD, "\nFILES DIFFER AT FRAME: %i\n", CompIVFOutput);
+    }
+
+    return 0;
+}
+int tool_compare_dec(int argc, const char *const *argv)
+{
+    if (argc < 3)
+        return vpxt_tool_help(argv[1], 0);
+
+    std::string Output1 = argv[2];
+    std::string Output2 = argv[3];
+
+    tprintf(PRINT_STD, "\nComparing Files:\n\n");
+    tprintf(PRINT_STD, "%s\n", Output1.c_str());
+    tprintf(PRINT_STD, "%s\n", Output2.c_str());
+
+    int CompIVFOutput = vpxt_compare_dec(Output1.c_str(), Output2.c_str());
+
+    if (CompIVFOutput == -1)
+    {
+        tprintf(PRINT_STD, "\n Files Contain Identical Video Data\n");
+    }
+
+    if (CompIVFOutput == -2)
+    {
+        tprintf(PRINT_STD, "\n\nFail: File 2 ends before File 1.\n");
+    }
+
+    if (CompIVFOutput == -3)
+    {
+        tprintf(PRINT_STD, "\n\nFail: File 1 ends before File 2.\n");
+    }
+
+    if (CompIVFOutput != -1 && CompIVFOutput != -2 && CompIVFOutput != -3 && CompIVFOutput != -5)
     {
         tprintf(PRINT_STD, "\nFILES DIFFER AT FRAME: %i\n", CompIVFOutput);
     }
@@ -4421,6 +4248,24 @@ int tool_compare_code_coverage(int argc, const char *const *argv)
 
     return 0;
 }
+int tool_compare_header_info(int argc, const char *const *argv)
+{
+    if (argc < 3)
+        return vpxt_tool_help(argv[1], 0);
+
+    vpxt_compare_header_info(argc, argv);
+
+    return 0;
+}
+int tool_display_header_info(int argc, const char *const *argv)
+{
+    if (argc < 3)
+        return vpxt_tool_help(argv[1], 0);
+
+    vpxt_display_header_info(argc, argv);
+
+    return 0;
+}
 int tool_compression_equiv(int argc, const char *const *argv, std::string WorkingDir)
 {
     char *CompressString = "Allow DF";
@@ -4433,6 +4278,7 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
                 "    <outputfile>\n"
                 "    <Bit Rate>\n"
                 "    <Mode>\n"
+                "    <ivf/webm>\n"
                 "    <Optional - Parameter File>\n"
                 "\n");
 
@@ -4443,6 +4289,7 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     std::string output = argv[3];
     int BitRate = atoi(argv[4]);
     int Mode = atoi(argv[5]);
+    std::string EncForm = argv[6];
 
     int speed = 0;
 
@@ -4451,7 +4298,7 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
 
     opt.target_bandwidth = BitRate;
 
-    if (argc == 7)
+    if (argc == 8)
     {
         opt = vpxt_input_settings(argv[6]);
     }
@@ -4469,20 +4316,20 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     if (Mode == 0)
     {
         opt.Mode = MODE_REALTIME;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+        vpxt_compress_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *)output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress((char *)input.c_str(), (char *)output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, EncForm);
     }
 
     if (Mode == 1)
     {
         opt.Mode = MODE_GOODQUALITY;
 
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress((char *)input.c_str(), (char *)output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+        vpxt_compress_no_error_output((char *)input.c_str(), (char *)output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, EncForm);
 
     }
 
@@ -4490,10 +4337,10 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     {
         opt.Mode = MODE_BESTQUALITY;
 
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+        vpxt_compress_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, EncForm);
     }
 
     if (Mode == 3)
@@ -4504,34 +4351,34 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     if (Mode == 4)
     {
         opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
 
         opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
 
         opt.Mode = MODE_SECONDPASS;
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, EncForm);
     }
 
     if (Mode == 5)
     {
         opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress((char *)input.c_str(), (char *) output1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
 
         opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_no_error_output((char *)input.c_str(), (char *) output2.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
 
         opt.Mode = MODE_SECONDPASS_BEST;
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, EncForm);
     }
 
-    if (vpxt_compare_ivf((char *)output1.c_str(), (char *)output2.c_str()) == -1)
+    if (vpxt_compare_enc((char *)output1.c_str(), (char *)output2.c_str()) == -1)
     {
         std::cout << "Pass - No Error Output and standard Do match \n";
 
-        if (vpxt_compare_ivf((char *)output2.c_str(), (char *)output3.c_str()) == -1)
+        if (vpxt_compare_enc((char *)output2.c_str(), (char *)output3.c_str()) == -1)
         {
             std::cout << "Pass - Time Compress and No Error Output match\n\n";
             std::cout << "\nAll compressions are equal. - Pass\n\n";
@@ -4560,18 +4407,18 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     output4DEC.append("_DecompressIVFtoIVFTimeAndOutput.ivf");
 
     std::cout << "DecompressIVFtoIVF\n";
-    vpxt_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output1DEC.c_str());
+    vpxt_decompress((char *)output1.c_str(), (char *) output1DEC.c_str(), "ivf");
     std::cout << "\nDecompressIVFtoIVFNoOutput\n";
-    vpxt_decompress_ivf_to_ivf_no_output((char *)output1.c_str(), (char *) output2DEC.c_str());
+    vpxt_decompress_no_output((char *)output1.c_str(), (char *) output2DEC.c_str(), "ivf");
     std::cout << "\nTimeDecompressIVFtoIVF\n";
     unsigned int CPUTick1 = 0;
-    vpxt_time_decompress_ivf_to_ivf((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick1);
+    vpxt_time_decompress((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick1, "ivf");
     std::cout << "\nDecompressIVFtoIVFTimeAndOutput\n";
     unsigned int CPUTick2 = 0;
-    vpxt_decompress_ivf_to_ivf_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2);
+    vpxt_decompress_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2, "ivf");
     std::cout << "\n\n";
 
-    if (vpxt_compare_ivf((char *) output1DEC.c_str(), (char *) output2DEC.c_str()) == -1)
+    if (vpxt_compare_enc((char *) output1DEC.c_str(), (char *) output2DEC.c_str()) == -1)
     {
         std::cout << "Pass DecompressIVFtoIVF == DecompressIVFtoIVFNoOutput\n";
     }
@@ -4584,30 +4431,19 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     return 0;
 }
 
-int tool_compr_ivf_to_ivf(int argc, const char *const *argv, std::string WorkingDir)
+int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir)
 {
     char *CompressString = "Allow DF";
 
-    if (argc < 7 || argc > 8)
-    {
-        tprintf(PRINT_STD,
-                "\n  Compress IVF to IVF \n\n"
-                "    <(1)Normal Compress |(2)TimeCompress>\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Bit Rate>\n"
-                "    <Mode>\n"
-                "    <Optional - Parameter File>\n"
-                "\n");
-
-        return 0;
-    }
+    if (argc < 8 || argc > 9)
+        return vpxt_tool_help(argv[1], 0);
 
     int CompressionType = atoi(argv[2]);
     std::string input = argv[3];
     std::string output = argv[4];
     int BitRate = atoi(argv[5]);
     int Mode = atoi(argv[6]);
+    std::string EncForm = argv[7];
 
     int speed = 0;
 
@@ -4635,14 +4471,12 @@ int tool_compr_ivf_to_ivf(int argc, const char *const *argv, std::string Working
     opt.Mode = Mode;
 
     if (CompressionType == 1)
-    {
-        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
-    }
+        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
 
     if (CompressionType == 2)
     {
         unsigned int CPUTick = 0;
-        vpxt_time_compress_ivf_to_ivf(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick);
+        vpxt_time_compress(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, EncForm);
     }
 
     ////////////Track Mem Usage//////////
@@ -4677,26 +4511,34 @@ int tool_comp_matches_ivfenc(int argc, const char *const *argv)
     vpxt_file_name(input.c_str(), FileNameChar, 0);
 
     /////////////////////Tester Par File//////////////////
-    std::string OutputsettingsFile = output;
-    OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
+    //std::string OutputsettingsFile = output;
+    //OutputsettingsFile.erase(OutputsettingsFile.length() - 4, 4);
+    std::string OutputsettingsFile;
+    vpxt_remove_file_extension(output.c_str(), OutputsettingsFile);
     std::string OutputsettingsFile2 = OutputsettingsFile;
-    OutputsettingsFile.append("_parameters_core.txt");
+    OutputsettingsFile.append("parameters_core.txt");
     /////////////////////IVFenc Par File//////////////////
-    OutputsettingsFile2.append("_IVFEnc_parameters.txt");
+    OutputsettingsFile2.append("IVFEnc_parameters.txt");
     /////////////////////Tester IVF Comp//////////////////
     /////////////////////IVFENC IVF Comp//////////////////
-    std::string IVFEncOutput1STR = input;
-    std::string IVFEncOutput2STR = input;
-    IVFEncOutput1STR.erase(IVFEncOutput1STR.length() - 4, 4);
-    IVFEncOutput2STR.erase(IVFEncOutput2STR.length() - 4, 4);
-    IVFEncOutput1STR.append("_IVFENC.ivf");
-    IVFEncOutput2STR.append("_IVFENC.yuv");
+    //std::string IVFEncOutput1STR = input;
+    //std::string IVFEncOutput2STR = input;
+    //IVFEncOutput1STR.erase(IVFEncOutput1STR.length() - 4, 4);
+    //IVFEncOutput2STR.erase(IVFEncOutput2STR.length() - 4, 4);
+    std::string IVFEncOutput1STR;
+    vpxt_remove_file_extension(input.c_str(), IVFEncOutput1STR);
+    IVFEncOutput1STR.append("IVFENC.ivf");
+    std::string IVFEncOutput2STR;
+    vpxt_remove_file_extension(input.c_str(), IVFEncOutput2STR);
+    IVFEncOutput2STR.append("IVFENC.yuv");
     /////////////////////IVF Source to Raw///////////////
-    std::string RawInput = input;
-    std::string RawInputNameOnly = FileNameChar;
+    //std::string RawInput = input;
+    //RawInput.erase(RawInput.length() - 4, 4);
+    std::string RawInput;
+    vpxt_remove_file_extension(input.c_str(), RawInput);
+    RawInput.append("Raw.yuv");
 
-    RawInput.erase(RawInput.length() - 4, 4);
-    RawInput.append("_Raw.yuv");
+    std::string RawInputNameOnly = FileNameChar;
     RawInputNameOnly.append("_Raw.yuv");
     //////////////////////////////////////////////////////
 
@@ -4754,19 +4596,19 @@ int tool_comp_matches_ivfenc(int argc, const char *const *argv)
     if (Mode == 0)
     {
         opt.Mode = MODE_REALTIME;
-        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, "webm");
     }
 
     if (Mode == 1)
     {
         opt.Mode = MODE_GOODQUALITY;
-        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, "webm");
     }
 
     if (Mode == 2)
     {
         opt.Mode = MODE_BESTQUALITY;
-        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, "webm");
     }
 
     if (Mode == 3)
@@ -4776,17 +4618,17 @@ int tool_comp_matches_ivfenc(int argc, const char *const *argv)
     if (Mode == 4)
     {
         opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, "webm");
     }
 
     if (Mode == 5)
     {
         opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_ivf_to_ivf_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0);
+        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, "webm");
     }
 
     vpxt_convert_par_file_to_ivfenc(ParameterFileTesterFP, ParameterFileIVFEncFP);  //Make IVFENC Parameter file from Tester Parameter File
-    IVF2Raw(input.c_str(), RawInputFP);                                             //Make Raw YUV File from IVF Input
+    vpxt_formatted_to_raw(input.c_str(), RawInputFP);                                             //Make Raw YUV File from IVF Input
 
     int Width = opt.Width;
     int Height = opt.Height;
@@ -4817,7 +4659,7 @@ int tool_comp_matches_ivfenc(int argc, const char *const *argv)
 
     system(Program.c_str());
 
-    int CompResult = vpxt_compare_ivf(IVFEncOutput1FP, output.c_str());
+    int CompResult = vpxt_compare_enc(IVFEncOutput1FP, output.c_str());
 
     if (CompResult == -1)
     {
@@ -4848,14 +4690,7 @@ int tool_convert_par_file_to_ivfenc(int argc, const char *const *argv)
 int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv)
 {
     if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Convert Parameter File to vpxenc settings\n\n"
-                "     <input core file>\n"
-                "     <input api file>\n"
-                "\n");
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     tprintf(PRINT_STD, "\n\nequivalent vpxenc settings:\n");
     vpxt_convert_par_file_to_vpxenc(argv[2], argv[3]);
@@ -4865,13 +4700,7 @@ int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv)
 int tool_create_rand_par_file(int argc, const char *const *argv)
 {
     if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  RandomParFile\n\n"
-                "    <Output Par File>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     std::string output = argv[2];
 
@@ -4882,22 +4711,10 @@ int tool_create_rand_par_file(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_crop_raw_ivf(int argc, const char *const *argv)
+int tool_crop_raw_clip(int argc, const char *const *argv)
 {
     if (argc < 8)
-    {
-        tprintf(PRINT_STD,
-                "\n  CropRawIVF\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <xoffset>\n"
-                "    <yoffset>\n"
-                "    <New Frame Width>\n"
-                "    <New Frame Height>\n"
-                "    <Raw/IVF 0-Raw 1-IVF>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     std::string inputFile = argv[2];
     std::string outputFile = argv[3];
@@ -4907,7 +4724,21 @@ int tool_crop_raw_ivf(int argc, const char *const *argv)
     int newFrameHeight = atoi(argv[7]);
     int FileIsIVF  = atoi(argv[8]);
 
-    vpxt_crop_raw_ivf(inputFile.c_str(), outputFile.c_str(), xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF, 0);
+    vpxt_crop_raw_clip(inputFile.c_str(), outputFile.c_str(), xoffset, yoffset, newFrameWidth, newFrameHeight, FileIsIVF, 0);
+    tprintf(PRINT_STD, "\n");
+    return 0;
+}
+int tool_pad_raw_clip(int argc, const char *const *argv)
+{
+    if (argc < 6)
+        return vpxt_tool_help(argv[1], 0);
+
+    std::string inputFile = argv[2];
+    std::string outputFile = argv[3];
+    int newFrameWidth = atoi(argv[4]);
+    int newFrameHeight = atoi(argv[5]);
+    int FileIsIVF  = atoi(argv[6]);
+    vpxt_pad_raw_clip(inputFile.c_str(), outputFile.c_str(), newFrameWidth, newFrameHeight, FileIsIVF, 0);
     return 0;
 }
 int tool_pad_raw_ivf(int argc, const char *const *argv)
@@ -5344,63 +5175,39 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 int tool_cut_ivf(int argc, const char *const *argv)
 {
     if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  CutIVF\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Starting Frame>\n"
-                "    <Ending Frame>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     std::string inputFile = argv[2];
     std::string outputFile = argv[3];
     int StartingFrame = atoi(argv[4]);
     int EndingFrame = atoi(argv[5]);
 
-    vpxt_cut_ivf(inputFile.c_str(), outputFile.c_str(), StartingFrame, EndingFrame);
+    vpxt_cut_clip(inputFile.c_str(), outputFile.c_str(), StartingFrame, EndingFrame);
 
     return 0;
 }
-int tool_dec_ivf_to_ivf(int argc, const char *const *argv)
+int tool_vpxt_dec(int argc, const char *const *argv)
 {
     if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Decompress IVF to IVF \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "\n");
+        return vpxt_tool_help(argv[1], 0);
 
-        return 0;
-    }
+    std::string inputFile = argv[2];
+    std::string outputFile = argv[3];
+    std::string DecForm = argv[4];
+
+    vpxt_decompress_no_output(inputFile.c_str(), outputFile.c_str(), DecForm);
+
+    return 0;
+}
+int tool_vpxt_dec_to_raw(int argc, const char *const *argv)
+{
+    if (argc < 4)
+        return vpxt_tool_help(argv[1], 0);
 
     std::string inputFile = argv[2];
     std::string outputFile = argv[3];
 
-    vpxt_decompress_ivf_to_ivf_no_output(inputFile.c_str(), outputFile.c_str());
-
-    return 0;
-}
-int tool_dec_ivf_to_raw(int argc, const char *const *argv)
-{
-    if (argc < 4)
-    {
-        tprintf(PRINT_STD,
-                "\n  Decompress IVF to Raw \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "\n");
-
-        return 0;
-    }
-
-    std::string inputFile = argv[2];
-    std::string outputFile = argv[3];
-
-    vpxt_decompress_ivf_to_raw(inputFile.c_str(), outputFile.c_str());
+    vpxt_decompress_to_raw(inputFile.c_str(), outputFile.c_str());
 
     return 0;
 }
@@ -5832,14 +5639,7 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
 int tool_disp_alt_ref_frames(int argc, const char *const *argv)
 {
     if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayAltRefFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n"
-                "\n");
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     int altrefframes = vpxt_display_alt_ref_frames(argv[2], atoi(argv[3]));
     tprintf(PRINT_STD, "\nAlternate Reference Frames Found: %i\n", altrefframes);
@@ -5878,14 +5678,7 @@ int tool_disp_frame_data(int argc, const char *const *argv)
 int tool_disp_key_frames(int argc, const char *const *argv)
 {
     if (argc < 3)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DispKeyFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n"
-                "\n");
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     int keyframecount = vpxt_display_key_frames(argv[2], atoi(argv[3]));
     tprintf(PRINT_STD, "\nKey Frames Found: %i\n", keyframecount);
@@ -5895,14 +5688,7 @@ int tool_disp_key_frames(int argc, const char *const *argv)
 int tool_disp_resized_frames(int argc, const char *const *argv)
 {
     if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayResizedFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 1 | 0 Print to screen>\n"
-                "\n");
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     int resizedframes = vpxt_display_resized_frames(argv[2], atoi(argv[3]));
     tprintf(PRINT_STD, "\nResized Frames Found: %i\n", resizedframes);
@@ -5911,14 +5697,7 @@ int tool_disp_resized_frames(int argc, const char *const *argv)
 int tool_disp_visible_frames(int argc, const char *const *argv)
 {
     if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  DisplayVisibleFrames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n"
-                "\n");
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     int visframenum = vpxt_display_visible_frames(argv[2], atoi(argv[3]));
     tprintf(PRINT_STD, "\nVisible Frames Found: %i\n", visframenum);
@@ -6185,19 +5964,10 @@ int tool_format_summary(int argc, const char *const *argv)
     return 0;
 }
 
-int tool_ivf_check_pbm_run(int argc, const char *const *argv)
+int tool_vpxt_check_pbm_run(int argc, const char *const *argv)
 {
     if (argc < 6)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVFCheckPBM\n\n"
-                "     <input>\n"
-                "     <bitrate>\n"
-                "     <bufferSize>\n"
-                "     <prebuffer>\n"
-                "\n");
-        exit(0);
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     std::string inputFile = argv[2];
     int bitRate = atoi(argv[3]);
@@ -6205,7 +5975,7 @@ int tool_ivf_check_pbm_run(int argc, const char *const *argv)
     int preBuffer = atoi(argv[5]);
     int outputme;
 
-    outputme = vpxt_ivf_check_pbm(inputFile.c_str(), bitRate, maxBuffer, preBuffer);
+    outputme = vpxt_check_pbm(inputFile.c_str(), bitRate, maxBuffer, preBuffer);
 
     if (outputme == -11)
     {
@@ -6218,18 +5988,12 @@ int tool_ivf_check_pbm_run(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_ivf_data_rate(int argc, const char *const *argv)
+int tool_vpxt_data_rate(int argc, const char *const *argv)
 {
     if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVF DataRate \n\n"
-                "    <Input File>\n"
-                "\n");
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
-    vpxt_ivf_data_rate(argv[2], 2);
+    vpxt_data_rate(argv[2], 2);
 
     return 1;
 }
@@ -6237,18 +6001,10 @@ int tool_ivf_dec_test_vector_check(int argc, const char *const *argv)
 {
     return 0;
 }
-int tool_ivf_psnr_run(int argc, const char *const *argv)
+int tool_vpxt_psnr_run(int argc, const char *const *argv)
 {
     if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVFPSNR\n\n"
-                "     <Raw IVF File>\n"
-                "     <Comp IVF File>\n"
-                "     <Run SSIM 0 no 1 yes>\n"
-                "\n");
-        exit(0);
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     double runssim = 1;
     std::string Raw = argv[2];
@@ -6256,70 +6012,46 @@ int tool_ivf_psnr_run(int argc, const char *const *argv)
 
     if (atoi(argv[4]) == 1)
     {
-        vpxt_ivf_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, &runssim);
+        vpxt_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, &runssim);
     }
     else
     {
-        vpxt_ivf_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, NULL);
+        vpxt_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, NULL);
     }
 
     tprintf(PRINT_STD, "\n");
 
     return 0;
 }
-int tool_ivf_to_raw(int argc, const char *const *argv)
+int tool_formatted_to_raw(int argc, const char *const *argv)
 {
     if (argc < 4)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  IVF2Raw \n\n"
-                "    <Input File>\n"
-                "    <Output File>\n"
-                "\n");
+        return vpxt_tool_help(argv[1], 0);
 
-        return 0;
-    }
-
-    IVF2Raw(argv[2], argv[3]);
+    vpxt_formatted_to_raw(argv[2], argv[3]);
     return 0;
 }
-int tool_ivf_to_raw_frames(int argc, const char *const *argv)
+int tool_formatted_to_raw_frames(int argc, const char *const *argv)
 {
     if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  IVF2RawFrames\n\n"
-                "    <Input File>\n"
-                "    <OutPutDir>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
-    tprintf(PRINT_STD, "\nConverting to Raw and Individual Frames.\n");
-    vpxt_ivf_to_raw_frames(argv[2], argv[3]);
+    tprintf(PRINT_STD, "\nConverting to Individual Frames.\n");
+    vpxt_formatted_to_raw_frames(argv[2], argv[3]);
     return 0;
 }
 
-int tool_paste_ivf(int argc, const char *const *argv)
+int tool_paste_clip(int argc, const char *const *argv)
 {
     if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  PasteIVF\n\n"
-                "    <Inputfile1>\n"
-                "    <Inputfile2>\n"
-                "    <Outputfile>\n"
-                "    <First Paste Frame>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
     std::string inputFile1 = argv[2];
     std::string inputFile2 = argv[3];
     std::string outputFile = argv[4];
     int StartingFrame = atoi(argv[5]);
 
-    vpxt_paste_ivf(inputFile1.c_str(), inputFile2.c_str(), outputFile.c_str(), StartingFrame);
+    vpxt_paste_clip(inputFile1.c_str(), inputFile2.c_str(), outputFile.c_str(), StartingFrame);
 
     return 0;
 }
@@ -6327,13 +6059,7 @@ int tool_paste_ivf(int argc, const char *const *argv)
 int tool_play_comp_ivf(int argc, const char *const *argv)
 {
     if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  PlayCompIVF\n\n"
-                "    <Input File>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
 #if defined(__APPLE__)
     {
@@ -6370,8 +6096,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
     std::string output = argv[2];
     output.append("_DEC.ivf.raw");
 
-    tprintf(PRINT_STD, "\n\nAPI - Decompressing VP8 IVF File to Raw File: \n");
-    vpxt_decompress_ivf_to_raw_no_error_output(input.c_str(), output.c_str());
+    //tprintf(PRINT_STD, "\n\nAPI - Decompressing VP8 IVF File to Raw File: \n");
 
     /////////////////////Read In Data From IVF File/////////////////////
     FILE *in = fopen(input.c_str(), "rb");
@@ -6386,6 +6111,14 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
 
     InitIVFHeader(&ivfhRaw);
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
+
+    std::string IVFCheck = (char *) ivfhRaw.signature;
+
+    if (IVFCheck.compare("DKIF") != 0)
+    {
+        tprintf(PRINT_STD, "\nError: Input file is not IVF\n");
+        return 0;
+    }
 
     char WidthChar[256];
     char HeightChar[256];
@@ -6403,6 +6136,8 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
     vpxt_itoa_custom(YUV, YUVChar, 10);
     fclose(in);
     ////////////////////////////////////////////////////////////////////
+
+    vpxt_decompress_to_raw_no_error_output(input.c_str(), output.c_str());
 
     std::string Program;
 
@@ -6493,13 +6228,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
 int tool_play_dec_ivf(int argc, const char *const *argv)
 {
     if (argc < 3)
-    {
-        tprintf(PRINT_STD,
-                "\n  PlayDecIVF\n\n"
-                "    <Input File>\n"
-               );
-        return 0;
-    }
+        return vpxt_tool_help(argv[1], 0);
 
 #if defined(linux)
     {
@@ -6536,10 +6265,6 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
     std::string output = argv[2];
     output.append(".raw");
 
-    tprintf(PRINT_STD, "\n\nConvereting to Raw.");
-
-    vpxt_ivf_to_raw(input.c_str(), output.c_str());
-
     /////////////////////Read In Data From IVF File/////////////////////
     FILE *in = fopen(input.c_str(), "rb");
 
@@ -6553,6 +6278,14 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
 
     InitIVFHeader(&ivfhRaw);
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
+
+    std::string IVFCheck = (char *) ivfhRaw.signature;
+
+    if (IVFCheck.compare("DKIF") != 0)
+    {
+        tprintf(PRINT_STD, "\nError: Input file is not IVF\n");
+        return 0;
+    }
 
     char WidthChar[256];
     char HeightChar[256];
@@ -6576,6 +6309,10 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
 
     fclose(in);
     ////////////////////////////////////////////////////////////////////
+
+    tprintf(PRINT_STD, "\n\nConvereting to Raw.");
+
+    vpxt_formatted_to_raw(input.c_str(), output.c_str());
 
     std::string Program;
 
@@ -6685,7 +6422,7 @@ int tool_print_cpu_info()
 
     return 0;
 }
-
+int tool_random_multi_test(int argc, const char *const *argv)
 int tool_random_multi_test(int argc, const char *const *argv)
 {
     if (argc < 5)
@@ -7320,28 +7057,666 @@ int tool_random_multi_test(int argc, const char *const *argv)
     outfile.close();
     return 0;
 }
-int tool_raw_to_ivf(int argc, const char *const *argv)
 {
-    if (argc < 8)
+    if (argc < 5)
     {
         tprintf(PRINT_STD,
-                "\n  Raw2IVF\n\n"
-                "    <Input File>\n"
-                "    <OutPutDir>\n"
-                "    <Width>\n"
-                "    <Height>\n"
-                "    <FrameRate>\n"
-                "    <FourCC>\n"
+                "\n  Random Multi Test\n\n"
+                "    <Input Dir>\n"
+                "    <Output Txt File>\n"
+                "    <Input Number of Tests to Run>\n"
                );
         return 0;
     }
 
+    std::string InputIVFDir = argv[2];
+    std::string OutputTestFile = argv[3];
+    int NumberOfTestsToRun = atoi(argv[4]);
+    char OutputTestFileName[255];
+    vpxt_file_name(OutputTestFile.c_str(), OutputTestFileName, 1);
+    std::string ParameterFilesFolder = InputIVFDir;
+    ParameterFilesFolder.append("\\");
+    ParameterFilesFolder.append(OutputTestFileName);
+    vpxt_make_dir(ParameterFilesFolder);
+    ParameterFilesFolder.append("\\");
+    std::string TestVectorFolder = InputIVFDir;
+    TestVectorFolder.append("\\TestVectors");
+    std::vector<std::string> FileNamesVector;
+    std::vector<std::string> IVFFileNamesVector;
+    vpxt_list_files_in_dir(FileNamesVector, InputIVFDir.c_str());
+    printf("\n");
+    int i = 0;
+
+    while (i < FileNamesVector.size())
+    {
+        if (!FileNamesVector[i].substr(FileNamesVector[i].length() - 4, 4).compare(".ivf"))
+            IVFFileNamesVector.push_back(FileNamesVector[i].c_str());
+
+        i++;
+    }
+
+    printf("\n");
+    i = 0;
+
+    while (i < IVFFileNamesVector.size())
+    {
+        printf("IVF file found %i %s\n", i, IVFFileNamesVector[i].c_str());
+        i++;
+    }
+
+    if (IVFFileNamesVector.size() == 0)
+    {
+        printf("Error - No ivf files found in directory %s\n", InputIVFDir.c_str());
+        return 0;
+    }
+
+    std::string DoneStr = "done";
+    char inputBuffer[255];
+    std::vector<int> ValidTestNumbers;
+    vpxt_on_error_output();
+    printf("\nPlease input test names or numbers to include (\"done\" to exit):\n");
+
+    while (DoneStr.compare(inputBuffer) != 0)
+    {
+        std::cin.getline(inputBuffer, 255);
+        int TestNumber = vpxt_identify_test(inputBuffer);
+
+        if (TestNumber > 0 && TestNumber <= MAXTENUM)
+            ValidTestNumbers.push_back(TestNumber);
+        else
+        {
+            if (DoneStr.compare(inputBuffer))
+                printf("Invaild Entry\n");
+        }
+    }
+
+    printf("outputFile: %s\n", OutputTestFile.c_str());
+    std::ofstream outfile(OutputTestFile.c_str());
+    int CurrentTest = 1;
+
+    while (CurrentTest <= NumberOfTestsToRun)
+    {
+        int RandTestNum = rand() % ValidTestNumbers.size();
+        int RandIVFNum = rand() % IVFFileNamesVector.size();
+        char CurrentTestChar[255];
+        vpxt_itoa_custom(CurrentTest, CurrentTestChar, 10);
+        std::string RandSettingsFile = ParameterFilesFolder;
+        RandSettingsFile.append(OutputTestFileName);
+        RandSettingsFile.append("_");
+        RandSettingsFile.append(CurrentTestChar);
+        RandSettingsFile.append(".txt");
+        std::string RandIVFFile = IVFFileNamesVector[RandIVFNum].c_str();
+        VP8_CONFIG opt = vpxt_random_parameters(opt, RandIVFFile.c_str(), 2);
+        vpxt_output_settings(RandSettingsFile.c_str(), opt);
+        int ModeNum = 3;
+
+        while (ModeNum == 3)
+            ModeNum = rand() % 6;
+
+        int RandTBNum = (rand() % 20 + 1) * 128;
+        int RandKeyFrameFreq = rand() % 120;
+        int RandVersion = rand() % 4;
+        int RandCQ = rand() % 64;
+        int RandQ1 = rand() % 64;
+        int RandQ2 = rand() % 64;
+        int RandForceKeyFrameNum = rand() % 120;
+        int RandLag1 = rand() % 26;
+        int RandLag2 = rand() % 26;
+        int RandMultiThread = rand() % 4;
+        int RandLagInFrames = rand() % 26;
+
+        if (ValidTestNumbers[RandTestNum] == AlWDFNUM)
+        {
+            outfile << "test_allow_drop_frames@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == ALWLGNUM)
+        {
+            outfile << "test_allow_lag@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == ALWSRNUM)
+        {
+            outfile << "test_allow_spatial_resampling@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == ARNRTNUM)
+        {
+            outfile << "test_arnr@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == AUTKFNUM)
+        {
+            outfile << "test_auto_key_frame@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandKeyFrameFreq;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == BUFLVNUM)
+        {
+            outfile << "test_buffer_level@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == CPUDENUM)
+        {
+            outfile << "test_change_cpu_dec@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandVersion;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == CPUENNUM)
+        {
+            outfile << "test_change_cpu_enc@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandVersion;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == CONQUNUM)
+        {
+            outfile << "test_constrained_quality@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandCQ;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == DTARTNUM)
+        {
+            outfile << "test_data_rate@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == DBMRLNUM)
+        {
+            outfile << "test_debug_matches_release@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
+            outfile << "@";
+            outfile << "VP8vNewest_PlugIn_RLib_RMode_32Bit.exe";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == DFWMWNUM)
+        {
+            outfile << "test_drop_frame_watermark@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == ENCBONUM)
+        {
+            outfile << "test_encoder_break_out@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == ERRMWNUM)
+        {
+            outfile << "test_error_resolution@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == EXTFINUM)
+        {
+            outfile << "test_extra_file@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == FIXDQNUM)
+        {
+            outfile << "test_fixed_quantizer@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandQ1;
+            outfile << "@";
+            outfile << RandQ2;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == FKEFRNUM)
+        {
+            outfile << "test_force_key_frame@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandForceKeyFrameNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == FRSZTNUM)
+        {
+            int RandWidth = opt.Width - (opt.Width % 16) - ((rand() % (opt.Width / 16)) * 16);
+            int RandHeight = opt.Height - - (opt.Height % 16) - ((rand() % (opt.Height / 16)) * 16);
+            outfile << "test_frame_size@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandWidth;
+            outfile << "@";
+            outfile << RandHeight;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == GQVBQNUM)
+        {
+            outfile << "test_good_vs_best@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == LGIFRNUM)
+        {
+            outfile << "test_lag_in_frames@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandLag1;
+            outfile << "@";
+            outfile << RandLag2;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == MAXQUNUM)
+        {
+            outfile << "test_max_quantizer@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == MEML1NUM)
+        {
+            outfile << "test_mem_leak@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == MEML2NUM)
+        {
+            outfile << "test_mem_leak2@";
+            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@";
+            outfile << "MemLeakCheck2_Compression.ivf";
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == MINQUNUM)
+        {
+            outfile << "test_min_quantizer@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == MULTTNUM)
+        {
+            outfile << "test_multithreaded@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandMultiThread;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == NVOECPTK)
+        {
+            outfile << "test_new_vs_old_enc_cpu_tick@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe";
+            outfile << "@";
+            outfile << "2";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == NVOPSNUM)
+        {
+            outfile << "test_new_vs_old_psnr@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe";
+            outfile << "@";
+            outfile << "2";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == NOISENUM)
+        {
+            outfile << "test_noise_sensitivity@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == OV2PSNUM)
+        {
+            outfile << "test_one_pass_vs_two_pass@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == PLYALNUM)
+        {
+            outfile << "test_play_alternate@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == POSTPNUM)
+        {
+            outfile << "test_post_processor@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == RECBFNUM)
+        {
+            outfile << "test_reconstruct_buffer@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == RSDWMNUM)
+        {
+            outfile << "test_resample_down_watermark@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == SPEEDNUM)
+        {
+            outfile << "test_speed@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandLagInFrames;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == TVECTNUM)
+        {
+            outfile << "test_test_vector@";
+            outfile << TestVectorFolder.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == TV2BTNUM)
+        {
+            outfile << "test_two_pass_vs_two_pass_best@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == UNDSHNUM)
+        {
+            outfile << "test_undershoot@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == VERSINUM)
+        {
+            outfile << "test_version@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == WMLMMNUM)
+        {
+        }
+
+        CurrentTest++;
+    }
+
+    outfile.close();
+    return 0;
+}
+int tool_raw_to_formatted(int argc, const char *const *argv)
+{
+    if (argc < 9)
+        return vpxt_tool_help(argv[1], 0);
+
     std::string inputFile = argv[2];
     std::string outputDir = argv[3];
-    int Width = atoi(argv[4]);
-    int Height = atoi(argv[5]);
-    int FrameRate = atoi(argv[6]);
-    std::string FourCC = argv[7];
+    std::string Format = argv[4];
+    vpxt_lower_case_string(Format);
+    int Width = atoi(argv[5]);
+    int Height = atoi(argv[6]);
+    int FrameRate = atoi(argv[7]);
+    std::string FourCC = argv[8];
+
+    int file_type = -1;
+
+    if (Format.compare("ivf") == 0)
+        file_type = FILE_TYPE_IVF;
+
+    if (Format.compare("y4m") == 0)
+        file_type = FILE_TYPE_Y4M;
+
+    if (file_type == -1)
+    {
+        tprintf(PRINT_STD, "\nError File format %s not recognised\n", argv[4]);
+        return 0;
+    }
 
     FILE *in = fopen(inputFile.c_str(), "rb");
     FILE *out2 = fopen(outputDir.c_str(), "wb");
@@ -7380,29 +7755,51 @@ int tool_raw_to_ivf(int argc, const char *const *argv)
     ivfhRaw.width       = Width;
 
     vpxt_format_ivf_header_write(ivfhRaw);
-    fwrite(&ivfhRaw, 1, 32, out2);
 
-    tprintf(PRINT_STD, "IVF DataRate\n\n"
-            "FILE HEADER \n\n"
-            "File Header            - %c%c%c%c \n"
-            "File Format Version    - %i \n"
-            "File Header Size       - %i \n"
-            "Video Data FourCC      - %i \n"
-            "Video Image Width      - %i \n"
-            "Video Image Height     - %i \n"
-            "Frame Rate Rate        - %i \n"
-            "Frame Rate Scale       - %i \n"
-            "Video Length in Frames - %i \n"
-            "Unused                 - %c \n"
-            "\n\n"
-            , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
-            , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
-            , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);
+    if (file_type == FILE_TYPE_Y4M)
+    {
+        std::string bufferStr = "YUV4MPEG2 C420jpeg W";
+
+        char widthChar[32];
+        char heightChar[32];
+        char FrameRateChar[32];
+        vpxt_itoa_custom(Width, widthChar, 10);
+        vpxt_itoa_custom(Height, heightChar, 10);
+        vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
+
+        bufferStr.append(widthChar);
+        bufferStr.append(" H");
+        bufferStr.append(heightChar);
+        bufferStr.append(" F");
+        bufferStr.append(FrameRateChar);
+        bufferStr.append(":1 Ip.");
+
+        out_put(out2, (unsigned char *)bufferStr.c_str(), strlen(bufferStr.c_str()), 0);
+    }
+
+    if (file_type == FILE_TYPE_IVF)
+        fwrite(&ivfhRaw, 1, 32, out2);
+
+    /*tprintf(PRINT_STD, "IVF DataRate\n\n"
+        "FILE HEADER \n\n"
+        "File Header            - %c%c%c%c \n"
+        "File Format Version    - %i \n"
+        "File Header Size       - %i \n"
+        "Video Data FourCC      - %i \n"
+        "Video Image Width      - %i \n"
+        "Video Image Height     - %i \n"
+        "Frame Rate Rate        - %i \n"
+        "Frame Rate Scale       - %i \n"
+        "Video Length in Frames - %i \n"
+        "Unused                 - %c \n"
+        "\n\n"
+        , ivfhRaw.signature[0], ivfhRaw.signature[1], ivfhRaw.signature[2], ivfhRaw.signature[3]
+    , ivfhRaw.version, ivfhRaw.headersize, ivfhRaw.four_cc, ivfhRaw.width, ivfhRaw.height, ivfhRaw.rate
+        , ivfhRaw.scale, ivfhRaw.length, ivfhRaw.unused);*/
 
     IVF_FRAME_HEADER ivf_fhRaw;
     ivf_fhRaw.frameSize = ivfhRaw.width * ivfhRaw.height * 3 / 2;
     ivf_fhRaw.timeStamp = 0;
-
 
     long nSamples = frameCount;
     long lRateNum = ivfhRaw.rate;
@@ -7414,7 +7811,11 @@ int tool_raw_to_ivf(int argc, const char *const *argv)
     long nBytesMin = 999999;
     long nBytesMax = 0;
 
-    std::cout << "\n Convereting to IVF.\n";
+    if (file_type == FILE_TYPE_IVF)
+        tprintf(PRINT_STD, "\nConvereting Raw to IVF:\n");
+
+    if (file_type == FILE_TYPE_Y4M)
+        tprintf(PRINT_STD, "\nConvereting Raw to Y4M:\n");
 
     char *inbuff = new char[ivfhRaw.width * ivfhRaw.height * 3/2];
     int CharCount = 0;
@@ -7423,35 +7824,48 @@ int tool_raw_to_ivf(int argc, const char *const *argv)
     {
         if (CharCount == 79)
         {
-            std::cout << "\n";
+            tprintf(PRINT_STD, "\n");
             CharCount = 0;
         }
 
-        std::cout << ".";
+        tprintf(PRINT_STD, ".");
         memset(inbuff, 0, ivfhRaw.width * ivfhRaw.height * 3 / 2);
         fread(inbuff, 1, ivf_fhRaw.frameSize, in);
 
         if (feof(in))
             break;
 
-        vpxt_format_frame_header_write(ivf_fhRaw);
-        fwrite(&ivf_fhRaw, 1, sizeof(ivf_fhRaw), out2);
+        if (file_type == FILE_TYPE_IVF)
+        {
+            vpxt_format_frame_header_write(ivf_fhRaw);
+            fwrite(&ivf_fhRaw, 1, sizeof(ivf_fhRaw), out2);
+        }
+
+        if (file_type == FILE_TYPE_Y4M)
+        {
+            out_put(out2, (unsigned char *)"FRAME\n", 6, 0);
+        }
+
         fwrite(inbuff, 1, ivf_fhRaw.frameSize, out2);
+
         currentVideoFrame ++;
     }
 
-    ivfhRaw.length = currentVideoFrame;
-    fseek(out2 , 0 , SEEK_SET);
-    vpxt_format_ivf_header_write(ivfhRaw);
-    fwrite(&ivfhRaw, 1, 32, out2);
+    if (file_type == FILE_TYPE_IVF)
+    {
+        ivfhRaw.length = currentVideoFrame;
+        fseek(out2 , 0 , SEEK_SET);
+        vpxt_format_ivf_header_write(ivfhRaw);
+        fwrite(&ivfhRaw, 1, 32, out2);
+    }
+
+    tprintf(PRINT_STD, "\n");
 
     fclose(in);
     fclose(out2);
 
     return 0;
 }
-
-
 int tool_run_ivfdec(int argc, const char *const *argv)
 {
     int dummyargc = argc - 1;
@@ -7509,7 +7923,7 @@ int tool_run_thresh(int argc, const char *const *argv)
         return 0;
     }
 
-    vpxt_ivf_check_pbm_threshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
+    vpxt_check_pbm_threshold(argv[2], atof(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
 
     return 0;
 }

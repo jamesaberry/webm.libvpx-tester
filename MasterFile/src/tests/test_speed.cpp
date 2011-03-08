@@ -4,28 +4,16 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 {
     char *CompressString = "Cpu Used";
     char *MyDir = "test_speed";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 7))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Lag In Frames>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int LagInFramesInput = atoi(argv[5]);
+    std::string EncForm = argv[6];
 
     int speed = 0;
     int Fail = 0;
@@ -34,19 +22,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     int Fail2b = 0;
 
     if (Mode != 0 && Mode != 1)
-    {
-        tprintf(PRINT_STD,
-                "  test_speed \n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Lag In Frames>\n"
-                "    <Optional Settings File>\n"
-               );
-        return 0;
-    }
+        return vpxt_test_help(argv[1], 0);
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -79,7 +55,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
             SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
             SpeedTestRealAR[speedCounter].append(CounterChar);
-            SpeedTestRealAR[speedCounter].append(".ivf");
+            //SpeedTestRealAR[speedCounter].append(".ivf");
+            vpxt_enc_format_append(SpeedTestRealAR[speedCounter], EncForm);
         }
         else
         {
@@ -90,7 +67,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
             SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
             SpeedTestRealAR[speedCounter].append("-");
             SpeedTestRealAR[speedCounter].append(CounterChar);
-            SpeedTestRealAR[speedCounter].append(".ivf");
+            //SpeedTestRealAR[speedCounter].append(".ivf");
+            vpxt_enc_format_append(SpeedTestRealAR[speedCounter], EncForm);
         }
 
         speedCounter++;
@@ -132,7 +110,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 7)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -177,10 +155,11 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
-                SpeedTestGoodQ.append(".ivf");
+                //SpeedTestGoodQ.append(".ivf");
+                vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
 
                 GoodTotalcpu_tick[counter] = vpxt_cpu_tick_return(SpeedTestGoodQ.c_str(), 0);
-                GoodPSNRArr[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
+                GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
                 counter++;
             }
         }
@@ -197,10 +176,11 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
-                SpeedTestRealTime.append(".ivf");
+                //SpeedTestRealTime.append(".ivf");
+                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
                 RealTotalcpu_tick[counter2] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArr[counter2] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 counter--;
                 counter2++;
             }
@@ -214,10 +194,11 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
-                SpeedTestRealTime.append(".ivf");
+                //SpeedTestRealTime.append(".ivf");
+                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
                 RealTotalcpu_tickPos[counter] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArrPos[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                RealPSNRArrPos[counter] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 counter++;
             }
         }
@@ -236,12 +217,13 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
-                SpeedTestGoodQ.append(".ivf");
+                //SpeedTestGoodQ.append(".ivf");
+                vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
 
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_GOODQUALITY;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, GoodTotalcpu_tick[counter]);
+                unsigned int Time = vpxt_time_compress(input.c_str(), SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, GoodTotalcpu_tick[counter], EncForm);
 
                 if (Time == -1)
                 {
@@ -252,7 +234,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    GoodPSNRArr[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
+                    GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
                 }
 
                 counter++;
@@ -271,12 +253,13 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
-                SpeedTestRealTime.append(".ivf");
+                //SpeedTestRealTime.append(".ivf");
+                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tick[counter2]);
+                unsigned int Time = vpxt_time_compress(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tick[counter2], EncForm);
 
                 if (Time == -1)
                 {
@@ -287,7 +270,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    RealPSNRArr[counter2] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                    RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 }
 
                 counter--;
@@ -303,12 +286,13 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
-                SpeedTestRealTime.append(".ivf");
+                //SpeedTestRealTime.append(".ivf");
+                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress_ivf_to_ivf(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tickPos[counter]);
+                unsigned int Time = vpxt_time_compress(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tickPos[counter], EncForm);
 
                 if (Time == -1)
                 {
@@ -319,7 +303,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    RealPSNRArrPos[counter] = vpxt_ivf_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                    RealPSNRArrPos[counter] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 }
 
                 counter++;

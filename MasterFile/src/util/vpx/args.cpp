@@ -19,9 +19,9 @@
 #endif
 
 #if defined(__GNUC__) && __GNUC__
-extern void die(const char *fmt, ...) __attribute__((noreturn));
+extern void die_enc(const char *fmt, ...) __attribute__((noreturn));
 #else
-extern void die(const char *fmt, ...);
+extern void die_enc(const char *fmt, ...);
 #endif
 
 
@@ -73,10 +73,10 @@ int arg_match(struct arg *arg_, const struct arg_def *def, char **argv)
     }
 
     if (arg.name && !arg.val && def->has_val)
-        die("Error: option %s requires argument.\n", arg.name);
+        die_enc("Error: option %s requires argument.\n", arg.name);
 
     if (arg.name && arg.val && !def->has_val)
-        die("Error: option %s requires no argument.\n", arg.name);
+        die_enc("Error: option %s requires no argument.\n", arg.name);
 
     if (arg.name
         && (arg.val || !def->has_val))
@@ -120,9 +120,12 @@ void arg_show_usage(FILE *fp, const struct arg_def *const *defs)
         const char *long_val = def->has_val ? "=<arg>" : "";
 
         if (def->short_name && def->long_name)
-            snprintf(option_text, 37, "-%s%s, --%s%s",
-                     def->short_name, short_val,
+        {
+            const char *comma = def->has_val ? "," : ",      ";
+            snprintf(option_text, 37, "-%s%s%s --%s%6s",
+                     def->short_name, short_val, comma,
                      def->long_name, long_val);
+        }
         else if (def->short_name)
             snprintf(option_text, 37, "-%s%s",
                      def->short_name, short_val);
@@ -131,6 +134,16 @@ void arg_show_usage(FILE *fp, const struct arg_def *const *defs)
                      def->long_name, long_val);
 
         fprintf(fp, "  %-37s\t%s\n", option_text, def->desc);
+
+        if (def->enums)
+        {
+            const struct arg_enum_list *listptr;
+            fprintf(fp, "  %-37s\t  ", "");
+
+            for (listptr = def->enums; listptr->name; listptr++)
+                fprintf(fp, "%s%s", listptr->name,
+                        listptr[1].name ? ", " : "\n");
+        }
     }
 }
 
@@ -147,11 +160,11 @@ unsigned int arg_parse_uint(const struct arg *arg)
         if (rawval >= 0 && rawval <= UINT_MAX)
             return rawval;
 
-        die("Option %s: Value %ld out of range for unsigned int\n",
-            arg->name, rawval);
+        die_enc("Option %s: Value %ld out of range for unsigned int\n",
+                arg->name, rawval);
     }
 
-    die("Option %s: Invalid character '%c'\n", arg->name, *endptr);
+    die_enc("Option %s: Invalid character '%c'\n", arg->name, *endptr);
     return 0;
 }
 
@@ -168,11 +181,11 @@ int arg_parse_int(const struct arg *arg)
         if (rawval >= INT_MIN && rawval <= INT_MAX)
             return rawval;
 
-        die("Option %s: Value %ld out of range for signed int\n",
-            arg->name, rawval);
+        die_enc("Option %s: Value %ld out of range for signed int\n",
+                arg->name, rawval);
     }
 
-    die("Option %s: Invalid character '%c'\n", arg->name, *endptr);
+    die_enc("Option %s: Invalid character '%c'\n", arg->name, *endptr);
     return 0;
 }
 
@@ -195,10 +208,10 @@ struct vpx_rational arg_parse_rational(const struct arg *arg)
     {
         if (rawval >= INT_MIN && rawval <= INT_MAX)
             rat.num = rawval;
-        else die("Option %s: Value %ld out of range for signed int\n",
-                     arg->name, rawval);
+        else die_enc("Option %s: Value %ld out of range for signed int\n",
+                         arg->name, rawval);
     }
-    else die("Option %s: Expected / at '%c'\n", arg->name, *endptr);
+    else die_enc("Option %s: Expected / at '%c'\n", arg->name, *endptr);
 
     /* parse denominator */
     rawval = strtol(endptr + 1, &endptr, 10);
@@ -207,10 +220,38 @@ struct vpx_rational arg_parse_rational(const struct arg *arg)
     {
         if (rawval >= INT_MIN && rawval <= INT_MAX)
             rat.den = rawval;
-        else die("Option %s: Value %ld out of range for signed int\n",
-                     arg->name, rawval);
+        else die_enc("Option %s: Value %ld out of range for signed int\n",
+                         arg->name, rawval);
     }
-    else die("Option %s: Invalid character '%c'\n", arg->name, *endptr);
+    else die_enc("Option %s: Invalid character '%c'\n", arg->name, *endptr);
 
     return rat;
+}
+int arg_parse_enum(const struct arg *arg)
+{
+    const struct arg_enum_list *listptr;
+    long int                    rawval;
+    char                       *endptr;
+    rawval = strtol(arg->val, &endptr, 10);
+
+    if (arg->val[0] != '\0' && endptr[0] == '\0')
+    {
+        for (listptr = arg->def->enums; listptr->name; listptr++)
+            if (listptr->val == rawval)
+                return rawval;
+    }
+
+    for (listptr = arg->def->enums; listptr->name; listptr++)
+        if (!strcmp(arg->val, listptr->name))
+            return listptr->val;
+
+    die_enc("Option %s: Invalid value '%s'\n", arg->name, arg->val);
+    return 0;
+}
+int arg_parse_enum_or_int(const struct arg *arg)
+{
+    if (arg->def->enums)
+        return arg_parse_enum(arg);
+
+    return arg_parse_int(arg);
 }

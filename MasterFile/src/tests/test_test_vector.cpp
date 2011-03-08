@@ -4,17 +4,10 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
 {
     char *CompressString = "Test Vector Check";
     char *MyDir = "test_test_vector";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 3))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input Directory>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
 
@@ -463,9 +456,10 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
 
     while (TestVectorNum < 102)
     {
-        TestVector_Text[TestVectorNum] = TestVector_Raw[TestVectorNum];
-        TestVector_Text[TestVectorNum].erase(TestVector_Text[TestVectorNum].end() - 4, TestVector_Text[TestVectorNum].end());
-        TestVector_Text[TestVectorNum].append("_MD5.txt");
+        //TestVector_Text[TestVectorNum] = TestVector_Raw[TestVectorNum];
+        //TestVector_Text[TestVectorNum].erase(TestVector_Text[TestVectorNum].end() - 4, TestVector_Text[TestVectorNum].end());
+        vpxt_remove_file_extension(TestVector_Raw[TestVectorNum].c_str(), TestVector_Text[TestVectorNum]);
+        TestVector_Text[TestVectorNum].append("MD5.txt");
         TestVectorNum++;
     }
 
@@ -620,9 +614,10 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
 
         while (CurTestVector < LastTestVector)
         {
-            tprintf(PRINT_BTH, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
+            tprintf(PRINT_BTH, "\n");
+            //tprintf(PRINT_BTH, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
-            if (vpxt_decompress_ivf_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str()) == -1)
+            if (vpxt_decompress_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str()) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -647,7 +642,8 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
 
     while (CurTestVector < LastTestVector)
     {
-        tprintf(PRINT_BTH, "\n\nComputing MD5 for TestVector %i", CurTestVector);
+        tprintf(PRINT_STD, "\n\nComputing MD5 for TestVector %i", CurTestVector);
+        tprintf(PRINT_ERR, "\n\nComputing MD5 for TestVector %i\n", CurTestVector);
         vpxt_dec_compute_md5(TestVector[CurTestVector].c_str(), TestVector_Text[CurTestVector].c_str());
         CurTestVector++;
     }

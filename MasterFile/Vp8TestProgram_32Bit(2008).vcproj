@@ -402,19 +402,35 @@
 						>
 					</File>
 					<File
+						RelativePath=".\src\util\vpx\EbmlWriter.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\halloc.c"
+						>
+					</File>
+					<File
 						RelativePath=".\src\util\vpx\ivf.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\src\util\vpx\ivfdec.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\src\util\vpx\ivfenc.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\src\util\vpx\md5_utils.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\nestegg.c"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\tools_common.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\vpxdec.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\vpxenc.cpp"
 						>
 					</File>
 					<File

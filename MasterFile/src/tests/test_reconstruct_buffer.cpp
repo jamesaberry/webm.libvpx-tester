@@ -4,30 +4,15 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_reconstruct_buffer";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -44,7 +29,8 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     std::string ReconBufferCompression = CurTestDirStr;
     ReconBufferCompression.append(slashCharStr());
     ReconBufferCompression.append(MyDir);
-    ReconBufferCompression.append("_compression.ivf");
+    ReconBufferCompression.append("_compression");
+    vpxt_enc_format_append(ReconBufferCompression, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -83,7 +69,7 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -113,7 +99,7 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, DeleteIVF) == -1)
+        if (vpxt_compress_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, DeleteIVF, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -133,9 +119,11 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     int fail = 0;
 
     std::ifstream ReconOutFile;
-    std::string ReconOutStr = ReconBufferCompression;
-    ReconOutStr.erase(ReconOutStr.length() - 4, 4);
-    ReconOutStr.append("_ReconFrameState.txt");
+    std::string ReconOutStr;
+    vpxt_remove_file_extension(ReconBufferCompression.c_str(), ReconOutStr);
+    //std::string ReconOutStr = ReconBufferCompression;
+    //ReconOutStr.erase(ReconOutStr.length() - 4, 4);
+    ReconOutStr.append("ReconFrameState.txt");
 
     ReconOutFile.open(ReconOutStr.c_str());
 

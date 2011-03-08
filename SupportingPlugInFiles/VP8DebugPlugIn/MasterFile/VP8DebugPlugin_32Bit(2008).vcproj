@@ -226,11 +226,35 @@
 					Name="vpx"
 					>
 					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\args.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\EbmlWriter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\halloc.c"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\MasterFile\src\util\vpx\ivf.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\..\..\MasterFile\src\util\vpx\md5_utils.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\nestegg.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\tools_common.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\y4minput.cpp"
 						>
 					</File>
 				</Filter>

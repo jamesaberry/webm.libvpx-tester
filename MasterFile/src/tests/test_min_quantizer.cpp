@@ -4,30 +4,15 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
 {
     char *CompressString = "Min Quantizer";
     char *MyDir = "test_min_quantizer";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -43,12 +28,14 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     std::string Min10QuantOutFile = CurTestDirStr;
     Min10QuantOutFile.append(slashCharStr());
     Min10QuantOutFile.append(MyDir);
-    Min10QuantOutFile.append("_compression_10.ivf");
+    Min10QuantOutFile.append("_compression_10");
+    vpxt_enc_format_append(Min10QuantOutFile, EncForm);
 
     std::string Min60QuantOutFile = CurTestDirStr;
     Min60QuantOutFile.append(slashCharStr());
     Min60QuantOutFile.append(MyDir);
-    Min60QuantOutFile.append("_compression_60.ivf");
+    Min60QuantOutFile.append("_compression_60");
+    vpxt_enc_format_append(Min60QuantOutFile, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -86,7 +73,7 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -119,7 +106,7 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
 
         opt.best_allowed_q = 10;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1) == -1)
+        if (vpxt_compress(input.c_str(), Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -128,7 +115,7 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
 
         opt.best_allowed_q = 60;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1) == -1)
+        if (vpxt_compress(input.c_str(), Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -145,8 +132,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         return 10;
     }
 
-    PSNRArr[0] = vpxt_ivf_psnr(input.c_str(), Min10QuantOutFile.c_str(), 0, 0, 1, NULL);
-    PSNRArr[1] = vpxt_ivf_psnr(input.c_str(), Min60QuantOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRArr[0] = vpxt_psnr(input.c_str(), Min10QuantOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRArr[1] = vpxt_psnr(input.c_str(), Min60QuantOutFile.c_str(), 0, 0, 1, NULL);
 
     tprintf(PRINT_BTH, "\n");
     int Min10Q = vpxt_check_min_quantizer(Min10QuantOutFile.c_str(), 10);

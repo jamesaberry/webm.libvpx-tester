@@ -4,28 +4,10 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
 {
     //Needs Debug.exe and Release.exe
     char *MyDir = "test_debug_matches_release";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 7 || argc == 8))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-                "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> <PARAMETER FILE>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
@@ -33,6 +15,8 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     const char *ExeInputDebug = argv[5];
     char ExeInputRelease[255];
     snprintf(ExeInputRelease, 255, "%s", argv[6]);
+    std::string EncForm = argv[7];
+    std::string DecForm = argv[8];
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -56,22 +40,26 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     std::string DebugOutputEnc = CurTestDirStr;
     DebugOutputEnc.append(slashCharStr());
     DebugOutputEnc.append(MyDir);
-    DebugOutputEnc.append("_compression_debug.ivf");
+    DebugOutputEnc.append("_compression_debug");
+    vpxt_enc_format_append(DebugOutputEnc, EncForm);
 
     std::string ReleaseOutputEnc = CurTestDirStr;
     ReleaseOutputEnc.append(slashCharStr());
     ReleaseOutputEnc.append(MyDir);
-    ReleaseOutputEnc.append("_compression_release.ivf");
+    ReleaseOutputEnc.append("_compression_release");
+    vpxt_enc_format_append(ReleaseOutputEnc, EncForm);
 
     std::string DebugOutputDec = CurTestDirStr;
     DebugOutputDec.append(slashCharStr());
     DebugOutputDec.append(MyDir);
-    DebugOutputDec.append("_decompression_debug.ivf");
+    DebugOutputDec.append("_decompression_debug");
+    vpxt_dec_format_append(DebugOutputDec, DecForm);
 
     std::string ReleaseOutputDec = CurTestDirStr;
     ReleaseOutputDec.append(slashCharStr());
     ReleaseOutputDec.append(MyDir);
-    ReleaseOutputDec.append("_decompression_release.ivf");
+    ReleaseOutputDec.append("_decompression_release");
+    vpxt_dec_format_append(ReleaseOutputDec, DecForm);
 
     std::string ParFileDebug = CurTestDirStr;
     ParFileDebug.append(slashCharStr());
@@ -222,7 +210,7 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 8)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -307,11 +295,11 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
-    int lngRCEnc = vpxt_compare_ivf(ReleaseOutputEnc.c_str(), DebugOutputEnc.c_str());
+    int lngRCEnc = vpxt_compare_enc(ReleaseOutputEnc.c_str(), DebugOutputEnc.c_str());
     int EncMatch = vpxt_print_compare_ivf_results(lngRCEnc);
 
     tprintf(PRINT_BTH, "Comparing Decompression Files: ");
-    int lngRCDec = vpxt_compare_ivf(ReleaseOutputDec.c_str(), DebugOutputDec.c_str());
+    int lngRCDec = vpxt_compare_dec(ReleaseOutputDec.c_str(), DebugOutputDec.c_str());
     int DecMatch = vpxt_print_compare_ivf_results(lngRCDec);
 
     int fail = 0;

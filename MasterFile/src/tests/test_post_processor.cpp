@@ -4,30 +4,15 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_post_processor";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 6 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
 
     int speed = 0;
 
@@ -43,7 +28,8 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     std::string PostProcOutFile = CurTestDirStr;
     PostProcOutFile.append(slashCharStr());
     PostProcOutFile.append(MyDir);
-    PostProcOutFile.append("_compression.ivf");
+    PostProcOutFile.append("_compression");
+    vpxt_enc_format_append(PostProcOutFile, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -81,7 +67,7 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 6)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -114,7 +100,7 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), PostProcOutFile.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,19 +125,19 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     double ssim = 0;
 
     tprintf(PRINT_BTH, "\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-    PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
+    PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
     countme++;
 
     flags++;
     tprintf(PRINT_BTH, "\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-    PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+    PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
     countme++;
     flags++;
 
     while (deblock_level != 16)
     {
         tprintf(PRINT_BTH, "\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
+        PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
         countme++;
         deblock_level++;
     }
@@ -163,7 +149,7 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     while (noise_level != 8)
     {
         tprintf(PRINT_BTH, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = vpxt_post_proc_ivf_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+        PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
         countme++;
 
         noise_level++;

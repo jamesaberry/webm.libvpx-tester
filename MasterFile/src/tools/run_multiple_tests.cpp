@@ -1595,8 +1595,11 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                     return 0;
                 }
 
-                std::string Test_Results_Html = WorkDirFileStr.c_str();
-                Test_Results_Html.erase(Test_Results_Html.length() - 4, 4);
+                std::string Test_Results_Html;
+                vpxt_remove_file_extension(WorkDirFileStr.c_str(), Test_Results_Html);
+                Test_Results_Html.erase(Test_Results_Html.length() - 1, 1);
+                //std::string Test_Results_Html = WorkDirFileStr.c_str();
+                //Test_Results_Html.erase(Test_Results_Html.length() - 4, 4);
                 Test_Results_Html.append(".html");
 
                 fp_html = fopen(Test_Results_Html.c_str() , "a");
@@ -1825,8 +1828,11 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         return 0;
     }
 
-    std::string Test_Results_Html = WorkDirFileStr.c_str();
-    Test_Results_Html.erase(Test_Results_Html.length() - 4, 4);
+    std::string Test_Results_Html;
+    vpxt_remove_file_extension(WorkDirFileStr.c_str(), Test_Results_Html);
+    Test_Results_Html.erase(Test_Results_Html.length() - 1, 1);
+    //std::string Test_Results_Html = WorkDirFileStr.c_str();
+    //Test_Results_Html.erase(Test_Results_Html.length() - 4, 4);
     Test_Results_Html.append(".html");
 
     fp_html = fopen(Test_Results_Html.c_str() , "w");
@@ -2460,9 +2466,11 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         /////////////////////////////Output Time it took to run test/////////////////////////////
         if (RecordRunTimes == 1)
         {
-            std::string TimeoutputStr = WorkDirFileStr;
-            TimeoutputStr.erase(TimeoutputStr.length() - 4, 4);
-            TimeoutputStr.append("_Times.txt");
+            std::string TimeoutputStr;
+            vpxt_remove_file_extension(WorkDirFileStr.c_str(), TimeoutputStr);
+            //std::string TimeoutputStr = WorkDirFileStr;
+            //TimeoutputStr.erase(TimeoutputStr.length() - 4, 4);
+            TimeoutputStr.append("Times.txt");
 
             FILE *outputTime;
             outputTime = fopen(TimeoutputStr.c_str() , "w");

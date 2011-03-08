@@ -9,12 +9,15 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
     {
         tprintf(PRINT_STD, "\n"
                 "  RandComp\n\n"
-                "    <Input File>\n\n"
+                "    <Input File>\n"
+                "    <webm/ivf>\n"
+                "\n"
                );
         return 0;
     }
 
     std::string input = argv[2];
+    std::string EncForm = argv[3];
 
     ////////////Formatting Test Specific Directory////////////
     char WorkingDir2[255] = "";
@@ -59,7 +62,8 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
     else
         WorkingDir4.append(InputFileName);
 
-    WorkingDir4.append("-RandComp.ivf");
+    WorkingDir4.append("-RandComp");
+    vpxt_enc_format_append(WorkingDir4, EncForm);
     WorkingDir5.append(slashCharStr());
     WorkingDir5.append("RandCompOutPut.txt");
 
@@ -113,7 +117,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -128,7 +132,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -143,7 +147,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -162,7 +166,7 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         opt.Mode = MODE_SECONDPASS_BEST;
 
         //vpxt_output_settings(RandCompParOut,opt);
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);

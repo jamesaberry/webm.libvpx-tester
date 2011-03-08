@@ -98,8 +98,8 @@
 #endif
 
 #undef  mem_get_be16_aligned
-#define mem_get_be16_aligned mem_ops_wrap_symbol(mem_get_be16_aligned)
-mem_get_be_aligned_generic(16);
+#define mem_get_be16_aligned mem_ops_wrap_symbol(mem_get_be16_aligned)\
+    mem_get_be_aligned_generic(16);
 
 #undef  mem_get_be32_aligned
 #define mem_get_be32_aligned mem_ops_wrap_symbol(mem_get_be32_aligned)

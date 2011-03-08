@@ -4,21 +4,14 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_good_vs_best";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 4 || argc == 5))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int BitRate = atoi(argv[3]);
+    std::string EncForm = argv[4];
 
     int speed = 0;
 
@@ -35,32 +28,38 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     std::string GoodOutFile1 = CurTestDirStr;
     GoodOutFile1.append(slashCharStr());
     GoodOutFile1.append(MyDir);
-    GoodOutFile1.append("_compression_good_1.ivf");
+    GoodOutFile1.append("_compression_good_1");
+    vpxt_enc_format_append(GoodOutFile1, EncForm);
 
     std::string GoodOutFile2 = CurTestDirStr;
     GoodOutFile2.append(slashCharStr());
     GoodOutFile2.append(MyDir);
-    GoodOutFile2.append("_compression_good_2.ivf");
+    GoodOutFile2.append("_compression_good_2");
+    vpxt_enc_format_append(GoodOutFile2, EncForm);
 
     std::string GoodOutFile3 = CurTestDirStr;
     GoodOutFile3.append(slashCharStr());
     GoodOutFile3.append(MyDir);
-    GoodOutFile3.append("_compression_good_3.ivf");
+    GoodOutFile3.append("_compression_good_3");
+    vpxt_enc_format_append(GoodOutFile3, EncForm);
 
     std::string BestOutFile1 = CurTestDirStr;
     BestOutFile1.append(slashCharStr());
     BestOutFile1.append(MyDir);
-    BestOutFile1.append("_compression_best_1.ivf");
+    BestOutFile1.append("_compression_best_1");
+    vpxt_enc_format_append(BestOutFile1, EncForm);
 
     std::string BestOutFile2 = CurTestDirStr;
     BestOutFile2.append(slashCharStr());
     BestOutFile2.append(MyDir);
-    BestOutFile2.append("_compression_best_2.ivf");
+    BestOutFile2.append("_compression_best_2");
+    vpxt_enc_format_append(BestOutFile2, EncForm);
 
     std::string BestOutFile3 = CurTestDirStr;
     BestOutFile3.append(slashCharStr());
     BestOutFile3.append(MyDir);
-    BestOutFile3.append("_compression_best_3.ivf");
+    BestOutFile3.append("_compression_best_3");
+    vpxt_enc_format_append(BestOutFile3, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -99,7 +98,7 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 5)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -131,7 +130,7 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_GOODQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), GoodOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), GoodOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -140,7 +139,7 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), GoodOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), GoodOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -149,7 +148,7 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), GoodOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), GoodOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -159,7 +158,7 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
         opt.target_bandwidth = BitRate1;
         opt.Mode = MODE_BESTQUALITY;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), BestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), BestOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -168,7 +167,7 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), BestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), BestOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -177,7 +176,7 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), BestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0) == -1)
+        if (vpxt_compress(input.c_str(), BestOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -195,12 +194,12 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
 
     tprintf(PRINT_BTH, "\n");
 
-    float GoodSize1 = vpxt_ivf_data_rate(GoodOutFile1.c_str(), 1);
-    float BestSize1 = vpxt_ivf_data_rate(BestOutFile1.c_str(), 1);
-    float GoodSize2 = vpxt_ivf_data_rate(GoodOutFile2.c_str(), 1);
-    float BestSize2 = vpxt_ivf_data_rate(BestOutFile2.c_str(), 1);
-    float GoodSize3 = vpxt_ivf_data_rate(GoodOutFile3.c_str(), 1);
-    float BestSize3 = vpxt_ivf_data_rate(BestOutFile3.c_str(), 1);
+    float GoodSize1 = vpxt_data_rate(GoodOutFile1.c_str(), 1);
+    float BestSize1 = vpxt_data_rate(BestOutFile1.c_str(), 1);
+    float GoodSize2 = vpxt_data_rate(GoodOutFile2.c_str(), 1);
+    float BestSize2 = vpxt_data_rate(BestOutFile2.c_str(), 1);
+    float GoodSize3 = vpxt_data_rate(GoodOutFile3.c_str(), 1);
+    float BestSize3 = vpxt_data_rate(BestOutFile3.c_str(), 1);
 
     double PSNRG1;
     double PSNRB1;
@@ -209,12 +208,12 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     double PSNRG3;
     double PSNRB3;
 
-    PSNRG1 = vpxt_ivf_psnr(input.c_str(), GoodOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRB1 = vpxt_ivf_psnr(input.c_str(), BestOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRG2 = vpxt_ivf_psnr(input.c_str(), GoodOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRB2 = vpxt_ivf_psnr(input.c_str(), BestOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRG3 = vpxt_ivf_psnr(input.c_str(), GoodOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNRB3 = vpxt_ivf_psnr(input.c_str(), BestOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRG1 = vpxt_psnr(input.c_str(), GoodOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRB1 = vpxt_psnr(input.c_str(), BestOutFile1.c_str(), 1, 0, 1, NULL);
+    PSNRG2 = vpxt_psnr(input.c_str(), GoodOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRB2 = vpxt_psnr(input.c_str(), BestOutFile2.c_str(), 1, 0, 1, NULL);
+    PSNRG3 = vpxt_psnr(input.c_str(), GoodOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRB3 = vpxt_psnr(input.c_str(), BestOutFile3.c_str(), 1, 0, 1, NULL);
 
     float GoodA = 0;
     float GoodB = 0;

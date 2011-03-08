@@ -4,35 +4,18 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
 {
     char *CompressString = "Frame Size";
     char *MyDir = "test_frame_size";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 8 || argc == 7))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Starting Width-must be a mult of 16>\n"
-                "    <Starting Height-must be a mult of 16>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
     int StartingWidth = atoi(argv[5]);
     int StartingHeight = atoi(argv[6]);
+    std::string EncForm = argv[7];
+    std::string DecForm = argv[8];
 
     int speed = 0;
 
@@ -55,6 +38,8 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
     char NewWidth[20];
     char NewHeight[20];
     std::string RawCrop[47];
+    std::string RawExt;
+    vpxt_get_file_extension(input.c_str(), RawExt);
 
     //height
     int counter = 0;
@@ -69,7 +54,9 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
         RawCrop[FileNum].append("x");
         vpxt_itoa_custom(StartingHeight - (counter), NewHeight, 10); //height
         RawCrop[FileNum].append(NewHeight);
-        RawCrop[FileNum].append("_raw.ivf");
+        RawCrop[FileNum].append("_raw");
+        RawCrop[FileNum].append(RawExt);
+
 
         counter++;
         FileNum++;
@@ -87,7 +74,8 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
         RawCrop[FileNum].append("x");
         vpxt_itoa_custom(StartingHeight, NewHeight, 10); //height
         RawCrop[FileNum].append(NewHeight);
-        RawCrop[FileNum].append("_raw.ivf");
+        RawCrop[FileNum].append("_raw");
+        RawCrop[FileNum].append(RawExt);
 
         counter++;
         FileNum++;
@@ -105,7 +93,8 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
         RawCrop[FileNum].append("x");
         vpxt_itoa_custom(StartingHeight - (counter), NewHeight, 10); //height
         RawCrop[FileNum].append(NewHeight);
-        RawCrop[FileNum].append("_raw.ivf");
+        RawCrop[FileNum].append("_raw");
+        RawCrop[FileNum].append(RawExt);
 
         counter++;
         FileNum++;
@@ -119,7 +108,8 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
     {
         EncCrop[FileNum] = RawCrop[FileNum];
         EncCrop[FileNum].erase(EncCrop[FileNum].end() - 7, EncCrop[FileNum].end());
-        EncCrop[FileNum].append("enc.ivf");
+        EncCrop[FileNum].append("enc");
+        vpxt_enc_format_append(EncCrop[FileNum], EncForm);
         FileNum++;
     }
 
@@ -187,7 +177,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 8)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -229,7 +219,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
         {
             //Crop
             tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth, StartingHeight - x);
-            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
+            vpxt_crop_raw_clip(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth, StartingHeight - x, 1, 1);
 
             //Comp
             char FileNameChar[256];
@@ -239,7 +229,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
 
             tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
 
-            if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (vpxt_compress(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -247,13 +237,15 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_ivf_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
 
-            char PSNROutFile[255];
+            //char PSNROutFile[255];
+            std::string PSNROutFile;
             vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
-            char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+            //char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+            PSNROutFile.append("psnr.txt");
 
-            std::ofstream outfilePSNR(PSNROutFileFull);
+            std::ofstream outfilePSNR(PSNROutFile.c_str());
             outfilePSNR << PSNRAr[RawCropNum-1];
             outfilePSNR.close();
 
@@ -274,7 +266,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
         {
             //Crop
             tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight);
-            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
+            vpxt_crop_raw_clip(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight, 1, 1);
 
             //Comp
             char FileNameChar[256];
@@ -284,7 +276,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
 
             tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
 
-            if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (vpxt_compress(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -309,17 +301,34 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
                 vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
             }
 
-            x++;
-            RawCropNum++;
-        }
+            }
+
+            //PSNR
+            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+
+            //char PSNROutFile[255];
+            std::string PSNROutFile;
+            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
+            //char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+            PSNROutFile.append("psnr.txt");
+
+            std::ofstream outfilePSNR(PSNROutFile.c_str());
+            outfilePSNR << PSNRAr[RawCropNum-1];
+            outfilePSNR.close();
+
+            //Delete
+            if (DeleteIVF)
+            {
+                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
+                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
+            }
+
 
         x = 1;
-
         while (x < 16)
-        {
             //Crop
             tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
-            vpxt_crop_raw_ivf(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
+            vpxt_crop_raw_clip(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);
 
             //Comp
             char FileNameChar[256];
@@ -329,7 +338,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
 
             tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
 
-            if (vpxt_compress_ivf_to_ivf(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0) == -1)
+            if (vpxt_compress(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -337,13 +346,15 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_ivf_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
 
-            char PSNROutFile[255];
+            //char PSNROutFile[255];
+            std::string PSNROutFile;
             vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
-            char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+            //char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
+            PSNROutFile.append("psnr.txt");
 
-            std::ofstream outfilePSNR(PSNROutFileFull);
+            std::ofstream outfilePSNR(PSNROutFile.c_str());
             outfilePSNR << PSNRAr[RawCropNum-1];
             outfilePSNR.close();
 

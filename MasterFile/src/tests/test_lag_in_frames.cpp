@@ -4,34 +4,17 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
 {
     char *CompressString = "Lag In Frames";
     char *MyDir = "test_lag_in_frames";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (!(argc == 7 || argc == 8))
-    {
-        vpxt_cap_string_print(PRINT_STD, "  %s", MyDir);
-        tprintf(PRINT_STD,
-                "\n\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n"
-                "    <Lag in Frames 1>\n"
-                "    <Lag in Frames 2>\n"
-                "    <Optional Settings File>\n"
-                "\n"
-               );
-        return 0;
-    }
+    if (inputCheck < 0)
+        return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);;
     int LagInFrames1Val = atoi(argv[5]);
     int LagInFrames2Val = atoi(argv[6]);
+    std::string EncForm = argv[7];
 
     int speed = 0;
 
@@ -49,21 +32,22 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
 
     std::string LagInFrames0 = CurTestDirStr;
     LagInFrames0.append(slashCharStr());
-    LagInFrames0.append("test_lag_in_frames_compression_0.ivf");
+    LagInFrames0.append("test_lag_in_frames_compression_0");
+    vpxt_enc_format_append(LagInFrames0, EncForm);
 
     std::string LagInFrames1 = CurTestDirStr;
     LagInFrames1.append(slashCharStr());
     LagInFrames1.append(MyDir);
     LagInFrames1.append("_compression_");
     LagInFrames1.append(vpxt_itoa_custom(LagInFrames1Val, laginframesbuff, 10));
-    LagInFrames1.append(".ivf");
+    vpxt_enc_format_append(LagInFrames1, EncForm);
 
     std::string LagInFrames2 = CurTestDirStr;
     LagInFrames2.append(slashCharStr());
     LagInFrames2.append(MyDir);
     LagInFrames2.append("_compression_");
     LagInFrames2.append(vpxt_itoa_custom(LagInFrames2Val, laginframesbuff, 10));
-    LagInFrames2.append(".ivf");
+    vpxt_enc_format_append(LagInFrames2, EncForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -102,7 +86,7 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (argc == 8)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -142,7 +126,7 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         opt.allow_lag = 0;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1) == -1)
+        if (vpxt_compress(input.c_str(), LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -152,7 +136,7 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+        if (vpxt_compress(input.c_str(), LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -162,7 +146,7 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames2Val;
 
-        if (vpxt_compress_ivf_to_ivf(input.c_str(), LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1) == -1)
+        if (vpxt_compress(input.c_str(), LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -177,30 +161,36 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         return 10;
     }
 
-    double LagInFrames0PSNR = vpxt_ivf_psnr(input.c_str(), LagInFrames0.c_str(), 0, 0, 1, NULL);
-    double LagInFrames1PSNR = vpxt_ivf_psnr(input.c_str(), LagInFrames1.c_str(), 0, 0, 1, NULL);
-    double LagInFrames2PSNR = vpxt_ivf_psnr(input.c_str(), LagInFrames2.c_str(), 0, 0, 1, NULL);
+    double LagInFrames0PSNR = vpxt_psnr(input.c_str(), LagInFrames0.c_str(), 0, 0, 1, NULL);
+    double LagInFrames1PSNR = vpxt_psnr(input.c_str(), LagInFrames1.c_str(), 0, 0, 1, NULL);
+    double LagInFrames2PSNR = vpxt_psnr(input.c_str(), LagInFrames2.c_str(), 0, 0, 1, NULL);
 
     double TenPer0 = LagInFrames0PSNR / 10;
     double TenPer1 = LagInFrames1PSNR / 10;
     double TenPer2 = LagInFrames2PSNR / 10;
 
-    int lngRC1 = vpxt_compare_ivf(LagInFrames0.c_str(), LagInFrames1.c_str());
-    int lngRC2 = vpxt_compare_ivf(LagInFrames1.c_str(), LagInFrames2.c_str());
+    int lngRC1 = vpxt_compare_enc(LagInFrames0.c_str(), LagInFrames1.c_str());
+    int lngRC2 = vpxt_compare_enc(LagInFrames1.c_str(), LagInFrames2.c_str());
 
-    std::string QuantInStr0 = LagInFrames0;
-    QuantInStr0.erase(QuantInStr0.length() - 4, 4);
-    QuantInStr0.append("_quantizers.txt");
+    std::string QuantInStr0;
+    vpxt_remove_file_extension(LagInFrames0.c_str(), QuantInStr0);
+    //std::string QuantInStr0 = LagInFrames0;
+    //QuantInStr0.erase(QuantInStr0.length() - 4, 4);
+    QuantInStr0.append("quantizers.txt");
     int LagInFramesFound0 = vpxt_lag_in_frames_check(QuantInStr0.c_str());
 
-    std::string QuantInStr1 = LagInFrames1;
-    QuantInStr1.erase(QuantInStr1.length() - 4, 4);
-    QuantInStr1.append("_quantizers.txt");
+    std::string QuantInStr1;
+    vpxt_remove_file_extension(LagInFrames1.c_str(), QuantInStr1);
+    //std::string QuantInStr1 = LagInFrames1;
+    //QuantInStr1.erase(QuantInStr1.length() - 4, 4);
+    QuantInStr1.append("quantizers.txt");
     int LagInFramesFound1 = vpxt_lag_in_frames_check(QuantInStr1.c_str());
 
-    std::string QuantInStr2 = LagInFrames2;
-    QuantInStr2.erase(QuantInStr2.length() - 4, 4);
-    QuantInStr2.append("_quantizers.txt");
+    std::string QuantInStr2;
+    vpxt_remove_file_extension(LagInFrames2.c_str(), QuantInStr2);
+    //std::string QuantInStr2 = LagInFrames2;
+    //QuantInStr2.erase(QuantInStr2.length() - 4, 4);
+    QuantInStr2.append("quantizers.txt");
     int LagInFramesFound2 = vpxt_lag_in_frames_check(QuantInStr2.c_str());
 
     int PSNRTally = 0;

@@ -12,7 +12,6 @@ TestsDir = ../src/tests
 # source files
 SRC = \
    $(SrcDir)/driver.cpp \
-   $(IvfDir)/ivf.cpp \
    $(PsnrDir)/psnr.cpp \
    $(PsnrDir)/ssim.cpp \
    $(TestsDir)/test_allow_drop_frames.cpp  \
@@ -62,14 +61,18 @@ SRC = \
    $(IvfDir)/md5_utils.cpp \
    $(UtlDir)/utilities.cpp \
    $(IvfDir)/args.cpp \
-   $(IvfDir)/ivfdec.cpp \
-   $(IvfDir)/ivfenc.cpp \
+   $(IvfDir)/EbmlWriter.cpp \
+   $(IvfDir)/halloc.c \
+   $(IvfDir)/ivf.cpp \
+   $(IvfDir)/nestegg.c \
+   $(IvfDir)/tools_common.cpp \
+   $(IvfDir)/vpxdec.cpp \
+   $(IvfDir)/vpxenc.cpp \
    $(IvfDir)/y4minput.cpp \
 
 # source object files
 SRCOBJ = \
    $(OBJDIR)/driver.o \
-   $(OBJDIR)/ivf.o \
    $(OBJDIR)/psnr.o \
    $(OBJDIR)/ssim.o \
    $(OBJDIR)/test_allow_drop_frames.o  \
@@ -119,8 +122,13 @@ SRCOBJ = \
    $(OBJDIR)/md5_utils.o \
    $(OBJDIR)/utilities.o \
    $(OBJDIR)/args.o \
-   $(OBJDIR)/ivfdec.o \
-   $(OBJDIR)/ivfenc.o \
+   $(OBJDIR)/EbmlWriter.o \
+   $(OBJDIR)/halloc.o \
+   $(OBJDIR)/ivf.o \
+   $(OBJDIR)/nestegg.o \
+   $(OBJDIR)/tools_common.o \
+   $(OBJDIR)/vpxdec.o \
+   $(OBJDIR)/vpxenc.o \
    $(OBJDIR)/y4minput.o \
 
 # compiler
@@ -140,9 +148,6 @@ $(OBJDIR)/driver.o: $(SrcDir)/driver.cpp
 	-mkdir $(OBJDIR)
 	$(GPP) -c $(SrcDir)/driver.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/driver.o
 
-$(OBJDIR)/ivf.o: $(IvfDir)/ivf.cpp
-	$(GPP) -c $(IvfDir)/ivf.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/ivf.o
-
 $(OBJDIR)/psnr.o: $(PsnrDir)/psnr.cpp
 	$(GPP) -c $(PsnrDir)/psnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/psnr.o
 
@@ -157,10 +162,10 @@ $(OBJDIR)/test_allow_lag.o: $(TestsDir)/test_allow_lag.cpp
 
 $(OBJDIR)/test_allow_spatial_resampling.o: $(TestsDir)/test_allow_spatial_resampling.cpp
 	$(GPP) -c $(TestsDir)/test_allow_spatial_resampling.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_allow_spatial_resampling.o
-	
+
 $(OBJDIR)/test_arnr.o: $(TestsDir)/test_arnr.cpp
 	$(GPP) -c $(TestsDir)/test_arnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_arnr.o
-
+	
 $(OBJDIR)/test_auto_key_frame.o: $(TestsDir)/test_auto_key_frame.cpp
 	$(GPP) -c $(TestsDir)/test_auto_key_frame.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_auto_key_frame.o
 
@@ -288,13 +293,28 @@ $(OBJDIR)/utilities.o: $(UtlDir)/utilities.cpp
 	$(GPP) -c  $(UtlDir)/utilities.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/utilities.o
 
 $(OBJDIR)/args.o: $(IvfDir)/args.cpp
-	$(GPP) -c $(IvfDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+	$(GCC) -c $(IvfDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
 
-$(OBJDIR)/ivfdec.o: $(IvfDir)/ivfdec.cpp
-	$(GPP) -c $(IvfDir)/ivfdec.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfdec.o
+$(OBJDIR)/EbmlWriter.o: $(IvfDir)/EbmlWriter.cpp
+	$(GPP) -c $(IvfDir)/EbmlWriter.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/EbmlWriter.o
 
-$(OBJDIR)/ivfenc.o: $(IvfDir)/ivfenc.cpp
-	$(GPP) -c $(IvfDir)/ivfenc.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivfenc.o
+$(OBJDIR)/halloc.o: $(IvfDir)/halloc.c
+	$(GCC) -c $(IvfDir)/halloc.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/halloc.o
+
+$(OBJDIR)/ivf.o: $(IvfDir)/ivf.cpp
+	$(GCC) -c $(IvfDir)/ivf.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
+
+$(OBJDIR)/nestegg.o: $(IvfDir)/nestegg.c
+	$(GCC) -c $(IvfDir)/nestegg.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/nestegg.o
+
+$(OBJDIR)/tools_common.o: $(IvfDir)/tools_common.cpp
+	$(GPP) -c $(IvfDir)/tools_common.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/tools_common.o
+
+$(OBJDIR)/vpxdec.o: $(IvfDir)/vpxdec.cpp
+	$(GPP) -c $(IvfDir)/vpxdec.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/vpxdec.o
+
+$(OBJDIR)/vpxenc.o: $(IvfDir)/vpxenc.cpp
+	$(GPP) -c $(IvfDir)/vpxenc.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/vpxenc.o
 
 $(OBJDIR)/y4minput.o: $(IvfDir)/y4minput.cpp
 	$(GPP) -c $(IvfDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o

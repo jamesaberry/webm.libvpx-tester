@@ -46,25 +46,25 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
 
     std::string OutputStr0 = CPUDecOnlyWorksOut_CPU;
     OutputStr0.append("_none");
-    vpxt_enc_format_append(OutputStr0, DecForm);
+    vpxt_dec_format_append(OutputStr0, DecForm);
     std::string OutputStr1 = CPUDecOnlyWorksOut_CPU;
     OutputStr1.append("_mmx");
-    vpxt_enc_format_append(OutputStr1, DecForm);
+    vpxt_dec_format_append(OutputStr1, DecForm);
     std::string OutputStr2 = CPUDecOnlyWorksOut_CPU;
     OutputStr2.append("_sse");
-    vpxt_enc_format_append(OutputStr2, DecForm);
+    vpxt_dec_format_append(OutputStr2, DecForm);
     std::string OutputStr3 = CPUDecOnlyWorksOut_CPU;
     OutputStr3.append("_sse2");
-    vpxt_enc_format_append(OutputStr3, DecForm);
+    vpxt_dec_format_append(OutputStr3, DecForm);
     std::string OutputStr4 = CPUDecOnlyWorksOut_CPU;
     OutputStr4.append("_sse3");
-    vpxt_enc_format_append(OutputStr4, DecForm);
+    vpxt_dec_format_append(OutputStr4, DecForm);
     std::string OutputStr5 = CPUDecOnlyWorksOut_CPU;
     OutputStr5.append("_ssse3");
-    vpxt_enc_format_append(OutputStr5, DecForm);
+    vpxt_dec_format_append(OutputStr5, DecForm);
     std::string OutputStr6 = CPUDecOnlyWorksOut_CPU;
     OutputStr6.append("_sse4_1");
-    vpxt_enc_format_append(OutputStr6, DecForm);
+    vpxt_dec_format_append(OutputStr6, DecForm);
 
     /////////////OutPutfile////////////
     std::string TextfileString = CurTestDirStr;
@@ -221,10 +221,10 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
         putenv("ON2_SIMD_CAPS=0");
 
         std::string Output2Str = CPUDecOnlyWorksOut_CPU;
-        Output2Str.append("NONE");
-        vpxt_enc_format_append(Output2Str, EncForm);
+        Output2Str.append("_none");
+        vpxt_dec_format_append(Output2Str, DecForm);
 
-        tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
+        tprintf(PRINT_BTH, "\n\nDetected CPU capability: none");
         unsigned int CPUTick1 = 0;
         totalms = vpxt_decompress_time_and_output(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str(), CPUTick1, DecForm);
         DecompressonVector.push_back(Output2Str);
@@ -273,22 +273,22 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
                 tprintf(PRINT_BTH, "\nDetected CPU capability: ");
 
                 if ((Simd_Caps & HAS_MMX)    == Has_Check)
-                    CPUStr = "mmx";
+                    CPUStr = "_mmx";
 
                 if ((Simd_Caps & HAS_SSE)    == Has_Check)
-                    CPUStr = "sse";
+                    CPUStr = "_sse";
 
                 if ((Simd_Caps & HAS_SSE2)   == Has_Check)
-                    CPUStr = "sse2";
+                    CPUStr = "_sse2";
 
                 if ((Simd_Caps & HAS_SSE3)   == Has_Check)
-                    CPUStr = "sse3";
+                    CPUStr = "_sse3";
 
                 if ((Simd_Caps & HAS_SSSE3)  == Has_Check)
-                    CPUStr = "ssse3";
+                    CPUStr = "_ssse3";
 
                 if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
-                    CPUStr = "sse4_1";
+                    CPUStr = "_sse4_1";
 
                 tprintf(PRINT_BTH, "%s", CPUStr.c_str());
 

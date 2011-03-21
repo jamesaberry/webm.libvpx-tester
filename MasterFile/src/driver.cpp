@@ -215,7 +215,8 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "  (36) test_two_pass_vs_two_pass_best       RandParFile\n");
     tprintf(PRINT_STD, "  (37) test_undershoot                      RandCompress\n");
     tprintf(PRINT_STD, "  (38) test_version                         GraphPSNR\n");
-    tprintf(PRINT_STD, "  (39) test_win_lin_mac_match               Help\n");
+    tprintf(PRINT_STD, "  (39) test_vpx_matches_int                 Help\n");
+    tprintf(PRINT_STD, "  (40) test_win_lin_mac_match               \n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -253,8 +254,13 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%%              \n");
     fprintf(fp5, "%%              \n");
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%Verify Encoders and Decoders%%%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@webm@y4m\n", "test_extra_file", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_good_vs_best", slashChar(), slashChar());
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
@@ -290,7 +296,6 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_reconstruct_buffer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
-    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_version", slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode1%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128@webm@y4m\n", "test_allow_drop_frames", slashChar(), slashChar());
@@ -462,8 +467,13 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%%              \n");
     fprintf(fp5, "%%              \n");
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
-    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
+    fprintf(fp5, "%%%%%%%%%%%%%%%%%%Verify Encoders and Decoders%%%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@webm@y4m\n", "test_extra_file", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@vpxenc.exe@vpxdec.exe@webm@y4m\n", "test_vpx_matches_int", slashChar(), slashChar());
+    fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_good_vs_best", slashChar(), slashChar());
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
@@ -647,7 +657,7 @@ int  print_quick_test_files(const std::string WorkingDir)
 
     return 0;
 }
-int vpxt_test_help(const char *InputChar, int printSummary)
+int  vpxt_test_help(const char *InputChar, int printSummary)
 {
     std::string TestInputString = InputChar;
     int selector = vpxt_identify_test(InputChar);
@@ -1706,6 +1716,36 @@ int vpxt_test_help(const char *InputChar, int printSummary)
             vpxt_formated_print(HLPPRT, "The test creates four compressions: the first with Version equal to 0, the second with Version equal to 1, the third with Version equal to 2, and the fourth with Version equal to 3. The test then decodes each and records the time it took to do so. If each successive Version takes less time than the prior to decode and has a lower PSNR, the test passes.");
     }
 
+    if (selector == VPXMINUM)
+    {
+        if (printSummary)
+            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
+        else
+            tprintf(PRINT_STD, " ");
+
+        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+
+        tprintf(PRINT_STD, "\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Vpxenc Executable>\n"
+                "    <Vpxdec Executable>\n"
+                "    <Encode Format - webm/ivf>\n"
+                "    <Decode Format - y4m/ivf>\n"
+                "     <Optional Settings File>\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(HLPPRT, "The test takes a raw input file along with vpxenc and vpxdec paths and produces two encode files and two decode files.  The first encode file is produced using the testers internal compressor.  The second encode file is produced using the passed in vpxenc path.  The first decode file is produced using the passed in vpxdec path.  The second decode file is produced using the testers internal decoder.  The test then compares the encoded and decoded files.  If all decoded and encoded files are identical the test passes.");
+    }
+
     if (selector == WMLMMNUM)
     {
         if (printSummary)
@@ -2598,6 +2638,9 @@ void format_summary(const char *InputFileNameCharAr)
 
         if (TestTracker == VERSINUM)
             TestTrackerName = "Test_Version";
+
+        if (TestTracker == VERSINUM)
+            TestTrackerName = "Test_Vpx_Matches_Int";
 
         if (TestTracker == WMLMMNUM)
             TestTrackerName = "Test_Win_Lin_Mac_Match";
@@ -3499,6 +3542,9 @@ int  main(int argc, const char *argv[])
 
     if (selector == VERSINUM)
         return test_version(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+
+    if (selector == VPXMINUM)
+        return test_vpx_matches_int(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == WMLMMNUM)
         return test_win_lin_mac_match(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);

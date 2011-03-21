@@ -296,11 +296,11 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
 
     tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
     int lngRCEnc = vpxt_compare_enc(ReleaseOutputEnc.c_str(), DebugOutputEnc.c_str());
-    int EncMatch = vpxt_print_compare_ivf_results(lngRCEnc);
+    int EncMatch = vpxt_print_compare_ivf_results(lngRCEnc, 0);
 
     tprintf(PRINT_BTH, "Comparing Decompression Files: ");
     int lngRCDec = vpxt_compare_dec(ReleaseOutputDec.c_str(), DebugOutputDec.c_str());
-    int DecMatch = vpxt_print_compare_ivf_results(lngRCDec);
+    int DecMatch = vpxt_print_compare_ivf_results(lngRCDec, 0);
 
     int fail = 0;
 

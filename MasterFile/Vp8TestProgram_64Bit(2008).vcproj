@@ -361,6 +361,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_vpx_matches_int.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_win_lin_mac_match.cpp"
 					>
 				</File>

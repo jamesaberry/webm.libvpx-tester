@@ -61,7 +61,7 @@ typedef off_t EbmlLoc;
 
 /* These pointers are to the start of an element */
 #if !CONFIG_OS_SUPPORT
-/*typedef long off_t;*/
+typedef long off_t;
 #define fseeko fseek
 #define ftello ftell
 #endif
@@ -2596,7 +2596,7 @@ int vpxt_convert_par_file_to_ivfenc(const char *input, const char *output)
 
     return 0;
 }
-int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_api)
+int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_api, char *vpxenc_parameters, int vpxenc_parameters_sz)
 {
     VP8_CONFIG opt;
     opt = vpxt_input_settings(input_core);
@@ -2606,105 +2606,106 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     vpx_codec_enc_config_default(codec->iface, &cfg, 0);
     vpxt_input_settings_api(input_api, cfg);
 
+    int endofstr = 0;
+
     //--debug                                                                           //Debug mode (makes output deterministic)
     //--output=<arg>                                                                    //Output filename
     //--codec=<arg>                                                                     //Codec to use
     if (opt.Mode > 2)
-        tprintf(PRINT_STD, "--passes=2 ");                                          //Number of passes (1/2)
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--passes=2 ");                                          //Number of passes (1/2)
 
     //--pass=<arg>                                                                      //Pass to execute (1/2)
     //--fpf=<arg>                                                                       //First pass statistics file name
     //--limit=<arg>                                                                     //Stop encoding after n input frames
     //--deadline=<arg>                                                                  //Deadline per frame (usec)
     if (opt.Mode == 2 || opt.Mode == 5)
-        tprintf(PRINT_STD, "--best ");                                              //Use Best Quality Deadline
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--best ");                                              //Use Best Quality Deadline
 
     if (opt.Mode == 1 || opt.Mode == 4)
-        tprintf(PRINT_STD, "--good ");                                              //Use Good Quality Deadline
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--good ");                                              //Use Good Quality Deadline
 
     if (opt.Mode == 0)
-        tprintf(PRINT_STD, "--rt ");                                                //Use Realtime Quality Deadline
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--rt ");                                                //Use Realtime Quality Deadline
 
-    tprintf(PRINT_STD, "--verbose ");                                                   //Show encoder parameters
-    //--psnr                                                                            //Show PSNR in status line
-    tprintf(PRINT_STD, "--ivf ");                                                       //Output IVF (default is WebM)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--verbose ");                                                   //Show encoder parameters
+    //--psnr                                                                            //Show PSNR in status line                                                    //Output IVF (default is WebM)
 
     //Encoder Global Options:
     //--yv12                                                                            //Input file is YV12
     //--i420                                                                            //Input file is I420 (default)
-    tprintf(PRINT_STD, "--usage=%i ", cfg.g_usage);                                     //Usage profile number to use
-    tprintf(PRINT_STD, "--threads=%i ", opt.multi_threaded);                            //Max number of threads to use
-    tprintf(PRINT_STD, "--profile=%i ", opt.Version);                                   //Bitstream profile number to use
-    tprintf(PRINT_STD, "--width=%i ", opt.Width);                                       //Frame width
-    tprintf(PRINT_STD, "--height=%i ", opt.Height);                                     //Frame height
-    tprintf(PRINT_STD, "--timebase=%i/%i ", cfg.g_timebase.num, cfg.g_timebase.den);    //Stream timebase (frame duration)
-    tprintf(PRINT_STD, "--fps=%i/%i ", cfg.g_timebase.den / 2, cfg.g_timebase.num);      //Stream frame rate (rate/scale)
-    tprintf(PRINT_STD, "--error-resilient=%i ", opt.error_resilient_mode);              //Enable error resiliency features
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--usage=%i ", cfg.g_usage);                                     //Usage profile number to use
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--threads=%i ", opt.multi_threaded);                            //Max number of threads to use
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--profile=%i ", opt.Version);                                   //Bitstream profile number to use
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--width=%i ", opt.Width);                                       //Frame width
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--height=%i ", opt.Height);                                     //Frame height
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--timebase=%i/%i ", cfg.g_timebase.num, cfg.g_timebase.den);    //Stream timebase (frame duration)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--fps=%i/%i ", cfg.g_timebase.den / 2, cfg.g_timebase.num);      //Stream frame rate (rate/scale)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--error-resilient=%i ", opt.error_resilient_mode);              //Enable error resiliency features
 
     if (opt.allow_lag == 0)
-        tprintf(PRINT_STD, "--lag-in-frames=%i ", 0);                                   //Max number of frames to lag
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--lag-in-frames=%i ", 0);                                   //Max number of frames to lag
     else
-        tprintf(PRINT_STD, "--lag-in-frames=%i ", opt.lag_in_frames);                   //Max number of frames to lag
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--lag-in-frames=%i ", opt.lag_in_frames);                   //Max number of frames to lag
 
     //Rate Control Options:
     if (opt.allow_df == 0)
-        tprintf(PRINT_STD, "--drop-frame=%i ", 0);                                      //Temporal resampling threshold (buf %)
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--drop-frame=%i ", 0);                                      //Temporal resampling threshold (buf %)
     else
-        tprintf(PRINT_STD, "--drop-frame=%i ", opt.drop_frames_water_mark);             //Temporal resampling threshold (buf %)
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--drop-frame=%i ", opt.drop_frames_water_mark);             //Temporal resampling threshold (buf %)
 
-    tprintf(PRINT_STD, "--resize-allowed=%i ", opt.allow_spatial_resampling);           //Spatial resampling enabled (bool)
-    tprintf(PRINT_STD, "--resize-up=%i ", opt.resample_up_water_mark);                  //Upscale threshold (buf %)
-    tprintf(PRINT_STD, "--resize-down=%i ", opt.resample_down_water_mark);              //Downscale threshold (buf %)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--resize-allowed=%i ", opt.allow_spatial_resampling);           //Spatial resampling enabled (bool)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--resize-up=%i ", opt.resample_up_water_mark);                  //Upscale threshold (buf %)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--resize-down=%i ", opt.resample_down_water_mark);              //Downscale threshold (buf %)
 
     if (opt.end_usage == USAGE_LOCAL_FILE_PLAYBACK)
-        tprintf(PRINT_STD, "--end-usage=%i ", VPX_VBR);                                 //VBR=0 | CBR=1
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--end-usage=%i ", VPX_VBR);                                 //VBR=0 | CBR=1
 
     if (opt.end_usage == USAGE_STREAM_FROM_SERVER)
-        tprintf(PRINT_STD, "--end-usage=%i ", VPX_CBR);                                 //VBR=0 | CBR=1
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--end-usage=%i ", VPX_CBR);                                 //VBR=0 | CBR=1
 
     if (opt.end_usage == USAGE_CONSTRAINED_QUALITY)
-        tprintf(PRINT_STD, "--end-usage=%i ", VPX_CQ);                                  //VBR=0 | CBR=1
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--end-usage=%i ", VPX_CQ);                                  //VBR=0 | CBR=1
 
-    tprintf(PRINT_STD, "--target-bitrate=%i ", opt.target_bandwidth);                   //Bitrate (kbps)
-    tprintf(PRINT_STD, "--min-q=%i ", opt.best_allowed_q);                              //Minimum (best) quantizer
-    tprintf(PRINT_STD, "--max-q=%i ", opt.worst_allowed_q);                             //Maximum (worst) quantizer
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--target-bitrate=%i ", opt.target_bandwidth);                   //Bitrate (kbps)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--min-q=%i ", opt.best_allowed_q);                              //Minimum (best) quantizer
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--max-q=%i ", opt.worst_allowed_q);                             //Maximum (worst) quantizer
 
     if (opt.fixed_q != -1)
     {
-        tprintf(PRINT_STD, "--min-q=%i ", opt.fixed_q);                                 //Minimum (best) quantizer
-        tprintf(PRINT_STD, "--max-q=%i ", opt.fixed_q);                                 //Maximum (worst) quantizer
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--min-q=%i ", opt.fixed_q);                                 //Minimum (best) quantizer
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--max-q=%i ", opt.fixed_q);                                 //Maximum (worst) quantizer
     }
 
-    tprintf(PRINT_STD, "--undershoot-pct=%i ", opt.under_shoot_pct);                    //Datarate undershoot (min) target (%)
-    tprintf(PRINT_STD, "--overshoot-pct=%i ", cfg.rc_overshoot_pct);                    //Datarate overshoot (max) target (%)
-    tprintf(PRINT_STD, "--buf-sz=%i ", opt.maximum_buffer_size * 1000);                 //Client buffer size (ms)
-    tprintf(PRINT_STD, "--buf-initial-sz=%i ", opt.starting_buffer_level * 1000);       //Client initial buffer size (ms)
-    tprintf(PRINT_STD, "--buf-optimal-sz=%i ", opt.optimal_buffer_level * 1000);        //Client optimal buffer size (ms)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--undershoot-pct=%i ", opt.under_shoot_pct);                    //Datarate undershoot (min) target (%)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--overshoot-pct=%i ", cfg.rc_overshoot_pct);                    //Datarate overshoot (max) target (%)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-sz=%i ", opt.maximum_buffer_size * 1000);                 //Client buffer size (ms)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-initial-sz=%i ", opt.starting_buffer_level * 1000);       //Client initial buffer size (ms)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-optimal-sz=%i ", opt.optimal_buffer_level * 1000);        //Client optimal buffer size (ms)
 
     //Twopass Rate Control Options:
-    tprintf(PRINT_STD, "--bias-pct==%i ", opt.two_pass_vbrbias);                        //CBR/VBR bias (0=CBR, 100=VBR)
-    tprintf(PRINT_STD, "--minsection-pct=%i ", opt.two_pass_vbrmin_section);            //GOP min bitrate (% of target)
-    tprintf(PRINT_STD, "--maxsection-pct=%i ", opt.two_pass_vbrmax_section);            //GOP max bitrate (% of target)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--bias-pct=%i ", opt.two_pass_vbrbias);                        //CBR/VBR bias (0=CBR, 100=VBR)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--minsection-pct=%i ", opt.two_pass_vbrmin_section);            //GOP min bitrate (% of target)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--maxsection-pct=%i ", opt.two_pass_vbrmax_section);            //GOP max bitrate (% of target)
 
     //Keyframe Placement Options:
-    tprintf(PRINT_STD, "--kf-min-dist=%i ", cfg.kf_min_dist);                           //Minimum keyframe interval (frames)
-    tprintf(PRINT_STD, "--kf-max-dist=%i ", opt.key_freq);                              //Maximum keyframe interval (frames)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--kf-min-dist=%i ", cfg.kf_min_dist);                           //Minimum keyframe interval (frames)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--kf-max-dist=%i ", opt.key_freq);                              //Maximum keyframe interval (frames)
 
     if (opt.auto_key == 0)
-        tprintf(PRINT_STD, "--disable-kf ");                                            //Disable keyframe placement
+        endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--disable-kf ");                                            //Disable keyframe placement
 
     //VP8 Specific Options:
-    tprintf(PRINT_STD, "--cpu-used=%i ", opt.cpu_used);                                 //CPU Used (-16..16)
-    tprintf(PRINT_STD, "--auto-alt-ref=%i ", opt.play_alternate);                       //Enable automatic alt reference frames
-    tprintf(PRINT_STD, "--noise-sensitivity=%i ", opt.noise_sensitivity);               //Noise sensitivity (frames to blur)
-    tprintf(PRINT_STD, "--sharpness=%i ", opt.Sharpness);                               //Filter sharpness (0-7)
-    tprintf(PRINT_STD, "--static-thresh=%i ", opt.encode_breakout);                     //Motion detection threshold
-    tprintf(PRINT_STD, "--token-parts=%i ", opt.token_partitions);                      //Number of token partitions to use, log2
-    tprintf(PRINT_STD, "--arnr-maxframes=%i ", opt.arnr_max_frames);                   //AltRef Max Frames
-    tprintf(PRINT_STD, "--arnr-strength=%i ", opt.arnr_strength);                    //AltRef Strength
-    tprintf(PRINT_STD, "--arnr-type=%i ", opt.arnr_type);                        //AltRef Type
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--cpu-used=%i ", opt.cpu_used);                                 //CPU Used (-16..16)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--auto-alt-ref=%i ", opt.play_alternate);                       //Enable automatic alt reference frames
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--noise-sensitivity=%i ", opt.noise_sensitivity);               //Noise sensitivity (frames to blur)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--sharpness=%i ", opt.Sharpness);                               //Filter sharpness (0-7)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--static-thresh=%i ", opt.encode_breakout);                     //Motion detection threshold
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--token-parts=%i ", opt.token_partitions);                      //Number of token partitions to use, log2
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--arnr-maxframes=%i ", opt.arnr_max_frames);                   //AltRef Max Frames
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--arnr-strength=%i ", opt.arnr_strength);                    //AltRef Strength
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--arnr-type=%i ", opt.arnr_type);                        //AltRef Type
     //--tune=<arg>                                                                      //Material to favor - psnr, ssim
-    tprintf(PRINT_STD, "--cq-level=%i ", opt.cq_level);
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--cq-level=%i ", opt.cq_level);
 
     return 0;
 }
@@ -3455,6 +3456,8 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == VERSINUM) TestName = "test_version";
 
+    if (TestNumber == VPXMINUM) TestName = "test_vpx_matches_int";
+
     if (TestNumber == WMLMMNUM) TestName = "test_win_lin_mac_match";
 
     return 0;
@@ -3591,6 +3594,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.compare("test_version") == 0)
             return VERSINUM;
+
+        if (id_test_str.compare("test_vpx_matches_int") == 0)
+            return VPXMINUM;
 
         if (id_test_str.compare("test_win_lin_mac_match") == 0)
             return WMLMMNUM;
@@ -4393,6 +4399,22 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
+                if (selector == VPXMINUM)
+                {
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "VpxencMatchesIntComp";
+                        PassFail[PassFailInt] = trackthis1;
+                        //std::cout << "\n\n\n\n\n" << DummyArgvVar << "\n\n\n\n\n";
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
                 if (selector == WMLMMNUM)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -4417,7 +4439,8 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTTNUM &&
                     selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM && selector != OV2PSNUM && selector != PLYALNUM &&
                     selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM && selector != RECBFNUM &&
-                    selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM)
+                    selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM &&
+                    selector != VPXMINUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -5027,6 +5050,16 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 1;
 
         if (argNum == 8)
+            return 2;
+    }
+
+    //test_win_lin_mac_match
+    if (selector == VPXMINUM)
+    {
+        if (argNum == 9)
+            return 1;
+
+        if (argNum == 10)
             return 2;
     }
 
@@ -17555,7 +17588,7 @@ int vpxt_check_mem_state(const std::string FileName, std::string &bufferString)
 
     return 0;
 }
-int vpxt_print_compare_ivf_results(int lngRC)
+int vpxt_print_compare_ivf_results(int lngRC, int printErr)
 {
     //return 1 for files identical
     //retrun -1 for files not identical

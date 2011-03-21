@@ -37,7 +37,8 @@
 #define TV2BTNUM 36 //test_two_pass_vs_two_pass_best
 #define UNDSHNUM 37 //test_undershoot
 #define VERSINUM 38 //test_version
-#define WMLMMNUM 39 //test_win_lin_mac_match
+#define VPXMINUM 39 //test_vpx_matches_int
+#define WMLMMNUM 40 //test_win_lin_mac_match
 
 #define MAXTENUM 39
 

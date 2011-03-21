@@ -30,7 +30,8 @@ int vpxt_output_settings_api(const char *outputFile, vpx_codec_enc_cfg_t cfg);
 int vpxt_input_settings_api(const char *inputFile, vpx_codec_enc_cfg_t &cfg);
 int vpxt_output_settings_ivfenc(const char *outputFile, VP8_CONFIG opt);
 int vpxt_convert_par_file_to_ivfenc(const char *input, const char *output);
-int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_api);
+int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_api, char *vpxenc_parameters, int vpxenc_parameters_sz);
+//int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_api);
 //---------------------------------------------------IVF Header Data------------------------------------------------------------------
 int vpxt_print_ivf_file_header(IVF_HEADER ivf);
 int vpxt_format_ivf_header_read(IVF_HEADER *ivf);
@@ -142,7 +143,7 @@ int vpxt_time_return(const char *infile, int FileType);
 int vpxt_cpu_tick_return(const char *infile, int FileType);
 int vpxt_check_force_key_frames(const char *KeyFrameoutputfile, int ForceKeyFrameInt, const char *ForceKeyFrame);
 int vpxt_check_mem_state(const std::string FileName, std::string &bufferString);
-int vpxt_print_compare_ivf_results(int lngRC);
+int vpxt_print_compare_ivf_results(int lngRC, int printErr);
 double vpxt_get_psnr(const char *compFileName);
 //-----------------------------------------------------------IVF Enc------------------------------------------------------
 int API20Encoder(long width, long height, const char *infilechar, const char *outfilechar);

@@ -43,6 +43,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     outputVP8Old.append(MyDir);
     outputVP8Old.append("_compression_old");
     vpxt_enc_format_append(outputVP8Old, EncForm);
+
     std::string ParFile = CurTestDirStr;
     ParFile.append(slashCharStr());
     ParFile.append(MyDir);

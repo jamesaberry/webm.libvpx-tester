@@ -4692,8 +4692,12 @@ int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv)
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
 
+    char VpxencParameters[1024];
+
     tprintf(PRINT_STD, "\n\nequivalent vpxenc settings:\n");
-    vpxt_convert_par_file_to_vpxenc(argv[2], argv[3]);
+    vpxt_convert_par_file_to_vpxenc(argv[2], argv[3], VpxencParameters, 1024);
+    tprintf(PRINT_STD, "%s", VpxencParameters);
+    //vpxt_convert_par_file_to_vpxenc(argv[2], argv[3]);
     tprintf(PRINT_STD, "\n\n");
     return 0;
 }
@@ -4739,29 +4743,6 @@ int tool_pad_raw_clip(int argc, const char *const *argv)
     int newFrameHeight = atoi(argv[5]);
     int FileIsIVF  = atoi(argv[6]);
     vpxt_pad_raw_clip(inputFile.c_str(), outputFile.c_str(), newFrameWidth, newFrameHeight, FileIsIVF, 0);
-    return 0;
-}
-int tool_pad_raw_ivf(int argc, const char *const *argv)
-{
-    if (argc < 6)
-    {
-        tprintf(PRINT_STD,
-                "\n  PadRawIVF\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <New Frame Width>\n"
-                "    <New Frame Height>\n"
-                "    <Raw/IVF 0-Raw 1-IVF>\n"
-               );
-        return 0;
-    }
-
-    std::string inputFile = argv[2];
-    std::string outputFile = argv[3];
-    int newFrameWidth = atoi(argv[4]);
-    int newFrameHeight = atoi(argv[5]);
-    int FileIsIVF  = atoi(argv[6]);
-    vpxt_pad_raw_ivf(inputFile.c_str(), outputFile.c_str(), newFrameWidth, newFrameHeight, FileIsIVF, 0);
     return 0;
 }
 int tool_copy_all_txt_files(int argc, const char *const *argv)
@@ -6423,7 +6404,6 @@ int tool_print_cpu_info()
     return 0;
 }
 int tool_random_multi_test(int argc, const char *const *argv)
-int tool_random_multi_test(int argc, const char *const *argv)
 {
     if (argc < 5)
     {
@@ -6541,6 +6521,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6553,6 +6537,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6567,6 +6555,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6579,6 +6571,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6595,6 +6591,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandKeyFrameFreq;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6607,6 +6607,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6623,6 +6627,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandVersion;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6637,6 +6645,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << RandTBNum;
             outfile << "@";
             outfile << RandVersion;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6653,6 +6665,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandCQ;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6665,6 +6681,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6683,6 +6703,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << "VP8vNewest_PlugIn_RLib_RMode_32Bit.exe";
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6695,6 +6719,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6709,6 +6737,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6722,6 +6754,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6730,6 +6766,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
         {
             outfile << "test_extra_file@";
             outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6748,6 +6788,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandQ2;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6762,6 +6806,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << RandTBNum;
             outfile << "@";
             outfile << RandForceKeyFrameNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6782,6 +6830,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandHeight;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6792,6 +6844,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << RandIVFFile.c_str();
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6810,6 +6866,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandLag2;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6822,6 +6882,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6837,6 +6901,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << RandTBNum;
             outfile << "@";
             outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6859,6 +6927,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6873,6 +6945,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << RandTBNum;
             outfile << "@";
             outfile << RandMultiThread;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6891,6 +6967,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << "2";
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6908,6 +6988,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << "2";
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6921,6 +7005,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6931,6 +7019,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << RandIVFFile.c_str();
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6945,6 +7037,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6957,6 +7053,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6971,6 +7071,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -6983,6 +7087,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -6998,6 +7106,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << RandTBNum;
             outfile << "@";
             outfile << RandLagInFrames;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -7017,638 +7129,9 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == UNDSHNUM)
-        {
-            outfile << "test_undershoot@";
-            outfile << RandIVFFile.c_str();
+            outfile << "webm";
             outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == VERSINUM)
-        {
-            outfile << "test_version@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == WMLMMNUM)
-        {
-        }
-
-        CurrentTest++;
-    }
-
-    outfile.close();
-    return 0;
-}
-{
-    if (argc < 5)
-    {
-        tprintf(PRINT_STD,
-                "\n  Random Multi Test\n\n"
-                "    <Input Dir>\n"
-                "    <Output Txt File>\n"
-                "    <Input Number of Tests to Run>\n"
-               );
-        return 0;
-    }
-
-    std::string InputIVFDir = argv[2];
-    std::string OutputTestFile = argv[3];
-    int NumberOfTestsToRun = atoi(argv[4]);
-    char OutputTestFileName[255];
-    vpxt_file_name(OutputTestFile.c_str(), OutputTestFileName, 1);
-    std::string ParameterFilesFolder = InputIVFDir;
-    ParameterFilesFolder.append("\\");
-    ParameterFilesFolder.append(OutputTestFileName);
-    vpxt_make_dir(ParameterFilesFolder);
-    ParameterFilesFolder.append("\\");
-    std::string TestVectorFolder = InputIVFDir;
-    TestVectorFolder.append("\\TestVectors");
-    std::vector<std::string> FileNamesVector;
-    std::vector<std::string> IVFFileNamesVector;
-    vpxt_list_files_in_dir(FileNamesVector, InputIVFDir.c_str());
-    printf("\n");
-    int i = 0;
-
-    while (i < FileNamesVector.size())
-    {
-        if (!FileNamesVector[i].substr(FileNamesVector[i].length() - 4, 4).compare(".ivf"))
-            IVFFileNamesVector.push_back(FileNamesVector[i].c_str());
-
-        i++;
-    }
-
-    printf("\n");
-    i = 0;
-
-    while (i < IVFFileNamesVector.size())
-    {
-        printf("IVF file found %i %s\n", i, IVFFileNamesVector[i].c_str());
-        i++;
-    }
-
-    if (IVFFileNamesVector.size() == 0)
-    {
-        printf("Error - No ivf files found in directory %s\n", InputIVFDir.c_str());
-        return 0;
-    }
-
-    std::string DoneStr = "done";
-    char inputBuffer[255];
-    std::vector<int> ValidTestNumbers;
-    vpxt_on_error_output();
-    printf("\nPlease input test names or numbers to include (\"done\" to exit):\n");
-
-    while (DoneStr.compare(inputBuffer) != 0)
-    {
-        std::cin.getline(inputBuffer, 255);
-        int TestNumber = vpxt_identify_test(inputBuffer);
-
-        if (TestNumber > 0 && TestNumber <= MAXTENUM)
-            ValidTestNumbers.push_back(TestNumber);
-        else
-        {
-            if (DoneStr.compare(inputBuffer))
-                printf("Invaild Entry\n");
-        }
-    }
-
-    printf("outputFile: %s\n", OutputTestFile.c_str());
-    std::ofstream outfile(OutputTestFile.c_str());
-    int CurrentTest = 1;
-
-    while (CurrentTest <= NumberOfTestsToRun)
-    {
-        int RandTestNum = rand() % ValidTestNumbers.size();
-        int RandIVFNum = rand() % IVFFileNamesVector.size();
-        char CurrentTestChar[255];
-        vpxt_itoa_custom(CurrentTest, CurrentTestChar, 10);
-        std::string RandSettingsFile = ParameterFilesFolder;
-        RandSettingsFile.append(OutputTestFileName);
-        RandSettingsFile.append("_");
-        RandSettingsFile.append(CurrentTestChar);
-        RandSettingsFile.append(".txt");
-        std::string RandIVFFile = IVFFileNamesVector[RandIVFNum].c_str();
-        VP8_CONFIG opt = vpxt_random_parameters(opt, RandIVFFile.c_str(), 2);
-        vpxt_output_settings(RandSettingsFile.c_str(), opt);
-        int ModeNum = 3;
-
-        while (ModeNum == 3)
-            ModeNum = rand() % 6;
-
-        int RandTBNum = (rand() % 20 + 1) * 128;
-        int RandKeyFrameFreq = rand() % 120;
-        int RandVersion = rand() % 4;
-        int RandCQ = rand() % 64;
-        int RandQ1 = rand() % 64;
-        int RandQ2 = rand() % 64;
-        int RandForceKeyFrameNum = rand() % 120;
-        int RandLag1 = rand() % 26;
-        int RandLag2 = rand() % 26;
-        int RandMultiThread = rand() % 4;
-        int RandLagInFrames = rand() % 26;
-
-        if (ValidTestNumbers[RandTestNum] == AlWDFNUM)
-        {
-            outfile << "test_allow_drop_frames@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == ALWLGNUM)
-        {
-            outfile << "test_allow_lag@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == ALWSRNUM)
-        {
-            outfile << "test_allow_spatial_resampling@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == ARNRTNUM)
-        {
-            outfile << "test_arnr@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == AUTKFNUM)
-        {
-            outfile << "test_auto_key_frame@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandKeyFrameFreq;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == BUFLVNUM)
-        {
-            outfile << "test_buffer_level@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == CPUDENUM)
-        {
-            outfile << "test_change_cpu_dec@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandVersion;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == CPUENNUM)
-        {
-            outfile << "test_change_cpu_enc@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandVersion;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == CONQUNUM)
-        {
-            outfile << "test_constrained_quality@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandCQ;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == DTARTNUM)
-        {
-            outfile << "test_data_rate@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == DBMRLNUM)
-        {
-            outfile << "test_debug_matches_release@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
-            outfile << "@";
-            outfile << "VP8vNewest_PlugIn_RLib_RMode_32Bit.exe";
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == DFWMWNUM)
-        {
-            outfile << "test_drop_frame_watermark@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == ENCBONUM)
-        {
-            outfile << "test_encoder_break_out@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == ERRMWNUM)
-        {
-            outfile << "test_error_resolution@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == EXTFINUM)
-        {
-            outfile << "test_extra_file@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == FIXDQNUM)
-        {
-            outfile << "test_fixed_quantizer@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandQ1;
-            outfile << "@";
-            outfile << RandQ2;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == FKEFRNUM)
-        {
-            outfile << "test_force_key_frame@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandForceKeyFrameNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == FRSZTNUM)
-        {
-            int RandWidth = opt.Width - (opt.Width % 16) - ((rand() % (opt.Width / 16)) * 16);
-            int RandHeight = opt.Height - - (opt.Height % 16) - ((rand() % (opt.Height / 16)) * 16);
-            outfile << "test_frame_size@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandWidth;
-            outfile << "@";
-            outfile << RandHeight;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == GQVBQNUM)
-        {
-            outfile << "test_good_vs_best@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == LGIFRNUM)
-        {
-            outfile << "test_lag_in_frames@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandLag1;
-            outfile << "@";
-            outfile << RandLag2;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == MAXQUNUM)
-        {
-            outfile << "test_max_quantizer@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == MEML1NUM)
-        {
-            outfile << "test_mem_leak@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == MEML2NUM)
-        {
-            outfile << "test_mem_leak2@";
-            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@";
-            outfile << "MemLeakCheck2_Compression.ivf";
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == MINQUNUM)
-        {
-            outfile << "test_min_quantizer@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == MULTTNUM)
-        {
-            outfile << "test_multithreaded@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandMultiThread;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == NVOECPTK)
-        {
-            outfile << "test_new_vs_old_enc_cpu_tick@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe";
-            outfile << "@";
-            outfile << "2";
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == NVOPSNUM)
-        {
-            outfile << "test_new_vs_old_psnr@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe";
-            outfile << "@";
-            outfile << "2";
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == NOISENUM)
-        {
-            outfile << "test_noise_sensitivity@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == OV2PSNUM)
-        {
-            outfile << "test_one_pass_vs_two_pass@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == PLYALNUM)
-        {
-            outfile << "test_play_alternate@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == POSTPNUM)
-        {
-            outfile << "test_post_processor@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == RECBFNUM)
-        {
-            outfile << "test_reconstruct_buffer@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == RSDWMNUM)
-        {
-            outfile << "test_resample_down_watermark@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == SPEEDNUM)
-        {
-            outfile << "test_speed@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << ModeNum;
-            outfile << "@";
-            outfile << RandTBNum;
-            outfile << "@";
-            outfile << RandLagInFrames;
-            outfile << "@";
-            outfile << RandSettingsFile.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == TVECTNUM)
-        {
-            outfile << "test_test_vector@";
-            outfile << TestVectorFolder.c_str();
-            outfile << "\n";
-        }
-
-        if (ValidTestNumbers[RandTestNum] == TV2BTNUM)
-        {
-            outfile << "test_two_pass_vs_two_pass_best@";
-            outfile << RandIVFFile.c_str();
-            outfile << "@";
-            outfile << RandTBNum;
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
@@ -7663,6 +7146,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";
         }
@@ -7675,6 +7162,31 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << ModeNum;
             outfile << "@";
             outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == VPXMINUM)
+        {
+            outfile << "test_vpx_matches_int@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << "vpxenc.exe";
+            outfile << "@";
+            outfile << "vpxdec.exe";
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";

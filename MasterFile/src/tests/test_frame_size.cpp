@@ -284,26 +284,6 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_ivf_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
-
-            char PSNROutFile[255];
-            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
-            char *PSNROutFileFull = strcat(PSNROutFile, "psnr.txt");
-
-            std::ofstream outfilePSNR(PSNROutFileFull);
-            outfilePSNR << PSNRAr[RawCropNum-1];
-            outfilePSNR.close();
-
-            //Delete
-            if (DeleteIVF)
-            {
-                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
-                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
-            }
-
-            }
-
-            //PSNR
             PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
 
             //char PSNROutFile[255];
@@ -323,9 +303,14 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
                 vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
             }
 
+            x++;
+            RawCropNum++;
+        }
 
         x = 1;
+
         while (x < 16)
+        {
             //Crop
             tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x, StartingHeight - x);
             vpxt_crop_raw_clip(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0, StartingWidth - x, StartingHeight - x, 1, 1);

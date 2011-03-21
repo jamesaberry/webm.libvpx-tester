@@ -52,6 +52,7 @@ SRC = \
    $(TestsDir)/test_two_pass_vs_two_pass_best.cpp  \
    $(TestsDir)/test_undershoot.cpp  \
    $(TestsDir)/test_version.cpp  \
+   $(TestsDir)/test_vpx_matches_int.cpp  \
    $(TestsDir)/test_win_lin_mac_match.cpp  \
    $(ToolDir)/run_multiple_tests.cpp \
    $(ToolDir)/rand_comp.cpp \
@@ -113,6 +114,7 @@ SRCOBJ = \
    $(OBJDIR)/test_two_pass_vs_two_pass_best.o  \
    $(OBJDIR)/test_undershoot.o  \
    $(OBJDIR)/test_version.o  \
+   $(OBJDIR)/test_vpx_matches_int.o  \
    $(OBJDIR)/test_win_lin_mac_match.o  \
    $(OBJDIR)/run_multiple_tests.o \
    $(OBJDIR)/rand_comp.o \
@@ -268,6 +270,9 @@ $(OBJDIR)/test_undershoot.o: $(TestsDir)/test_undershoot.cpp
 $(OBJDIR)/test_version.o: $(TestsDir)/test_version.cpp
 	$(GPP) -c $(TestsDir)/test_version.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_version.o
 
+$(OBJDIR)/test_vpx_matches_int.o: $(TestsDir)/test_vpx_matches_int.cpp
+	$(GPP) -c $(TestsDir)/test_vpx_matches_int.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_vpx_matches_int.o
+	
 $(OBJDIR)/test_win_lin_mac_match.o: $(TestsDir)/test_win_lin_mac_match.cpp
 	$(GPP) -c $(TestsDir)/test_win_lin_mac_match.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_win_lin_mac_match.o
 

@@ -43,6 +43,7 @@ extern int test_vector_test(int argc, const char *const *argv, const std::string
 extern int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_undershoot(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_version(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
+extern int test_vpx_matches_int(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_win_lin_mac_match(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 
 //Tools

@@ -1199,7 +1199,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "The test creates fourty-six cropped raw ivf or y4m files from a user inputfile, starting height, and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its PSNR.  If all compressions PSNRs are within five percent of the starting width/height file's PSNR and all PSNRs are greater than 25 the test passes.");
+            vpxt_formated_print(HLPPRT, "The test creates forty-six cropped raw ivf or y4m files from a user inputfile, starting height, and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its PSNR.  If all compressions PSNRs are within five percent of the starting width/height file's PSNR and all PSNRs are greater than 25 the test passes.");
     }
 
     if (selector == GQVBQNUM)
@@ -1220,7 +1220,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "The test creates six compressions: the first and fourth compressions for 30%% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30%% more than the input target bandwidth at good quality and best quality. The test then records each file's data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.");
+            vpxt_formated_print(HLPPRT, "The test creates six compressions: the first and fourth compressions for 30%% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the third and sixth at 30%% more than the input target bandwidth at good quality and best quality. The test then records each file's data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.");
     }
 
     if (selector == LGIFRNUM)
@@ -1431,7 +1431,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test then computes and records PSNR values for each. If the new compressions PSNR is greater than the old compresssions PSNR (or within 1%%), the test passes.");
+            vpxt_formated_print(HLPPRT, "The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test then computes and records PSNR values for each. If the new compressions PSNR is greater than the old compressions PSNR (or within 1%%), the test passes.");
     }
 
     if (selector == NOISENUM)

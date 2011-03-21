@@ -88,7 +88,7 @@
 
 <h1 id="vp8-codec-tester-v096">VP8 Codec-Tester v0.9.6</h1>
 
-<p><em>Updated 2011-03-07</em></p>
+<p><em>Updated 2011-03-21</em></p>
 
 <hr />
 
@@ -110,7 +110,7 @@
           <li><a href="#tools-example">Tools Example</a></li>
         </ul>
       </li>
-      <li><a href="#checking-the-progess-of-multiple-tests">Checking the Progess of Multiple Tests</a></li>
+      <li><a href="#checking-the-progress-of-multiple-tests">Checking the Progress of Multiple Tests</a></li>
       <li><a href="#resuming-a-stopped-multiple-test">Resuming a Stopped Multiple Test</a></li>
       <li><a href="#creating-control-files-manually">Creating Control Files Manually</a></li>
       <li><a href="#evaluating-results-of-a-multiple-test">Evaluating Results of a Multiple Test</a></li>
@@ -130,7 +130,7 @@
 
 <h2 id="using-the-tester">Using the Tester</h2>
 
-<p>Open a terminal window and change to a directory containing the linvpx-tester executable (<code>VP8_Tester_API_32Bit.exe</code> or <code>VP8_Tester_API_64Bit.exe</code>).  Running the command with no arguments displays the usage information shown in Figure 1, which is a list of the various tests and tools available.</p>
+<p>Open a terminal window and change to a directory containing the libvpx-tester executable (<code>VP8_Tester_API_32Bit.exe</code> or <code>VP8_Tester_API_64Bit.exe</code>).  Running the command with no arguments displays the usage information shown in Figure 1, which is a list of the various tests and tools available.</p>
 
 <pre class="terminal"><code>$ VP8_Tester_API_64Bit.exe 
 
@@ -607,7 +607,7 @@ API - Compressing Raw IVF File to VP8 Webm File:
 
 <p>See the column labeled <strong>Tools</strong> in the tester&rsquo;s usage output or <strong>Tools Overview</strong> below for a full list of available tools.</p>
 
-<h2 id="checking-the-progess-of-multiple-tests">Checking the Progess of Multiple Tests</h2>
+<h2 id="checking-the-progress-of-multiple-tests">Checking the Progress of Multiple Tests</h2>
 
 <p>To check the status of a currently running multiple test, you can check both <code>tests_run.txt</code> and <code>test_results.html</code> (or <code>compression_results.html</code>, etc.). </p>
 
@@ -754,12 +754,12 @@ on file <code>input.ivf</code>.</li>
     <tr>
       <td>18</td>
       <td>test_frame_size</td>
-      <td>The test creates fourty-six cropped raw ivf or y4m files from a user inputfile, starting height, and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its PSNR.  If all compressions PSNRs are within five percent of the starting width/height file&rsquo;s PSNR and all PSNRs are greater than 25 the test passes.</td>
+      <td>The test creates forty-six cropped raw ivf or y4m files from a user inputfile, starting height, and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its PSNR.  If all compressions PSNRs are within five percent of the starting width/height file&rsquo;s PSNR and all PSNRs are greater than 25 the test passes.</td>
     </tr>
     <tr>
       <td>19</td>
       <td>test_good_vs_best</td>
-      <td>The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each file&rsquo;s data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.</td>
+      <td>The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the third and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each file&rsquo;s data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.</td>
     </tr>
     <tr>
       <td>20</td>
@@ -799,7 +799,7 @@ on file <code>input.ivf</code>.</li>
     <tr>
       <td>27</td>
       <td>test_new_vs_old_psnr</td>
-      <td>The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test then computes and records PSNR values for each. If the new compressions PSNR is greater than the old compresssions PSNR (or within 1%), the test passes.</td>
+      <td>The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test then computes and records PSNR values for each. If the new compressions PSNR is greater than the old compressions PSNR (or within 1%), the test passes.</td>
     </tr>
     <tr>
       <td>28</td>

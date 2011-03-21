@@ -11,7 +11,7 @@
 VP8 Codec-Tester v0.9.6
 =======================
 
-_Updated 2011-03-07_
+_Updated 2011-03-21_
 
 
 ***
@@ -34,7 +34,7 @@ The raw video files used as example input in this document are available for dow
 Using the Tester
 ----------------
 
-Open a terminal window and change to a directory containing the linvpx-tester executable (`VP8_Tester_API_32Bit.exe` or `VP8_Tester_API_64Bit.exe`).  Running the command with no arguments displays the usage information shown in Figure 1, which is a list of the various tests and tools available.
+Open a terminal window and change to a directory containing the libvpx-tester executable (`VP8_Tester_API_32Bit.exe` or `VP8_Tester_API_64Bit.exe`).  Running the command with no arguments displays the usage information shown in Figure 1, which is a list of the various tests and tools available.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -537,7 +537,7 @@ $ VP8_Tester_API_64Bit.exe VPXTPSNR
 See the column labeled **Tools** in the tester's usage output or **Tools Overview** below for a full list of available tools.
 
 
-Checking the Progess of Multiple Tests
+Checking the Progress of Multiple Tests
 --------------------------------------
 
 To check the status of a currently running multiple test, you can check both `tests_run.txt` and `test_results.html` (or `compression_results.html`, etc.). 
@@ -607,8 +607,8 @@ Tests Overview
 | 15 | test_extra_file                | The test creates a two-pass compression and checks for extra files in the current directory, the directory the executable is located in, and the directory the output file is written to. If no extra files are found, the test passes.
 | 16 | test_fixed_quantizer           | The test creates two compressions each with user input Fixed Quantizers, and records the quantizers used to encode each frame. The test then records the compressions' sizes. If all quantizers for each compression match the input Fixed Quantizer, and the smaller quantizer's compression has a larger file size, the test passes.
 | 17 | test_force_key_frame           | The test creates a compression using a user-input value as a Force Key Frame Interval. The Test then records the placement of all key frames in the compression. If key frames occur only when Force Key Frame dictates, the test passes.
-| 18 | test_frame_size                | The test creates fourty-six cropped raw ivf or y4m files from a user inputfile, starting height, and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its PSNR.  If all compressions PSNRs are within five percent of the starting width/height file's PSNR and all PSNRs are greater than 25 the test passes.
-| 19 | test_good_vs_best              | The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the thrid and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each file's data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.
+| 18 | test_frame_size                | The test creates forty-six cropped raw ivf or y4m files from a user inputfile, starting height, and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its PSNR.  If all compressions PSNRs are within five percent of the starting width/height file's PSNR and all PSNRs are greater than 25 the test passes.
+| 19 | test_good_vs_best              | The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the third and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each file's data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.
 | 20 | test_lag_in_frames             | The test creates three compressions: the first with Allow Lag set to 0, the second and third with Allow Lag set to 1. The second compression uses the first user-input Lag in Frames value for its Lag in frames and the third uses the second user-input value for its Lag in Frames. The test outputs each file's quantizer values for each encoded frame. If none of the files are identical, the PSNRs of each successive file are within 10% of the last, and the quantizer output shows that the proper number of frames were lagged, the test passes.
 | 21 | test_max_quantizer             | The test creates nine compressions, the first with a Max Quantizer equal to 4 and each subsequent file with a Max Quantizer 8 greater than the last until 63. The test records the individual quantizer values for each encoded frame. If the PSNRs of each Max Quantizer compression from 4 to 63 increase as Max Quantizer decreases and the recorded quantizers for each file do not exceed their corresponding Max Quantizer for all compressions, the test passes.
 | 22 | test_mem_leak                  | The test creates a compression using the debug executable to check memory usage and records the results to an output file. If no memory leaks are found, the test passes.
@@ -616,7 +616,7 @@ Tests Overview
 | 24 | test_min_quantizer             | The test creates two compressions: the first with a Min Quantizer equal to 10, the second with a Min Quantizer equal to 60. It records the quantizer used for each frame of the compression. If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding Min Quantizer, the test passes.
 | 25 | test_multithreaded             | The test creates two compressions: the first using a MultiThreaded equal to 2, the second using a MultiThreaded equal to 0. The test then compares the times to compress each. If MultiThreaded 2 is faster than 0, the test passes.
 | 26 | test_new_vs_old_enc_cpu_tick   | The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test records the time that each compression took. If the new compression's time is at least 10% faster than the old compression's time, the test passes.
-| 27 | test_new_vs_old_psnr           | The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test then computes and records PSNR values for each. If the new compressions PSNR is greater than the old compresssions PSNR (or within 1%), the test passes.
+| 27 | test_new_vs_old_psnr           | The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test then computes and records PSNR values for each. If the new compressions PSNR is greater than the old compressions PSNR (or within 1%), the test passes.
 | 28 | test_noise_sensitivity         | The test creates seven compressions with Noise Sensitivity values from 0 to 6 and computes PSNR values for each. If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6, the test passes.
 | 29 | test_one_pass_vs_two_pass      | The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at one-pass good quality and two-pass good quality, the second and fifth compressions for the input target bandwidth at one-pass good quality and two-pass good quality, and the third and sixth at 30% more than the input target bandwidth at one-pass good quality and two-pass good quality. The test then records each file's data rate and PSNR and computes the area under the curve for the common interval between the one-pass good quality curve and the two-pass good quality curve. If the area under the two-pass good quality curve is greater than the area under the one-pass good quality curve, the test passes.
 | 30 | test_play_alternate            | The test creates two compressions: the first with Play Alternate equal to 0, the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions. If alternate reference frames exist for Play Alternate = 1 and not for Play Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2 are equal, and the files are not identical, the test passes.

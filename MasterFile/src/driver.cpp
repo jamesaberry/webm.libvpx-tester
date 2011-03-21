@@ -2482,6 +2482,54 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)//return 1 if string
         return 1;
     }
 
+    if (InputString.compare("writeivffileheader") == 0)
+    {
+        tprintf(PRINT_STD,
+                "\n  Write IVF File Header\n\n"
+                "     <Output File>\n"
+                "     <Width>\n"
+                "     <Height>\n"
+                "     <Scale>\n"
+                "     <Rate>\n"
+                "     <Length>\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+
+    if (InputString.compare("writeivfframeheader") == 0)
+    {
+        tprintf(PRINT_STD,
+                "\n  Write IVF Frame Header\n\n"
+                "     <Output File>\n"
+                "     <Time Stamp>\n"
+                "     <Frame Size>\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+
+    if (InputString.compare("writeframedata") == 0)
+    {
+        tprintf(PRINT_STD,
+                "\n  Write IVF Frame Data\n\n"
+                "     <Input File>\n"
+                "     <Output File>\n"
+                "     <Frame Size>\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+
     return 0;
 }
 void format_summary(const char *InputFileNameCharAr)
@@ -3413,6 +3461,15 @@ int  main(int argc, const char *argv[])
 
     if (TestInputString.compare("getframecount") == 0)
         return vpxt_get_number_of_frames(argv[2]);
+
+    if (TestInputString.compare("writeivffileheader") == 0)
+        return tool_vpxt_write_ivf_file_header(argc, argv);
+
+    if (TestInputString.compare("writeivfframeheader") == 0)
+        return tool_vpxt_write_ivf_frame_header(argc, argv);
+
+    if (TestInputString.compare("writeframedata") == 0)
+        return tool_vpxt_write_frame_data(argc, argv);
 
     tprintf(PRINT_STD, "\n");
 

@@ -28,6 +28,39 @@ typedef unsigned char       BYTE;
      ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
 #endif
 
+#ifdef __POWERPC__
+# define make_endian_16(a) \
+    (((unsigned int)(a & 0xff)) << 8) | (((unsigned int)(a & 0xff00)) >> 8)
+# define make_endian_32(a)                                                                  \
+    (((unsigned int)(a & 0xff)) << 24)    | (((unsigned int)(a & 0xff00)) << 8) |   \
+    (((unsigned int)(a & 0xff0000)) >> 8) | (((unsigned int)(a & 0xff000000)) >> 24)
+# define make_endian_64(a)  \
+    ((a & 0xff) << 56           |   \
+     ((a >>  8) & 0xff) << 48   |   \
+     ((a >> 16) & 0xff) << 40   |   \
+     ((a >> 24) & 0xff) << 32   |   \
+     ((a >> 32) & 0xff) << 24   |   \
+     ((a >> 40) & 0xff) << 16   |   \
+     ((a >> 48) & 0xff) <<  8   |   \
+     ((a >> 56) & 0xff))
+# define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
+    ((DWORD)(BYTE)(ch0) << 24 | ((DWORD)(BYTE)(ch1) << 16) |    \
+     ((DWORD)(BYTE)(ch2) << 8) | ((DWORD)(BYTE)(ch3)))
+# define swap4(d)\
+    ((d&0x000000ff)<<24) |  \
+    ((d&0x0000ff00)<<8)  |  \
+    ((d&0x00ff0000)>>8)  |  \
+    ((d&0xff000000)>>24)
+#else
+# define make_endian_16(a)  a
+# define make_endian_32(a)  a
+# define make_endian_64(a)  a
+# define MAKEFOURCC(ch0, ch1, ch2, ch3)                                 \
+    ((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |           \
+     ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
+# define swap4(d) d
+#endif
+
 //ivfdec ivfenc
 extern int ivfdec(int argc, const char **argv_);
 extern int ivfenc(int argc, const char **argv_);
@@ -5191,6 +5224,82 @@ int tool_vpxt_dec_to_raw(int argc, const char *const *argv)
     vpxt_decompress_to_raw(inputFile.c_str(), outputFile.c_str());
 
     return 0;
+}
+int tool_vpxt_write_ivf_file_header(int argc, const char *const *argv)
+{
+    if (argc < 7)
+        return vpxt_tool_help(argv[1], 0);
+
+    const char *outputfile = argv[2];
+    int width = atoi(argv[3]);
+    int height = atoi(argv[4]);
+    int scale = atoi(argv[5]);
+    int rate = atoi(argv[6]);
+    int length = atoi(argv[7]);
+
+    FILE *outfile = fopen(outputfile, "a");
+
+    IVF_HEADER ivf;
+    strncpy((char *)(ivf.signature), "DKIF", 4);
+    ivf.version = 0;
+    ivf.headersize = make_endian_16(32);
+    ivf.four_cc     = MAKEFOURCC('I', '4', '2', '0');
+    ivf.width      = make_endian_16(width);
+    ivf.height     = make_endian_16(height);
+    ivf.scale      = make_endian_32(scale);
+    ivf.rate       = make_endian_32(rate);
+    ivf.length     = make_endian_32(length);
+    fseek(outfile, 0, 0);
+    fwrite((char *)&ivf, sizeof(ivf), 1, outfile);
+
+    fclose(outfile);
+    return 0;
+}
+int tool_vpxt_write_ivf_frame_header(int argc, const char *const *argv)
+{
+    if (argc < 4)
+        return vpxt_tool_help(argv[1], 0);
+
+    const char *outputfile = argv[2];
+    int timeStamp = atoi(argv[3]);
+    int frameSize = atoi(argv[4]);
+
+    FILE *outfile = fopen(outputfile, "a");
+
+    IVF_FRAME_HEADER ivf_fh;
+
+    ivf_fh.timeStamp = make_endian_64(timeStamp);
+    ivf_fh.frameSize = make_endian_32(frameSize);
+
+    fwrite((char *)&ivf_fh, sizeof(ivf_fh), 1, outfile);
+
+    fclose(outfile);
+    return 0;
+
+}
+int tool_vpxt_write_frame_data(int argc, const char *const *argv)
+{
+    if (argc < 4)
+        return vpxt_tool_help(argv[1], 0);
+
+    const char *inputfile = argv[2];
+    const char *outputfile = argv[3];
+    int framesize = atoi(argv[4]);
+
+    FILE *infile = fopen(inputfile, "r");
+    FILE *outfile = fopen(outputfile, "a");
+
+    char *readframe = new char[framesize];
+
+    fread(readframe, framesize, 1, infile);
+    fwrite(readframe, framesize, 1, outfile);
+
+    fclose(infile);
+    fclose(outfile);
+    delete [] readframe;
+
+    return 0;
+
 }
 int tool_delete_all_ivf_files(int argc, const char *const *argv)
 {

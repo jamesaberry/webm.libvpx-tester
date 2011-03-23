@@ -31,28 +31,28 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     QuantOutBase.append("_compression_");
 
     std::string QuantOut3 = QuantOutBase;
-    QuantOut3.append("3");
+    QuantOut3.append("4");
     vpxt_enc_format_append(QuantOut3, EncForm);
     std::string QuantOut11 = QuantOutBase;
-    QuantOut11.append("11");
+    QuantOut11.append("12");
     vpxt_enc_format_append(QuantOut11, EncForm);
     std::string QuantOut19 = QuantOutBase;
-    QuantOut19.append("19");
+    QuantOut19.append("20");
     vpxt_enc_format_append(QuantOut19, EncForm);
     std::string QuantOut27 = QuantOutBase;
-    QuantOut27.append("27");
+    QuantOut27.append("28");
     vpxt_enc_format_append(QuantOut27, EncForm);
     std::string QuantOut35 = QuantOutBase;
-    QuantOut35.append("35");
+    QuantOut35.append("36");
     vpxt_enc_format_append(QuantOut35, EncForm);
     std::string QuantOut43 = QuantOutBase;
-    QuantOut43.append("43");
+    QuantOut43.append("44");
     vpxt_enc_format_append(QuantOut43, EncForm);
     std::string QuantOut51 = QuantOutBase;
-    QuantOut51.append("51");
+    QuantOut51.append("52");
     vpxt_enc_format_append(QuantOut51, EncForm);
     std::string QuantOut59 = QuantOutBase;
-    QuantOut59.append("59");
+    QuantOut59.append("60");
     vpxt_enc_format_append(QuantOut59, EncForm);
 
     /////////////OutPutfile////////////

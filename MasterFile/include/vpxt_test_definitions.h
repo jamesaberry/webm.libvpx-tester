@@ -40,7 +40,7 @@
 #define VPXMINUM 39 //test_vpx_matches_int
 #define WMLMMNUM 40 //test_win_lin_mac_match
 
-#define MAXTENUM 39
+#define MAXTENUM 40
 
 /*Removed Tests
 #define PREPRNUM 32 //PreProcessorWorks        //removed 07 15 2010 - Combined with NoiseSensitivity

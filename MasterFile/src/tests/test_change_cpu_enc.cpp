@@ -211,7 +211,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
         putenv("ON2_SIMD_CAPS=0");
         std::string OutputStr = ChangedCPUDecNOutBase;
         OutputStr.append("none");
-        vpxt_dec_format_append(OutputStr, DecForm);
+        vpxt_enc_format_append(OutputStr, EncForm);
 
         opt.arnr_max_frames = ArnrMaxframes;
 
@@ -299,7 +299,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
                 char count[20];
                 vpxt_itoa_custom(counter, count, 10);
                 ChangedCPUDecNOutCurrent.append(CPUStr.c_str());
-                vpxt_dec_format_append(ChangedCPUDecNOutCurrent, DecForm);
+                vpxt_enc_format_append(ChangedCPUDecNOutCurrent, EncForm);
 
                 opt.Mode = Mode;
                 unsigned int Time2 = vpxt_time_compress(input.c_str(), ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2, EncForm);

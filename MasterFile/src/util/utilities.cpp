@@ -1345,7 +1345,7 @@ static int read_frame_dec(struct input_ctx      *input, uint8_t               **
 
         if (kind == RAW_FILE && new_buf_sz > 256 * 1024)
             fprintf(stderr, "Warning: Read invalid frame size (%u)"
-                    " - not a raw file?\n", (unsigned int)new_buf_sz);
+                    " - not a raw file?\n", new_buf_sz);
 
         if (new_buf_sz > *buf_alloc_sz)
         {
@@ -2915,7 +2915,7 @@ int  vpxt_get_number_of_frames(const char *inputFile)
     int length = 0;
     int use_y4m = 1;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
 
     unsigned int           fourcc;
@@ -3078,7 +3078,7 @@ int  vpxt_raw_file_size(const char *inputFile)
     int size = 0;
     int use_y4m = 1;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
 
     unsigned int           fourcc;
@@ -3196,7 +3196,6 @@ int  vpxt_raw_file_size(const char *inputFile)
 
         //printf("\nIVF Size: %i\n",size);
 
-        y4m_input_close(&y4m);
         fclose(infile);
         return size;
     }
@@ -3228,7 +3227,10 @@ int  vpxt_raw_file_size(const char *inputFile)
 
     fclose(infile);
     vpx_img_free(&raw);
-    y4m_input_close(&y4m);
+
+    if (file_type == FILE_TYPE_Y4M)
+        y4m_input_close(&y4m);
+
     return -1;
 }
 int vpxt_remove_file_extension(const char *In, std::string &Out)
@@ -6037,7 +6039,7 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
     //////////////////////////////////////////New//////////////////////////////////////////
 
     uint8_t               *CompBuff = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
 
     //while (currentVideo1Frame <= frameCount - 1)
     //while(read_frame_enc(RawFile, &raw_img, file_type, &y4m, &detect))
@@ -6592,7 +6594,7 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
     //////////////////////////////////////////New//////////////////////////////////////////
 
     uint8_t               *CompBuff = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
 
     //while (currentVideo1Frame <= frameCount - 1)
     //while(read_frame_enc(RawFile, &raw_img, file_type, &y4m, &detect))
@@ -6853,7 +6855,7 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
     unsigned int           fourcc;
 
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
 
     struct input_ctx        input;
 
@@ -6990,7 +6992,7 @@ int vpxt_check_pbm(const char *inputFile, int bitRate, int maxBuffer, int preBuf
     unsigned int            fourcc;
 
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
 
     struct input_ctx        input;
 
@@ -7120,7 +7122,7 @@ int vpxt_check_pbm_threshold(const char *inputFile, double bitRate, int maxBuffe
     unsigned int            fourcc;
 
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
 
     struct input_ctx        input;
 
@@ -7251,7 +7253,7 @@ int vpxt_faux_decompress(const char *inputChar)
     vpx_codec_iface_t     *iface = &vpx_codec_vp8_dx_algo;
     vpx_codec_dec_cfg_t     cfg;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     unsigned int           fourcc;
     const char            *fn = inputChar;
@@ -11307,7 +11309,7 @@ int vpxt_decompress(const char *inputchar, const char *outputchar, std::string D
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -11607,7 +11609,7 @@ int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar)
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -11908,7 +11910,7 @@ int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *ou
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -12213,7 +12215,7 @@ int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -12520,7 +12522,7 @@ unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar,
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 1, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -12864,7 +12866,7 @@ unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -13192,7 +13194,7 @@ int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar)
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 1, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -15084,7 +15086,7 @@ int vpxt_display_header_info(int argc, const char *const *argv)
     }
 
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
 
@@ -15783,8 +15785,12 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 
             fclose(in_1);
             fclose(in_2);
-            y4m_input_close(&y4m_1);
-            y4m_input_close(&y4m_2);
+
+            if (file_type_1 == FILE_TYPE_Y4M)
+                y4m_input_close(&y4m_1);
+
+            if (file_type_2 == FILE_TYPE_Y4M)
+                y4m_input_close(&y4m_2);
 
             if (frame_avail_1 == frame_avail_2)
                 return -1;
@@ -15802,8 +15808,12 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 
             fclose(in_1);
             fclose(in_2);
-            y4m_input_close(&y4m_1);
-            y4m_input_close(&y4m_2);
+
+            if (file_type_1 == FILE_TYPE_Y4M)
+                y4m_input_close(&y4m_1);
+
+            if (file_type_2 == FILE_TYPE_Y4M)
+                y4m_input_close(&y4m_2);
 
             return currentVideoFrame + 1;
         }
@@ -15827,8 +15837,12 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 
                 fclose(in_1);
                 fclose(in_2);
-                y4m_input_close(&y4m_1);
-                y4m_input_close(&y4m_2);
+
+                if (file_type_1 == FILE_TYPE_Y4M)
+                    y4m_input_close(&y4m_1);
+
+                if (file_type_2 == FILE_TYPE_Y4M)
+                    y4m_input_close(&y4m_2);
 
                 return currentVideoFrame + 1;
             }
@@ -15853,8 +15867,12 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 
                 fclose(in_1);
                 fclose(in_2);
-                y4m_input_close(&y4m_1);
-                y4m_input_close(&y4m_2);
+
+                if (file_type_1 == FILE_TYPE_Y4M)
+                    y4m_input_close(&y4m_1);
+
+                if (file_type_2 == FILE_TYPE_Y4M)
+                    y4m_input_close(&y4m_2);
 
                 return currentVideoFrame + 1;
             }
@@ -15879,8 +15897,12 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 
                 fclose(in_1);
                 fclose(in_2);
-                y4m_input_close(&y4m_1);
-                y4m_input_close(&y4m_2);
+
+                if (file_type_1 == FILE_TYPE_Y4M)
+                    y4m_input_close(&y4m_1);
+
+                if (file_type_2 == FILE_TYPE_Y4M)
+                    y4m_input_close(&y4m_2);
 
                 return currentVideoFrame + 1;
             }
@@ -15906,8 +15928,12 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 
     fclose(in_1);
     fclose(in_2);
-    y4m_input_close(&y4m_1);
-    y4m_input_close(&y4m_2);
+
+    if (file_type_1 == FILE_TYPE_Y4M)
+        y4m_input_close(&y4m_1);
+
+    if (file_type_2 == FILE_TYPE_Y4M)
+        y4m_input_close(&y4m_2);
 
     return returnval;
 }
@@ -16319,7 +16345,7 @@ double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
     const char            *fn = inputchar;
     int                    i;
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
@@ -16634,7 +16660,7 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
     }
 
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
 
@@ -16822,7 +16848,7 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
     }
 
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
 
@@ -17004,7 +17030,7 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
     }
 
     uint8_t               *buf = NULL;
-    uint32_t               buf_sz = 0, buf_alloc_sz = 0;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
 

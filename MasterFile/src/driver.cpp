@@ -391,7 +391,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_play_alternate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_post_processor", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_reconstruct_buffer", slashChar(), slashChar());
-    fprintf(fp5, "%s@..%cTestClips%cInternal_gNYZH9kuaYM_640x360_2000F.ivf@4@512@..%cTestClips%cspecial-case-par-files%c4-test_reconstruct_buffer_settings.txt\n", "test_reconstruct_buffer", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cInternal_gNYZH9kuaYM_640x360_2000F.ivf@4@512@webm@ivf@..%cTestClips%cspecial-case-par-files%c4-test_reconstruct_buffer_settings.txt\n", "test_reconstruct_buffer", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_version", slashChar(), slashChar());

@@ -1620,8 +1620,6 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 std::string Test_Results_Html;
                 vpxt_remove_file_extension(WorkDirFileStr.c_str(), Test_Results_Html);
                 Test_Results_Html.erase(Test_Results_Html.length() - 1, 1);
-                //std::string Test_Results_Html = WorkDirFileStr.c_str();
-                //Test_Results_Html.erase(Test_Results_Html.length() - 4, 4);
                 Test_Results_Html.append(".html");
 
                 fp_html = fopen(Test_Results_Html.c_str() , "a");
@@ -1853,8 +1851,6 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
     std::string Test_Results_Html;
     vpxt_remove_file_extension(WorkDirFileStr.c_str(), Test_Results_Html);
     Test_Results_Html.erase(Test_Results_Html.length() - 1, 1);
-    //std::string Test_Results_Html = WorkDirFileStr.c_str();
-    //Test_Results_Html.erase(Test_Results_Html.length() - 4, 4);
     Test_Results_Html.append(".html");
 
     fp_html = fopen(Test_Results_Html.c_str() , "w");
@@ -1867,174 +1863,42 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
     fp_html = fopen(Test_Results_Html.c_str() , "a");
 
-    if (TestType == 1)
-    {
-        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Results \n");
-        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Results \n");
-    }
-
-    if (TestType == 2)
-    {
-        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Compressions \n");
-        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Compressions \n");
-    }
-
-    if (TestType == 3)
-    {
-        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Only Results \n");
-        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Only Results \n");
-    }
-
     y = 0;
-
-    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
-    fprintf(fp_html, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
 
     while (y < TestsRun)
     {
         SelectorAr2[y].erase(SelectorAr2[y].end() - 1);
-        tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-
-        //////////////////////////////////////////////////////////////////////////////////
-        std::string LowerCaseName = SelectorAr[y].c_str();
-        vpxt_lower_case_string(LowerCaseName);
-
-        std::string HtmlName   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
-        HtmlName.append(LowerCaseName);
-        HtmlName.append("/");
-        HtmlName.append(SelectorAr2[y].c_str());
-        HtmlName.append("/");
-        HtmlName.append(LowerCaseName);
-        HtmlName.append(".txt\" color=\"green\">");
-        HtmlName.append(SelectorAr[y].c_str());
-        HtmlName.append("</a>");
-
-        std::string HtmlFolder   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
-        HtmlFolder.append(LowerCaseName);
-        HtmlFolder.append("/");
-        HtmlFolder.append(SelectorAr2[y].c_str());
-        HtmlFolder.append("\" color=\"green\">");
-        HtmlFolder.append(SelectorAr2[y].c_str());
-        HtmlFolder.append("</a>");
-
-        fprintf(fp_html, "%4i", y);
-        fprintf(fp_html, " %s", HtmlName.c_str());
-
-        int numberofspaces = 0;
-
-        while (SelectorAr[y].size() + numberofspaces < 31)
-        {
-            fprintf(fp_html, " ");
-            numberofspaces = numberofspaces + 1;
-        }
-
-        fprintf(fp_html, " %s", HtmlFolder.c_str());
-        numberofspaces = 0;
-
-        while (SelectorAr2[y].size() + numberofspaces < 25)
-        {
-            fprintf(fp_html, " ");
-            numberofspaces = numberofspaces + 1;
-        }
-
-        //////////////////////////////////////////////////////////////////////////////////
-
-
-        if (PassFail[y] == 1)
-        {
-            tprintf(PRINT_BTH, "Passed\n");
-            fprintf(fp_html, "Passed\n");
-        }
-
-        if (PassFail[y] == 0)
-        {
-            tprintf(PRINT_BTH, "Failed\n");
-            fprintf(fp_html, "Failed\n");
-        }
-
-        if (PassFail[y] == 2)
-        {
-            tprintf(PRINT_BTH, "Indeterminate\n");
-            fprintf(fp_html, "Indeterminate\n");
-        }
-
-        if (PassFail[y] == 3)
-        {
-            tprintf(PRINT_BTH, "SeeComboRunLog\n");
-            fprintf(fp_html, "SeeComboRunLog\n");
-        }
-
-        if (PassFail[y] == 4)
-        {
-            tprintf(PRINT_BTH, "SeePSNRLog\n");
-            fprintf(fp_html, "SeePSNRLog\n");
-        }
-
-        if (PassFail[y] == 5)
-        {
-            tprintf(PRINT_BTH, "RandomTestCompleted\n");
-            fprintf(fp_html, "RandomTestCompleted\n");
-        }
-
-        if (PassFail[y] == 8)
-        {
-            tprintf(PRINT_BTH, "MinTestPassed\n");
-            fprintf(fp_html, "MinTestPassed\n");
-        }
-
-        if (PassFail[y] == 10)
-        {
-            tprintf(PRINT_BTH, "CompressionMade\n");
-            fprintf(fp_html, "CompressionMade\n");
-        }
-
-        if (PassFail[y] == 11)
-        {
-            tprintf(PRINT_BTH, "ErrorFileMismatch\n");
-            fprintf(fp_html, "ErrorFileMismatch\n");
-        }
-
-        if (PassFail[y] == 12)
-        {
-            tprintf(PRINT_BTH, "TestNotSupported\n");
-            fprintf(fp_html, "TestNotSupported\n");
-        }
-
         y++;
     }
 
-    if (TestType == 1)
-    {
-        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Results - Passed \n");
-        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Results - Passed \n");
-    }
-
-    if (TestType == 3)
-    {
-        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Results - Passed \n");
-        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                "Test Results - Passed \n");
-    }
-
     int TestIndicator = 0;
+    y = 0;
 
     if (TestType == 3 || TestType == 1)
     {
+
+        if (TestType == 1)
+        {
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Failed \n");
+            fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Failed \n");
+        }
+
+        if (TestType == 3)
+        {
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Failed \n");
+            fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Failed \n");
+        }
+
         TestIndicator = 0;
         y = 0;
 
         while (y < TestsRun)
         {
-            if (PassFail[y] == 1)
+            if (PassFail[y] == 0)
             {
                 if (TestIndicator == 0)
                 {
@@ -2044,7 +1908,6 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 TestIndicator = 1;
                 tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-
                 //////////////////////////////////////////////////////////////////////////////////
                 std::string LowerCaseName = SelectorAr[y].c_str();
                 vpxt_lower_case_string(LowerCaseName);
@@ -2088,9 +1951,96 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////
+                tprintf(PRINT_BTH, "Failed\n");
+                fprintf(fp_html, "Failed\n");
+            }
 
-                tprintf(PRINT_BTH, "Passed\n");
-                fprintf(fp_html, "Passed\n");
+            y++;
+        }
+
+        if (TestIndicator == 0)
+        {
+            tprintf(PRINT_BTH, "\n    NONE\n\n");
+            fprintf(fp_html, "\n    NONE\n\n");
+        }
+
+
+        if (TestType == 1)
+        {
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Indeterminate \n");
+            fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Indeterminate \n");
+        }
+
+        if (TestType == 3)
+        {
+            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Indeterminate \n");
+            fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
+                    "Test Results - Indeterminate \n");
+        }
+
+        TestIndicator = 0;
+        y = 0;
+
+        while (y < TestsRun)
+        {
+            if (PassFail[y] == 2)
+            {
+                if (TestIndicator == 0)
+                {
+                    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+                    fprintf(fp_html, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+                }
+
+                TestIndicator = 1;
+                tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+                //////////////////////////////////////////////////////////////////////////////////
+                std::string LowerCaseName = SelectorAr[y].c_str();
+                vpxt_lower_case_string(LowerCaseName);
+
+                std::string HtmlName   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+                HtmlName.append(LowerCaseName);
+                HtmlName.append("/");
+                HtmlName.append(SelectorAr2[y].c_str());
+                HtmlName.append("/");
+                HtmlName.append(LowerCaseName);
+                HtmlName.append(".txt\" color=\"green\">");
+                HtmlName.append(SelectorAr[y].c_str());
+                HtmlName.append("</a>");
+
+                std::string HtmlFolder   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+                HtmlFolder.append(LowerCaseName);
+                HtmlFolder.append("/");
+                HtmlFolder.append(SelectorAr2[y].c_str());
+                HtmlFolder.append("\" color=\"green\">");
+                HtmlFolder.append(SelectorAr2[y].c_str());
+                HtmlFolder.append("</a>");
+
+                fprintf(fp_html, "%4i", y);
+                fprintf(fp_html, " %s", HtmlName.c_str());
+
+                int numberofspaces = 0;
+
+                while (SelectorAr[y].size() + numberofspaces < 31)
+                {
+                    fprintf(fp_html, " ");
+                    numberofspaces = numberofspaces + 1;
+                }
+
+                fprintf(fp_html, " %s", HtmlFolder.c_str());
+                numberofspaces = 0;
+
+                while (SelectorAr2[y].size() + numberofspaces < 25)
+                {
+                    fprintf(fp_html, " ");
+                    numberofspaces = numberofspaces + 1;
+                }
+
+                //////////////////////////////////////////////////////////////////////////////////
+                tprintf(PRINT_BTH, "Indeterminate\n");
+                fprintf(fp_html, "Indeterminate\n");
             }
 
             y++;
@@ -2192,17 +2142,17 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         if (TestType == 1)
         {
             tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Indeterminate \n");
+                    "Test Results - Passed \n");
             fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Indeterminate \n");
+                    "Test Results - Passed \n");
         }
 
         if (TestType == 3)
         {
             tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Indeterminate \n");
+                    "Test Results - Passed \n");
             fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Indeterminate \n");
+                    "Test Results - Passed \n");
         }
 
         TestIndicator = 0;
@@ -2210,7 +2160,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
         while (y < TestsRun)
         {
-            if (PassFail[y] == 2)
+            if (PassFail[y] == 1)
             {
                 if (TestIndicator == 0)
                 {
@@ -2220,6 +2170,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 TestIndicator = 1;
                 tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+
                 //////////////////////////////////////////////////////////////////////////////////
                 std::string LowerCaseName = SelectorAr[y].c_str();
                 vpxt_lower_case_string(LowerCaseName);
@@ -2263,8 +2214,9 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////
-                tprintf(PRINT_BTH, "Indeterminate\n");
-                fprintf(fp_html, "Indeterminate\n");
+
+                tprintf(PRINT_BTH, "Passed\n");
+                fprintf(fp_html, "Passed\n");
             }
 
             y++;
@@ -2276,92 +2228,6 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
             fprintf(fp_html, "\n    NONE\n\n");
         }
 
-        if (TestType == 1)
-        {
-            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Failed \n");
-            fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Failed \n");
-        }
-
-        if (TestType == 3)
-        {
-            tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Failed \n");
-            fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
-                    "Test Results - Failed \n");
-        }
-
-        TestIndicator = 0;
-        y = 0;
-
-        while (y < TestsRun)
-        {
-            if (PassFail[y] == 0)
-            {
-                if (TestIndicator == 0)
-                {
-                    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
-                    fprintf(fp_html, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
-                }
-
-                TestIndicator = 1;
-                tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
-                //////////////////////////////////////////////////////////////////////////////////
-                std::string LowerCaseName = SelectorAr[y].c_str();
-                vpxt_lower_case_string(LowerCaseName);
-
-                std::string HtmlName   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
-                HtmlName.append(LowerCaseName);
-                HtmlName.append("/");
-                HtmlName.append(SelectorAr2[y].c_str());
-                HtmlName.append("/");
-                HtmlName.append(LowerCaseName);
-                HtmlName.append(".txt\" color=\"green\">");
-                HtmlName.append(SelectorAr[y].c_str());
-                HtmlName.append("</a>");
-
-                std::string HtmlFolder   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
-                HtmlFolder.append(LowerCaseName);
-                HtmlFolder.append("/");
-                HtmlFolder.append(SelectorAr2[y].c_str());
-                HtmlFolder.append("\" color=\"green\">");
-                HtmlFolder.append(SelectorAr2[y].c_str());
-                HtmlFolder.append("</a>");
-
-                fprintf(fp_html, "%4i", y);
-                fprintf(fp_html, " %s", HtmlName.c_str());
-
-                int numberofspaces = 0;
-
-                while (SelectorAr[y].size() + numberofspaces < 31)
-                {
-                    fprintf(fp_html, " ");
-                    numberofspaces = numberofspaces + 1;
-                }
-
-                fprintf(fp_html, " %s", HtmlFolder.c_str());
-                numberofspaces = 0;
-
-                while (SelectorAr2[y].size() + numberofspaces < 25)
-                {
-                    fprintf(fp_html, " ");
-                    numberofspaces = numberofspaces + 1;
-                }
-
-                //////////////////////////////////////////////////////////////////////////////////
-                tprintf(PRINT_BTH, "Failed\n");
-                fprintf(fp_html, "Failed\n");
-            }
-
-            y++;
-        }
-
-        if (TestIndicator == 0)
-        {
-            tprintf(PRINT_BTH, "\n    NONE\n\n");
-            fprintf(fp_html, "\n    NONE\n\n");
-        }
 
         if (TestType == 1)
         {
@@ -2528,6 +2394,148 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
+    }
+
+    if (TestType == 1)
+    {
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
+                "Chronological Test Results \n");
+        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
+                "Chronological Test Results \n");
+    }
+
+    if (TestType == 2)
+    {
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
+                "Chronological Test Compressions \n");
+        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
+                "Chronological Test Compressions \n");
+    }
+
+    if (TestType == 3)
+    {
+        tprintf(PRINT_BTH, "\n-------------------------------------------------------------------------------\n\n"
+                "Chronological Test Only Results \n");
+        fprintf(fp_html, "\n-------------------------------------------------------------------------------\n\n"
+                "Chronological Test Only Results \n");
+    }
+
+    y = 0;
+
+    tprintf(PRINT_BTH, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+    fprintf(fp_html, "\n\n%4s %-32s%-25s%s\n\n", "#", "Test Name" , "Date and Time", "Status");
+
+    while (y < TestsRun)
+    {
+        //SelectorAr2[y].erase(SelectorAr2[y].end() - 1);
+        tprintf(PRINT_BTH, "%4i %-32s%-25s", y, SelectorAr[y].c_str(), SelectorAr2[y].c_str());
+
+        //////////////////////////////////////////////////////////////////////////////////
+        std::string LowerCaseName = SelectorAr[y].c_str();
+        vpxt_lower_case_string(LowerCaseName);
+
+        std::string HtmlName   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+        HtmlName.append(LowerCaseName);
+        HtmlName.append("/");
+        HtmlName.append(SelectorAr2[y].c_str());
+        HtmlName.append("/");
+        HtmlName.append(LowerCaseName);
+        HtmlName.append(".txt\" color=\"green\">");
+        HtmlName.append(SelectorAr[y].c_str());
+        HtmlName.append("</a>");
+
+        std::string HtmlFolder   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+        HtmlFolder.append(LowerCaseName);
+        HtmlFolder.append("/");
+        HtmlFolder.append(SelectorAr2[y].c_str());
+        HtmlFolder.append("\" color=\"green\">");
+        HtmlFolder.append(SelectorAr2[y].c_str());
+        HtmlFolder.append("</a>");
+
+        fprintf(fp_html, "%4i", y);
+        fprintf(fp_html, " %s", HtmlName.c_str());
+
+        int numberofspaces = 0;
+
+        while (SelectorAr[y].size() + numberofspaces < 31)
+        {
+            fprintf(fp_html, " ");
+            numberofspaces = numberofspaces + 1;
+        }
+
+        fprintf(fp_html, " %s", HtmlFolder.c_str());
+        numberofspaces = 0;
+
+        while (SelectorAr2[y].size() + numberofspaces < 25)
+        {
+            fprintf(fp_html, " ");
+            numberofspaces = numberofspaces + 1;
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+
+        if (PassFail[y] == 1)
+        {
+            tprintf(PRINT_BTH, "Passed\n");
+            fprintf(fp_html, "Passed\n");
+        }
+
+        if (PassFail[y] == 0)
+        {
+            tprintf(PRINT_BTH, "Failed\n");
+            fprintf(fp_html, "Failed\n");
+        }
+
+        if (PassFail[y] == 2)
+        {
+            tprintf(PRINT_BTH, "Indeterminate\n");
+            fprintf(fp_html, "Indeterminate\n");
+        }
+
+        if (PassFail[y] == 3)
+        {
+            tprintf(PRINT_BTH, "SeeComboRunLog\n");
+            fprintf(fp_html, "SeeComboRunLog\n");
+        }
+
+        if (PassFail[y] == 4)
+        {
+            tprintf(PRINT_BTH, "SeePSNRLog\n");
+            fprintf(fp_html, "SeePSNRLog\n");
+        }
+
+        if (PassFail[y] == 5)
+        {
+            tprintf(PRINT_BTH, "RandomTestCompleted\n");
+            fprintf(fp_html, "RandomTestCompleted\n");
+        }
+
+        if (PassFail[y] == 8)
+        {
+            tprintf(PRINT_BTH, "MinTestPassed\n");
+            fprintf(fp_html, "MinTestPassed\n");
+        }
+
+        if (PassFail[y] == 10)
+        {
+            tprintf(PRINT_BTH, "CompressionMade\n");
+            fprintf(fp_html, "CompressionMade\n");
+        }
+
+        if (PassFail[y] == 11)
+        {
+            tprintf(PRINT_BTH, "ErrorFileMismatch\n");
+            fprintf(fp_html, "ErrorFileMismatch\n");
+        }
+
+        if (PassFail[y] == 12)
+        {
+            tprintf(PRINT_BTH, "TestNotSupported\n");
+            fprintf(fp_html, "TestNotSupported\n");
+        }
+
+        y++;
     }
 
     fclose(fp);

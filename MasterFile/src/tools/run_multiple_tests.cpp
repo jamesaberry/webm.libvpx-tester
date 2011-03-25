@@ -1680,6 +1680,13 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 HtmlName.append(SelectorAr[SelectorArInt].c_str());
                 HtmlName.append("</a>");
 
+                std::string HtmlStatus   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append("/");
+                HtmlStatus.append(SelectorAr2[SelectorArInt].c_str());
+                HtmlStatus.append("/");
+                HtmlStatus.append(LowerCaseName);
+
                 std::string HtmlFolder   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
                 HtmlFolder.append(LowerCaseName);
                 HtmlFolder.append("/");
@@ -1714,6 +1721,82 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 SelectorAr2[SelectorArInt].append("\"");
 
                 if (PassFail[SelectorArInt] == 1)
+                {
+                    tprintf(PRINT_BTH, "Passed\n");
+
+                    HtmlStatus.append(".txt\" color=\"green\">");
+                    HtmlStatus.append("Passed");
+                    HtmlStatus.append("</a>");
+                    fprintf(fp_html, "%s \n", HtmlStatus.c_str());
+                }
+
+                if (PassFail[SelectorArInt] == 0)
+                {
+                    tprintf(PRINT_BTH, "Failed\n");
+
+                    HtmlStatus.append(".txt\" color=\"red\">");
+                    HtmlStatus.append("Failed");
+                    HtmlStatus.append("</a>");
+                    fprintf(fp_html, "%s \n", HtmlStatus.c_str());
+                }
+
+                if (PassFail[SelectorArInt] == 2)
+                {
+                    tprintf(PRINT_BTH, "Indeterminate\n");
+
+                    HtmlStatus.append(".txt\" color=\"yellow\">");
+                    HtmlStatus.append("Indeterminate");
+                    HtmlStatus.append("</a>");
+                    fprintf(fp_html, "%s \n", HtmlStatus.c_str());
+                }
+
+                if (PassFail[SelectorArInt] == 3)
+                {
+                    tprintf(PRINT_BTH, "SeeComboRunLog\n");
+                    fprintf(fp_html, "SeeComboRunLog\n");
+                }
+
+                if (PassFail[SelectorArInt] == 4)
+                {
+                    tprintf(PRINT_BTH, "SeePSNRLog\n");
+                    fprintf(fp_html, "SeePSNRLog\n");
+                }
+
+                if (PassFail[SelectorArInt] == 5)
+                {
+                    tprintf(PRINT_BTH, "RandomTestCompleted\n");
+                    fprintf(fp_html, "RandomTestCompleted\n");
+                }
+
+                if (PassFail[SelectorArInt] == 8)
+                {
+                    tprintf(PRINT_BTH, "MinTestPassed\n");
+
+                    HtmlStatus.append(".txt\" color=\"yellow\">");
+                    HtmlStatus.append("MinTestPassed");
+                    HtmlStatus.append("</a>");
+                    fprintf(fp_html, "%s \n", HtmlStatus.c_str());
+                }
+
+                if (PassFail[SelectorArInt] == 10)
+                {
+                    tprintf(PRINT_BTH, "CompressionMade\n");
+                    fprintf(fp_html, "CompressionMade\n");
+                }
+
+                if (PassFail[SelectorArInt] == 11)
+                {
+                    tprintf(PRINT_BTH, "ErrorFileMismatch\n");
+                    fprintf(fp_html, "ErrorFileMismatch\n");
+                }
+
+                if (PassFail[SelectorArInt] == 12)
+                {
+                    tprintf(PRINT_BTH, "TestNotSupported\n");
+                    fprintf(fp_html, "TestNotSupported\n");
+                }
+
+                /*if (PassFail[SelectorArInt] == 1)
                 {
                     fprintf(stderr, "Passed\n");
                     fprintf(fp_html, "Passed\n");
@@ -1771,7 +1854,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 {
                     fprintf(stderr, "TestNotSupported\n");
                     fprintf(fp_html, "TestNotSupported\n");
-                }
+                }*/
 
                 fclose(fp);
                 fclose(fp_html);
@@ -1952,7 +2035,17 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 //////////////////////////////////////////////////////////////////////////////////
                 tprintf(PRINT_BTH, "Failed\n");
-                fprintf(fp_html, "Failed\n");
+
+                std::string HtmlStatus   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append("/");
+                HtmlStatus.append(SelectorAr2[y].c_str());
+                HtmlStatus.append("/");
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append(".txt\" color=\"green\">");
+                HtmlStatus.append("Failed");
+                HtmlStatus.append("</a>");
+                fprintf(fp_html, "%s \n", HtmlStatus.c_str());
             }
 
             y++;
@@ -2040,7 +2133,17 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 //////////////////////////////////////////////////////////////////////////////////
                 tprintf(PRINT_BTH, "Indeterminate\n");
-                fprintf(fp_html, "Indeterminate\n");
+
+                std::string HtmlStatus   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append("/");
+                HtmlStatus.append(SelectorAr2[y].c_str());
+                HtmlStatus.append("/");
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append(".txt\" color=\"green\">");
+                HtmlStatus.append("Indeterminate");
+                HtmlStatus.append("</a>");
+                fprintf(fp_html, "%s \n", HtmlStatus.c_str());
             }
 
             y++;
@@ -2127,7 +2230,17 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 //////////////////////////////////////////////////////////////////////////////////
                 tprintf(PRINT_BTH, "MinTestPassed\n");
-                fprintf(fp_html, "MinTestPassed\n");
+
+                std::string HtmlStatus   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append("/");
+                HtmlStatus.append(SelectorAr2[y].c_str());
+                HtmlStatus.append("/");
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append(".txt\" color=\"green\">");
+                HtmlStatus.append("MinTestPassed");
+                HtmlStatus.append("</a>");
+                fprintf(fp_html, "%s \n", HtmlStatus.c_str());
             }
 
             y++;
@@ -2216,7 +2329,17 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                 //////////////////////////////////////////////////////////////////////////////////
 
                 tprintf(PRINT_BTH, "Passed\n");
-                fprintf(fp_html, "Passed\n");
+
+                std::string HtmlStatus   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append("/");
+                HtmlStatus.append(SelectorAr2[y].c_str());
+                HtmlStatus.append("/");
+                HtmlStatus.append(LowerCaseName);
+                HtmlStatus.append(".txt\" color=\"green\">");
+                HtmlStatus.append("Passed");
+                HtmlStatus.append("</a>");
+                fprintf(fp_html, "%s \n", HtmlStatus.c_str());
             }
 
             y++;
@@ -2356,8 +2479,6 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         {
             std::string TimeoutputStr;
             vpxt_remove_file_extension(WorkDirFileStr.c_str(), TimeoutputStr);
-            //std::string TimeoutputStr = WorkDirFileStr;
-            //TimeoutputStr.erase(TimeoutputStr.length() - 4, 4);
             TimeoutputStr.append("Times.txt");
 
             FILE *outputTime;
@@ -2444,6 +2565,13 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         HtmlName.append(SelectorAr[y].c_str());
         HtmlName.append("</a>");
 
+        std::string HtmlStatus   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
+        HtmlStatus.append(LowerCaseName);
+        HtmlStatus.append("/");
+        HtmlStatus.append(SelectorAr2[y].c_str());
+        HtmlStatus.append("/");
+        HtmlStatus.append(LowerCaseName);
+
         std::string HtmlFolder   = "<a style=\"color: #800000; text-decoration: none;\" href=\"";
         HtmlFolder.append(LowerCaseName);
         HtmlFolder.append("/");
@@ -2478,19 +2606,31 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         if (PassFail[y] == 1)
         {
             tprintf(PRINT_BTH, "Passed\n");
-            fprintf(fp_html, "Passed\n");
+
+            HtmlStatus.append(".txt\" color=\"green\">");
+            HtmlStatus.append("Passed");
+            HtmlStatus.append("</a>");
+            fprintf(fp_html, "%s \n", HtmlStatus.c_str());
         }
 
         if (PassFail[y] == 0)
         {
             tprintf(PRINT_BTH, "Failed\n");
-            fprintf(fp_html, "Failed\n");
+
+            HtmlStatus.append(".txt\" color=\"red\">");
+            HtmlStatus.append("Failed");
+            HtmlStatus.append("</a>");
+            fprintf(fp_html, "%s \n", HtmlStatus.c_str());
         }
 
         if (PassFail[y] == 2)
         {
             tprintf(PRINT_BTH, "Indeterminate\n");
-            fprintf(fp_html, "Indeterminate\n");
+
+            HtmlStatus.append(".txt\" color=\"yellow\">");
+            HtmlStatus.append("Indeterminate");
+            HtmlStatus.append("</a>");
+            fprintf(fp_html, "%s \n", HtmlStatus.c_str());
         }
 
         if (PassFail[y] == 3)
@@ -2514,7 +2654,11 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
         if (PassFail[y] == 8)
         {
             tprintf(PRINT_BTH, "MinTestPassed\n");
-            fprintf(fp_html, "MinTestPassed\n");
+
+            HtmlStatus.append(".txt\" color=\"yellow\">");
+            HtmlStatus.append("MinTestPassed");
+            HtmlStatus.append("</a>");
+            fprintf(fp_html, "%s \n", HtmlStatus.c_str());
         }
 
         if (PassFail[y] == 10)

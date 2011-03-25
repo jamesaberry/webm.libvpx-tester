@@ -239,13 +239,17 @@ void write_32bit_quick_test(const std::string WorkingDir)
     }
 
     std::string OSStr = "";
+    std::string LinMacWinFolder = "";
 
 #if defined(_WIN32)
     OSStr = "Win";
+    LinMacWinFolder = "\\\\filer\\home\\jamesberry\\win-lin-mac-match";
 #elif defined(__APPLE__)
     OSStr = "Mac";
+    LinMacWinFolder = "/home/jamesberry";
 #elif defined(linux)
     OSStr = "Lin";
+    LinMacWinFolder = "/home/jamesberry";
 #endif
 
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
@@ -329,6 +333,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode2%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128@webm@y4m\n", "test_allow_spatial_resampling", slashChar(), slashChar());
@@ -359,6 +364,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode4%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_allow_lag", slashChar(), slashChar());
@@ -395,6 +401,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode5%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_allow_lag", slashChar(), slashChar());
@@ -429,6 +436,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
 
@@ -452,13 +460,17 @@ void write_64bit_quick_test(const std::string WorkingDir)
     }
 
     std::string OSStr = "";
+    std::string LinMacWinFolder = "";
 
 #if defined(_WIN32)
     OSStr = "Win";
+    LinMacWinFolder = "\\\\filer\\home\\jamesberry\\win-lin-mac-match";
 #elif defined(__APPLE__)
     OSStr = "Mac";
+    LinMacWinFolder = "/home/jamesberry";
 #elif defined(linux)
     OSStr = "Lin";
+    LinMacWinFolder = "/home/jamesberry";
 #endif
 
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
@@ -543,6 +555,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode2%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128@webm@y4m\n", "test_allow_spatial_resampling", slashChar(), slashChar());
@@ -573,6 +586,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode4%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_allow_lag", slashChar(), slashChar());
@@ -609,6 +623,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%cInternal_gNYZH9kuaYM_640x360_2000F.ivf@4@512@webm@y4m@..%cTestClips%cspecial-case-par-files%c4-test_reconstruct_buffer_settings.txt\n", "test_reconstruct_buffer", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "\n");
     fprintf(fp5, "%%%%Mode5%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_allow_lag", slashChar(), slashChar());
@@ -643,6 +658,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_undershoot", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_version", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@%s@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar(), LinMacWinFolder.c_str(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
 

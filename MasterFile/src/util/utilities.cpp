@@ -15395,8 +15395,8 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
 
     uint8_t               *buf_1 = NULL;
     uint8_t               *buf_2 = NULL;
-    uint32_t               buf_sz_1 = 0, buf_alloc_sz_1 = 0;
-    uint32_t               buf_sz_2 = 0, buf_alloc_sz_2 = 0;
+    size_t               buf_sz_1 = 0, buf_alloc_sz_1 = 0;
+    size_t               buf_sz_2 = 0, buf_alloc_sz_2 = 0;
     int currentVideoFrame = 0;
     int frame_avail_1 = 0;
     int frame_avail_2 = 0;
@@ -16131,8 +16131,8 @@ int vpxt_compare_enc(const char *inputFile1, const char *inputFile2)
 
     uint8_t               *buf_1 = NULL;
     uint8_t               *buf_2 = NULL;
-    uint32_t               buf_sz_1 = 0, buf_alloc_sz_1 = 0;
-    uint32_t               buf_sz_2 = 0, buf_alloc_sz_2 = 0;
+    size_t               buf_sz_1 = 0, buf_alloc_sz_1 = 0;
+    size_t               buf_sz_2 = 0, buf_alloc_sz_2 = 0;
     int currentVideoFrame = 0;
     int frame_avail_1 = 0;
     int frame_avail_2 = 0;

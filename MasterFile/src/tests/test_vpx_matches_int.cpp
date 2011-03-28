@@ -228,21 +228,25 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
 
     if (EncMatch == 1)
     {
-        vpxt_formated_print(RESPRT, "Internal Compression identical to Vpxenc Compression - Passed\n");
+        vpxt_formated_print(RESPRT, "Internal Compression identical to Vpxenc Compression - Passed");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Internal Compression not identical to Vpxenc Compression - Failed");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (DecMatch == 1)
     {
-        vpxt_formated_print(RESPRT, "Internal Decompression identical to Vpxenc Decompression - Passed\n");
+        vpxt_formated_print(RESPRT, "Internal Decompression identical to Vpxenc Decompression - Passed");
+        tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Internal Decompression not identical to Vpxenc Decompression - Failed");
+        tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 

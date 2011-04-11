@@ -1,5 +1,6 @@
 # directory to build to
-OBJDIR = build-imac32
+OBJDIR = build-lin64-icc
+
 # source directories
 SrcDir = ../src
 UtlDir = ../src/util
@@ -133,17 +134,17 @@ SRCOBJ = \
    $(OBJDIR)/y4minput.o \
 
 # compiler
-GPP = g++ -g -m32
-GCC = gcc -g -m32
+GPP = icpc -g -m64
+GCC = icc -g -m64
 
 # Libraries
-LFLAGS= -L../lib -lvpx_IMac32 -DINLINE=
+LFLAGS= -L../lib -lvpx_Lin64_icc -DINLINE= -lpthread
 
 #Includes
-INCLUDE = -I ../include -I ../include/release-32 -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
+INCLUDE = -I ../include -I ../include/release-64 -D API -DHAVE_STDINT_H -D CONFIG_MD5=1
 
-$(OBJDIR)/VP8_Tester_API_32Bit: $(SRCOBJ)
-	$(GPP)  $(INCLUDE) -o "$(OBJDIR)/VP8_Tester_API_32Bit.exe" $(SRCOBJ) $(LFLAGS)
+$(OBJDIR)/VP8_Tester_API_64Bit: $(SRCOBJ)
+	$(GPP)  $(INCLUDE) -o "$(OBJDIR)/VP8_Tester_API_64Bit.exe" $(SRCOBJ) $(LFLAGS)
 
 $(OBJDIR)/driver.o: $(SrcDir)/driver.cpp
 	-mkdir $(OBJDIR)
@@ -324,4 +325,4 @@ $(OBJDIR)/y4minput.o: $(IvfDir)/y4minput.cpp
 	$(GPP) -c $(IvfDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o
 
 clean:
-	rm -f $(SRCOBJ) $(OBJDIR)/VP8_Tester_API_32Bit.exe
+	rm -f $(SRCOBJ) $(OBJDIR)/VP8_Tester_API_64Bit.exe

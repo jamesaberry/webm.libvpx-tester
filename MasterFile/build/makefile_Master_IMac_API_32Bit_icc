@@ -1,5 +1,6 @@
 # directory to build to
-OBJDIR = build-imac32
+OBJDIR = build-imac32-icc
+
 # source directories
 SrcDir = ../src
 UtlDir = ../src/util
@@ -133,11 +134,11 @@ SRCOBJ = \
    $(OBJDIR)/y4minput.o \
 
 # compiler
-GPP = g++ -g -m32
-GCC = gcc -g -m32
+GPP = icpc -g -m32
+GCC = icc -g -m32
 
 # Libraries
-LFLAGS= -L../lib -lvpx_IMac32 -DINLINE=
+LFLAGS= -L../lib -lvpx_IMac32_icc -DINLINE=
 
 #Includes
 INCLUDE = -I ../include -I ../include/release-32 -D API -DHAVE_STDINT_H -D CONFIG_MD5=1

@@ -1,0 +1,31 @@
+PrimaryWD = $PWD
+
+cd $PrimaryWD/MasterFile/build
+
+make -f makefile_Master_Lin_API_32Bit_icc clean
+make -f makefile_Master_Lin_API_32Bit_icc
+
+cd $PrimaryWD
+
+mkdir TestFolder_32Bit_ICC
+
+cp -f -p $PrimaryWD/MasterFile/build/build-lin32-icc/VP8_Tester_API_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8_Tester_API_32Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build
+
+make -f makefile_Debug_Lin_API_32Bit_icc clean
+make -f makefile_Debug_Lin_API_32Bit_icc
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-lin32-icc/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build
+
+make -f makefile_Release_Lin_New_API_32Bit_icc clean
+make -f makefile_Release_Lin_New_API_32Bit_icc
+make -f makefile_Release_Lin_Old_API_32Bit_icc clean
+make -f makefile_Release_Lin_Old_API_32Bit_icc
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-lin32-new-icc/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-lin32-old-icc/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe

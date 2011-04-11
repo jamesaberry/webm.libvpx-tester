@@ -1,4 +1,4 @@
-PrimaryWD = $PWD
+PrimaryWD=$PWD
 
 cd $PrimaryWD/MasterFile/build
 

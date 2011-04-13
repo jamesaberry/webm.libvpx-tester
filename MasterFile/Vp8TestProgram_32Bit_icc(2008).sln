@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{EAF909A5-FA59-4C3D-9431-0FCC20D5BCF9}") = "libvpx-tester-32bit", "Vp8TestProgram_32Bit_icc(2008).icproj", "{0E657494-3839-4868-9DEF-4294E3DD13F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E657494-3839-4868-9DEF-4294E3DD13F7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0E657494-3839-4868-9DEF-4294E3DD13F7}.Debug|Win32.Build.0 = Debug|Win32
+		{0E657494-3839-4868-9DEF-4294E3DD13F7}.Release|Win32.ActiveCfg = Release|Win32
+		{0E657494-3839-4868-9DEF-4294E3DD13F7}.Release|Win32.Build.0 = Release|Win32
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Release|Win32.Build.0 = Release|Win32
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Release|Win32.ActiveCfg = Release|Win32
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Debug|Win32.Build.0 = Debug|Win32
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Debug|Win32.ActiveCfg = Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="gb2312"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="12.0"
+	Name="libvpx-teser-release-plugin-old-32bit"
+	ProjectGUID="{CB3F5A2A-0885-451D-8E3D-C1CF464FDB15}"
+	VCNestedProjectGUID="{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}"
+	VCNestedProjectFileName="VP8ReleasePlugin_Old32Bit_icc(2008).vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

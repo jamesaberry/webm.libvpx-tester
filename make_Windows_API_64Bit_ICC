@@ -1,0 +1,31 @@
+PrimaryWD=$PWD
+
+cd $PrimaryWD/MasterFile
+
+devenv /clean "Release|x64" "Vp8TestProgram_64Bit_icc(2008).sln"
+devenv /rebuild "Release|x64" "Vp8TestProgram_64Bit_icc(2008).sln" /projectconfig "Release|x64"
+
+cd $PrimaryWD
+
+mkdir TestFolder_64Bit_ICC
+
+cp -f -p $PrimaryWD/MasterFile/build/build-win64-icc/VP8_Tester_API_64Bit.exe $PrimaryWD/TestFolder_64Bit_ICC/VP8_Tester_API_64Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile
+
+devenv /clean "Debug|x64" "VP8DebugPlugin_64Bit_icc(2008).sln"
+devenv /rebuild "Debug|x64" "VP8DebugPlugin_64Bit_icc(2008).sln" /projectconfig "Debug|x64"
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-win64-icc/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe $PrimaryWD/TestFolder_64Bit_ICC/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile
+
+devenv /clean "Release|x64" "VP8ReleasePlugin_New64Bit_icc(2008).sln"
+devenv /rebuild "Release|x64" "VP8ReleasePlugin_New64Bit_icc(2008).sln" /projectconfig "Release|x64"
+devenv /clean "Release|x64" "VP8ReleasePlugin_Old64Bit_icc(2008).sln"
+devenv /rebuild "Release|x64" "VP8ReleasePlugin_Old64Bit_icc(2008).sln" /projectconfig "Release|x64"
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win64-new-icc/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe $PrimaryWD/TestFolder_64Bit_ICC/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win64-old-icc/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe $PrimaryWD/TestFolder_64Bit_ICC/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe

@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{EAF909A5-FA59-4C3D-9431-0FCC20D5BCF9}") = "libvpx-teser-release-plugin-new-64bit", "VP8ReleasePlugin_New64Bit_icc(2008).icproj", "{3C4805ED-0CB0-4D03-B324-697B858627EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C4805ED-0CB0-4D03-B324-697B858627EE}.Debug|x64.ActiveCfg = Debug|x64
+		{3C4805ED-0CB0-4D03-B324-697B858627EE}.Debug|x64.Build.0 = Debug|x64
+		{3C4805ED-0CB0-4D03-B324-697B858627EE}.Release|x64.ActiveCfg = Release|x64
+		{3C4805ED-0CB0-4D03-B324-697B858627EE}.Release|x64.Build.0 = Release|x64
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Release|x64.Build.0 = Release|x64
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Release|x64.ActiveCfg = Release|x64
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Debug|x64.Build.0 = Debug|x64
+		{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}.Debug|x64.ActiveCfg = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

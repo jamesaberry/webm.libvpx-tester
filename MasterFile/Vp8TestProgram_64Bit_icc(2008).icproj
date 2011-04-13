@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="gb2312"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="12.0"
+	Name="libvpx-tester-64bit"
+	ProjectGUID="{2FEAA4DD-E2C0-4979-A9B9-BAFE81AED4C3}"
+	VCNestedProjectGUID="{2D0A3692-9FDF-40D4-9765-90FE8BA5D531}"
+	VCNestedProjectFileName="Vp8TestProgram_64Bit_icc(2008).vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

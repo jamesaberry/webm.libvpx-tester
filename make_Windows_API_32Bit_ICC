@@ -1,0 +1,31 @@
+PrimaryWD=$PWD
+
+cd $PrimaryWD/MasterFile
+
+devenv /clean Release "Vp8TestProgram_32Bit_icc(2008).sln"
+devenv /rebuild Release "Vp8TestProgram_32Bit_icc(2008).sln" /projectconfig Release
+
+cd $PrimaryWD
+
+mkdir TestFolder_32Bit_ICC
+
+cp -f -p $PrimaryWD/MasterFile/build/build-win32-icc/VP8_Tester_API_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8_Tester_API_32Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile
+
+devenv /clean Debug "VP8DebugPlugin_32Bit_icc(2008).sln"
+devenv /rebuild Debug "VP8DebugPlugin_32Bit_icc(2008).sln" /projectconfig Debug
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-win32-icc/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile
+
+devenv /clean Release "VP8ReleasePlugin_New32Bit_icc(2008).sln"
+devenv /rebuild Release "VP8ReleasePlugin_New32Bit_icc(2008).sln" /projectconfig Release
+devenv /clean Release "VP8ReleasePlugin_Old32Bit_icc(2008).sln"
+devenv /rebuild Release "VP8ReleasePlugin_Old32Bit_icc(2008).sln" /projectconfig Release
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win32-new-icc/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win32-old-icc/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe $PrimaryWD/TestFolder_32Bit_ICC/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe

@@ -1722,7 +1722,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 if (PassFail[SelectorArInt] == 1)
                 {
-                    tprintf(PRINT_BTH, "Passed\n");
+                    tprintf(PRINT_ERR, "Passed\n");
 
                     HtmlStatus.append(".txt\" color=\"green\">");
                     HtmlStatus.append("Passed");
@@ -1732,7 +1732,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 if (PassFail[SelectorArInt] == 0)
                 {
-                    tprintf(PRINT_BTH, "Failed\n");
+                    tprintf(PRINT_ERR, "Failed\n");
 
                     HtmlStatus.append(".txt\" color=\"red\">");
                     HtmlStatus.append("Failed");
@@ -1742,7 +1742,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 if (PassFail[SelectorArInt] == 2)
                 {
-                    tprintf(PRINT_BTH, "Indeterminate\n");
+                    tprintf(PRINT_ERR, "Indeterminate\n");
 
                     HtmlStatus.append(".txt\" color=\"yellow\">");
                     HtmlStatus.append("Indeterminate");
@@ -1752,25 +1752,25 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 if (PassFail[SelectorArInt] == 3)
                 {
-                    tprintf(PRINT_BTH, "SeeComboRunLog\n");
+                    tprintf(PRINT_ERR, "SeeComboRunLog\n");
                     fprintf(fp_html, "SeeComboRunLog\n");
                 }
 
                 if (PassFail[SelectorArInt] == 4)
                 {
-                    tprintf(PRINT_BTH, "SeePSNRLog\n");
+                    tprintf(PRINT_ERR, "SeePSNRLog\n");
                     fprintf(fp_html, "SeePSNRLog\n");
                 }
 
                 if (PassFail[SelectorArInt] == 5)
                 {
-                    tprintf(PRINT_BTH, "RandomTestCompleted\n");
+                    tprintf(PRINT_ERR, "RandomTestCompleted\n");
                     fprintf(fp_html, "RandomTestCompleted\n");
                 }
 
                 if (PassFail[SelectorArInt] == 8)
                 {
-                    tprintf(PRINT_BTH, "MinTestPassed\n");
+                    tprintf(PRINT_ERR, "MinTestPassed\n");
 
                     HtmlStatus.append(".txt\" color=\"yellow\">");
                     HtmlStatus.append("MinTestPassed");
@@ -1780,19 +1780,19 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
 
                 if (PassFail[SelectorArInt] == 10)
                 {
-                    tprintf(PRINT_BTH, "CompressionMade\n");
+                    tprintf(PRINT_ERR, "CompressionMade\n");
                     fprintf(fp_html, "CompressionMade\n");
                 }
 
                 if (PassFail[SelectorArInt] == 11)
                 {
-                    tprintf(PRINT_BTH, "ErrorFileMismatch\n");
+                    tprintf(PRINT_ERR, "ErrorFileMismatch\n");
                     fprintf(fp_html, "ErrorFileMismatch\n");
                 }
 
                 if (PassFail[SelectorArInt] == 12)
                 {
-                    tprintf(PRINT_BTH, "TestNotSupported\n");
+                    tprintf(PRINT_ERR, "TestNotSupported\n");
                     fprintf(fp_html, "TestNotSupported\n");
                 }
 

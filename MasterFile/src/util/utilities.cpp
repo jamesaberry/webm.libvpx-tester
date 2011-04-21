@@ -7477,10 +7477,18 @@ void print_header_info()
 {
     std::string TestMachineInfo = "                 Test Machine is Running: Unknown Platform\n\n";
     std::string arch = "Unknown";
+    std::string comp = "Unknown";
 #if ARCH_X86
     arch = "32 bit";
 #else if ARCH_X86_64
     arch = "64 bit";
+#endif
+#if defined(COMP_GCC)
+    comp = "gcc";
+#elif defined(COMP_ICC)
+    comp = "icc";
+#elif defined(COMP_VS)
+    comp = "vs";
 #endif
 
 #if defined(_WIN32)
@@ -7501,6 +7509,8 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" Windows");
+    Platform.append(" using ");
+    Platform.append(comp.c_str());
 
     x = 0;
 
@@ -7532,6 +7542,8 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" Linux");
+    Platform.append(" using ");
+    Platform.append(comp.c_str());
 
     x = 0;
 
@@ -7562,6 +7574,8 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" Intel Mac");
+    Platform.append(" using ");
+    Platform.append(comp.c_str());
 
     x = 0;
 
@@ -7592,6 +7606,8 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" PowerPC");
+    Platform.append(" using ");
+    Platform.append(comp.c_str());
 
     x = 0;
 

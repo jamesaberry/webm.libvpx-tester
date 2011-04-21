@@ -47,7 +47,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="include;&quot;include\release-old-64&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;VP7_ONLY=1;ON2_TRACK_MEM_USAGE=1;API"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;VP7_ONLY=1;ON2_TRACK_MEM_USAGE=1;API;COMP_ICC"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"

@@ -313,7 +313,7 @@
 				FavorSizeOrSpeed="1"
 				EnableFiberSafeOptimizations="false"
 				AdditionalIncludeDirectories="..\..\..\MasterFile\include;&quot;include\release-new-64&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ON2_TRACK_MEM_USAGE=1;API"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ON2_TRACK_MEM_USAGE=1;API;COMP_VS"
 				StringPooling="false"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"

@@ -46,7 +46,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="..\..\..\MasterFile\include;&quot;include\debug-32&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;VP7_ONLY=1;ON2_TRACK_MEM_USAGE=1;CONFIG_MEM_TRACKER=1;API"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;VP7_ONLY=1;ON2_TRACK_MEM_USAGE=1;CONFIG_MEM_TRACKER=1;API;COMP_VS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"

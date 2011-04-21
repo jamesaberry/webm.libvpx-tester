@@ -47,7 +47,7 @@ GCC = icc -g -m64
 LFLAGS= -L../newlib -lvpx_NewIMac64_icc -DINLINE=
 
 #Includes
-INCLUDE = -I ../../../../MasterFile/include -I ../include/release-new-64 -D API -D API -D HAVE_STDINT_H
+INCLUDE = -I ../../../../MasterFile/include -I ../include/release-new-64 -D API -D API -D HAVE_STDINT_H -D COMP_ICC
 
 $(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe: $(SRCOBJ)
 	$(GPP) $(INCLUDE) -o "$(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe" $(SRCOBJ) $(LFLAGS)

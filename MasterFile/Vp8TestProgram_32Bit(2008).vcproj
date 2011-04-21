@@ -135,7 +135,7 @@
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				AdditionalIncludeDirectories="include;&quot;include\release-32&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ON2_TRACK_MEM_USAGE=1;API;CONFIG_MD5=1"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ON2_TRACK_MEM_USAGE=1;API;CONFIG_MD5=1;COMP_VS"
 				StringPooling="false"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"

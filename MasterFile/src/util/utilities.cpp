@@ -7484,11 +7484,11 @@ void print_header_info()
     arch = "64 bit";
 #endif
 #if defined(COMP_GCC)
-    comp = "gcc";
+    comp = "GCC";
 #elif defined(COMP_ICC)
-    comp = "icc";
+    comp = "ICC";
 #elif defined(COMP_VS)
-    comp = "vs";
+    comp = "VS";
 #endif
 
 #if defined(_WIN32)
@@ -7509,7 +7509,7 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" Windows");
-    Platform.append(" using ");
+    Platform.append(" ");
     Platform.append(comp.c_str());
 
     x = 0;
@@ -7542,7 +7542,7 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" Linux");
-    Platform.append(" using ");
+    Platform.append(" ");
     Platform.append(comp.c_str());
 
     x = 0;
@@ -7574,7 +7574,7 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" Intel Mac");
-    Platform.append(" using ");
+    Platform.append(" ");
     Platform.append(comp.c_str());
 
     x = 0;
@@ -7606,7 +7606,7 @@ void print_header_info()
     Platform.append("Test Machine is Running: ");
     Platform.append(arch.c_str());
     Platform.append(" PowerPC");
-    Platform.append(" using ");
+    Platform.append(" ");
     Platform.append(comp.c_str());
 
     x = 0;

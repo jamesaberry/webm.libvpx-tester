@@ -1840,6 +1840,8 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     opt.arnr_max_frames = 0;
     opt.arnr_strength = 3;
     opt.arnr_type = 3;
+
+    opt.rc_max_intra_bitrate_pct = 0;
 }
 int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
 {
@@ -1922,6 +1924,8 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
     {
         cfg->rc_end_usage = VPX_CQ;
     }
+
+    cfg->rc_max_intra_bitrate_pct = coreCfg.rc_max_intra_bitrate_pct;
 
     return 0;
 }
@@ -2098,6 +2102,8 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     opt.gold_q = 28;
     opt.key_q = 12;
 
+    opt.rc_max_intra_bitrate_pct = rand() % 1501; //valid Range: 0 to 1500 (soft range limit most reasonable value between 100 and 1500)
+
     if (display != 2)
     {
         tprintf(PRINT_STD, "\nRandom Parameters Generated:");
@@ -2137,6 +2143,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
         std::cout << "TokenPartitions " << opt.token_partitions << "\n";
         std::cout << "MultiThreaded " << opt.multi_threaded << "\n";
         std::cout << "ErrorResilientMode " << opt.error_resilient_mode << "\n";
+        std::cout << "rc_max_intra_bitrate_pct " << opt.rc_max_intra_bitrate_pct << "\n";
     }
 
     if (display == 1)
@@ -2178,6 +2185,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
         std::cerr << "TokenPartitions " << opt.token_partitions << "\n";
         std::cerr << "MultiThreaded " << opt.multi_threaded << "\n";
         std::cerr << "ErrorResilientMode " << opt.error_resilient_mode << "\n";
+        std::cerr << "rc_max_intra_bitrate_pct " << opt.rc_max_intra_bitrate_pct << "\n";
     }
 
     //std::cout << "FrameRate " << opt.FrameRate << "\n";
@@ -2282,6 +2290,8 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile)
     infile2 >> Garbage;
     infile2 >> opt.arnr_type;
     infile2 >> Garbage;
+    infile2 >> opt.rc_max_intra_bitrate_pct;
+    infile2 >> Garbage;
 
     infile2.close();
 
@@ -2337,6 +2347,7 @@ int vpxt_output_settings(const char *outputFile, VP8_CONFIG opt)
     outfile << opt.arnr_max_frames << " ArnrMaxFrames\n";
     outfile << opt.arnr_strength << " ArnrStr\n";
     outfile << opt.arnr_type << " ArnrType\n";
+    outfile << opt.rc_max_intra_bitrate_pct << " rc_max_intra_bitrate_pct\n";
 
     outfile.close();
     return 0;
@@ -2405,6 +2416,7 @@ int vpxt_output_compatable_settings(const char *outputFile, VP8_CONFIG opt, int 
     outfile << opt.arnr_max_frames << " ArnrMaxFrames\n";
     outfile << opt.arnr_strength << " ArnrStr\n";
     outfile << opt.arnr_type << " ArnrType\n";
+    outfile << opt.rc_max_intra_bitrate_pct << " rc_max_intra_bitrate_pct\n";
 
     outfile.close();
     return 0;
@@ -2581,6 +2593,7 @@ int vpxt_output_settings_ivfenc(const char *outputFile, VP8_CONFIG opt)
     outfile << "PlayAlternate " << opt.play_alternate <<  "\n";
     outfile << "Version " << opt.Version <<  "\n";
     outfile << "EncodeBreakout " << opt.encode_breakout <<  "\n";
+    outfile << "rc_max_intra_bitrate_pct " << opt.rc_max_intra_bitrate_pct <<  "\n";
 
     outfile.close();
     return 0;
@@ -2706,6 +2719,7 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--arnr-type=%i ", opt.arnr_type);                        //AltRef Type
     //--tune=<arg>                                                                      //Material to favor - psnr, ssim
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--cq-level=%i ", opt.cq_level);
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--max-intra-rate=%i ", opt.rc_max_intra_bitrate_pct);
 
     return 0;
 }

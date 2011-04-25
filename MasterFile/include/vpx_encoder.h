@@ -398,6 +398,7 @@ extern "C" {
         unsigned int           rc_target_bitrate;
 
 
+        unsigned int           rc_max_intra_bitrate_pct;
         /*
          * quantizer settings
          */

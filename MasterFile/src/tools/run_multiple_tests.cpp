@@ -1254,9 +1254,9 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                     TestsRun++;
                 }
 
-                if (selector == MULTTNUM)
+				if (selector == MULTDNUM)
                 {
-                    SelectorAr[SelectorArInt] = "Test_Multithreaded";
+                    SelectorAr[SelectorArInt] = "Test_Multithreaded_Dec";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
                     SelectorAr2[SelectorArInt] = TimeStampAr2[0];
 
@@ -1265,7 +1265,29 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_multithreaded(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
+                    PassFail[PassFailInt] = test_multithreaded_dec(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = vpxt_get_time();
+                        RunTimeRecAr[SelectorArInt] = vpxt_get_time_in_micro_sec(RunTime1, RunTime2);
+                    }
+
+                    TestsRun++;
+                }
+
+                if (selector == MULTENUM)
+                {
+                    SelectorAr[SelectorArInt] = "Test_Multithreaded_Enc";
+                    check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
+                    SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = vpxt_get_time();
+                    }
+
+                    PassFail[PassFailInt] = test_multithreaded_enc(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {

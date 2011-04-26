@@ -7044,9 +7044,28 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "\n";
         }
 
-        if (ValidTestNumbers[RandTestNum] == MULTTNUM)
+		if (ValidTestNumbers[RandTestNum] == MULTDNUM)
         {
-            outfile << "test_multithreaded@";
+            outfile << "test_multithreaded_dec@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandMultiThread;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == MULTENUM)
+        {
+            outfile << "test_multithreaded_enc@";
             outfile << RandIVFFile.c_str();
             outfile << "@";
             outfile << ModeNum;

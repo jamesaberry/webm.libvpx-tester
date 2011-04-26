@@ -38,7 +38,8 @@ SRC = \
    $(TestsDir)/test_mem_leak.cpp  \
    $(TestsDir)/test_mem_leak2.cpp  \
    $(TestsDir)/test_min_quantizer.cpp  \
-   $(TestsDir)/test_multithreaded.cpp  \
+   $(TestsDir)/test_multithreaded_enc.cpp  \
+   $(TestsDir)/test_multithreaded_dec.cpp  \
    $(TestsDir)/test_new_vs_old_psnr.cpp  \
    $(TestsDir)/test_new_vs_old_enc_cpu_tick.cpp  \
    $(TestsDir)/test_noise_sensitivity.cpp  \
@@ -100,7 +101,8 @@ SRCOBJ = \
    $(OBJDIR)/test_mem_leak.o  \
    $(OBJDIR)/test_mem_leak2.o  \
    $(OBJDIR)/test_min_quantizer.o  \
-   $(OBJDIR)/test_multithreaded.o  \
+   $(OBJDIR)/test_multithreaded_enc.o  \
+   $(OBJDIR)/test_multithreaded_dec.o  \
    $(OBJDIR)/test_new_vs_old_psnr.o  \
    $(OBJDIR)/test_new_vs_old_enc_cpu_tick.o  \
    $(OBJDIR)/test_noise_sensitivity.o  \
@@ -167,7 +169,7 @@ $(OBJDIR)/test_allow_spatial_resampling.o: $(TestsDir)/test_allow_spatial_resamp
 
 $(OBJDIR)/test_arnr.o: $(TestsDir)/test_arnr.cpp
 	$(GPP) -c $(TestsDir)/test_arnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_arnr.o
-	
+
 $(OBJDIR)/test_auto_key_frame.o: $(TestsDir)/test_auto_key_frame.cpp
 	$(GPP) -c $(TestsDir)/test_auto_key_frame.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_auto_key_frame.o
 
@@ -228,8 +230,11 @@ $(OBJDIR)/test_mem_leak2.o: $(TestsDir)/test_mem_leak2.cpp
 $(OBJDIR)/test_min_quantizer.o: $(TestsDir)/test_min_quantizer.cpp
 	$(GPP) -c $(TestsDir)/test_min_quantizer.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_min_quantizer.o
 
-$(OBJDIR)/test_multithreaded.o: $(TestsDir)/test_multithreaded.cpp
-	$(GPP) -c $(TestsDir)/test_multithreaded.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_multithreaded.o
+$(OBJDIR)/test_multithreaded_enc.o: $(TestsDir)/test_multithreaded_enc.cpp
+	$(GPP) -c $(TestsDir)/test_multithreaded_enc.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_multithreaded_enc.o
+
+$(OBJDIR)/test_multithreaded_dec.o: $(TestsDir)/test_multithreaded_dec.cpp
+	$(GPP) -c $(TestsDir)/test_multithreaded_dec.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_multithreaded_dec.o
 
 $(OBJDIR)/test_new_vs_old_psnr.o: $(TestsDir)/test_new_vs_old_psnr.cpp
 	$(GPP) -c $(TestsDir)/test_new_vs_old_psnr.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_psnr.o
@@ -272,7 +277,7 @@ $(OBJDIR)/test_version.o: $(TestsDir)/test_version.cpp
 
 $(OBJDIR)/test_vpx_matches_int.o: $(TestsDir)/test_vpx_matches_int.cpp
 	$(GPP) -c $(TestsDir)/test_vpx_matches_int.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_vpx_matches_int.o
-	
+
 $(OBJDIR)/test_win_lin_mac_match.o: $(TestsDir)/test_win_lin_mac_match.cpp
 	$(GPP) -c $(TestsDir)/test_win_lin_mac_match.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_win_lin_mac_match.o
 

@@ -3444,7 +3444,9 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == MINQUNUM) TestName = "test_min_quantizer";
 
-    if (TestNumber == MULTTNUM) TestName = "test_multithreaded";
+	if (TestNumber == MULTDNUM) TestName = "test_multithreaded_dec";
+
+    if (TestNumber == MULTENUM) TestName = "test_multithreaded_enc";
 
     if (TestNumber == NVOECPTK) TestName = "test_new_vs_old_enc_cpu_tick";
 
@@ -3569,8 +3571,11 @@ int vpxt_identify_test(const char *test_char)
         if (id_test_str.compare("test_min_quantizer") == 0)
             return MINQUNUM;
 
-        if (id_test_str.compare("test_multithreaded") == 0)
-            return MULTTNUM;
+		if (id_test_str.compare("test_multithreaded_dec") == 0)
+            return MULTDNUM;
+
+        if (id_test_str.compare("test_multithreaded_enc") == 0)
+            return MULTENUM;
 
         if (id_test_str.compare("test_new_vs_old_psnr") == 0)
             return NVOPSNUM;
@@ -4190,12 +4195,27 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MULTTNUM)
+				if (selector == MULTDNUM)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
                         SelectorAr[SelectorArInt].append(buffer);
-                        SelectorAr2[SelectorArInt] = "MultiThreadedTest";
+                        SelectorAr2[SelectorArInt] = "MultiThreadedTestDec";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
+                if (selector == MULTENUM)
+                {
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "MultiThreadedTestEnc";
                         PassFail[PassFailInt] = trackthis1;
                     }
                     else
@@ -4452,11 +4472,11 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CPUENNUM && selector != CONQUNUM &&
                     selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
-                    selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTTNUM &&
-                    selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM && selector != OV2PSNUM && selector != PLYALNUM &&
-                    selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM && selector != RECBFNUM &&
-                    selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM &&
-                    selector != VPXMINUM)
+                    selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTENUM &&
+					selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM && selector != OV2PSNUM &&
+					selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM &&
+					selector != RECBFNUM && selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && 
+					selector != ALWSRNUM && selector != VPXMINUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -4934,8 +4954,18 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_multithreaded
-    if (selector == MULTTNUM)
+	//test_multithreaded_dec
+    if (selector == MULTDNUM)
+    {
+        if (argNum == 8)
+            return 1;
+
+        if (argNum == 9)
+            return 2;
+    }
+
+    //test_multithreaded_enc
+    if (selector == MULTENUM)
     {
         if (argNum == 8)
             return 1;

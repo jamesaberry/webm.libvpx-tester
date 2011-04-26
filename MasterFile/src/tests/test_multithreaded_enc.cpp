@@ -1,9 +1,9 @@
 #include "vpxt_test_declarations.h"
 
-int test_multithreaded(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_multithreaded_enc(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Multithreaded";
-    char *MyDir = "test_multithreaded";
+    char *MyDir = "test_multithreaded_enc";
     int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
     if (inputCheck < 0)

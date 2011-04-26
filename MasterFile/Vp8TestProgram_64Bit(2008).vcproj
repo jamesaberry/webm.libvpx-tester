@@ -305,7 +305,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\tests\test_multithreaded.cpp"
+					RelativePath=".\src\tests\test_multithreaded_dec.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\tests\test_multithreaded_enc.cpp"
 					>
 				</File>
 				<File

@@ -264,7 +264,8 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_good_vs_best", slashChar(), slashChar());
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
-    fprintf(fp5, "%s@..%cTestClips%cTestVectors\n", "test_test_vector", slashChar(), slashChar());
+    fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 1, slashChar(), slashChar());
+	fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
     fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
@@ -477,7 +478,8 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_good_vs_best", slashChar(), slashChar());
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
-    fprintf(fp5, "%s@..%cTestClips%cTestVectors\n", "test_test_vector", slashChar(), slashChar());
+    fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 1, slashChar(), slashChar());
+	fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
     fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", "test_win_lin_mac_match", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
@@ -1630,12 +1632,13 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
 
         tprintf(PRINT_STD, "\n"
+			    "    <Threads>\n"
                 "    <Input Directory>\n"
                 "\n"
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "The test decodes each VP8 Test Vector and Checks its MD5 checksum against the expected value. If all Test Vectors decode properly and all MD5 checksums match their expected values, the test passes.");
+            vpxt_formated_print(HLPPRT, "The test decodes each VP8 Test Vector using the number of threads input and Checks its MD5 checksum against the expected value. If all Test Vectors decode properly and all MD5 checksums match their expected values, the test passes.");
 
     }
 

@@ -5036,7 +5036,7 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
 
     //test_test_vector
     if (selector == TVECTNUM)
-        if ((argNum == 3))
+        if ((argNum == 4))
             return 1;
 
     //test_two_pass_vs_two_pass_best

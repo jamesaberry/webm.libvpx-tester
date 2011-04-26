@@ -9,7 +9,8 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
     if (inputCheck < 0)
         return vpxt_test_help(argv[1], 0);
 
-    std::string input = argv[2];
+	int threads = atoi(argv[2]);
+    std::string input = argv[3];
 
     int CurTestVector = 1;
     int LastTestVector = 102;
@@ -617,7 +618,7 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
             tprintf(PRINT_BTH, "\n");
             //tprintf(PRINT_BTH, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
-            if (vpxt_decompress_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str(), 1) == -1)
+            if (vpxt_decompress_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str(), threads) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

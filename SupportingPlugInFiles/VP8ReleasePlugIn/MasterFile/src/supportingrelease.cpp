@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
         vpxt_get_file_extension(outputFile, DecExt);
         DecExt.erase(0, 1); //remove period
 
-        vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt);
+        vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt, 1);
 
         return 0;
     }

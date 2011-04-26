@@ -408,12 +408,12 @@ int main(int argc, char *argv[])
             char *MemLeakCheckTXT = argv[4];
             printf("\n Outputfile: %s\n", MemLeakCheckTXT);
             vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
-            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt);
+            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt, 1);
             vpx_memory_tracker_dump();
         }
 
         if (Decompress.compare(argv[1]) == 0)
-            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt);
+            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt, 1);
 
         return 0;
     }

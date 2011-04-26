@@ -204,7 +204,7 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
         }
 
         tprintf(PRINT_ERR, "\nAttempting to run: %s\n\n", VpxdecProgramString.c_str());
-        vpxt_decompress(VpxEncComp.c_str(), InternalDec.c_str(), DecForm);
+        vpxt_decompress(VpxEncComp.c_str(), InternalDec.c_str(), DecForm, 1);
     }
 
     if (TestType == COMP_ONLY)

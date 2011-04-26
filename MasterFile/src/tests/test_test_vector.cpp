@@ -617,7 +617,7 @@ int test_vector_test(int argc, const char *const *argv, const std::string &Worki
             tprintf(PRINT_BTH, "\n");
             //tprintf(PRINT_BTH, "\n\nTestVector %i\nAPI - Decompressing VP8 IVF File to Raw File: \n", CurTestVector);
 
-            if (vpxt_decompress_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str()) == -1)
+            if (vpxt_decompress_to_raw(TestVector[CurTestVector].c_str(), TestVector_Raw[CurTestVector].c_str(), 1) == -1)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

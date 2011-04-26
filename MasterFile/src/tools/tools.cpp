@@ -224,13 +224,13 @@ int DecoderCheck(int argc, const char *const *argv)
 
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput1Char);
     unsigned int CPUTick1 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput1Char, CPUTick1, "ivf");
+    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput1Char, CPUTick1, "ivf", 1);
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput2Char);
     unsigned int CPUTick2 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput2Char, CPUTick2, "ivf");
+    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput2Char, CPUTick2, "ivf", 1);
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, BeforeCompressionDecOutput3Char);
     unsigned int CPUTick3 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput3Char, CPUTick3, "ivf");
+    vpxt_decompress_time_and_output(DecodeInput, BeforeCompressionDecOutput3Char, CPUTick3, "ivf", 1);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     int speed = 0;
@@ -255,13 +255,13 @@ int DecoderCheck(int argc, const char *const *argv)
 
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput1Char);
     unsigned int CPUTick4 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput1Char, CPUTick4, "ivf");
+    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput1Char, CPUTick4, "ivf", 1);
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput2Char);
     unsigned int CPUTick5 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput2Char, CPUTick5, "ivf");
+    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput2Char, CPUTick5, "ivf", 1);
     tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput, AfterCompressionDecOutput3Char);
     unsigned int CPUTick6 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput3Char, CPUTick6, "ivf");
+    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput3Char, CPUTick6, "ivf", 1);
 
     std::cout << "\n\n";
 
@@ -4440,15 +4440,15 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     output4DEC.append("_DecompressIVFtoIVFTimeAndOutput.ivf");
 
     std::cout << "DecompressIVFtoIVF\n";
-    vpxt_decompress((char *)output1.c_str(), (char *) output1DEC.c_str(), "ivf");
+    vpxt_decompress((char *)output1.c_str(), (char *) output1DEC.c_str(), "ivf", 1);
     std::cout << "\nDecompressIVFtoIVFNoOutput\n";
-    vpxt_decompress_no_output((char *)output1.c_str(), (char *) output2DEC.c_str(), "ivf");
+    vpxt_decompress_no_output((char *)output1.c_str(), (char *) output2DEC.c_str(), "ivf", 1);
     std::cout << "\nTimeDecompressIVFtoIVF\n";
     unsigned int CPUTick1 = 0;
-    vpxt_time_decompress((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick1, "ivf");
+    vpxt_time_decompress((char *)output1.c_str(), (char *) output3DEC.c_str(), CPUTick1, "ivf", 1);
     std::cout << "\nDecompressIVFtoIVFTimeAndOutput\n";
     unsigned int CPUTick2 = 0;
-    vpxt_decompress_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2, "ivf");
+    vpxt_decompress_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2, "ivf", 1);
     std::cout << "\n\n";
 
     if (vpxt_compare_enc((char *) output1DEC.c_str(), (char *) output2DEC.c_str()) == -1)
@@ -5209,7 +5209,7 @@ int tool_vpxt_dec(int argc, const char *const *argv)
     std::string outputFile = argv[3];
     std::string DecForm = argv[4];
 
-    vpxt_decompress_no_output(inputFile.c_str(), outputFile.c_str(), DecForm);
+    vpxt_decompress_no_output(inputFile.c_str(), outputFile.c_str(), DecForm, 1);
 
     return 0;
 }
@@ -5221,7 +5221,7 @@ int tool_vpxt_dec_to_raw(int argc, const char *const *argv)
     std::string inputFile = argv[2];
     std::string outputFile = argv[3];
 
-    vpxt_decompress_to_raw(inputFile.c_str(), outputFile.c_str());
+    vpxt_decompress_to_raw(inputFile.c_str(), outputFile.c_str(), 1);
 
     return 0;
 }
@@ -6227,7 +6227,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
     fclose(in);
     ////////////////////////////////////////////////////////////////////
 
-    vpxt_decompress_to_raw_no_error_output(input.c_str(), output.c_str());
+    vpxt_decompress_to_raw_no_error_output(input.c_str(), output.c_str(), 1);
 
     std::string Program;
 

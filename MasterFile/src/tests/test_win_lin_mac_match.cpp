@@ -170,7 +170,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
-        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm) == -1)
+        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

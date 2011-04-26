@@ -165,7 +165,7 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         }
 
         unsigned int cpu_tick2 = 0;
-        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick2, DecForm);
+        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick2, DecForm, 1);
 
         if (DecTimeArr[x] == -1)
         {

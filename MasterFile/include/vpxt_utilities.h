@@ -110,12 +110,12 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
 unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick, std::string EncFormat);
 int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, std::string EncFormat);
 int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int OutputRaw, std::string EncFormat);
-int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat);
-int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar);
-int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *outputchar);
-int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std::string DecFormat);
-unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat);
-unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat);
+int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat, int threads);
+int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar, int threads);
+int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *outputchar, int threads);
+int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std::string DecFormat, int threads);
+unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat, int threads);
+unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat, int threads);
 int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar);
 #endif
 //--------------------------------------------------------IVF Tools-------------------------------------------------------------------------

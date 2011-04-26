@@ -11327,7 +11327,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
 
     return 0;
 }
-int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat)
+int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat, int threads)
 {
     int                     use_y4m = 1;
     vpxt_lower_case_string(DecFormat);
@@ -11498,6 +11498,8 @@ int vpxt_decompress(const char *inputchar, const char *outputchar, std::string D
     unsigned int FrameSize = (width * height * 3) / 2;
     unsigned __int64 TimeStamp = 0;
 
+    cfg.threads = threads;
+
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
@@ -11631,7 +11633,7 @@ fail:
 
     return 0;
 }
-int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar)
+int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar, int threads)
 {
     int                     use_y4m = 1;
 
@@ -11798,6 +11800,8 @@ int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar)
     unsigned int FrameSize = (width * height * 3) / 2;
     unsigned __int64 TimeStamp = 0;
 
+    cfg.threads = threads;
+
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
@@ -11932,7 +11936,7 @@ fail:
 
     return 0;
 }
-int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *outputchar)
+int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *outputchar, int threads)
 {
     int                     use_y4m = 1;
 
@@ -12100,6 +12104,8 @@ int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *ou
     unsigned int FrameSize = (width * height * 3) / 2;
     unsigned __int64 TimeStamp = 0;
 
+    cfg.threads = threads;
+
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
@@ -12233,7 +12239,7 @@ fail:
 
     return 0;
 }
-int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std::string DecFormat)
+int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std::string DecFormat, int threads)
 {
     int                     use_y4m = 1;
     vpxt_lower_case_string(DecFormat);
@@ -12404,6 +12410,8 @@ int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std
     unsigned int FrameSize = (width * height * 3) / 2;
     unsigned __int64 TimeStamp = 0;
 
+    cfg.threads = threads;
+
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
@@ -12537,7 +12545,7 @@ fail:
 
     return 0;
 }
-unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat)
+unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat, int threads)
 {
     int                     use_y4m = 1;
     vpxt_lower_case_string(DecFormat);
@@ -12711,6 +12719,8 @@ unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar,
     unsigned int FrameSize = (width * height * 3) / 2;
     unsigned __int64 TimeStamp = 0;
 
+    cfg.threads = threads;
+
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
@@ -12883,7 +12893,7 @@ fail:
     CPUTick = total_cpu_time_used;
     return dx_time;
 }
-unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat)
+unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *outputchar, unsigned int &CPUTick, std::string DecFormat, int threads)
 {
     int                     use_y4m = 1;
     vpxt_lower_case_string(DecFormat);
@@ -13054,6 +13064,8 @@ unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *
 
     unsigned int FrameSize = (width * height * 3) / 2;
     unsigned __int64 TimeStamp = 0;
+
+    cfg.threads = threads;
 
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {

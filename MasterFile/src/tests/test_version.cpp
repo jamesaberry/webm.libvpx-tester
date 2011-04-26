@@ -183,7 +183,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         tprintf(PRINT_STD, "\n\n");
         //fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time1 = vpxt_time_decompress(Version0.c_str(), Version0_Dec.c_str(), Deccpu_tick[0], DecForm);
+        unsigned int Time1 = vpxt_time_decompress(Version0.c_str(), Version0_Dec.c_str(), Deccpu_tick[0], DecForm, 1);
 
         if (Time1 == -1)
         {
@@ -194,7 +194,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         tprintf(PRINT_STD, "\n");
         //fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time2 = vpxt_time_decompress(Version1.c_str(), Version1_Dec.c_str(), Deccpu_tick[1], DecForm);
+        unsigned int Time2 = vpxt_time_decompress(Version1.c_str(), Version1_Dec.c_str(), Deccpu_tick[1], DecForm, 1);
 
         if (Time2 == -1)
         {
@@ -205,7 +205,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         tprintf(PRINT_STD, "\n");
         //fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time3 = vpxt_time_decompress(Version2.c_str(), Version2_Dec.c_str(), Deccpu_tick[2], DecForm);
+        unsigned int Time3 = vpxt_time_decompress(Version2.c_str(), Version2_Dec.c_str(), Deccpu_tick[2], DecForm, 1);
 
         if (Time3 == -1)
         {
@@ -216,7 +216,7 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
 
         tprintf(PRINT_STD, "\n");
         //fprintf(stderr, "\nDecompressing VP8 IVF File to IVF File: \n");
-        unsigned int Time4 = vpxt_time_decompress(Version3.c_str(), Version3_Dec.c_str(), Deccpu_tick[3], DecForm);
+        unsigned int Time4 = vpxt_time_decompress(Version3.c_str(), Version3_Dec.c_str(), Deccpu_tick[3], DecForm, 1);
 
         if (Time4 == -1)
         {

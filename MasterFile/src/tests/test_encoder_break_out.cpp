@@ -179,7 +179,7 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\nDecoding EncBreakOut0");
 
-        if (vpxt_decompress(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str(), DecForm) == -1)
+        if (vpxt_decompress(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str(), DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -188,7 +188,7 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\n\nDecoding EncBreakOut100");
 
-        if (vpxt_decompress(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str(), DecForm) == -1)
+        if (vpxt_decompress(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str(), DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -197,7 +197,7 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\n\nDecoding EncBreakOut500");
 
-        if (vpxt_decompress(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str(), DecForm) == -1)
+        if (vpxt_decompress(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str(), DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -206,7 +206,7 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\n\nDecoding EncBreakOut1000");
 
-        if (vpxt_decompress(EncBreakOut1000.c_str(), EncBreakOut1000_Dec.c_str(), DecForm) == -1)
+        if (vpxt_decompress(EncBreakOut1000.c_str(), EncBreakOut1000_Dec.c_str(), DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

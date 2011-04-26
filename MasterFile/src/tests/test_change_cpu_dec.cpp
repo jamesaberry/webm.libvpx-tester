@@ -226,7 +226,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
 
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: none");
         unsigned int CPUTick1 = 0;
-        totalms = vpxt_decompress_time_and_output(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str(), CPUTick1, DecForm);
+        totalms = vpxt_decompress_time_and_output(CPUDecOnlyWorksOutFile.c_str(), Output2Str.c_str(), CPUTick1, DecForm, 1);
         DecompressonVector.push_back(Output2Str);
 
         if (totalms == -1)
@@ -313,7 +313,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
                 vpxt_dec_format_append(ChangedCPUDecOutFileStr1, DecForm);
 
                 unsigned int CPUTick2 = 0;
-                totalms2 = vpxt_decompress_time_and_output(CPUDecOnlyWorksOutFile.c_str(), ChangedCPUDecOutFileStr1.c_str(), CPUTick2, DecForm);
+                totalms2 = vpxt_decompress_time_and_output(CPUDecOnlyWorksOutFile.c_str(), ChangedCPUDecOutFileStr1.c_str(), CPUTick2, DecForm, 1);
                 DecompressonVector.push_back(ChangedCPUDecOutFileStr1);
 
                 if (totalms2 == -1)

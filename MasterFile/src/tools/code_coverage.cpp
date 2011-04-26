@@ -1624,7 +1624,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecCorrect, DecForm);
+    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecCorrect, DecForm, 1);
     vpxt_dec_compute_md5(CodeCoverageCompression, CodeCoverageDecCorrect);
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -2700,7 +2700,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
 
 
     //////////////////////////////////////////////////////////////////////////////////////
-    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecModified, DecForm);
+    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecModified, DecForm, 1);
     vpxt_dec_compute_md5(CodeCoverageCompression, CodeCoverageDecModified);
     //////////////////////////////////////////////////////////////////////////////////////
 

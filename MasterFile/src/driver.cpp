@@ -3628,7 +3628,7 @@ int  main(int argc, const char *argv[])
         return test_speed(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TVECTNUM)
-        return test_vector_test(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_test_vector(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TV2BTNUM)
         return test_two_pass_vs_two_pass_best(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);

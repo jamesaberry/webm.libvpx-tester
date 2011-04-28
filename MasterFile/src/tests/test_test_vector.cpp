@@ -1,6 +1,6 @@
 #include "vpxt_test_declarations.h"
 
-int test_vector_test(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_test_vector(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
     char *CompressString = "Test Vector Check";
     char *MyDir = "test_test_vector";

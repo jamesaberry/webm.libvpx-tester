@@ -1507,7 +1507,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                         RunTime1 = vpxt_get_time();
                     }
 
-                    PassFail[PassFailInt] = test_vector_test(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
+                    PassFail[PassFailInt] = test_test_vector(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {

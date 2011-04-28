@@ -9,7 +9,7 @@ int test_test_vector(int argc, const char *const *argv, const std::string &Worki
     if (inputCheck < 0)
         return vpxt_test_help(argv[1], 0);
 
-	int threads = atoi(argv[2]);
+    int threads = atoi(argv[2]);
     std::string input = argv[3];
 
     int CurTestVector = 1;

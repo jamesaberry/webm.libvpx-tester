@@ -201,7 +201,7 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "  (22) test_mem_leak                        DispAltRefFrames\n");
     tprintf(PRINT_STD, "  (23) test_mem_leak2                       \n");
     tprintf(PRINT_STD, "  (24) test_min_quantizer                   CropRawClip\n");
-	tprintf(PRINT_STD, "  (25) test_multithreaded_dec               PadRawClip\n");
+    tprintf(PRINT_STD, "  (25) test_multithreaded_dec               PadRawClip\n");
     tprintf(PRINT_STD, "  (26) test_multithreaded_enc               CutClip\n");
     tprintf(PRINT_STD, "  (27) test_new_vs_old_enc_cpu_tick         PasteClip\n");
     tprintf(PRINT_STD, "  (28) test_new_vs_old_psnr                 \n");
@@ -213,11 +213,12 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "  (34) test_resample_down_watermark         \n");
     tprintf(PRINT_STD, "  (35) test_speed                           VPXEncPar\n");
     tprintf(PRINT_STD, "  (36) test_test_vector                     RandParFile\n");
-    tprintf(PRINT_STD, "  (37) test_two_pass_vs_two_pass_best       RandCompress\n");
-    tprintf(PRINT_STD, "  (38) test_undershoot                      GraphPSNR\n");
-    tprintf(PRINT_STD, "  (39) test_version                         Help\n");
-    tprintf(PRINT_STD, "  (40) test_vpx_matches_int                 \n");
-    tprintf(PRINT_STD, "  (41) test_win_lin_mac_match               \n");
+    tprintf(PRINT_STD, "  (37) test_thirtytwo_vs_sixtyfour          RandCompress\n");
+    tprintf(PRINT_STD, "  (38) test_two_pass_vs_two_pass_best       GraphPSNR\n");
+    tprintf(PRINT_STD, "  (39) test_undershoot                      Help\n");
+    tprintf(PRINT_STD, "  (40) test_version                         \n");
+    tprintf(PRINT_STD, "  (41) test_vpx_matches_int                 \n");
+    tprintf(PRINT_STD, "  (42) test_win_lin_mac_match               \n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -266,13 +267,13 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
     fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 1, slashChar(), slashChar());
-	fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
+    fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
     fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2@webm@y4m\n", "test_multithreaded_enc", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2@webm@y4m\n", "test_multithreaded_enc", slashChar(), slashChar());
-	fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2@webm@y4m\n", "test_multithreaded_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2@webm@y4m\n", "test_multithreaded_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2@webm@y4m\n", "test_multithreaded_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
@@ -482,13 +483,13 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
     fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 1, slashChar(), slashChar());
-	fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
+    fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
     fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", "test_win_lin_mac_match", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2@webm@y4m\n", "test_multithreaded_enc", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2@webm@y4m\n", "test_multithreaded_enc", slashChar(), slashChar());
-	fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2@webm@y4m\n", "test_multithreaded_dec", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@2@webm@y4m\n", "test_multithreaded_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@2@webm@y4m\n", "test_multithreaded_dec", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
@@ -1364,7 +1365,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: the first with a Min Quantizer equal to 10, the second with a Min Quantizer equal to 60. It records the quantizer used for each frame of the compression. If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding Min Quantizer, the test passes.");
     }
 
-	if (selector == MULTDNUM)
+    if (selector == MULTDNUM)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1662,13 +1663,39 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
 
         tprintf(PRINT_STD, "\n"
-			    "    <Threads>\n"
+                "    <Threads>\n"
                 "    <Input Directory>\n"
                 "\n"
                );
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test decodes each VP8 Test Vector using the number of threads input and Checks its MD5 checksum against the expected value. If all Test Vectors decode properly and all MD5 checksums match their expected values, the test passes.");
+
+    }
+
+    if (selector == TTVSFNUM)
+    {
+        if (printSummary)
+            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
+        else
+            tprintf(PRINT_STD, " ");
+
+        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+
+        tprintf(PRINT_STD, "\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "    <Target Bit Rate>\n"
+                "    <Output Directory>\n"
+                "    <Settings File>\n"
+                "    <Encode Format - webm/ivf>\n"
+                "    <Decode Format - y4m/ivf>\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(HLPPRT, "");
 
     }
 
@@ -1793,18 +1820,11 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                 "    <Mode>\n"
                 "          (0)Realtime/Live Encoding\n"
                 "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
                 "    <Target Bit Rate>\n"
-                "    <Test Mode>\n"
-                "          (0)Create Test Files\n"
-                "          (1)Preform Test\n"
-                "    <Input Folder - enter N/A if none>\n"
+                "    <Output Directory>\n"
+                "    <Settings File>\n"
                 "    <Encode Format - webm/ivf>\n"
                 "    <Decode Format - y4m/ivf>\n"
-                "    <Optional Settings File>\n"
                );
 
         if (printSummary)
@@ -2678,7 +2698,7 @@ void format_summary(const char *InputFileNameCharAr)
         if (TestTracker == MINQUNUM)
             TestTrackerName = "Test_Min_Quantizer";
 
-		if (TestTracker == MULTDNUM)
+        if (TestTracker == MULTDNUM)
             TestTrackerName = "Test_Multithreaded_Dec";
 
         if (TestTracker == MULTENUM)
@@ -2713,6 +2733,9 @@ void format_summary(const char *InputFileNameCharAr)
 
         if (TestTracker == TVECTNUM)
             TestTrackerName = "Test_Test_Vector";
+
+        if (TestTracker == TTVSFNUM)
+            TestTrackerName = "Test_Thirtytwo_Vs_Sixtyfour";
 
         if (TestTracker == TV2BTNUM)
             TestTrackerName = "Test_Two_Pass_Vs_Two_Pass_Best";
@@ -3594,7 +3617,7 @@ int  main(int argc, const char *argv[])
     if (selector == MINQUNUM)
         return test_min_quantizer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
-	if (selector == MULTDNUM)
+    if (selector == MULTDNUM)
         return test_multithreaded_dec(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MULTENUM)
@@ -3629,6 +3652,9 @@ int  main(int argc, const char *argv[])
 
     if (selector == TVECTNUM)
         return test_test_vector(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+
+    if (selector == TTVSFNUM)
+        return test_thirtytwo_vs_sixtyfour(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TV2BTNUM)
         return test_two_pass_vs_two_pass_best(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);

@@ -7044,7 +7044,7 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "\n";
         }
 
-		if (ValidTestNumbers[RandTestNum] == MULTDNUM)
+        if (ValidTestNumbers[RandTestNum] == MULTDNUM)
         {
             outfile << "test_multithreaded_dec@";
             outfile << RandIVFFile.c_str();
@@ -7248,6 +7248,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "test_test_vector@";
             outfile << TestVectorFolder.c_str();
             outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == TTVSFNUM)
+        {
         }
 
         if (ValidTestNumbers[RandTestNum] == TV2BTNUM)

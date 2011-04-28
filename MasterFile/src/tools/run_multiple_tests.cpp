@@ -1254,7 +1254,7 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                     TestsRun++;
                 }
 
-				if (selector == MULTDNUM)
+                if (selector == MULTDNUM)
                 {
                     SelectorAr[SelectorArInt] = "Test_Multithreaded_Dec";
                     check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
@@ -1508,6 +1508,28 @@ int run_multiple_tests(int argc, const char *argv[], std::string WorkingDir,  in
                     }
 
                     PassFail[PassFailInt] = test_test_vector(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime2 = vpxt_get_time();
+                        RunTimeRecAr[SelectorArInt] = vpxt_get_time_in_micro_sec(RunTime1, RunTime2);
+                    }
+
+                    TestsRun++;
+                }
+
+                if (selector == TTVSFNUM)
+                {
+                    SelectorAr[SelectorArInt] = "Test_Thirtytwo_Vs_Sixtyfour";
+                    check_time_stamp(SelectorArInt, SelectorAr, SelectorAr2, TimeStampPrevious, identicalFileVar, TimeStampAr2);
+                    SelectorAr2[SelectorArInt] = TimeStampAr2[0];
+
+                    if (RecordRunTimes == 1)
+                    {
+                        RunTime1 = vpxt_get_time();
+                    }
+
+                    PassFail[PassFailInt] = test_thirtytwo_vs_sixtyfour(DummyArgvVar, (char **)DummyArgv, TestDir, TimeStampAr2, TestType, DeleteIVFFiles);
 
                     if (RecordRunTimes == 1)
                     {

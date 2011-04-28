@@ -35,13 +35,14 @@
 #define RSDWMNUM 34 //test_resample_down_watermark
 #define SPEEDNUM 35 //test_speed
 #define TVECTNUM 36 //test_test_vector
-#define TV2BTNUM 37 //test_two_pass_vs_two_pass_best
-#define UNDSHNUM 38 //test_undershoot
-#define VERSINUM 39 //test_version
-#define VPXMINUM 40 //test_vpx_matches_int
-#define WMLMMNUM 41 //test_win_lin_mac_match
+#define TTVSFNUM 37 //test_thirtytwo_vs_sixtyfour
+#define TV2BTNUM 38 //test_two_pass_vs_two_pass_best
+#define UNDSHNUM 39 //test_undershoot
+#define VERSINUM 40 //test_version
+#define VPXMINUM 41 //test_vpx_matches_int
+#define WMLMMNUM 42 //test_win_lin_mac_match
 
-#define MAXTENUM 40
+#define MAXTENUM 42
 
 /*Removed Tests
 #define PREPRNUM 32 //PreProcessorWorks        //removed 07 15 2010 - Combined with NoiseSensitivity

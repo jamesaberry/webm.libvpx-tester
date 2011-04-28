@@ -351,6 +351,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_thirtytwo_vs_sixtyfour.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_two_pass_vs_two_pass_best.cpp"
 					>
 				</File>

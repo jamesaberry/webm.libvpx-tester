@@ -3444,7 +3444,7 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == MINQUNUM) TestName = "test_min_quantizer";
 
-	if (TestNumber == MULTDNUM) TestName = "test_multithreaded_dec";
+    if (TestNumber == MULTDNUM) TestName = "test_multithreaded_dec";
 
     if (TestNumber == MULTENUM) TestName = "test_multithreaded_enc";
 
@@ -3467,6 +3467,8 @@ int get_test_name(int TestNumber, std::string &TestName)
     if (TestNumber == SPEEDNUM) TestName = "test_speed";
 
     if (TestNumber == TVECTNUM) TestName = "test_test_vector";
+
+    if (TestNumber == TTVSFNUM) TestName = "test_thirtytwo_vs_sixtyfour";
 
     if (TestNumber == TV2BTNUM) TestName = "test_two_pass_vs_two_pass_best";
 
@@ -3571,7 +3573,7 @@ int vpxt_identify_test(const char *test_char)
         if (id_test_str.compare("test_min_quantizer") == 0)
             return MINQUNUM;
 
-		if (id_test_str.compare("test_multithreaded_dec") == 0)
+        if (id_test_str.compare("test_multithreaded_dec") == 0)
             return MULTDNUM;
 
         if (id_test_str.compare("test_multithreaded_enc") == 0)
@@ -3606,6 +3608,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.compare("test_test_vector") == 0)
             return TVECTNUM;
+
+        if (id_test_str.compare("test_thirtytwo_vs_sixtyfour") == 0)
+            return TTVSFNUM;
 
         if (id_test_str.compare("test_two_pass_vs_two_pass_best") == 0)
             return TV2BTNUM;
@@ -4195,7 +4200,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-				if (selector == MULTDNUM)
+                if (selector == MULTDNUM)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4390,6 +4395,22 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
+                if (selector == TTVSFNUM)
+                {
+
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "32BitVs64Bit";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
                 if (selector == TV2BTNUM)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -4473,10 +4494,10 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
                     selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
                     selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTENUM &&
-					selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM && selector != OV2PSNUM &&
-					selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM &&
-					selector != RECBFNUM && selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && 
-					selector != ALWSRNUM && selector != VPXMINUM)
+                    selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM && selector != OV2PSNUM &&
+                    selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM &&
+                    selector != TTVSFNUM && selector != RECBFNUM && selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM &&
+                    selector != WMLMMNUM && selector != ALWSRNUM && selector != VPXMINUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -4954,7 +4975,7 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-	//test_multithreaded_dec
+    //test_multithreaded_dec
     if (selector == MULTDNUM)
     {
         if (argNum == 8)
@@ -5068,6 +5089,16 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
     if (selector == TVECTNUM)
         if ((argNum == 4))
             return 1;
+
+    //test_test_vector
+    if (selector == TTVSFNUM)
+    {
+        if (argNum == 9)
+            return 1;
+
+        if (argNum == 10)
+            return 2;
+    }
 
     //test_two_pass_vs_two_pass_best
     if (selector == TV2BTNUM)

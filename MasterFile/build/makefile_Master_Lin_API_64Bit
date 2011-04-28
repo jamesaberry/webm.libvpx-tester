@@ -50,6 +50,7 @@ SRC = \
    $(TestsDir)/test_resample_down_watermark.cpp  \
    $(TestsDir)/test_speed.cpp  \
    $(TestsDir)/test_test_vector.cpp  \
+   $(TestsDir)/test_thirtytwo_vs_sixtyfour.cpp  \
    $(TestsDir)/test_two_pass_vs_two_pass_best.cpp  \
    $(TestsDir)/test_undershoot.cpp  \
    $(TestsDir)/test_version.cpp  \
@@ -113,6 +114,7 @@ SRCOBJ = \
    $(OBJDIR)/test_resample_down_watermark.o  \
    $(OBJDIR)/test_speed.o  \
    $(OBJDIR)/test_test_vector.o  \
+   $(OBJDIR)/test_thirtytwo_vs_sixtyfour.o  \
    $(OBJDIR)/test_two_pass_vs_two_pass_best.o  \
    $(OBJDIR)/test_undershoot.o  \
    $(OBJDIR)/test_version.o  \
@@ -265,6 +267,9 @@ $(OBJDIR)/test_speed.o: $(TestsDir)/test_speed.cpp
 
 $(OBJDIR)/test_test_vector.o: $(TestsDir)/test_test_vector.cpp
 	$(GPP) -c $(TestsDir)/test_test_vector.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_test_vector.o
+
+$(OBJDIR)/test_thirtytwo_vs_sixtyfour.o: $(TestsDir)/test_thirtytwo_vs_sixtyfour.cpp
+	$(GPP) -c $(TestsDir)/test_thirtytwo_vs_sixtyfour.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_thirtytwo_vs_sixtyfour.o
 
 $(OBJDIR)/test_two_pass_vs_two_pass_best.o: $(TestsDir)/test_two_pass_vs_two_pass_best.cpp
 	$(GPP) -c $(TestsDir)/test_two_pass_vs_two_pass_best.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_two_pass_vs_two_pass_best.o

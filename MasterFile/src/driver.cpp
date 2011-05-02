@@ -1644,6 +1644,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                 "          (0)Realtime/Live Encoding\n"
                 "          (1)Good Quality Fast Encoding\n"
                 "    <Target Bit Rate>\n"
+                "    <Lag in Frames>\n"
                 "    <Encode Format - webm/ivf>\n"
                 "    <Decode Format - y4m/ivf>\n"
                 "     <Optional Settings File>\n"

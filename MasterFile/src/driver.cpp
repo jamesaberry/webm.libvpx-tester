@@ -285,6 +285,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
@@ -316,6 +317,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@1@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
@@ -346,6 +348,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
@@ -378,6 +381,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@4@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
@@ -414,6 +418,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@5@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
@@ -501,6 +506,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
@@ -533,6 +539,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
@@ -563,6 +570,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
@@ -595,6 +603,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@4@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
@@ -631,6 +640,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@5@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());

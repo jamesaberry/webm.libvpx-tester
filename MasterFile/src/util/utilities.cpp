@@ -10512,10 +10512,6 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
     if (EncFormat.compare("ivf") == 0)
         write_webm = 0;
 
-    if (write_webm)
-        outputFile2Str.append(".webm");
-    else
-        outputFile2Str.append(".ivf");
 
     //RunQCheck - Signifies if the quantizers should be check to make sure theyre working properly during an encode
     //RunQCheck = 0 = Do not save q values

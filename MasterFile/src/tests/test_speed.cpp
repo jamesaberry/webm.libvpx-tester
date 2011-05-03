@@ -55,7 +55,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
             SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
             SpeedTestRealAR[speedCounter].append(CounterChar);
-            //SpeedTestRealAR[speedCounter].append(".ivf");
             vpxt_enc_format_append(SpeedTestRealAR[speedCounter], EncForm);
         }
         else
@@ -67,7 +66,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
             SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
             SpeedTestRealAR[speedCounter].append("-");
             SpeedTestRealAR[speedCounter].append(CounterChar);
-            //SpeedTestRealAR[speedCounter].append(".ivf");
             vpxt_enc_format_append(SpeedTestRealAR[speedCounter], EncForm);
         }
 
@@ -155,7 +153,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
-                //SpeedTestGoodQ.append(".ivf");
                 vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
 
                 GoodTotalcpu_tick[counter] = vpxt_cpu_tick_return(SpeedTestGoodQ.c_str(), 0);
@@ -176,7 +173,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
-                //SpeedTestRealTime.append(".ivf");
                 vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
                 RealTotalcpu_tick[counter2] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
@@ -185,7 +181,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 counter2++;
             }
 
-            counter = 0;
+            //positive values for real time are not hard set and therefore shouldnt be included
+            /*counter = 0;
 
             while (counter < 17)
             {
@@ -200,7 +197,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 RealTotalcpu_tickPos[counter] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
                 RealPSNRArrPos[counter] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
                 counter++;
-            }
+            }*/
         }
     }
     else
@@ -217,7 +214,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestGoodQ = SpeedTestGoodQBase;
                 SpeedTestGoodQ.append(CounterChar);
-                //SpeedTestGoodQ.append(".ivf");
                 vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
 
                 opt.cpu_used = counter;
@@ -253,7 +249,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 std::string SpeedTestRealTime = SpeedTestRealTimeBase;
                 SpeedTestRealTime.append(CounterChar);
-                //SpeedTestRealTime.append(".ivf");
                 vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
                 opt.cpu_used = counter;
@@ -277,7 +272,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 counter2++;
             }
 
-            counter = 0;
+            //positive values for real time are not hard set and therefore shouldnt be included
+            /*counter = 0;
 
             while (counter < 17)
             {
@@ -307,7 +303,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 }
 
                 counter++;
-            }
+            }*/
         }
     }
 
@@ -405,7 +401,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
         tprintf(PRINT_BTH, "\n\n");
 
-        counter = 1;
+        //positive values for real time are not hard set and therefore shouldnt be included
+        /*counter = 1;
 
         while (counter < 17)
         {
@@ -449,7 +446,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
             }
 
             counter++;
-        }
+        }*/
     }
 
 
@@ -461,8 +458,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
         {
             vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed increases - Passed");
             tprintf(PRINT_BTH, "\n");
-
-            //printf("All encode ticks decrease as CpuUsed increases - Passed");
         }
 
         if (Fail < 4 && Fail != 0)

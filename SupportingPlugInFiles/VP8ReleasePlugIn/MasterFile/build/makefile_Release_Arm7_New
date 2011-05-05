@@ -11,12 +11,18 @@ IvfDir = ../../../../MasterFile/src/util/vpx
 
 # source files
 SRC = \
-	$(SourceDir)/supportingdebug.cpp \
+	$(SourceDir)/supportingrelease.cpp \
 	$(PsnrDir)/psnr.cpp \
 	$(PsnrDir)/ssim.cpp \
 	$(UtlSrcDir)/utilities.cpp \
 	$(IvfDir)/ivf.cpp \
 	$(IvfDir)/md5_utils.cpp \
+	$(IvfDir)/args.cpp \
+	$(IvfDir)/EbmlWriter.cpp \
+        $(IvfDir)/halloc.c \
+	$(IvfDir)/nestegg.c \
+        $(IvfDir)/tools_common.cpp \
+	$(IvfDir)/y4minput.cpp \
 
 # source object files
 SRCOBJ = \
@@ -26,6 +32,12 @@ SRCOBJ = \
    $(OBJDIR)/ssim.o \
    $(OBJDIR)/utilities.o \
    $(OBJDIR)/md5_utils.o\
+   $(OBJDIR)/args.o \
+   $(OBJDIR)/EbmlWriter.o \
+   $(OBJDIR)/halloc.o \
+   $(OBJDIR)/nestegg.o \
+   $(OBJDIR)/tools_common.o \
+   $(OBJDIR)/y4minput.o \
 
 # compiler
 GPP = arm-none-linux-gnueabi-g++
@@ -40,6 +52,10 @@ INCLUDE = -I ../../../../MasterFile/include -I ../include/release-new-arm7 -D AP
 $(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe: $(SRCOBJ)
 	$(GPP) $(INCLUDE) -o "$(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe" $(SRCOBJ) $(LFLAGS)
 
+$(OBJDIR)/supportingrelease.o: $(SourceDir)/supportingrelease.cpp
+	-mkdir $(OBJDIR)
+	$(GPP) -c $(SourceDir)/supportingrelease.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/supportingrelease.o
+
 $(OBJDIR)/ivf.o: $(IvfDir)/ivf.cpp
 	$(GPP) -c $(IvfDir)/ivf.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
 
@@ -52,11 +68,26 @@ $(OBJDIR)/ssim.o: $(PsnrDir)/ssim.cpp
 $(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
 	$(GPP) -c $(UtlSrcDir)/utilities.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/utilities.o
 
-$(OBJDIR)/supportingrelease.o: $(SourceDir)/supportingrelease.cpp
-	$(GPP) -c $(SourceDir)/supportingrelease.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/supportingrelease.o
-
 $(OBJDIR)/md5_utils.o: $(IvfDir)/md5_utils.cpp
 	$(GPP) -c $(IvfDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+
+$(OBJDIR)/args.o: $(IvfDir)/args.cpp
+	$(GCC) -c $(IvfDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+	
+$(OBJDIR)/EbmlWriter.o: $(IvfDir)/EbmlWriter.cpp
+	$(GPP) -c $(IvfDir)/EbmlWriter.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/EbmlWriter.o
+
+$(OBJDIR)/halloc.o: $(IvfDir)/halloc.c
+	$(GCC) -c $(IvfDir)/halloc.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/halloc.o
+
+$(OBJDIR)/nestegg.o: $(IvfDir)/nestegg.c
+	$(GCC) -c $(IvfDir)/nestegg.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/nestegg.o
+
+$(OBJDIR)/tools_common.o: $(IvfDir)/tools_common.cpp
+	$(GPP) -c $(IvfDir)/tools_common.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/tools_common.o
+
+$(OBJDIR)/y4minput.o: $(IvfDir)/y4minput.cpp
+	$(GPP) -c $(IvfDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o
 
 clean:
 	rm -f $(SRCOBJ) $(OBJDIR)/VP8vNewest_PlugIn_RLib_RMode_Arm7.exe

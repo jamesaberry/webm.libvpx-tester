@@ -235,7 +235,7 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
 
     if (vpxt_check_mem_state(EncMemLeakCheckTxtStr, MemCompressResults) == -1)
     {
-        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr);
+        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr.c_str());
         fail = 1;
     }
     else
@@ -255,7 +255,7 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
 
     if (vpxt_check_mem_state(DecMemLeakCheckTxtStr, MemDecompressResults) == -1)
     {
-        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr);
+        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr.c_str());
         fail = 1;
     }
     else

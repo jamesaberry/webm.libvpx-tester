@@ -117,6 +117,7 @@ SRCOBJ = \
    $(OBJDIR)/test_two_pass_vs_two_pass_best.o  \
    $(OBJDIR)/test_undershoot.o  \
    $(OBJDIR)/test_version.o  \
+   $(OBJDIR)/test_vpx_matches_int.o  \
    $(OBJDIR)/test_win_lin_mac_match.o  \
    $(OBJDIR)/run_multiple_tests.o \
    $(OBJDIR)/rand_comp.o \
@@ -145,8 +146,8 @@ LFLAGS= -L../lib -lvpx_Arm7 -DINLINE= -lpthread
 #Includes
 INCLUDE = -I ../include -I ../include/release-arm7 -D API -D ARM -DHAVE_STDINT_H -D CONFIG_MD5=1
 
-$(OBJDIR)/VP8_Tester_API_Arm7: $(SRCOBJ)
-	$(GPP)  $(INCLUDE) -o "$(OBJDIR)/VP8_Tester_API_Arm7.exe" $(SRCOBJ) $(LFLAGS)
+$(OBJDIR)/VP8_Tester_Arm7: $(SRCOBJ)
+	$(GPP)  $(INCLUDE) -o "$(OBJDIR)/VP8_Tester_Arm7.exe" $(SRCOBJ) $(LFLAGS)
 
 $(OBJDIR)/driver.o: $(SrcDir)/driver.cpp
 	-mkdir $(OBJDIR)

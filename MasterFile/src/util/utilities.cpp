@@ -4735,6 +4735,271 @@ void vpxt_test_name(char *input, char *FileName)
 
     return;
 }
+int  vpxt_init_new_vs_old_log(const char *input, std::string TestIDStr)
+{
+    //returns the number of instances TestIDStr was found in the input file
+    //if no instances are found one will be created and the number 1 will be
+    //retunred as output.
+    std::fstream inputFile;
+    inputFile.open(input, std::fstream::in);
+
+    char inputFileLine[256];
+    inputFile.getline(inputFileLine, 256);
+
+    int numberOfUniqueIDs = 0;
+
+    //loop through log file for TestIDStr to make sure that log entry exists
+    while (!inputFile.eof())
+    {
+        if (TestIDStr.compare(inputFileLine) == 0)
+            numberOfUniqueIDs = numberOfUniqueIDs + 1;
+
+        inputFile.getline(inputFileLine, 256);
+    }
+
+    inputFile.close();
+
+    if (numberOfUniqueIDs != 0)
+        return numberOfUniqueIDs;
+
+    //if log entry does not exist create it and return that only 1 entry exists
+    std::fstream outputFile;
+    outputFile.open(input, std::fstream::out | std::fstream::app);
+    outputFile << TestIDStr.c_str() << "\n";
+    outputFile.close();
+
+    return 1;
+}
+int  vpxt_sync_new_vs_old_log(const char *testlog, const char *gitlog, const char *newtestlog, const char *updateinfo, std::string TestIDStr, std::string testName)
+{
+    if (vpxt_file_size(gitlog, 0) == 0)
+        return -1;
+
+    std::fstream testlogFile;
+    testlogFile.open(testlog, std::fstream::in);
+
+    std::fstream gitlogFile;
+    gitlogFile.open(gitlog, std::fstream::in);
+
+    std::fstream newtestlogFile;
+    newtestlogFile.open(newtestlog, std::fstream::out);
+
+    char testlogFileLine[256];
+    char gitlogFileLine[256];
+
+    testlogFile.getline(testlogFileLine, 256);
+    gitlogFile.getline(gitlogFileLine, 256);
+
+    std::string versionStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    std::string versionStrSub = versionStr.substr(37, 7);
+
+    int firstheader = 1;
+    int correctTest = 0;
+    int correctCommit = 0;
+    int writenext = 0;
+
+    while (!gitlogFile.eof() || !testlogFile.eof())
+    {
+        //if we are at the correct test log (ident by input vars)
+        if (TestIDStr.compare(testlogFileLine) == 0)
+            correctTest = 1;
+
+        if (correctTest == 1) //if we are at the correct commit id (ident by partial version str)
+            if (strncmp(testlogFileLine, versionStrSub.c_str(), 7) == 0)
+                correctCommit = 1;
+
+        if (correctTest == 1) //if we are at the correct commit id (ident by partial version str)
+            if (strncmp(gitlogFileLine, versionStrSub.c_str(), 7) == 0)
+                correctCommit = 1;
+
+        char gitlogFileLineCommit[41] = "";
+        char testlogFileLineCommit[41] = "";
+
+        //formatted lines to print
+        strncpy(gitlogFileLineCommit, gitlogFileLine, 40);
+        strncpy(testlogFileLineCommit, testlogFileLine, 40);
+
+        //if we come to a test identification line finish writing git history if applicable
+        //and reset git log to start the next run through.
+        if (strncmp(testlogFileLine, testName.c_str(), testName.length()) == 0)
+        {
+            if (firstheader != 1) //igore first instance
+            {
+                if (writenext == 0)
+                {
+                    if (correctTest == 1)
+                        writenext = 1;
+
+                    while (!gitlogFile.eof())
+                    {
+                        strncpy(gitlogFileLineCommit, gitlogFileLine, 40);
+                        newtestlogFile << gitlogFileLineCommit << "\n";
+                        gitlogFile.getline(gitlogFileLine, 256);
+
+                        if (!testlogFile.eof())
+                            gitlogFile.getline(gitlogFileLine, 256);
+                    }
+                }
+                else
+                {
+                    while (!gitlogFile.eof())
+                    {
+                        strncpy(gitlogFileLineCommit, gitlogFileLine, 40);
+
+                        if (correctCommit == 1)
+                        {
+                            newtestlogFile << gitlogFileLineCommit << " " << updateinfo << "\n";
+                            correctCommit = 0;
+                            correctTest = 0;
+                        }
+                        else
+                            newtestlogFile << gitlogFileLineCommit << "\n";
+
+                        gitlogFile.getline(gitlogFileLine, 256);
+                    }
+
+                    writenext = 0;
+                }
+            }
+
+            firstheader = 0;
+
+            gitlogFile.clear();
+            gitlogFile.seekg(0, std::ios::beg);
+            gitlogFile.getline(gitlogFileLine, 256);
+
+            newtestlogFile << testlogFileLine << "\n";
+
+            if (!testlogFile.eof())
+                testlogFile.getline(testlogFileLine, 256);
+
+        }
+        else
+        {
+            //if git and new-vs-old log commits are the same print the log info and advance both
+            if (strncmp(testlogFileLine, gitlogFileLine, 40) == 0)
+            {
+                if (correctCommit == 1 && correctTest == 1)
+                {
+                    newtestlogFile << testlogFileLineCommit << " " << updateinfo << "\n";
+                    correctCommit = 0;
+                    correctTest = 0;
+                }
+                else
+                    newtestlogFile << testlogFileLine << "\n";
+
+                if (!testlogFile.eof())
+                    testlogFile.getline(testlogFileLine, 256);
+
+                if (!gitlogFile.eof())
+                    gitlogFile.getline(gitlogFileLine, 256);
+            }
+            else //if git and new-vs-old are not the same print the git info and advance git
+            {
+                if (correctCommit == 1 && correctTest == 1)
+                {
+                    newtestlogFile << gitlogFileLineCommit << " " << updateinfo << "\n";
+                    correctCommit = 0;
+                    correctTest = 0;
+                }
+                else
+                    newtestlogFile << gitlogFileLine << "\n";
+
+                if (!gitlogFile.eof())
+                    gitlogFile.getline(gitlogFileLine, 256);
+            }
+        }
+    }
+
+    testlogFile.close();
+    gitlogFile.close();
+    newtestlogFile.close();
+
+    return 0;
+}
+double vpxt_get_new_vs_old_val(std::string fileline)
+{
+    int lastNumPos = 0;
+
+    while (41 + lastNumPos < fileline.length())
+    {
+        if (fileline.substr(41 + lastNumPos, 1).compare(" ") == 0)
+            break;
+
+        lastNumPos = lastNumPos + 1;
+    }
+
+    if (lastNumPos == 0)
+        return 0.0;
+    else
+        return atof(fileline.substr(41, 41 + lastNumPos - 1).c_str());
+
+}
+int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int printvar, std::vector<double> &ValueList)
+{
+    std::string versionStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    std::string versionStrSub = versionStr.substr(37, 7);
+
+    std::fstream logFile;
+    logFile.open(logfile, std::fstream::in);
+
+    char logFileLine[256];
+    logFile.getline(logFileLine, 256);
+
+    int correctTest = 0;
+    int correctCommit = 0;
+    int contextLines = 0;
+    int totalLines = 0;
+    int FirstLineReached = 0;
+
+    while (!logFile.eof())
+    {
+        if (TestIDStr.compare(logFileLine) == 0)
+            correctTest = 1;
+
+        if (correctTest == 1)
+            if (strncmp(logFileLine, versionStrSub.c_str(), 7) == 0)
+                correctCommit = 1;
+
+        if (correctCommit == 1)
+        {
+            while (!logFile.eof() && (ValueList.size() < 2 || contextLines < 5) && (ValueList.size() < 2 || totalLines < 30))
+            {
+                totalLines = totalLines + 1;
+
+                double value = vpxt_get_new_vs_old_val(logFileLine);
+
+                if (value > 0)
+                {
+                    if (strncmp(logFileLine, versionStrSub.c_str(), 7) == 0 || FirstLineReached == 1)
+                    {
+                        if (FirstLineReached == 0)
+                            tprintf(PRINT_BTH, "%s <--\n", logFileLine);
+                        else
+                            tprintf(PRINT_BTH, "%s\n", logFileLine);
+
+                        FirstLineReached = 1;
+                        ValueList.push_back(value);
+                        contextLines = contextLines + 1;
+                    }
+                }
+                else
+                    tprintf(PRINT_BTH, "%s\n", logFileLine);
+
+                if (!logFile.eof())
+                    logFile.getline(logFileLine, 256);
+            }
+
+            correctCommit == 0;
+            correctTest = 0;
+        }
+
+        if (!logFile.eof())
+            logFile.getline(logFileLine, 256);
+    }
+
+    return 0;
+}
 int  vpxt_check_arg_input(const char *testName, int argNum)
 {
     //return 1 if correct number of inputs 2 if par file input and - 1 if fail
@@ -5439,6 +5704,29 @@ void vpxt_delete_files(int argcount, ...)
     }
 
     va_end(vl);
+}
+void vpxt_delete_files_quiet(int argcount, ...)
+{
+    va_list vl;
+    va_start(vl, argcount);
+    tprintf(PRINT_BTH, "\n");
+    int i;
+
+    for (i = 0; i < argcount; ++i)
+        std::string FileToDelete = va_arg(vl, const char *);
+
+    va_end(vl);
+}
+void vpxt_copy_file(const char *input, const char *output)
+{
+    std::ifstream inputFile(input, std::ios::binary);
+    std::ofstream outputFile(output, std::ios::binary);
+    outputFile << inputFile.rdbuf();
+
+    inputFile.close();
+    outputFile.close();
+
+    return;
 }
 unsigned int vpxt_get_high_res_timer_tick()
 {

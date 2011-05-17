@@ -229,7 +229,7 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
         else
         {
             tprintf(PRINT_BTH, "\n\n-------------------------COMMIT-PSNR-LOG-------------------------\n\n");
-            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList);
+            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList, "test_new_vs_old_psnr");
             tprintf(PRINT_BTH, "\n-----------------------------------------------------------------\n");
         }
 

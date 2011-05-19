@@ -4935,7 +4935,7 @@ double vpxt_get_new_vs_old_val(std::string fileline)
         return atof(fileline.substr(41, 41 + lastNumPos - 1).c_str());
 
 }
-int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int printvar, std::vector<double> &ValueList)
+int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int printvar, std::vector<double> &ValueList, std::string testName)
 {
     std::string versionStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
     std::string versionStrSub = versionStr.substr(37, 7);
@@ -4988,6 +4988,13 @@ int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int pr
 
                 if (!logFile.eof())
                     logFile.getline(logFileLine, 256);
+
+                //if reach next test break out.
+                if (strncmp(logFileLine, testName.c_str(), testName.length()) == 0)
+                {
+                    correctCommit = 0;
+                    break;
+                }
             }
 
             correctCommit == 0;

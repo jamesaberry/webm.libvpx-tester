@@ -60,7 +60,7 @@ void vpxt_test_name(char *input, char *FileName);
 int  vpxt_init_new_vs_old_log(const char *input, std::string TestIDStr);
 int  vpxt_sync_new_vs_old_log(const char *timelog, const char *gitlog, const char *newtimelog, const char *updateinfo, std::string TestIDStr, std::string testName);
 double vpxt_get_new_vs_old_val(std::string fileline);
-int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int printvar, std::vector<double> &ValueList);
+int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int printvar, std::vector<double> &ValueList, std::string testName);
 int  vpxt_check_arg_input(const char *testName, int argNum);
 int vpxt_remove_char_spaces(const char *input, char *output, int maxsize);
 //--------------------------------------------------------Math------------------------------------------------------------------------

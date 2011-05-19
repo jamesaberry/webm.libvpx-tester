@@ -225,7 +225,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         else
         {
             tprintf(PRINT_BTH, "\n\n---------------------COMMIT-TIME-LOG---------------------\n\n");
-            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList);
+            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList, "test_new_vs_old_enc_cpu_tick");
             tprintf(PRINT_BTH, "\n---------------------------------------------------------\n");
         }
 

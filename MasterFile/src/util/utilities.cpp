@@ -17863,7 +17863,7 @@ int vpxt_time_return(const char *infile, int FileType)
 
     if (!infile2.is_open())
     {
-        tprintf(PRINT_BTH, "File: %s not opened", FullName);
+        tprintf(PRINT_BTH, "File: %s not opened", FullName.c_str());
         return 0;
     }
 
@@ -17899,7 +17899,7 @@ int vpxt_cpu_tick_return(const char *infile, int FileType)
 
     if (!infile2.is_open())
     {
-        tprintf(PRINT_BTH, "File: %s not opened", FullName);
+        tprintf(PRINT_BTH, "File: %s not opened", FullName.c_str());
         return 0;
     }
 

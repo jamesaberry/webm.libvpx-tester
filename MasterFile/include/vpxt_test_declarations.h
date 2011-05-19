@@ -8,7 +8,6 @@
 #include "onyxd.h"
 #include "onyx.h"
 #include "ivf.h"
-#include "x86.h"
 #include <iomanip>
 #include <sstream>
 #include <cstdarg>
@@ -21,6 +20,11 @@
 #include <fstream>
 #include <cstdio>
 #include <map>
+#if defined(ARM)
+#include "arm.h"
+#else
+#include "x86.h"
+#endif
 
 #if defined(_WIN32)
 #include "on2vpplugin.h"

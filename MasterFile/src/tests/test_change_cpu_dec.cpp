@@ -2,6 +2,10 @@
 
 int test_change_cpu_dec(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
 {
+#if defined(ARM)
+	printf("\nTEST NOT SUPPORTED FOR ARM.\n");
+	return 0;
+#else
     char *CompressString = "Version";
     char *MyDir = "test_change_cpu_dec";
     int inputCheck = vpxt_check_arg_input(argv[1], argc);
@@ -462,4 +466,5 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
     fclose(fp);
     record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
+	#endif
 }

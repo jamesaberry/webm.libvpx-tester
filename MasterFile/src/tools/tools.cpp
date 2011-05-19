@@ -5,13 +5,17 @@
 #include "comp_ivf.h"
 #include "onyx.h"
 #include "ivf.h"
-#include "x86.h"
 #include <sstream>
 #include <fstream>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#if defined(ARM)
+#include "arm.h"
+#else
+#include "x86.h"
+#endif
 
 #if defined(_WIN32)
 #include "on2vpplugin.h"
@@ -6490,6 +6494,9 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
 
 int tool_print_cpu_info()
 {
+#if defined(ARM)
+	printf("\nNOT SUPPORTED FOR ARM\n");
+#else
     int Simd_Caps = x86_simd_caps();
 
     //printf("\nSimd_Caps = %i\n",Simd_Caps);
@@ -6509,6 +6516,7 @@ int tool_print_cpu_info()
     if ((Simd_Caps & HAS_SSE4_1) == HAS_SSE4_1)tprintf(PRINT_STD, "\n     SSE4_1 Detected");
 
     tprintf(PRINT_STD, "\n");
+#endif
 
     return 0;
 }

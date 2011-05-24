@@ -5005,7 +5005,7 @@ int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int pr
             logFile.getline(logFileLine, 256);
     }
 
-    logFile.close()
+    logFile.close();
     return 0;
 }
 int  vpxt_check_arg_input(const char *testName, int argNum)

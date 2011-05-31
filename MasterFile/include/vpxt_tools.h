@@ -44,6 +44,7 @@ int tool_vpxt_check_pbm_run(int argc, const char *const *argv);
 int tool_vpxt_data_rate(int argc, const char *const *argv);
 int tool_ivf_dec_test_vector_check(int argc, const char *const *argv);
 int tool_vpxt_psnr_run(int argc, const char *const *argv);
+int tool_vpxt_psnr_run_dec(int argc, const char *const *argv);
 int tool_formatted_to_raw(int argc, const char *const *argv);
 int tool_formatted_to_raw_frames(int argc, const char *const *argv);
 int tool_paste_clip(int argc, const char *const *argv);

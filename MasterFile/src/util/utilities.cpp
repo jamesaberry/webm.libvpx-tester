@@ -6120,21 +6120,6 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
     forceUVswap = 0;
 
     ////////////////////////Initilize Raw File////////////////////////
-
-    /*FILE *RawFile = fopen(inputFile1, "rb");
-
-    if (RawFile == NULL)
-    {
-    tprintf(PRINT_BTH, "\nError Opening Raw File: %s\n", inputFile1);
-    return 0;
-    }
-
-    IVF_HEADER ivfhRaw;
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), RawFile);
-    vpxt_format_ivf_header_read(&ivfhRaw);
-
-    int buffer_sz = 32;*/
     unsigned int frameCount = 0;//ivfhRaw.length;
 
     unsigned int             file_type, fourcc;
@@ -6252,21 +6237,6 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
     }
 
     ////////////////////////Initilize Compressed File////////////////////////
-    /*FILE *CompFile = fopen(inputFile2, "rb");
-
-    if (CompFile == NULL)
-    {
-    tprintf(PRINT_BTH, "\nError Opening Compressed File: %s\n", inputFile2);
-    vpx_img_free(&raw_img);
-    fclose(RawFile);
-    return 0;
-    }
-
-    IVF_HEADER ivfhComp;
-    InitIVFHeader(&ivfhComp);
-    fread(&ivfhComp, 1, sizeof(ivfhComp), CompFile);
-    vpxt_format_ivf_header_read(&ivfhComp);*/
-
     /* Open file */
     FILE *CompFile = strcmp(inputFile2, "-") ? fopen(inputFile2, "rb") : set_binary_mode(stdin);
 
@@ -6314,17 +6284,7 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
             return EXIT_FAILURE;
         }
 
-    //if(input.kind == WEBM_FILE)
-    //   if(webm_guess_framerate(&input, &CompScale, &CompRate))
-    //   {
-    //       fprintf(stderr, "Failed to guess framerate -- error parsing "
-    //                       "webm file?\n");
-    //       return EXIT_FAILURE;
-    //   }
-
     YV12_BUFFER_CONFIG Comp_YV12;
-    //memset(&Comp_YV12, 0, sizeof(Comp_YV12));
-    //vp8_yv12_alloc_frame_buffer(&Comp_YV12, ivfhRaw.height, ivfhRaw.width, 32);
 
     if (CompressedFrameOffset > 0) //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
     {
@@ -6432,40 +6392,6 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
 
         bytes2 = buf_sz;
         sumBytes2 += bytes2;
-
-        //////////////////////Get YV12 Data For Compressed File//////////////////////
-        /*IVF_FRAME_HEADER ivf_fhComp;
-
-        if (!fread(&ivf_fhComp, 1, sizeof(ivf_fhComp), CompFile))
-        {
-        tprintf(PRINT_BTH, "\nError Computing PSNR 1\n");
-        fclose(RawFile);
-        fclose(CompFile);
-        delete timeStamp2;
-        delete timeEndStamp2;
-        vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
-        vpx_img_free(&raw_img);
-        return 0;
-        }
-
-        vpxt_format_frame_header_read(ivf_fhComp);*/
-
-
-
-        //char *CompBuff = new char[ivf_fhComp.frameSize*2];
-        //read_frame_dec(&input, &CompBuff, (size_t*)&buf_sz, (size_t*)&buf_alloc_sz);
-        //if (!fread(CompBuff, 1, ivf_fhComp.frameSize, CompFile))
-        //{
-        //    tprintf(PRINT_BTH, "\nError Computing PSNR 2\n");
-        //    fclose(RawFile);
-        //    fclose(CompFile);
-        //    delete timeStamp2;
-        //    delete timeEndStamp2;
-        //    delete [] CompBuff;
-        //    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
-        //    vpx_img_free(&raw_img);
-        //    return 0;
-        //}
 
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -6642,6 +6568,479 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
 
     if (input.kind != WEBM_FILE)
         free(CompBuff);
+
+    return totalPsnr;
+}
+double vpxt_psnr_dec(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut, int width, int height)
+{
+    if (frameStats != 3)
+    {
+        frameStats = 1;//Overide to print individual frames to screen
+    }
+
+    double summedQuality = 0;
+    double summedWeights = 0;
+    double summedPsnr = 0;
+    double summedYPsnr = 0;
+    double summedUPsnr = 0;
+    double summedVPsnr = 0;
+    double sumSqError = 0;
+    double sumBytes = 0;
+    double sumBytes2 = 0;
+
+    unsigned int currentVideo1Frame = 0;
+    int RawFrameOffset = 0;
+    int CompressedFrameOffset = 0;
+    unsigned int maximumFrameCount = 0;
+
+    int original_forceUVswap = forceUVswap;
+    forceUVswap = 0;
+
+    ////////////////////////Initilize Raw File////////////////////////
+    unsigned int frameCount = 0;//ivfhRaw.length;
+
+    unsigned int             file_type, fourcc;
+    struct detect_buffer detect;
+    unsigned int RawWidth = 0;
+    unsigned int RawHeight = 0;
+    unsigned int    RawRate = 0;
+    unsigned int    RawScale = 0;
+    y4m_input                y4m;
+    int                      arg_have_framerate = 0;
+    struct vpx_rational      arg_framerate = {30, 1};
+    int                      arg_use_i420 = 1;
+
+    FILE *RawFile = strcmp(inputFile1, "-") ? fopen(inputFile1, "rb") : set_binary_mode(stdin);
+
+    if (!RawFile)
+    {
+        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile1);
+        return -1;
+    }
+
+    detect.buf_read = fread(detect.buf, 1, 4, RawFile);
+    detect.position = 0;
+
+    if (detect.buf_read == 4 && file_is_y4m(RawFile, &y4m, detect.buf))
+    {
+        if (y4m_input_open(&y4m, RawFile, detect.buf, 4) >= 0)
+        {
+            file_type = FILE_TYPE_Y4M;
+            RawWidth = y4m.pic_w;
+            RawHeight = y4m.pic_h;
+            RawRate = y4m.fps_n;
+            RawScale = y4m.fps_d;
+
+            /* Use the frame rate from the file only if none was specified
+            * on the command-line.
+            */
+            if (!arg_have_framerate)
+            {
+                arg_framerate.num = y4m.fps_n;
+                arg_framerate.den = y4m.fps_d;
+            }
+
+            arg_use_i420 = 0;
+        }
+        else
+        {
+            fprintf(stderr, "Unsupported Y4M stream.\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else if (detect.buf_read == 4 &&
+             file_is_ivf(RawFile, &fourcc, &RawWidth, &RawHeight, &detect, &RawScale, &RawRate))
+    {
+        file_type = FILE_TYPE_IVF;
+
+        switch (fourcc)
+        {
+        case 0x32315659:
+            arg_use_i420 = 0;
+            break;
+        case 0x30323449:
+            arg_use_i420 = 1;
+            break;
+        default:
+            fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        file_type = FILE_TYPE_RAW;
+        RawWidth = width;
+        RawHeight = height;
+    }
+
+    if (!RawWidth || !RawHeight)
+    {
+        fprintf(stderr, "\n     No width or height specified\n");
+        return EXIT_FAILURE;
+    }
+
+    vpx_image_t    raw_img;
+    vpx_img_alloc(&raw_img, IMG_FMT_I420, RawWidth, RawHeight, 1);
+
+    YV12_BUFFER_CONFIG Raw_YV12;
+    Raw_YV12.y_width   = raw_img.d_w;
+    Raw_YV12.y_height  = raw_img.d_h;
+    Raw_YV12.y_stride  = raw_img.stride[PLANE_Y];
+    Raw_YV12.uv_width  = (1 + Raw_YV12.y_width) / 2;
+    Raw_YV12.uv_height = (1 + Raw_YV12.y_height) / 2;
+    Raw_YV12.uv_stride = raw_img.stride[PLANE_U];
+    Raw_YV12.buffer_alloc        = raw_img.img_data;
+    Raw_YV12.y_buffer           = raw_img.img_data;
+    Raw_YV12.u_buffer = raw_img.planes[PLANE_U];
+    Raw_YV12.v_buffer = raw_img.planes[PLANE_V];
+
+    if (RawFrameOffset > 0) //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
+    {
+        for (int i = 0; i < RawFrameOffset; i++)
+        {
+        }
+    }
+
+    //I420 hex-0x30323449 dec-808596553
+    //YV12 hex-0x32315659 dec-842094169
+
+    if (fourcc == 842094169)
+        forceUVswap = 1;   //if YV12 Do not swap Frames
+
+    if (forceUVswap == 1)
+    {
+        unsigned char *temp = Raw_YV12.u_buffer;
+        Raw_YV12.u_buffer = Raw_YV12.v_buffer;
+        Raw_YV12.v_buffer = temp;
+    }
+
+    ////////////////////////Initilize CompRaw File////////////////////////
+    //unsigned int frameCount = 0;//ivfhRaw.length;
+
+    unsigned int             compraw_file_type, compraw_fourcc;
+    struct detect_buffer compraw_detect;
+    unsigned int compraw_width = 0;
+    unsigned int compraw_height = 0;
+    unsigned int    compraw_rate = 0;
+    unsigned int    compraw_scale = 0;
+    y4m_input                compraw_y4m;
+    int                      compraw_arg_have_framerate = 0;
+    struct vpx_rational      compraw_arg_framerate = {30, 1};
+    int                      compraw_arg_use_i420 = 1;
+
+    FILE *compraw_file = strcmp(inputFile2, "-") ? fopen(inputFile2, "rb") : set_binary_mode(stdin);
+
+    if (!compraw_file)
+    {
+        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile1);
+        return -1;
+    }
+
+    compraw_detect.buf_read = fread(compraw_detect.buf, 1, 4, compraw_file);
+    compraw_detect.position = 0;
+
+    if (compraw_detect.buf_read == 4 && file_is_y4m(compraw_file, &compraw_y4m, compraw_detect.buf))
+    {
+        if (y4m_input_open(&compraw_y4m, compraw_file, compraw_detect.buf, 4) >= 0)
+        {
+            compraw_file_type = FILE_TYPE_Y4M;
+            compraw_width = compraw_y4m.pic_w;
+            compraw_height = compraw_y4m.pic_h;
+            compraw_rate = compraw_y4m.fps_n;
+            compraw_scale = compraw_y4m.fps_d;
+
+            /* Use the frame rate from the file only if none was specified
+            * on the command-line.
+            */
+            if (!compraw_arg_have_framerate)
+            {
+                compraw_arg_framerate.num = compraw_y4m.fps_n;
+                compraw_arg_framerate.den = compraw_y4m.fps_d;
+            }
+
+            compraw_arg_use_i420 = 0;
+        }
+        else
+        {
+            fprintf(stderr, "Unsupported Y4M stream.\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else if (compraw_detect.buf_read == 4 &&
+             file_is_ivf(compraw_file, &compraw_fourcc, &compraw_width, &compraw_height, &compraw_detect, &RawScale, &compraw_rate))
+    {
+        compraw_file_type = FILE_TYPE_IVF;
+
+        switch (compraw_fourcc)
+        {
+        case 0x32315659:
+            compraw_arg_use_i420 = 0;
+            break;
+        case 0x30323449:
+            compraw_arg_use_i420 = 1;
+            break;
+        default:
+            fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        compraw_file_type = FILE_TYPE_RAW;
+        compraw_width = width;
+        compraw_height = height;
+        forceUVswap = original_forceUVswap;
+    }
+
+    if (!compraw_width || !compraw_height)
+    {
+        fprintf(stderr, "\n     No width or height specified\n");
+        return EXIT_FAILURE;
+    }
+
+    vpx_image_t    compraw_img;
+    vpx_img_alloc(&compraw_img, IMG_FMT_I420, compraw_width, compraw_height, 1);
+
+    YV12_BUFFER_CONFIG compraw_YV12;
+    compraw_YV12.y_width   = compraw_img.d_w;
+    compraw_YV12.y_height  = compraw_img.d_h;
+    compraw_YV12.y_stride  = compraw_img.stride[PLANE_Y];
+    compraw_YV12.uv_width  = (1 + compraw_YV12.y_width) / 2;
+    compraw_YV12.uv_height = (1 + compraw_YV12.y_height) / 2;
+    compraw_YV12.uv_stride = compraw_img.stride[PLANE_U];
+    compraw_YV12.buffer_alloc        = compraw_img.img_data;
+    compraw_YV12.y_buffer           = compraw_img.img_data;
+    compraw_YV12.u_buffer = compraw_img.planes[PLANE_U];
+    compraw_YV12.v_buffer = compraw_img.planes[PLANE_V];
+
+    if (CompressedFrameOffset > 0) //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
+    {
+    }
+
+    if (compraw_fourcc == 842094169)
+        forceUVswap = 1;   //if YV12 Do not swap Frames
+
+    if (forceUVswap == 1)
+    {
+        unsigned char *temp = compraw_YV12.u_buffer;
+        compraw_YV12.u_buffer = compraw_YV12.v_buffer;
+        compraw_YV12.v_buffer = temp;
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+    ////////Printing////////
+    if (printvar != 0)
+    {
+        tprintf(PRINT_BTH, "\n\n                        ---------Computing PSNR---------");
+    }
+
+    if (printvar == 0)
+    {
+        tprintf(PRINT_STD, "\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
+    }
+
+    if (printvar == 1)
+    {
+        tprintf(PRINT_BTH, "\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
+    }
+
+    if (printvar == 5)
+    {
+        tprintf(PRINT_BTH, "\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
+    }
+
+    if (printvar == 1 || printvar == 5 || printvar == 0)
+    {
+        if (frameStats == 3)
+        {
+            tprintf(PRINT_STD, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
+        }
+        else
+        {
+            tprintf(PRINT_BTH, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
+        }
+    }
+
+    ////////////////////////
+
+    __int64 *timeStamp2 = new __int64;
+    __int64 *timeEndStamp2 = new __int64;
+    int deblock_level2 = 0;
+    int noise_level2 = 0;
+    int flags2 = 0;
+    int currentFrame2 = 0;
+
+    while (read_frame_enc(RawFile, &raw_img, file_type, &y4m, &detect))
+    {
+        if (file_type == 2)
+        {
+            raw_img.img_data = y4m.dst_buf;
+            Raw_YV12.buffer_alloc        = raw_img.img_data;
+            Raw_YV12.y_buffer           = raw_img.img_data;
+            Raw_YV12.u_buffer = raw_img.planes[PLANE_U];
+            Raw_YV12.v_buffer = raw_img.planes[PLANE_V];
+        }
+
+        unsigned long lpdwFlags = 0;
+        unsigned long lpckid = 0;
+        long bytes1;
+        long bytes2;
+
+        if (read_frame_enc(compraw_file, &compraw_img, compraw_file_type, &compraw_y4m, &compraw_detect))
+        {
+            if (compraw_file_type == 2)
+            {
+                compraw_img.img_data      = compraw_y4m.dst_buf;
+                compraw_YV12.buffer_alloc = compraw_img.img_data;
+                compraw_YV12.y_buffer     = compraw_img.img_data;
+                compraw_YV12.u_buffer     = compraw_img.planes[PLANE_U];
+                compraw_YV12.v_buffer     = compraw_img.planes[PLANE_V];
+            }
+
+            ++currentVideo1Frame;
+
+            //////////////////////Get YV12 Data For Raw File//////////////////////
+            bytes1 = (RawWidth * RawHeight * 3) / 2; //ivf_fhRaw.frameSize;
+            bytes2 = (RawWidth * RawHeight * 3) / 2;
+            sumBytes += bytes1;
+            sumBytes2 += bytes2;
+
+            ///////////////////////////Preform PSNR Calc///////////////////////////////////
+            if (SsimOut)
+            {
+                double weight;
+                double thisSsim = VP8_CalcSSIM_Tester(&Raw_YV12, &compraw_YV12, 1, &weight);
+                summedQuality += thisSsim * weight ;
+                summedWeights += weight;
+            }
+
+            double YPsnr;
+            double UPsnr;
+            double VPsnr;
+            double SqError;
+            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &compraw_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
+
+            summedYPsnr += YPsnr;
+            summedUPsnr += UPsnr;
+            summedVPsnr += VPsnr;
+            summedPsnr += thisPsnr;
+            sumSqError += SqError;
+            ///////////////////////////////////////////////////////////////////////////////
+
+            ////////Printing////////
+            if (printvar == 1 || printvar == 5 || printvar == 0)
+            {
+                if (frameStats == 0)
+                {
+                    tprintf(PRINT_STD, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%7d of %7d  ",
+                            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                            currentVideo1Frame, frameCount
+                           );
+                }
+
+                if (frameStats == 1)
+                {
+                    tprintf(PRINT_BTH, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
+                            currentVideo1Frame,
+                            bytes1 * 8.0,
+                            bytes2 * 8.0,
+                            thisPsnr, 1.0 * YPsnr ,
+                            1.0 * UPsnr ,
+                            1.0 * VPsnr);
+                }
+
+                if (frameStats == 2)
+                {
+                    tprintf(PRINT_STD, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%7d of %7d  ",
+                            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                            currentVideo1Frame, frameCount
+                           );
+
+                    fprintf(stderr, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
+                            currentVideo1Frame,
+                            bytes1 * 8.0,
+                            bytes2 * 8.0,
+                            thisPsnr, 1.0 * YPsnr ,
+                            1.0 * UPsnr ,
+                            1.0 * VPsnr);
+                }
+
+                if (frameStats == 3)
+                {
+                    tprintf(PRINT_STD, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
+                            currentVideo1Frame,
+                            bytes1 * 8.0,
+                            bytes2 * 8.0,
+                            thisPsnr, 1.0 * YPsnr ,
+                            1.0 * UPsnr ,
+                            1.0 * VPsnr);
+                }
+            }
+
+            ////////////////////////
+        }
+        else
+        {
+            //delete [] CompBuff;
+        }
+    }
+
+    //Over All PSNR Calc
+    double samples = 3.0 / 2 * currentVideo1Frame * Raw_YV12.y_width * Raw_YV12.y_height;
+    double avgPsnr = summedPsnr / currentVideo1Frame;
+    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
+
+    if (summedWeights < 1.0)
+        summedWeights = 1.0;
+
+    double totalSSim = 100 * pow(summedQuality / summedWeights, 8.0);
+
+    ////////Printing////////
+    if (printvar == 1 || printvar == 5 || printvar == 0)
+    {
+        if (frameStats == 3)
+        {
+            tprintf(PRINT_STD, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+                    sumBytes * 8.0 / currentVideo1Frame*(RawRate / 2) / RawScale / 1000,                  //divided by two added when rate doubled to handle doubling of timestamp
+                    sumBytes2 * 8.0 / currentVideo1Frame*(compraw_rate / 2) / compraw_scale / 1000,               //divided by two added when rate doubled to handle doubling of timestamp
+                    avgPsnr,
+                    1.0 * summedYPsnr / currentVideo1Frame,
+                    1.0 * summedUPsnr / currentVideo1Frame,
+                    1.0 * summedVPsnr / currentVideo1Frame,
+                    totalPsnr);
+            tprintf(PRINT_STD, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
+
+        }
+        else
+        {
+            tprintf(PRINT_BTH, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+                    sumBytes * 8.0 / currentVideo1Frame*(RawRate / 2) / RawScale / 1000,          //divided by two added when rate doubled to handle doubling of timestamp
+                    sumBytes2 * 8.0 / currentVideo1Frame*(compraw_rate / 2) / compraw_scale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
+                    avgPsnr,
+                    1.0 * summedYPsnr / currentVideo1Frame,
+                    1.0 * summedUPsnr / currentVideo1Frame,
+                    1.0 * summedVPsnr / currentVideo1Frame,
+                    totalPsnr);
+            tprintf(PRINT_BTH, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
+        }
+    }
+
+    if (printvar != 0)
+    {
+        tprintf(PRINT_BTH, "\n                        --------------------------------\n");
+    }
+
+    if (SsimOut)
+        *SsimOut = totalSSim;
+
+    ////////////////////////
+    fclose(RawFile);
+    fclose(compraw_file);
+    delete timeStamp2;
+    delete timeEndStamp2;
+
+    vpx_img_free(&raw_img);
+    vpx_img_free(&compraw_img);
 
     return totalPsnr;
 }

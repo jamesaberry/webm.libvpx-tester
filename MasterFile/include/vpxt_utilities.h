@@ -90,6 +90,7 @@ int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles, st
 //---------------------------------------------------------IVF------------------------------------------------------------------------
 int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12);
 double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut);
+double vpxt_psnr_dec(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut, int width, int height);
 double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut);
 double vpxt_data_rate(const char *inputFile, int DROuputSel);
 int vpxt_check_pbm(const char *inputFile, int bitRate, int maxBuffer, int preBuffer);

@@ -6117,6 +6117,41 @@ int tool_vpxt_psnr_run(int argc, const char *const *argv)
 
     return 0;
 }
+int tool_vpxt_psnr_run_dec(int argc, const char *const *argv)
+{
+    if (argc < 5)
+        return vpxt_tool_help(argv[1], 0);
+
+    double runssim = 1;
+    std::string Raw = argv[2];
+    std::string Comp = argv[3];
+
+    int width = 0;
+    int height = 0;
+    int UVSwap = 0;
+
+    if (argc > 5)
+        width = atoi(argv[5]);
+
+    if (argc > 6)
+        height = atoi(argv[6]);
+
+    if (argc > 7)
+        UVSwap = atoi(argv[7]);
+
+    if (atoi(argv[4]) == 1)
+    {
+        vpxt_psnr_dec(Raw.c_str(), Comp.c_str(), UVSwap, 3, 0, &runssim, width, height);
+    }
+    else
+    {
+        vpxt_psnr_dec(Raw.c_str(), Comp.c_str(), UVSwap, 3, 0, NULL, width, height);
+    }
+
+    tprintf(PRINT_STD, "\n");
+
+    return 0;
+}
 int tool_formatted_to_raw(int argc, const char *const *argv)
 {
     if (argc < 4)
@@ -6495,7 +6530,7 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
 int tool_print_cpu_info()
 {
 #if defined(ARM)
-	printf("\nNOT SUPPORTED FOR ARM\n");
+    printf("\nNOT SUPPORTED FOR ARM\n");
 #else
     int Simd_Caps = x86_simd_caps();
 

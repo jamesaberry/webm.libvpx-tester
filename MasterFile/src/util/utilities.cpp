@@ -3524,6 +3524,8 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == ENCBONUM) TestName = "test_encoder_break_out";
 
+    if (TestNumber == ERRCONUM) TestName = "test_error_concealment";
+
     if (TestNumber == ERRMWNUM) TestName = "test_error_resolution";
 
     if (TestNumber == EXTFINUM) TestName = "test_extra_file";
@@ -3641,6 +3643,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.compare("test_encoder_break_out") == 0)
             return ENCBONUM;
+
+        if (id_test_str.compare("test_error_concealment") == 0)
+            return ERRCONUM;
 
         if (id_test_str.compare("test_error_resolution") == 0)
             return ERRMWNUM;
@@ -4137,6 +4142,21 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
+                if (selector == ERRCONUM)
+                {
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "ErrorConcealment";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
                 if (selector == ERRMWNUM)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -4593,13 +4613,13 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 //Make sure that all tests input are vaild tests by checking the list (make sure to add new tests here!)
                 if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM && selector != FRSZTNUM && selector != ARNRTNUM &&
                     selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CPUENNUM && selector != CONQUNUM &&
-                    selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRMWNUM &&
-                    selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM && selector != LGIFRNUM &&
-                    selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM && selector != MULTENUM &&
-                    selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM && selector != OV2PSNUM &&
-                    selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM && selector != TVECTNUM &&
-                    selector != TTVSFNUM && selector != RECBFNUM && selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM &&
-                    selector != WMLMMNUM && selector != ALWSRNUM && selector != VPXMINUM)
+                    selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRCONUM &&
+                    selector != ERRMWNUM && selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM &&
+                    selector != LGIFRNUM && selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM &&
+                    selector != MULTENUM && selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM &&
+                    selector != OV2PSNUM && selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM &&
+                    selector != TVECTNUM && selector != TTVSFNUM && selector != RECBFNUM && selector != TV2BTNUM && selector != UNDSHNUM &&
+                    selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM && selector != VPXMINUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -5244,6 +5264,11 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
         if (argNum == 8)
             return 2;
     }
+
+    //test_error_concealment
+    if (selector == ERRCONUM)//error res check this one
+        if (argNum == 7)
+            return 1;
 
     //test_error_resolution
     if (selector == ERRMWNUM)//error res check this one

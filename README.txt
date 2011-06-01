@@ -69,41 +69,45 @@ Build Main Test Executable from newest libvpx Libraries
 
 7)	Place libvpx.lib  from \codec-sdk-build-VP8-Win32\Win32\Release\ in \libvpx-tester\MasterFile\lib\
 8)  Place vpx_config.h from \codec-sdk-build-VP8-Win32\ in \libvpx-tester\MasterFile\include\release-32\
-9)	Open .sln file located in \libvpx-tester\MasterFile\
-10)	Build in Release Mode.
-11)	Rename executable produced in \libvpx-tester\MasterFile\Release\ from VP8_Tester_API.exe to VP8_Tester_API_32Bit.exe.
+9)  Place vpx_version.h from \codec-sdk-build-VP8-Win32\ in \libvpx-tester\MasterFile\include\release-32\
+10)	Open .sln file located in \libvpx-tester\MasterFile\
+11)	Build in Release Mode.
+12)	Rename executable produced in \libvpx-tester\MasterFile\Release\ from VP8_Tester_API.exe to VP8_Tester_API_32Bit.exe.
 
 Build Supporting Debug Executable from newest libvpx Libraries
 
-12)	Place libvpx.lib  from \codec-sdk-build-VP8-Win32-Debug\Win32\Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\lib
-13) Place vpx_config.h from \codec-sdk-build-VP8-Win32-Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\include\debug-32\
-14)	Open .sln file located in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\
-15)	Build in Debug Mode.
-16)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_ PlugIn_DLib_DMode.exe to VP8vNewest_PlugIn_DLib_DMode.exe.
+13)	Place libvpx.lib  from \codec-sdk-build-VP8-Win32-Debug\Win32\Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\lib
+14) Place vpx_config.h from \codec-sdk-build-VP8-Win32-Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\include\debug-32\
+15) Place vpx_version.h from \codec-sdk-build-VP8-Win32-Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\include\debug-32\
+16)	Open .sln file located in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\
+17)	Build in Debug Mode.
+18)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_ PlugIn_DLib_DMode.exe to VP8vNewest_PlugIn_DLib_DMode.exe.
 
 Build Supporting Release Executable from newest libvpx Libraries
 
-17)	Place libvpx.lib  from \codec-sdk-build-VP8-Win32\Win32\Release\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
-18) Place vpx_config.h from \codec-sdk-build-VP8-Win32\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-new-32\
-19)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
-20)	Build in Release Mode.
-21)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vNewest_PlugIn_RLib_RMode.exe.
+19)	Place libvpx.lib  from \codec-sdk-build-VP8-Win32\Win32\Release\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
+20) Place vpx_config.h from \codec-sdk-build-VP8-Win32\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-new-32\
+21) Place vpx_version.h from \codec-sdk-build-VP8-Win32\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-new-32\
+22)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
+23)	Build in Release Mode.
+24)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vNewest_PlugIn_RLib_RMode.exe.
 
 Build Supporting Release Executable from old libvpx Libraries
 
-22)	Place libvpx.lib  from \codec-sdk-build-VP8-Win32-old\Win32\Release\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
-23) Place vpx_config.h from \codec-sdk-build-VP8-Win32-old\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-old-32\
-24)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
-25)	Build in Release Mode.
-26)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vOldest_PlugIn_RLib_RMode.exe.
+25)	Place libvpx.lib  from \codec-sdk-build-VP8-Win32-old\Win32\Release\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
+26) Place vpx_config.h from \codec-sdk-build-VP8-Win32-old\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-old-32\
+27) Place vpx_version.h from \codec-sdk-build-VP8-Win32-old\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-old-32\
+28)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
+29)	Build in Release Mode.
+30)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vOldest_PlugIn_RLib_RMode.exe.
 
 Gather Executables
 
-27)	Create \libvpx-tester\TestFolder_32Bit\
-28)	Place \libvpx-tester\MasterFile\Release\VP8_Tester_API_32Bit.exe in \libvpx-tester\TestFolder_32Bit\
-29)	Place \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\Debug\VP8vNewest_PlugIn_DLib_DMode.exe in \libvpx-tester\TestFolder_32Bit\
-30)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vNewest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_32Bit\
-31)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vOldest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_32Bit\
+31)	Create \libvpx-tester\TestFolder_32Bit\
+32)	Place \libvpx-tester\MasterFile\Release\VP8_Tester_API_32Bit.exe in \libvpx-tester\TestFolder_32Bit\
+33)	Place \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\Debug\VP8vNewest_PlugIn_DLib_DMode.exe in \libvpx-tester\TestFolder_32Bit\
+34)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vNewest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_32Bit\
+35)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vOldest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_32Bit\
 
 
 
@@ -156,9 +160,14 @@ Copy and Rename VP8 Libraries
 13)	Copy /codec-sdk-build-VP8-Lin32/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-32/
 14)	Copy /codec-sdk-build-VP8-Lin32-old/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-32/
 
+15)	Copy /codec-sdk-build-VP8-Lin32/vpx_version.h to /libvpx-tester/MasterFile/include/release-32/
+16)	Copy /codec-sdk-build-VP8-Lin32-Debug/vpx_version.h to to /libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/debug-32/
+17)	Copy /codec-sdk-build-VP8-Lin32/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-32/
+18)	Copy /codec-sdk-build-VP8-Lin32-old/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-32/
+
 Build Test Executables
 
-11)	Run make_Linux_API_32Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_32Bit/
+19)	Run make_Linux_API_32Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_32Bit/
 
 
 
@@ -211,9 +220,14 @@ Copy and Rename VP8 Libraries
 13)	Copy /codec-sdk-build-VP8-IMac32/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-32/
 14)	Copy /codec-sdk-build-VP8-IMac32-old/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-32/
 
+15)	Copy /codec-sdk-build-VP8-IMac32/vpx_version.h to /libvpx-tester/MasterFile/include/release-32/
+16)	Copy /codec-sdk-build-VP8-IMac32-Debug/vpx_version.h to to /libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/debug-32/
+17)	Copy /codec-sdk-build-VP8-IMac32/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-32/
+18)	Copy /codec-sdk-build-VP8-IMac32-old/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-32/
+
 Build Test Executables
 
-11)	Run make_IMac_API_32Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_32Bit/
+19)	Run make_IMac_API_32Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_32Bit/
 
 
 
@@ -258,41 +272,45 @@ Build Main Test Executable from newest libvpx Libraries
 
 7)	Place libvpx.lib  from \codec-sdk-build-VP8-Win64\Win64\Release\ in \libvpx-tester\MasterFile\lib\
 8)  Place vpx_config.h from \codec-sdk-build-VP8-Win64\ in \libvpx-tester\MasterFile\include\release-64\
-9)	Open .sln file located in \libvpx-tester\MasterFile\
-10)	Build in Release Mode.
-11)	Rename executable produced in \libvpx-tester\MasterFile\Release\ from VP8_Tester_API.exe to VP8_Tester_API_64Bit.exe.
+9)  Place vpx_version.h from \codec-sdk-build-VP8-Win64\ in \libvpx-tester\MasterFile\include\release-64\
+10)	Open .sln file located in \libvpx-tester\MasterFile\
+11)	Build in Release Mode.
+12)	Rename executable produced in \libvpx-tester\MasterFile\Release\ from VP8_Tester_API.exe to VP8_Tester_API_64Bit.exe.
 
 Build Supporting Debug Executable from newest libvpx Libraries
 
-12)	Place libvpx.lib  from \codec-sdk-build-VP8-Win64-Debug\Win64\Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\lib
-13) Place vpx_config.h from \codec-sdk-build-VP8-Win64-Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\include\debug-64\
-14)	Open .sln file located in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\
-15)	Build in Debug Mode.
-16)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_ PlugIn_DLib_DMode.exe to VP8vNewest_PlugIn_DLib_DMode.exe.
+13)	Place libvpx.lib  from \codec-sdk-build-VP8-Win64-Debug\Win64\Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\lib
+14) Place vpx_config.h from \codec-sdk-build-VP8-Win64-Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\include\debug-64\
+15) Place vpx_version.h from \codec-sdk-build-VP8-Win64-Debug\ in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\include\debug-64\
+16)	Open .sln file located in \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\
+17)	Build in Debug Mode.
+18)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_ PlugIn_DLib_DMode.exe to VP8vNewest_PlugIn_DLib_DMode.exe.
 
 Build Supporting Release Executable from newest libvpx Libraries
 
-17)	Place libvpx.lib  from \codec-sdk-build-VP8-Win64\Win64\Release\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
-18) Place vpx_config.h from \codec-sdk-build-VP8-Win64\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-new-64\
-19)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
-20)	Build in Release Mode.
-21)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vNewest_PlugIn_RLib_RMode.exe.
+19)	Place libvpx.lib  from \codec-sdk-build-VP8-Win64\Win64\Release\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
+20) Place vpx_config.h from \codec-sdk-build-VP8-Win64\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-new-64\
+21) Place vpx_version.h from \codec-sdk-build-VP8-Win64\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-new-64\
+22)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
+23)	Build in Release Mode.
+24)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vNewest_PlugIn_RLib_RMode.exe.
 
 Build Supporting Release Executable from old libvpx Libraries
 
-22)	Place libvpx.lib  from \codec-sdk-build-VP8-Win64-old\Win64\Release\ in \libvpx-tester \SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
-23) Place vpx_config.h from \codec-sdk-build-VP8-Win64-old\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-old-64\
-24)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
-25)	Build in Release Mode.
-26)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vOldest_PlugIn_RLib_RMode.exe.
+25)	Place libvpx.lib  from \codec-sdk-build-VP8-Win64-old\Win64\Release\ in \libvpx-tester \SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\lib\
+26) Place vpx_config.h from \codec-sdk-build-VP8-Win64-old\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-old-64\
+27) Place vpx_version.h from \codec-sdk-build-VP8-Win64-old\ in \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\include\release-old-64\
+28)	Open .sln file located in \libvpx-tester\VP8ReleasePlugIn\MasterFile\
+29)	Build in Release Mode.
+30)	Rename executable produced in \libvpx-tester\VP8ReleasePlugIn\MasterFile\Release\ from VP8v--_PlugIn_RLib_RMode.exe to VP8vOldest_PlugIn_RLib_RMode.exe.
 
 Gather Executables
 
-27)	Create \libvpx-tester\TestFolder_64Bit\
-28)	Place \libvpx-tester \MasterFile\Release\VP8_Tester_API_64Bit.exe in \libvpx-tester\TestFolder_64Bit\
-29)	Place \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\Debug\VP8vNewest_PlugIn_DLib_DMode.exe in \libvpx-tester\TestFolder_64Bit\
-30)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vNewest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_64Bit\
-31)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vOldest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_64Bit\
+31)	Create \libvpx-tester\TestFolder_64Bit\
+32)	Place \libvpx-tester \MasterFile\Release\VP8_Tester_API_64Bit.exe in \libvpx-tester\TestFolder_64Bit\
+33)	Place \libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\Debug\VP8vNewest_PlugIn_DLib_DMode.exe in \libvpx-tester\TestFolder_64Bit\
+34)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vNewest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_64Bit\
+35)	Place \libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\Release\VP8vOldest_PlugIn_RLib_RMode.exe in \libvpx-tester\TestFolder_64Bit\
 
 
 
@@ -345,9 +363,14 @@ Copy and Rename VP8 Libraries
 13)	Copy /codec-sdk-build-VP8-Lin64/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-64/
 14)	Copy /codec-sdk-build-VP8-Lin64-old/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-64/
 
+15)	Copy /codec-sdk-build-VP8-Lin64/vpx_version.h to /libvpx-tester/MasterFile/include/release-64/
+16)	Copy /codec-sdk-build-VP8-Lin64-Debug/vpx_version.h to to /libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/debug-64/
+17)	Copy /codec-sdk-build-VP8-Lin64/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-64/
+18)	Copy /codec-sdk-build-VP8-Lin64-old/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-64/
+
 Build Test Executables
 
-11)	Run make_Linux_API_64Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_64Bit/
+19)	Run make_Linux_API_64Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_64Bit/
 
 
 
@@ -400,6 +423,11 @@ Copy and Rename VP8 Libraries
 13)	Copy /codec-sdk-build-VP8-IMac64/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-64/
 14)	Copy /codec-sdk-build-VP8-IMac64-old/vpx_config.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-64/
 
+15)	Copy /codec-sdk-build-VP8-IMac64/vpx_version.h to /libvpx-tester/MasterFile/include/release-64/
+16)	Copy /codec-sdk-build-VP8-IMac64-Debug/vpx_version.h to to /libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/debug-64/
+17)	Copy /codec-sdk-build-VP8-IMac64/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-new-64/
+18)	Copy /codec-sdk-build-VP8-IMac64-old/vpx_version.h to /libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/release-old-64/
+
 Build Test Executables
 
-11)	Run make_IMac_API_64Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_64Bit/
+19)	Run make_IMac_API_64Bit located in /libvpx-tester/ Test Executables will be located in /libvpx-tester/TestFolder_64Bit/

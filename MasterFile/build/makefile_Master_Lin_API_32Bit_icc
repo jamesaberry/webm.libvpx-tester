@@ -27,6 +27,7 @@ SRC = \
    $(TestsDir)/test_debug_matches_release.cpp  \
    $(TestsDir)/test_drop_frame_watermark.cpp  \
    $(TestsDir)/test_encoder_break_out.cpp  \
+   $(TestsDir)/test_error_concealment.cpp  \
    $(TestsDir)/test_error_resolution.cpp  \
    $(TestsDir)/test_extra_file.cpp  \
    $(TestsDir)/test_fixed_quantizer.cpp  \
@@ -91,6 +92,7 @@ SRCOBJ = \
    $(OBJDIR)/test_debug_matches_release.o  \
    $(OBJDIR)/test_drop_frame_watermark.o  \
    $(OBJDIR)/test_encoder_break_out.o  \
+   $(OBJDIR)/test_error_concealment.o  \
    $(OBJDIR)/test_error_resolution.o  \
    $(OBJDIR)/test_extra_file.o  \
    $(OBJDIR)/test_fixed_quantizer.o  \
@@ -198,6 +200,9 @@ $(OBJDIR)/test_drop_frame_watermark.o: $(TestsDir)/test_drop_frame_watermark.cpp
 
 $(OBJDIR)/test_encoder_break_out.o: $(TestsDir)/test_encoder_break_out.cpp
 	$(GPP) -c $(TestsDir)/test_encoder_break_out.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_encoder_break_out.o
+
+$(OBJDIR)/test_error_concealment.o: $(TestsDir)/test_error_concealment.cpp
+    $(GPP) -c $(TestsDir)/test_error_concealment.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_error_concealment.o
 
 $(OBJDIR)/test_error_resolution.o: $(TestsDir)/test_error_resolution.cpp
 	$(GPP) -c $(TestsDir)/test_error_resolution.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_error_resolution.o

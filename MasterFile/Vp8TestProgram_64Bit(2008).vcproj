@@ -261,6 +261,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_error_concealment.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_error_resolution.cpp"
 					>
 				</File>

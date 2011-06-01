@@ -190,35 +190,36 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "  (11) test_debug_matches_release           \n");
     tprintf(PRINT_STD, "  (12) test_drop_frame_watermark            Raw2Formatted\n");
     tprintf(PRINT_STD, "  (13) test_encoder_break_out               Formatted2Raw\n");
-    tprintf(PRINT_STD, "  (14) test_error_resolution                Formatted2RawFrames\n");
-    tprintf(PRINT_STD, "  (15) test_extra_file                      CombineIndvFrames\n");
-    tprintf(PRINT_STD, "  (16) test_fixed_quantizer                 \n");
-    tprintf(PRINT_STD, "  (17) test_force_key_frame                 CompareEnc\n");
-    tprintf(PRINT_STD, "  (18) test_frame_size                      CompareHeader\n");
-    tprintf(PRINT_STD, "  (19) test_good_vs_best                    DisplayHeader\n");
-    tprintf(PRINT_STD, "  (20) test_lag_in_frames                   \n");
-    tprintf(PRINT_STD, "  (21) test_max_quantizer                   DispKeyFrames\n");
-    tprintf(PRINT_STD, "  (22) test_mem_leak                        DispResizedFrames\n");
-    tprintf(PRINT_STD, "  (23) test_mem_leak2                       DispVisibleFrames\n");
-    tprintf(PRINT_STD, "  (24) test_min_quantizer                   DispAltRefFrames\n");
-    tprintf(PRINT_STD, "  (25) test_multithreaded_dec               \n");
-    tprintf(PRINT_STD, "  (26) test_multithreaded_enc               CropRawClip\n");
-    tprintf(PRINT_STD, "  (27) test_new_vs_old_enc_cpu_tick         PadRawClip\n");
-    tprintf(PRINT_STD, "  (28) test_new_vs_old_psnr                 CutClip\n");
-    tprintf(PRINT_STD, "  (29) test_noise_sensitivity               PasteClip\n");
-    tprintf(PRINT_STD, "  (30) test_one_pass_vs_two_pass            \n");
-    tprintf(PRINT_STD, "  (31) test_play_alternate                  PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (32) test_post_processor                  PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (33) test_reconstruct_buffer              \n");
-    tprintf(PRINT_STD, "  (34) test_resample_down_watermark         CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (35) test_speed                           PrintVersion\n");
-    tprintf(PRINT_STD, "  (36) test_test_vector                     \n");
-    tprintf(PRINT_STD, "  (37) test_thirtytwo_vs_sixtyfour          VPXEncPar\n");
-    tprintf(PRINT_STD, "  (38) test_two_pass_vs_two_pass_best       RandParFile\n");
-    tprintf(PRINT_STD, "  (39) test_undershoot                      RandCompress\n");
-    tprintf(PRINT_STD, "  (40) test_version                         GraphPSNR\n");
-    tprintf(PRINT_STD, "  (41) test_vpx_matches_int                 Help\n");
-    tprintf(PRINT_STD, "  (42) test_win_lin_mac_match               \n");
+    tprintf(PRINT_STD, "  (14) test_error_concealment               Formatted2RawFrames\n");
+    tprintf(PRINT_STD, "  (15) test_error_resolution                CombineIndvFrames\n");
+    tprintf(PRINT_STD, "  (16) test_extra_file                      \n");
+    tprintf(PRINT_STD, "  (17) test_fixed_quantizer                 CompareEnc\n");
+    tprintf(PRINT_STD, "  (18) test_force_key_frame                 CompareHeader\n");
+    tprintf(PRINT_STD, "  (19) test_frame_size                      DisplayHeader\n");
+    tprintf(PRINT_STD, "  (20) test_good_vs_best                    \n");
+    tprintf(PRINT_STD, "  (21) test_lag_in_frames                   DispKeyFrames\n");
+    tprintf(PRINT_STD, "  (22) test_max_quantizer                   DispResizedFrames\n");
+    tprintf(PRINT_STD, "  (23) test_mem_leak                        DispVisibleFrames\n");
+    tprintf(PRINT_STD, "  (24) test_mem_leak2                       DispAltRefFrames\n");
+    tprintf(PRINT_STD, "  (25) test_min_quantizer                   \n");
+    tprintf(PRINT_STD, "  (26) test_multithreaded_dec               CropRawClip\n");
+    tprintf(PRINT_STD, "  (27) test_multithreaded_enc               PadRawClip\n");
+    tprintf(PRINT_STD, "  (28) test_new_vs_old_enc_cpu_tick         CutClip\n");
+    tprintf(PRINT_STD, "  (29) test_new_vs_old_psnr                 PasteClip\n");
+    tprintf(PRINT_STD, "  (30) test_noise_sensitivity               \n");
+    tprintf(PRINT_STD, "  (31) test_one_pass_vs_two_pass            PlayDecIVF\n");
+    tprintf(PRINT_STD, "  (32) test_play_alternate                  PlayCompIVF\n");
+    tprintf(PRINT_STD, "  (33) test_post_processor                  \n");
+    tprintf(PRINT_STD, "  (34) test_reconstruct_buffer              CreateSampleTextFiles\n");
+    tprintf(PRINT_STD, "  (35) test_resample_down_watermark         PrintVersion\n");
+    tprintf(PRINT_STD, "  (36) test_speed                           \n");
+    tprintf(PRINT_STD, "  (37) test_test_vector                     VPXEncPar\n");
+    tprintf(PRINT_STD, "  (38) test_thirtytwo_vs_sixtyfour          RandParFile\n");
+    tprintf(PRINT_STD, "  (39) test_two_pass_vs_two_pass_best       RandCompress\n");
+    tprintf(PRINT_STD, "  (40) test_undershoot                      GraphPSNR\n");
+    tprintf(PRINT_STD, "  (41) test_version                         Help\n");
+    tprintf(PRINT_STD, "  (42) test_vpx_matches_int                 \n");
+    tprintf(PRINT_STD, "  (43) test_win_lin_mac_match               \n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -287,6 +288,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@0@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@6@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -320,6 +322,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@1@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -351,6 +354,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -384,6 +388,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@4@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -421,6 +426,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@5@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@VP8vNewest_PlugIn_RLib_RMode_32Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -508,6 +514,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@0@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@6@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -542,6 +549,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -573,6 +581,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -606,6 +615,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@4@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -643,6 +653,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@5@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@VP8vNewest_PlugIn_RLib_RMode_64Bit.exe@webm@y4m\n", "test_debug_matches_release", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@128@webm@y4m\n", "test_encoder_break_out", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_error_concealment", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_error_resolution", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@20@60@webm@y4m\n", "test_fixed_quantizer", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@24@webm@y4m\n", "test_force_key_frame", slashChar(), slashChar());
@@ -1080,6 +1091,34 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates four compressions: the first has an EncodeBreakout of 0, the second EncodeBreakout of 100, the third EncodeBreakout of 500 and the fourth EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated. If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are within 2 dB, the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive; if the PSNRs have greater than a 5 dB difference the test fails.");
+    }
+
+    if (selector == ERRCONUM)
+    {
+        if (printSummary)
+            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
+        else
+            tprintf(PRINT_STD, " ");
+
+        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+
+        tprintf(PRINT_STD, "\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <Encode Format - webm/ivf>\n"
+                "    <Decode Format - y4m/ivf>\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(HLPPRT, "");
+
     }
 
     if (selector == ERRMWNUM)
@@ -2723,6 +2762,9 @@ void format_summary(const char *InputFileNameCharAr)
         if (TestTracker == ENCBONUM)
             TestTrackerName = "Test_Encoder_Break_Out";
 
+        if (TestTracker == ERRCONUM)
+            TestTrackerName = "Test_Error_Concealment";
+
         if (TestTracker == ERRMWNUM)
             TestTrackerName = "Test_Error_Resolution";
 
@@ -3647,6 +3689,9 @@ int  main(int argc, const char *argv[])
 
     if (selector == ENCBONUM)
         return test_encoder_break_out(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+
+    if (selector == ERRCONUM)
+        return test_error_concealment(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ERRMWNUM)
         return test_error_resolution(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);

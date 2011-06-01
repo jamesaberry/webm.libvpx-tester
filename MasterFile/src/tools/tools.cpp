@@ -5206,7 +5206,7 @@ int tool_cut_ivf(int argc, const char *const *argv)
 }
 int tool_vpxt_dec(int argc, const char *const *argv)
 {
-    if (argc < 4)
+    if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
 
     std::string inputFile = argv[2];
@@ -5214,6 +5214,22 @@ int tool_vpxt_dec(int argc, const char *const *argv)
     std::string DecForm = argv[4];
 
     vpxt_decompress_no_output(inputFile.c_str(), outputFile.c_str(), DecForm, 1);
+
+    return 0;
+}
+int tool_vpxt_dec_part_drop(int argc, const char *const *argv)
+{
+    if (argc < 8)
+        return vpxt_tool_help(argv[1], 0);
+
+    std::string inputFile = argv[2];
+    std::string outputFile = argv[3];
+    std::string DecForm = argv[4];
+
+    vpxt_decompress_partial_drops(inputFile.c_str(), outputFile.c_str(), DecForm, 1, atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), PRINT_STD);
+    //vpxt_decompress_partial_drops(inputFile.c_str(), outputFile.c_str(), DecForm, 1, 3, 5, 2);
+
+    tprintf(PRINT_STD, "\n");
 
     return 0;
 }
@@ -6097,7 +6113,7 @@ int tool_ivf_dec_test_vector_check(int argc, const char *const *argv)
 }
 int tool_vpxt_psnr_run(int argc, const char *const *argv)
 {
-    if (argc < 5)
+    if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
 
     double runssim = 1;

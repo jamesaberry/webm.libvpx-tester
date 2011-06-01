@@ -1766,6 +1766,108 @@ void generate_filename(const char *pattern, char *out, size_t q_len, unsigned in
     }
     while (*p);
 }
+struct parsed_header
+{
+    char key_frame;
+    int version;
+    char show_frame;
+    int first_part_size;
+};
+int next_packet(struct parsed_header *hdr, int pos, int length, int mtu)
+{
+    int size = 0;
+    int remaining = length - pos;
+    /* Uncompressed part is 3 bytes for P frames and 10 bytes for I frames */
+    int uncomp_part_size = (hdr->key_frame ? 10 : 3);
+    /* number of bytes yet to send from header and the first partition */
+    int remainFirst = uncomp_part_size + hdr->first_part_size - pos;
+
+    if (remainFirst > 0)
+    {
+        if (remainFirst <= mtu)
+        {
+            size = remainFirst;
+        }
+        else
+        {
+            size = mtu;
+        }
+
+        return size;
+    }
+
+    /* second partition; just slot it up according to MTU */
+    if (remaining <= mtu)
+    {
+        size = remaining;
+        return size;
+    }
+
+    return mtu;
+}
+void throw_packets(unsigned char *frame, int *size, int loss_rate, int *thrown, int *kept, int printVar)
+{
+    unsigned char loss_frame[256*1024];
+    int pkg_size = 1;
+    int pos = 0;
+    int loss_pos = 0;
+    struct parsed_header hdr;
+    unsigned int tmp;
+    int mtu = 1500;
+
+    if (*size < 3)
+    {
+        return;
+    }
+
+    //putc('|', stdout);
+    tprintf(printVar, "|");
+    /* parse uncompressed 3 bytes */
+    tmp = (frame[2] << 16) | (frame[1] << 8) | frame[0];
+    hdr.key_frame = !(tmp & 0x1); /* inverse logic */
+    hdr.version = (tmp >> 1) & 0x7;
+    hdr.show_frame = (tmp >> 4) & 0x1;
+    hdr.first_part_size = (tmp >> 5) & 0x7FFFF;
+
+    /* don't drop key frames */
+    if (hdr.key_frame)
+    {
+        int i;
+        *kept = *size / mtu + ((*size % mtu > 0) ? 1 : 0); /* approximate */
+
+        for (i = 0; i < *kept; i++)
+            tprintf(printVar, ".");
+
+        //putc('.', stdout);
+        return;
+    }
+
+    while ((pkg_size = next_packet(&hdr, pos, *size, mtu)) > 0)
+    {
+        int loss_event = ((rand() + 1.0) / (RAND_MAX + 1.0) < loss_rate / 100.0);
+
+        if (*thrown == 0 && !loss_event)
+        {
+            memcpy(loss_frame + loss_pos, frame + pos, pkg_size);
+            loss_pos += pkg_size;
+            (*kept)++;
+            tprintf(printVar, ".");
+            //putc('.', stdout);
+        }
+        else
+        {
+            (*thrown)++;
+            tprintf(printVar, "X");
+            //putc('X', stdout);
+        }
+
+        pos += pkg_size;
+    }
+
+    memcpy(frame, loss_frame, loss_pos);
+    memset(frame + loss_pos, 0, *size - loss_pos);
+    *size = loss_pos;
+}
 ///////////////////////////DECODE-END/////////////////////////////////////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------VP8 Settings-------------------------------------------------------------------
 void vpxt_default_parameters(VP8_CONFIG &opt)
@@ -12367,6 +12469,393 @@ fail:
     if (vpx_codec_destroy(&decoder))
     {
         tprintf(PRINT_STD, "Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+
+        return -1;
+    }
+
+    if (single_file && !noblit)
+        out_close(out, outfile, do_md5);
+
+    if (input.nestegg_ctx)
+        nestegg_destroy(input.nestegg_ctx);
+
+    if (input.kind != WEBM_FILE)
+        free(buf);
+
+    fclose(infile);
+
+    return 0;
+}
+int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar, std::string DecFormat, int threads, int n, int m, int mode, int printVar)
+{
+    int                     use_y4m = 1;
+    vpxt_lower_case_string(DecFormat);
+
+    if (DecFormat.compare("ivf") == 0)
+        use_y4m = 2;
+
+    vpx_codec_ctx_t       decoder;
+    const char            *fn = inputchar;
+    int                    i;
+    uint8_t               *buf = NULL;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
+    FILE                  *infile;
+    int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
+    int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
+    vpx_codec_iface_t       *iface = NULL;
+    unsigned int           fourcc;
+    unsigned long          dx_time = 0;
+    struct arg               arg;
+    char                   **argv, **argi, **argj;
+    const char             *outfile_pattern = 0;
+    char                    outfile[PATH_MAX];
+    int                     single_file;
+    unsigned int            width;
+    unsigned int            height;
+    unsigned int            fps_den;
+    unsigned int            fps_num;
+    void                   *out = NULL;
+    vpx_codec_dec_cfg_t     cfg = {0};
+#if CONFIG_VP8_DECODER
+    vp8_postproc_cfg_t      vp8_pp_cfg = {0};
+    int                     vp8_dbg_color_ref_frame = 0;
+    int                     vp8_dbg_color_mb_modes = 0;
+    int                     vp8_dbg_color_b_modes = 0;
+    int                     vp8_dbg_display_mv = 0;
+#endif
+    struct input_ctx        input;
+
+    int              flags = 0, frame_cnt = 0;
+
+////////////////////////////////////////////////////////////////////////////////
+    //int              n, m, mode;                                            //
+    unsigned int     seed;                                                    //
+    int              thrown = 0, kept = 0;                                    //
+    int              thrown_frame = 0, kept_frame = 0;                        //
+    unsigned char    frame[256*1024];                                         //
+////////////////////////////////////////////////////////////////////////////////
+    //char *nptr;                                                         //
+    //n = strtol("3,5", &nptr, 0);                                        //
+    //mode = (*nptr == '\0' || *nptr == ',') ? 2 : (*nptr == '-') ? 1 : 0;//
+    //
+    //m = strtol(nptr+1, NULL, 0);                                        //
+    //if((!n && !m) || (*nptr != '-' && *nptr != '/' &&                   //
+    //    *nptr != '\0' && *nptr != ','))                                 //
+    //    die_dec("Couldn't parse pattern %s\n", "3,5");                  //
+    //
+    seed = (m > 0) ? m : (unsigned int)time(NULL);                            //
+    srand(seed);
+    thrown_frame = 0;                                             //
+    //printf("Seed: %u\n", seed);                                                 //
+////////////////////////////////////////////////////////////////////////////////
+
+    input.chunk = 0;
+    input.chunks = 0;
+    input.infile = NULL;
+    input.kind = RAW_FILE;
+    input.nestegg_ctx = 0;
+    input.pkt = 0;
+    input.video_track = 0;
+
+    int CharCount = 0;
+
+    /* Open file */
+    infile = strcmp(fn, "-") ? fopen(fn, "rb") : set_binary_mode(stdin);
+
+    if (!infile)
+    {
+        tprintf(PRINT_BTH, "Failed to open input file: %s", fn);
+        return -1;
+    }
+
+    //tprintf(PRINT_BTH, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    input.infile = infile;
+
+    if (file_is_ivf_dec(infile, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = IVF_FILE;
+    else if (file_is_webm(&input, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = WEBM_FILE;
+    else if (file_is_raw(infile, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = RAW_FILE;
+    else
+    {
+        fprintf(stderr, "Unrecognized input file type.\n");
+        return EXIT_FAILURE;
+    }
+
+    std::string compformat;
+    std::string decformat;
+
+    if (input.kind == IVF_FILE)
+        compformat = "IVF";
+
+    if (input.kind == WEBM_FILE)
+        compformat = "Webm";
+
+    if (input.kind == RAW_FILE)
+        compformat = "Raw";
+
+    if (use_y4m == 0)
+        decformat = "Raw";
+
+    if (use_y4m == 1)
+        decformat = "Y4M";
+
+    if (use_y4m == 2)
+        decformat = "IVF";
+
+    tprintf(printVar, "\nAPI - Decompressing VP8 %s File to Raw %s File - With Partial Drops: \n", compformat.c_str(), decformat.c_str());
+
+    outfile_pattern = outfile_pattern ? outfile_pattern : "-";
+    single_file = 1;
+    {
+        const char *p = outfile_pattern;
+
+        do
+        {
+            p = strchr(p, '%');
+
+            if (p && p[1] >= '1' && p[1] <= '9')
+            {
+                single_file = 0;
+                break;
+            }
+
+            if (p)
+                p++;
+        }
+        while (p);
+    }
+
+    if (single_file && !noblit)
+    {
+        generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
+                          width, height, 0);
+        strncpy(outfile, outputchar, PATH_MAX);
+        //outfile = outputchar;
+        out = out_open(outfile, do_md5);
+    }
+
+    if (use_y4m && !noblit)
+    {
+        char buffer[128];
+
+        if (!single_file)
+        {
+            fprintf(stderr, "YUV4MPEG2 not supported with output patterns,"
+                    " try --i420 or --yv12.\n");
+            return EXIT_FAILURE;
+        }
+
+        if (input.kind == WEBM_FILE)
+            if (webm_guess_framerate(&input, &fps_den, &fps_num))
+            {
+                fprintf(stderr, "Failed to guess framerate -- error parsing "
+                        "webm file?\n");
+                return EXIT_FAILURE;
+            }
+
+        /*Note: We can't output an aspect ratio here because IVF doesn't
+        store one, and neither does VP8.
+        That will have to wait until these tools support WebM natively.*/
+        sprintf(buffer, "YUV4MPEG2 C%s W%u H%u F%u:%u I%c\n",
+                "420jpeg", width, height, fps_num, fps_den, 'p');
+        out_put(out, (unsigned char *)buffer, strlen(buffer), do_md5);
+    }
+
+    /* Try to determine the codec from the fourcc. */
+    for (i = 0; i < sizeof(ifaces) / sizeof(ifaces[0]); i++)
+        if ((fourcc & ifaces[i].fourcc_mask) == ifaces[i].fourcc)
+        {
+            vpx_codec_iface_t  *ivf_iface = ifaces[i].iface;
+
+            if (iface && iface != ivf_iface)
+                tprintf(printVar, "Notice -- IVF header indicates codec: %s\n",
+                        ifaces[i].name);
+            else
+                iface = ivf_iface;
+
+            break;
+        }
+
+    unsigned int FrameSize = (width * height * 3) / 2;
+    unsigned __int64 TimeStamp = 0;
+
+    cfg.threads = threads;
+
+    if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, VPX_CODEC_USE_ERROR_CONCEALMENT))
+    {
+        tprintf(printVar, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+
+        return -1;
+    }
+
+    /* Decode file */
+    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    {
+        vpx_codec_iter_t  iter = NULL;
+        vpx_image_t    *img;
+        struct vpx_usec_timer timer;
+
+        int frame_sz = buf_sz;
+
+        ////////////////////////////////////////////////////////////////////////
+        /* Decide whether to throw parts of the frame or the whole frame      //
+           depending on the drop mode */                                      //
+        thrown_frame = 0;                                                     //
+        kept_frame = 0;                                                       //
+
+        switch (mode)                                                         //
+        {
+            //
+        case 0:                                                               //
+
+            if (m - (frame_in - 1) % m <= n)                                 //
+            {
+                //
+                frame_sz = 0;                                                 //
+            }                                                                 //
+
+            break;                                                            //
+        case 1:                                                               //
+
+            if (frame_in >= n && frame_in <= m)                               //
+            {
+                //
+                frame_sz = 0;                                                 //
+            }                                                                 //
+
+            break;                                                            //
+        case 2:                                                               //
+            throw_packets(buf, &frame_sz, n, &thrown_frame, &kept_frame, printVar);     //
+            break;                                                            //
+        default:
+            break;                                                       //
+        }                                                                     //
+
+        if (mode < 2)                                                         //
+        {
+            //
+            if (frame_sz == 0)                                                //
+            {
+                tprintf(printVar, "X");                                       //
+                //putc('X', stdout);                                          //
+                thrown_frame++;                                               //
+            }                                                                 //
+            else                                                              //
+            {
+                tprintf(printVar, ".");                                       //
+                //putc('.', stdout);                                          //
+                kept_frame++;                                                 //
+            }                                                                 //
+        }                                                                     //
+
+        thrown += thrown_frame;                                               //
+        kept += kept_frame;                                                   //
+        ////////////////////////////////////////////////////////////////////////
+
+        vpx_usec_timer_start(&timer);
+
+        if (vpx_codec_decode(&decoder, buf, frame_sz, NULL, 0))
+        {
+            const char *detail = vpx_codec_error_detail(&decoder);
+            tprintf(printVar, "Failed to decode frame: %s\n", vpx_codec_error(&decoder));
+
+            if (detail)
+                tprintf(printVar, "  Additional information: %s\n", detail);
+
+            goto fail;
+        }
+
+        vpx_usec_timer_mark(&timer);
+        dx_time += vpx_usec_timer_elapsed(&timer);
+
+        ++frame_in;
+
+        if ((img = vpx_codec_get_frame(&decoder, &iter)))
+            ++frame_out;
+
+        if (progress)
+        {
+        }
+
+        if (!noblit)
+        {
+            if (img)
+            {
+                unsigned int y;
+                char out_fn[PATH_MAX];
+                uint8_t *buf;
+
+                if (!single_file)
+                {
+                    size_t len = sizeof(out_fn) - 1;
+                    out_fn[len] = '\0';
+                    generate_filename(outfile_pattern, out_fn, len - 1,
+                                      img->d_w, img->d_h, frame_in);
+                    out = out_open(out_fn, do_md5);
+                }
+                else if (use_y4m)
+                    out_put(out, (unsigned char *)"FRAME\n", 6, do_md5);
+
+                if (!use_y4m)
+                    ivf_write_frame_header((FILE *)out, 0, img->d_h * img->d_w);
+
+                /*if (CharCount == 79)
+                {
+                    tprintf(PRINT_BTH, "\n");
+                    CharCount = 0;
+                }*/
+
+                /*CharCount++;
+                tprintf(PRINT_BTH, ".");*/
+
+                buf = img->planes[VPX_PLANE_Y];
+
+                for (y = 0; y < img->d_h; y++)
+                {
+                    out_put(out, buf, img->d_w, do_md5);
+                    buf += img->stride[VPX_PLANE_Y];
+                }
+
+                buf = img->planes[flipuv?VPX_PLANE_V:VPX_PLANE_U];
+
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
+                {
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
+                    buf += img->stride[VPX_PLANE_U];
+                }
+
+                buf = img->planes[flipuv?VPX_PLANE_U:VPX_PLANE_V];
+
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
+                {
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
+                    buf += img->stride[VPX_PLANE_V];
+                }
+
+                if (!single_file)
+                    out_close(out, out_fn, do_md5);
+            }
+        }
+
+        if (stop_after && frame_in >= stop_after)
+            break;
+    }
+
+    if (summary || progress)
+    {
+        show_progress(frame_in, frame_out, dx_time);
+        fprintf(stderr, "\n");
+    }
+
+fail:
+
+    if (vpx_codec_destroy(&decoder))
+    {
+        tprintf(printVar, "Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
         fclose(infile);
 
         return -1;

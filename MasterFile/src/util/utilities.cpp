@@ -5850,7 +5850,7 @@ void vpxt_delete_files_quiet(int argcount, ...)
     for (i = 0; i < argcount; ++i)
     {
         std::string FileToDelete = va_arg(vl, const char *);
-        remove(FileToDelete.c_str();
+        remove(FileToDelete.c_str());
     }
 
     va_end(vl);

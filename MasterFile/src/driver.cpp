@@ -186,40 +186,41 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "   (7) test_change_cpu_dec                  VPXTDataRate\n");
     tprintf(PRINT_STD, "   (8) test_change_cpu_enc                  VPXTPSNR\n");
     tprintf(PRINT_STD, "   (9) test_constrained_quality             VPXTPSNRDEC\n");
-    tprintf(PRINT_STD, "  (10) test_data_rate                       VPXTCheckPBM\n");
-    tprintf(PRINT_STD, "  (11) test_debug_matches_release           \n");
-    tprintf(PRINT_STD, "  (12) test_drop_frame_watermark            Raw2Formatted\n");
-    tprintf(PRINT_STD, "  (13) test_encoder_break_out               Formatted2Raw\n");
-    tprintf(PRINT_STD, "  (14) test_error_concealment               Formatted2RawFrames\n");
-    tprintf(PRINT_STD, "  (15) test_error_resolution                CombineIndvFrames\n");
-    tprintf(PRINT_STD, "  (16) test_extra_file                      \n");
-    tprintf(PRINT_STD, "  (17) test_fixed_quantizer                 CompareEnc\n");
-    tprintf(PRINT_STD, "  (18) test_force_key_frame                 CompareHeader\n");
-    tprintf(PRINT_STD, "  (19) test_frame_size                      DisplayHeader\n");
-    tprintf(PRINT_STD, "  (20) test_good_vs_best                    \n");
-    tprintf(PRINT_STD, "  (21) test_lag_in_frames                   DispKeyFrames\n");
-    tprintf(PRINT_STD, "  (22) test_max_quantizer                   DispResizedFrames\n");
-    tprintf(PRINT_STD, "  (23) test_mem_leak                        DispVisibleFrames\n");
-    tprintf(PRINT_STD, "  (24) test_mem_leak2                       DispAltRefFrames\n");
-    tprintf(PRINT_STD, "  (25) test_min_quantizer                   \n");
-    tprintf(PRINT_STD, "  (26) test_multithreaded_dec               CropRawClip\n");
-    tprintf(PRINT_STD, "  (27) test_multithreaded_enc               PadRawClip\n");
-    tprintf(PRINT_STD, "  (28) test_new_vs_old_enc_cpu_tick         CutClip\n");
-    tprintf(PRINT_STD, "  (29) test_new_vs_old_psnr                 PasteClip\n");
-    tprintf(PRINT_STD, "  (30) test_noise_sensitivity               \n");
-    tprintf(PRINT_STD, "  (31) test_one_pass_vs_two_pass            PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (32) test_play_alternate                  PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (33) test_post_processor                  \n");
-    tprintf(PRINT_STD, "  (34) test_reconstruct_buffer              CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (35) test_resample_down_watermark         PrintVersion\n");
-    tprintf(PRINT_STD, "  (36) test_speed                           \n");
-    tprintf(PRINT_STD, "  (37) test_test_vector                     VPXEncPar\n");
-    tprintf(PRINT_STD, "  (38) test_thirtytwo_vs_sixtyfour          RandParFile\n");
-    tprintf(PRINT_STD, "  (39) test_two_pass_vs_two_pass_best       RandCompress\n");
-    tprintf(PRINT_STD, "  (40) test_undershoot                      GraphPSNR\n");
-    tprintf(PRINT_STD, "  (41) test_version                         Help\n");
-    tprintf(PRINT_STD, "  (42) test_vpx_matches_int                 \n");
-    tprintf(PRINT_STD, "  (43) test_win_lin_mac_match               \n");
+    tprintf(PRINT_STD, "  (10) test_copy_set_reference              VPXTCheckPBM\n");
+    tprintf(PRINT_STD, "  (11) test_data_rate                       \n");
+    tprintf(PRINT_STD, "  (12) test_debug_matches_release           Raw2Formatted\n");
+    tprintf(PRINT_STD, "  (13) test_drop_frame_watermark            Formatted2Raw\n");
+    tprintf(PRINT_STD, "  (14) test_encoder_break_out               Formatted2RawFrames\n");
+    tprintf(PRINT_STD, "  (15) test_error_concealment               CombineIndvFrames\n");
+    tprintf(PRINT_STD, "  (16) test_error_resolution                \n");
+    tprintf(PRINT_STD, "  (17) test_extra_file                      CompareEnc\n");
+    tprintf(PRINT_STD, "  (18) test_fixed_quantizer                 CompareHeader\n");
+    tprintf(PRINT_STD, "  (19) test_force_key_frame                 DisplayHeader\n");
+    tprintf(PRINT_STD, "  (20) test_frame_size                      \n");
+    tprintf(PRINT_STD, "  (21) test_good_vs_best                    DispKeyFrames\n");
+    tprintf(PRINT_STD, "  (22) test_lag_in_frames                   DispResizedFrames\n");
+    tprintf(PRINT_STD, "  (23) test_max_quantizer                   DispVisibleFrames\n");
+    tprintf(PRINT_STD, "  (24) test_mem_leak                        DispAltRefFrames\n");
+    tprintf(PRINT_STD, "  (25) test_mem_leak2                       \n");
+    tprintf(PRINT_STD, "  (26) test_min_quantizer                   CropRawClip\n");
+    tprintf(PRINT_STD, "  (27) test_multithreaded_dec               PadRawClip\n");
+    tprintf(PRINT_STD, "  (28) test_multithreaded_enc               CutClip\n");
+    tprintf(PRINT_STD, "  (29) test_new_vs_old_enc_cpu_tick         PasteClip\n");
+    tprintf(PRINT_STD, "  (30) test_new_vs_old_psnr                 \n");
+    tprintf(PRINT_STD, "  (31) test_noise_sensitivity               PlayDecIVF\n");
+    tprintf(PRINT_STD, "  (32) test_one_pass_vs_two_pass            PlayCompIVF\n");
+    tprintf(PRINT_STD, "  (33) test_play_alternate                  \n");
+    tprintf(PRINT_STD, "  (34) test_post_processor                  CreateSampleTextFiles\n");
+    tprintf(PRINT_STD, "  (35) test_reconstruct_buffer              PrintVersion\n");
+    tprintf(PRINT_STD, "  (36) test_resample_down_watermark         \n");
+    tprintf(PRINT_STD, "  (37) test_speed                           VPXEncPar\n");
+    tprintf(PRINT_STD, "  (38) test_test_vector                     RandParFile\n");
+    tprintf(PRINT_STD, "  (39) test_thirtytwo_vs_sixtyfour          RandCompress\n");
+    tprintf(PRINT_STD, "  (40) test_two_pass_vs_two_pass_best       GraphPSNR\n");
+    tprintf(PRINT_STD, "  (41) test_undershoot                      Help\n");
+    tprintf(PRINT_STD, "  (42) test_version                         \n");
+    tprintf(PRINT_STD, "  (43) test_vpx_matches_int                 \n");
+    tprintf(PRINT_STD, "  (44) test_win_lin_mac_match               \n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -285,6 +286,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@webm@y4m\n", "test_allow_spatial_resampling", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_buffer_level", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@0@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -317,6 +319,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c1-test_change_cpu_enc-cpuused-4.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -350,6 +353,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -384,6 +388,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@4@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -422,6 +427,7 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@5@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -512,6 +518,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@128@webm@y4m\n", "test_allow_spatial_resampling", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_buffer_level", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@0@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -545,6 +552,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c1-test_change_cpu_enc-cpuused-4.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@2048@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -578,6 +586,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@2@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -612,6 +621,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@4@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@4@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -650,6 +660,7 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@0@webm@y4m@..%cTestClips%cspecial-case-par-files%c0-default-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@1@webm@y4m@..%cTestClips%cspecial-case-par-files%c3-test_change_cpu_enc-coverage-settings.txt\n", "test_change_cpu_enc", slashChar(), slashChar(), slashChar(), slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@256@10@webm@y4m\n", "test_constrained_quality", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@120@webm@y4m\n", "test_copy_set_reference", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@288@webm@y4m\n", "test_drop_frame_watermark", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@5@128@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csam-1920x1080.ivf@5@1024@webm@y4m\n", "test_data_rate", slashChar(), slashChar());
@@ -976,6 +987,36 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: the first with constrained quality off, the second with user input constrained quality.  The test then records their PSNRs and Data Rates.  If linear PSNR per Data Rate is greater for user input Constrained Quality, the test passes.");
+    }
+
+    if (selector == COPSRNUM)
+    {
+        if (printSummary)
+            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
+        else
+            tprintf(PRINT_STD, " ");
+
+        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+
+        tprintf(PRINT_STD, "\n"
+                "    <Input File>\n"
+                "    <Mode>\n"
+                "          (0)Realtime/Live Encoding\n"
+                "          (1)Good Quality Fast Encoding\n"
+                "          (2)One Pass Best Quality\n"
+                "          (3)Two Pass - First Pass\n"
+                "          (4)Two Pass\n"
+                "          (5)Two Pass Best Quality\n"
+                "    <Target Bit Rate>\n"
+                "    <First Copy Frame>\n"
+                "    <Encode Format - webm/ivf>\n"
+                "    <Decode Format - y4m/ivf>\n"
+                "     <Optional Settings File>\n"
+                "\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(HLPPRT, "The test creates a compression with error resilient on and then decompresses it using vpxt_decompress_copy_set.  At the First Copy Frame the decoder is copied to decoder_copy and run syncronusly with the original.  So long as the First Copy Frame is reached and all decoded original and copy frames after the First Copy Frame are identical the test passes.");
     }
 
     if (selector == DTARTNUM)
@@ -2752,6 +2793,9 @@ void format_summary(const char *InputFileNameCharAr)
         if (TestTracker == CONQUNUM)
             TestTrackerName = "Test_Constrained_Quality";
 
+        if (TestTracker == COPSRNUM)
+            TestTrackerName = "Test_Copy_Set_Reference";
+
         if (TestTracker == DTARTNUM)
             TestTrackerName = "Test_Data_Rate";
 
@@ -3679,6 +3723,9 @@ int  main(int argc, const char *argv[])
 
     if (selector == CONQUNUM)
         return test_constrained_quality(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+
+    if (selector == COPSRNUM)
+        return test_copy_set_reference(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == DFWMWNUM)
         return test_drop_frame_watermark(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);

@@ -118,6 +118,7 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
 int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, std::string EncFormat);
 int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int OutputRaw, std::string EncFormat);
 int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat, int threads);
+int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, const char *outfile2, std::string DecFormat, int threads, int firstClone, int printVar);
 int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar, std::string DecFormat, int threads, int n, int m, int mode, int printVar);
 int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar, int threads);
 int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *outputchar, int threads);

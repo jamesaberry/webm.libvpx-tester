@@ -6841,6 +6841,25 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "\n";
         }
 
+        if (ValidTestNumbers[RandTestNum] == COPSRNUM)
+        {
+            outfile << "test_copy_set_reference@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << RandCQ;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
         if (ValidTestNumbers[RandTestNum] == DTARTNUM)
         {
             outfile << "test_data_rate@";

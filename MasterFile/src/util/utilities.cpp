@@ -3516,6 +3516,8 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == CONQUNUM) TestName = "test_constrained_quality";
 
+    if (TestNumber == COPSRNUM) TestName = "test_copy_set_reference";
+
     if (TestNumber == DTARTNUM) TestName = "test_data_rate";
 
     if (TestNumber == DBMRLNUM) TestName = "test_debug_matches_release";
@@ -3631,6 +3633,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.compare("test_constrained_quality") == 0)
             return CONQUNUM;
+
+        if (id_test_str.compare("test_copy_set_reference") == 0)
+            return COPSRNUM;
 
         if (id_test_str.compare("test_data_rate") == 0)
             return DTARTNUM;
@@ -4072,6 +4077,21 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     {
                         SelectorAr[SelectorArInt].append(buffer);
                         SelectorAr2[SelectorArInt] = "ConstrainQuality";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
+                if (selector == COPSRNUM)
+                {
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "CopySetReference";
                         PassFail[PassFailInt] = trackthis1;
                     }
                     else
@@ -4613,13 +4633,13 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 //Make sure that all tests input are vaild tests by checking the list (make sure to add new tests here!)
                 if (selector != RTFFINUM && selector != AlWDFNUM && selector != ALWLGNUM && selector != FRSZTNUM && selector != ARNRTNUM &&
                     selector != AUTKFNUM && selector != BUFLVNUM && selector != CPUDENUM && selector != CPUENNUM && selector != CONQUNUM &&
-                    selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM && selector != ERRCONUM &&
-                    selector != ERRMWNUM && selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM && selector != GQVBQNUM &&
-                    selector != LGIFRNUM && selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM && selector != MINQUNUM &&
-                    selector != MULTENUM && selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK && selector != NOISENUM &&
-                    selector != OV2PSNUM && selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM && selector != SPEEDNUM &&
-                    selector != TVECTNUM && selector != TTVSFNUM && selector != RECBFNUM && selector != TV2BTNUM && selector != UNDSHNUM &&
-                    selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM && selector != VPXMINUM)
+                    selector != COPSRNUM && selector != DFWMWNUM && selector != DTARTNUM && selector != DBMRLNUM && selector != ENCBONUM &&
+                    selector != ERRCONUM && selector != ERRMWNUM && selector != EXTFINUM && selector != FIXDQNUM && selector != FKEFRNUM &&
+                    selector != GQVBQNUM && selector != LGIFRNUM && selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM &&
+                    selector != MINQUNUM && selector != MULTENUM && selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK &&
+                    selector != NOISENUM && selector != OV2PSNUM && selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM &&
+                    selector != SPEEDNUM && selector != TVECTNUM && selector != TTVSFNUM && selector != RECBFNUM && selector != TV2BTNUM &&
+                    selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM && selector != VPXMINUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -5217,6 +5237,16 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
 
     //test_constrained_quality
     if (selector == CONQUNUM)
+    {
+        if (argNum == 8)
+            return 1;
+
+        if (argNum == 9)
+            return 2;
+    }
+
+    //test_copy_set_reference
+    if (selector == COPSRNUM)
     {
         if (argNum == 8)
             return 1;
@@ -12514,6 +12544,530 @@ fail:
     fclose(infile);
 
     return 0;
+}
+int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, const char *outfile2, std::string DecFormat, int threads, int firstClone, int printVar)
+{
+    int                     use_y4m = 1;
+    vpxt_lower_case_string(DecFormat);
+
+    if (DecFormat.compare("ivf") == 0)
+        use_y4m = 2;
+
+    vpx_codec_ctx_t  decoder_clone;
+    vpx_img_fmt_t    fmt;
+    unsigned int     d_w = 0;
+    unsigned int     d_h = 0;
+    int              cloned = 0;
+    int notprinted = 1;
+    int copyEqualSet = 1;
+
+    vpx_codec_ctx_t       decoder;
+    const char            *fn = inputchar;
+    int                    i;
+    uint8_t               *buf = NULL;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
+    FILE                  *infile;
+    int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
+    int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
+    vpx_codec_iface_t       *iface = NULL;
+    unsigned int           fourcc;
+    unsigned long          dx_time = 0;
+    struct arg               arg;
+    char                   **argv, **argi, **argj;
+    const char             *outfile_pattern = 0;
+    char                    outfile[PATH_MAX];
+    int                     single_file;
+    unsigned int            width;
+    unsigned int            height;
+    unsigned int            fps_den;
+    unsigned int            fps_num;
+    void                   *out = NULL;
+    void                   *out2 = NULL;
+    vpx_codec_dec_cfg_t     cfg = {0};
+#if CONFIG_VP8_DECODER
+    vp8_postproc_cfg_t      vp8_pp_cfg = {0};
+    int                     vp8_dbg_color_ref_frame = 0;
+    int                     vp8_dbg_color_mb_modes = 0;
+    int                     vp8_dbg_color_b_modes = 0;
+    int                     vp8_dbg_display_mv = 0;
+#endif
+    struct input_ctx        input;
+
+    input.chunk = 0;
+    input.chunks = 0;
+    input.infile = NULL;
+    input.kind = RAW_FILE;
+    input.nestegg_ctx = 0;
+    input.pkt = 0;
+    input.video_track = 0;
+
+    int CharCount = 0;
+
+    /* Open file */
+    infile = strcmp(fn, "-") ? fopen(fn, "rb") : set_binary_mode(stdin);
+
+    if (!infile)
+    {
+        tprintf(printVar, "Failed to open input file: %s", fn);
+        return -1;
+    }
+
+    //tprintf(printVar, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    input.infile = infile;
+
+    if (file_is_ivf_dec(infile, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = IVF_FILE;
+    else if (file_is_webm(&input, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = WEBM_FILE;
+    else if (file_is_raw(infile, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = RAW_FILE;
+    else
+    {
+        fprintf(stderr, "Unrecognized input file type.\n");
+        return EXIT_FAILURE;
+    }
+
+    std::string compformat;
+    std::string decformat;
+
+    if (input.kind == IVF_FILE)
+        compformat = "IVF";
+
+    if (input.kind == WEBM_FILE)
+        compformat = "Webm";
+
+    if (input.kind == RAW_FILE)
+        compformat = "Raw";
+
+    if (use_y4m == 0)
+        decformat = "Raw";
+
+    if (use_y4m == 1)
+        decformat = "Y4M";
+
+    if (use_y4m == 2)
+        decformat = "IVF";
+
+    tprintf(printVar, "\nAPI - Decompressing VP8 %s File to Raw %s File: \n", compformat.c_str(), decformat.c_str());
+
+    outfile_pattern = outfile_pattern ? outfile_pattern : "-";
+    single_file = 1;
+    {
+        const char *p = outfile_pattern;
+
+        do
+        {
+            p = strchr(p, '%');
+
+            if (p && p[1] >= '1' && p[1] <= '9')
+            {
+                single_file = 0;
+                break;
+            }
+
+            if (p)
+                p++;
+        }
+        while (p);
+    }
+
+    if (single_file && !noblit)
+    {
+        generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
+                          width, height, 0);
+        strncpy(outfile, outputchar, PATH_MAX);
+        //outfile = outputchar;
+        out = out_open(outfile, do_md5);
+        out2 = out_open(outfile2, do_md5);
+    }
+
+    if (use_y4m && !noblit)
+    {
+        char buffer[128];
+
+        if (!single_file)
+        {
+            fprintf(stderr, "YUV4MPEG2 not supported with output patterns,"
+                    " try --i420 or --yv12.\n");
+            return EXIT_FAILURE;
+        }
+
+        if (input.kind == WEBM_FILE)
+            if (webm_guess_framerate(&input, &fps_den, &fps_num))
+            {
+                fprintf(stderr, "Failed to guess framerate -- error parsing "
+                        "webm file?\n");
+                return EXIT_FAILURE;
+            }
+
+        /*Note: We can't output an aspect ratio here because IVF doesn't
+        store one, and neither does VP8.
+        That will have to wait until these tools support WebM natively.*/
+        sprintf(buffer, "YUV4MPEG2 C%s W%u H%u F%u:%u I%c\n",
+                "420jpeg", width, height, fps_num, fps_den, 'p');
+        out_put(out, (unsigned char *)buffer, strlen(buffer), do_md5);
+        out_put(out2, (unsigned char *)buffer, strlen(buffer), do_md5);
+    }
+
+    /* Try to determine the codec from the fourcc. */
+    for (i = 0; i < sizeof(ifaces) / sizeof(ifaces[0]); i++)
+        if ((fourcc & ifaces[i].fourcc_mask) == ifaces[i].fourcc)
+        {
+            vpx_codec_iface_t  *ivf_iface = ifaces[i].iface;
+
+            if (iface && iface != ivf_iface)
+                tprintf(printVar, "Notice -- IVF header indicates codec: %s\n",
+                        ifaces[i].name);
+            else
+                iface = ivf_iface;
+
+            break;
+        }
+
+    unsigned int FrameSize = (width * height * 3) / 2;
+    unsigned __int64 TimeStamp = 0;
+
+    cfg.threads = threads;
+
+    if (vpx_codec_dec_init(&decoder,       iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
+    {
+        tprintf(printVar, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+
+        return -1;
+    }
+
+    if (vpx_codec_dec_init(&decoder_clone, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
+    {
+        tprintf(printVar, "Failed to initialize decoder clone: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+
+        return -1;
+    }
+
+    int clonethedecoder = 0;
+
+    /* Decode file */
+    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    {
+        vpx_codec_iter_t  iter = NULL;
+        vpx_image_t    *img;
+        vpx_image_t    *img2;
+        struct vpx_usec_timer timer;
+
+        if (frame_in == firstClone && d_w > 0)
+        {
+            /* Clone the decoder */
+            vpx_ref_frame_t ref_frame;
+            //tprintf(printVar, "\nClone the decoder!\n");
+            clonethedecoder = 1;
+
+            /* Allocate memory for image copy */
+            if (!vpx_img_alloc(&ref_frame.img, fmt, d_w, d_h, 1))
+                die_dec("Failed to allocate reference frame storage");
+
+            /* Copy VP8_LAST_FRAME */
+            ref_frame.frame_type = VP8_LAST_FRAME;
+
+            if (vpx_codec_control(&decoder, VP8_COPY_REFERENCE, &ref_frame))
+                die_dec("Failed to get reference frame");
+
+            if (vpx_codec_control(&decoder_clone, VP8_SET_REFERENCE, &ref_frame))
+                die_dec("Failed to set reference frame");
+
+            /* Copy VP8_GOLD_FRAME */
+            ref_frame.frame_type = VP8_GOLD_FRAME;
+
+            if (vpx_codec_control(&decoder, VP8_COPY_REFERENCE, &ref_frame))
+                die_dec("Failed to get reference frame");
+
+            if (vpx_codec_control(&decoder_clone, VP8_SET_REFERENCE, &ref_frame))
+                die_dec("Failed to set reference frame");
+
+            /* Copy VP8_ALTR_FRAME */
+            ref_frame.frame_type = VP8_ALTR_FRAME;
+
+            if (vpx_codec_control(&decoder, VP8_COPY_REFERENCE, &ref_frame))
+                die_dec("Failed to get reference frame");
+
+            if (vpx_codec_control(&decoder_clone, VP8_SET_REFERENCE, &ref_frame))
+                die_dec("Failed to set reference frame");
+
+            cloned = 1;
+        }
+
+        vpx_usec_timer_start(&timer);
+
+        if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
+        {
+            const char *detail = vpx_codec_error_detail(&decoder);
+            tprintf(printVar, "Failed to decode frame: %s\n", vpx_codec_error(&decoder));
+
+            if (detail)
+                tprintf(printVar, "  Additional information: %s\n", detail);
+
+            goto fail;
+        }
+
+        if (cloned || ((buf[0] & 0x01) == 0))
+        {
+            if (vpx_codec_decode(&decoder_clone, buf, buf_sz, NULL, 0))
+            {
+                const char *detail = vpx_codec_error_detail(&decoder);
+                tprintf(printVar, "Failed to decode frame: %s\n", vpx_codec_error(&decoder));
+
+                if (detail)
+                    tprintf(printVar, "  Additional information: %s\n", detail);
+
+                goto fail;
+            }
+        }
+
+        vpx_usec_timer_mark(&timer);
+        dx_time += vpx_usec_timer_elapsed(&timer);
+
+        ++frame_in;
+
+        if ((img = vpx_codec_get_frame(&decoder, &iter)))
+        {
+            ++frame_out;
+            fmt = img->fmt;
+            d_w = img->d_w;
+            d_h = img->d_h;
+
+            /* Check if secondary decoder is active */
+            if (cloned)
+            {
+                vpx_codec_iter_t  iter2 = NULL;
+                unsigned int      plane, z, x;
+
+                /* Get frame from secondary decoder */
+                img2 = vpx_codec_get_frame(&decoder_clone, &iter2);
+
+                /* Compare outputs */
+                if (img->fmt != img2->fmt)
+                    tprintf(printVar, "Clone output fmt differs");
+
+                if (img->w != img2->w)
+                    tprintf(printVar, "Clone output w differs");
+
+                if (img->h != img2->h)
+                    tprintf(printVar, "Clone output h differs");
+
+                if (img->d_w != img2->d_w)
+                    tprintf(printVar, "Clone output d_w differs");
+
+                if (img->d_h != img2->d_h)
+                    tprintf(printVar, "Clone output d_h differs");
+
+                if (img->x_chroma_shift != img2->x_chroma_shift)
+                    tprintf(printVar, "Clone output x_chroma_shift differs");
+
+                if (img->y_chroma_shift != img2->y_chroma_shift)
+                    tprintf(printVar, "Clone output y_chroma_shift differs");
+
+                notprinted = 1;
+
+                for (plane = 0; plane < 3; plane++)
+                {
+                    unsigned char *buf = img->planes[plane];
+                    unsigned char *buf2 = img2->planes[plane];
+
+                    for (z = 0; z < img->d_h >> (plane ? 1 : 0); z++)
+                    {
+                        for (x = 0; x < img->d_w >> (plane ? 1 : 0); x++)
+                        {
+                            if (buf[x] != buf2[x])
+                            {
+                                if (notprinted == 1)
+                                {
+                                    if (copyEqualSet == 1)
+                                        tprintf(printVar, "\n");
+
+                                    tprintf(printVar, "%i - Clone image differs\n", frame_out);
+                                    notprinted = 0;
+                                    copyEqualSet = 0;
+                                }
+                            }
+                            else if (notprinted == 1)
+                            {
+                                //tprintf(printVar, "%i Good\n", frame_out);
+                                //notprinted = 0;
+                            }
+                        }
+
+                        buf += img->stride[plane];
+                        buf2 += img->stride[plane];
+                    }
+                }
+            }
+        }
+
+        if (!noblit)
+        {
+            if (img)
+            {
+                unsigned int y;
+                char out_fn[PATH_MAX];
+                uint8_t *buf;
+
+                if (!single_file)
+                {
+                    size_t len = sizeof(out_fn) - 1;
+                    out_fn[len] = '\0';
+                    generate_filename(outfile_pattern, out_fn, len - 1,
+                                      img->d_w, img->d_h, frame_in);
+                    out = out_open(out_fn, do_md5);
+                }
+                else if (use_y4m)
+                    out_put(out, (unsigned char *)"FRAME\n", 6, do_md5);
+
+                if (!use_y4m)
+                    ivf_write_frame_header((FILE *)out, 0, img->d_h * img->d_w);
+
+                if (CharCount == 79)
+                {
+                    tprintf(printVar, "\n");
+                    CharCount = 0;
+                }
+
+                if (notprinted == 0)
+                    CharCount = 0;
+
+                if (notprinted == 1)
+                {
+                    if (clonethedecoder != 1)
+                        tprintf(printVar, ".");
+                    else
+                        tprintf(printVar, "*");
+
+                    CharCount++;
+                }
+
+                buf = img->planes[VPX_PLANE_Y];
+
+                for (y = 0; y < img->d_h; y++)
+                {
+                    out_put(out, buf, img->d_w, do_md5);
+                    buf += img->stride[VPX_PLANE_Y];
+                }
+
+                buf = img->planes[flipuv?VPX_PLANE_V:VPX_PLANE_U];
+
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
+                {
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
+                    buf += img->stride[VPX_PLANE_U];
+                }
+
+                buf = img->planes[flipuv?VPX_PLANE_U:VPX_PLANE_V];
+
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
+                {
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
+                    buf += img->stride[VPX_PLANE_V];
+                }
+
+                if (!single_file)
+                    out_close(out, out_fn, do_md5);
+            }
+
+            if (cloned)
+            {
+                unsigned int y;
+                char out_fn[PATH_MAX];
+                uint8_t *buf;
+
+                std::string out_fnSTR = out_fn;
+                out_fnSTR.append("2");
+
+                if (!single_file)
+                {
+                    size_t len = sizeof(out_fn) - 1;
+                    out_fn[len] = '\0';
+                    generate_filename(outfile_pattern, out_fn, len - 1,
+                                      img2->d_w, img2->d_h, frame_in);
+                    out2 = out_open(out_fnSTR.c_str(), do_md5);
+                }
+                else if (use_y4m)
+                    out_put(out2, (unsigned char *)"FRAME\n", 6, do_md5);
+
+                if (!use_y4m)
+                    ivf_write_frame_header((FILE *)out2, 0, img2->d_h * img2->d_w);
+
+                buf = img2->planes[VPX_PLANE_Y];
+
+                for (y = 0; y < img2->d_h; y++)
+                {
+                    out_put(out2, buf, img2->d_w, do_md5);
+                    buf += img2->stride[VPX_PLANE_Y];
+                }
+
+                buf = img2->planes[flipuv?VPX_PLANE_V:VPX_PLANE_U];
+
+                for (y = 0; y < (1 + img2->d_h) / 2; y++)
+                {
+                    out_put(out2, buf, (1 + img2->d_w) / 2, do_md5);
+                    buf += img2->stride[VPX_PLANE_U];
+                }
+
+                buf = img2->planes[flipuv?VPX_PLANE_U:VPX_PLANE_V];
+
+                for (y = 0; y < (1 + img2->d_h) / 2; y++)
+                {
+                    out_put(out2, buf, (1 + img2->d_w) / 2, do_md5);
+                    buf += img2->stride[VPX_PLANE_V];
+                }
+            }
+        }
+
+        if (stop_after && frame_in >= stop_after)
+            break;
+    }
+
+    if (summary || progress)
+    {
+        show_progress(frame_in, frame_out, dx_time);
+        fprintf(stderr, "\n");
+    }
+
+fail:
+
+    if (vpx_codec_destroy(&decoder))
+    {
+        tprintf(PRINT_STD, "Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+        vpx_codec_destroy(&decoder_clone);
+
+        return -1;
+    }
+
+    if (vpx_codec_destroy(&decoder_clone))
+    {
+        tprintf(PRINT_STD, "Failed to destroy decoder clone: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+
+        return -1;
+    }
+
+    if (single_file && !noblit)
+    {
+        out_close(out, outfile, do_md5);
+        out_close(out2, outfile, do_md5);
+    }
+
+    if (input.nestegg_ctx)
+        nestegg_destroy(input.nestegg_ctx);
+
+    if (input.kind != WEBM_FILE)
+        free(buf);
+
+    fclose(infile);
+
+    if (clonethedecoder == 1)
+        return copyEqualSet;
+    else
+        return 2;
 }
 int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar, std::string DecFormat, int threads, int n, int m, int mode, int printVar)
 {

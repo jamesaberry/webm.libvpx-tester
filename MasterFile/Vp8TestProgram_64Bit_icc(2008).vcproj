@@ -245,6 +245,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_copy_set_reference.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_data_rate.cpp"
 					>
 				</File>

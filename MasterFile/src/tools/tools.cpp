@@ -6584,6 +6584,8 @@ int tool_random_multi_test(int argc, const char *const *argv)
         return 0;
     }
 
+    printf("\n");
+
     std::string InputIVFDir = argv[2];
     std::string OutputTestFile = argv[3];
     int NumberOfTestsToRun = atoi(argv[4]);
@@ -6599,7 +6601,21 @@ int tool_random_multi_test(int argc, const char *const *argv)
     std::vector<std::string> FileNamesVector;
     std::vector<std::string> IVFFileNamesVector;
     vpxt_list_files_in_dir(FileNamesVector, InputIVFDir.c_str());
-    printf("\n");
+
+    std::string VP8vNewest_PlugIn_RLib_RMode;
+    std::string VP8vOldest_PlugIn_RLib_RMode;
+    std::string VP8vNewest_PlugIn_DLib_DMode;
+
+#if ARCH_X86
+    VP8vNewest_PlugIn_RLib_RMode = "VP8vNewest_PlugIn_RLib_RMode_32Bit.exe";
+    VP8vOldest_PlugIn_RLib_RMode = "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe";
+    VP8vNewest_PlugIn_DLib_DMode = "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
+#else if ARCH_X86_64
+    VP8vNewest_PlugIn_RLib_RMode = "VP8vNewest_PlugIn_RLib_RMode_64Bit.exe";
+    VP8vOldest_PlugIn_RLib_RMode = "VP8vOldest_PlugIn_RLib_RMode_64Bit.exe";
+    VP8vNewest_PlugIn_DLib_DMode = "VP8vNewest_PlugIn_DLib_DMode_64Bit.exe";
+#endif
+
     int i = 0;
 
     while (i < FileNamesVector.size())
@@ -6675,6 +6691,7 @@ int tool_random_multi_test(int argc, const char *const *argv)
         int RandQ1 = rand() % 64;
         int RandQ2 = rand() % 64;
         int RandForceKeyFrameNum = rand() % 120;
+        int RandCopySetFrame = rand() % 120;
         int RandLag1 = rand() % 26;
         int RandLag2 = rand() % 26;
         int RandMultiThread = rand() % 4;
@@ -6850,7 +6867,7 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
-            outfile << RandCQ;
+            outfile << RandCopySetFrame;
             outfile << "@";
             outfile << "webm";
             outfile << "@";
@@ -6886,9 +6903,9 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
-            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
+            outfile << VP8vNewest_PlugIn_DLib_DMode.c_str();
             outfile << "@";
-            outfile << "VP8vNewest_PlugIn_RLib_RMode_32Bit.exe";
+            outfile << VP8vNewest_PlugIn_RLib_RMode.c_str();
             outfile << "@";
             outfile << "webm";
             outfile << "@";
@@ -7104,7 +7121,7 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
-            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe";
+            outfile << VP8vNewest_PlugIn_DLib_DMode.c_str();
             outfile << "@";
             outfile << "webm";
             outfile << "@";
@@ -7117,7 +7134,8 @@ int tool_random_multi_test(int argc, const char *const *argv)
         if (ValidTestNumbers[RandTestNum] == MEML2NUM)
         {
             outfile << "test_mem_leak2@";
-            outfile << "VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@";
+            outfile << VP8vNewest_PlugIn_DLib_DMode.c_str();
+            outfile << "@";
             outfile << "MemLeakCheck2_Compression.ivf";
             outfile << "\n";
         }
@@ -7186,7 +7204,7 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
-            outfile << "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe";
+            outfile << VP8vOldest_PlugIn_RLib_RMode.c_str();
             outfile << "@";
             outfile << "2";
             outfile << "@";
@@ -7207,7 +7225,7 @@ int tool_random_multi_test(int argc, const char *const *argv)
             outfile << "@";
             outfile << RandTBNum;
             outfile << "@";
-            outfile << "VP8vOldest_PlugIn_RLib_RMode_32Bit.exe";
+            outfile << VP8vOldest_PlugIn_RLib_RMode.c_str();
             outfile << "@";
             outfile << "2";
             outfile << "@";

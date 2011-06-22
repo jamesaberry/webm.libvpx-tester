@@ -7914,6 +7914,9 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
 
 int vpxt_check_pbm(const char *inputFile, int bitRate, int maxBuffer, int preBuffer)
 {
+    //bitRate    bitrate in kbps
+    //maxBuffer  maxbuffer in ms
+    //preBuffer  prebuffer in ms
 
     unsigned int            width;
     unsigned int            height;
@@ -7973,15 +7976,15 @@ int vpxt_check_pbm(const char *inputFile, int bitRate, int maxBuffer, int preBuf
     int nFrameFail = 0;
 
     bool checkOverrun = false;
-    double secondsperframe = ((double)fps_den / (double)fps_num);//(the *2 is due to scale being doubled for extra frame padding)
+    double secondsperframe = ((double)fps_den / (double)fps_num);
     int bitsAddedPerFrame = ((bitRate * 1000 * secondsperframe)) - .5; //-.5 to cancel out rounding
-    int bitsInBuffer = preBuffer * bitRate;
-    int maxBitsInBuffer = maxBuffer * bitRate;
+    int bitsInBuffer = preBuffer * bitRate;    //scale factors cancel (ms * kbps = bits)
+    int maxBitsInBuffer = maxBuffer * bitRate; //scale factors cancel (ms * kbps = bits)
 
     while (!skim_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
     {
         bitsInBuffer += bitsAddedPerFrame;
-        bitsInBuffer -= buf_sz * 8;
+        bitsInBuffer -= buf_sz * 8; //buf_sz in kB
 
         if (bitsInBuffer < 0.)
         {

@@ -2089,14 +2089,14 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)//return 1 if string
     {
         tprintf(PRINT_STD,
                 "\n  VPXT Check PBM\n\n"
-                "     <input>\n"
-                "     <bitrate>\n"
-                "     <bufferSize>\n"
-                "     <prebuffer>\n"
+                "     <Input File>\n"
+                "     <Bitrate         (kbps)>\n"
+                "     <Max Buffer Size (ms)>\n"
+                "     <Prebuffer Size  (ms)>\n"
                );
 
         if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will run CheckPBM to make sure a buffer underrun won't occur.");
+            vpxt_formated_print(TOLPRT, "This tool will run CheckPBM to ensure a buffer underrun won't occur.");
 
 #if !defined(_WIN32)
         else

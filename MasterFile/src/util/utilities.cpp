@@ -12559,7 +12559,7 @@ int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, cons
     unsigned int     d_h = 0;
     int              cloned = 0;
     int notprinted = 1;
-    int copyEqualSet = 1;
+    int dec_cpy_set_retval = 1;
 
     vpx_codec_ctx_t       decoder;
     const char            *fn = inputchar;
@@ -12759,41 +12759,81 @@ int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, cons
         {
             /* Clone the decoder */
             vpx_ref_frame_t ref_frame;
-            //tprintf(printVar, "\nClone the decoder!\n");
             clonethedecoder = 1;
 
+            int ref_frame_w = d_w;
+            int ref_frame_h = d_h;
+
+            ref_frame_w = (ref_frame_w + 15) & ~15;
+            ref_frame_h = (ref_frame_h + 15) & ~15;
+
             /* Allocate memory for image copy */
-            if (!vpx_img_alloc(&ref_frame.img, fmt, d_w, d_h, 1))
-                die_dec("Failed to allocate reference frame storage");
+            if (!vpx_img_alloc(&ref_frame.img, fmt, ref_frame_w, ref_frame_h, 1))
+            {
+                tprintf(PRINT_BTH, "Failed to allocate reference frame storage");
+                dec_cpy_set_retval = -1;
+                break;
+            }
 
             /* Copy VP8_LAST_FRAME */
             ref_frame.frame_type = VP8_LAST_FRAME;
 
             if (vpx_codec_control(&decoder, VP8_COPY_REFERENCE, &ref_frame))
-                die_dec("Failed to get reference frame");
+            {
+                tprintf(PRINT_BTH, "Failed to get reference frame");
+                vpx_img_free(&ref_frame.img);
+                dec_cpy_set_retval = -1;
+                return -1;
+            }
 
             if (vpx_codec_control(&decoder_clone, VP8_SET_REFERENCE, &ref_frame))
-                die_dec("Failed to set reference frame");
+            {
+                tprintf(PRINT_BTH, "Failed to set reference frame");
+                vpx_img_free(&ref_frame.img);
+                dec_cpy_set_retval = -1;
+                break;
+            }
 
             /* Copy VP8_GOLD_FRAME */
             ref_frame.frame_type = VP8_GOLD_FRAME;
 
             if (vpx_codec_control(&decoder, VP8_COPY_REFERENCE, &ref_frame))
-                die_dec("Failed to get reference frame");
+            {
+                tprintf(PRINT_BTH, "Failed to get reference frame");
+                vpx_img_free(&ref_frame.img);
+                dec_cpy_set_retval = -1;
+                break;
+            }
 
             if (vpx_codec_control(&decoder_clone, VP8_SET_REFERENCE, &ref_frame))
-                die_dec("Failed to set reference frame");
+            {
+                tprintf(PRINT_BTH, "Failed to set reference frame");
+                vpx_img_free(&ref_frame.img);
+                dec_cpy_set_retval = -1;
+                break;
+            }
 
             /* Copy VP8_ALTR_FRAME */
             ref_frame.frame_type = VP8_ALTR_FRAME;
 
             if (vpx_codec_control(&decoder, VP8_COPY_REFERENCE, &ref_frame))
-                die_dec("Failed to get reference frame");
+            {
+                tprintf(PRINT_BTH, "Failed to get reference frame");
+                vpx_img_free(&ref_frame.img);
+                dec_cpy_set_retval = -1;
+                break;
+            }
 
             if (vpx_codec_control(&decoder_clone, VP8_SET_REFERENCE, &ref_frame))
-                die_dec("Failed to set reference frame");
+            {
+                tprintf(PRINT_BTH, "Failed to set reference frame");
+                vpx_img_free(&ref_frame.img);
+                dec_cpy_set_retval = -1;
+                break;
+            }
 
             cloned = 1;
+            vpx_img_free(&ref_frame.img);
         }
 
         vpx_usec_timer_start(&timer);
@@ -12881,12 +12921,12 @@ int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, cons
                             {
                                 if (notprinted == 1)
                                 {
-                                    if (copyEqualSet == 1)
+                                    if (dec_cpy_set_retval == 1)
                                         tprintf(printVar, "\n");
 
                                     tprintf(printVar, "%i - Clone image differs\n", frame_out);
                                     notprinted = 0;
-                                    copyEqualSet = 0;
+                                    dec_cpy_set_retval = 0;
                                 }
                             }
                             else if (notprinted == 1)
@@ -13065,7 +13105,7 @@ fail:
     fclose(infile);
 
     if (clonethedecoder == 1)
-        return copyEqualSet;
+        return dec_cpy_set_retval;
     else
         return 2;
 }

@@ -1,0 +1,94 @@
+# directory to build to
+OBJDIR = build-ppc64
+
+# source directory
+SourceDir = ../src
+
+# utilities source directory
+UtlSrcDir = ../../../../MasterFile/src/util
+PsnrDir = ../../../../MasterFile/src/util/psnr
+IvfDir = ../../../../MasterFile/src/util/vpx
+
+# source files
+SRC = \
+	$(SourceDir)/supportingdebug.cpp \
+	$(PsnrDir)/psnr.cpp \
+	$(PsnrDir)/ssim.cpp \
+	$(UtlSrcDir)/utilities.cpp \
+	$(IvfDir)/ivf.cpp \
+	$(IvfDir)/md5_utils.cpp \
+	$(IvfDir)/args.cpp \
+	$(IvfDir)/EbmlWriter.cpp \
+        $(IvfDir)/halloc.c \
+	$(IvfDir)/nestegg.c \
+        $(IvfDir)/tools_common.cpp \
+	$(IvfDir)/y4minput.cpp \
+
+# source object files
+SRCOBJ = \
+   $(OBJDIR)/supportingdebug.o \
+   $(OBJDIR)/ivf.o \
+   $(OBJDIR)/psnr.o \
+   $(OBJDIR)/ssim.o \
+   $(OBJDIR)/utilities.o \
+   $(OBJDIR)/md5_utils.o\
+   $(OBJDIR)/args.o \
+   $(OBJDIR)/EbmlWriter.o \
+   $(OBJDIR)/halloc.o \
+   $(OBJDIR)/nestegg.o \
+   $(OBJDIR)/tools_common.o \
+   $(OBJDIR)/y4minput.o \
+
+# compiler
+GPP = g++ -g -m64
+GCC = gcc -g -m64
+
+# Libraries
+LFLAGS= -L../lib -lvpx_MemPPC64 -D CONFIG_MEM_TRACKER=1 -DINLINE=
+
+#Includes
+INCLUDE = -I ../../../../MasterFile/include -I ../include/debug-64 -D API -DHAVE_STDINT_H -D COMP_GCC
+
+$(OBJDIR)/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe: $(SRCOBJ)
+	$(GPP) $(INCLUDE) -o "$(OBJDIR)/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe" $(SRCOBJ) $(LFLAGS)
+
+$(OBJDIR)/supportingdebug.o: $(SourceDir)/supportingdebug.cpp
+	-mkdir $(OBJDIR)
+	$(GPP) -c $(SourceDir)/supportingdebug.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/supportingdebug.o
+
+$(OBJDIR)/ivf.o: $(IvfDir)/ivf.cpp
+	$(GPP) -c $(IvfDir)/ivf.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ivf.o
+
+$(OBJDIR)/psnr.o: $(PsnrDir)/psnr.cpp
+	$(GPP) -c $(PsnrDir)/psnr.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/psnr.o
+
+$(OBJDIR)/ssim.o: $(PsnrDir)/ssim.cpp
+	$(GPP) -c $(PsnrDir)/ssim.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/ssim.o
+
+$(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
+	$(GPP) -c $(UtlSrcDir)/utilities.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/utilities.o
+
+$(OBJDIR)/md5_utils.o: $(IvfDir)/md5_utils.cpp
+	$(GPP) -c $(IvfDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o
+
+$(OBJDIR)/args.o: $(IvfDir)/args.cpp
+	$(GCC) -c $(IvfDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+
+$(OBJDIR)/EbmlWriter.o: $(IvfDir)/EbmlWriter.cpp
+	$(GPP) -c $(IvfDir)/EbmlWriter.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/EbmlWriter.o
+
+$(OBJDIR)/halloc.o: $(IvfDir)/halloc.c
+	$(GCC) -c $(IvfDir)/halloc.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/halloc.o
+
+
+$(OBJDIR)/nestegg.o: $(IvfDir)/nestegg.c
+	$(GCC) -c $(IvfDir)/nestegg.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/nestegg.o
+
+$(OBJDIR)/tools_common.o: $(IvfDir)/tools_common.cpp
+	$(GPP) -c $(IvfDir)/tools_common.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/tools_common.o
+
+$(OBJDIR)/y4minput.o: $(IvfDir)/y4minput.cpp
+	$(GPP) -c $(IvfDir)/y4minput.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/y4minput.o
+
+clean:
+	rm -f $(SRCOBJ) $(OBJDIR)/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe

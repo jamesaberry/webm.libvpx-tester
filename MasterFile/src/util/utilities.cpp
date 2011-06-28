@@ -112,7 +112,7 @@ typedef unsigned int  DWORD;
 #endif
 
 /////////////////////////////////////////////Endian Conversions////////////////////////////////////////////
-#ifdef __POWERPC__
+#ifdef _PPC
 # define make_endian_16(a) \
     (((unsigned int)(a & 0xff)) << 8) | (((unsigned int)(a & 0xff00)) >> 8)
 # define make_endian_32(a)                                                                  \
@@ -2848,7 +2848,7 @@ int vpxt_print_ivf_file_header(IVF_HEADER ivf)
 }
 int vpxt_format_ivf_header_read(IVF_HEADER *ivf)
 {
-#ifdef __POWERPC__
+#ifdef _PPC
     //std::cout << "\n\n\n\n\nPPC DEFINED\n\n\n\n\n";
     // For big endian systems need to swap bytes on height and width
     ivf->width  = ((ivf->width & 0xff) << 8)  | ((ivf->width >> 8) & 0xff);
@@ -2885,7 +2885,7 @@ int vpxt_format_ivf_header_write(IVF_HEADER &ivf)
 }
 int vpxt_format_frame_header_read(IVF_FRAME_HEADER &ivf_fh)
 {
-#ifdef __POWERPC__
+#ifdef _PPC
     ivf_fh.frameSize = ((ivf_fh.frameSize & 0xff) << 24) |
                        ((ivf_fh.frameSize & 0xff00) << 8) |
                        ((ivf_fh.frameSize & 0xff0000) >> 8) |
@@ -2906,7 +2906,7 @@ int vpxt_format_frame_header_read(IVF_FRAME_HEADER &ivf_fh)
 }
 int vpxt_format_frame_header_write(IVF_FRAME_HEADER &ivf_fh)
 {
-#ifdef __POWERPC__
+#ifdef _PPC
     ivf_fh.timeStamp = make_endian_64(ivf_fh.timeStamp);
     ivf_fh.frameSize = make_endian_32(ivf_fh.frameSize);
 #endif
@@ -3436,7 +3436,7 @@ std::string vpxt_extract_date_time(const std::string InputStr)
 #elif defined(__APPLE__)
     char input[255];
     snprintf(input, 255, "%s", InputStr.c_str());
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     char input[255];
     snprintf(input, 255, "%s", InputStr.c_str());
 #endif
@@ -5830,7 +5830,7 @@ std::string slashCharStr()
     return "/";
 #elif defined(__APPLE__)
     return "/";
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     return "/";
 #endif
 
@@ -5845,7 +5845,7 @@ char slashChar()
     return '/';
 #elif defined(__APPLE__)
     return '/';
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     return'/';
 #endif
 
@@ -6003,7 +6003,7 @@ int vpxt_make_dir(std::string CreateDir)
     CreateDir.insert(0, "mkdir -p \"");
     CreateDir.append("\"");
     system(CreateDir.c_str());
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     CreateDir.insert(0, "mkdir -p \"");
     CreateDir.append("\"");
     system(CreateDir.c_str());
@@ -6029,7 +6029,7 @@ int vpxt_make_dir_vpx(std::string CreateDir2)
     CreateDir2.insert(0, "mkdir -p \"");
     CreateDir2.append("\"");
     system(CreateDir2.c_str());
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     CreateDir2.erase(0, 4);
     CreateDir2.insert(0, "mkdir -p \"");
     CreateDir2.append("\"");
@@ -6050,7 +6050,7 @@ void vpxt_run_exe(std::string RunExe)
 
     system(RunExe.c_str());
 
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
 
     system(RunExe.c_str());
 #endif
@@ -8399,7 +8399,7 @@ int print_version()
     Platform = "Linux";
 #elif defined(__APPLE__)
     Platform = "Intel Mac";
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     Platform = "PowerPC";
 #endif
 
@@ -8490,6 +8490,36 @@ void print_header_info()
     TestMachineInfo.append("\n\n");
 #endif
 #if defined(__APPLE__)
+#if defined(_PPC)
+    TestMachineInfo = "";
+    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+    TestMachineInfo.append("\n");
+    std::string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" PowerPC");
+    Platform.append(" ");
+    Platform.append(comp.c_str());
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
+#else
     TestMachineInfo = "";
     std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
     int x = 0;
@@ -8521,37 +8551,12 @@ void print_header_info()
     TestMachineInfo.append(Platform.c_str());
     TestMachineInfo.append("\n\n");
 #endif
-#if defined(__POWERPC__)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
 
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
 
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" PowerPC");
-    Platform.append(" ");
-    Platform.append(comp.c_str());
 
-    x = 0;
 
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
 
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
 #endif
 
     tprintf(PRINT_BTH, "%s", TestMachineInfo.c_str());
@@ -8631,6 +8636,34 @@ void print_header_info_to_file(const char *FileName)
     TestMachineInfo.append("\n\n");
 #endif
 #if defined(__APPLE__)
+#if defined(_PPC)
+    TestMachineInfo = "";
+    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    int x = 0;
+
+    while (x < 40 - (CodecNameStr.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+    TestMachineInfo.append("\n");
+    std::string Platform = "";
+    Platform.append("Test Machine is Running: ");
+    Platform.append(arch.c_str());
+    Platform.append(" PowerPC");
+    x = 0;
+
+    while (x < 40 - (Platform.length() / 2))
+    {
+        TestMachineInfo.append(" ");
+        x++;
+    }
+
+    TestMachineInfo.append(Platform.c_str());
+    TestMachineInfo.append("\n\n");
+#else
     TestMachineInfo = "";
     std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
     int x = 0;
@@ -8660,35 +8693,12 @@ void print_header_info_to_file(const char *FileName)
     TestMachineInfo.append(Platform.c_str());
     TestMachineInfo.append("\n\n");
 #endif
-#if defined(__POWERPC__)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
 
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
 
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" PowerPC");
 
-    x = 0;
 
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
 
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
 #endif
 
     fprintf(outfile, "%s", TestMachineInfo.c_str());
@@ -18582,14 +18592,14 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
         //check to see if visible frame
         VP8_HEADER oz;
 
-#if defined(__POWERPC__)
+#if defined(_PPC)
         {
-            int v = ((int *)inbuff)[0];
+            int v = ((int *)buf)[0];
             v = swap4(v);
             oz.type = v & 1;
             oz.version = (v >> 1) & 7;
-            oz.showFrame = (v >> 4) & 1;
-            oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
+            oz.show_frame = (v >> 4) & 1;
+            oz.first_partition_length_in_bytes = (v >> 5) & 0x7ffff;
         }
 #else
         memcpy(&oz, buf, 3); // copy 3 bytes;
@@ -18770,14 +18780,14 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
         //check to see if visible frame
         VP8_HEADER oz;
 
-#if defined(__POWERPC__)
+#if defined(_PPC)
         {
-            int v = ((int *)inbuff)[0];
+            int v = ((int *)buf)[0];
             v = swap4(v);
             oz.type = v & 1;
             oz.version = (v >> 1) & 7;
-            oz.showFrame = (v >> 4) & 1;
-            oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
+            oz.show_frame = (v >> 4) & 1;
+            oz.first_partition_length_in_bytes = (v >> 5) & 0x7ffff;
         }
 #else
         memcpy(&oz, buf, 3); // copy 3 bytes;
@@ -18952,14 +18962,14 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
         //check to see if visible frame
         VP8_HEADER oz;
 
-#if defined(__POWERPC__)
+#if defined(_PPC)
         {
-            int v = ((int *)inbuff)[0];
+            int v = ((int *)buf)[0];
             v = swap4(v);
             oz.type = v & 1;
             oz.version = (v >> 1) & 7;
-            oz.showFrame = (v >> 4) & 1;
-            oz.firstPartitionLengthInBytes = (v >> 5) & 0x7ffff;
+            oz.show_frame = (v >> 4) & 1;
+            oz.first_partition_length_in_bytes = (v >> 5) & 0x7ffff;
         }
 #else
         memcpy(&oz, buf, 3); // copy 3 bytes;

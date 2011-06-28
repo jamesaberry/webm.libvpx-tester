@@ -23,7 +23,9 @@
 #if defined(ARM)
 #include "arm.h"
 #else
+#if !defined(_PPC)
 #include "x86.h"
+#endif
 #endif
 
 #if defined(_WIN32)

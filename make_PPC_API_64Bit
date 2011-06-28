@@ -1,0 +1,31 @@
+PrimaryWD=$PWD
+
+cd $PrimaryWD/MasterFile/build
+
+make -f makefile_Master_PPC_API_64Bit clean
+make -f makefile_Master_PPC_API_64Bit
+
+cd $PrimaryWD
+
+mkdir TestFolder_64Bit
+
+cp -f -p $PrimaryWD/MasterFile/build/build-ppc64/VP8_Tester_API_64Bit.exe $PrimaryWD/TestFolder_64Bit/VP8_Tester_API_64Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build
+
+make -f makefile_Debug_PPC_API_64Bit clean
+make -f makefile_Debug_PPC_API_64Bit
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-ppc64/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe $PrimaryWD/TestFolder_64Bit/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+cd $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build
+
+make -f makefile_Release_PPC_New_API_64Bit clean
+make -f makefile_Release_PPC_New_API_64Bit
+make -f makefile_Release_PPC_Old_API_64Bit clean
+make -f makefile_Release_PPC_Old_API_64Bit
+
+cd $PrimaryWD
+
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-ppc64-new/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe $PrimaryWD/TestFolder_64Bit/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe
+cp -f -p $PrimaryWD/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-ppc64-old/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe $PrimaryWD/TestFolder_64Bit/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe

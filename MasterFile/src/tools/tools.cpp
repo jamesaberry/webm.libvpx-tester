@@ -14,7 +14,9 @@
 #if defined(ARM)
 #include "arm.h"
 #else
+#if !defined(_PPC)
 #include "x86.h"
+#endif
 #endif
 
 #if defined(_WIN32)
@@ -32,7 +34,7 @@ typedef unsigned char       BYTE;
      ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
 #endif
 
-#ifdef __POWERPC__
+#ifdef _PPC
 # define make_endian_16(a) \
     (((unsigned int)(a & 0xff)) << 8) | (((unsigned int)(a & 0xff00)) >> 8)
 # define make_endian_32(a)                                                                  \
@@ -613,7 +615,7 @@ int TxtParseandCopy(const char *DirName, const char *BaseOutputDir, int BaseInpu
 
     return 0;
 
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
 
     unsigned char isFile = 0x8;
     unsigned char isFolder = 0x4;
@@ -4875,7 +4877,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 
     return 0;
 
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
 
     unsigned char isFile = 0x8;
     unsigned char isFolder = 0x4;
@@ -5422,7 +5424,7 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
 
     return 0;
 
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
 
     unsigned char isFile = 0x8;
     unsigned char isFolder = 0x4;
@@ -6212,7 +6214,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
         //return 0;
     }
 #endif
-#if defined(__POWERPC__)
+#if defined(_PPC)
     {
         //printf("\nError - Not Yet Implemented for Mac.\n");
         //return 0;
@@ -6320,7 +6322,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
     Program.append(output.c_str());
     Program.append("\"");
     Program.append(" -loop 1000");
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
     Program.append(WidthChar);
     Program.append(":h=");
@@ -6390,7 +6392,7 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
         //return 0;
     }
 #endif
-#if defined(__POWERPC__)
+#if defined(_PPC)
     {
         //printf("\nError - Not Yet Implemented for Mac\n");
         //return 0;
@@ -6494,7 +6496,7 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
     Program.append(output.c_str());
     Program.append("\"");
     Program.append(" -loop 1000");
-#elif defined(__POWERPC__)
+#elif defined(_PPC)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
     Program.append(WidthChar);
     Program.append(":h=");
@@ -6546,7 +6548,12 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
 int tool_print_cpu_info()
 {
 #if defined(ARM)
-    printf("\nNOT SUPPORTED FOR ARM\n");
+    printf("\nNOT SUPPORTED FOR ARM.\n");
+    return 0;
+#endif
+#if defined(_PPC)
+    printf("\nNOT SUPPORTED FOR PPC.\n");
+    return 0;
 #else
     int Simd_Caps = x86_simd_caps();
 

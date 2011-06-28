@@ -5,6 +5,10 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
 #if defined(ARM)
     printf("\nTEST NOT SUPPORTED FOR ARM.\n");
     return 0;
+#endif
+#if defined(_PPC)
+    printf("\nTEST NOT SUPPORTED FOR PPC.\n");
+    return 0;
 #else
     char *CompressString = "Version";
     char *MyDir = "test_change_cpu_dec";

@@ -428,9 +428,9 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
 
     if (totalms == totalms2)
     {
-        vpxt_formated_print(RESPRT, "CPU changes are not effecting the runtime - Failed");
+        vpxt_formated_print(RESPRT, "CPU changes are not effecting the runtime - MinPassed");
         tprintf(PRINT_BTH, "\n");
-        overallfail = 1;
+        overallfail = 2;
     }
 
     if (overallfail == 2)

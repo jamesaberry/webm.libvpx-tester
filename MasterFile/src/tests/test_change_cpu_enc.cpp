@@ -407,9 +407,9 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
     if (cpu_tick1 == cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "cpu_tick1: %u == cpu_tick2: %u - Failed", cpu_tick1, cpu_tick2);
+        vpxt_formated_print(RESPRT, "cpu_tick1: %u == cpu_tick2: %u - MinPassed", cpu_tick1, cpu_tick2);
         tprintf(PRINT_BTH, "\n");
-        overallfail = 1;
+        overallfail = 2;
     }
 
     if (cpu_tick1 != cpu_tick2)

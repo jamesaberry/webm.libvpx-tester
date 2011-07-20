@@ -131,6 +131,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
     opt.Mode = MODE_GOODQUALITY;
     opt.Version = VersionNum;
     int CompressInt = opt.Version;
+    opt.noise_sensitivity = 0; //Noise sensitivity not currently det. - 2011-07-20
 
     int counter = 0;
     int Mode2 = 0;

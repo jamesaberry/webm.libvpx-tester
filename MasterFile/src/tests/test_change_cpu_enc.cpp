@@ -129,6 +129,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     //opt.Version = VersionNum;
     int CompressInt = ArnrMaxframes;
     opt.Mode = Mode;
+    opt.noise_sensitivity = 0; //Noise sensitivity not currently det. - 2011-07-20
     int counter = 0;
 
     putenv("ON2_SIMD_CAPS=0");
@@ -167,7 +168,6 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
         while (CurrentFile < CompressonVector.size())
         {
-
             cpu_tick2 = vpxt_cpu_tick_return(CompressonVector[CurrentFile].c_str(), 0);
 
             if (CurrentFile >= 1)

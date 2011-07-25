@@ -6642,6 +6642,10 @@ int tool_random_multi_test(int argc, const char *const *argv)
 
     while (i < IVFFileNamesVector.size())
     {
+#if !defined(_WIN32)
+        IVFFileNamesVector[i].insert(0, "/");
+        IVFFileNamesVector[i].insert(0, InputIVFDir.c_str());
+#endif
         printf("IVF file found %i %s\n", i, IVFFileNamesVector[i].c_str());
         i++;
     }

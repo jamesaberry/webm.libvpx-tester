@@ -6599,12 +6599,13 @@ int tool_random_multi_test(int argc, const char *const *argv)
     char OutputTestFileName[255];
     vpxt_file_name(OutputTestFile.c_str(), OutputTestFileName, 1);
     std::string ParameterFilesFolder = InputIVFDir;
-    ParameterFilesFolder.append("\\");
+    ParameterFilesFolder.append(slashCharStr().c_str());
     ParameterFilesFolder.append(OutputTestFileName);
     vpxt_make_dir(ParameterFilesFolder);
-    ParameterFilesFolder.append("\\");
+    ParameterFilesFolder.append(slashCharStr().c_str());
     std::string TestVectorFolder = InputIVFDir;
-    TestVectorFolder.append("\\TestVectors");
+    TestVectorFolder.append(slashCharStr().c_str());
+    TestVectorFolder.append("TestVectors");
     std::vector<std::string> FileNamesVector;
     std::vector<std::string> IVFFileNamesVector;
     vpxt_list_files_in_dir(FileNamesVector, InputIVFDir.c_str());
@@ -6627,8 +6628,11 @@ int tool_random_multi_test(int argc, const char *const *argv)
 
     while (i < FileNamesVector.size())
     {
-        if (!FileNamesVector[i].substr(FileNamesVector[i].length() - 4, 4).compare(".ivf"))
-            IVFFileNamesVector.push_back(FileNamesVector[i].c_str());
+        if (FileNamesVector[i].length() > 4)
+        {
+            if (!FileNamesVector[i].substr(FileNamesVector[i].length() - 4, 4).compare(".ivf"))
+                IVFFileNamesVector.push_back(FileNamesVector[i].c_str());
+        }
 
         i++;
     }

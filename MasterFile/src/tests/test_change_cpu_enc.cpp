@@ -131,6 +131,12 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     opt.Mode = Mode;
     opt.noise_sensitivity = 0; //Noise sensitivity not currently det. - 2011-07-20
     opt.multi_threaded = 0;    //Multithread not currently det.       - 2011-07-27
+
+    //Make sure valid cpu_used settings are used                      - 2011-07-27
+    //(negative cpu_used should be deterministic for realtime)
+    if (Mode == 0 && opt.cpu_used > 0)
+        opt.cpu_used = opt.cpu_used * -1;
+
     int counter = 0;
 
     putenv("ON2_SIMD_CAPS=0");

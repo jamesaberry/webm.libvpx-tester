@@ -130,6 +130,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     int CompressInt = ArnrMaxframes;
     opt.Mode = Mode;
     opt.noise_sensitivity = 0; //Noise sensitivity not currently det. - 2011-07-20
+    opt.multi_threaded = 0;    //Multithread not currently det.       - 2011-07-27
     int counter = 0;
 
     putenv("ON2_SIMD_CAPS=0");

@@ -12043,43 +12043,43 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
 
                             bufDecode += imgDecode->stride[PLANE_Y];
 
-                            MemCheckY |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_Y]);
+                            MemCheckY |= memcmp(bufPreview, bufDecode, imgDecode->d_w);
                         }
 
                         bufPreview = imgPreview->planes[PLANE_U];
                         bufDecode = imgDecode->planes[PLANE_U];
 
-                        for (y = 0; y < imgDecode->d_h / 2; y++)
+                        for (y = 0; y < (imgDecode->d_h + 1) / 2; y++)
                         {
                             if (!OutputRaw)
-                                out_put(out3, bufPreview, imgDecode->d_w / 2, 0);
+                                out_put(out3, bufPreview, (imgDecode->d_w + 1) / 2, 0);
 
                             bufPreview += imgPreview->stride[PLANE_U];
 
                             if (!OutputRaw)
-                                out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+                                out_put(out4, bufDecode, (imgDecode->d_w + 1) / 2, 0);
 
                             bufDecode += imgDecode->stride[PLANE_U];
 
-                            MemCheckU |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_U]);
+                            MemCheckU |= memcmp(bufPreview, bufDecode, (imgDecode->d_w + 1) / 2);
                         }
 
                         bufPreview = imgPreview->planes[PLANE_V];
                         bufDecode = imgDecode->planes[PLANE_V];
 
-                        for (y = 0; y < imgDecode->d_h / 2; y++)
+                        for (y = 0; y < (imgDecode->d_h + 1) / 2; y++)
                         {
                             if (!OutputRaw)
-                                out_put(out3, bufPreview, imgDecode->d_w / 2, 0);
+                                out_put(out3, bufPreview, (imgDecode->d_w + 1) / 2, 0);
 
                             bufPreview += imgPreview->stride[PLANE_V];
 
                             if (!OutputRaw)
-                                out_put(out4, bufDecode, imgDecode->d_w / 2, 0);
+                                out_put(out4, bufDecode, (imgDecode->d_w + 1) / 2, 0);
 
                             bufDecode += imgDecode->stride[PLANE_V];
 
-                            MemCheckV |= memcmp(bufPreview, bufDecode, imgDecode->stride[PLANE_V]);
+                            MemCheckV |= memcmp(bufPreview, bufDecode, (imgDecode->d_w + 1) / 2);
                         }
 
 
@@ -12133,17 +12133,17 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
 
                         buf = imgPreview->planes[PLANE_U];
 
-                        for (y = 0; y < imgDecode->d_h / 2; y++)
+                        for (y = 0; y < (imgDecode->d_h + 1) / 2; y++)
                         {
-                            out_put(out, buf, imgDecode->d_w / 2, 0);
+                            out_put(out, buf, (imgDecode->d_w + 1) / 2, 0);
                             buf += imgPreview->stride[PLANE_U];
                         }
 
                         buf = imgPreview->planes[PLANE_V];
 
-                        for (y = 0; y < imgDecode->d_h / 2; y++)
+                        for (y = 0; y < (imgDecode->d_h + 1) / 2; y++)
                         {
-                            out_put(out, buf, imgDecode->d_w / 2, 0);
+                            out_put(out, buf, (imgDecode->d_w + 1) / 2, 0);
                             buf += imgPreview->stride[PLANE_V];
                         }
                     }
@@ -12164,17 +12164,17 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
 
                         buf = imgDecode->planes[PLANE_U];
 
-                        for (y = 0; y < imgDecode->d_h / 2; y++)
+                        for (y = 0; y < (imgDecode->d_h + 1) / 2; y++)
                         {
-                            out_put(out2, buf, imgDecode->d_w / 2, 0);
+                            out_put(out2, buf, (imgDecode->d_w + 1) / 2, 0);
                             buf += imgDecode->stride[PLANE_U];
                         }
 
                         buf = imgDecode->planes[PLANE_V];
 
-                        for (y = 0; y < imgDecode->d_h / 2; y++)
+                        for (y = 0; y < (imgDecode->d_h + 1) / 2; y++)
                         {
-                            out_put(out2, buf, imgDecode->d_w / 2, 0);
+                            out_put(out2, buf, (imgDecode->d_w + 1) / 2, 0);
                             buf += imgDecode->stride[PLANE_V];
                         }
                     }

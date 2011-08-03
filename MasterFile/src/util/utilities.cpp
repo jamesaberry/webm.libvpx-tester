@@ -652,38 +652,88 @@ void Ebml_Write(EbmlGlobal *glob, const void *buffer_in, unsigned long len)
 {
     if (fwrite(buffer_in, 1, len, glob->stream));
 }
-void Ebml_Serialize(EbmlGlobal *glob, const void *buffer_in, unsigned long len)
-{
-    const unsigned char *q = (const unsigned char *)buffer_in + len - 1;
 
-    for (; len; len--)
-        Ebml_Write(glob, q--, 1);
+#define WRITE_BUFFER(s) \
+    for(i = len-1; i>=0; i--)\
+    { \
+        x = *(const s *)buffer_in >> (i * CHAR_BIT); \
+        Ebml_Write(glob, &x, 1); \
+    }
+void Ebml_Serialize(EbmlGlobal *glob, const void *buffer_in, int buffer_size, unsigned long len)
+{
+    char x;
+    int i;
+
+    /* buffer_size:
+     * 1 - int8_t;
+     * 2 - int16_t;
+     * 3 - int32_t;
+     * 4 - int64_t;
+     */
+    switch (buffer_size)
+    {
+    case 1:
+        WRITE_BUFFER(int8_t)
+        break;
+    case 2:
+        WRITE_BUFFER(int16_t)
+        break;
+    case 4:
+        WRITE_BUFFER(int32_t)
+        break;
+    case 8:
+        WRITE_BUFFER(int64_t)
+        break;
+    default:
+        break;
+    }
 }
+#undef WRITE_BUFFER
+
+/* Need a fixed size serializer for the track ID. libmkv provides a 64 bit
+ * one, but not a 32 bit one.
+ */
 static void Ebml_SerializeUnsigned32(EbmlGlobal *glob, unsigned long class_id, uint64_t ui)
 {
     unsigned char sizeSerialized = 4 | 0x80;
     Ebml_WriteID(glob, class_id);
-    Ebml_Serialize(glob, &sizeSerialized, 1);
-    Ebml_Serialize(glob, &ui, 4);
+    Ebml_Serialize(glob, &sizeSerialized, sizeof(sizeSerialized), 1);
+    Ebml_Serialize(glob, &ui, sizeof(ui), 4);
 }
+
+
 static void Ebml_StartSubElement(EbmlGlobal *glob, EbmlLoc *ebmlLoc, unsigned long class_id)
 {
-    unsigned long long unknownLen =  LITERALU64(0x01FFFFFFFFFFFFFF);
+    //todo this is always taking 8 bytes, this may need later optimization
+    //this is a key that says length unknown
+    uint64_t unknownLen =  LITERALU64(0x01FFFFFFFFFFFFFF);
+
     Ebml_WriteID(glob, class_id);
     *ebmlLoc = ftello(glob->stream);
-    Ebml_Serialize(glob, &unknownLen, 8);
+    Ebml_Serialize(glob, &unknownLen, sizeof(unknownLen), 8);
 }
+
 static void Ebml_EndSubElement(EbmlGlobal *glob, EbmlLoc *ebmlLoc)
 {
     off_t pos;
     uint64_t size;
+
+    /* Save the current stream pointer */
     pos = ftello(glob->stream);
+
+    /* Calculate the size of this element */
     size = pos - *ebmlLoc - 8;
     size |=  LITERALU64(0x0100000000000000);
+
+    /* Seek back to the beginning of the element and write the new size */
     fseeko(glob->stream, *ebmlLoc, SEEK_SET);
-    Ebml_Serialize(glob, &size, 8);
+    Ebml_Serialize(glob, &size, sizeof(size), 8);
+
+    /* Reset the stream pointer */
     fseeko(glob->stream, pos, SEEK_SET);
 }
+
+
 static void write_webm_seek_element(EbmlGlobal *ebml, unsigned long id, off_t pos)
 {
     uint64_t offset = pos - ebml->position_reference;
@@ -828,11 +878,11 @@ static void write_webm_block(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *cfg, c
     Ebml_WriteID(glob, SimpleBlock);
     block_length = pkt->data.frame.sz + 4;
     block_length |= 0x10000000;
-    Ebml_Serialize(glob, &block_length, 4);
+    Ebml_Serialize(glob, &block_length, sizeof(block_length),  4);
     track_number = 1;
     track_number |= 0x80;
     Ebml_Write(glob, &track_number, 1);
-    Ebml_Serialize(glob, &block_timecode, 2);
+    Ebml_Serialize(glob, &block_timecode, sizeof(block_timecode), 2);
     flags = 0;
 
     if (is_keyframe)
@@ -2027,7 +2077,7 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
         cfg->rc_end_usage = VPX_CQ;
     }
 
-    cfg->rc_max_intra_bitrate_pct = coreCfg.rc_max_intra_bitrate_pct;
+    //cfg->rc_max_intra_bitrate_pct = coreCfg.rc_max_intra_bitrate_pct;
 
     return 0;
 }
@@ -9497,6 +9547,7 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
         vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
         vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
         vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
+        vpx_codec_control(&encoder, VP8E_SET_MAX_INTRA_BITRATE_PCT, oxcf.rc_max_intra_bitrate_pct);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -10053,6 +10104,7 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
         vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
         vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
         vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
+        vpx_codec_control(&encoder, VP8E_SET_MAX_INTRA_BITRATE_PCT, oxcf.rc_max_intra_bitrate_pct);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -10610,6 +10662,7 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
         vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
         vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
         vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
+        vpx_codec_control(&encoder, VP8E_SET_MAX_INTRA_BITRATE_PCT, oxcf.rc_max_intra_bitrate_pct);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -11197,6 +11250,7 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
         vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
         vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
         vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
+        vpx_codec_control(&encoder, VP8E_SET_MAX_INTRA_BITRATE_PCT, oxcf.rc_max_intra_bitrate_pct);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)
@@ -11838,6 +11892,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
         vpx_codec_control(&encoder, VP8E_SET_ARNR_STRENGTH, oxcf.arnr_strength);
         vpx_codec_control(&encoder, VP8E_SET_ARNR_TYPE, oxcf.arnr_type);
         vpx_codec_control(&encoder, VP8E_SET_CQ_LEVEL, oxcf.cq_level);
+        vpx_codec_control(&encoder, VP8E_SET_MAX_INTRA_BITRATE_PCT, oxcf.rc_max_intra_bitrate_pct);
 
         ///////////////////////////////////////////////////////
         if (ctx_exit_on_error_tester(&encoder, "Failed to initialize encoder") == -1)

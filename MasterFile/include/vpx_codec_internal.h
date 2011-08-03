@@ -322,7 +322,7 @@ typedef struct vpx_codec_priv_cb_pair
     {
         vpx_codec_put_frame_cb_fn_t    put_frame;
         vpx_codec_put_slice_cb_fn_t    put_slice;
-    };
+    } u;
     void                            *user_priv;
 } vpx_codec_priv_cb_pair_t;
 
@@ -358,18 +358,18 @@ struct vpx_codec_priv
 };
 
 /*#undef VPX_CTRL_USE_TYPE
-  #define VPX_CTRL_USE_TYPE(id, typ) \
-      static typ id##__value(va_list args) {return va_arg(args, typ);} \
-      static typ id##__convert(void *x)\
-      {\
-          union\
-          {\
-              void *x;\
-              typ   d;\
-          } u;\
-          u.x = x;\
-         return u.d;\
-      }*/
+#define VPX_CTRL_USE_TYPE(id, typ) \
+    static typ id##__value(va_list args) {return va_arg(args, typ);} \
+    static typ id##__convert(void *x)\
+    {\
+        union\
+        {\
+            void *x;\
+            typ   d;\
+        } u;\
+        u.x = x;\
+        return u.d;\
+    }*/
 
 
 #undef VPX_CTRL_USE_TYPE_DEPRECATED

@@ -78,10 +78,10 @@ extern "C" {
         /*!\brief An iterator reached the end of list.
          *
          */
-        VPX_DEC_LIST_END = VPX_CODEC_LIST_END,
+        VPX_DEC_LIST_END = VPX_CODEC_LIST_END
 
-    }
-    vpx_dec_err_t;
+                       }
+                       vpx_dec_err_t;
 
     /*! \brief Decoder capabilities bitfield
      *

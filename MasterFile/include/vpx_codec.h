@@ -382,7 +382,7 @@ extern "C" {
     /*!\brief vpx_codec_control wrapper macro
      *
      * This macro allows for type safe conversions across the variadic parameter
-     * to vpx_codec_control_().
+     * to vpx_codec_control().
      *
      * \internal
      * It works by dispatching the call to the control function through a wrapper
@@ -395,7 +395,7 @@ extern "C" {
     /*!\brief vpx_codec_control type definition macro
      *
      * This macro allows for type safe conversions across the variadic parameter
-     * to vpx_codec_control_(). It defines the type of the argument for a given
+     * to vpx_codec_control(). It defines the type of the argument for a given
      * control identifier.
      *
      * \internal
@@ -436,7 +436,7 @@ extern "C" {
     /*!\brief vpx_codec_control void type definition macro
      *
      * This macro allows for type safe conversions across the variadic parameter
-     * to vpx_codec_control_(). It indicates that a given control identifier takes
+     * to vpx_codec_control(). It indicates that a given control identifier takes
      * no argument.
      *
      * \internal

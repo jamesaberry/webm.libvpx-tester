@@ -92,6 +92,5 @@ vpx_usec_timer_elapsed(struct vpx_usec_timer *t)
     return diff.tv_sec ? 1000000 : diff.tv_usec;
 #endif
 }
-
-
 #endif
+

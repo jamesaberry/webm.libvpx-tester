@@ -6255,6 +6255,36 @@ int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
     //  yv12->clrtype = (/*img->fmt == IMG_FMT_ON2I420 || img->fmt == */IMG_FMT_ON2YV12); //REG_YUV = 0
     return 0;
 }
+int yuvconfig2image(vpx_image_t *img, const YV12_BUFFER_CONFIG  *yv12, void *user_priv)
+{
+    /** vpx_img_wrap() doesn't allow specifying independent strides for
+      * the Y, U, and V planes, nor other alignment adjustments that
+      * might be representable by a YV12_BUFFER_CONFIG, so we just
+      * initialize all the fields.*/
+    img->fmt = yv12->clrtype == REG_YUV ?
+               VPX_IMG_FMT_I420 : VPX_IMG_FMT_VPXI420;
+    img->w = yv12->y_stride;
+    img->h = (yv12->y_height + 2 * VP8BORDERINPIXELS + 15) & ~15;
+    img->d_w = yv12->y_width;
+    img->d_h = yv12->y_height;
+    img->x_chroma_shift = 1;
+    img->y_chroma_shift = 1;
+    img->planes[VPX_PLANE_Y] = yv12->y_buffer;
+    img->planes[VPX_PLANE_U] = yv12->u_buffer;
+    img->planes[VPX_PLANE_V] = yv12->v_buffer;
+    img->planes[VPX_PLANE_ALPHA] = NULL;
+    img->stride[VPX_PLANE_Y] = yv12->y_stride;
+    img->stride[VPX_PLANE_U] = yv12->uv_stride;
+    img->stride[VPX_PLANE_V] = yv12->uv_stride;
+    img->stride[VPX_PLANE_ALPHA] = yv12->y_stride;
+    img->bps = 12;
+    img->user_priv = user_priv;
+    img->img_data = yv12->buffer_alloc;
+    img->img_data_owner = 0;
+    img->self_allocd = 0;
+
+    return 0;
+}
 double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
 {
     if (frameStats != 3)
@@ -13495,6 +13525,347 @@ fail:
 
         return -1;
     }
+
+    if (single_file && !noblit)
+        out_close(out, outfile, do_md5);
+
+    if (input.nestegg_ctx)
+        nestegg_destroy(input.nestegg_ctx);
+
+    if (input.kind != WEBM_FILE)
+        free(buf);
+
+    fclose(infile);
+
+    return 0;
+}
+int vpxt_decompress_resize(const char *inputchar, const char *outputchar, std::string DecFormat, int threads)
+{
+    int                     use_y4m = 1;
+    vpxt_lower_case_string(DecFormat);
+
+    if (DecFormat.compare("ivf") == 0)
+        use_y4m = 2;
+
+    vpx_codec_ctx_t       decoder;
+    const char            *fn = inputchar;
+    int                    i;
+    uint8_t               *buf = NULL;
+    size_t               buf_sz = 0, buf_alloc_sz = 0;
+    FILE                  *infile;
+    int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
+    int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
+    vpx_codec_iface_t       *iface = NULL;
+    unsigned int           fourcc;
+    unsigned long          dx_time = 0;
+    struct arg               arg;
+    char                   **argv, **argi, **argj;
+    const char             *outfile_pattern = 0;
+    char                    outfile[PATH_MAX];
+    int                     single_file;
+    unsigned int            width;
+    unsigned int            height;
+    unsigned int            fps_den;
+    unsigned int            fps_num;
+    void                   *out = NULL;
+    vpx_codec_dec_cfg_t     cfg = {0};
+#if CONFIG_VP8_DECODER
+    vp8_postproc_cfg_t      vp8_pp_cfg = {0};
+    int                     vp8_dbg_color_ref_frame = 0;
+    int                     vp8_dbg_color_mb_modes = 0;
+    int                     vp8_dbg_color_b_modes = 0;
+    int                     vp8_dbg_display_mv = 0;
+#endif
+    struct input_ctx        input;
+
+    input.chunk = 0;
+    input.chunks = 0;
+    input.infile = NULL;
+    input.kind = RAW_FILE;
+    input.nestegg_ctx = 0;
+    input.pkt = 0;
+    input.video_track = 0;
+
+    int CharCount = 0;
+
+    /* Open file */
+    infile = strcmp(fn, "-") ? fopen(fn, "rb") : set_binary_mode(stdin);
+
+    if (!infile)
+    {
+        tprintf(PRINT_STD, "Failed to open input file: %s", fn);
+        return -1;
+    }
+
+    //tprintf(PRINT_STD, "\nAPI - Decompressing VP8 IVF File to Raw IVF File: \n");
+    input.infile = infile;
+
+    if (file_is_ivf_dec(infile, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = IVF_FILE;
+    else if (file_is_webm(&input, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = WEBM_FILE;
+    else if (file_is_raw(infile, &fourcc, &width, &height, &fps_den, &fps_num))
+        input.kind = RAW_FILE;
+    else
+    {
+        fprintf(stderr, "Unrecognized input file type.\n");
+        return EXIT_FAILURE;
+    }
+
+    std::string compformat;
+    std::string decformat;
+
+    if (input.kind == IVF_FILE)
+        compformat = "IVF";
+
+    if (input.kind == WEBM_FILE)
+        compformat = "Webm";
+
+    if (input.kind == RAW_FILE)
+        compformat = "Raw";
+
+    if (use_y4m == 0)
+        decformat = "Raw";
+
+    if (use_y4m == 1)
+        decformat = "Y4M";
+
+    if (use_y4m == 2)
+        decformat = "IVF";
+
+    tprintf(PRINT_STD, "\nAPI - Decompressing VP8 %s File to Raw %s File: \n", compformat.c_str(), decformat.c_str());
+
+    outfile_pattern = outfile_pattern ? outfile_pattern : "-";
+    single_file = 1;
+    {
+        const char *p = outfile_pattern;
+
+        do
+        {
+            p = strchr(p, '%');
+
+            if (p && p[1] >= '1' && p[1] <= '9')
+            {
+                single_file = 0;
+                break;
+            }
+
+            if (p)
+                p++;
+        }
+        while (p);
+    }
+
+    if (single_file && !noblit)
+    {
+        generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
+                          width, height, 0);
+        strncpy(outfile, outputchar, PATH_MAX);
+        //outfile = outputchar;
+        out = out_open(outfile, do_md5);
+    }
+
+    if (use_y4m && !noblit)
+    {
+        char buffer[128];
+
+        if (!single_file)
+        {
+            fprintf(stderr, "YUV4MPEG2 not supported with output patterns,"
+                    " try --i420 or --yv12.\n");
+            return EXIT_FAILURE;
+        }
+
+        if (input.kind == WEBM_FILE)
+            if (webm_guess_framerate(&input, &fps_den, &fps_num))
+            {
+                fprintf(stderr, "Failed to guess framerate -- error parsing "
+                        "webm file?\n");
+                return EXIT_FAILURE;
+            }
+
+        /*Note: We can't output an aspect ratio here because IVF doesn't
+        store one, and neither does VP8.
+        That will have to wait until these tools support WebM natively.*/
+        sprintf(buffer, "YUV4MPEG2 C%s W%u H%u F%u:%u I%c\n",
+                "420jpeg", width, height, fps_num, fps_den, 'p');
+        out_put(out, (unsigned char *)buffer, strlen(buffer), do_md5);
+    }
+
+    /* Try to determine the codec from the fourcc. */
+    for (i = 0; i < sizeof(ifaces) / sizeof(ifaces[0]); i++)
+        if ((fourcc & ifaces[i].fourcc_mask) == ifaces[i].fourcc)
+        {
+            vpx_codec_iface_t  *ivf_iface = ifaces[i].iface;
+
+            if (iface && iface != ivf_iface)
+                tprintf(PRINT_STD, "Notice -- IVF header indicates codec: %s\n",
+                        ifaces[i].name);
+            else
+                iface = ivf_iface;
+
+            break;
+        }
+
+    unsigned int FrameSize = (width * height * 3) / 2;
+    unsigned __int64 TimeStamp = 0;
+
+    cfg.threads = threads;
+
+    if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
+    {
+        tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+
+        return -1;
+    }
+
+    /////////////////////Setup yv12_buffer_dest to Resize if nessicary/////////////////////
+    vp8_scale_machine_specific_config();
+
+    YV12_BUFFER_CONFIG yv12_buffer_source;
+    memset(&yv12_buffer_source, 0, sizeof(yv12_buffer_source));
+
+    YV12_BUFFER_CONFIG yv12_buffer_dest;
+    memset(&yv12_buffer_dest, 0, sizeof(yv12_buffer_dest));
+    vp8_yv12_alloc_frame_buffer(&yv12_buffer_dest, width, height, 0);
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    /* Decode file */
+    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    {
+        vpx_codec_iter_t  iter = NULL;
+        vpx_image_t    *img;
+        struct vpx_usec_timer timer;
+        int resized = 0;
+
+        vpx_usec_timer_start(&timer);
+
+        if (vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0))
+        {
+            const char *detail = vpx_codec_error_detail(&decoder);
+            tprintf(PRINT_STD, "Failed to decode frame: %s\n", vpx_codec_error(&decoder));
+
+            if (detail)
+                tprintf(PRINT_STD, "  Additional information: %s\n", detail);
+
+            goto fail;
+        }
+
+        vpx_usec_timer_mark(&timer);
+        dx_time += vpx_usec_timer_elapsed(&timer);
+
+        ++frame_in;
+
+        if ((img = vpx_codec_get_frame(&decoder, &iter)))
+        {
+            ////////////////////////Inflate Dec Img if needed////////////////////////
+            image2yuvconfig(img, &yv12_buffer_source);
+
+            if (img->d_w != width || img->d_h != height) //if frame not correct size resize it
+            {
+                resized = 1;
+                int GCDInt1 = vpxt_gcd(img->d_w, width);
+                int GCDInt2 = vpxt_gcd(img->d_h, height);
+
+                vp8_yv12_scale_or_center(&yv12_buffer_source, &yv12_buffer_dest, width, height, 0, (width / GCDInt1), (img->d_w / GCDInt1), (height / GCDInt2), (img->d_h / GCDInt2));
+
+                yuvconfig2image(img, &yv12_buffer_dest, 0);
+            }
+
+            /////////////////////////////////////////////////////////////////////////
+            ++frame_out;
+        }
+
+        if (progress)
+        {
+        }
+
+        if (!noblit)
+        {
+            if (img)
+            {
+                unsigned int y;
+                char out_fn[PATH_MAX];
+                uint8_t *buf;
+
+                if (!single_file)
+                {
+                    size_t len = sizeof(out_fn) - 1;
+                    out_fn[len] = '\0';
+                    generate_filename(outfile_pattern, out_fn, len - 1,
+                                      img->d_w, img->d_h, frame_in);
+                    out = out_open(out_fn, do_md5);
+                }
+                else if (use_y4m)
+                    out_put(out, (unsigned char *)"FRAME\n", 6, do_md5);
+
+                if (!use_y4m)
+                    ivf_write_frame_header((FILE *)out, 0, img->d_h * img->d_w);
+
+                if (CharCount == 79)
+                {
+                    tprintf(PRINT_STD, "\n");
+                    CharCount = 0;
+                }
+
+                CharCount++;
+
+                if (resized == 1)
+                    tprintf(PRINT_STD, "*");
+                else
+                    tprintf(PRINT_STD, ".");
+
+                buf = img->planes[VPX_PLANE_Y];
+
+                for (y = 0; y < img->d_h; y++)
+                {
+                    out_put(out, buf, img->d_w, do_md5);
+                    buf += img->stride[VPX_PLANE_Y];
+                }
+
+                buf = img->planes[flipuv?VPX_PLANE_V:VPX_PLANE_U];
+
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
+                {
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
+                    buf += img->stride[VPX_PLANE_U];
+                }
+
+                buf = img->planes[flipuv?VPX_PLANE_U:VPX_PLANE_V];
+
+                for (y = 0; y < (1 + img->d_h) / 2; y++)
+                {
+                    out_put(out, buf, (1 + img->d_w) / 2, do_md5);
+                    buf += img->stride[VPX_PLANE_V];
+                }
+
+                if (!single_file)
+                    out_close(out, out_fn, do_md5);
+            }
+        }
+
+        if (stop_after && frame_in >= stop_after)
+            break;
+    }
+
+    if (summary || progress)
+    {
+        show_progress(frame_in, frame_out, dx_time);
+        fprintf(stderr, "\n");
+    }
+
+fail:
+
+    if (vpx_codec_destroy(&decoder))
+    {
+        tprintf(PRINT_STD, "Failed to destroy decoder: %s\n", vpx_codec_error(&decoder));
+        fclose(infile);
+
+        return -1;
+    }
+
+    vp8_yv12_de_alloc_frame_buffer(&yv12_buffer_dest);
 
     if (single_file && !noblit)
         out_close(out, outfile, do_md5);

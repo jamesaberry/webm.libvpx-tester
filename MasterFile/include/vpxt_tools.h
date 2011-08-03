@@ -28,6 +28,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv);
 int tool_cut_ivf(int argc, const char *const *argv);
 int tool_vpxt_dec(int argc, const char *const *argv);
 int tool_vpxt_dec_part_drop(int argc, const char *const *argv);
+int tool_vpxt_dec_resize(int argc, const char *const *argv);
 int tool_vpxt_dec_to_raw(int argc, const char *const *argv);
 int tool_vpxt_write_ivf_file_header(int argc, const char *const *argv);
 int tool_vpxt_write_ivf_frame_header(int argc, const char *const *argv);

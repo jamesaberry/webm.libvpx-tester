@@ -5235,6 +5235,19 @@ int tool_vpxt_dec_part_drop(int argc, const char *const *argv)
 
     return 0;
 }
+int tool_vpxt_dec_resize(int argc, const char *const *argv)
+{
+    if (argc < 5)
+        return vpxt_tool_help(argv[1], 0);
+
+    std::string inputFile = argv[2];
+    std::string outputFile = argv[3];
+    std::string DecForm = argv[4];
+
+    vpxt_decompress_resize(inputFile.c_str(), outputFile.c_str(), DecForm, 1);
+
+    return 0;
+}
 int tool_vpxt_dec_to_raw(int argc, const char *const *argv)
 {
     if (argc < 4)

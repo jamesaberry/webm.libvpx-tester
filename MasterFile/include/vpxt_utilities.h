@@ -120,6 +120,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
 int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat, int threads);
 int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, const char *outfile2, std::string DecFormat, int threads, int firstClone, int printVar);
 int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar, std::string DecFormat, int threads, int n, int m, int mode, int printVar);
+int vpxt_decompress_resize(const char *inputchar, const char *outputchar, std::string DecFormat, int threads);
 int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar, int threads);
 int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *outputchar, int threads);
 int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std::string DecFormat, int threads);

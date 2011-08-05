@@ -126,16 +126,9 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     /////////////////////////////////////////////////////////
 
     opt.target_bandwidth = BitRate;
-    //opt.Version = VersionNum;
     int CompressInt = ArnrMaxframes;
     opt.Mode = Mode;
-    opt.noise_sensitivity = 0; //Noise sensitivity not currently det. - 2011-07-20
-    opt.multi_threaded = 0;    //Multithread not currently det.       - 2011-07-27
-
-    //Make sure valid cpu_used settings are used                      - 2011-07-27
-    //(negative cpu_used should be deterministic for realtime)
-    if (Mode == 0 && opt.cpu_used > 0)
-        opt.cpu_used = opt.cpu_used * -1;
+    vpxt_determinate_parameters(opt);
 
     int counter = 0;
 

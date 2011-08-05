@@ -267,6 +267,7 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     else
     {
         opt.Mode = Mode;
+        vpxt_determinate_parameters(opt);
 
         vpxt_output_settings(ParFileDebug.c_str(), opt);
         vpxt_run_exe(ProgramDebugEnc);

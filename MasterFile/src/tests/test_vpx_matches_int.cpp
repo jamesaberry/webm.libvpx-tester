@@ -163,12 +163,7 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
     else
     {
         opt.Mode = Mode;
-
-        //Make sure valid cpu_used settings are used
-        //(negative cpu_used should be deterministic
-        // for realtime)
-        if (Mode == 0 && opt.cpu_used > 0)
-            opt.cpu_used = opt.cpu_used * -1;
+        vpxt_determinate_parameters(opt);
 
         if (vpxt_compress(input.c_str(), InternalComp.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
         {

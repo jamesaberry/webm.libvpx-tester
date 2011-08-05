@@ -21,6 +21,7 @@ std::string slashCharStr();
 char slashChar();
 //-----------------------------------------------------VP8 Settings-------------------------------------------------------------------
 void vpxt_default_parameters(VP8_CONFIG &opt);
+void vpxt_determinate_parameters(VP8_CONFIG &opt);
 int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg);
 VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int display);
 VP8_CONFIG vpxt_input_settings(const char *inputFile);

@@ -12,7 +12,6 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
     int BitRate = atoi(argv[4]);
-    //int Arnr = atoi(argv[5]);
     std::string EncForm = argv[5];
 
     int speed = 0;

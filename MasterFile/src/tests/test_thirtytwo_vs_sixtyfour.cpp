@@ -129,6 +129,7 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
     else
     {
         opt.Mode = Mode;
+        vpxt_determinate_parameters(opt);
 
         if (vpxt_compress(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0, EncForm) == -1)
         {

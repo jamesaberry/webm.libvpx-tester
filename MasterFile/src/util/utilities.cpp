@@ -1995,6 +1995,18 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
 
     opt.rc_max_intra_bitrate_pct = 0;
 }
+void vpxt_determinate_parameters(VP8_CONFIG &opt)
+{
+    opt.noise_sensitivity = 0; //Noise sensitivity not currently det. - 2011-07-20
+    opt.multi_threaded = 0;    //Multithread not currently det.       - 2011-07-27
+    //Make sure valid cpu_used settings are used                      - 2011-07-27
+    //(negative cpu_used should be deterministic for realtime)
+    if (opt.Mode == 0)
+        if (opt.cpu_used > 0)
+            opt.cpu_used = opt.cpu_used * -1;
+        else if (opt.cpu_used == 0)
+            opt.cpu_used = -1;
+}
 int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
 {
     //Converts a core configuration to api configuration

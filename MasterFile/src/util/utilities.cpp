@@ -5358,14 +5358,24 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
     }
 
     //test_error_concealment
-    if (selector == ERRCONUM)//error res check this one
+    if (selector == ERRCONUM)
+    {
         if (argNum == 7)
             return 1;
 
+        if (argNum == 8)
+            return 2;
+    }
+
     //test_error_resolution
-    if (selector == ERRMWNUM)//error res check this one
+    if (selector == ERRMWNUM)
+    {
         if (argNum == 7)
             return 1;
+
+        if (argNum == 8)
+            return 2;
+    }
 
     //test_extra_file
     if (selector == EXTFINUM)

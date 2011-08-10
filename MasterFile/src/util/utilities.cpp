@@ -4995,7 +4995,7 @@ int  vpxt_sync_new_vs_old_log(const char *testlog, const char *gitlog, const cha
     gitlogFile.getline(gitlogFileLine, 256);
 
     std::string versionStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    std::string versionStrSub = versionStr.substr(37, 7);
+    std::string versionStrSub = versionStr.substr(versionStr.length() - 7, 7);
 
     int firstheader = 1;
     int correctTest = 0;
@@ -5142,7 +5142,7 @@ double vpxt_get_new_vs_old_val(std::string fileline)
 int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int printvar, std::vector<double> &ValueList, std::string testName)
 {
     std::string versionStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    std::string versionStrSub = versionStr.substr(37, 7);
+    std::string versionStrSub = versionStr.substr(versionStr.length() - 7, 7);
 
     std::fstream logFile;
     logFile.open(logfile, std::fstream::in);

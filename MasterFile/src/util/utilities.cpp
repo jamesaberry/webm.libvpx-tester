@@ -2089,6 +2089,9 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
         cfg->rc_end_usage = VPX_CQ;
     }
 
+#if ENABLE_LAYERS
+    cfg->ts_number_layers = 1;
+#endif
     //cfg->rc_max_intra_bitrate_pct = coreCfg.rc_max_intra_bitrate_pct;
 
     return 0;

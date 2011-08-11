@@ -32,6 +32,10 @@ extern "C" {
 #define VPX_ENCODER_H
 #include "vpx_codec.h"
 
+#define ENABLE_LAYERS 1
+#if ENABLE_LAYERS
+#define MAXIMUM_PERIODICITY 16
+#endif
 
     /*!\brief Current ABI version number
      *
@@ -592,6 +596,13 @@ extern "C" {
          */
         unsigned int           kf_max_dist;
 
+#if ENABLE_LAYERS
+        unsigned int           ts_number_layers;
+        unsigned int           ts_target_bitrate[5];
+        unsigned int           ts_rate_decimator[5];
+        unsigned int           ts_periodicity;
+        unsigned int           ts_layer_id[MAXIMUM_PERIODICITY];
+#endif
     } vpx_codec_enc_cfg_t; /**< alias for struct vpx_codec_enc_cfg */
 
 

@@ -1160,7 +1160,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "");
+            vpxt_formated_print(HLPPRT, "The test creates a compression with error resilient mode on and then decompresses it with partial frame drops.  Psnrs are calculated for both the decoded file and encoded file.  If the psnr of the decoded file is with in 50% of the psnr of the encoded file, the test passes.");
 
     }
 
@@ -1788,7 +1788,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "");
+            vpxt_formated_print(HLPPRT, "The test is run in one of two modes. The first creates either a thirty two or sixty four bit compression and decompression to be tested by the second mode. The second mode creates either a thirty two or sixty four bit compression and decompression, and then compares them to previously encoded and decoded files. If the files are identical, the test passes.");
 
     }
 

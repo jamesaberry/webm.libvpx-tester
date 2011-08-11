@@ -86,16 +86,16 @@
   $ kramdown libvpx-tester-manual.txt --template template.html > libvpx-tester-manual.html
 -------------------------------------------------------------------- -->
 
-<h1 id="vp8-codec-tester-v096">VP8 Codec-Tester v0.9.6</h1>
+<h1 id="vp8-codec-tester-v097">VP8 Codec-Tester v0.9.7</h1>
 
-<p><em>Updated 2011-03-21</em></p>
+<p><em>Updated 2011-08-11</em></p>
 
 <hr />
 
 <p><strong>Contents</strong></p>
 
 <ul id="markdown-toc">
-  <li><a href="#vp8-codec-tester-v096">VP8 Codec-Tester v0.9.6</a>    <ul>
+  <li><a href="#vp8-codec-tester-v097">VP8 Codec-Tester v0.9.7</a>    <ul>
       <li><a href="#overview">Overview</a></li>
       <li><a href="#using-the-tester">Using the Tester</a></li>
       <li><a href="#running-a-single-test">Running a Single Test</a>        <ul>
@@ -142,42 +142,47 @@ Usage: Tester.exe &lt;options&gt;
    (1) test_allow_drop_frames               VPXDec
    (2) test_allow_lag                       VPXTEnc
    (3) test_allow_spatial_resampling        VPXTDec
-   (4) test_arnr                            VPXTDec2Raw
-   (5) test_auto_key_frame
-   (6) test_buffer_level                    VPXTDataRate
-   (7) test_change_cpu_dec                  VPXTPSNR
-   (8) test_change_cpu_enc                  VPXTCheckPBM
-   (9) test_constrained_quality
-  (10) test_data_rate                       Raw2Formatted
-  (11) test_debug_matches_release           Formatted2Raw
-  (12) test_drop_frame_watermark            Formatted2RawFrames
-  (13) test_encoder_break_out               CombineIndvFrames
-  (14) test_error_resolution
-  (15) test_extra_file                      CompareEnc
-  (16) test_fixed_quantizer                 CompareHeader
-  (17) test_force_key_frame                 DisplayHeader
-  (18) test_frame_size
-  (19) test_good_vs_best                    DispKeyFrames
-  (20) test_lag_in_frames                   DispResizedFrames
-  (21) test_max_quantizer                   DispVisibleFrames
-  (22) test_mem_leak                        DispAltRefFrames
-  (23) test_mem_leak2
-  (24) test_min_quantizer                   CropRawClip
-  (25) test_multithreaded                   PadRawClip
-  (26) test_new_vs_old_enc_cpu_tick         CutClip
-  (27) test_new_vs_old_psnr                 PasteClip
-  (28) test_noise_sensitivity
-  (29) test_one_pass_vs_two_pass            PlayDecIVF
-  (30) test_play_alternate                  PlayCompIVF
-  (31) test_post_processor
-  (32) test_reconstruct_buffer              CreateSampleTextFiles
-  (33) test_resample_down_watermark         PrintVersion
-  (34) test_speed
-  (35) test_test_vector                     VPXEncPar
-  (36) test_two_pass_vs_two_pass_best       RandParFile
-  (37) test_undershoot                      RandCompress
-  (38) test_version                         GraphPSNR
-  (39) test_win_lin_mac_match               Help
+   (4) test_arnr                            VPXTDecRESZ
+   (5) test_auto_key_frame                  VPXTDecPARD
+   (6) test_buffer_level                    VPXTDec2Raw
+   (7) test_change_cpu_dec
+   (8) test_change_cpu_enc                  VPXTDataRate
+   (9) test_constrained_quality             VPXTPSNR
+  (10) test_copy_set_reference              VPXTPSNRDEC
+  (11) test_data_rate                       VPXTCheckPBM
+  (12) test_debug_matches_release
+  (13) test_drop_frame_watermark            Raw2Formatted
+  (14) test_encoder_break_out               Formatted2Raw
+  (15) test_error_concealment               Formatted2RawFrames
+  (16) test_error_resolution                CombineIndvFrames
+  (17) test_extra_file
+  (18) test_fixed_quantizer                 CompareEnc
+  (19) test_force_key_frame                 CompareHeader
+  (20) test_frame_size                      DisplayHeader
+  (21) test_good_vs_best
+  (22) test_lag_in_frames                   DispKeyFrames
+  (23) test_max_quantizer                   DispResizedFrames
+  (24) test_mem_leak                        DispVisibleFrames
+  (25) test_mem_leak2                       DispAltRefFrames
+  (26) test_min_quantizer
+  (27) test_multithreaded_dec               CropRawClip
+  (28) test_multithreaded_enc               PadRawClip
+  (29) test_new_vs_old_enc_cpu_tick         CutClip
+  (30) test_new_vs_old_psnr                 PasteClip
+  (31) test_noise_sensitivity
+  (32) test_one_pass_vs_two_pass            PlayDecIVF
+  (33) test_play_alternate                  PlayCompIVF
+  (34) test_post_processor
+  (35) test_reconstruct_buffer              CreateSampleTextFiles
+  (36) test_resample_down_watermark         PrintVersion
+  (37) test_speed
+  (38) test_test_vector                     VPXEncPar
+  (39) test_thirtytwo_vs_sixtyfour          RandParFile
+  (40) test_two_pass_vs_two_pass_best       RandCompress
+  (41) test_undershoot                      GraphPSNR
+  (42) test_version                         Help
+  (43) test_vpx_matches_int
+  (44) test_win_lin_mac_match
 
 </code></pre>
 <p><strong><em>Figure 1</em></strong></p>
@@ -713,151 +718,176 @@ on file <code>input.ivf</code>.</li>
     </tr>
     <tr>
       <td>10</td>
+      <td>test_copy_set_reference</td>
+      <td>The test creates a compression with error resilient on and then decompresses it using vpxt_decompress_copy_set.  At the First Copy Frame the decoder is copied to decoder_copy and run syncronusly with the original.  So long as the First Copy Frame is reached and all decoded original and copy frames after the First Copy Frame are identical the test passes.</td>
+    </tr>
+    <tr>
+      <td>11</td>
       <td>test_data_rate</td>
       <td>The test creates a compression and records its data rate. If the compression&rsquo;s data rate is within 30% of the input target bandwidth, the test passes.</td>
     </tr>
     <tr>
-      <td>11</td>
+      <td>12</td>
       <td>test_debug_matches_release</td>
       <td>The test creates two compressions: the first using an executable built using the newest release library, the second using an executable built using the newest debug library. If the two compressions are identical, the test passes.</td>
     </tr>
     <tr>
-      <td>12</td>
+      <td>13</td>
       <td>test_drop_frame_watermark</td>
       <td>The test creates 6 compressions with DFWM values of 100, 80, 60, 40, 20 and 0, and records their sizes. If each successively lower DFWM compression has an equal or larger size than the previous, the test passes.</td>
     </tr>
     <tr>
-      <td>13</td>
+      <td>14</td>
       <td>test_encoder_break_out</td>
       <td>The test creates four compressions: the first has an EncodeBreakout of 0, the second EncodeBreakout of 100, the third EncodeBreakout of 500 and the fourth EncodeBreakout of 1000. Decompressions of the encoded files are then carried out and PSNR values are calculated. If the decompressions run successfully and the PSNR values of each successive EncodeBreakout trial are within 2 dB, the test passes. If the PSNRs are greater than 2 dB but less than 5 dB the test is inconclusive; if the PSNRs have greater than a 5 dB difference the test fails.</td>
     </tr>
     <tr>
-      <td>14</td>
+      <td>15</td>
+      <td>test_error_concealment</td>
+      <td>The test creates a compression with error resilient mode on and then decompresses it with partial frame drops.  Psnrs are calculated for both the decoded file and encoded file.  If the psnr of the decoded file is with in 50% of the psnr of the encoded file, the test passes.</td>
+    </tr>
+    <tr>
+      <td>16</td>
       <td>test_error_resolution</td>
       <td>The test creates two compressions: the first with Error Resilient Mode off, the second with Error Resilient Mode on. The test then records their PSNR values. If their PSNRs are within 10% of each other, the test passes.</td>
     </tr>
     <tr>
-      <td>15</td>
+      <td>17</td>
       <td>test_extra_file</td>
       <td>The test creates a two-pass compression and checks for extra files in the current directory, the directory the executable is located in, and the directory the output file is written to. If no extra files are found, the test passes.</td>
     </tr>
     <tr>
-      <td>16</td>
+      <td>18</td>
       <td>test_fixed_quantizer</td>
       <td>The test creates two compressions each with user input Fixed Quantizers, and records the quantizers used to encode each frame. The test then records the compressions&rsquo; sizes. If all quantizers for each compression match the input Fixed Quantizer, and the smaller quantizer&rsquo;s compression has a larger file size, the test passes.</td>
     </tr>
     <tr>
-      <td>17</td>
+      <td>19</td>
       <td>test_force_key_frame</td>
       <td>The test creates a compression using a user-input value as a Force Key Frame Interval. The Test then records the placement of all key frames in the compression. If key frames occur only when Force Key Frame dictates, the test passes.</td>
     </tr>
     <tr>
-      <td>18</td>
+      <td>20</td>
       <td>test_frame_size</td>
       <td>The test creates forty-six cropped raw ivf or y4m files from a user inputfile, starting height, and starting width (where starting height and starting width must be multiples of 16).  The test then creates compressions for each raw file and computes its PSNR.  If all compressions PSNRs are within five percent of the starting width/height file&rsquo;s PSNR and all PSNRs are greater than 25 the test passes.</td>
     </tr>
     <tr>
-      <td>19</td>
+      <td>21</td>
       <td>test_good_vs_best</td>
       <td>The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at good quality and best quality, the second and fifth compressions for the input target bandwidth at good quality and best quality, and the third and sixth at 30% more than the input target bandwidth at good quality and best quality. The test then records each file&rsquo;s data rate and PSNR, and computes the area under the curve for the common interval between the good quality curve and best quality curve. If the area under the best quality curve is greater than the area under the good quality curve, the test passes.</td>
     </tr>
     <tr>
-      <td>20</td>
+      <td>22</td>
       <td>test_lag_in_frames</td>
       <td>The test creates three compressions: the first with Allow Lag set to 0, the second and third with Allow Lag set to 1. The second compression uses the first user-input Lag in Frames value for its Lag in frames and the third uses the second user-input value for its Lag in Frames. The test outputs each file&rsquo;s quantizer values for each encoded frame. If none of the files are identical, the PSNRs of each successive file are within 10% of the last, and the quantizer output shows that the proper number of frames were lagged, the test passes.</td>
     </tr>
     <tr>
-      <td>21</td>
+      <td>23</td>
       <td>test_max_quantizer</td>
       <td>The test creates nine compressions, the first with a Max Quantizer equal to 4 and each subsequent file with a Max Quantizer 8 greater than the last until 63. The test records the individual quantizer values for each encoded frame. If the PSNRs of each Max Quantizer compression from 4 to 63 increase as Max Quantizer decreases and the recorded quantizers for each file do not exceed their corresponding Max Quantizer for all compressions, the test passes.</td>
     </tr>
     <tr>
-      <td>22</td>
+      <td>24</td>
       <td>test_mem_leak</td>
       <td>The test creates a compression using the debug executable to check memory usage and records the results to an output file. If no memory leaks are found, the test passes.</td>
     </tr>
     <tr>
-      <td>23</td>
+      <td>25</td>
       <td>test_mem_leak2</td>
       <td>The test uses the debug executable to open and close 10,000 instances of the encoder and 10,000 instances of the decoder, and then checks for no memory leaks. If there are no leaks, the test passes.</td>
     </tr>
     <tr>
-      <td>24</td>
+      <td>26</td>
       <td>test_min_quantizer</td>
       <td>The test creates two compressions: the first with a Min Quantizer equal to 10, the second with a Min Quantizer equal to 60. It records the quantizer used for each frame of the compression. If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding Min Quantizer, the test passes.</td>
     </tr>
     <tr>
-      <td>25</td>
-      <td>test_multithreaded</td>
+      <td>27</td>
+      <td>test_multithreaded_dec</td>
+      <td>The test creates a compression with a user input number of token partitions.  It then preforms two decompressions on this compression.  The first decompression using 0 threads,  The second decompression using a user input number of threads.  If the user input number of threads takes less time to decompress and the two decompressions are identical, the test passes.</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>test_multithreaded_enc</td>
       <td>The test creates two compressions: the first using a MultiThreaded equal to 2, the second using a MultiThreaded equal to 0. The test then compares the times to compress each. If MultiThreaded 2 is faster than 0, the test passes.</td>
     </tr>
     <tr>
-      <td>26</td>
+      <td>29</td>
       <td>test_new_vs_old_enc_cpu_tick</td>
       <td>The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test records the time that each compression took. If the new compression&rsquo;s time is at least 10% faster than the old compression&rsquo;s time, the test passes.</td>
     </tr>
     <tr>
-      <td>27</td>
+      <td>30</td>
       <td>test_new_vs_old_psnr</td>
       <td>The test creates two compressions: the first using the newest version of VP8, the second using a separate executable built using an older version. The test then computes and records PSNR values for each. If the new compressions PSNR is greater than the old compressions PSNR (or within 1%), the test passes.</td>
     </tr>
     <tr>
-      <td>28</td>
+      <td>31</td>
       <td>test_noise_sensitivity</td>
       <td>The test creates seven compressions with Noise Sensitivity values from 0 to 6 and computes PSNR values for each. If all compressions have differing PSNR values and Noise Sensitivity 0 has a higher PSNR than Noise Sensitivity 6, the test passes.</td>
     </tr>
     <tr>
-      <td>29</td>
+      <td>32</td>
       <td>test_one_pass_vs_two_pass</td>
       <td>The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at one-pass good quality and two-pass good quality, the second and fifth compressions for the input target bandwidth at one-pass good quality and two-pass good quality, and the third and sixth at 30% more than the input target bandwidth at one-pass good quality and two-pass good quality. The test then records each file&rsquo;s data rate and PSNR and computes the area under the curve for the common interval between the one-pass good quality curve and the two-pass good quality curve. If the area under the two-pass good quality curve is greater than the area under the one-pass good quality curve, the test passes.</td>
     </tr>
     <tr>
-      <td>30</td>
+      <td>33</td>
       <td>test_play_alternate</td>
       <td>The test creates two compressions: the first with Play Alternate equal to 0, the second with Play Alternate equal to 1. The test then records the placement of alternate reference frames and visible frames for both compressions. If alternate reference frames exist for Play Alternate = 1 and not for Play Alternate = 0, visible frames for Play Alternate 1 and Play Alternate 2 are equal, and the files are not identical, the test passes.</td>
     </tr>
     <tr>
-      <td>31</td>
+      <td>34</td>
       <td>test_post_processor</td>
       <td>The test creates a compression, then creates a No Filtering decompression, and decompressions for Deblock and Noise levels ranging from 0 to 15. If all Deblock and Noise decompressions return a different PSNR than the No Filtering Decompression but are within 10%, the test passes.</td>
     </tr>
     <tr>
-      <td>32</td>
+      <td>35</td>
       <td>test_reconstruct_buffer</td>
       <td>The test creates a compression and internally compares the compressor&rsquo;s preview frames to the decoded output produced by decompressing the compressor&rsquo;s encoded frame. The state of each frame is recorded to a text file. If the contents of all preview frames are identical to the content of all decoded frames, the test passes.</td>
     </tr>
     <tr>
-      <td>33</td>
+      <td>36</td>
       <td>test_resample_down_watermark</td>
       <td>The test creates two compressions: the first with resample-down-watermark set to 90, the second with resample-down-watermark set to 10. The test then records the frames at which the file buffer reaches the designated thresholds, the location of key frames, and location of resized frames for both files. If the first resized frame occurs on the first instance where the frame prior to a key frame reaches the correct buffer saturation for both compressions, the test passes.</td>
     </tr>
     <tr>
-      <td>34</td>
+      <td>37</td>
       <td>test_speed</td>
       <td>The test works for RealTime Mode and Good Quality Mode. For RealTime Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions for CpuUsed Values from 0 to 5. If compression speed increases as CpuUsed increases and all PSNRs are within 10% of the previous, the test passes.</td>
     </tr>
     <tr>
-      <td>35</td>
+      <td>38</td>
       <td>test_test_vector</td>
       <td>The test decodes each VP8 Test Vector and Checks its MD5 checksum against the expected value. If all Test Vectors decode properly and all MD5 checksums match their expected values, the test passes.</td>
     </tr>
     <tr>
-      <td>36</td>
+      <td>39</td>
+      <td>test_thirtytwo_vs_sixtyfour</td>
+      <td>The test is run in one of two modes. The first creates either a thirty two or sixty four bit compression and decompression to be tested by the second mode. The second mode creates either a thirty two or sixty four bit compression and decompression, and then compares them to previously encoded and decoded files. If the files are identical, the test passes.</td>
+    </tr>
+    <tr>
+      <td>40</td>
       <td>test_two_pass_vs_two_pass_best</td>
       <td>The test creates six compressions: the first and fourth compressions for 30% less than the input target bandwidth at two-pass good quality and two-pass best quality, the second and fifth compressions for the input target bandwidth at two-pass good quality and two-pass best quality, and the third and sixth at 30% more than the input target bandwidth at two-pass good quality and two-pass best quality. The test then records each file&rsquo;s data rate and PSNR and computes the area under the curve for the common interval between the two-pass good quality curve and the two-pass best quality curve. If the area under the two-pass best quality curve is greater than the area under the two-pass good quality curve, the test passes.</td>
     </tr>
     <tr>
-      <td>37</td>
+      <td>41</td>
       <td>test_undershoot</td>
       <td>The test creates two compressions: the first with an undershoot equal to 10, the second with an undershoot equal to 100. If the Undershoot 100 compression&rsquo;s file size is greater than the Undershoot 10 compression&rsquo;s file size, the test passes.</td>
     </tr>
     <tr>
-      <td>38</td>
+      <td>42</td>
       <td>test_version</td>
       <td>The test creates four compressions: the first with Version equal to 0, the second with Version equal to 1, the third with Version equal to 2, and the fourth with Version equal to 3. The test then decodes each and records the time it took to do so. If each successive Version takes less time than the prior to decode and has a lower PSNR, the test passes.</td>
     </tr>
     <tr>
-      <td>39</td>
+      <td>43</td>
+      <td>test_vpx_matches_int</td>
+      <td>The test takes a raw input file along with vpxenc and vpxdec paths and produces two encode files and two decode files.  The first encode file is produced using the testers internal compressor.  The second encode file is produced using the passed in vpxenc path.  The first decode file is produced using the passed in vpxdec path.  The second decode file is produced using the testers internal decoder.  The test then compares the encoded and decoded files.  If all decoded and encoded files are identical the test passes.</td>
+    </tr>
+    <tr>
+      <td>44</td>
       <td>test_win_lin_mac_match</td>
       <td>The test can be run in two test modes. The first, Mode 0, creates platform-specific compressions and decompressions to be tested on another platform. The second mode, Mode 1, creates platform-specific compressions and decompressions, and then compares them to previously encoded and decoded files created by Mode 0. If the files are identical, the test passes.</td>
     </tr>
@@ -891,6 +921,14 @@ on file <code>input.ivf</code>.</li>
       <td>This tool will take in an encoded IVF or WEBM file and output a decoded IVF or Y4M file.</td>
     </tr>
     <tr>
+      <td>VPXTDecRESZ</td>
+      <td>This tool will take in an encoded IVF or WEBM file and output a decoded IVF or Y4M file making sure to correctly scale up any resized encoded frames.</td>
+    </tr>
+    <tr>
+      <td>VPXTDecPARD</td>
+      <td>This tool will take in an encoded IVF or WEBM file and output a decoded IVF or Y4M file with user input partial drops.  The first parameter signifies the numerator of the ratio of frames to drop for mode 0, the starting frame for mode 1 and the percentage to randomly drop for mode 2.  The second parameter signifies the denominator of the ratio of frames to drop for mode 0, the last frame to drop for mode 1 and the random seed for mode 2.</td>
+    </tr>
+    <tr>
       <td>VPXTDec2Raw</td>
       <td>This tool will take in an encoded IVF or WEBM file and output a decoded raw file.</td>
     </tr>
@@ -901,6 +939,10 @@ on file <code>input.ivf</code>.</li>
     <tr>
       <td>VPXTPSNR</td>
       <td>This tool will compute an encoded IVF or WEBM file&rsquo;s PSNR using the encoded file&rsquo;s IVF or Y4M source file.</td>
+    </tr>
+    <tr>
+      <td>VPXTPSNRDEC</td>
+      <td>This tool will compute a decoded IVF or WEBM file&rsquo;s PSNR using the encoded file&rsquo;s IVF or Y4M source file.</td>
     </tr>
     <tr>
       <td>VPXTCheckPBM</td>

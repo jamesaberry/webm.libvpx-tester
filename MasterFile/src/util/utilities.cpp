@@ -5072,7 +5072,7 @@ int  vpxt_sync_new_vs_old_log(const char *testlog, const char *gitlog, const cha
             firstheader = 0;
 
             gitlogFile.clear();
-            gitlogFile.seekg(0, std::ios::beg);
+            gitlogFile.seekg(std::ios::beg);
             gitlogFile.getline(gitlogFileLine, 256);
 
             newtestlogFile << testlogFileLine << "\n";
@@ -13350,7 +13350,7 @@ int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar,
     if (use_y4m == 2)
         decformat = "IVF";
 
-    tprintf(printVar, "\nAPI - Decompressing VP8 %s File to Raw %s File - With Partial Drops: \n", compformat.c_str(), decformat.c_str());
+    tprintf(printVar, "\nAPI - Decompressing VP8 %s File to Raw %s File - With Partial Drops (seed = %i): \n", compformat.c_str(), decformat.c_str(), seed);
 
     outfile_pattern = outfile_pattern ? outfile_pattern : "-";
     single_file = 1;

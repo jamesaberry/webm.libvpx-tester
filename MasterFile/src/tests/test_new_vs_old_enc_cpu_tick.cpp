@@ -185,7 +185,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         }
 
         char cpu_tick1_char[256];
-        vpxt_itoa_custom(cpu_tick1, cpu_tick1_char, 10);
+        sprintf(cpu_tick1_char, "%u", cpu_tick1);
 
         std::string UpdateString = "";
         UpdateString.append(cpu_tick1_char);
@@ -302,7 +302,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
             unsigned int Time2 = vpxt_time_return(outputVP8Old.c_str(), 0);
             cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old.c_str(), 0);
 
-            tprintf(PRINT_BTH, "\n\nFile completed: Time in Microseconds: %i", Time2);
+            tprintf(PRINT_BTH, "\n\nFile completed: Time in Microseconds: %u", Time2);
             tprintf(PRINT_BTH, "\n Total CPU Ticks: %u\n", cpu_tick2);
         }
     }
@@ -320,7 +320,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (Indeterminate == 1)
     {
-        vpxt_formated_print(RESPRT, "New speed: %.2i Old speed: Not Found - Indeterminate", cpu_tick1);
+        vpxt_formated_print(RESPRT, "New speed: %.2u Old speed: Not Found - Indeterminate", cpu_tick1);
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
@@ -334,7 +334,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (cpu_tick1 < cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "New: %i is Faster than Old: %i - Passed", cpu_tick1, cpu_tick2);
+        vpxt_formated_print(RESPRT, "New: %u is Faster than Old: %u - Passed", cpu_tick1, cpu_tick2);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
@@ -348,7 +348,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (cpu_tick1 < (cpu_tick2 + (cpu_tick2 * .05)))
     {
-        vpxt_formated_print(RESPRT, "New: %i is with in five percent of Old: %i - Passed", cpu_tick1, cpu_tick2);
+        vpxt_formated_print(RESPRT, "New: %u is with in five percent of Old: %u - Passed", cpu_tick1, cpu_tick2);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
@@ -363,7 +363,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (cpu_tick1 > cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "Old: %i is Faster than New: %i - Failed", cpu_tick2, cpu_tick1);
+        vpxt_formated_print(RESPRT, "Old: %u is Faster than New: %u - Failed", cpu_tick2, cpu_tick1);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 

@@ -5139,7 +5139,7 @@ double vpxt_get_new_vs_old_val(std::string fileline)
     if (lastNumPos == 0)
         return 0.0;
     else
-        return atof(fileline.substr(41, 41 + lastNumPos - 1).c_str());
+        return strtod(fileline.substr(41, 41 + lastNumPos - 1).c_str(), NULL);
 
 }
 int  vpxt_eval_new_vs_old_log(const char *logfile, std::string TestIDStr, int printvar, std::vector<double> &ValueList, std::string testName)

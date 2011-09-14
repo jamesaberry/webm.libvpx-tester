@@ -13232,8 +13232,11 @@ fail:
     else
         return 2;
 }
-int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar, std::string DecFormat, int threads, int n, int m, int mode, int printVar)
+int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar, std::string DecFormat, int threads, int n, int m, int mode, int printVar, int outputParDropEnc)
 {
+    std::string ParDropEncStr;
+    vpxt_remove_file_extension(inputchar, ParDropEncStr);
+    ParDropEncStr.append("with_part_frame_drops.ivf");
     int                     use_y4m = 1;
     vpxt_lower_case_string(DecFormat);
 
@@ -13246,6 +13249,7 @@ int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar,
     uint8_t               *buf = NULL;
     size_t               buf_sz = 0, buf_alloc_sz = 0;
     FILE                  *infile;
+    FILE                  *outfile_drops;
     int                    frame_in = 0, frame_out = 0, flipuv = 0, noblit = 0, do_md5 = 0, progress = 0;
     int                    stop_after = 0, postproc = 0, summary = 0, quiet = 1;
     vpx_codec_iface_t       *iface = NULL;
@@ -13262,6 +13266,7 @@ int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar,
     unsigned int            fps_num;
     void                   *out = NULL;
     vpx_codec_dec_cfg_t     cfg = {0};
+    vpx_codec_enc_cfg_t    enc_cfg = {0};
 #if CONFIG_VP8_DECODER
     vp8_postproc_cfg_t      vp8_pp_cfg = {0};
     int                     vp8_dbg_color_ref_frame = 0;
@@ -13437,6 +13442,16 @@ int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar,
         return -1;
     }
 
+    if (outputParDropEnc)
+    {
+        enc_cfg.g_w = width;
+        enc_cfg.g_h = height;
+        enc_cfg.g_timebase.den = fps_num;
+        enc_cfg.g_timebase.num = fps_den;
+        outfile_drops = fopen(ParDropEncStr.c_str(), "wb");
+        write_ivf_file_header(outfile_drops, &enc_cfg, VP8_FOURCC, 0);
+    }
+
     /* Decode file */
     while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
     {
@@ -13500,6 +13515,16 @@ int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar,
         thrown += thrown_frame;                                               //
         kept += kept_frame;                                                   //
         ////////////////////////////////////////////////////////////////////////
+
+        if (outputParDropEnc)
+        {
+            char header_drop[12];
+            mem_put_le32(header_drop, frame_sz);
+            mem_put_le32(header_drop + 4, 0);
+            mem_put_le32(header_drop + 8, 0);
+            fwrite(header_drop, 1, 12, outfile_drops);
+            fwrite(buf, 1, frame_sz, outfile_drops);
+        }
 
         vpx_usec_timer_start(&timer);
 
@@ -13616,6 +13641,14 @@ fail:
         free(buf);
 
     fclose(infile);
+
+    if (outputParDropEnc)
+    {
+        if (!fseek(outfile_drops, 0, SEEK_SET))
+            write_ivf_file_header(outfile_drops, &enc_cfg, VP8_FOURCC, frame_out);
+
+        fclose(outfile_drops);
+    }
 
     return 0;
 }

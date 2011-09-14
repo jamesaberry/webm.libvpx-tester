@@ -32,6 +32,10 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
     ErrConComp.append("_compression");
     vpxt_enc_format_append(ErrConComp, EncForm);
 
+    std::string ErrConCompWPFD;
+    vpxt_remove_file_extension(ErrConComp.c_str(), ErrConCompWPFD);
+    ErrConCompWPFD.append("with_part_frame_drops.ivf");
+
     std::string ErrConDec = CurTestDirStr;
     ErrConDec.append(slashCharStr());
     ErrConDec.append(MyDir);
@@ -95,7 +99,7 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
             return 2;
         }
 
-        if (vpxt_decompress_partial_drops(ErrConComp.c_str(), ErrConDec.c_str(), DecForm, 1, 3, 5, 2, PRINT_BTH) == -1)
+        if (vpxt_decompress_partial_drops(ErrConComp.c_str(), ErrConDec.c_str(), DecForm, 1, 3, 5, 2, PRINT_BTH, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -155,7 +159,7 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, ErrConComp.c_str(), ErrConDec.c_str());
+            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(), ErrConCompWPFD.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -166,7 +170,7 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, ErrConComp.c_str(), ErrConDec.c_str());
+            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(), ErrConCompWPFD.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

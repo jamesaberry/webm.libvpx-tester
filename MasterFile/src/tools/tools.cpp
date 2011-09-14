@@ -5228,7 +5228,7 @@ int tool_vpxt_dec_part_drop(int argc, const char *const *argv)
     std::string outputFile = argv[3];
     std::string DecForm = argv[4];
 
-    vpxt_decompress_partial_drops(inputFile.c_str(), outputFile.c_str(), DecForm, 1, atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), PRINT_STD);
+    vpxt_decompress_partial_drops(inputFile.c_str(), outputFile.c_str(), DecForm, 1, atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), PRINT_STD, 1);
     //vpxt_decompress_partial_drops(inputFile.c_str(), outputFile.c_str(), DecForm, 1, 3, 5, 2);
 
     tprintf(PRINT_STD, "\n");

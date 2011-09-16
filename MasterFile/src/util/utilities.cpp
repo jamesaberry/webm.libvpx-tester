@@ -6628,7 +6628,7 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
 
     YV12_BUFFER_CONFIG Temp_YV12;
     memset(&Temp_YV12, 0, sizeof(Temp_YV12));
-    vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, 0);
+    int TempBuffState = vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, 0);
     ///////////////////////////////////////////////////////////////////////////////////////
 
     vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
@@ -6675,6 +6675,24 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
 
             if (img->d_w != RawWidth || img->d_h != RawHeight) //if frame not correct size resize it for psnr
             {
+                if (TempBuffState < 0)
+                {
+                    printf("Could not allocate yv12 buffer for %i x %i\n", RawWidth, RawHeight);
+                    fclose(RawFile);
+                    fclose(CompFile);
+                    delete timeStamp2;
+                    delete timeEndStamp2;
+                    vpx_img_free(&raw_img);
+
+                    if (input.nestegg_ctx)
+                        nestegg_destroy(input.nestegg_ctx);
+
+                    if (input.kind != WEBM_FILE)
+                        free(CompBuff);
+
+                    return 0;
+                }
+
                 int GCDInt1 = vpxt_gcd(img->d_w, RawWidth);
                 int GCDInt2 = vpxt_gcd(img->d_h, RawHeight);
 
@@ -7622,7 +7640,8 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
 
     YV12_BUFFER_CONFIG Temp_YV12;
     memset(&Temp_YV12, 0, sizeof(Temp_YV12));
-    vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, 0);
+    int TempBuffState = vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, 0);
+
     ///////////////////////////////////////////////////////////////////////////////////////
 
     vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
@@ -7704,6 +7723,24 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
 
             if (img->d_w != RawWidth || img->d_h != RawHeight) //if frame not correct size resize it for psnr
             {
+                if (TempBuffState < 0)
+                {
+                    printf("Could not allocate yv12 buffer for %i x %i\n", RawWidth, RawHeight);
+                    fclose(RawFile);
+                    fclose(CompFile);
+                    delete timeStamp2;
+                    delete timeEndStamp2;
+                    vpx_img_free(&raw_img);
+
+                    if (input.nestegg_ctx)
+                        nestegg_destroy(input.nestegg_ctx);
+
+                    if (input.kind != WEBM_FILE)
+                        free(CompBuff);
+
+                    return 0;
+                }
+
                 int GCDInt1 = vpxt_gcd(img->d_w, RawWidth);
                 int GCDInt2 = vpxt_gcd(img->d_h, RawHeight);
 

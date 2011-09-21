@@ -207,7 +207,7 @@ $(OBJDIR)/test_encoder_break_out.o: $(TestsDir)/test_encoder_break_out.cpp
 	$(GPP) -c $(TestsDir)/test_encoder_break_out.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_encoder_break_out.o
 
 $(OBJDIR)/test_error_concealment.o: $(TestsDir)/test_error_concealment.cpp
-    $(GPP) -c $(TestsDir)/test_error_concealment.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_error_concealment.o
+	$(GPP) -c $(TestsDir)/test_error_concealment.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_error_concealment.o
 
 $(OBJDIR)/test_error_resolution.o: $(TestsDir)/test_error_resolution.cpp
 	$(GPP) -c $(TestsDir)/test_error_resolution.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_error_resolution.o

@@ -32,10 +32,8 @@ extern "C" {
 #define VPX_ENCODER_H
 #include "vpx_codec.h"
 
-#define ENABLE_LAYERS 1
-#if ENABLE_LAYERS
-#define MAXIMUM_PERIODICITY 16
-#endif
+#define MAX_PERIODICITY 16
+#define MAX_LAYERS       5
 
     /*!\brief Current ABI version number
      *
@@ -45,7 +43,7 @@ extern "C" {
      * types, removing or reassigning enums, adding/removing/rearranging
      * fields to structures
      */
-#define VPX_ENCODER_ABI_VERSION (2 + VPX_CODEC_ABI_VERSION) /**<\hideinitializer*/
+#define VPX_ENCODER_ABI_VERSION (3 + VPX_CODEC_ABI_VERSION) /**<\hideinitializer*/
 
 
     /*! \brief Encoder capabilities bitfield
@@ -76,7 +74,7 @@ extern "C" {
      */
 #define VPX_CODEC_USE_PSNR  0x10000 /**< Calculate PSNR on each frame */
 #define VPX_CODEC_USE_OUTPUT_PARTITION  0x20000 /**< Make the encoder output one
-    partition at a time. */
+                                                     partition at a time. */
 
 
     /*!\brief Generic fixed size buffer structure
@@ -123,15 +121,15 @@ extern "C" {
      */
     typedef uint32_t vpx_codec_er_flags_t;
 #define VPX_ERROR_RESILIENT_DEFAULT     0x1 /**< Improve resiliency against
-    losses of whole frames */
+                                                 losses of whole frames */
 #define VPX_ERROR_RESILIENT_PARTITIONS  0x2 /**< The frame partitions are
-    independently decodable by the
-    bool decoder, meaning that
-    partitions can be decoded even
-    though earlier partitions have
-    been lost. Note that intra
-    predicition is still done over
-    the partition boundary. */
+                                                 independently decodable by the
+                                                 bool decoder, meaning that
+                                                 partitions can be decoded even
+                                                 though earlier partitions have
+                                                 been lost. Note that intra
+                                                 predicition is still done over
+                                                 the partition boundary. */
 
     /*!\brief Encoder output packet variants
      *
@@ -596,13 +594,47 @@ extern "C" {
          */
         unsigned int           kf_max_dist;
 
-#if ENABLE_LAYERS
+        /*
+         * Temporal scalability settings (ts)
+         */
+
+        /*!\brief Number of coding layers
+         *
+         * This value specifies the number of coding layers to be used.
+         */
         unsigned int           ts_number_layers;
-        unsigned int           ts_target_bitrate[5];
-        unsigned int           ts_rate_decimator[5];
+
+        /*!\brief Target bitrate for each layer
+         *
+         * These values specify the target coding bitrate for each coding layer.
+         */
+        unsigned int           ts_target_bitrate[MAX_LAYERS];
+
+        /*!\brief Frame rate decimation factor for each layer
+         *
+         * These values specify the frame rate decimation factors to apply
+         * to each layer.
+         */
+        unsigned int           ts_rate_decimator[MAX_LAYERS];
+
+        /*!\brief Length of the sequence defining frame layer membership
+         *
+         * This value specifies the length of the sequence that defines the
+         * membership of frames to layers. For example, if ts_periodicity=8 then
+         * frames are assigned to coding layers with a repeated sequence of
+         * length 8.
+         */
         unsigned int           ts_periodicity;
-        unsigned int           ts_layer_id[MAXIMUM_PERIODICITY];
-#endif
+
+        /*!\brief Template defining the membership of frames to coding layers
+         *
+         * This array defines the membership of frames to coding layers. For a
+         * 2-layer encoding that assigns even numbered frames to one layer (0)
+         * and odd numbered frames to a second layer (1) with ts_periodicity=8,
+         * then ts_layer_id = (0,1,0,1,0,1,0,1).
+         */
+        unsigned int           ts_layer_id[MAX_PERIODICITY];
+
     } vpx_codec_enc_cfg_t; /**< alias for struct vpx_codec_enc_cfg */
 
 

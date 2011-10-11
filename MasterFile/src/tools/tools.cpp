@@ -4491,9 +4491,9 @@ int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir)
 
     opt.target_bandwidth = BitRate;
 
-    if (argc == 8)
+    if (argc == 9)
     {
-        opt = vpxt_input_settings(argv[7]);
+        opt = vpxt_input_settings(argv[8]);
     }
 
     int CompressInt = opt.allow_df;

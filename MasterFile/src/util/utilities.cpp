@@ -828,7 +828,9 @@ static void write_webm_file_header(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *
         }
     }
 }
-static void write_webm_block(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *cfg, const vpx_codec_cx_pkt_t  *pkt)
+static void write_webm_block(EbmlGlobal                *glob,
+                 const vpx_codec_enc_cfg_t *cfg,
+                 const vpx_codec_cx_pkt_t  *pkt)
 {
     unsigned long  block_length;
     unsigned char  track_number;
@@ -836,26 +838,27 @@ static void write_webm_block(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *cfg, c
     unsigned char  flags;
     int64_t        pts_ms;
     int            start_cluster = 0, is_keyframe;
+
+    /* Calculate the PTS of this frame in milliseconds */
     pts_ms = pkt->data.frame.pts * 1000
              * (uint64_t)cfg->g_timebase.num / (uint64_t)cfg->g_timebase.den;
-
-    if (pts_ms <= glob->last_pts_ms)
+    if(pts_ms <= glob->last_pts_ms)
         pts_ms = glob->last_pts_ms + 1;
-
     glob->last_pts_ms = pts_ms;
 
-    if (pts_ms - glob->cluster_timecode > SHRT_MAX)
+    /* Calculate the relative time of this block */
+    if(pts_ms - glob->cluster_timecode > SHRT_MAX)
         start_cluster = 1;
     else
         block_timecode = pts_ms - glob->cluster_timecode;
 
     is_keyframe = (pkt->data.frame.flags & VPX_FRAME_IS_KEY);
-
-    if (start_cluster || is_keyframe)
+    if(start_cluster || is_keyframe)
     {
-        if (glob->cluster_open)
+        if(glob->cluster_open)
             Ebml_EndSubElement(glob, &glob->startCluster);
 
+        /* Open the new cluster */
         block_timecode = 0;
         glob->cluster_open = 1;
         glob->cluster_timecode = pts_ms;
@@ -863,11 +866,21 @@ static void write_webm_block(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *cfg, c
         Ebml_StartSubElement(glob, &glob->startCluster, Cluster); //cluster
         Ebml_SerializeUnsigned(glob, Timecode, glob->cluster_timecode);
 
-        if (is_keyframe)
+        /* Save a cue point if this is a keyframe. */
+        if(is_keyframe)
         {
-            struct cue_entry *cue;
-            glob->cue_list = (cue_entry *)realloc(glob->cue_list,
-                                                  (glob->cues + 1) * sizeof(struct cue_entry));
+            struct cue_entry *cue, *new_cue_list;
+
+            new_cue_list = (cue_entry*) realloc(glob->cue_list,
+                                   (glob->cues+1) * sizeof(struct cue_entry));
+            if(new_cue_list)
+                glob->cue_list = new_cue_list;
+            else
+            {
+                fprintf(stderr, "\nFailed to realloc cue list.\n");
+                exit(EXIT_FAILURE);
+            }
+
             cue = &glob->cue_list[glob->cues];
             cue->time = glob->cluster_timecode;
             cue->loc = glob->cluster_pos;
@@ -875,25 +888,29 @@ static void write_webm_block(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *cfg, c
         }
     }
 
+    /* Write the Simple Block */
     Ebml_WriteID(glob, SimpleBlock);
     block_length = pkt->data.frame.sz + 4;
     block_length |= 0x10000000;
-    Ebml_Serialize(glob, &block_length, sizeof(block_length),  4);
+    Ebml_Serialize(glob, &block_length, sizeof(block_length), 4);
+
     track_number = 1;
     track_number |= 0x80;
     Ebml_Write(glob, &track_number, 1);
+
     Ebml_Serialize(glob, &block_timecode, sizeof(block_timecode), 2);
+
     flags = 0;
-
-    if (is_keyframe)
+    if(is_keyframe)
         flags |= 0x80;
-
-    if (pkt->data.frame.flags & VPX_FRAME_IS_INVISIBLE)
+    if(pkt->data.frame.flags & VPX_FRAME_IS_INVISIBLE)
         flags |= 0x08;
-
     Ebml_Write(glob, &flags, 1);
+
     Ebml_Write(glob, pkt->data.frame.buf, pkt->data.frame.sz);
 }
+
+
 static void
 write_webm_file_footer(EbmlGlobal *glob, long hash)
 {
@@ -1976,7 +1993,8 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     opt.two_pass_vbrbias = 50;
     opt.two_pass_vbrmax_section = 400;
     opt.two_pass_vbrmin_section = 0;
-    opt.under_shoot_pct = 95;
+    opt.over_shoot_pct = 100;
+    opt.under_shoot_pct = 100;
     opt.Version = 0;
     //opt.worst_allowed_q = 56;
 
@@ -1994,6 +2012,7 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     opt.arnr_type = 3;
 
     opt.rc_max_intra_bitrate_pct = 0;
+    opt.frame_rate = 30.0;
 }
 void vpxt_determinate_parameters(VP8_CONFIG &opt)
 {
@@ -2020,6 +2039,7 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
     cfg->rc_target_bitrate = coreCfg.target_bandwidth;
     cfg->rc_min_quantizer = coreCfg.best_allowed_q;
     cfg->rc_max_quantizer = coreCfg.worst_allowed_q;
+    cfg->rc_overshoot_pct = coreCfg.over_shoot_pct;
     cfg->rc_undershoot_pct = coreCfg.under_shoot_pct;
     cfg->rc_buf_sz = coreCfg.maximum_buffer_size * 1000;
     cfg->rc_buf_initial_sz  = coreCfg.starting_buffer_level * 1000;
@@ -2369,6 +2389,7 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile)
     std::string Garbage;
 
     VP8_CONFIG opt;
+    vpxt_default_parameters(opt);
 
     infile2 >> opt.target_bandwidth;
     infile2 >> Garbage;
@@ -10482,7 +10503,8 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
     /*vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
     cfg.g_w, cfg.g_h, 1);*/
 
-    cfg.g_timebase.den *= 2;
+    cfg.g_timebase.den = 1000;
+    //cfg.g_timebase.den *= 2;
     memset(&stats, 0, sizeof(stats));
 
     for (pass = 0; pass < arg_passes; pass++)

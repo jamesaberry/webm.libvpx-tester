@@ -248,7 +248,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
             Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-            putenv(Simd_Caps_Str.c_str());
+            putenv((char*)Simd_Caps_Str.c_str());
             return 2;
         }
 
@@ -336,7 +336,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
                     record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
                     std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
                     Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-                    putenv(Simd_Caps_Str.c_str());
+                    putenv((char*)Simd_Caps_Str.c_str());
                     return 2;
                 }
 
@@ -397,7 +397,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
         Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv(Simd_Caps_Str.c_str());
+        putenv((char*)Simd_Caps_Str.c_str());
         return 10;
     }
 
@@ -451,7 +451,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
         Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv(Simd_Caps_Str.c_str());
+        putenv((char*)Simd_Caps_Str.c_str());
         return 2;
     }
 
@@ -466,7 +466,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
         Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv(Simd_Caps_Str.c_str());
+        putenv((char*)Simd_Caps_Str.c_str());
         return 1;
     }
     else
@@ -480,7 +480,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
         Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv(Simd_Caps_Str.c_str());
+        putenv((char*)Simd_Caps_Str.c_str());
         return 0;
     }
 
@@ -488,7 +488,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
     record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
     Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-    putenv(Simd_Caps_Str.c_str());
+    putenv((char*)Simd_Caps_Str.c_str());
     return 6;
 #endif
 }

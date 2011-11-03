@@ -1,0 +1,6 @@
+rm -r libvpx-vs9-build-Win32
+mkdir libvpx-vs9-build-Win32
+cd libvpx-vs9-build-Win32
+chmod -R 777 ../libvpx
+../libvpx/configure --target=x86-win32-vs9 --enable-static-msvcrt --enable-error-concealment
+make

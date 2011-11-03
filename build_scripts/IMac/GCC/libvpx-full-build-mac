@@ -1,0 +1,294 @@
+DIR=$(cd `dirname $0` && pwd)
+
+OldDef=0
+NewDef=0
+OldVersion=aa926fbd273c7d62d43487f73f2f3cdce7bec5a8
+NewVersion="0"
+BUILD_32=1
+BUILD_64=1
+LOOP_NUM=1
+GIT=0
+
+#parse input
+for i in $@
+do 
+	if [ $OldDef -eq "1" ]
+	then
+		OldVersion=$i
+		echo "OldVersion=$OldVersion"
+		OldDef=0
+	fi
+	
+	if [ $NewDef -eq "1" ]
+	then
+		NewVersion=$i
+		echo "NewVersion=$NewVersion"
+		NewDef=1
+	fi
+	
+	if [ $i = "-GIT" ]
+	then
+		echo "GIT=1"
+		GIT=0
+	fi
+	
+	if [ $i = "-32" ]
+	then
+		echo "BUILD_64=0"
+		BUILD_64=0
+	fi
+	
+	if [ $i = "-64" ]
+	then
+		echo "BUILD_32=0"
+		BUILD_32=0
+	fi
+	
+	if [ $i = "-old" ]
+	then
+		OldDef=1
+	fi
+	
+	if [ $i = "-new" ]
+	then
+		NewDef=1
+	fi
+	
+	if [ $i = "-help" -o  $i = "--help" -o  $i = "help" ]
+	then
+		echo "Usage: libvpx-full-build-win <Options>
+		
+		<Options>
+		
+		-new (commit hash)	build new using this hash
+		-old (commit hash)	build old using this hash
+		-64					build 64 bit only
+		-32					build 32 bit only"
+		
+	fi
+done
+
+if [ $BUILD_32 = 1 ]
+then
+	cd $DIR
+
+	#Clean any prexising libvpx-tester libs
+	rm -f $DIR/libvpx-tester/MasterFile/lib/libvpx_IMac32.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemIMac32.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewIMac32.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldIMac32.a
+
+	#Clean any prexising libvpx-tester exes
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit/VP8_Tester_API_32Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe
+	
+	#if set to override current check out get fresh
+	if [ GIT = 1 ]
+	then
+		#Clone and set up clean versions of libvpx libvpx-old and libvpx-tester
+		git clone http://git.chromium.org/webm/libvpx.git
+		if [ $NewVersion != 0 ]
+		then
+			cd libvpx
+			git checkout $NewVersion
+			echo "current libvpx version: $NewVersion"
+			cd ..
+		fi
+		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+
+	#if directories dont exist check them out
+	if [ ! -d "$DIR/libvpx/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git
+		if [ $NewVersion != 0 ]
+		then
+			cd libvpx
+			git checkout $NewVersion
+			echo "current libvpx version: $NewVersion"
+			cd ..
+		fi
+	fi
+
+	if [ ! -d "$DIR/libvpx-old/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+	fi
+
+	if [ ! -d "$DIR/libvpx-tester/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+	
+	#Set Permisions
+	chmod 777 /scripts/Build-VP8-IMac32-libvpx
+	chmod 777 /scripts/Build-VP8-IMac32-libvpx-Debug
+	chmod 777 /scripts/Build-VP8-IMac32-libvpx-old
+
+	#Build libvpx variations
+	./scripts/Build-VP8-IMac32-libvpx
+	./scripts/Build-VP8-IMac32-libvpx-Debug
+	./scripts/Build-VP8-IMac32-libvpx-old
+
+	#make sure lib directories exist
+	mkdir $DIR/libvpx-tester/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib
+
+	#copy new libraries for the tester to use
+	cp -f $DIR/libvpx-build-IMac32/libvpx.a $DIR/libvpx-tester/MasterFile/lib/libvpx_IMac32.a
+	cp -f $DIR/libvpx-build-IMac32-Debug/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemIMac32.a
+	cp -f $DIR/libvpx-build-IMac32/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewIMac32.a
+	cp -f $DIR/libvpx-build-IMac32-old/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldIMac32.a
+
+	#make sure include folders exist
+	mkdir $DIR/libvpx-tester/MasterFile/include/release-32
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32
+
+	#copy include files over
+	cp -f $DIR/libvpx-build-IMac32/vpx_config.h $DIR/libvpx-tester/MasterFile/include/release-32/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac32/vpx_version.h $DIR/libvpx-tester/MasterFile/include/release-32/vpx_version.h
+	
+	cp -f $DIR/libvpx-build-IMac32/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac32/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_version.h
+	
+	cp -f $DIR/libvpx-build-IMac32-old/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac32-old/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_version.h
+	
+	cp -f $DIR/libvpx-build-IMac32-Debug/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac32-Debug/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_version.h
+
+	cd $DIR/libvpx-tester/
+	chmod 777 make_IMac_API_32Bit
+
+	#run the tester make scripts
+	./make_IMac_API_32Bit
+	
+	cp -f $DIR/libvpx-build-IMac32/vpxenc $DIR/libvpx-tester/TestFolder_32Bit/vpxenc.exe
+	cp -f $DIR/libvpx-build-IMac32/vpxdec $DIR/libvpx-tester/TestFolder_32Bit/vpxdec.exe
+fi
+
+if [ $BUILD_64 = 1 ]
+then
+	cd $DIR
+
+	#Clean any prexising libvpx-tester libs
+	rm -f $DIR/libvpx-tester/MasterFile/lib/libvpx_IMac64.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemIMac64.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewIMac64.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldIMac64.a
+
+	#Clean any prexising libvpx-tester exes
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit/VP8_Tester_API_64Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe
+
+	if [ $BUILD_32 = 0 ]
+	then
+		if [ GIT = 1 ]
+		then
+			#Clone and set up clean versions of libvpx libvpx-old and libvpx-tester
+			git clone http://git.chromium.org/webm/libvpx.git
+			if [ $NewVersion != 0 ]
+			then
+				cd libvpx
+				git checkout $NewVersion
+				echo "current libvpx version: $NewVersion"
+				cd ..
+			fi
+			git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+			cd libvpx-old
+			git checkout $OldVersion
+			cd ..
+			git clone http://git.chromium.org/webm/libvpx-tester.git
+		fi
+	fi
+
+	#if directories dont exist check them out
+	if [ ! -d "$DIR/libvpx/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git
+		if [ $NewVersion != 0 ]
+		then
+			cd libvpx
+			git checkout $NewVersion
+			echo "current libvpx version: $NewVersion"
+			cd ..
+		fi
+	fi
+
+	if [ ! -d "$DIR/libvpx-old/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+	fi
+
+	if [ ! -d "$DIR/libvpx-tester/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+	
+	chmod 777 /scripts/Build-VP8-IMac64-libvpx
+	chmod 777 /scripts/Build-VP8-IMac64-libvpx-Debug
+	chmod 777 /scripts/Build-VP8-IMac64-libvpx-old
+
+	#Build libvpx variations
+	./scripts/Build-VP8-IMac64-libvpx
+	./scripts/Build-VP8-IMac64-libvpx-Debug
+	./scripts/Build-VP8-IMac64-libvpx-old
+
+	#make sure lib directories exist
+	mkdir $DIR/libvpx-tester/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib
+
+	#copy new libraries for the tester to use
+	cp -f $DIR/libvpx-build-IMac64/libvpx.a $DIR/libvpx-tester/MasterFile/lib/libvpx_IMac64.a
+	cp -f $DIR/libvpx-build-IMac64-Debug/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemIMac64.a
+	cp -f $DIR/libvpx-build-IMac64/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewIMac64.a
+	cp -f $DIR/libvpx-build-IMac64-old/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldIMac64.a
+
+	#make sure include folders exist
+	mkdir $DIR/libvpx-tester/MasterFile/include/release-64
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64
+
+	#copy include files over
+	cp -f $DIR/libvpx-build-IMac64/vpx_config.h $DIR/libvpx-tester/MasterFile/include/release-64/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac64/vpx_version.h $DIR/libvpx-tester/MasterFile/include/release-64/vpx_version.h
+
+	cp -f $DIR/libvpx-build-IMac64/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac64/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_version.h
+
+	cp -f $DIR/libvpx-build-IMac64-old/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac64-old/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_version.h
+
+	cp -f $DIR/libvpx-build-IMac64-Debug/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_config.h
+	cp -f $DIR/libvpx-build-IMac64-Debug/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_version.h
+
+	cd $DIR/libvpx-tester/
+	chmod 777 make_IMac_API_64Bit
+
+	#run the tester make scripts
+	./make_IMac_API_64Bit
+	
+	cp -f $DIR/libvpx-build-IMac64/vpxenc $DIR/libvpx-tester/TestFolder_64Bit/vpxenc.exe
+	cp -f $DIR/libvpx-build-IMac64/vpxdec $DIR/libvpx-tester/TestFolder_64Bit/vpxdec.exe
+fi

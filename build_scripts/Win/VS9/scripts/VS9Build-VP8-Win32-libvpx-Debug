@@ -1,0 +1,6 @@
+rm -r libvpx-vs9-build-Win32-Debug
+mkdir libvpx-vs9-build-Win32-Debug
+cd libvpx-vs9-build-Win32-Debug
+chmod -R 777 ../libvpx
+../libvpx/configure --target=x86-win32-vs9 --enable-static-msvcrt --enable-mem-tracker --enable-error-concealment
+make

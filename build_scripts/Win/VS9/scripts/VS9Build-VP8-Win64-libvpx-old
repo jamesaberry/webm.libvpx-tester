@@ -1,0 +1,6 @@
+rm -r libvpx-vs9-build-Win64-old
+mkdir libvpx-vs9-build-Win64-old
+cd libvpx-vs9-build-Win64-old
+chmod -R 777 ../libvpx-old
+../libvpx-old/configure --target=x86_64-win64-vs9 --enable-static-msvcrt
+make

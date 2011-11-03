@@ -1,0 +1,6 @@
+rm -r libvpx-build-Imac32-Debug-icc
+mkdir libvpx-build-Imac32-Debug-icc
+cd libvpx-build-Imac32-Debug-icc
+chmod -R 777 ../libvpx
+../libvpx/configure --target=x86-darwin9-icc --disable-install-docs --enable-mem-tracker --enable-debug-libs
+make

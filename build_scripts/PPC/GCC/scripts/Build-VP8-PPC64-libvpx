@@ -1,0 +1,6 @@
+rm -r libvpx-build-PPC64
+mkdir libvpx-build-PPC64
+cd libvpx-build-PPC64
+chmod -R 777 ../libvpx
+../libvpx/configure --target=ppc64-darwin9-gcc --enable-error-concealment
+make

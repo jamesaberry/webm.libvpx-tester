@@ -1,0 +1,6 @@
+rm -r libvpx-build-Lin32-old
+mkdir libvpx-build-Lin32-old
+cd libvpx-build-Lin32-old
+chmod -R 777 ../libvpx-old
+../libvpx-old/configure --target=x86-linux-gcc
+make

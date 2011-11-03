@@ -1,0 +1,6 @@
+rm -r libvpx-build-Arm6
+mkdir libvpx-build-Arm6
+cd libvpx-build-Arm6
+chmod -R 777 ../libvpx
+../libvpx/configure --target=armv6-linux-gcc --enable-error-concealment
+make

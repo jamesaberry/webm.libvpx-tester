@@ -1,0 +1,293 @@
+DIR=$(cd `dirname $0` && pwd)
+
+OldDef=0
+NewDef=0
+OldVersion=aa926fbd273c7d62d43487f73f2f3cdce7bec5a8
+NewVersion=0
+BUILD_32=1
+BUILD_64=1
+LOOP_NUM=1
+GIT=0
+
+#parse input
+for i in $@
+do 
+	if [ $OldDef -eq "1" ]
+	then
+		OldVersion=$i
+		echo "OldVersion=$OldVersion"
+		OldDef=0
+	fi
+	
+	if [ $NewDef -eq "1" ]
+	then
+		NewVersion=$i
+		echo "NewVersion=$NewVersion"
+		NewDef=1
+	fi
+	
+	if [ $i = "-GIT" ]
+	then
+		echo "GIT=1"
+		GIT=0
+	fi
+	
+	if [ $i = "-32" ]
+	then
+		echo "BUILD_64=0"
+		BUILD_64=0
+	fi
+	
+	if [ $i = "-64" ]
+	then
+		echo "BUILD_32=0"
+		BUILD_32=0
+	fi
+	
+	if [ $i = "-old" ]
+	then
+		OldDef=1
+	fi
+	
+	if [ $i = "-new" ]
+	then
+		NewDef=1
+	fi
+	
+	if [ $i = "-help" -o  $i = "--help" -o  $i = "help" ]
+	then
+		echo "Usage: libvpx-full-build-win <Options>
+		
+		<Options>
+		
+		-new (commit hash)	build new using this hash
+		-old (commit hash)	build old using this hash
+		-64					build 64 bit only
+		-32					build 32 bit only"
+		
+	fi
+done
+
+if [ $BUILD_32 = 1 ]
+then
+	cd $DIR
+	source /opt/intel/composerxe-2011.3.174/bin/iccvars.sh ia32
+
+	#Clean any prexising libvpx-tester libs
+	rm -f $DIR/libvpx-tester/MasterFile/lib/libvpx_Lin32-icc.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemLin32_icc.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewLin32_icc.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldLin32_icc.a
+
+	#Clean any prexising libvpx-tester exes
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit_ICC/VP8_Tester_API_32Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit_ICC/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit_ICC/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_32Bit_ICC/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe
+	
+	#if set to override current check out get fresh
+	if [ GIT = 1 ]
+	then
+		#Clone and set up clean versions of libvpx libvpx-old and libvpx-tester
+		git clone http://git.chromium.org/webm/libvpx.git
+		if [ $NewVersion -ne 0 ]
+		then
+			cd libvpx
+			git checkout $NewVersion
+			cd ..
+		fi
+		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+
+	#if directories dont exist check them out
+	if [ ! -d "$DIR/libvpx/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git
+		if [ $NewVersion -ne 0 ]
+		then
+			cd libvpx
+			git checkout $NewVersion
+			cd ..
+		fi
+	fi
+
+	if [ ! -d "$DIR/libvpx-old/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+	fi
+
+	if [ ! -d "$DIR/libvpx-tester/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+	
+	#Set Permisions
+	chmod 777 /scripts/Build-VP8-Lin32-libvpx-icc
+	chmod 777 /scripts/Build-VP8-Lin32-libvpx-Debug-icc
+	chmod 777 /scripts/Build-VP8-Lin32-libvpx-old-icc
+
+	#Build libvpx variations
+	./scripts/Build-VP8-Lin32-libvpx-icc
+	./scripts/Build-VP8-Lin32-libvpx-Debug-icc
+	./scripts/Build-VP8-Lin32-libvpx-old-icc
+
+	#make sure lib directories exist
+	mkdir $DIR/libvpx-tester/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib
+
+	#copy new libraries for the tester to use
+	cp -f $DIR/libvpx-build-Lin32-icc/libvpx.a $DIR/libvpx-tester/MasterFile/lib/libvpx_Lin32_icc.a
+	cp -f $DIR/libvpx-build-Lin32-Debug-icc/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemLin32_icc.a
+	cp -f $DIR/libvpx-build-Lin32-icc/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewLin32_icc.a
+	cp -f $DIR/libvpx-build-Lin32-old-icc/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldLin32_icc.a
+
+	#make sure include folders exist
+	mkdir $DIR/libvpx-tester/MasterFile/include/release-32
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32
+
+	#copy include files over
+	cp -f $DIR/libvpx-build-Lin32-icc/vpx_config.h $DIR/libvpx-tester/MasterFile/include/release-32/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin32-icc/vpx_version.h $DIR/libvpx-tester/MasterFile/include/release-32/vpx_version.h
+	
+	cp -f $DIR/libvpx-build-Lin32-icc/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin32-icc/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_version.h
+	
+	cp -f $DIR/libvpx-build-Lin32-old-icc/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin32-old-icc/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_version.h
+	
+	cp -f $DIR/libvpx-build-Lin32-Debug-icc/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin32-Debug-icc/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_version.h
+
+	cd $DIR/libvpx-tester/
+	chmod 777 make_Linux_API_32Bit_ICC
+
+	#run the tester make scripts
+	./make_Linux_API_32Bit_ICC
+	
+	cp -f $DIR/libvpx-build-Lin32-icc/vpxenc $DIR/libvpx-tester/TestFolder_32Bit_ICC/vpxenc.exe
+	cp -f $DIR/libvpx-build-Lin32-icc/vpxdec $DIR/libvpx-tester/TestFolder_32Bit_ICC/vpxdec.exe
+fi
+
+if [ $BUILD_64 = 1 ]
+then
+	cd $DIR
+	source /opt/intel/composerxe-2011.3.174/bin/iccvars.sh intel64
+
+	#Clean any prexising libvpx-tester libs
+	rm -f $DIR/libvpx-tester/MasterFile/lib/libvpx_Lin64_icc.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemLin64_icc.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewLin64_icc.a
+	rm -f $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldLin64_icc.a
+
+	#Clean any prexising libvpx-tester exes
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit_ICC/VP8_Tester_API_64Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit_ICC/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit_ICC/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe
+	rm -f $DIR/libvpx-tester/TestFolder_64Bit_ICC/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe
+
+	if [ $BUILD_32 = 0 ]
+	then
+		if [ GIT = 1 ]
+		then
+			#Clone and set up clean versions of libvpx libvpx-old and libvpx-tester
+			git clone http://git.chromium.org/webm/libvpx.git
+			if [ $NewVersion -ne 0 ]
+				then
+				cd libvpx
+				git checkout $NewVersion
+				cd ..
+			fi
+			git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+			cd libvpx-old
+			git checkout $OldVersion
+			cd ..
+			git clone http://git.chromium.org/webm/libvpx-tester.git
+		fi
+	fi
+
+	#if directories dont exist check them out
+	if [ ! -d "$DIR/libvpx/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git
+		if [ $NewVersion -ne 0 ]
+		then
+			cd libvpx
+			git checkout $NewVersion
+			cd ..
+		fi
+	fi
+
+	if [ ! -d "$DIR/libvpx-old/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+	fi
+
+	if [ ! -d "$DIR/libvpx-tester/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+	
+	chmod 777 /scripts/Build-VP8-Lin64-libvpx-icc
+	chmod 777 /scripts/Build-VP8-Lin64-libvpx-Debug-icc
+	chmod 777 /scripts/Build-VP8-Lin64-libvpx-old-icc
+
+	#Build libvpx variations
+	./scripts/Build-VP8-Lin64-libvpx-icc
+	./scripts/Build-VP8-Lin64-libvpx-Debug-icc
+	./scripts/Build-VP8-Lin64-libvpx-old-icc
+
+	#make sure lib directories exist
+	mkdir $DIR/libvpx-tester/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib
+
+	#copy new libraries for the tester to use
+	cp -f $DIR/libvpx-build-Lin64/libvpx.a $DIR/libvpx-tester/MasterFile/lib/libvpx_Lin64_icc.a
+	cp -f $DIR/libvpx-build-Lin64-Debug/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemLin64_icc.a
+	cp -f $DIR/libvpx-build-Lin64/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewLin64_icc.a
+	cp -f $DIR/libvpx-build-Lin64-old/libvpx.a $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldLin64_icc.a
+
+	#make sure include folders exist
+	mkdir $DIR/libvpx-tester/MasterFile/include/release-64
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64
+	mkdir $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64
+
+	#copy include files over
+	cp -f $DIR/libvpx-build-Lin64-icc/vpx_config.h $DIR/libvpx-tester/MasterFile/include/release-64/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin64-icc/vpx_version.h $DIR/libvpx-tester/MasterFile/include/release-64/vpx_version.h
+
+	cp -f $DIR/libvpx-build-Lin64-icc/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin64-icc/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_version.h
+
+	cp -f $DIR/libvpx-build-Lin64-old-icc/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin64-old-icc/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_version.h
+
+	cp -f $DIR/libvpx-build-Lin64-Debug-icc/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_config.h
+	cp -f $DIR/libvpx-build-Lin64-Debug-icc/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_version.h
+
+	cd $DIR/libvpx-tester/
+	chmod 777 make_Linux_API_64Bit_ICC
+
+	#run the tester make scripts
+	./make_Linux_API_64Bit_ICC
+	
+	cp -f $DIR/libvpx-build-Lin64-icc/vpxenc $DIR/libvpx-tester/TestFolder_64Bit/vpxenc.exe
+	cp -f $DIR/libvpx-build-Lin64-icc/vpxdec $DIR/libvpx-tester/TestFolder_64Bit/vpxdec.exe
+	
+fi

@@ -1,0 +1,319 @@
+#standard install devenv path needed for libvpx install this may need to be updated depending on your installation.
+export PATH="$PATH:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/IDE:/cygdrive/c/Windows/Microsoft.NET/Framework/v3.5:/cygdrive/c/Windows/System32"
+
+DIR=$(cd `dirname $0` && pwd)
+
+OldDef=0
+NewDef=0
+OldVersion=aa926fbd273c7d62d43487f73f2f3cdce7bec5a8
+NewVersion="0"
+BUILD_32=1
+BUILD_64=1
+LOOP_NUM=1
+GIT=0
+
+#parse input
+for i in $@
+do 
+	if [ $OldDef -eq "1" ]
+	then
+		OldVersion=$i
+		echo "OldVersion=$OldVersion"
+		OldDef=0
+	fi
+	
+	if [ $NewDef -eq "1" ]
+	then
+		NewVersion=$i
+		echo "NewVersion=$NewVersion"
+		NewDef=0
+	fi
+	
+	if [ $i = "-GIT" ]
+	then
+		echo "GIT=1"
+		GIT=0
+	fi
+	
+	if [ $i = "-32" ]
+	then
+		echo "BUILD_64=0"
+		BUILD_64=0
+	fi
+	
+	if [ $i = "-64" ]
+	then
+		echo "BUILD_32=0"
+		BUILD_32=0
+	fi
+	
+	if [ $i = "-old" ]
+	then
+		OldDef=1
+	fi
+	
+	if [ $i = "-new" ]
+	then
+		NewDef=1
+	fi
+	
+	if [ $i = "-help" -o  $i = "--help" -o  $i = "help" ]
+	then
+		echo "Usage: libvpx-full-build-win <Options>
+		
+		<Options>
+		
+		-new (commit hash)	build new using this hash
+		-old (commit hash)	build old using this hash
+		-64					build 64 bit only
+		-32					build 32 bit only"
+		
+	fi
+done
+
+if [ $BUILD_32 = 1 ]
+then
+	cd "$DIR"
+
+	#Clean any prexising libvpx-tester libs
+	rm -f "$DIR/libvpx-tester/MasterFile/lib/libvpx_Win32.a"
+	rm -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemWin32.a"
+	rm -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewWin32.a"
+	rm -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldWin32.a"
+
+	#Clean any prexising libvpx-tester exes
+	rm -f "$DIR/libvpx-tester/TestFolder_32Bit/VP8_Tester_API_32Bit.exe"
+	rm -f "$DIR/libvpx-tester/TestFolder_32Bit/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe"
+	rm -f "$DIR/libvpx-tester/TestFolder_32Bit/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe"
+	rm -f "$DIR/libvpx-tester/TestFolder_32Bit/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe"
+	
+	#if set to override current check out get fresh
+	if [ GIT = 1 ]
+	then
+		#Clone and set up clean versions of libvpx libvpx-old and libvpx-tester
+		git clone http://git.chromium.org/webm/libvpx.git
+		if [ $NewVersion != 0 ]
+		then
+			cd libvpx
+			git checkout $NewVersion
+			echo "current libvpx version: $NewVersion"
+			cd ..
+		fi
+		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+	
+	#if directories dont exist check them out
+	if [ ! -d "$DIR/libvpx/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git
+			if [ $NewVersion != 0 ]
+			then
+				cd libvpx
+				git checkout $NewVersion
+				echo "current libvpx version: $NewVersion"
+				cd ..
+			fi
+	fi
+
+	if [ ! -d "$DIR/libvpx-old/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+	fi
+
+	if [ ! -d "$DIR/libvpx-tester/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+	
+	#Set Permisions
+	chmod 777 scripts/VS9Build-VP8-Win32-libvpx
+	chmod 777 scripts/VS9Build-VP8-Win32-libvpx-Debug
+	chmod 777 scripts/VS9Build-VP8-Win32-libvpx-old
+	
+	#Build libvpx variations
+	./scripts/VS9Build-VP8-Win32-libvpx
+	./scripts/VS9Build-VP8-Win32-libvpx-Debug
+	./scripts/VS9Build-VP8-Win32-libvpx-old
+	
+	#make sure lib directories exist
+	mkdir "$DIR/libvpx-tester/MasterFile/lib"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib"
+	
+	#copy new libraries for the tester to use
+	cp -f "$DIR/libvpx-vs9-build-Win32/Win32/Release/vpxmt.lib" "$DIR/libvpx-tester/MasterFile/lib/vpxmt_Win32.lib"
+	cp -f "$DIR/libvpx-vs9-build-Win32-Debug/Win32/Release/vpxmt.lib" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/vpxmtd_MemWin32.lib"
+	cp -f "$DIR/libvpx-vs9-build-Win32/Win32/Release/vpxmt.lib" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/vpxmt_NewWin32.lib"
+	cp -f "$DIR/libvpx-vs9-build-Win32-old/Win32/Release/vpxmt.lib" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/vpxmt_OldWin32.lib"
+	
+	#make sure include folders exist
+	mkdir "$DIR/libvpx-tester/MasterFile/include/release-32"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32"
+
+	#copy include files over
+	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_config.h" "$DIR/libvpx-tester/MasterFile/include/release-32/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_version.h" "$DIR/libvpx-tester/MasterFile/include/release-32/vpx_version.h"
+	
+	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_version.h"
+	
+	cp -f "$DIR/libvpx-vs9-build-Win32-old/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32-old/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_version.h"
+	
+	cp -f "$DIR/libvpx-vs9-build-Win32-Debug/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32-Debug/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_version.h"
+	
+	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_32Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_32Bit(2008).sln" /t:Rebuild /p:Configuration=Release
+	
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\VP8DebugPlugin_32Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\VP8DebugPlugin_32Bit(2008).sln" /t:Rebuild /p:Configuration=Debug
+	
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_New32Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_New32Bit(2008).sln" /t:Rebuild /p:Configuration=Release
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_Old32Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_Old32Bit(2008).sln" /t:Rebuild /p:Configuration=Release
+	
+	mkdir "$DIR/libvpx-tester/TestFolder_32Bit"
+	cp -f "$DIR/libvpx-vs9-build-Win32/Win32/Release/vpxenc.exe" "$DIR/libvpx-tester/TestFolder_32Bit/vpxenc.exe"
+	cp -f "$DIR/libvpx-vs9-build-Win32/Win32/Release/vpxdec.exe" "$DIR/libvpx-tester/TestFolder_32Bit/vpxdec.exe"
+	cp -f "$DIR/libvpx-tester/MasterFile/build/build-win32/VP8_Tester_API_32Bit.exe" "$DIR/libvpx-tester/TestFolder_32Bit/VP8_Tester_API_32Bit.exe"
+	cp -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-win32/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe" "$DIR/libvpx-tester/TestFolder_32Bit/VP8vNewest_PlugIn_DLib_DMode_32Bit.exe"
+	cp -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win32-new/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe" "$DIR/libvpx-tester/TestFolder_32Bit/VP8vNewest_PlugIn_RLib_RMode_32Bit.exe"
+	cp -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win32-old/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe" "$DIR/libvpx-tester/TestFolder_32Bit/VP8vOldest_PlugIn_RLib_RMode_32Bit.exe"
+fi
+
+if [ $BUILD_64 = 1 ]
+then
+	cd "$DIR"
+
+	#Clean any prexising libvpx-tester libs
+	rm -f "$DIR/libvpx-tester/MasterFile/lib/libvpx_Win64.a"
+	rm -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/libvpx_MemWin64.a"
+	rm -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/libvpx_NewWin64.a"
+	rm -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/libvpx_OldWin64.a"
+
+	#Clean any prexising libvpx-tester exes
+	rm -f "$DIR/libvpx-tester/TestFolder_64Bit/VP8_Tester_API_64Bit.exe"
+	rm -f "$DIR/libvpx-tester/TestFolder_64Bit/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe"
+	rm -f "$DIR/libvpx-tester/TestFolder_64Bit/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe"
+	rm -f "$DIR/libvpx-tester/TestFolder_64Bit/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe"
+	
+	if [ $BUILD_32 = 0 ]
+	then
+		if [ GIT = 1 ]
+		then
+			#Clone and set up clean versions of libvpx libvpx-old and libvpx-tester
+			git clone http://git.chromium.org/webm/libvpx.git
+			if [ $NewVersion != 0 ]
+			then
+				cd libvpx
+				git checkout $NewVersion
+				echo "current libvpx version: $NewVersion"
+				cd ..
+			fi
+			git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+			cd libvpx-old
+			git checkout $OldVersion
+			cd ..
+			git clone http://git.chromium.org/webm/libvpx-tester.git
+		fi
+	fi
+	
+	#if directories dont exist check them out
+	if [ ! -d "$DIR/libvpx/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git
+			if [ $NewVersion != 0 ]
+			then
+				cd libvpx
+				git checkout $NewVersion
+				echo "current libvpx version: $NewVersion"
+				cd ..
+			fi
+	fi
+
+	if [ ! -d "$DIR/libvpx-old/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx.git libvpx-old
+		cd libvpx-old
+		git checkout $OldVersion
+		cd ..
+	fi
+
+	if [ ! -d "$DIR/libvpx-tester/" ]
+	then
+    		git clone http://git.chromium.org/webm/libvpx-tester.git
+	fi
+	
+	#Set Permisions
+	chmod 777 scripts/VS9Build-VP8-Win64-libvpx
+	chmod 777 scripts/VS9Build-VP8-Win64-libvpx-Debug
+	chmod 777 scripts/VS9Build-VP8-Win64-libvpx-old
+
+	#Build libvpx variations
+	./scripts/VS9Build-VP8-Win64-libvpx
+	./scripts/VS9Build-VP8-Win64-libvpx-Debug
+	./scripts/VS9Build-VP8-Win64-libvpx-old
+	
+	#make sure lib directories exist
+	mkdir "$DIR/libvpx-tester/MasterFile/lib"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib"
+
+	#copy new libraries for the tester to use
+	cp -f "$DIR/libvpx-vs9-build-Win64/x64/Release/vpxmt.lib" "$DIR/libvpx-tester/MasterFile/lib/vpxmt_Win64.lib"
+	cp -f "$DIR/libvpx-vs9-build-Win64-Debug/x64/Release/vpxmt.lib" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/lib/vpxmtd_MemWin64.lib"
+	cp -f "$DIR/libvpx-vs9-build-Win64/x64/Release/vpxmt.lib" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/newlib/vpxmt_NewWin64.lib"
+	cp -f "$DIR/libvpx-vs9-build-Win64-old/x64/Release/vpxmt.lib" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/oldlib/vpxmt_OldWin64.lib"
+		
+	#make sure include folders exist
+	mkdir "$DIR/libvpx-tester/MasterFile/include/release-64"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64"
+	mkdir "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64"
+	
+	#copy include files over
+	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_config.h" "$DIR/libvpx-tester/MasterFile/include/release-64/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_version.h" "$DIR/libvpx-tester/MasterFile/include/release-64/vpx_version.h"
+	
+	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_version.h"
+	
+	cp -f "$DIR/libvpx-vs9-build-Win64-old/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64-old/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_version.h"
+	
+	cp -f "$DIR/libvpx-vs9-build-Win64-Debug/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_config.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64-Debug/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_version.h"
+
+	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_64Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_64Bit(2008).sln" /t:Rebuild /p:Configuration=Release
+
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\VP8DebugPlugin_64Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8DebugPlugIn\MasterFile\VP8DebugPlugin_64Bit(2008).sln" /t:Rebuild /p:Configuration=Debug
+	
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_New64Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_New64Bit(2008).sln" /t:Rebuild /p:Configuration=Release
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_Old64Bit(2008).sln" /t:Clean
+	"MSBuild.exe" "libvpx-tester\SupportingPlugInFiles\VP8ReleasePlugIn\MasterFile\VP8ReleasePlugin_Old64Bit(2008).sln" /t:Rebuild /p:Configuration=Release
+	
+	mkdir "$DIR/libvpx-tester/TestFolder_64Bit"
+	cp -f "$DIR/libvpx-vs9-build-Win64/x64/Release/vpxenc.exe" "$DIR/libvpx-tester/TestFolder_64Bit/vpxenc.exe"
+	cp -f "$DIR/libvpx-vs9-build-Win64/x64/Release/vpxdec.exe" "$DIR/libvpx-tester/TestFolder_64Bit/vpxdec.exe"
+	cp -f "$DIR/libvpx-tester/MasterFile/build/build-win64/VP8_Tester_API_64Bit.exe" "$DIR/libvpx-tester/TestFolder_64Bit/VP8_Tester_API_64Bit.exe"
+	cp -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/build/build-win64/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe" "$DIR/libvpx-tester/TestFolder_64Bit/VP8vNewest_PlugIn_DLib_DMode_64Bit.exe"
+	cp -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win64-new/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe" "$DIR/libvpx-tester/TestFolder_64Bit/VP8vNewest_PlugIn_RLib_RMode_64Bit.exe"
+	cp -f "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/build/build-win64-old/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe" "$DIR/libvpx-tester/TestFolder_64Bit/VP8vOldest_PlugIn_RLib_RMode_64Bit.exe"
+
+fi

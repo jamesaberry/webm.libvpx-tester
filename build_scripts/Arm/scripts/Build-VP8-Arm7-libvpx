@@ -1,0 +1,6 @@
+rm -r libvpx-build-Arm7
+mkdir libvpx-build-Arm7
+cd libvpx-build-Arm7
+chmod -R 777 ../libvpx
+../libvpx/configure --target=armv7-linux-gcc --enable-error-concealment
+make

@@ -1,0 +1,6 @@
+rm -r libvpx-build-PPC32-old
+mkdir libvpx-build-PPC32-old
+cd libvpx-build-PPC32-old
+chmod -R 777 ../libvpx-old
+../libvpx-old/configure --target=ppc32-darwin9-gcc
+make

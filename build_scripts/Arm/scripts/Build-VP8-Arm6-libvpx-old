@@ -1,0 +1,6 @@
+rm -r libvpx-build-Arm6-old
+mkdir libvpx-build-Arm6-old
+cd libvpx-build-Arm6-old
+chmod -R 777 ../libvpx-old
+../libvpx-old/configure --target=armv6-linux-gcc
+make

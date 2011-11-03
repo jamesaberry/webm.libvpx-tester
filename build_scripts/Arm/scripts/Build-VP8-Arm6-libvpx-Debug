@@ -1,0 +1,6 @@
+rm -r libvpx-build-Arm6-Debug
+mkdir libvpx-build-Arm6-Debug
+cd libvpx-build-Arm6-Debug
+chmod -R 777 ../libvpx
+../libvpx/configure --target=armv6-linux-gcc --disable-install-docs --enable-mem-tracker --enable-debug-libs
+make

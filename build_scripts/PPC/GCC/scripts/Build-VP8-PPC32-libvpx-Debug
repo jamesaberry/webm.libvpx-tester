@@ -1,0 +1,6 @@
+rm -r libvpx-build-PPC32-Debug
+mkdir libvpx-build-PPC32-Debug
+cd libvpx-build-PPC32-Debug
+chmod -R 777 ../libvpx
+../libvpx/configure --target=ppc32-darwin9-gcc --disable-install-docs --enable-mem-tracker --enable-debug-libs
+make

@@ -1,0 +1,6 @@
+rm -r libvpx-build-Imac32
+mkdir libvpx-build-Imac32
+cd libvpx-build-Imac32
+chmod -R 777 ../libvpx
+../libvpx/configure --target=x86-darwin9-gcc --enable-error-concealment
+make

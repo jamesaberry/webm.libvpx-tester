@@ -1,0 +1,12 @@
+export PATH="$PATH:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/IDE:/cygdrive/c/Program Files (x86)/Common Files/Intel/shared files/ia32/Bin/"
+
+rm -r libvpx-vs9-build-Win32-old-icc
+mkdir libvpx-vs9-build-Win32-old-icc
+cd libvpx-vs9-build-Win32-old-icc
+chmod -R 777 ../libvpx-old
+../libvpx-old/configure --target=x86-win32-vs9 --enable-static-msvcrt
+make
+ICProjConvert120.exe vpx.sln decode_to_md5.vcproj decode_with_drops.vcproj error_resilient.vcproj force_keyframe.vcproj obj_int_extract.vcproj postproc.vcproj simple_decoder.vcproj simple_encoder.vcproj twopass_encoder.vcproj vp8_scalable_patterns.vcproj vp8_set_maps.vcproj vp8cx_set_ref.vcproj vpx.vcproj vpxdec.vcproj vpxenc.vcproj /IC /f
+rm -r Win32
+devenv /clean Release vpx.sln
+devenv /rebuild Release vpx.sln /projectconfig Release

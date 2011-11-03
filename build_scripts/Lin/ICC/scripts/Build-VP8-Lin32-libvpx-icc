@@ -1,0 +1,7 @@
+rm -r libvpx-build-Lin32-icc
+mkdir libvpx-build-Lin32-icc
+cd libvpx-build-Lin32-icc
+chmod -R 777 ../libvpx
+../libvpx/configure --target=x86-linux-icc --enable-error-concealment
+make
+

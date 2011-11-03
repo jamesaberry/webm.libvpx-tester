@@ -1,0 +1,6 @@
+rm -r libvpx-build-Arm7-old
+mkdir libvpx-build-Arm7-old
+cd libvpx-build-Arm7-old
+chmod -R 777 ../libvpx-old
+../libvpx-old/configure --target=armv7-linux-gcc
+make

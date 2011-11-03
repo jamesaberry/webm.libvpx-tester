@@ -1,0 +1,6 @@
+rm -r libvpx-build-Imac64-old
+mkdir libvpx-build-Imac64-old
+cd libvpx-build-Imac64-old
+chmod -R 777 ../libvpx-old
+../libvpx-old/configure --target=x86_64-darwin9-gcc
+make

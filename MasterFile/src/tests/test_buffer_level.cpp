@@ -15,16 +15,12 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
     std::string EncForm = argv[5];
 
     int speed = 0;
-    int StartingBufferLvl = 4;
-    int MaximumBufferLevel = 6;
+    int StartingBufferLvl;
+    int MaximumBufferLevel;
 
     char CharCalcBufferSize[32];
     char CharCalcPrebuffer[32];
     char CharBitRate[32];
-
-    vpxt_itoa_custom(MaximumBufferLevel * 1000, CharCalcBufferSize, 10);
-    vpxt_itoa_custom(StartingBufferLvl * 100, CharCalcPrebuffer, 10);
-    vpxt_itoa_custom(BitRate, CharBitRate, 10);
 
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
@@ -97,8 +93,12 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
     int CompressInt = opt.allow_df;
 
     opt.target_bandwidth = BitRate;
-    opt.starting_buffer_level = StartingBufferLvl;
-    opt.maximum_buffer_size = MaximumBufferLevel;
+    StartingBufferLvl = opt.starting_buffer_level;
+    MaximumBufferLevel = opt.maximum_buffer_size;
+
+    vpxt_itoa_custom(MaximumBufferLevel, CharCalcBufferSize, 10);
+    vpxt_itoa_custom(StartingBufferLvl, CharCalcPrebuffer, 10);
+    vpxt_itoa_custom(BitRate, CharBitRate, 10);
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == TEST_ONLY)
@@ -124,7 +124,7 @@ int test_buffer_level(int argc, const char *const *argv, const std::string &Work
         return 10;
     }
 
-    int PassFail = vpxt_check_pbm(BufferLevelWorksOut.c_str(), BitRate, MaximumBufferLevel * 1000, StartingBufferLvl * 1000);
+    int PassFail = vpxt_check_pbm(BufferLevelWorksOut.c_str(), BitRate, MaximumBufferLevel, StartingBufferLvl);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 

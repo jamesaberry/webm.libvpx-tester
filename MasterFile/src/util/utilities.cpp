@@ -1980,15 +1980,15 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     //opt.gold_q = 28;
     opt.key_freq = 999999;
     //opt.key_q = 12;
-    opt.maximum_buffer_size = 6;
+    opt.maximum_buffer_size = 6000;
     opt.Mode = 2;
     opt.noise_sensitivity = 0;
-    opt.optimal_buffer_level = 5;
+    opt.optimal_buffer_level = 5000;
     //opt.play_alternate = 1; //this may be being used incorrectly for EnableAutoAltRef for some reason
     opt.resample_down_water_mark = 30;
     opt.resample_up_water_mark = 60;
     opt.Sharpness = 0;
-    opt.starting_buffer_level = 4;
+    opt.starting_buffer_level = 4000;
     opt.target_bandwidth = 40;
     opt.two_pass_vbrbias = 50;
     opt.two_pass_vbrmax_section = 400;
@@ -2041,9 +2041,9 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
     cfg->rc_max_quantizer = coreCfg.worst_allowed_q;
     cfg->rc_overshoot_pct = coreCfg.over_shoot_pct;
     cfg->rc_undershoot_pct = coreCfg.under_shoot_pct;
-    cfg->rc_buf_sz = coreCfg.maximum_buffer_size * 1000;
-    cfg->rc_buf_initial_sz  = coreCfg.starting_buffer_level * 1000;
-    cfg->rc_buf_optimal_sz  = coreCfg.optimal_buffer_level * 1000;
+    cfg->rc_buf_sz = coreCfg.maximum_buffer_size;
+    cfg->rc_buf_initial_sz  = coreCfg.starting_buffer_level;
+    cfg->rc_buf_optimal_sz  = coreCfg.optimal_buffer_level;
     cfg->rc_2pass_vbr_bias_pct      = coreCfg.two_pass_vbrbias;
     cfg->rc_2pass_vbr_minsection_pct    = coreCfg.two_pass_vbrmin_section;
     cfg->rc_2pass_vbr_maxsection_pct  = coreCfg.two_pass_vbrmax_section;
@@ -2278,9 +2278,9 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     //opt.FrameRate = rand()% 101; //valid Range:
     //////////////////////////////////////////////////////////////////////////////////////
 
-    opt.maximum_buffer_size = 6;
-    opt.starting_buffer_level = 4;
-    opt.optimal_buffer_level = 5;
+    opt.maximum_buffer_size = 6000;
+    opt.starting_buffer_level = 4000;
+    opt.optimal_buffer_level = 5000;
     opt.two_pass_vbrmin_section = 400;
     opt.two_pass_vbrmax_section = 0;
 
@@ -2407,6 +2407,8 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile)
     infile2 >> Garbage;
     infile2 >> opt.end_usage;
     infile2 >> Garbage;
+    infile2 >> opt.over_shoot_pct;
+    infile2 >> Garbage;
     infile2 >> opt.under_shoot_pct;
     infile2 >> Garbage;
     infile2 >> opt.starting_buffer_level;
@@ -2499,6 +2501,7 @@ int vpxt_output_settings(const char *outputFile, VP8_CONFIG opt)
     outfile <<  opt.auto_key << " AutoKey\n";
     outfile <<  opt.key_freq << " KeyFreq\n";
     outfile <<  opt.end_usage << " EndUsage\n";
+    outfile <<  opt.over_shoot_pct << " OverShootPct\n";
     outfile <<  opt.under_shoot_pct << " UnderShootPct\n";
     outfile <<  opt.starting_buffer_level << " StartingBufferLevel\n";
     outfile <<  opt.optimal_buffer_level << " OptimalBufferLevel\n";
@@ -2562,6 +2565,7 @@ int vpxt_output_compatable_settings(const char *outputFile, VP8_CONFIG opt, int 
     outfile <<  opt.auto_key << " AutoKey\n";
     outfile <<  opt.key_freq << " KeyFreq\n";
     outfile <<  opt.end_usage << " EndUsage\n";
+    outfile <<  opt.over_shoot_pct << " OverShootPct\n";
     outfile <<  opt.under_shoot_pct << " UnderShootPct\n";
     outfile <<  opt.starting_buffer_level << " StartingBufferLevel\n";
     outfile <<  opt.optimal_buffer_level << " OptimalBufferLevel\n";
@@ -2761,7 +2765,7 @@ int vpxt_output_settings_ivfenc(const char *outputFile, VP8_CONFIG opt)
     outfile << "StartingBufferLevel " << opt.starting_buffer_level <<  "\n";
     outfile << "OptimalBufferLevel " << opt.optimal_buffer_level <<  "\n";
     outfile << "MaximumBufferSize " << opt.maximum_buffer_size <<  "\n";
-    outfile << " FixedQ " << opt.fixed_q <<  "\n";
+    outfile << "FixedQ " << opt.fixed_q <<  "\n";
     outfile << "WorstAllowedQ " << opt.worst_allowed_q <<  "\n";
     outfile << "BestAllowedQ " << opt.best_allowed_q <<  "\n";
     outfile << " llowSpatialResampling " << opt.allow_spatial_resampling <<  "\n";
@@ -2879,9 +2883,9 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
 
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--undershoot-pct=%i ", opt.under_shoot_pct);                    //Datarate undershoot (min) target (%)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--overshoot-pct=%i ", cfg.rc_overshoot_pct);                    //Datarate overshoot (max) target (%)
-    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-sz=%i ", opt.maximum_buffer_size * 1000);                 //Client buffer size (ms)
-    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-initial-sz=%i ", opt.starting_buffer_level * 1000);       //Client initial buffer size (ms)
-    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-optimal-sz=%i ", opt.optimal_buffer_level * 1000);        //Client optimal buffer size (ms)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-sz=%i ", opt.maximum_buffer_size);                        //Client buffer size (ms)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-initial-sz=%i ", opt.starting_buffer_level);              //Client initial buffer size (ms)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--buf-optimal-sz=%i ", opt.optimal_buffer_level);               //Client optimal buffer size (ms)
 
     //Twopass Rate Control Options:
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--bias-pct=%i ", opt.two_pass_vbrbias);                        //CBR/VBR bias (0=CBR, 100=VBR)

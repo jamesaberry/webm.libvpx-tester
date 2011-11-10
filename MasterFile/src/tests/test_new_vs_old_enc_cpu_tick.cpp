@@ -176,7 +176,7 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
             opt.Mode = Mode;
             unsigned int Time = vpxt_time_compress(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, EncForm);
 
-            if (Time == -1)
+            if (Time == -1 || Time == 0)
             {
                 fclose(fp);
                 record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -2304,7 +2304,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
         std::cout << "AutoKey " << opt.auto_key << "\n";
         std::cout << "KeyFreq " << opt.key_freq << "\n";
         std::cout << "EndUsage " << opt.end_usage << "\n";
-        std::cout << "OverShootPct " << opt.over_shoot_pct << "\n"
+        std::cout << "OverShootPct " << opt.over_shoot_pct << "\n";
         std::cout << "UnderShootPct " << opt.under_shoot_pct << "\n";
         std::cout << "StartingBufferLevel " << opt.starting_buffer_level << "\n";
         std::cout << "OptimalBufferLevel " << opt.optimal_buffer_level << "\n";
@@ -2347,7 +2347,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
         std::cerr << "AutoKey " << opt.auto_key << "\n";
         std::cerr << "KeyFreq " << opt.key_freq << "\n";
         std::cerr << "EndUsage " << opt.end_usage << "\n";
-        std::cout << "OverShootPct " << opt.over_shoot_pct << "\n"
+        std::cout << "OverShootPct " << opt.over_shoot_pct << "\n";
         std::cerr << "UnderShootPct " << opt.under_shoot_pct << "\n";
         std::cerr << "StartingBufferLevel " << opt.starting_buffer_level << "\n";
         std::cerr << "OptimalBufferLevel " << opt.optimal_buffer_level << "\n";

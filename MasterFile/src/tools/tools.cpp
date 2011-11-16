@@ -6672,20 +6672,43 @@ int tool_random_multi_test(int argc, const char *const *argv)
     std::string DoneStr = "done";
     char inputBuffer[255];
     std::vector<int> ValidTestNumbers;
-    vpxt_on_error_output();
-    printf("\nPlease input test names or numbers to include (\"done\" to exit):\n");
+    int argparse = 5;
+    int input_done = 0;
 
-    while (DoneStr.compare(inputBuffer) != 0)
+    //parse command line if done is found skip manual input
+    while(argparse < argc)
     {
-        std::cin.getline(inputBuffer, 255);
-        int TestNumber = vpxt_identify_test(inputBuffer);
+        int TestNumber = vpxt_identify_test(argv[argparse]);
 
         if (TestNumber > 0 && TestNumber <= MAXTENUM)
             ValidTestNumbers.push_back(TestNumber);
         else
         {
             if (DoneStr.compare(inputBuffer))
-                printf("Invaild Entry\n");
+                input_done=1;
+        }
+
+        argparse++;
+
+    }
+
+    if(!input_done)
+    {
+        vpxt_on_error_output();
+        printf("\nPlease input test names or numbers to include (\"done\" to exit):\n");
+
+        while (DoneStr.compare(inputBuffer) != 0)
+        {
+            std::cin.getline(inputBuffer, 255);
+            int TestNumber = vpxt_identify_test(inputBuffer);
+
+            if (TestNumber > 0 && TestNumber <= MAXTENUM)
+                ValidTestNumbers.push_back(TestNumber);
+            else
+            {
+                if (DoneStr.compare(inputBuffer))
+                    printf("Invaild Entry\n");
+            }
         }
     }
 

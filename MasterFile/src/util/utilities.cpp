@@ -2891,7 +2891,7 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core, const char *input_ap
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--width=%i ", opt.Width);                                       //Frame width
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--height=%i ", opt.Height);                                     //Frame height
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--timebase=%i/%i ", cfg.g_timebase.num, cfg.g_timebase.den);    //Stream timebase (frame duration)
-    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--fps=%i/%i ", cfg.g_timebase.den / 2, cfg.g_timebase.num);      //Stream frame rate (rate/scale)
+    endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--fps=%i/%i ", cfg.g_timebase.den, cfg.g_timebase.num);      //Stream frame rate (rate/scale)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz, "--error-resilient=%i ", opt.error_resilient_mode);              //Enable error resiliency features
 
     if (opt.allow_lag == 0)

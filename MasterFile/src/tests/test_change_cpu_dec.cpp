@@ -188,7 +188,7 @@ int test_change_cpu_dec(int argc, const char *const *argv, const std::string &Wo
 
                 tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
-                int lngRC = vpxt_compare_enc(DecompressonVector[CurrentDecFile-1].c_str(), DecompressonVector[CurrentDecFile].c_str());
+                int lngRC = vpxt_compare_enc(DecompressonVector[CurrentDecFile-1].c_str(), DecompressonVector[CurrentDecFile].c_str(), 0);
 
                 if (lngRC >= 0)
                 {

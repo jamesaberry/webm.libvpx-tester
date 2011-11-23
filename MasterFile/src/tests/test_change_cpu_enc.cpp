@@ -185,7 +185,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
                 tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
-                int lngRC = vpxt_compare_enc(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str());
+                int lngRC = vpxt_compare_enc(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str(), 0);
 
                 if (lngRC >= 0)
                 {
@@ -338,7 +338,7 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
                     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
 
-                    int lngRC = vpxt_compare_enc(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str());
+                    int lngRC = vpxt_compare_enc(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str(), 0);
 
                     if (lngRC >= 0)
                     {

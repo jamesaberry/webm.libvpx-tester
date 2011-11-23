@@ -18459,7 +18459,7 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 
     return returnval;
 }
-int vpxt_compare_enc(const char *inputFile1, const char *inputFile2)
+int vpxt_compare_enc(const char *inputFile1, const char *inputFile2, int fullcheck)
 {
     ////Returns:
     //-1 if files are identical
@@ -18682,28 +18682,62 @@ int vpxt_compare_enc(const char *inputFile1, const char *inputFile2)
             fclose(infile_2);
 
             if (frame_avail_1 == frame_avail_2)
-                return -1;
+                return returnval;
             else
                 return currentVideoFrame + 1;
         }
 
         if (memcmp(buf_1, buf_2, buf_sz_1) != 0)
         {
-            if (input_1.nestegg_ctx)
-                nestegg_destroy(input_1.nestegg_ctx);
+            if(fullcheck)
+            {
+                printf("\nFrame: %i Not Identical",currentVideoFrame);
 
-            if (input_2.nestegg_ctx)
-                nestegg_destroy(input_2.nestegg_ctx);
+                if(returnval == -1)
+                    returnval = currentVideoFrame + 1;
 
-            if (input_1.kind != WEBM_FILE)
-                free(buf_1);
+                char intchar[56];
+                vpxt_itoa_custom(currentVideoFrame, intchar, 10);
 
-            if (input_2.kind != WEBM_FILE)
-                free(buf_2);
+                //write different frames out
+                std::string first_file_frame;
+                vpxt_remove_file_extension(inputFile1, first_file_frame);
+                first_file_frame.append("Frame");
+                first_file_frame.append(intchar);
+                first_file_frame.append(".raw");
+                FILE *first_file_frame_file = fopen(first_file_frame.c_str(), "w");
 
-            fclose(infile_1);
-            fclose(infile_2);
-            return currentVideoFrame + 1;
+                std::string second_file_frame;
+                vpxt_remove_file_extension(inputFile2, second_file_frame);
+                second_file_frame.append("Frame");
+                second_file_frame.append(intchar);
+                second_file_frame.append(".raw");
+                FILE *second_file_frame_file = fopen(second_file_frame.c_str(), "w");
+
+                fwrite(buf_1, buf_sz_1, 1, first_file_frame_file);
+                fwrite(buf_2, buf_sz_2, 1, second_file_frame_file);
+
+                fclose(first_file_frame_file);
+                fclose(second_file_frame_file);
+            }
+            else
+            {
+                if (input_1.nestegg_ctx)
+                    nestegg_destroy(input_1.nestegg_ctx);
+
+                if (input_2.nestegg_ctx)
+                    nestegg_destroy(input_2.nestegg_ctx);
+
+                if (input_1.kind != WEBM_FILE)
+                    free(buf_1);
+
+                if (input_2.kind != WEBM_FILE)
+                    free(buf_2);
+
+                fclose(infile_1);
+                fclose(infile_2);
+                return currentVideoFrame + 1;
+            }
         }
 
         currentVideoFrame++;

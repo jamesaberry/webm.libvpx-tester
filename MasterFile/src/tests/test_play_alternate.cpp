@@ -136,7 +136,7 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
         return 10;
     }
 
-    int lngRC = vpxt_compare_enc(PlayAlternate2.c_str(), PlayAlternate1.c_str());
+    int lngRC = vpxt_compare_enc(PlayAlternate2.c_str(), PlayAlternate1.c_str(), 0);
 
     int fail = 0;
 

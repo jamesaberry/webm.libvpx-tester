@@ -199,7 +199,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     vpxt_file_name(CompArnr3.c_str(), CompArnr3Name, 0);
 
     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr1AltRef0Name, CompArnr1Name);
-    int Compare1 = vpxt_compare_enc(CompArnr1AltRef0.c_str(), CompArnr1.c_str());
+    int Compare1 = vpxt_compare_enc(CompArnr1AltRef0.c_str(), CompArnr1.c_str(), 0);
 
     if (Compare1 >= 0)
         tprintf(PRINT_BTH, "\n Files differ at frame: %i\n", Compare1);
@@ -207,7 +207,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         tprintf(PRINT_BTH, "\n Files are identical\n");
 
     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr1Name, CompArnr2Name);
-    int Compare2 = vpxt_compare_enc(CompArnr1.c_str(), CompArnr2.c_str());
+    int Compare2 = vpxt_compare_enc(CompArnr1.c_str(), CompArnr2.c_str(), 0);
 
     if (Compare2 >= 0)
         tprintf(PRINT_BTH, "\n Files differ at frame: %i\n", Compare2);
@@ -215,7 +215,7 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         tprintf(PRINT_BTH, "\n Files are identical\n");
 
     tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr2Name, CompArnr3Name);
-    int Compare3 = vpxt_compare_enc(CompArnr2.c_str(), CompArnr3.c_str());
+    int Compare3 = vpxt_compare_enc(CompArnr2.c_str(), CompArnr3.c_str(), 0);
 
     if (Compare3 >= 0)
         tprintf(PRINT_BTH, "\n Files differ at frame: %i\n", Compare3);

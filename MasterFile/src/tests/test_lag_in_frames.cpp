@@ -169,8 +169,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
     double TenPer1 = LagInFrames1PSNR / 10;
     double TenPer2 = LagInFrames2PSNR / 10;
 
-    int lngRC1 = vpxt_compare_enc(LagInFrames0.c_str(), LagInFrames1.c_str());
-    int lngRC2 = vpxt_compare_enc(LagInFrames1.c_str(), LagInFrames2.c_str());
+    int lngRC1 = vpxt_compare_enc(LagInFrames0.c_str(), LagInFrames1.c_str(), 0);
+    int lngRC2 = vpxt_compare_enc(LagInFrames1.c_str(), LagInFrames2.c_str(), 0);
 
     std::string QuantInStr0;
     vpxt_remove_file_extension(LagInFrames0.c_str(), QuantInStr0);

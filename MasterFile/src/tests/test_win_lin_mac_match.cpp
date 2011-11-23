@@ -205,7 +205,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     int DECFAIL = 0;
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
-    int WinEncVsLinEnc = vpxt_compare_enc(WinEnc.c_str(), LinEnc.c_str());
+    int WinEncVsLinEnc = vpxt_compare_enc(WinEnc.c_str(), LinEnc.c_str(), 0);
 
     if (WinEncVsLinEnc == -1)
     {
@@ -231,7 +231,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
-    int LinEncVsMacEnc = vpxt_compare_enc(LinEnc.c_str(), MacEnc.c_str());
+    int LinEncVsMacEnc = vpxt_compare_enc(LinEnc.c_str(), MacEnc.c_str(), 0);
 
     if (LinEncVsMacEnc == -1)
     {
@@ -257,7 +257,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
-    int WinEncVsMacEnc = vpxt_compare_enc(WinEnc.c_str(), MacEnc.c_str());
+    int WinEncVsMacEnc = vpxt_compare_enc(WinEnc.c_str(), MacEnc.c_str(), 0);
 
     if (WinEncVsMacEnc == -1)
     {
@@ -283,7 +283,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
-    int WinDecVsLinDec = vpxt_compare_enc(WinDec.c_str(), LinDec.c_str());
+    int WinDecVsLinDec = vpxt_compare_enc(WinDec.c_str(), LinDec.c_str(), 0);
 
     if (WinDecVsLinDec == -1)
     {
@@ -309,7 +309,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
-    int LinDecVsMacDec = vpxt_compare_enc(LinDec.c_str(), MacDec.c_str());
+    int LinDecVsMacDec = vpxt_compare_enc(LinDec.c_str(), MacDec.c_str(), 0);
 
     if (LinDecVsMacDec == -1)
     {
@@ -335,7 +335,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
-    int WinDecVsMacDec = vpxt_compare_enc(WinDec.c_str(), MacDec.c_str());
+    int WinDecVsMacDec = vpxt_compare_enc(WinDec.c_str(), MacDec.c_str(), 0);
 
     if (WinDecVsMacDec == -1)
     {

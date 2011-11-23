@@ -176,7 +176,7 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
     int DECFAIL = 0;
 
     tprintf(PRINT_BTH, "\n\nComparing %s and %s", Enc32.c_str(), Enc64.c_str());
-    int Enc32VsEnc64 = vpxt_compare_enc(Enc32.c_str(), Enc64.c_str());
+    int Enc32VsEnc64 = vpxt_compare_enc(Enc32.c_str(), Enc64.c_str(), 0);
 
     if (Enc32VsEnc64 == -1)
     {

@@ -147,7 +147,7 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     char AllowLagoffFilename[255];
     vpxt_file_name(AllowLagoff.c_str(), AllowLagoffFilename, 0);
 
-    int lngRC = vpxt_compare_enc(AllowLagoff.c_str(), AllowLagon.c_str());
+    int lngRC = vpxt_compare_enc(AllowLagoff.c_str(), AllowLagon.c_str(), 0);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 

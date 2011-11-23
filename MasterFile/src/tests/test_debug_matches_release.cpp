@@ -296,7 +296,7 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
-    int lngRCEnc = vpxt_compare_enc(ReleaseOutputEnc.c_str(), DebugOutputEnc.c_str());
+    int lngRCEnc = vpxt_compare_enc(ReleaseOutputEnc.c_str(), DebugOutputEnc.c_str(), 0);
     int EncMatch = vpxt_print_compare_ivf_results(lngRCEnc, 0);
 
     tprintf(PRINT_BTH, "Comparing Decompression Files: ");

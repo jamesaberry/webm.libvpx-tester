@@ -2232,6 +2232,7 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)//return 1 if string
                 "\n  Compare Enc\n\n"
                 "     <inputfile1>\n"
                 "     <inputfile2>\n"
+                "     <full 1/0>\n"
                );
 
         if (printSummary)

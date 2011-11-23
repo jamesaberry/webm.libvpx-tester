@@ -139,7 +139,7 @@ int vpxt_formatted_to_raw_frames(std::string inputFile, std::string outputDir);
 int vpxt_display_header_info(int argc, const char *const *argv);
 int vpxt_compare_header_info(int argc, const char *const *argv);
 int vpxt_compare_dec(const char *inputFile1, const char *inputFile2);
-int vpxt_compare_enc(const char *inputFile1, const char *inputFile2);
+int vpxt_compare_enc(const char *inputFile1, const char *inputFile2, int fullcheck);
 double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch);
 double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch);
 double vpxt_display_visible_frames(const char *inputFile, int Selector);

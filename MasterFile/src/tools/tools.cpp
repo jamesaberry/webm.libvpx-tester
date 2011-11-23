@@ -271,97 +271,97 @@ int DecoderCheck(int argc, const char *const *argv)
 
     std::cout << "\n\n";
 
-    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char, 0) == -1)
     {
         std::cout << "\nBefore Compression Files 1 and 2 are identical";
     }
     else
     {
         std::cout << "\nBefore Compression Files 1 and 2 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput2Char, 0);
     }
 
-    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char, 0) == -1)
     {
         std::cout << "\nBefore Compression Files 1 and 3 are identical";
     }
     else
     {
         std::cout << "\nBefore Compression Files 1 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, BeforeCompressionDecOutput3Char, 0);
     }
 
-    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char, 0) == -1)
     {
         std::cout << "\nBefore Compression Files 2 and 3 are identical";
     }
     else
     {
         std::cout << "\nBefore Compression Files 2 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput2Char, BeforeCompressionDecOutput3Char, 0);
     }
 
     //////////////////////////After//////////////////////////
 
-    if (vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char) == -1)
+    if (vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char, 0) == -1)
     {
         std::cout << "\nAfter Compression Files 1 and 2 are identical";
     }
     else
     {
         std::cout << "\nAfter Compression Files 1 and 2 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput2Char, 0);
     }
 
-    if (vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char, 0) == -1)
     {
         std::cout << "\nAfter Compression Files 1 and 3 are identical";
     }
     else
     {
         std::cout << "\nAfter Compression Files 1 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput1Char, AfterCompressionDecOutput3Char, 0);
     }
 
-    if (vpxt_compare_enc(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char, 0) == -1)
     {
         std::cout << "\nAfter Compression Files 2 and 3 are identical ";
     }
     else
     {
         std::cout << "\nAfter Compression Files 2 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(AfterCompressionDecOutput2Char, AfterCompressionDecOutput3Char, 0);
     }
 
 
-    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char, 0) == -1)
     {
         std::cout << "\nBefore Compression File 1 and After Compression File 1 are identical ";
     }
     else
     {
         std::cout << "\nBefore Compression File 1 and After Compression File 1 are not identical : ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput1Char, AfterCompressionDecOutput1Char, 0);
     }
 
-    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char, 0) == -1)
     {
         std::cout << "\nBefore Compression File 2 and After Compression File 2 are identical ";
     }
     else
     {
         std::cout << "\nBefore Compression File 2 and After Compression File 2 are not identical : ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput2Char, AfterCompressionDecOutput2Char, 0);
     }
 
-    if (vpxt_compare_enc(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char) == -1)
+    if (vpxt_compare_enc(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char, 0) == -1)
     {
         std::cout << "\nBefore Compression File 3 and After Compression File 3 are identical ";
     }
     else
     {
         std::cout << "\nBefore Compression File 3 and After Compression File 3 are not identical : ";
-        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char);
+        std::cout << "Files Differ at Frame: " << vpxt_compare_enc(BeforeCompressionDecOutput3Char, AfterCompressionDecOutput3Char, 0);
     }
 
     return 0;
@@ -3939,17 +3939,18 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
 }
 int tool_compare_enc(int argc, const char *const *argv)
 {
-    if (argc < 3)
+    if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
 
     std::string Output1 = argv[2];
     std::string Output2 = argv[3];
+    int fullcheck = atoi(argv[4]);
 
     tprintf(PRINT_STD, "\nComparing Files:\n\n");
     tprintf(PRINT_STD, "%s\n", Output1.c_str());
     tprintf(PRINT_STD, "%s\n", Output2.c_str());
 
-    int CompIVFOutput = vpxt_compare_enc(Output1.c_str(), Output2.c_str());
+    int CompIVFOutput = vpxt_compare_enc(Output1.c_str(), Output2.c_str(), fullcheck);
 
     if (CompIVFOutput == -1)
     {
@@ -3968,7 +3969,10 @@ int tool_compare_enc(int argc, const char *const *argv)
 
     if (CompIVFOutput != -1 && CompIVFOutput != -2 && CompIVFOutput != -3 && CompIVFOutput != -5)
     {
-        tprintf(PRINT_STD, "\nFILES DIFFER AT FRAME: %i\n", CompIVFOutput);
+        if(fullcheck)
+            tprintf(PRINT_STD, "\nFILES NOT IDENTICAL\n");
+        else
+            tprintf(PRINT_STD, "\nFILES DIFFER AT FRAME: %i\n", CompIVFOutput);
     }
 
     return 0;
@@ -4413,11 +4417,11 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
         vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick, EncForm);
     }
 
-    if (vpxt_compare_enc((char *)output1.c_str(), (char *)output2.c_str()) == -1)
+    if (vpxt_compare_enc((char *)output1.c_str(), (char *)output2.c_str(), 0) == -1)
     {
         std::cout << "Pass - No Error Output and standard Do match \n";
 
-        if (vpxt_compare_enc((char *)output2.c_str(), (char *)output3.c_str()) == -1)
+        if (vpxt_compare_enc((char *)output2.c_str(), (char *)output3.c_str(), 0) == -1)
         {
             std::cout << "Pass - Time Compress and No Error Output match\n\n";
             std::cout << "\nAll compressions are equal. - Pass\n\n";
@@ -4457,7 +4461,7 @@ int tool_compression_equiv(int argc, const char *const *argv, std::string Workin
     vpxt_decompress_time_and_output((char *)output1.c_str(), (char *)output4DEC.c_str(), CPUTick2, "ivf", 1);
     std::cout << "\n\n";
 
-    if (vpxt_compare_enc((char *) output1DEC.c_str(), (char *) output2DEC.c_str()) == -1)
+    if (vpxt_compare_enc((char *) output1DEC.c_str(), (char *) output2DEC.c_str(), 0) == -1)
     {
         std::cout << "Pass DecompressIVFtoIVF == DecompressIVFtoIVFNoOutput\n";
     }
@@ -4698,7 +4702,7 @@ int tool_comp_matches_ivfenc(int argc, const char *const *argv)
 
     system(Program.c_str());
 
-    int CompResult = vpxt_compare_enc(IVFEncOutput1FP, output.c_str());
+    int CompResult = vpxt_compare_enc(IVFEncOutput1FP, output.c_str(), 0);
 
     if (CompResult == -1)
     {

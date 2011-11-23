@@ -437,7 +437,7 @@ void stats_write(stats_io_t *stats, const void *pkt, size_t len)
 {
     if (stats->file)
     {
-        fwrite(pkt, 1, len, stats->file);
+        if(fwrite(pkt, 1, len, stats->file));
     }
     else
     {
@@ -464,7 +464,15 @@ vpx_fixed_buf_t stats_get(stats_io_t *stats)
 {
     return stats->buf;
 }
-
+/* Stereo 3D packed frame format */
+typedef enum stereo_format
+{
+    STEREO_FORMAT_MONO       = 0,
+    STEREO_FORMAT_LEFT_RIGHT = 1,
+    STEREO_FORMAT_BOTTOM_TOP = 2,
+    STEREO_FORMAT_TOP_BOTTOM = 3,
+    STEREO_FORMAT_RIGHT_LEFT = 11
+} stereo_format_t;
 static int read_frame_enc(FILE *f, vpx_image_t *img, unsigned int file_type, y4m_input *y4m, struct detect_buffer *detect)
 {
     int plane = 0;
@@ -762,8 +770,22 @@ static void write_webm_seek_info(EbmlGlobal *ebml)
         Ebml_EndSubElement(ebml, &start);
     }
     {
+        //segment info
         EbmlLoc startInfo;
         uint64_t frame_time;
+        char version_string[64];
+
+        /* Assemble version string */
+        if(ebml->debug)
+            strcpy(version_string, "vpxenc");
+        else
+        {
+            strcpy(version_string, "vpxenc ");
+            strncat(version_string,
+                    vpx_codec_version_str(),
+                    sizeof(version_string) - 1 - strlen(version_string));
+        }
+
         frame_time = (uint64_t)1000 * ebml->framerate.den
                      / ebml->framerate.num;
         ebml->segment_info_pos = ftello(ebml->stream);
@@ -771,14 +793,12 @@ static void write_webm_seek_info(EbmlGlobal *ebml)
         Ebml_SerializeUnsigned(ebml, TimecodeScale, 1000000);
         Ebml_SerializeFloat(ebml, Segment_Duration,
                             ebml->last_pts_ms + frame_time);
-        Ebml_SerializeString(ebml, 0x4D80,
-                             ebml->debug ? "vpxenc" : "vpxenc" VERSION_STRING);
-        Ebml_SerializeString(ebml, 0x5741,
-                             ebml->debug ? "vpxenc" : "vpxenc" VERSION_STRING);
+        Ebml_SerializeString(ebml, 0x4D80, version_string);
+        Ebml_SerializeString(ebml, 0x5741, version_string);
         Ebml_EndSubElement(ebml, &startInfo);
     }
 }
-static void write_webm_file_header(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *cfg, const struct vpx_rational *fps)
+static void write_webm_file_header(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *cfg, const struct vpx_rational *fps, stereo_format_t stereo_fmt)
 {
     {
         EbmlLoc start;
@@ -797,6 +817,7 @@ static void write_webm_file_header(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *
         glob->position_reference = ftello(glob->stream);
         glob->framerate = *fps;
         write_webm_seek_info(glob);
+
         {
             EbmlLoc trackStart;
             glob->track_pos = ftello(glob->stream);
@@ -804,6 +825,7 @@ static void write_webm_file_header(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *
             {
                 unsigned int trackNumber = 1;
                 uint64_t     trackID = 0;
+
                 EbmlLoc start;
                 Ebml_StartSubElement(glob, &start, TrackEntry);
                 Ebml_SerializeUnsigned(glob, TrackNumber, trackNumber);
@@ -814,11 +836,13 @@ static void write_webm_file_header(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *
                 {
                     unsigned int pixelWidth = cfg->g_w;
                     unsigned int pixelHeight = cfg->g_h;
-                    float        frameRate   = (float)fps->num / (float)fps->den;
+                    float        frameRate   = (float)fps->num/(float)fps->den;
+
                     EbmlLoc videoStart;
                     Ebml_StartSubElement(glob, &videoStart, Video);
                     Ebml_SerializeUnsigned(glob, PixelWidth, pixelWidth);
                     Ebml_SerializeUnsigned(glob, PixelHeight, pixelHeight);
+                    Ebml_SerializeUnsigned(glob, StereoMode, stereo_fmt);
                     Ebml_SerializeFloat(glob, FrameRate, frameRate);
                     Ebml_EndSubElement(glob, &videoStart); //Video
                 }
@@ -826,6 +850,7 @@ static void write_webm_file_header(EbmlGlobal *glob, const vpx_codec_enc_cfg_t *
             }
             Ebml_EndSubElement(glob, &trackStart);
         }
+        // segment element is open
     }
 }
 static void write_webm_block(EbmlGlobal                *glob,
@@ -1060,8 +1085,18 @@ static const arg_def_t width            = ARG_DEF("w", "width", 1,
         "Frame width");
 static const arg_def_t height           = ARG_DEF("h", "height", 1,
         "Frame height");
+static const struct arg_enum_list stereo_mode_enum[] = {
+    {"mono"      , STEREO_FORMAT_MONO},
+    {"left-right", STEREO_FORMAT_LEFT_RIGHT},
+    {"bottom-top", STEREO_FORMAT_BOTTOM_TOP},
+    {"top-bottom", STEREO_FORMAT_TOP_BOTTOM},
+    {"right-left", STEREO_FORMAT_RIGHT_LEFT},
+    {NULL, 0}
+};
+static const arg_def_t stereo_mode      = ARG_DEF_ENUM(NULL, "stereo-mode", 1,
+        "Stereo 3D video format", stereo_mode_enum);
 static const arg_def_t timebase         = ARG_DEF(NULL, "timebase", 1,
-        "Stream timebase (frame duration)");
+        "Output timestamp precision (fractional seconds)");
 static const arg_def_t error_resilient  = ARG_DEF(NULL, "error-resilient", 1,
         "Enable error resiliency features");
 static const arg_def_t lag_in_frames    = ARG_DEF(NULL, "lag-in-frames", 1,
@@ -1070,7 +1105,7 @@ static const arg_def_t lag_in_frames    = ARG_DEF(NULL, "lag-in-frames", 1,
 static const arg_def_t *global_args[] =
 {
     &use_yv12, &use_i420, &usage, &threads, &profile,
-    &width, &height, &timebase, &framerate, &error_resilient,
+    &width, &height, &stereo_mode, &timebase, &framerate, &error_resilient,
     &lag_in_frames, NULL
 };
 
@@ -1082,8 +1117,14 @@ static const arg_def_t resize_up_thresh   = ARG_DEF(NULL, "resize-up", 1,
         "Upscale threshold (buf %)");
 static const arg_def_t resize_down_thresh = ARG_DEF(NULL, "resize-down", 1,
         "Downscale threshold (buf %)");
-static const arg_def_t end_usage          = ARG_DEF(NULL, "end-usage", 1,
-        "VBR=0 | CBR=1 | CQ=2");
+static const struct arg_enum_list end_usage_enum[] = {
+    {"vbr", VPX_VBR},
+    {"cbr", VPX_CBR},
+    {"cq",  VPX_CQ},
+    {NULL, 0}
+};
+static const arg_def_t end_usage          = ARG_DEF_ENUM(NULL, "end-usage", 1,
+        "Rate control mode", end_usage_enum);
 static const arg_def_t target_bitrate     = ARG_DEF(NULL, "target-bitrate", 1,
         "Bitrate (kbps)");
 static const arg_def_t min_quantizer      = ARG_DEF(NULL, "min-q", 1,
@@ -1168,12 +1209,15 @@ static const struct arg_enum_list tuning_enum[] =
 static const arg_def_t tune_ssim = ARG_DEF_ENUM(NULL, "tune", 1,
                                    "Material to favor", tuning_enum);
 static const arg_def_t cq_level = ARG_DEF(NULL, "cq-level", 1,
-                                  "Constrained Quality Level");
+                                   "Constrained Quality Level");
+static const arg_def_t max_intra_rate_pct = ARG_DEF(NULL, "max-intra-rate", 1,
+        "Max I-frame bitrate (pct)");
+
 static const arg_def_t *vp8_args[] =
 {
     &cpu_used, &auto_altref, &noise_sens, &sharpness, &static_thresh,
     &token_parts, &arnr_maxframes, &arnr_strength, &arnr_type,
-    &tune_ssim, &cq_level, NULL
+    &tune_ssim, &cq_level, &max_intra_rate_pct, NULL
 };
 static const int vp8_arg_ctrl_map[] =
 {
@@ -1181,7 +1225,7 @@ static const int vp8_arg_ctrl_map[] =
     VP8E_SET_NOISE_SENSITIVITY, VP8E_SET_SHARPNESS, VP8E_SET_STATIC_THRESHOLD,
     VP8E_SET_TOKEN_PARTITIONS,
     VP8E_SET_ARNR_MAXFRAMES, VP8E_SET_ARNR_STRENGTH , VP8E_SET_ARNR_TYPE,
-    VP8E_SET_TUNING, VP8E_SET_CQ_LEVEL, 0
+    VP8E_SET_TUNING, VP8E_SET_CQ_LEVEL, VP8E_SET_MAX_INTRA_BITRATE_PCT, 0
 };
 #endif
 
@@ -9292,6 +9336,8 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
     int                      arg_use_i420 = 1;
     unsigned long            cx_time = 0;
     struct vpx_rational      arg_framerate = {30, 1};
+    stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
+	ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -9615,7 +9661,7 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
         if (write_webm)
         {
             ebml.stream = outfile;
-            write_webm_file_header(&ebml, &cfg, &arg_framerate);
+            write_webm_file_header(&ebml, &cfg, &arg_framerate, stereo_fmt);
         }
         else
             write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);
@@ -9890,6 +9936,8 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
     unsigned long          cx_time = 0;
 
     struct vpx_rational      arg_framerate = {30, 1};
+    stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
+	ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -10171,7 +10219,7 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
         if (write_webm)
         {
             ebml.stream = outfile;
-            write_webm_file_header(&ebml, &cfg, &arg_framerate);
+            write_webm_file_header(&ebml, &cfg, &arg_framerate, stereo_fmt);
         }
         else
             write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);
@@ -10448,6 +10496,8 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
     unsigned int total_cpu_time_used = 0;
     int framesoutrec = 0;
     struct vpx_rational      arg_framerate = {30, 1};
+    stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
+	ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -10731,7 +10781,7 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
         if (write_webm)
         {
             ebml.stream = outfile;
-            write_webm_file_header(&ebml, &cfg, &arg_framerate);
+            write_webm_file_header(&ebml, &cfg, &arg_framerate, stereo_fmt);
         }
         else
             write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);
@@ -11037,6 +11087,8 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
     unsigned long          cx_time = 0;
 
     struct vpx_rational      arg_framerate = {30, 1};
+    stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
+	ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -11319,7 +11371,7 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
         if (write_webm)
         {
             ebml.stream = outfile;
-            write_webm_file_header(&ebml, &cfg, &arg_framerate);
+            write_webm_file_header(&ebml, &cfg, &arg_framerate, stereo_fmt);
         }
         else
             write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);
@@ -11612,6 +11664,8 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
     unsigned long          cx_time = 0;
 
     struct vpx_rational      arg_framerate = {30, 1};
+    stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
+	ebml.last_pts_ms = -1;
 
     //outfile = encoded ivf file
     void *out;//all raw preview frames
@@ -11961,7 +12015,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
         if (write_webm)
         {
             ebml.stream = outfile;
-            write_webm_file_header(&ebml, &cfg, &arg_framerate);
+            write_webm_file_header(&ebml, &cfg, &arg_framerate, stereo_fmt);
         }
         else
             write_ivf_file_header(outfile, &cfg, codec->fourcc, 0);

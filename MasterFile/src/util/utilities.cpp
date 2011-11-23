@@ -9438,7 +9438,7 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
     /*vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
     cfg.g_w, cfg.g_h, 1);*/
 
-    cfg.g_timebase.den *= 2;
+    //cfg.g_timebase.den *= 2;
     memset(&stats, 0, sizeof(stats));
 
     for (pass = 0; pass < arg_passes; pass++)
@@ -10000,7 +10000,7 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
     /*vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
     cfg.g_w, cfg.g_h, 1);*/
 
-    cfg.g_timebase.den *= 2;
+    //cfg.g_timebase.den *= 2;
     memset(&stats, 0, sizeof(stats));
 
     for (pass = 0; pass < arg_passes; pass++)
@@ -11151,7 +11151,7 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
     /*vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
     cfg.g_w, cfg.g_h, 1);*/
 
-    cfg.g_timebase.den *= 2;
+    //cfg.g_timebase.den *= 2;
     memset(&stats, 0, sizeof(stats));
 
     for (pass = 0; pass < arg_passes; pass++)
@@ -11735,7 +11735,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
     /*vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
     cfg.g_w, cfg.g_h, 1);*/
 
-    cfg.g_timebase.den *= 2;
+    //cfg.g_timebase.den *= 2;
     memset(&stats, 0, sizeof(stats));
 
     //std::string out_fn4STRb = out_fn;

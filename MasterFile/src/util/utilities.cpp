@@ -9857,6 +9857,8 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
         vpx_codec_destroy(&encoder);
 
         fclose(infile);
+        if (file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
 
         if (write_webm)
         {
@@ -10423,6 +10425,8 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
         vpx_codec_destroy(&encoder);
 
         fclose(infile);
+        if (file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
 
         if (write_webm)
         {
@@ -10993,6 +10997,8 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
         vpx_codec_destroy(&encoder);
 
         fclose(infile);
+        if (file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
 
         if (write_webm)
         {
@@ -11601,6 +11607,8 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
         vpx_codec_destroy(&encoder);
 
         fclose(infile);
+        if (file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
 
         if (write_webm)
         {
@@ -12483,6 +12491,8 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
         vpx_codec_destroy(&decoder);
 
         fclose(infile);
+        if (file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
 
         if (write_webm)
         {

@@ -9670,6 +9670,13 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
         if (cfg.kf_min_dist == cfg.kf_max_dist)
             cfg.kf_mode = VPX_KF_FIXED;
 
+        /*check timebase*/
+        if(arg_framerate.num > cfg.g_timebase.den)
+        {
+            cfg.g_timebase.den = arg_framerate.num;
+            cfg.g_timebase.num = 1;
+        }
+
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
         ///////////Set Encoder Custom Settings/////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
@@ -10228,6 +10235,12 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
         if (cfg.kf_min_dist == cfg.kf_max_dist)
             cfg.kf_mode = VPX_KF_FIXED;
 
+        /*check timebase*/
+        if(arg_framerate.num > cfg.g_timebase.den)
+        {
+            cfg.g_timebase.den = arg_framerate.num;
+            cfg.g_timebase.num = 1;
+        }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
         ///////////Set Encoder Custom Settings/////////////////
@@ -10789,6 +10802,13 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
         /* Construct Encoder Context */
         if (cfg.kf_min_dist == cfg.kf_max_dist)
             cfg.kf_mode = VPX_KF_FIXED;
+
+        /*check timebase*/
+        if(arg_framerate.num > cfg.g_timebase.den)
+        {
+            cfg.g_timebase.den = arg_framerate.num;
+            cfg.g_timebase.num = 1;
+        }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
         ///////////Set Encoder Custom Settings/////////////////
@@ -11379,6 +11399,13 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
         /* Construct Encoder Context */
         if (cfg.kf_min_dist == cfg.kf_max_dist)
             cfg.kf_mode = VPX_KF_FIXED;
+
+        /*check timebase*/
+        if(arg_framerate.num > cfg.g_timebase.den)
+        {
+            cfg.g_timebase.den = arg_framerate.num;
+            cfg.g_timebase.num = 1;
+        }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
         ///////////Set Encoder Custom Settings/////////////////
@@ -12023,6 +12050,13 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
         /* Construct Encoder Context */
         if (cfg.kf_min_dist == cfg.kf_max_dist)
             cfg.kf_mode = VPX_KF_FIXED;
+
+        /*check timebase*/
+        if(arg_framerate.num > cfg.g_timebase.den)
+        {
+            cfg.g_timebase.den = arg_framerate.num;
+            cfg.g_timebase.num = 1;
+        }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
         ///////////Set Encoder Custom Settings/////////////////

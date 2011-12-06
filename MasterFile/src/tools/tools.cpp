@@ -6595,13 +6595,14 @@ int tool_print_cpu_info()
 
     return 0;
 }
-int tool_random_multi_test(int argc, const char *const *argv)
+int tool_random_stress_test(int argc, const char *const *argv)
 {
-    if (argc < 5)
+    if (argc < 6)
     {
         tprintf(PRINT_STD,
-                "\n  Random Multi Test\n\n"
+                "\n  Random Stress Test\n\n"
                 "    <Input Dir>\n"
+                "    <Output Par Dir>\n"
                 "    <Output Txt File>\n"
                 "    <Input Number of Tests to Run>\n"
                );
@@ -6611,11 +6612,13 @@ int tool_random_multi_test(int argc, const char *const *argv)
     printf("\n");
 
     std::string InputIVFDir = argv[2];
-    std::string OutputTestFile = argv[3];
-    int NumberOfTestsToRun = atoi(argv[4]);
+    std::string OutputParDir = argv[3];
+    std::string OutputTestFile = argv[4];
+    int NumberOfTestsToRun = atoi(argv[5]);
+
     char OutputTestFileName[255];
     vpxt_file_name(OutputTestFile.c_str(), OutputTestFileName, 1);
-    std::string ParameterFilesFolder = InputIVFDir;
+    std::string ParameterFilesFolder = OutputParDir;
     ParameterFilesFolder.append(slashCharStr().c_str());
     ParameterFilesFolder.append(OutputTestFileName);
     vpxt_make_dir(ParameterFilesFolder);
@@ -6676,7 +6679,7 @@ int tool_random_multi_test(int argc, const char *const *argv)
     std::string DoneStr = "done";
     char inputBuffer[255];
     std::vector<int> ValidTestNumbers;
-    int argparse = 5;
+    int argparse = 6;
     int input_done = 0;
 
     //parse command line if done is found skip manual input

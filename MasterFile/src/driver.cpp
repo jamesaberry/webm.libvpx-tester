@@ -3691,8 +3691,8 @@ int  main(int argc, const char *argv[])
     if (TestInputString.compare("printcpuinfo") == 0)                       //
         return tool_print_cpu_info();
 
-    if (TestInputString.compare("randommultitest") == 0)
-        return tool_random_multi_test(argc, argv);
+    if (TestInputString.compare("randomstresstest") == 0)
+        return tool_random_stress_test(argc, argv);
 
     if (TestInputString.compare("getframecount") == 0)
         return vpxt_get_number_of_frames(argv[2]);

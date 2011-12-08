@@ -109,10 +109,12 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     }
 
     /////////////////////////////////////////////////////////
-
+    //make sure constrained quantizer mode is off
+    if(opt.end_usage == 2)
+        opt.end_usage = 1;
     opt.target_bandwidth = BitRate;
-    int PSNRToggle = 0;
 
+    int PSNRToggle = 0;
     int n = 4;
     double PSNRArr[10];
     int MaxQArr[10];

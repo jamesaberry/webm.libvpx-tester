@@ -93,7 +93,9 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     opt.target_bandwidth = BitRate;
     opt.worst_allowed_q = 63;
 
-    int n = 0;
+    //make sure constrained quantizer mode is off
+    if(opt.end_usage == 2)
+        opt.end_usage = 1;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
     if (TestType == TEST_ONLY)

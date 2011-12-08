@@ -6745,7 +6745,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
         int RandTBNum = (rand() % 20 + 1) * 128;
         int RandKeyFrameFreq = rand() % 120;
         int RandVersion = rand() % 4;
-        int RandCQ = rand() % 64;
+        int RandCQ = opt.cq_level;
         int RandQ1 = rand() % 64;
         int RandQ2 = rand() % 64;
         int RandForceKeyFrameNum = rand() % 120;

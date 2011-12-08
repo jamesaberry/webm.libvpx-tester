@@ -2248,21 +2248,25 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     {
         opt.fixed_q = rand() % 64; //valid Range: 0 to 63 or -1 (-1 = fixedQ off)
         opt.best_allowed_q = opt.fixed_q; //valid Range: 0 to 63
-        opt.worst_allowed_q   = opt.fixed_q; //valid Range: 0 to 63
-        opt.cq_level   = rand() % 64; //valid Range: 0 to 63
+        opt.worst_allowed_q = opt.fixed_q; //valid Range: 0 to 63
+        opt.cq_level = opt.worst_allowed_q; //valid Range: 0 to 63
     }
     else
     {
         opt.fixed_q = -1; //valid Range: 0 to 63 or -1 (-1 = fixedQ off)
-        opt.best_allowed_q = rand() % 64; //valid Range: 0 to 63
         opt.worst_allowed_q   = rand() % 64; //valid Range: 0 to 63
-        opt.cq_level   = rand() % 64; //valid Range: 0 to 63
+        opt.best_allowed_q = rand() % opt.worst_allowed_q; //valid Range:0 to 63
 
         while (opt.best_allowed_q > opt.worst_allowed_q)
         {
             opt.best_allowed_q = rand() % 64;
             opt.worst_allowed_q   = rand() % 64;
         }
+
+        //valid Range: opt.best_allowed_q to opt.worst_allowed_q
+        opt.cq_level = 0;
+        while(opt.cq_level < opt.best_allowed_q)
+            opt.cq_level   = rand() % opt.worst_allowed_q;
     }
 
     opt.auto_key = rand() % 2; //valid Range: 0 to 1
@@ -9673,8 +9677,35 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
         /*check timebase*/
         if(arg_framerate.num > cfg.g_timebase.den)
         {
+            tprintf(PRINT_BTH,"Invalid timebase: %i/%i - changing to default:"
+                                " %i/%i\n",cfg.g_timebase.num,cfg.g_timebase.den
+                                , 1, arg_framerate.num);
             cfg.g_timebase.den = arg_framerate.num;
             cfg.g_timebase.num = 1;
+        }
+
+        /*check cq*/
+        if(oxcf.cq_level < oxcf.best_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i less than min q: %i - changing to:"
+                               " %i\n", oxcf.cq_level, oxcf.best_allowed_q,
+                               new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
+        }
+        if(oxcf.cq_level > oxcf.worst_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i greater than max q: %i - changing"
+                               " to: %i\n", oxcf.cq_level, oxcf.worst_allowed_q,
+                                new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
@@ -10240,8 +10271,35 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
         /*check timebase*/
         if(arg_framerate.num > cfg.g_timebase.den)
         {
+            tprintf(PRINT_BTH,"Invalid timebase: %i/%i - changing to default:"
+                                " %i/%i\n",cfg.g_timebase.num,cfg.g_timebase.den
+                                , 1, arg_framerate.num);
             cfg.g_timebase.den = arg_framerate.num;
             cfg.g_timebase.num = 1;
+        }
+
+        /*check cq*/
+        if(oxcf.cq_level < oxcf.best_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i less than min q: %i - changing to:"
+                               " %i\n", oxcf.cq_level, oxcf.best_allowed_q,
+                               new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
+        }
+        if(oxcf.cq_level > oxcf.worst_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i greater than max q: %i - changing"
+                               " to: %i\n", oxcf.cq_level, oxcf.worst_allowed_q,
+                                new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
@@ -10810,8 +10868,35 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
         /*check timebase*/
         if(arg_framerate.num > cfg.g_timebase.den)
         {
+            tprintf(PRINT_BTH,"Invalid timebase: %i/%i - changing to default:"
+                                " %i/%i\n",cfg.g_timebase.num,cfg.g_timebase.den
+                                , 1, arg_framerate.num);
             cfg.g_timebase.den = arg_framerate.num;
             cfg.g_timebase.num = 1;
+        }
+
+        /*check cq*/
+        if(oxcf.cq_level < oxcf.best_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i less than min q: %i - changing to:"
+                               " %i\n", oxcf.cq_level, oxcf.best_allowed_q,
+                               new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
+        }
+        if(oxcf.cq_level > oxcf.worst_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i greater than max q: %i - changing"
+                               " to: %i\n", oxcf.cq_level, oxcf.worst_allowed_q,
+                                new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
@@ -11409,8 +11494,35 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
         /*check timebase*/
         if(arg_framerate.num > cfg.g_timebase.den)
         {
+            tprintf(PRINT_BTH,"Invalid timebase: %i/%i - changing to default:"
+                                " %i/%i\n",cfg.g_timebase.num,cfg.g_timebase.den
+                                , 1, arg_framerate.num);
             cfg.g_timebase.den = arg_framerate.num;
             cfg.g_timebase.num = 1;
+        }
+
+        /*check cq*/
+        if(oxcf.cq_level < oxcf.best_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i less than min q: %i - changing to:"
+                               " %i\n", oxcf.cq_level, oxcf.best_allowed_q,
+                               new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
+        }
+        if(oxcf.cq_level > oxcf.worst_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i greater than max q: %i - changing"
+                               " to: %i\n", oxcf.cq_level, oxcf.worst_allowed_q,
+                                new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
@@ -12062,8 +12174,35 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
         /*check timebase*/
         if(arg_framerate.num > cfg.g_timebase.den)
         {
+            tprintf(PRINT_BTH,"Invalid timebase: %i/%i - changing to default:"
+                                " %i/%i\n",cfg.g_timebase.num,cfg.g_timebase.den
+                                , 1, arg_framerate.num);
             cfg.g_timebase.den = arg_framerate.num;
             cfg.g_timebase.num = 1;
+        }
+
+        /*check cq*/
+        if(oxcf.cq_level < oxcf.best_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i less than min q: %i - changing to:"
+                               " %i\n", oxcf.cq_level, oxcf.best_allowed_q,
+                               new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
+        }
+        if(oxcf.cq_level > oxcf.worst_allowed_q)
+        {
+            int new_cq_level = oxcf.best_allowed_q +
+                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+
+            tprintf(PRINT_BTH, "cq_level: %i greater than max q: %i - changing"
+                               " to: %i\n", oxcf.cq_level, oxcf.worst_allowed_q,
+                                new_cq_level);
+
+            oxcf.cq_level = new_cq_level;
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);

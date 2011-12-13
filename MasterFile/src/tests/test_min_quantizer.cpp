@@ -107,6 +107,9 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         opt.Mode = Mode;
 
         opt.best_allowed_q = 10;
+        //make sure max q is greater than min q
+        while(opt.worst_allowed_q < opt.best_allowed_q)
+                opt.worst_allowed_q = rand() % 64;
 
         if (vpxt_compress(input.c_str(), Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1, EncForm) == -1)
         {
@@ -116,6 +119,9 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         }
 
         opt.best_allowed_q = 60;
+        //make sure max q is greater than min q
+        while(opt.worst_allowed_q < opt.best_allowed_q)
+                opt.worst_allowed_q = rand() % 64;
 
         if (vpxt_compress(input.c_str(), Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1, EncForm) == -1)
         {

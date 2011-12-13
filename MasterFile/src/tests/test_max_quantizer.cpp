@@ -152,6 +152,9 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
         {
 
             opt.worst_allowed_q = n;
+            //make sure min q is less than max
+            while(opt.best_allowed_q > n)
+                opt.best_allowed_q = rand() % 64;
 
             char num[20];
             vpxt_itoa_custom(n, num, 10);

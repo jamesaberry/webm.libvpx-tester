@@ -2255,7 +2255,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
     {
         opt.fixed_q = -1; //valid Range: 0 to 63 or -1 (-1 = fixedQ off)
         opt.worst_allowed_q   = rand() % 64; //valid Range: 0 to 63
-        opt.best_allowed_q = rand() % opt.worst_allowed_q; //valid Range:0 to 63
+        opt.best_allowed_q = rand() % 64; //valid Range:0 to 63
 
         while (opt.best_allowed_q > opt.worst_allowed_q)
         {
@@ -2265,8 +2265,9 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int di
 
         //valid Range: opt.best_allowed_q to opt.worst_allowed_q
         opt.cq_level = 0;
-        while(opt.cq_level < opt.best_allowed_q)
-            opt.cq_level   = rand() % opt.worst_allowed_q;
+        while(opt.cq_level < opt.best_allowed_q
+              || opt.cq_level > opt.worst_allowed_q)
+            opt.cq_level   = rand() % 64;
     }
 
     opt.auto_key = rand() % 2; //valid Range: 0 to 1

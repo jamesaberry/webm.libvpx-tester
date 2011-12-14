@@ -20025,8 +20025,6 @@ int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
 
     tprintf(PRINT_BTH, "Checking %s min quantizer:\n", QuantDispNameChar);
 
-    //std::string QuantInStr = inputFile;
-    //QuantInStr.erase(QuantInStr.length() - 4, 4);
     std::string QuantInStr;
     vpxt_remove_file_extension(inputFile, QuantInStr);
     QuantInStr.append("quantizers.txt");
@@ -20055,6 +20053,7 @@ int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
             if (quantizer != 0 && quantizer < MinQuantizer)
             {
                 tprintf(PRINT_BTH, "     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
+                infile.close();
                 return frame;
             }
         }
@@ -20063,17 +20062,14 @@ int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
             if (quantizer < MinQuantizer)
             {
                 tprintf(PRINT_BTH, "     Quantizer not >= min for frame %i q=%i - Failed", frame, quantizer);
+                infile.close();
                 return frame;
             }
         }
-
-        //std::cout << "FRAME: " << frame << " Quantizer: " << quantizer << "\n";
-
     }
 
-    tprintf(PRINT_STD, "     All quantizers >= min for all frames - Passed");
-    fprintf(stderr, "     All quantizers >= min for all frames - Passed");
-
+    tprintf(PRINT_BTH, "     All quantizers >= min for all frames - Passed");
+    infile.close();
     return -1;//result > -1 -> fail | result = -1 pass
 }
 int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer)
@@ -20113,6 +20109,7 @@ int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer)
             if (quantizer != 0 && quantizer > MaxQuantizer)
             {
                 tprintf(PRINT_BTH, "     Quantizer not <= max for frame %i q=%i - Failed", frame, quantizer);
+                infile.close();
                 return frame;
             }
         }
@@ -20121,15 +20118,14 @@ int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer)
             if (quantizer > MaxQuantizer)
             {
                 tprintf(PRINT_BTH, "     Quantizer not <= max for frame %i q=%i - Failed", frame, quantizer);
+                infile.close();
                 return frame;
             }
         }
-
-        //std::cout << "FRAME: " << frame << " Quantizer: " << quantizer << "\n";
     }
 
     tprintf(PRINT_BTH, " All quantizers <= max for all frames");
-
+    infile.close();
     return -1;//result > -1 -> fail | result = -1 pass
 }
 int vpxt_check_fixed_quantizer(const char *inputFile, int FixedQuantizer)

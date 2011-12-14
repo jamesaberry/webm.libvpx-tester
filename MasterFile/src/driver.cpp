@@ -1378,7 +1378,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "The test creates nine compressions, the first with a Max Quantizer equal to 4 and each subsequent file with a Max Quantizer 8 greater than the last until 63. The test records the individual quantizer values for each encoded frame. If the PSNRs of each Max Quantizer compression from 4 to 63 increase as Max Quantizer decreases and the recorded quantizers for each file do not exceed their corresponding Max Quantizer for all compressions, the test passes.");
+            vpxt_formated_print(HLPPRT, "The test creates nine compressions, the first with a Max Quantizer equal to 4 and each subsequent file with a Max Quantizer 8 greater than the last until 63. The test records the individual quantizer values for each encoded frame. If the PSNRs of each Max Quantizer compression from 4 to 63 increase as Max Quantizer decreases (or are with in 1 %% of eachother) and the recorded quantizers for each file do not exceed their corresponding Max Quantizer for all compressions, the test passes.");
 
     }
 

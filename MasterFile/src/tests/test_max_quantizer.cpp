@@ -209,9 +209,18 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         if (!(PSNRArr[i+1] <= PSNRArr[i]))
         {
-            vpxt_formated_print(RESPRT, "MaxQ %2i %.2f > %.2f MaxQ %2i - Failed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
-            tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            if (PSNRArr[i+1] <= (PSNRArr[i] + (PSNRArr[i] * 0.01))) // if PSNRArr[i+1] greater than but within 1% - min pass
+            {
+                vpxt_formated_print(RESPRT, "MaxQ %2i PSNR %.2f within 1%% of MaxQ %2i PSNR %.2f - MinPassed", MaxQDisplayValue + 8, PSNRArr[i+1], MaxQDisplayValue, PSNRArr[i]);
+                tprintf(PRINT_BTH, "\n");
+                fail = 2;
+            }
+            else
+            {
+                vpxt_formated_print(RESPRT, "MaxQ %2i %.2f > %.2f MaxQ %2i - Failed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
+                tprintf(PRINT_BTH, "\n");
+                fail = 1;
+            }
         }
         else
         {
@@ -254,6 +263,17 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
+    }
+	else if (fail == 2)
+    {
+        tprintf(PRINT_BTH, "\nMin Passed\n");
+
+        if (DeleteIVF)
+            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(), QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(), QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+
+        fclose(fp);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        return 8;
     }
     else
     {

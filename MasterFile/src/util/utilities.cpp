@@ -6705,7 +6705,7 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
 
     YV12_BUFFER_CONFIG Temp_YV12;
     memset(&Temp_YV12, 0, sizeof(Temp_YV12));
-    int TempBuffState = vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, 0);
+    int TempBuffState = vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, VP8BORDERINPIXELS);
     ///////////////////////////////////////////////////////////////////////////////////////
 
     vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
@@ -7633,7 +7633,7 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
 
     YV12_BUFFER_CONFIG Comp_YV12;
     //memset(&Comp_YV12, 0, sizeof(Comp_YV12));
-    //vp8_yv12_alloc_frame_buffer(&Comp_YV12, ivfhRaw.height, ivfhRaw.width, 32);
+    //vp8_yv12_alloc_frame_buffer(&Comp_YV12, ivfhRaw.height, ivfhRaw.width, VP8BORDERINPIXELS);
 
     if (CompressedFrameOffset > 0) //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
     {
@@ -7717,7 +7717,7 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
 
     YV12_BUFFER_CONFIG Temp_YV12;
     memset(&Temp_YV12, 0, sizeof(Temp_YV12));
-    int TempBuffState = vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, 0);
+    int TempBuffState = vp8_yv12_alloc_frame_buffer(&Temp_YV12, RawWidth, RawHeight, VP8BORDERINPIXELS);
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -14145,7 +14145,7 @@ int vpxt_decompress_resize(const char *inputchar, const char *outputchar, std::s
 
     YV12_BUFFER_CONFIG yv12_buffer_dest;
     memset(&yv12_buffer_dest, 0, sizeof(yv12_buffer_dest));
-    vp8_yv12_alloc_frame_buffer(&yv12_buffer_dest, width, height, 0);
+    vp8_yv12_alloc_frame_buffer(&yv12_buffer_dest, width, height, VP8BORDERINPIXELS);
     ///////////////////////////////////////////////////////////////////////////////////////
 
     /* Decode file */

@@ -6652,6 +6652,8 @@ int tool_random_stress_test(int argc, const char *const *argv)
         {
             if (!FileNamesVector[i].substr(FileNamesVector[i].length() - 4, 4).compare(".ivf"))
                 IVFFileNamesVector.push_back(FileNamesVector[i].c_str());
+            else if (!FileNamesVector[i].substr(FileNamesVector[i].length() - 4, 4).compare(".y4m"))
+                IVFFileNamesVector.push_back(FileNamesVector[i].c_str());
         }
 
         i++;
@@ -6666,13 +6668,13 @@ int tool_random_stress_test(int argc, const char *const *argv)
         IVFFileNamesVector[i].insert(0, "/");
         IVFFileNamesVector[i].insert(0, InputIVFDir.c_str());
 #endif
-        printf("IVF file found %i %s\n", i, IVFFileNamesVector[i].c_str());
+        printf("Input file found %i %s\n", i, IVFFileNamesVector[i].c_str());
         i++;
     }
 
     if (IVFFileNamesVector.size() == 0)
     {
-        printf("Error - No ivf files found in directory %s\n", InputIVFDir.c_str());
+        printf("Error - No input files found in directory %s\n", InputIVFDir.c_str());
         return 0;
     }
 

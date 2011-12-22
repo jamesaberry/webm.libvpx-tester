@@ -220,6 +220,38 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     //    double BRPerc = vpxt_abs_double(((Size2 - Size1) / Size1) * 100.00);
     int Pass = 0;
 
+    //data rates not always in order so find smallest observed data rate
+    float SizeTwoPassMin = SizeTwoPass1;
+    float SizeOnePassMin = SizeOnePass1;
+
+    if(SizeTwoPass2 < SizeTwoPassMin)
+        SizeTwoPassMin = SizeTwoPass2;
+
+    if(SizeTwoPass3 < SizeTwoPassMin)
+        SizeTwoPassMin = SizeTwoPass3;
+
+    if(SizeOnePass2 < SizeOnePassMin)
+        SizeOnePassMin = SizeOnePass2;
+
+    if(SizeOnePass3 < SizeOnePassMin)
+        SizeOnePassMin = SizeOnePass3;
+
+    //data rates not always in order so find largest observed data rate
+    float SizeTwoPassMax = SizeTwoPass3;
+    float SizeOnePassMax = SizeOnePass3;
+
+    if(SizeTwoPass2 > SizeTwoPassMax)
+        SizeTwoPassMax = SizeTwoPass2;
+
+    if(SizeTwoPass1 > SizeTwoPassMax)
+        SizeTwoPassMax = SizeTwoPass1;
+
+    if(SizeOnePass2 > SizeOnePassMax)
+        SizeOnePassMax = SizeOnePass2;
+
+    if(SizeOnePass1 > SizeOnePassMax)
+        SizeOnePassMax = SizeOnePass1;
+
     float TwoPassA = 0;
     float TwoPassB = 0;
     float TwoPassC = 0;
@@ -231,23 +263,16 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     float minCommon = 0;
     float maxCommon = 0;
 
-    if (SizeTwoPass1 > SizeOnePass1) //take area over same range we have decent data for.
-    {
-        minCommon = SizeTwoPass1;
-    }
+    //take area over same range we have decent data for.
+    if (SizeTwoPassMin > SizeOnePassMin)
+        minCommon = SizeTwoPassMin;
     else
-    {
-        minCommon = SizeOnePass1;
-    }
+        minCommon = SizeOnePassMin;
 
-    if (SizeTwoPass3 > SizeOnePass3)
-    {
-        maxCommon = SizeOnePass3;
-    }
+    if (SizeTwoPassMax > SizeOnePassMax)
+        maxCommon = SizeOnePassMax;
     else
-    {
-        maxCommon = SizeTwoPass3;
-    }
+        maxCommon = SizeTwoPassMax;
 
     vpxt_solve_quadratic(SizeTwoPass1, SizeTwoPass2, SizeTwoPass3, PSNRTwoPass1, PSNRTwoPass2, PSNRTwoPass3, TwoPassA, TwoPassB, TwoPassC);
     float TwoPassAreaVal = vpxt_area_under_quadratic(TwoPassA, TwoPassB, TwoPassC, minCommon, maxCommon);

@@ -215,6 +215,38 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     PSNRG3 = vpxt_psnr(input.c_str(), GoodOutFile3.c_str(), 1, 0, 1, NULL);
     PSNRB3 = vpxt_psnr(input.c_str(), BestOutFile3.c_str(), 1, 0, 1, NULL);
 
+    //data rates not always in order so find smallest observed data rate
+    float GoodSizeMin = GoodSize1;
+    float BestSizeMin = BestSize1;
+
+    if(GoodSize2 < GoodSizeMin)
+        GoodSizeMin = GoodSize2;
+
+    if(GoodSize3 < GoodSizeMin)
+        GoodSizeMin = GoodSize3;
+
+    if(BestSize2 < BestSizeMin)
+        BestSizeMin = BestSize2;
+
+    if(BestSize3 < BestSizeMin)
+        BestSizeMin = BestSize3;
+
+    //data rates not always in order so find largest observed data rate
+    float GoodSizeMax = GoodSize3;
+    float BestSizeMax = BestSize3;
+
+    if(GoodSize2 > GoodSizeMax)
+        GoodSizeMax = GoodSize2;
+
+    if(GoodSize1 > GoodSizeMax)
+        GoodSizeMax = GoodSize1;
+
+    if(BestSize2 > BestSizeMax)
+        BestSizeMax = BestSize2;
+
+    if(BestSize1 > BestSizeMax)
+        BestSizeMax = BestSize1;
+
     float GoodA = 0;
     float GoodB = 0;
     float GoodC = 0;
@@ -226,23 +258,16 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     float minCommon = 0;
     float maxCommon = 0;
 
-    if (GoodSize1 > BestSize1) //take area over same range we have decent data for.
-    {
-        minCommon = GoodSize1;
-    }
+    //take area over same range we have decent data for.
+    if (GoodSizeMin > BestSizeMin)
+        minCommon = GoodSizeMin;
     else
-    {
-        minCommon = BestSize1;
-    }
+        minCommon = BestSizeMin;
 
-    if (GoodSize3 > BestSize3)
-    {
-        maxCommon = BestSize3;
-    }
+    if (GoodSizeMax > BestSizeMax)
+        maxCommon = BestSizeMax;
     else
-    {
-        maxCommon = GoodSize3;
-    }
+        maxCommon = GoodSizeMax;
 
     vpxt_solve_quadratic(GoodSize1, GoodSize2, GoodSize3, PSNRG1, PSNRG2, PSNRG3, GoodA, GoodB, GoodC);
     float GoodAreaVal = vpxt_area_under_quadratic(GoodA, GoodB, GoodC, minCommon, maxCommon);

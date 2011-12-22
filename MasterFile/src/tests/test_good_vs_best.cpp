@@ -244,11 +244,11 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
         maxCommon = GoodSize3;
     }
 
-    vpxt_solve_quadradic(GoodSize1, GoodSize2, GoodSize3, PSNRG1, PSNRG2, PSNRG3, GoodA, GoodB, GoodC);
-    float GoodAreaVal = vpxt_area_under_quadradic(GoodA, GoodB, GoodC, minCommon, maxCommon);
+    vpxt_solve_quadratic(GoodSize1, GoodSize2, GoodSize3, PSNRG1, PSNRG2, PSNRG3, GoodA, GoodB, GoodC);
+    float GoodAreaVal = vpxt_area_under_quadratic(GoodA, GoodB, GoodC, minCommon, maxCommon);
 
-    vpxt_solve_quadradic(BestSize1, BestSize2, BestSize3, PSNRB1, PSNRB2, PSNRB3, BestA, BestB, BestC);
-    float BestAreaVal = vpxt_area_under_quadradic(BestA, BestB, BestC, minCommon, maxCommon);
+    vpxt_solve_quadratic(BestSize1, BestSize2, BestSize3, PSNRB1, PSNRB2, PSNRB3, BestA, BestB, BestC);
+    float BestAreaVal = vpxt_area_under_quadratic(BestA, BestB, BestC, minCommon, maxCommon);
 
     tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"

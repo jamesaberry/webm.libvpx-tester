@@ -249,11 +249,11 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
         maxCommon = SizeTwoPass3;
     }
 
-    vpxt_solve_quadradic(SizeTwoPass1, SizeTwoPass2, SizeTwoPass3, PSNRTwoPass1, PSNRTwoPass2, PSNRTwoPass3, TwoPassA, TwoPassB, TwoPassC);
-    float TwoPassAreaVal = vpxt_area_under_quadradic(TwoPassA, TwoPassB, TwoPassC, minCommon, maxCommon);
+    vpxt_solve_quadratic(SizeTwoPass1, SizeTwoPass2, SizeTwoPass3, PSNRTwoPass1, PSNRTwoPass2, PSNRTwoPass3, TwoPassA, TwoPassB, TwoPassC);
+    float TwoPassAreaVal = vpxt_area_under_quadratic(TwoPassA, TwoPassB, TwoPassC, minCommon, maxCommon);
 
-    vpxt_solve_quadradic(SizeOnePass1, SizeOnePass2, SizeOnePass3, PSNROnePass1, PSNROnePass2, PSNROnePass3, OnePassA, OnePassB, OnePassC);
-    float OnePassAreaVal = vpxt_area_under_quadradic(OnePassA, OnePassB, OnePassC, minCommon, maxCommon);
+    vpxt_solve_quadratic(SizeOnePass1, SizeOnePass2, SizeOnePass3, PSNROnePass1, PSNROnePass2, PSNROnePass3, OnePassA, OnePassB, OnePassC);
+    float OnePassAreaVal = vpxt_area_under_quadratic(OnePassA, OnePassB, OnePassC, minCommon, maxCommon);
 
     tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"

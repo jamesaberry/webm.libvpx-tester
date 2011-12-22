@@ -70,8 +70,8 @@ int vpxt_gcd(int a, int b);
 int vpxt_abs_int(int input);
 float vpxt_abs_float(float input);
 double vpxt_abs_double(double input);
-int vpxt_solve_quadradic(float X1, float X2, float X3, float Y1, float Y2, float Y3, float &A, float &B, float &C);
-float vpxt_area_under_quadradic(float A, float B, float C, float X1, float X2);
+int vpxt_solve_quadratic(float X1, float X2, float X3, float Y1, float Y2, float Y3, float &A, float &B, float &C);
+float vpxt_area_under_quadratic(float A, float B, float C, float X1, float X2);
 char *vpxt_itoa_custom(int value, char *result, int base);
 //----------------------------------------------------Cross Plat----------------------------------------------------------------------
 void vpxt_delete_files(int argcount, ...);

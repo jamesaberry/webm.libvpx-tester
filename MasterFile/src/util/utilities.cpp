@@ -5815,7 +5815,7 @@ double vpxt_abs_double(double input)
 
     return input;
 }
-int vpxt_solve_quadradic(float X1, float X2, float X3, float Y1, float Y2, float Y3, float &A, float &B, float &C)
+int vpxt_solve_quadratic(float X1, float X2, float X3, float Y1, float Y2, float Y3, float &A, float &B, float &C)
 {
     /*float X1 = 0;
     float X2 = 0;
@@ -5856,7 +5856,7 @@ int vpxt_solve_quadradic(float X1, float X2, float X3, float Y1, float Y2, float
 
     return 0;
 }
-float vpxt_area_under_quadradic(float A, float B, float C, float X1, float X2)
+float vpxt_area_under_quadratic(float A, float B, float C, float X1, float X2)
 {
     float Area1 = ((A * X1 * X1 * X1) / 3) + ((B * X1 * X1) / 2) + C * X1;
     float Area2 = ((A * X2 * X2 * X2) / 3) + ((B * X2 * X2) / 2) + C * X2;

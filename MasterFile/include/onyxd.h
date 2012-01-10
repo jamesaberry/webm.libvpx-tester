@@ -18,7 +18,6 @@
 extern "C"
 {
 #endif
-#include "vpx_codec.h"
 #include "type_aliases.h"
 #include "yv12config.h"
 #include "ppflags.h"
@@ -34,7 +33,7 @@ extern "C"
         int     postprocess;
         int     max_threads;
         int     error_concealment;
-        int     input_partition;
+        int     input_fragments;
     } VP8D_CONFIG;
 
 #ifndef onyxreferenceframetype

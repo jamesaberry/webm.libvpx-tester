@@ -14,7 +14,7 @@
  * VP8 is vpx's newest video compression algorithm that uses motion
  * compensated prediction, Discrete Cosine Transform (DCT) coding of the
  * prediction error signal and context dependent entropy coding techniques
- * based on arithmatic principles. It features:
+ * based on arithmetic principles. It features:
  *  - YUV 4:2:0 image format
  *  - Macro-block based coding (16x16 luma plus two 8x8 chroma)
  *  - 1/4 (1/8) pixel accuracy motion compensated prediction
@@ -25,7 +25,7 @@
  *
  * @{
  */
-/*!\file vp8.h
+/*!\file
  * \brief Provides controls common to both the VP8 encoder and decoder.
  */
 #ifndef VP8_H
@@ -56,27 +56,28 @@ enum vp8_com_control_id
 enum vp8_postproc_level
 {
     VP8_NOFILTERING             = 0,
-    VP8_DEBLOCK                 = 1 << 0,
-    VP8_DEMACROBLOCK            = 1 << 1,
-    VP8_ADDNOISE                = 1 << 2,
-    VP8_DEBUG_TXT_FRAME_INFO    = 1 << 3, /**< print frame information */
-    VP8_DEBUG_TXT_MBLK_MODES    = 1 << 4, /**< print macro block modes over each macro block */
-    VP8_DEBUG_TXT_DC_DIFF       = 1 << 5, /**< print dc diff for each macro block */
-    VP8_DEBUG_TXT_RATE_INFO     = 1 << 6, /**< print video rate info (encoder only) */
+    VP8_DEBLOCK                 = 1<<0,
+    VP8_DEMACROBLOCK            = 1<<1,
+    VP8_ADDNOISE                = 1<<2,
+    VP8_DEBUG_TXT_FRAME_INFO    = 1<<3, /**< print frame information */
+    VP8_DEBUG_TXT_MBLK_MODES    = 1<<4, /**< print macro block modes over each macro block */
+    VP8_DEBUG_TXT_DC_DIFF       = 1<<5, /**< print dc diff for each macro block */
+    VP8_DEBUG_TXT_RATE_INFO     = 1<<6, /**< print video rate info (encoder only) */
+    VP8_MFQE                    = 1<<10,
 };
 
 /*!\brief post process flags
  *
  * This define a structure that describe the post processing settings. For
- * the best objective measure (using thet PSNR metric) set post_proc_flag
+ * the best objective measure (using the PSNR metric) set post_proc_flag
  * to VP8_DEBLOCK and deblocking_level to 1.
  */
 
 typedef struct vp8_postproc_cfg
 {
-    int post_proc_flag;           /**< the types of post processing to be done, should be combination of "vp8_postproc_level" */
-    int deblocking_level;        /**< the strength of deblocking, valid range [0, 16] */
-    int noise_level;             /**< the strength of additive noise, valid range [0, 16] */
+    int post_proc_flag;         /**< the types of post processing to be done, should be combination of "vp8_postproc_level" */
+    int deblocking_level;       /**< the strength of deblocking, valid range [0, 16] */
+    int noise_level;            /**< the strength of additive noise, valid range [0, 16] */
 } vp8_postproc_cfg_t;
 
 /*!\brief reference frame type
@@ -102,9 +103,9 @@ typedef struct vpx_ref_frame
 } vpx_ref_frame_t;
 
 
-/*!\brief vp8 decoder control funciton parameter type
+/*!\brief vp8 decoder control function parameter type
  *
- * defines the data type for each of VP8 decoder control funciton requires
+ * defines the data type for each of VP8 decoder control function requires
  */
 
 VPX_CTRL_USE_TYPE(VP8_SET_REFERENCE,           vpx_ref_frame_t *)

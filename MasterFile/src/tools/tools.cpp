@@ -7589,7 +7589,7 @@ int tool_raw_to_formatted(int argc, const char *const *argv)
         bufferStr.append(heightChar);
         bufferStr.append(" F");
         bufferStr.append(FrameRateChar);
-        bufferStr.append(":1 Ip.");
+        bufferStr.append(":1 Ip\n");
 
         out_put(out2, (unsigned char *)bufferStr.c_str(), strlen(bufferStr.c_str()), 0);
     }

@@ -4675,7 +4675,7 @@ int tool_comp_matches_ivfenc(int argc, const char *const *argv)
 
     int Width = opt.Width;
     int Height = opt.Height;
-    int FrameRate = opt.frame_rate;
+    int FrameRate = opt.timebase.den / opt.timebase.num;
     char ConversionHolder[256];
 
     //Make System Exe string for IVFENC to Create Compression

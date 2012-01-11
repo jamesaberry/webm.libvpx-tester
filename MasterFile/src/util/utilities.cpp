@@ -2056,7 +2056,8 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     opt.arnr_type = 3;
 
     opt.rc_max_intra_bitrate_pct = 0;
-    opt.frame_rate = 30.0;
+    opt.timebase.num = 1;
+    opt.timebase.den = 30;
 }
 void vpxt_determinate_parameters(VP8_CONFIG &opt)
 {

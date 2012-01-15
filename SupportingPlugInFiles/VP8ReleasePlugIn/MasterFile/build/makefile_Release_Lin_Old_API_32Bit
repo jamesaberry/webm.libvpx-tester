@@ -44,7 +44,7 @@ GPP = g++ -g -m32
 GCC = gcc -g -m32
 
 # Libraries
-LFLAGS= -L../oldlib -lpthread -lvpx_OldLin32 -DINLINE=
+LFLAGS= -L../oldlib -lpthread -fprofile-arcs -ftest-coverage  -lvpx_OldLin32 -DINLINE=
 
 #Includes
 INCLUDE = -I ../../../../MasterFile/include -I ../include/release-old-32 -D API -D HAVE_STDINT_H -D COMP_GCC

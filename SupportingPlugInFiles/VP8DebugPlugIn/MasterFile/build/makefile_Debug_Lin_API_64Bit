@@ -44,7 +44,7 @@ GPP = g++ -g -m64
 GCC = gcc -g -m64
 
 # Libraries
-LFLAGS= -L../lib -lvpx_MemLin64  -D CONFIG_MEM_TRACKER=1 -DINLINE= -lpthread
+LFLAGS= -L../lib -lvpx_MemLin64  -D CONFIG_MEM_TRACKER=1 -DINLINE= -lpthread -fprofile-arcs -ftest-coverage 
 
 #Includes
 INCLUDE = -I ../../../../MasterFile/include -I ../include/debug-64 -D API -DHAVE_STDINT_H -D COMP_GCC

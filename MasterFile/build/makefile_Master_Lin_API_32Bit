@@ -146,7 +146,7 @@ GPP = g++ -g -m32
 GCC = gcc -g -m32
 
 # Libraries
-LFLAGS= -L../lib -lvpx_Lin32 -DINLINE= -lpthread
+LFLAGS= -L../lib -lvpx_Lin32 -DINLINE= -lpthread -fprofile-arcs -ftest-coverage 
 
 #Includes
 INCLUDE = -I ../include -I ../include/release-32 -D API -DHAVE_STDINT_H -D CONFIG_MD5=1 -D COMP_GCC

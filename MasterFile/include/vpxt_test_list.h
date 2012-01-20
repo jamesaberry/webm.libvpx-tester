@@ -31,6 +31,7 @@ extern int test_max_quantizer(int argc, const char *const *argv, const std::stri
 extern int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_mem_leak2(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_min_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
+extern int test_multiple_resolution_encode(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_multithreaded_dec(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_multithreaded_enc(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);
 extern int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF);

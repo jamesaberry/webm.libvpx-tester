@@ -230,6 +230,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\cpu_id.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\MasterFile\src\util\vpx\EbmlWriter.cpp"
 						>
 					</File>
@@ -250,7 +254,15 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\scale.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\MasterFile\src\util\vpx\tools_common.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\vp8_multi_resolution_encoder.cpp"
 						>
 					</File>
 					<File

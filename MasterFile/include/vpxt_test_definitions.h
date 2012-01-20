@@ -25,26 +25,27 @@
 #define MEML1NUM 24 //test_mem_leak
 #define MEML2NUM 25 //test_mem_leak2
 #define MINQUNUM 26 //test_min_quantizer
-#define MULTDNUM 27 //test_multithreaded_dec
-#define MULTENUM 28 //test_multithreaded_enc
-#define NVOECPTK 29 //test_new_vs_old_enc_cpu_tick
-#define NVOPSNUM 30 //test_new_vs_old_psnr
-#define NOISENUM 31 //test_noise_sensitivity
-#define OV2PSNUM 32 //test_one_pass_vs_two_pass
-#define PLYALNUM 33 //test_play_alternate
-#define POSTPNUM 34 //test_post_processor
-#define RECBFNUM 35 //test_reconstruct_buffer
-#define RSDWMNUM 36 //test_resample_down_watermark
-#define SPEEDNUM 37 //test_speed
-#define TVECTNUM 38 //test_test_vector
-#define TTVSFNUM 39 //test_thirtytwo_vs_sixtyfour
-#define TV2BTNUM 40 //test_two_pass_vs_two_pass_best
-#define UNDSHNUM 41 //test_undershoot
-#define VERSINUM 42 //test_version
-#define VPXMINUM 43 //test_vpx_matches_int
-#define WMLMMNUM 44 //test_win_lin_mac_match
+#define MULRENUM 27 //test_multiple_resolution_encode
+#define MULTDNUM 28 //test_multithreaded_dec
+#define MULTENUM 29 //test_multithreaded_enc
+#define NVOECPTK 30 //test_new_vs_old_enc_cpu_tick
+#define NVOPSNUM 31 //test_new_vs_old_psnr
+#define NOISENUM 32 //test_noise_sensitivity
+#define OV2PSNUM 33 //test_one_pass_vs_two_pass
+#define PLYALNUM 34 //test_play_alternate
+#define POSTPNUM 35 //test_post_processor
+#define RECBFNUM 36 //test_reconstruct_buffer
+#define RSDWMNUM 37 //test_resample_down_watermark
+#define SPEEDNUM 38 //test_speed
+#define TVECTNUM 39 //test_test_vector
+#define TTVSFNUM 40 //test_thirtytwo_vs_sixtyfour
+#define TV2BTNUM 41 //test_two_pass_vs_two_pass_best
+#define UNDSHNUM 42 //test_undershoot
+#define VERSINUM 43 //test_version
+#define VPXMINUM 44 //test_vpx_matches_int
+#define WMLMMNUM 45 //test_win_lin_mac_match
 
-#define MAXTENUM 44
+#define MAXTENUM 45
 
 /*Removed Tests
 #define PREPRNUM 32 //PreProcessorWorks        //removed 07 15 2010 - Combined with NoiseSensitivity

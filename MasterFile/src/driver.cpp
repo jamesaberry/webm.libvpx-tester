@@ -180,48 +180,47 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "   (1) test_allow_drop_frames               VPXDec\n");
     tprintf(PRINT_STD, "   (2) test_allow_lag                       VPXTEnc\n");
     tprintf(PRINT_STD, "   (3) test_allow_spatial_resampling        VPXTDec\n");
-    tprintf(PRINT_STD, "   (4) test_arnr                            \n");
-    tprintf(PRINT_STD, "   (5) test_auto_key_frame                  VPXMultiResEnc\n");
-    tprintf(PRINT_STD, "   (6) test_buffer_level                    VPXTMultiResEnc\n");
-    tprintf(PRINT_STD, "   (7) test_change_cpu_dec                  VPXTDecRESZ\n");
-    tprintf(PRINT_STD, "   (8) test_change_cpu_enc                  VPXTDecPARD\n");
-    tprintf(PRINT_STD, "   (9) test_constrained_quality             VPXTDec2Raw\n");
-    tprintf(PRINT_STD, "  (10) test_copy_set_reference              \n");
-    tprintf(PRINT_STD, "  (11) test_data_rate                       VPXTDataRate\n");
-    tprintf(PRINT_STD, "  (12) test_debug_matches_release           VPXTPSNR\n");
-    tprintf(PRINT_STD, "  (13) test_drop_frame_watermark            VPXTPSNRDEC\n");
-    tprintf(PRINT_STD, "  (14) test_encoder_break_out               VPXTCheckPBM\n");
-    tprintf(PRINT_STD, "  (15) test_error_concealment               \n");
-    tprintf(PRINT_STD, "  (16) test_error_resolution                Raw2Formatted\n");
-    tprintf(PRINT_STD, "  (17) test_extra_file                      Formatted2Raw\n");
-    tprintf(PRINT_STD, "  (18) test_fixed_quantizer                 Formatted2RawFrames\n");
-    tprintf(PRINT_STD, "  (19) test_force_key_frame                 CombineIndvFrames\n");
-    tprintf(PRINT_STD, "  (20) test_frame_size                      \n");
-    tprintf(PRINT_STD, "  (21) test_good_vs_best                    CompareEnc\n");
-    tprintf(PRINT_STD, "  (22) test_lag_in_frames                   CompareHeader\n");
-    tprintf(PRINT_STD, "  (23) test_max_quantizer                   DisplayHeader\n");
-    tprintf(PRINT_STD, "  (24) test_mem_leak                        \n");
-    tprintf(PRINT_STD, "  (25) test_mem_leak2                       DispKeyFrames\n");
-    tprintf(PRINT_STD, "  (26) test_min_quantizer                   DispResizedFrames\n");
-    tprintf(PRINT_STD, "  (27) test_multiple_resolution_encode      DispVisibleFrames\n");
-    tprintf(PRINT_STD, "  (28) test_multithreaded_dec               DispAltRefFrames\n");
-    tprintf(PRINT_STD, "  (29) test_multithreaded_enc               \n");
-    tprintf(PRINT_STD, "  (30) test_new_vs_old_enc_cpu_tick         CropRawClip\n");
-    tprintf(PRINT_STD, "  (31) test_new_vs_old_psnr                 PadRawClip\n");
-    tprintf(PRINT_STD, "  (32) test_noise_sensitivity               CutClip\n");
-    tprintf(PRINT_STD, "  (33) test_one_pass_vs_two_pass            PasteClip\n");
-    tprintf(PRINT_STD, "  (34) test_play_alternate                  \n");
-    tprintf(PRINT_STD, "  (35) test_post_processor                  PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (36) test_reconstruct_buffer              PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (37) test_resample_down_watermark         \n");
-    tprintf(PRINT_STD, "  (38) test_speed                           CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (39) test_test_vector                     PrintVersion\n");
-    tprintf(PRINT_STD, "  (40) test_thirtytwo_vs_sixtyfour          \n");
-    tprintf(PRINT_STD, "  (41) test_two_pass_vs_two_pass_best       VPXEncPar\n");
-    tprintf(PRINT_STD, "  (42) test_undershoot                      RandParFile\n");
-    tprintf(PRINT_STD, "  (43) test_version                         RandCompress\n");
-    tprintf(PRINT_STD, "  (44) test_vpx_matches_int                 GraphPSNR\n");
-    tprintf(PRINT_STD, "  (45) test_win_lin_mac_match               Help\n");
+    tprintf(PRINT_STD, "   (4) test_arnr                            VPXTDecRESZ\n");
+    tprintf(PRINT_STD, "   (5) test_auto_key_frame                  VPXTDecPARD\n");
+    tprintf(PRINT_STD, "   (6) test_buffer_level                    VPXTDec2Raw\n");
+    tprintf(PRINT_STD, "   (7) test_change_cpu_dec                  \n");
+    tprintf(PRINT_STD, "   (8) test_change_cpu_enc                  VPXTDataRate\n");
+    tprintf(PRINT_STD, "   (9) test_constrained_quality             VPXTPSNR\n");
+    tprintf(PRINT_STD, "  (10) test_copy_set_reference              VPXTPSNRDEC\n");
+    tprintf(PRINT_STD, "  (11) test_data_rate                       VPXTCheckPBM\n");
+    tprintf(PRINT_STD, "  (12) test_debug_matches_release           \n");
+    tprintf(PRINT_STD, "  (13) test_drop_frame_watermark            Raw2Formatted\n");
+    tprintf(PRINT_STD, "  (14) test_encoder_break_out               Formatted2Raw\n");
+    tprintf(PRINT_STD, "  (15) test_error_concealment               Formatted2RawFrames\n");
+    tprintf(PRINT_STD, "  (16) test_error_resolution                CombineIndvFrames\n");
+    tprintf(PRINT_STD, "  (17) test_extra_file                      \n");
+    tprintf(PRINT_STD, "  (18) test_fixed_quantizer                 CompareEnc\n");
+    tprintf(PRINT_STD, "  (19) test_force_key_frame                 CompareHeader\n");
+    tprintf(PRINT_STD, "  (20) test_frame_size                      DisplayHeader\n");
+    tprintf(PRINT_STD, "  (21) test_good_vs_best                    \n");
+    tprintf(PRINT_STD, "  (22) test_lag_in_frames                   DispKeyFrames\n");
+    tprintf(PRINT_STD, "  (23) test_max_quantizer                   DispResizedFrames\n");
+    tprintf(PRINT_STD, "  (24) test_mem_leak                        DispVisibleFrames\n");
+    tprintf(PRINT_STD, "  (25) test_mem_leak2                       DispAltRefFrames\n");
+    tprintf(PRINT_STD, "  (26) test_min_quantizer                   \n");
+    tprintf(PRINT_STD, "  (27) test_multithreaded_dec               CropRawClip\n");
+    tprintf(PRINT_STD, "  (28) test_multithreaded_enc               PadRawClip\n");
+    tprintf(PRINT_STD, "  (29) test_new_vs_old_enc_cpu_tick         CutClip\n");
+    tprintf(PRINT_STD, "  (30) test_new_vs_old_psnr                 PasteClip\n");
+    tprintf(PRINT_STD, "  (31) test_noise_sensitivity               \n");
+    tprintf(PRINT_STD, "  (32) test_one_pass_vs_two_pass            PlayDecIVF\n");
+    tprintf(PRINT_STD, "  (33) test_play_alternate                  PlayCompIVF\n");
+    tprintf(PRINT_STD, "  (34) test_post_processor                  \n");
+    tprintf(PRINT_STD, "  (35) test_reconstruct_buffer              CreateSampleTextFiles\n");
+    tprintf(PRINT_STD, "  (36) test_resample_down_watermark         PrintVersion\n");
+    tprintf(PRINT_STD, "  (37) test_speed                           \n");
+    tprintf(PRINT_STD, "  (38) test_test_vector                     VPXEncPar\n");
+    tprintf(PRINT_STD, "  (39) test_thirtytwo_vs_sixtyfour          RandParFile\n");
+    tprintf(PRINT_STD, "  (40) test_two_pass_vs_two_pass_best       RandCompress\n");
+    tprintf(PRINT_STD, "  (41) test_undershoot                      GraphPSNR\n");
+    tprintf(PRINT_STD, "  (42) test_version                         Help\n");
+    tprintf(PRINT_STD, "  (43) test_vpx_matches_int                 \n");
+    tprintf(PRINT_STD, "  (44) test_win_lin_mac_match               \n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -268,12 +267,11 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Once Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_good_vs_best", slashChar(), slashChar());
     fprintf(fp5, "%s@VP8vNewest_PlugIn_DLib_DMode_32Bit.exe@..%cTestClips%cMemLeakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(), slashChar());
-    fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_multiple_resolution_encode", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_one_pass_vs_two_pass", slashChar(), slashChar());
     fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 1, slashChar(), slashChar());
     fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
-    fprintf(fp5, "%%%s@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar());
+    fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
@@ -1459,27 +1457,6 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: the first with a Min Quantizer equal to 10, the second with a Min Quantizer equal to 60. It records the quantizer used for each frame of the compression. If the first file has a higher PSNR than the second file and every quantizer for both files is above the corresponding Min Quantizer, the test passes.");
     }
 
-    if (selector == MULRENUM)
-    {
-        if (printSummary)
-            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
-        else
-            tprintf(PRINT_STD, " ");
-
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
-
-        tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n"
-               );
-
-        if (printSummary)
-            vpxt_formated_print(HLPPRT, "");
-    }
-
     if (selector == MULTDNUM)
     {
         if (printSummary)
@@ -2544,6 +2521,7 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)//return 1 if string
 #if !defined(_WIN32)
         else
             tprintf(PRINT_STD, "\n");
+
 #endif
         return 1;
     }
@@ -2565,8 +2543,8 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)//return 1 if string
 #if !defined(_WIN32)
         else
             tprintf(PRINT_STD, "\n");
+
 #endif
-        return 1;
     }
 
     if (InputString.compare("testvectorindex") == 0)
@@ -2766,49 +2744,6 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)//return 1 if string
         return 1;
     }
 
-    if (InputString.compare("multiresenc") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-            "  Multi Resolution Encoder\n\n"
-            "    <Width>\n"
-            "    <Height>\n"
-            "    <Input File>\n"
-            "    <Output 1>\n"
-            "    <Output 2>\n"
-            "    <Output 3>\n"
-            );
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtmultiresenc") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-            "  VPXT Multi Resolution Encoder\n\n"
-            "    <Input File>\n"
-            "    <Output>\n"
-            "    <Bit Rate>\n"
-            "    <Encode Format - webm/ivf>\n"
-            );
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-
     return 0;
 }
 void format_summary(const char *InputFileNameCharAr)
@@ -2929,9 +2864,6 @@ void format_summary(const char *InputFileNameCharAr)
 
         if (TestTracker == MINQUNUM)
             TestTrackerName = "Test_Min_Quantizer";
-
-        if (TestTracker == MULRENUM)
-            TestTrackerName = "Test_Multiple_Resolution_Encode";
 
         if (TestTracker == MULTDNUM)
             TestTrackerName = "Test_Multithreaded_Dec";
@@ -3587,12 +3519,6 @@ int  main(int argc, const char *argv[])
     if (TestInputString.compare("quad") == 0)                               //Solves Quadradic
         return tool_solve_quad();
 
-    if (TestInputString.compare("vpxmultiresenc") == 0)                     //Multi Resolution Encode
-        return tool_multi_res_enc(argc, argv);
-
-    if (TestInputString.compare("vpxtmultiresenc") == 0)                    //vpxt Multi Resolution Encode
-        return tool_vpxt_multi_res_enc(argc, argv);
-
     if (TestInputString.compare("vpxtenc") == 0)                            //Compresses an IVF Raw File to an IVF Compressed file
         return tool_vpxt_enc(argc, argv, WorkingDir);
 
@@ -3677,7 +3603,7 @@ int  main(int argc, const char *argv[])
     if (TestInputString.compare("playdecivf") == 0)                         // Plays a Decoded ivf file (Converts the file to a Raw file and uses tmnplay.exe to play the file)
         return tool_play_dec_ivf(argc, argv);
 
-    if (TestInputString.compare("vpxencpar") == 0)                          //converts Tester Parameter file to a vpxenc ParFile
+    if (TestInputString.compare("vpxencpar") == 0)             //converts Tester Parameter file to a vpxenc ParFile
         return tool_convert_par_file_to_vpxenc(argc, argv);
 
     ////////////////////Hidden Commands/////////////////////////
@@ -3872,9 +3798,6 @@ int  main(int argc, const char *argv[])
 
     if (selector == MINQUNUM)
         return test_min_quantizer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
-
-    if (selector == MULRENUM)
-        return test_multiple_resolution_encode(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MULTDNUM)
         return test_multithreaded_dec(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);

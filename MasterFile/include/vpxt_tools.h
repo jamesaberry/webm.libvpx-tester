@@ -18,8 +18,6 @@ int tool_compare_header_info(int argc, const char *const *argv);
 int tool_display_header_info(int argc, const char *const *argv);
 int tool_compression_equiv(int argc, const char *const *argv, std::string WorkingDir);
 int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir);
-int tool_vpxt_multi_res_enc(int argc, const char *const *argv);
-int tool_multi_res_enc(int argc, const char *const *argv);
 int tool_comp_matches_ivfenc(int argc, const char *const *argv);
 int tool_convert_par_file_to_ivfenc(int argc, const char *const *argv);
 int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv);

@@ -40,6 +40,7 @@ SRC = \
    $(TestsDir)/test_mem_leak.cpp  \
    $(TestsDir)/test_mem_leak2.cpp  \
    $(TestsDir)/test_min_quantizer.cpp  \
+   $(TestsDir)/test_multiple_resolution_encode.cpp  \
    $(TestsDir)/test_multithreaded_enc.cpp  \
    $(TestsDir)/test_multithreaded_dec.cpp  \
    $(TestsDir)/test_new_vs_old_psnr.cpp  \
@@ -66,11 +67,14 @@ SRC = \
    $(IvfDir)/md5_utils.cpp \
    $(UtlDir)/utilities.cpp \
    $(IvfDir)/args.cpp \
+   $(IvfDir)/cpu_id.cpp \
    $(IvfDir)/EbmlWriter.cpp \
    $(IvfDir)/halloc.c \
    $(IvfDir)/ivf.cpp \
    $(IvfDir)/nestegg.c \
+   $(IvfDir)/scale.cpp \
    $(IvfDir)/tools_common.cpp \
+   $(IvfDir)/vp8_multi_resolution_encoder.cpp \
    $(IvfDir)/vpxdec.cpp \
    $(IvfDir)/vpxenc.cpp \
    $(IvfDir)/y4minput.cpp \
@@ -106,6 +110,7 @@ SRCOBJ = \
    $(OBJDIR)/test_mem_leak.o  \
    $(OBJDIR)/test_mem_leak2.o  \
    $(OBJDIR)/test_min_quantizer.o  \
+   $(OBJDIR)/test_multiple_resolution_encode.o  \
    $(OBJDIR)/test_multithreaded_enc.o  \
    $(OBJDIR)/test_multithreaded_dec.o  \
    $(OBJDIR)/test_new_vs_old_psnr.o  \
@@ -132,11 +137,14 @@ SRCOBJ = \
    $(OBJDIR)/md5_utils.o \
    $(OBJDIR)/utilities.o \
    $(OBJDIR)/args.o \
+   $(OBJDIR)/cpu_id.o \
    $(OBJDIR)/EbmlWriter.o \
    $(OBJDIR)/halloc.o \
    $(OBJDIR)/ivf.o \
    $(OBJDIR)/nestegg.o \
+   $(OBJDIR)/scale.o \
    $(OBJDIR)/tools_common.o \
+   $(OBJDIR)/vp8_multi_resolution_encoder.o \
    $(OBJDIR)/vpxdec.o \
    $(OBJDIR)/vpxenc.o \
    $(OBJDIR)/y4minput.o \
@@ -242,6 +250,9 @@ $(OBJDIR)/test_mem_leak2.o: $(TestsDir)/test_mem_leak2.cpp
 $(OBJDIR)/test_min_quantizer.o: $(TestsDir)/test_min_quantizer.cpp
 	$(GPP) -c $(TestsDir)/test_min_quantizer.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_min_quantizer.o
 
+$(OBJDIR)/test_multiple_resolution_encode.o: $(TestsDir)/test_multiple_resolution_encode.cpp
+	$(GPP) -c $(TestsDir)/test_multiple_resolution_encode.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_multiple_resolution_encode.o
+	
 $(OBJDIR)/test_multithreaded_enc.o: $(TestsDir)/test_multithreaded_enc.cpp
 	$(GPP) -c $(TestsDir)/test_multithreaded_enc.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_multithreaded_enc.o
 
@@ -319,6 +330,9 @@ $(OBJDIR)/utilities.o: $(UtlDir)/utilities.cpp
 
 $(OBJDIR)/args.o: $(IvfDir)/args.cpp
 	$(GCC) -c $(IvfDir)/args.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/args.o
+	
+$(OBJDIR)/cpu_id.o: $(IvfDir)/cpu_id.cpp
+	$(GPP) -c $(IvfDir)/cpu_id.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/cpu_id.o
 
 $(OBJDIR)/EbmlWriter.o: $(IvfDir)/EbmlWriter.cpp
 	$(GPP) -c $(IvfDir)/EbmlWriter.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/EbmlWriter.o
@@ -331,9 +345,15 @@ $(OBJDIR)/ivf.o: $(IvfDir)/ivf.cpp
 
 $(OBJDIR)/nestegg.o: $(IvfDir)/nestegg.c
 	$(GCC) -c $(IvfDir)/nestegg.c $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/nestegg.o
+	
+$(OBJDIR)/scale.o: $(IvfDir)/scale.cpp
+	$(GPP) -c $(IvfDir)/scale.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/scale.o
 
 $(OBJDIR)/tools_common.o: $(IvfDir)/tools_common.cpp
 	$(GPP) -c $(IvfDir)/tools_common.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/tools_common.o
+	
+$(OBJDIR)/vp8_multi_resolution_encoder.o: $(IvfDir)/vp8_multi_resolution_encoder.cpp
+	$(GPP) -c $(IvfDir)/vp8_multi_resolution_encoder.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/vp8_multi_resolution_encoder.o
 
 $(OBJDIR)/vpxdec.o: $(IvfDir)/vpxdec.cpp
 	$(GPP) -c $(IvfDir)/vpxdec.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/vpxdec.o

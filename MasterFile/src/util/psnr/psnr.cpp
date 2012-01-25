@@ -8,7 +8,7 @@ double VP8_Mse2Psnr_Tester(double Samples, double Peak, double Mse)
 {
     double psnr;
 
-    if ((double)Mse > 0.0)
+    if (Mse > 0.0)
         psnr = 10.0 * log10(Peak * Peak * Samples / Mse);
     else
         psnr = MAX_PSNR;      // Limit to prevent / 0

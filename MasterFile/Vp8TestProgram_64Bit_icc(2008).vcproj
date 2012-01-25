@@ -313,6 +313,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_multiple_resolution_encode.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_multithreaded_dec.cpp"
 					>
 				</File>
@@ -424,6 +428,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\src\util\vpx\cpu_id.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\src\util\vpx\EbmlWriter.cpp"
 						>
 					</File>
@@ -444,7 +452,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\src\util\vpx\scale.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\src\util\vpx\tools_common.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\vp8_multi_resolution_encoder.cpp"
 						>
 					</File>
 					<File

@@ -71,6 +71,9 @@ typedef unsigned char       BYTE;
 extern int ivfdec(int argc, const char **argv_);
 extern int ivfenc(int argc, const char **argv_);
 extern void out_put(void *out, const uint8_t *buf, unsigned int len, int do_md5);
+//extern int vp8_multi_resolution_encoder(long width, long height, const char *input, const char *output[3]);
+extern int vp8_multi_resolution_encoder(int argc, char **argv);
+
 enum video_file_type
 {
     FILE_TYPE_RAW,
@@ -4527,9 +4530,61 @@ int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir)
     /////////////////////////////////////
     return 0;
 }
-int tool_comp_matches_ivfenc(int argc, const char *const *argv)
+int tool_vpxt_multi_res_enc(int argc, const char *const *argv)
 {
     char *CompressString = "Allow DF";
+
+    if (argc < 6)
+        return vpxt_tool_help(argv[1], 0);
+
+    std::string input = argv[2];
+    std::string output = argv[3];
+    int BitRate = atoi(argv[4]);
+    std::string EncForm = argv[5];
+
+    int Mode = 0;
+    int speed = 0;
+
+    VP8_CONFIG opt;
+    vpxt_default_parameters(opt);
+
+    opt.target_bandwidth = BitRate;
+
+    if (argc == 9)
+    {
+        opt = vpxt_input_settings(argv[8]);
+    }
+
+    int CompressInt = opt.allow_df;
+
+    opt.Mode = Mode;
+
+    vpxt_compress_multi_resolution(input.c_str(), output.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+
+    return 0;
+}
+int tool_multi_res_enc(int argc, const char *const *argv)
+{
+    int dummyargc = argc - 1;
+
+    const char *DummyArgv[999];
+    DummyArgv[0] = argv[0];
+
+    int i = 2;
+
+    while (i < argc)
+    {
+        DummyArgv[i-1] = argv[i];
+        i++;
+    }
+
+    vp8_multi_resolution_encoder(dummyargc, (char **) DummyArgv);
+
+    return 0;
+}
+int tool_comp_matches_ivfenc(int argc, const char *const *argv)
+{
+    const char *CompressString = "Allow DF";
 
     if (argc < 6 || argc > 7)
     {
@@ -7217,6 +7272,22 @@ int tool_random_stress_test(int argc, const char *const *argv)
             outfile << "\n";
         }
 
+        if (ValidTestNumbers[RandTestNum] == MULRENUM)
+        {
+            outfile << "test_multiple_resolution_encode@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+
         if (ValidTestNumbers[RandTestNum] == MULTDNUM)
         {
             outfile << "test_multithreaded_dec@";
@@ -7589,7 +7660,7 @@ int tool_raw_to_formatted(int argc, const char *const *argv)
         bufferStr.append(heightChar);
         bufferStr.append(" F");
         bufferStr.append(FrameRateChar);
-        bufferStr.append(":1 Ip\n");
+        bufferStr.append(":1 Ip.");
 
         out_put(out2, (unsigned char *)bufferStr.c_str(), strlen(bufferStr.c_str()), 0);
     }

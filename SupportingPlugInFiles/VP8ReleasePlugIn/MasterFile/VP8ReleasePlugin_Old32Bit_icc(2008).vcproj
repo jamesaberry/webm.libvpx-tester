@@ -230,6 +230,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\cpu_id.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\MasterFile\src\util\vpx\EbmlWriter.cpp"
 						>
 					</File>
@@ -247,6 +251,10 @@
 					</File>
 					<File
 						RelativePath="..\..\..\MasterFile\src\util\vpx\nestegg.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\MasterFile\src\util\vpx\scale.cpp"
 						>
 					</File>
 					<File

@@ -15,6 +15,8 @@ SRC = \
 	$(PsnrDir)/psnr.cpp \
 	$(PsnrDir)/ssim.cpp \
 	$(UtlSrcDir)/utilities.cpp \
+	$(IvfDir)/scale.cpp \
+	$(IvfDir)/cpu_id.cpp \
 	$(IvfDir)/ivf.cpp \
 	$(IvfDir)/md5_utils.cpp \
 	$(IvfDir)/args.cpp \
@@ -23,7 +25,7 @@ SRC = \
 	$(IvfDir)/nestegg.c \
         $(IvfDir)/tools_common.cpp \
 	$(IvfDir)/y4minput.cpp \
-
+	
 # source object files
 SRCOBJ = \
    $(OBJDIR)/supportingrelease.o \
@@ -31,6 +33,8 @@ SRCOBJ = \
    $(OBJDIR)/psnr.o \
    $(OBJDIR)/ssim.o \
    $(OBJDIR)/utilities.o \
+   $(OBJDIR)/scale.o\
+   $(OBJDIR)/cpu_id.o \
    $(OBJDIR)/md5_utils.o\
    $(OBJDIR)/args.o \
    $(OBJDIR)/EbmlWriter.o \
@@ -67,6 +71,12 @@ $(OBJDIR)/ssim.o: $(PsnrDir)/ssim.cpp
 
 $(OBJDIR)/utilities.o: $(UtlSrcDir)/utilities.cpp
 	$(GPP) -c $(UtlSrcDir)/utilities.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/utilities.o
+
+$(OBJDIR)/cpu_id.o: $(IvfDir)/cpu_id.cpp
+	$(GPP) -c $(IvfDir)/cpu_id.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/cpu_id.o
+
+$(OBJDIR)/scale.o: $(IvfDir)/scale.cpp
+	$(GPP) -c $(IvfDir)/scale.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/scale.o
 
 $(OBJDIR)/md5_utils.o: $(IvfDir)/md5_utils.cpp
 	$(GPP) -c $(IvfDir)/md5_utils.cpp $(INCLUDE) $(LFLAGS) -o $(OBJDIR)/md5_utils.o

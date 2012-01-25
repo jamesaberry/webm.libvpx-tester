@@ -7051,33 +7051,33 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
                 }
 
                 if((img->d_h / GCDInt2) == 1){
-                    if((RawWidth / GCDInt1) % 2 == 0){
+                    if((RawHeight / GCDInt2) % 2 == 0){
                         HeightScale = 2;
                         HeightRatio = 1;
                         resizeHeight = (RawHeight / GCDInt2) / 2;
                     }
                 }
-                else if((img->d_w / GCDInt1) == 2){
-                    if((RawWidth / GCDInt1) % 3 == 0){
+                else if((img->d_h / GCDInt2) == 2){
+                    if((RawHeight / GCDInt2) % 3 == 0){
                         HeightScale = 3;
                         HeightRatio = 2;
                         resizeHeight = (RawHeight / GCDInt2) / 3;
                     }
                 }
-                else if((img->d_w / GCDInt1) == 3){
-                    if((RawWidth / GCDInt1) % 4 == 0){
+                else if((img->d_h / GCDInt2) == 3){
+                    if((RawHeight / GCDInt2) % 4 == 0){
                         HeightScale = 4;
                         HeightRatio = 3;
                         resizeHeight = (RawHeight / GCDInt2) / 4;
                     }
-                    else if((RawWidth / GCDInt1) % 3 == 0){
+                    else if((RawHeight / GCDInt2) % 5 == 0){
                         HeightScale = 5;
                         HeightRatio = 3;
                         resizeHeight = (RawHeight / GCDInt2) / 5;
                     }
                 }
-                else if((img->d_w / GCDInt1) == 4){
-                    if((RawWidth / GCDInt1) % 5 == 0){
+                else if((img->d_h / GCDInt2) == 4){
+                    if((RawHeight / GCDInt2) % 5 == 0){
                         HeightScale = 5;
                         HeightRatio = 4;
                         resizeHeight = (RawHeight / GCDInt2) / 5;
@@ -8126,33 +8126,33 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
                 }
 
                 if((img->d_h / GCDInt2) == 1){
-                    if((RawWidth / GCDInt1) % 2 == 0){
+                    if((RawHeight / GCDInt2) % 2 == 0){
                         HeightScale = 2;
                         HeightRatio = 1;
                         resizeHeight = (RawHeight / GCDInt2) / 2;
                     }
                 }
-                else if((img->d_w / GCDInt1) == 2){
-                    if((RawWidth / GCDInt1) % 3 == 0){
+                else if((img->d_h / GCDInt2) == 2){
+                    if((RawHeight / GCDInt2) % 3 == 0){
                         HeightScale = 3;
                         HeightRatio = 2;
                         resizeHeight = (RawHeight / GCDInt2) / 3;
                     }
                 }
-                else if((img->d_w / GCDInt1) == 3){
-                    if((RawWidth / GCDInt1) % 4 == 0){
+                else if((img->d_h / GCDInt2) == 3){
+                    if((RawHeight / GCDInt2) % 4 == 0){
                         HeightScale = 4;
                         HeightRatio = 3;
                         resizeHeight = (RawHeight / GCDInt2) / 4;
                     }
-                    else if((RawWidth / GCDInt1) % 3 == 0){
+                    else if((RawHeight / GCDInt2) % 5 == 0){
                         HeightScale = 5;
                         HeightRatio = 3;
                         resizeHeight = (RawHeight / GCDInt2) / 5;
                     }
                 }
-                else if((img->d_w / GCDInt1) == 4){
-                    if((RawWidth / GCDInt1) % 5 == 0){
+                else if((img->d_h / GCDInt2) == 4){
+                    if((RawHeight / GCDInt2) % 5 == 0){
                         HeightScale = 5;
                         HeightRatio = 4;
                         resizeHeight = (RawHeight / GCDInt2) / 5;
@@ -8160,11 +8160,6 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
                 }
                 else{
                     printf("No scale match found for height \n");
-                    return 0;
-                }
-
-                if(resizeWidth == 0 && resizeHeight == 0){
-                    printf("ERROR: No scale match found for width or height \n");
                     return 0;
                 }
 

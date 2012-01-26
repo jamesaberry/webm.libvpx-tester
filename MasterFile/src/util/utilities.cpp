@@ -6775,7 +6775,7 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
             return EXIT_FAILURE;
         }
 
-	file_type = FILE_TYPE_IVF;
+    file_type = FILE_TYPE_IVF;
     }
     else
     {
@@ -7088,16 +7088,18 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
                     return 0;
                 }
 
-                if(resizeWidth == 0 && resizeHeight == 0){
-                    printf("ERROR: No scale match found for width or height \n");
-                    return 0;
-                }
-
                 //resize YV12 untill it is scaled properly.
                 while(resizeWidth || resizeHeight){
 
-                    resize_frame_width = RawWidth - (RawWidth / (WidthScale/WidthRatio))*(resizeWidth-1);
-                    resize_frame_height = RawHeight - (RawHeight / (HeightScale/HeightRatio))*(resizeHeight-1);
+                    if(resizeWidth)
+                        resize_frame_width = RawWidth - (RawWidth / (WidthScale/WidthRatio))*(resizeWidth-1);
+                    else
+                        resize_frame_width = img->d_w;
+
+                    if(resizeHeight)
+                        resize_frame_height = RawHeight - (RawHeight / (HeightScale/HeightRatio))*(resizeHeight-1);
+                    else
+                        resize_frame_height = img->d_h;
 
                     vpxt_yv12_alloc_frame_buffer(&Temp_YV12_2, resize_frame_width, resize_frame_height, VP8BORDERINPIXELS);
 
@@ -8166,8 +8168,15 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
                 //resize YV12 untill it is scaled properly.
                 while(resizeWidth || resizeHeight){
 
-                    resize_frame_width = RawWidth - (RawWidth / (WidthScale/WidthRatio))*(resizeWidth-1);
-                    resize_frame_height = RawHeight - (RawHeight / (HeightScale/HeightRatio))*(resizeHeight-1);
+                    if(resizeWidth)
+                        resize_frame_width = RawWidth - (RawWidth / (WidthScale/WidthRatio))*(resizeWidth-1);
+                    else
+                        resize_frame_width = img->d_w;
+
+                    if(resizeHeight)
+                        resize_frame_height = RawHeight - (RawHeight / (HeightScale/HeightRatio))*(resizeHeight-1);
+                    else
+                        resize_frame_height = img->d_h;
 
                     vpxt_yv12_alloc_frame_buffer(&Temp_YV12_2, resize_frame_width, resize_frame_height, VP8BORDERINPIXELS);
 
@@ -8199,7 +8208,7 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
             //////////////////////Get YV12 Data For Raw File//////////////////////
             read_frame_enc(RawFile, &raw_img, file_type, &y4m, &detect);
             image2yuvconfig(&raw_img, &Raw_YV12);
-			if (forceUVswap == 1){
+            if (forceUVswap == 1){
                 unsigned char *temp = Raw_YV12.u_buffer;
                 Raw_YV12.u_buffer = Raw_YV12.v_buffer;
                 Raw_YV12.v_buffer = temp;
@@ -9716,7 +9725,7 @@ int vpxt_compress(const char *inputFile, const char *outputFile2, int speed, int
     unsigned long            cx_time = 0;
     struct vpx_rational      arg_framerate = {30, 1};
     stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
-	ebml.last_pts_ms = -1;
+    ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -10352,7 +10361,7 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
 
     struct vpx_rational      arg_framerate = {30, 1};
     stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
-	ebml.last_pts_ms = -1;
+    ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -10947,7 +10956,7 @@ unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, 
     int framesoutrec = 0;
     struct vpx_rational      arg_framerate = {30, 1};
     stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
-	ebml.last_pts_ms = -1;
+    ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -11574,7 +11583,7 @@ int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2
 
     struct vpx_rational      arg_framerate = {30, 1};
     stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
-	ebml.last_pts_ms = -1;
+    ebml.last_pts_ms = -1;
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -12187,7 +12196,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
 
     struct vpx_rational      arg_framerate = {30, 1};
     stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
-	ebml.last_pts_ms = -1;
+    ebml.last_pts_ms = -1;
 
     //outfile = encoded ivf file
     void *out;//all raw preview frames

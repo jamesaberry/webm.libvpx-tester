@@ -6915,7 +6915,7 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
     ppcfg.noise_level = noise_level2;
     ppcfg.post_proc_flag = flags2;
 
-    if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, 0))
+    if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, VPX_CODEC_USE_POSTPROC))
     {
         tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
         fclose(RawFile);
@@ -6924,6 +6924,11 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
         delete timeEndStamp2;
         vpx_img_free(&raw_img);
         return EXIT_FAILURE;
+    }
+
+    if (vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg) != 0)
+    {
+        tprintf(PRINT_STD, "Failed to update decoder post processor settings\n");
     }
 
     /////////////////////Setup Temp YV12 Buffer to Resize if nessicary/////////////////////

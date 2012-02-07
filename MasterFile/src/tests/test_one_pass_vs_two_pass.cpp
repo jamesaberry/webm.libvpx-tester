@@ -209,12 +209,12 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     double PSNROnePass2;
     double PSNROnePass3;
 
-    PSNRTwoPass1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRTwoPass2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRTwoPass3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNROnePass1 = vpxt_psnr(input.c_str(), OnePassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNROnePass2 = vpxt_psnr(input.c_str(), OnePassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNROnePass3 = vpxt_psnr(input.c_str(), OnePassOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRTwoPass1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRTwoPass2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRTwoPass3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNROnePass1 = vpxt_psnr(input.c_str(), OnePassOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNROnePass2 = vpxt_psnr(input.c_str(), OnePassOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNROnePass3 = vpxt_psnr(input.c_str(), OnePassOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
 
     //    double PSRNPerc = vpxt_abs_double(((PSNR2 - PSNR1) / PSNR1) * 100.00);
     //    double BRPerc = vpxt_abs_double(((Size2 - Size1) / Size1) * 100.00);

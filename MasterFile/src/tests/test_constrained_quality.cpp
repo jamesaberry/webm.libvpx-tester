@@ -136,8 +136,8 @@ int test_constrained_quality(int argc, const char *const *argv, const std::strin
         return 10;
     }
 
-    double ConstrainedQonPSNR = vpxt_psnr(input.c_str(), ConstrainedQon.c_str(), 0, 0, 1, NULL);
-    double ConstrainedQoffPSNR = vpxt_psnr(input.c_str(), ConstrainedQoff.c_str(), 0, 0, 1, NULL);
+    double ConstrainedQonPSNR = vpxt_psnr(input.c_str(), ConstrainedQon.c_str(), 0, PRINT_BTH, 1, NULL);
+    double ConstrainedQoffPSNR = vpxt_psnr(input.c_str(), ConstrainedQoff.c_str(), 0, PRINT_BTH, 1, NULL);
 
     double ConstrainedQonDataRate = vpxt_data_rate(ConstrainedQon.c_str(), 1);
     double ConstrainedQoffDataRate = vpxt_data_rate(ConstrainedQoff.c_str(), 1);

@@ -6196,11 +6196,11 @@ int tool_vpxt_psnr_run(int argc, const char *const *argv)
 
     if (atoi(argv[4]) == 1)
     {
-        vpxt_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, &runssim);
+        vpxt_psnr(Raw.c_str(), Comp.c_str(), 0, PRINT_STD, 0, &runssim);
     }
     else
     {
-        vpxt_psnr(Raw.c_str(), Comp.c_str(), 0, 3, 0, NULL);
+        vpxt_psnr(Raw.c_str(), Comp.c_str(), 0, PRINT_STD, 0, NULL);
     }
 
     tprintf(PRINT_STD, "\n");

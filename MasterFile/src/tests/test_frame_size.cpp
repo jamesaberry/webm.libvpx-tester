@@ -237,7 +237,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, PRINT_BTH, 1, NULL);
 
             //char PSNROutFile[255];
             std::string PSNROutFile;
@@ -284,7 +284,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, PRINT_BTH, 1, NULL);
 
             //char PSNROutFile[255];
             std::string PSNROutFile;
@@ -331,7 +331,7 @@ int test_frame_size(int argc, const char *const *argv, const std::string &Workin
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, 0, 1, NULL);
+            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(), EncCrop[RawCropNum].c_str(), 0, PRINT_BTH, 1, NULL);
 
             //char PSNROutFile[255];
             std::string PSNROutFile;

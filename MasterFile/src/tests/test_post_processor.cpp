@@ -125,19 +125,19 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     double ssim = 0;
 
     tprintf(PRINT_BTH, "\nCaculating PSNR: NOFILTERING DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-    PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
+    PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, PRINT_BTH, 1, deblock_level, 0, flags, &ssim);
     countme++;
 
     flags++;
     tprintf(PRINT_BTH, "\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-    PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+    PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, PRINT_BTH, 1, deblock_level, noise_level, flags, &ssim);
     countme++;
     flags++;
 
     while (deblock_level != 16)
     {
         tprintf(PRINT_BTH, "\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, 0, flags, &ssim);
+        PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, PRINT_BTH, 1, deblock_level, 0, flags, &ssim);
         countme++;
         deblock_level++;
     }
@@ -149,7 +149,7 @@ int test_post_processor(int argc, const char *const *argv, const std::string &Wo
     while (noise_level != 8)
     {
         tprintf(PRINT_BTH, "\nCaculating PSNR: ADDNOISE DeblockLevel %i noise_level %i \n", deblock_level, noise_level);
-        PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, 0, 1, deblock_level, noise_level, flags, &ssim);
+        PSNRArr[countme] = vpxt_post_proc_psnr(input.c_str(), PostProcOutFile.c_str(), 0, PRINT_BTH, 1, deblock_level, noise_level, flags, &ssim);
         countme++;
 
         noise_level++;

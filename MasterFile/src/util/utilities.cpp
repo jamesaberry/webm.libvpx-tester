@@ -1396,6 +1396,12 @@ enum file_kind
     IVF_FILE,
     WEBM_FILE
 };
+struct nestegg_packet
+{
+    uint64_t track;
+    uint64_t timecode;
+    struct frame *frame;
+};
 struct input_ctx
 {
     enum file_kind  kind;
@@ -1406,7 +1412,11 @@ struct input_ctx
     unsigned int    chunks;
     unsigned int    video_track;
 };
-static int read_frame_dec(struct input_ctx      *input, uint8_t               **buf, size_t                *buf_sz, size_t                *buf_alloc_sz)
+static int read_frame_dec(struct input_ctx *input,
+                          uint8_t **buf,
+                          size_t *buf_sz,
+                          size_t *buf_alloc_sz,
+                          uint64_t *timeStamp)
 {
     char     raw_hdr[IVF_FRAME_HDR_SZ];
     size_t          new_buf_sz;
@@ -1429,6 +1439,8 @@ static int read_frame_dec(struct input_ctx      *input, uint8_t               **
                     return 1;
             }
             while (track != input->video_track);
+
+            *timeStamp = input->pkt->timecode;
 
             if (nestegg_packet_count(input->pkt, &input->chunks))
                 return 1;
@@ -1457,6 +1469,7 @@ static int read_frame_dec(struct input_ctx      *input, uint8_t               **
     else
     {
         new_buf_sz = mem_get_le32(raw_hdr);
+        *timeStamp = mem_get_le32(raw_hdr+4);
 
         if (new_buf_sz > 256 * 1024 * 1024)
         {
@@ -6267,7 +6280,7 @@ unsigned int vpxt_get_time_in_micro_sec(unsigned int startTick, unsigned int sto
 {
 #if defined(_WIN32)
     LARGE_INTEGER pf;
-    __int64 duration = stopTick - startTick;
+    uint64_t duration = stopTick - startTick;
 
     if (QueryPerformanceFrequency(&pf))
     {
@@ -6682,65 +6695,66 @@ int yuvconfig2image(vpx_image_t *img, const YV12_BUFFER_CONFIG  *yv12, void *use
 
     return 0;
 }
-double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut)
+double vpxt_psnr(const char *input_file1,
+                 const char *input_file2,
+                 int force_uvswap,
+                 int print_out,
+                 int print_embl,
+                 double *ssim_out)
 {
-    if (frameStats != 3){
-        //Overide to print individual frames to screen
-        frameStats = 1;
-    }
+    double summed_quality = 0;
+    double summed_weights = 0;
+    double summed_psnr = 0;
+    double summed_ypsnr = 0;
+    double summed_upsnr = 0;
+    double summed_vpsnr = 0;
+    double sum_sq_error = 0;
+    double sum_bytes = 0;
+    double sum_bytes2 = 0;
 
-    double summedQuality = 0;
-    double summedWeights = 0;
-    double summedPsnr = 0;
-    double summedYPsnr = 0;
-    double summedUPsnr = 0;
-    double summedVPsnr = 0;
-    double sumSqError = 0;
-    double sumBytes = 0;
-    double sumBytes2 = 0;
-
-    unsigned int             currentVideo1Frame = 0;
-    int                      RawFrameOffset = 0;
-    int                      CompressedFrameOffset = 0;
+    unsigned int             decoded_frames = 0;
+    int                      raw_offset = 0;
+    int                      comp_offset = 0;
     unsigned int             maximumFrameCount = 0;
-    YV12_BUFFER_CONFIG       Raw_YV12;
-    YV12_BUFFER_CONFIG       Comp_YV12;
+    YV12_BUFFER_CONFIG       raw_yv12;
+    YV12_BUFFER_CONFIG       comp_yv12;
     vpx_image_t              raw_img;
     unsigned int             frameCount = 0;
     unsigned int             file_type = FILE_TYPE_RAW;
     unsigned int             fourcc    = 808596553;
     struct                   detect_buffer detect;
-    unsigned int             RawWidth = 0;
-    unsigned int             RawHeight = 0;
-    unsigned int             RawRate = 0;
-    unsigned int             RawScale = 0;
+    unsigned int             raw_width = 0;
+    unsigned int             raw_height = 0;
+    unsigned int             raw_rate = 0;
+    unsigned int             raw_scale = 0;
     y4m_input                y4m;
     int                      arg_have_framerate = 0;
     struct vpx_rational      arg_framerate = {30, 1};
     int                      arg_use_i420 = 1;
 
-    forceUVswap = 0;
+    force_uvswap = 0;
     ////////////////////////Initilize Raw File////////////////////////
-    FILE *RawFile = strcmp(inputFile1, "-") ? fopen(inputFile1, "rb") : set_binary_mode(stdin);
+    FILE *raw_file = strcmp(input_file1, "-") ?
+        fopen(input_file1, "rb") : set_binary_mode(stdin);
 
-    if (!RawFile)
+    if (!raw_file)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile1);
+        tprintf(print_out, "Failed to open input file: %s", input_file1);
         return -1;
     }
 
-    detect.buf_read = fread(detect.buf, 1, 4, RawFile);
+    detect.buf_read = fread(detect.buf, 1, 4, raw_file);
     detect.position = 0;
 
-    if (detect.buf_read == 4 && file_is_y4m(RawFile, &y4m, detect.buf))
+    if (detect.buf_read == 4 && file_is_y4m(raw_file, &y4m, detect.buf))
     {
-        if (y4m_input_open(&y4m, RawFile, detect.buf, 4) >= 0)
+        if (y4m_input_open(&y4m, raw_file, detect.buf, 4) >= 0)
         {
             file_type = FILE_TYPE_Y4M;
-            RawWidth = y4m.pic_w;
-            RawHeight = y4m.pic_h;
-            RawRate = y4m.fps_n;
-            RawScale = y4m.fps_d;
+            raw_width = y4m.pic_w;
+            raw_height = y4m.pic_h;
+            raw_rate = y4m.fps_n;
+            raw_scale = y4m.fps_d;
 
             /* Use the frame rate from the file only if none was specified
             * on the command-line.
@@ -6755,12 +6769,13 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
         }
         else
         {
-            fprintf(stderr, "Unsupported Y4M stream.\n");
+            tprintf(print_out, "Unsupported Y4M stream.\n");
             return EXIT_FAILURE;
         }
     }
     else if (detect.buf_read == 4 &&
-             file_is_ivf(RawFile, &fourcc, &RawWidth, &RawHeight, &detect, &RawScale, &RawRate))
+        file_is_ivf(raw_file, &fourcc, &raw_width, &raw_height, &detect,
+            &raw_scale, &raw_rate))
     {
         switch (fourcc)
         {
@@ -6771,31 +6786,32 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
             arg_use_i420 = 1;
             break;
         default:
-            fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
+            tprintf(print_out, "Unsupported fourcc (%08x) in IVF\n", fourcc);
             return EXIT_FAILURE;
         }
 
-    file_type = FILE_TYPE_IVF;
+        file_type = FILE_TYPE_IVF;
     }
     else
     {
         file_type = FILE_TYPE_RAW;
     }
 
-    if (!RawWidth || !RawHeight)
+    if (!raw_width || !raw_height)
     {
-        fprintf(stderr, "Specify stream dimensions with --width (-w) "
-                " and --height (-h).\n");
+        tprintf(print_out, "Specify stream dimensions with --width (-w) "
+            " and --height (-h).\n");
         return EXIT_FAILURE;
     }
 
     if(file_type != FILE_TYPE_Y4M)
-        vpx_img_alloc(&raw_img, IMG_FMT_I420, RawWidth, RawHeight, 1);
+        vpx_img_alloc(&raw_img, IMG_FMT_I420, raw_width, raw_height, 1);
 
-    //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
-    if (RawFrameOffset > 0)
+    //Burn Frames untill Raw frame offset reached - currently disabled by
+    //override of raw_offset
+    if (raw_offset > 0)
     {
-        for (int i = 0; i < RawFrameOffset; i++)
+        for (int i = 0; i < raw_offset; i++)
         {
         }
     }
@@ -6804,23 +6820,24 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
     //YV12 hex-0x32315659 dec-842094169
     //if YV12 Do not swap Frames
     if (fourcc == 842094169)
-        forceUVswap = 1;   
+        force_uvswap = 1;
 
     ////////////////////////Initilize Compressed File////////////////////////
     /* Open file */
-    FILE *CompFile = strcmp(inputFile2, "-") ? fopen(inputFile2, "rb") : set_binary_mode(stdin);
+    FILE *comp_file = strcmp(input_file2, "-") ?
+        fopen(input_file2, "rb") : set_binary_mode(stdin);
 
-    if (!CompFile)
+    if (!comp_file)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile2);
+        tprintf(print_out, "Failed to open input file: %s", input_file2);
         return -1;
     }
 
-    unsigned int            CompFourcc;
-    unsigned int            CompWidth;
-    unsigned int            CompHeight;
-    unsigned int            CompScale;
-    unsigned int            CompRate;
+    unsigned int            comp_fourcc;
+    unsigned int            comp_width;
+    unsigned int            comp_height;
+    unsigned int            comp_scale;
+    unsigned int            comp_rate;
     struct input_ctx        input;
 
     input.chunk = 0;
@@ -6831,463 +6848,466 @@ double vpxt_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap
     input.pkt = 0;
     input.video_track = 0;
 
-    input.infile = CompFile;
+    input.infile = comp_file;
 
-    if (file_is_ivf_dec(CompFile, &CompFourcc, &CompWidth, &CompHeight, &CompScale, &CompRate))
+    if (file_is_ivf_dec(comp_file, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
         input.kind = IVF_FILE;
-    else if (file_is_webm(&input, &CompFourcc, &CompWidth, &CompHeight, &CompScale, &CompRate))
+    else if (file_is_webm(&input, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
         input.kind = WEBM_FILE;
-    else if (file_is_raw(CompFile, &CompFourcc, &CompWidth, &CompHeight, &CompScale, &CompRate))
+    else if (file_is_raw(comp_file, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
         input.kind = RAW_FILE;
     else
     {
-        fprintf(stderr, "Unrecognized input file type.\n");
+        tprintf(print_out, "Unrecognized input file type.\n");
         return EXIT_FAILURE;
     }
 
     if (input.kind == WEBM_FILE)
-        if (webm_guess_framerate(&input, &CompScale, &CompRate))
+        if (webm_guess_framerate(&input, &comp_scale, &comp_rate))
         {
-            fprintf(stderr, "Failed to guess framerate -- error parsing "
-                    "webm file?\n");
+            tprintf(print_out, "Failed to guess framerate -- error parsing "
+                "webm file?\n");
             return EXIT_FAILURE;
         }
 
-    //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
-    if (CompressedFrameOffset > 0)
-    {
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-    ////////Printing////////
-    if (printvar != 0)
-    {
-        tprintf(PRINT_BTH, "\n\n                        ---------Computing PSNR---------");
-    }
-
-    if (printvar == 0)
-    {
-        tprintf(PRINT_STD, "\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
-    }
-
-    if (printvar == 1)
-    {
-        tprintf(PRINT_BTH, "\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
-    }
-
-    if (printvar == 5)
-    {
-        tprintf(PRINT_BTH, "\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
-    }
-
-    if (printvar == 1 || printvar == 5 || printvar == 0)
-    {
-        if (frameStats == 3)
+        //Burn Frames untill Compressed frame offset reached - currently
+        //disabled by override of comp_offset
+        if (comp_offset > 0)
         {
-            tprintf(PRINT_STD, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
-        }
-        else
-        {
-            tprintf(PRINT_BTH, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
-        }
-    }
-
-    ////////////////////////
-
-    __int64 *timeStamp2 = new __int64;
-    __int64 *timeEndStamp2 = new __int64;
-    int deblock_level2 = 0;
-    int noise_level2 = 0;
-    int flags2 = 0;
-    int currentFrame2 = 0;
-
-    //////////////////////////////////////////New//////////////////////////////////////////
-    vpx_codec_ctx_t       decoder;
-    vpx_codec_iface_t       *iface = NULL;
-    const struct codec_item  *codec = codecs;
-    vpx_codec_iface_t  *ivf_iface = ifaces[0].iface;
-    vpx_codec_dec_cfg_t     cfg = {0};
-    iface = ivf_iface;
-
-    vp8_postproc_cfg_t ppcfg = {0};
-
-    ppcfg.deblocking_level = deblock_level2;
-    ppcfg.noise_level = noise_level2;
-    ppcfg.post_proc_flag = flags2;
-
-    if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, 0))
-    {
-        tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        fclose(RawFile);
-        fclose(CompFile);
-        delete timeStamp2;
-        delete timeEndStamp2;
-        vpx_img_free(&raw_img);
-        return EXIT_FAILURE;
-    }
-
-    /////////////////////Setup Temp YV12 Buffer to Resize if nessicary/////////////////////
-    vp8_scale_machine_specific_config();
-
-    YV12_BUFFER_CONFIG Temp_YV12;
-    YV12_BUFFER_CONFIG Temp_YV12_2;
-
-    memset(&Temp_YV12, 0, sizeof(Temp_YV12));
-    memset(&Temp_YV12_2, 0, sizeof(Temp_YV12_2));
-    ///////////////////////////////////////////////////////////////////////////////////////
-
-    vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
-    //////////////////////////////////////////New//////////////////////////////////////////
-
-    uint8_t               *CompBuff = NULL;
-    size_t               buf_sz = 0, buf_alloc_sz = 0;
-
-    while (!read_frame_dec(&input, &CompBuff, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
-    {
-        unsigned long lpdwFlags = 0;
-        unsigned long lpckid = 0;
-        long bytes1;
-        long bytes2;
-
-        bytes2 = buf_sz;
-        sumBytes2 += bytes2;
-
-        vpx_codec_iter_t  iter = NULL;
-        vpx_image_t    *img;
-
-        if (vpx_codec_decode(&decoder, (uint8_t *) CompBuff, buf_sz, NULL, 0))
-        {
-            const char *detail = vpx_codec_error_detail(&decoder);
-            tprintf(PRINT_STD, "Failed to decode frame: %s\n", vpx_codec_error(&decoder));
         }
 
-        if (img = vpx_codec_get_frame(&decoder, &iter))
+        ////////////////////////////////////////////////////////////////////////
+        ////////Printing////////
+        if (print_embl)
+            tprintf(print_out, "\n\n                        "
+                "---------Computing PSNR---------");
+
+        tprintf(print_out, "\n\nComparing %s to %s:\n                        \n"
+            , input_file1, input_file2);
+        ////////////////////////
+        int deblock_level2 = 0;
+        int noise_level2 = 0;
+        int flags2 = 0;
+        int currentFrame2 = 0;
+
+        vpx_codec_ctx_t       decoder;
+        vpx_codec_iface_t       *iface = NULL;
+        const struct codec_item  *codec = codecs;
+        vpx_codec_iface_t  *ivf_iface = ifaces[0].iface;
+        vpx_codec_dec_cfg_t     cfg = {0};
+        iface = ivf_iface;
+
+        vp8_postproc_cfg_t ppcfg = {0};
+
+        ppcfg.deblocking_level = deblock_level2;
+        ppcfg.noise_level = noise_level2;
+        ppcfg.post_proc_flag = flags2;
+
+        if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, 0))
         {
-            ++currentVideo1Frame;
+            tprintf(print_out, "Failed to initialize decoder: %s\n",
+                vpx_codec_error(&decoder));
 
-            image2yuvconfig(img, &Comp_YV12);
+            fclose(raw_file);
+            fclose(comp_file);
+            vpx_img_free(&raw_img);
+            return EXIT_FAILURE;
+        }
 
-            int TempBuffState = vpxt_yv12_alloc_frame_buffer(&Temp_YV12, Comp_YV12.y_width, Comp_YV12.y_height, VP8BORDERINPIXELS);
-            vp8_yv12_copy_frame(&Comp_YV12, &Temp_YV12);
+        ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
+        vp8_scale_machine_specific_config();
 
-            int resize_frame_width = 0;
-            int resize_frame_height = 0;
+        YV12_BUFFER_CONFIG temp_yv12;
+        YV12_BUFFER_CONFIG temp_yv12b;
 
-            //if frame not correct size resize it for psnr
-            if (img->d_w != RawWidth || img->d_h != RawHeight)
+        memset(&temp_yv12, 0, sizeof(temp_yv12));
+        memset(&temp_yv12b, 0, sizeof(temp_yv12b));
+        ////////////////////////////////////////////////////////////////////////
+
+        vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
+
+        uint8_t *comp_buff = NULL;
+        size_t buf_sz = 0, buf_alloc_sz = 0;
+        int current_raw_frame = 0;
+        int comp_frame_available = 1;
+
+        uint64_t raw_timestamp = 0;
+        uint64_t comp_timestamp = 0;
+
+        while (comp_frame_available)
+        {
+            if(read_frame_dec(&input, &comp_buff, &buf_sz, &buf_alloc_sz,
+                &comp_timestamp))
+                comp_frame_available = 0;
+
+            unsigned long lpdwFlags = 0;
+            unsigned long lpckid = 0;
+            long bytes1;
+            long bytes2;
+            int resized_frame = 0;
+            int dropped_frame = 0;
+
+            if (input.kind == WEBM_FILE){
+                raw_timestamp = current_raw_frame * 1000 * raw_scale / raw_rate;
+                raw_timestamp = raw_timestamp * 1000000;
+            }
+            else
+                raw_timestamp = current_raw_frame;
+
+            bytes2 = buf_sz;
+            sum_bytes2 += bytes2;
+
+            vpx_codec_iter_t  iter = NULL;
+            vpx_image_t    *img;
+
+            //make sure the timestamps sync otherwise process
+            //last shown compressed frame vs current raw frame
+            //for psnr calculations, turn off artifact detection
+            while(raw_timestamp <= comp_timestamp || !comp_frame_available)
             {
-                if (TempBuffState < 0)
+                if(comp_timestamp == raw_timestamp)
                 {
-                    printf("Could not allocate yv12 buffer for %i x %i\n", RawWidth, RawHeight);
-                    fclose(RawFile);
-                    fclose(CompFile);
-                    delete timeStamp2;
-                    delete timeEndStamp2;
-                    vpx_img_free(&raw_img);
+                    dropped_frame = 0;
 
-                    if (input.nestegg_ctx)
-                        nestegg_destroy(input.nestegg_ctx);
+                    if (vpx_codec_decode(&decoder, (uint8_t *) comp_buff,
+                        buf_sz, NULL, 0))
+                    {
+                        const char *detail = vpx_codec_error_detail(&decoder);
+                        tprintf(print_out, "Failed to decode frame: %s\n",
+                            vpx_codec_error(&decoder));
+                    }
 
-                    if (input.kind != WEBM_FILE)
-                        free(CompBuff);
+                    if (img = vpx_codec_get_frame(&decoder, &iter))
+                    {
+                        ++decoded_frames;
 
-                    return 0;
-                }
+                        image2yuvconfig(img, &comp_yv12);
 
-                int GCDInt1 = vpxt_gcd(img->d_w, RawWidth);
-                int GCDInt2 = vpxt_gcd(img->d_h, RawHeight);
+                        int TempBuffState = vpxt_yv12_alloc_frame_buffer(
+                            &temp_yv12, comp_yv12.y_width, comp_yv12.y_height,
+                            VP8BORDERINPIXELS);
 
-                //Possible Scales
-                /* 4-5 Scale in Width direction */
-                /* 3-4 Scale in Width direction */
-                /* 2-3 Scale in Width direction */
-                /* 3-5 Scale in Width direction */
-                /* 1-2 Scale in Width direction */
-                /* no scale in Width direction */
+                        vp8_yv12_copy_frame(&comp_yv12, &temp_yv12);
 
-                int resizeWidth = 0;
-                int resizeHeight = 0;
-                int WidthScale = 0;
-                int HeightScale = 0;
-                int WidthRatio = 0;
-                int HeightRatio = 0;
+                        int resize_frame_width = 0;
+                        int resize_frame_height = 0;
 
-                if((img->d_w / GCDInt1) == 1){
-                    if((RawWidth / GCDInt1) % 2 == 0){
-                        WidthScale = 2;
-                        WidthRatio = 1;
-                        resizeWidth = (RawWidth / GCDInt1) / 2;
+                        //if frame not correct size resize it for psnr
+                        if (img->d_w != raw_width || img->d_h != raw_height)
+                        {
+                            if (TempBuffState < 0)
+                            {
+                                tprintf(print_out, "Could not allocate yv12 "
+                                    "buffer for %i x %i\n", raw_width,
+                                    raw_height);
+
+                                fclose(raw_file);
+                                fclose(comp_file);
+                                vpx_img_free(&raw_img);
+
+                                if (input.nestegg_ctx)
+                                    nestegg_destroy(input.nestegg_ctx);
+
+                                if (input.kind != WEBM_FILE)
+                                    free(comp_buff);
+
+                                return 0;
+                            }
+
+                            int gcd_width = vpxt_gcd(img->d_w, raw_width);
+                            int gcd_height = vpxt_gcd(img->d_h, raw_height);
+
+                            //Possible Scales
+                            /* 4-5 Scale in Width direction */
+                            /* 3-4 Scale in Width direction */
+                            /* 2-3 Scale in Width direction */
+                            /* 3-5 Scale in Width direction */
+                            /* 1-2 Scale in Width direction */
+                            /* no scale in Width direction */
+
+                            int resize_width = 0;
+                            int resize_height = 0;
+                            int width_scale = 0;
+                            int height_scale = 0;
+                            int width_ratio = 0;
+                            int height_ratio = 0;
+
+                            if((img->d_w / gcd_width) == 1){
+                                if((raw_width / gcd_width) % 2 == 0){
+                                    width_scale = 2;
+                                    width_ratio = 1;
+                                    resize_width = (raw_width / gcd_width) / 2;
+                                }
+                            }
+                            else if((img->d_w / gcd_width) == 2){
+                                if((raw_width / gcd_width) % 3 == 0){
+                                    width_scale = 3;
+                                    width_ratio = 2;
+                                    resize_width = (raw_width / gcd_width) / 3;
+                                }
+                            }
+                            else if((img->d_w / gcd_width) == 3){
+                                if((raw_width / gcd_width) % 4 == 0){
+                                    width_scale = 4;
+                                    width_ratio = 3;
+                                    resize_width = (raw_width / gcd_width) / 4;
+                                }
+                                else if((raw_width / gcd_width) % 5 == 0){
+                                    width_scale = 5;
+                                    width_ratio = 3;
+                                    resize_width = (raw_width / gcd_width) / 5;
+                                }
+                            }
+                            else if((img->d_w / gcd_width) == 4){
+                                if((raw_width / gcd_width) % 5 == 0){
+                                    width_scale = 5;
+                                    width_ratio = 4;
+                                    resize_width = (raw_width / gcd_width) / 5;
+                                }
+                            }
+                            else{
+                                tprintf(print_out, "No scale match found for"
+                                    " width \n");
+                                return 0;
+                            }
+
+                            if((img->d_h / gcd_height) == 1){
+                                if((raw_height / gcd_height) % 2 == 0){
+                                    height_scale = 2;
+                                    height_ratio = 1;
+                                    resize_height = (raw_height / gcd_height)/2;
+                                }
+                            }
+                            else if((img->d_h / gcd_height) == 2){
+                                if((raw_height / gcd_height) % 3 == 0){
+                                    height_scale = 3;
+                                    height_ratio = 2;
+                                    resize_height = (raw_height / gcd_height)/3;
+                                }
+                            }
+                            else if((img->d_h / gcd_height) == 3){
+                                if((raw_height / gcd_height) % 4 == 0){
+                                    height_scale = 4;
+                                    height_ratio = 3;
+                                    resize_height = (raw_height / gcd_height)/4;
+                                }
+                                else if((raw_height / gcd_height) % 5 == 0){
+                                    height_scale = 5;
+                                    height_ratio = 3;
+                                    resize_height = (raw_height / gcd_height)/5;
+                                }
+                            }
+                            else if((img->d_h / gcd_height) == 4){
+                                if((raw_height / gcd_height) % 5 == 0){
+                                    height_scale = 5;
+                                    height_ratio = 4;
+                                    resize_height = (raw_height / gcd_height)/5;
+                                }
+                            }
+                            else{
+                                tprintf(print_out, "No scale match found for "
+                                    "height \n");
+                                return 0;
+                            }
+
+                            //resize YV12 untill it is scaled properly.
+                            while(resize_width || resize_height){
+
+                                resized_frame = 1;
+
+                                if(resize_width)
+                                    resize_frame_width = raw_width - (raw_width/
+                                    (width_scale/width_ratio))*(resize_width-1);
+                                else
+                                    resize_frame_width = img->d_w;
+
+                                if(resize_height)
+                                    resize_frame_height = raw_height -
+                                    (raw_height / (height_scale/height_ratio))
+                                    *(resize_height-1);
+                                else
+                                    resize_frame_height = img->d_h;
+
+                                vpxt_yv12_alloc_frame_buffer(&temp_yv12b,
+                                    resize_frame_width, resize_frame_height,
+                                    VP8BORDERINPIXELS);
+
+                                //if resize width or height is done but still
+                                //need to resize the other set finished to 1:1
+                                if(!resize_width){
+                                    width_scale = 1;
+                                    width_ratio = 1;
+                                }
+                                if(!resize_height){
+                                    height_scale = 1;
+                                    height_ratio = 1;
+                                }
+
+                                vp8_yv12_scale_or_center(&temp_yv12,
+                                    &temp_yv12b, resize_frame_width,
+                                    resize_frame_height, 0, width_scale,
+                                    width_ratio, height_scale, height_ratio);
+
+                                if(resize_width)
+                                    resize_width--;
+                                if(resize_height)
+                                    resize_height--;
+
+                                vpxt_yv12_alloc_frame_buffer(&temp_yv12,
+                                    resize_frame_width, resize_frame_height,
+                                    VP8BORDERINPIXELS);
+                                vp8_yv12_copy_frame(&temp_yv12b, &temp_yv12);
+                            }
+
+                            comp_yv12 = temp_yv12;
+                        }
                     }
                 }
-                else if((img->d_w / GCDInt1) == 2){
-                    if((RawWidth / GCDInt1) % 3 == 0){
-                        WidthScale = 3;
-                        WidthRatio = 2;
-                        resizeWidth = (RawWidth / GCDInt1) / 3;
+                else
+                    dropped_frame = 1;
+
+                //run psnr if img returned(skip non visibile frames), dropped
+                //frame detected or if end of comp input file detected.
+                if(img || dropped_frame || !comp_frame_available)
+                {
+                    //////////////////Get YV12 Data For Raw File////////////////
+                    //if end of uncompressed file break out
+                    if(!read_frame_enc(raw_file, &raw_img, file_type, &y4m,
+                        &detect))
+                        break;
+
+                    image2yuvconfig(&raw_img, &raw_yv12);
+                    if (force_uvswap == 1){
+                        unsigned char *temp = raw_yv12.u_buffer;
+                        raw_yv12.u_buffer = raw_yv12.v_buffer;
+                        raw_yv12.v_buffer = temp;
                     }
-                }
-                else if((img->d_w / GCDInt1) == 3){
-                    if((RawWidth / GCDInt1) % 4 == 0){
-                        WidthScale = 4;
-                        WidthRatio = 3;
-                        resizeWidth = (RawWidth / GCDInt1) / 4;
+                    bytes1 = (raw_width * raw_height * 3) / 2;
+                    sum_bytes += bytes1;
+                    current_raw_frame = current_raw_frame + 1;
+                    if (input.kind == WEBM_FILE){
+                        raw_timestamp = current_raw_frame * 1000 * raw_scale /
+                            raw_rate;
+                        raw_timestamp = raw_timestamp * 1000000;
                     }
-                    else if((RawWidth / GCDInt1) % 5 == 0){
-                        WidthScale = 5;
-                        WidthRatio = 3;
-                        resizeWidth = (RawWidth / GCDInt1) / 5;
+                    else
+                        raw_timestamp = current_raw_frame;
+
+                    ///////////////////////////Preform PSNR Calc////////////////
+                    if (ssim_out)
+                    {
+                        double weight;
+                        double this_ssim = VP8_CalcSSIM_Tester(&raw_yv12,
+                            &comp_yv12, 1, &weight);
+                        summed_quality += this_ssim * weight ;
+                        summed_weights += weight;
                     }
-                }
-                else if((img->d_w / GCDInt1) == 4){
-                    if((RawWidth / GCDInt1) % 5 == 0){
-                        WidthScale = 5;
-                        WidthRatio = 4;
-                        resizeWidth = (RawWidth / GCDInt1) / 5;
-                    }
+
+                    double ypsnr = 0.0;
+                    double upsnr = 0.0;
+                    double vpsnr = 0.0;
+                    double sq_error = 0.0;
+                    double this_psnr = VP8_CalcPSNR_Tester(&raw_yv12,
+                        &comp_yv12, &ypsnr, &upsnr, &vpsnr, &sq_error);
+
+                    summed_ypsnr += ypsnr;
+                    summed_upsnr += upsnr;
+                    summed_vpsnr += vpsnr;
+                    summed_psnr += this_psnr;
+                    sum_sq_error += sq_error;
+                    ////////////////////////////////////////////////////////////
+
+                    ////////Printing////////
+                    tprintf(print_out, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
+                        "Y:%5.2f, U:%5.2f, V:%5.2f",
+                        current_raw_frame,
+                        bytes1 * 8.0,
+                        bytes2 * 8.0,
+                        this_psnr, 1.0 * ypsnr ,
+                        1.0 * upsnr ,
+                        1.0 * vpsnr);
+
+                    if(dropped_frame)
+                        tprintf(print_out, " D");
+
+                    if(resized_frame)
+                        tprintf(print_out, " R");
+
+                    tprintf(print_out, "\n");
+                    ////////////////////////
                 }
                 else{
-                    printf("No scale match found for width \n");
-                    return 0;
-                }
+                    //subtract one unit to move calculation along.
+                    current_raw_frame = current_raw_frame - 1;
 
-                if((img->d_h / GCDInt2) == 1){
-                    if((RawHeight / GCDInt2) % 2 == 0){
-                        HeightScale = 2;
-                        HeightRatio = 1;
-                        resizeHeight = (RawHeight / GCDInt2) / 2;
+                    if (input.kind == WEBM_FILE){
+                        raw_timestamp = current_raw_frame * 1000 * raw_scale /
+                            raw_rate;
+                        raw_timestamp = raw_timestamp * 1000000;
                     }
-                }
-                else if((img->d_h / GCDInt2) == 2){
-                    if((RawHeight / GCDInt2) % 3 == 0){
-                        HeightScale = 3;
-                        HeightRatio = 2;
-                        resizeHeight = (RawHeight / GCDInt2) / 3;
-                    }
-                }
-                else if((img->d_h / GCDInt2) == 3){
-                    if((RawHeight / GCDInt2) % 4 == 0){
-                        HeightScale = 4;
-                        HeightRatio = 3;
-                        resizeHeight = (RawHeight / GCDInt2) / 4;
-                    }
-                    else if((RawHeight / GCDInt2) % 5 == 0){
-                        HeightScale = 5;
-                        HeightRatio = 3;
-                        resizeHeight = (RawHeight / GCDInt2) / 5;
-                    }
-                }
-                else if((img->d_h / GCDInt2) == 4){
-                    if((RawHeight / GCDInt2) % 5 == 0){
-                        HeightScale = 5;
-                        HeightRatio = 4;
-                        resizeHeight = (RawHeight / GCDInt2) / 5;
-                    }
-                }
-                else{
-                    printf("No scale match found for height \n");
-                    return 0;
-                }
-
-                //resize YV12 untill it is scaled properly.
-                while(resizeWidth || resizeHeight){
-
-                    if(resizeWidth)
-                        resize_frame_width = RawWidth - (RawWidth / (WidthScale/WidthRatio))*(resizeWidth-1);
                     else
-                        resize_frame_width = img->d_w;
-
-                    if(resizeHeight)
-                        resize_frame_height = RawHeight - (RawHeight / (HeightScale/HeightRatio))*(resizeHeight-1);
-                    else
-                        resize_frame_height = img->d_h;
-
-                    vpxt_yv12_alloc_frame_buffer(&Temp_YV12_2, resize_frame_width, resize_frame_height, VP8BORDERINPIXELS);
-
-                    //if resize width or height is done but still need to
-                    //resize the other set finished to 1:1
-                    if(!resizeWidth){
-                        WidthScale = 1;
-                        WidthRatio = 1;
-                    }
-                    if(!resizeHeight){
-                        HeightScale = 1;
-                        HeightRatio = 1;
-                    }
-
-                    vp8_yv12_scale_or_center(&Temp_YV12, &Temp_YV12_2, resize_frame_width, resize_frame_height, 0, WidthScale, WidthRatio, HeightScale, HeightRatio);
-
-                    if(resizeWidth)
-                        resizeWidth--;
-                    if(resizeHeight)
-                        resizeHeight--;
-
-                    vpxt_yv12_alloc_frame_buffer(&Temp_YV12, resize_frame_width, resize_frame_height, VP8BORDERINPIXELS);
-                    vp8_yv12_copy_frame(&Temp_YV12_2, &Temp_YV12);
-                }
-
-                Comp_YV12 = Temp_YV12;
-            }
-
-            //////////////////////Get YV12 Data For Raw File//////////////////////
-            read_frame_enc(RawFile, &raw_img, file_type, &y4m, &detect);
-            image2yuvconfig(&raw_img, &Raw_YV12);
-            if (forceUVswap == 1){
-                unsigned char *temp = Raw_YV12.u_buffer;
-                Raw_YV12.u_buffer = Raw_YV12.v_buffer;
-                Raw_YV12.v_buffer = temp;
-            }
-            bytes1 = (RawWidth * RawHeight * 3) / 2;
-            sumBytes += bytes1;
-
-            ///////////////////////////Preform PSNR Calc///////////////////////////////////
-            if (SsimOut)
-            {
-                double weight;
-                double thisSsim = VP8_CalcSSIM_Tester(&Raw_YV12, &Comp_YV12, 1, &weight);
-                summedQuality += thisSsim * weight ;
-                summedWeights += weight;
-            }
-
-            double YPsnr = 0.0;
-            double UPsnr = 0.0;
-            double VPsnr = 0.0;
-            double SqError = 0.0;
-            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
-
-            summedYPsnr += YPsnr;
-            summedUPsnr += UPsnr;
-            summedVPsnr += VPsnr;
-            summedPsnr += thisPsnr;
-            sumSqError += SqError;
-            ///////////////////////////////////////////////////////////////////////////////
-
-            ////////Printing////////
-            if (printvar == 1 || printvar == 5 || printvar == 0)
-            {
-                if (frameStats == 0)
-                {
-                    tprintf(PRINT_STD, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%7d of %7d  ",
-                            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                            currentVideo1Frame, frameCount
-                           );
-                }
-
-                if (frameStats == 1)
-                {
-                    tprintf(PRINT_BTH, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                            currentVideo1Frame,
-                            bytes1 * 8.0,
-                            bytes2 * 8.0,
-                            thisPsnr, 1.0 * YPsnr ,
-                            1.0 * UPsnr ,
-                            1.0 * VPsnr);
-                }
-
-                if (frameStats == 2)
-                {
-                    tprintf(PRINT_STD, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%7d of %7d  ",
-                            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                            currentVideo1Frame, frameCount
-                           );
-
-                    fprintf(stderr, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                            currentVideo1Frame,
-                            bytes1 * 8.0,
-                            bytes2 * 8.0,
-                            thisPsnr, 1.0 * YPsnr ,
-                            1.0 * UPsnr ,
-                            1.0 * VPsnr);
-                }
-
-                if (frameStats == 3)
-                {
-                    tprintf(PRINT_STD, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                            currentVideo1Frame,
-                            bytes1 * 8.0,
-                            bytes2 * 8.0,
-                            thisPsnr, 1.0 * YPsnr ,
-                            1.0 * UPsnr ,
-                            1.0 * VPsnr);
+                        raw_timestamp = current_raw_frame;
                 }
             }
-
-            ////////////////////////
         }
-    }
 
-    //Over All PSNR Calc
-    double samples = 3.0 / 2 * currentVideo1Frame * Raw_YV12.y_width * Raw_YV12.y_height;
-    double avgPsnr = summedPsnr / currentVideo1Frame;
-    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
+        //Over All PSNR Calc
+        double samples = 3.0 / 2 * current_raw_frame * raw_yv12.y_width *
+            raw_yv12.y_height;
+        double avg_psnr = summed_psnr / current_raw_frame;
+        double total_psnr = VP8_Mse2Psnr_Tester(samples, 255.0, sum_sq_error);
 
-    if (summedWeights < 1.0)
-        summedWeights = 1.0;
+        if (summed_weights < 1.0)
+            summed_weights = 1.0;
 
-    double totalSSim = 100 * pow(summedQuality / summedWeights, 8.0);
+        double total_ssim = 100 * pow(summed_quality / summed_weights, 8.0);
 
-    ////////Printing////////
-    if (printvar == 1 || printvar == 5 || printvar == 0)
-    {
-        if (frameStats == 3)
-        {
-            tprintf(PRINT_STD, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-                    sumBytes * 8.0 / currentVideo1Frame*(RawRate / 2) / RawScale / 1000,                  //divided by two added when rate doubled to handle doubling of timestamp
-                    sumBytes2 * 8.0 / currentVideo1Frame*(CompRate / 2) / CompScale / 1000,               //divided by two added when rate doubled to handle doubling of timestamp
-                    avgPsnr,
-                    1.0 * summedYPsnr / currentVideo1Frame,
-                    1.0 * summedUPsnr / currentVideo1Frame,
-                    1.0 * summedVPsnr / currentVideo1Frame,
-                    totalPsnr);
-            tprintf(PRINT_STD, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
+        ////////Printing////////
+        tprintf(print_out, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, "
+            "Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+            sum_bytes * 8.0 / current_raw_frame*(raw_rate) / raw_scale / 1000,
+            sum_bytes2 * 8.0 /current_raw_frame*(comp_rate) / comp_scale / 1000,
+            avg_psnr,
+            1.0 * summed_ypsnr / current_raw_frame,
+            1.0 * summed_upsnr / current_raw_frame,
+            1.0 * summed_vpsnr / current_raw_frame,
+            total_psnr);
 
-        }
-        else
-        {
-            tprintf(PRINT_BTH, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-                    sumBytes * 8.0 / currentVideo1Frame*(RawRate / 2) / RawScale / 1000,          //divided by two added when rate doubled to handle doubling of timestamp
-                    sumBytes2 * 8.0 / currentVideo1Frame*(CompRate / 2) / CompScale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
-                    avgPsnr,
-                    1.0 * summedYPsnr / currentVideo1Frame,
-                    1.0 * summedUPsnr / currentVideo1Frame,
-                    1.0 * summedVPsnr / currentVideo1Frame,
-                    totalPsnr);
-            tprintf(PRINT_BTH, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
-        }
-    }
+        tprintf(print_out, ssim_out ? "SSIM: %8.2f\n" : "SSIM: Not run.",
+            total_ssim);
 
-    if (printvar != 0)
-    {
-        tprintf(PRINT_BTH, "\n                        --------------------------------\n");
-    }
+        if (print_embl)
+            tprintf(print_out, "\n                        "
+                "--------------------------------\n");
+        ////////////////////////
+        if (ssim_out)
+            *ssim_out = total_ssim;
 
-    if (SsimOut)
-        *SsimOut = totalSSim;
+        fclose(raw_file);
+        fclose(comp_file);
+        vp8_yv12_de_alloc_frame_buffer(&temp_yv12);
+        vp8_yv12_de_alloc_frame_buffer(&temp_yv12b);
 
-    ////////////////////////
-    fclose(RawFile);
-    fclose(CompFile);
-    delete timeStamp2;
-    delete timeEndStamp2;
-    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
-    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12_2);
+        if(file_type != FILE_TYPE_Y4M)
+            vpx_img_free(&raw_img);
 
-    if(file_type != FILE_TYPE_Y4M)
-        vpx_img_free(&raw_img);
+        if(file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
 
-    if(file_type == FILE_TYPE_Y4M)
-        y4m_input_close(&y4m);
+        vpx_codec_destroy(&decoder);
 
-    vpx_codec_destroy(&decoder);
+        if (input.nestegg_ctx)
+            nestegg_destroy(input.nestegg_ctx);
 
-    if (input.nestegg_ctx)
-        nestegg_destroy(input.nestegg_ctx);
+        if (input.kind != WEBM_FILE)
+            free(comp_buff);
 
-    if (input.kind != WEBM_FILE)
-        free(CompBuff);
-
-    return totalPsnr;
+        return total_psnr;
 }
-double vpxt_psnr_dec(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut, int width, int height)
+double vpxt_psnr_dec(const char *inputFile1,const char *inputFile2, int forceUVswap, int frameStats, int printvar, double *SsimOut, int width, int height)
 {
     if (frameStats != 3)
     {
@@ -7579,8 +7599,8 @@ double vpxt_psnr_dec(const char *inputFile1, const char *inputFile2, int forceUV
 
     ////////////////////////
 
-    __int64 *timeStamp2 = new __int64;
-    __int64 *timeEndStamp2 = new __int64;
+    uint64_t *timeStamp2 = new uint64_t;
+    uint64_t *timeEndStamp2 = new uint64_t;
     int deblock_level2 = 0;
     int noise_level2 = 0;
     int flags2 = 0;
@@ -7760,64 +7780,69 @@ double vpxt_psnr_dec(const char *inputFile1, const char *inputFile2, int forceUV
 
     return totalPsnr;
 }
-double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int forceUVswap, int frameStats, int printvar, int deblock_level, int noise_level, int flags, double *SsimOut)
+double vpxt_post_proc_psnr(const char *input_file1,
+                           const char *input_file2,
+                           int force_uvswap,
+                           int print_out,
+                           int print_embl,
+                           int deblock_level,
+                           int noise_level,
+                           int flags,
+                           double *ssim_out)
 {
-    if (frameStats != 3){
-        //Overide to print individual frames to screen
-        frameStats = 1;
-    }
+    double summed_quality = 0;
+    double summed_weights = 0;
+    double summed_psnr = 0;
+    double summed_ypsnr = 0;
+    double summed_upsnr = 0;
+    double summed_vpsnr = 0;
+    double sum_sq_error = 0;
+    double sum_bytes = 0;
+    double sum_bytes2 = 0;
 
-    double summedQuality = 0;
-    double summedWeights = 0;
-    double summedPsnr = 0;
-    double summedYPsnr = 0;
-    double summedUPsnr = 0;
-    double summedVPsnr = 0;
-    double sumSqError = 0;
-    double sumBytes = 0;
-    double sumBytes2 = 0;
-
-    unsigned int             currentVideo1Frame = 0;
-    int                      RawFrameOffset = 0;
-    int                      CompressedFrameOffset = 0;
+    unsigned int             decoded_frames = 0;
+    int                      raw_offset = 0;
+    int                      comp_offset = 0;
     unsigned int             maximumFrameCount = 0;
-    YV12_BUFFER_CONFIG       Raw_YV12;
-    YV12_BUFFER_CONFIG       Comp_YV12;
+    YV12_BUFFER_CONFIG       raw_yv12;
+    YV12_BUFFER_CONFIG       comp_yv12;
     vpx_image_t              raw_img;
     unsigned int             frameCount = 0;
-    unsigned int             file_type, fourcc=808596553;
+    unsigned int             file_type = FILE_TYPE_RAW;
+    unsigned int             fourcc    = 808596553;
     struct                   detect_buffer detect;
-    unsigned int             RawWidth = 0;
-    unsigned int             RawHeight = 0;
-    unsigned int             RawRate = 0;
-    unsigned int             RawScale = 0;
+    unsigned int             raw_width = 0;
+    unsigned int             raw_height = 0;
+    unsigned int             raw_rate = 0;
+    unsigned int             raw_scale = 0;
     y4m_input                y4m;
     int                      arg_have_framerate = 0;
     struct vpx_rational      arg_framerate = {30, 1};
     int                      arg_use_i420 = 1;
 
-    forceUVswap = 0;
+    force_uvswap = 0;
     ////////////////////////Initilize Raw File////////////////////////
-    FILE *RawFile = strcmp(inputFile1, "-") ? fopen(inputFile1, "rb") : set_binary_mode(stdin);
+    FILE *raw_file = strcmp(input_file1, "-") ?
+        fopen(input_file1, "rb") : set_binary_mode(stdin);
 
-    if (!RawFile)
+    if (!raw_file)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile1);
+        tprintf(print_out, "Failed to open input file: %s", input_file1);
         return -1;
     }
 
-    detect.buf_read = fread(detect.buf, 1, 4, RawFile);
+    detect.buf_read = fread(detect.buf, 1, 4, raw_file);
     detect.position = 0;
 
-    if (detect.buf_read == 4 && file_is_y4m(RawFile, &y4m, detect.buf))
+    if (detect.buf_read == 4 && file_is_y4m(raw_file, &y4m, detect.buf))
     {
-        if (y4m_input_open(&y4m, RawFile, detect.buf, 4) >= 0)
+        if (y4m_input_open(&y4m, raw_file, detect.buf, 4) >= 0)
         {
             file_type = FILE_TYPE_Y4M;
-            RawWidth = y4m.pic_w;
-            RawHeight = y4m.pic_h;
-            RawRate = y4m.fps_n;
-            RawScale = y4m.fps_d;
+            raw_width = y4m.pic_w;
+            raw_height = y4m.pic_h;
+            raw_rate = y4m.fps_n;
+            raw_scale = y4m.fps_d;
 
             /* Use the frame rate from the file only if none was specified
             * on the command-line.
@@ -7832,15 +7857,14 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
         }
         else
         {
-            fprintf(stderr, "Unsupported Y4M stream.\n");
+            tprintf(print_out, "Unsupported Y4M stream.\n");
             return EXIT_FAILURE;
         }
     }
     else if (detect.buf_read == 4 &&
-             file_is_ivf(RawFile, &fourcc, &RawWidth, &RawHeight, &detect, &RawScale, &RawRate))
+        file_is_ivf(raw_file, &fourcc, &raw_width, &raw_height, &detect,
+        &raw_scale, &raw_rate))
     {
-        file_type = FILE_TYPE_IVF;
-
         switch (fourcc)
         {
         case 0x32315659:
@@ -7850,28 +7874,32 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
             arg_use_i420 = 1;
             break;
         default:
-            fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
+            tprintf(print_out, "Unsupported fourcc (%08x) in IVF\n", fourcc);
             return EXIT_FAILURE;
         }
+
+        file_type = FILE_TYPE_IVF;
     }
     else
     {
         file_type = FILE_TYPE_RAW;
     }
 
-    if (!RawWidth || !RawHeight)
+    if (!raw_width || !raw_height)
     {
-        fprintf(stderr, "Specify stream dimensions with --width (-w) "
-                " and --height (-h).\n");
+        tprintf(print_out, "Specify stream dimensions with --width (-w) "
+            " and --height (-h).\n");
         return EXIT_FAILURE;
     }
 
-    vpx_img_alloc(&raw_img, IMG_FMT_I420, RawWidth, RawHeight, 1);
+    if(file_type != FILE_TYPE_Y4M)
+        vpx_img_alloc(&raw_img, IMG_FMT_I420, raw_width, raw_height, 1);
 
-    //Burn Frames untill Raw frame offset reached - currently disabled by override of RawFrameOffset
-    if (RawFrameOffset > 0)
+    //Burn Frames untill Raw frame offset reached - currently disabled by
+    //override of raw_offset
+    if (raw_offset > 0)
     {
-        for (int i = 0; i < RawFrameOffset; i++)
+        for (int i = 0; i < raw_offset; i++)
         {
         }
     }
@@ -7880,24 +7908,24 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
     //YV12 hex-0x32315659 dec-842094169
     //if YV12 Do not swap Frames
     if (fourcc == 842094169)
-        forceUVswap = 1;   
-
+        force_uvswap = 1;
 
     ////////////////////////Initilize Compressed File////////////////////////
     /* Open file */
-    FILE *CompFile = strcmp(inputFile2, "-") ? fopen(inputFile2, "rb") : set_binary_mode(stdin);
+    FILE *comp_file = strcmp(input_file2, "-") ?
+        fopen(input_file2, "rb") : set_binary_mode(stdin);
 
-    if (!CompFile)
+    if (!comp_file)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile2);
+        tprintf(print_out, "Failed to open input file: %s", input_file2);
         return -1;
     }
 
-    unsigned int            CompFourcc;
-    unsigned int            CompWidth;
-    unsigned int            CompHeight;
-    unsigned int            CompScale;
-    unsigned int            CompRate;
+    unsigned int            comp_fourcc;
+    unsigned int            comp_width;
+    unsigned int            comp_height;
+    unsigned int            comp_scale;
+    unsigned int            comp_rate;
     struct input_ctx        input;
 
     input.chunk = 0;
@@ -7908,464 +7936,467 @@ double vpxt_post_proc_psnr(const char *inputFile1, const char *inputFile2, int f
     input.pkt = 0;
     input.video_track = 0;
 
-    input.infile = CompFile;
+    input.infile = comp_file;
 
-    if (file_is_ivf_dec(CompFile, &CompFourcc, &CompWidth, &CompHeight, &CompScale, &CompRate))
+    if (file_is_ivf_dec(comp_file, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
         input.kind = IVF_FILE;
-    else if (file_is_webm(&input, &CompFourcc, &CompWidth, &CompHeight, &CompScale, &CompRate))
+    else if (file_is_webm(&input, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
         input.kind = WEBM_FILE;
-    else if (file_is_raw(CompFile, &CompFourcc, &CompWidth, &CompHeight, &CompScale, &CompRate))
+    else if (file_is_raw(comp_file, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
         input.kind = RAW_FILE;
     else
     {
-        fprintf(stderr, "Unrecognized input file type.\n");
+        tprintf(print_out, "Unrecognized input file type.\n");
         return EXIT_FAILURE;
     }
 
     if (input.kind == WEBM_FILE)
-        if (webm_guess_framerate(&input, &CompScale, &CompRate))
+        if (webm_guess_framerate(&input, &comp_scale, &comp_rate))
         {
-            fprintf(stderr, "Failed to guess framerate -- error parsing "
-                    "webm file?\n");
+            tprintf(print_out, "Failed to guess framerate -- error parsing "
+                "webm file?\n");
             return EXIT_FAILURE;
         }
 
-    //Burn Frames untill Compressed frame offset reached - currently disabled by override of CompressedFrameOffset
-    if (CompressedFrameOffset > 0)
-    {
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-    ////////Printing////////
-    if (printvar != 0)
-    {
-        tprintf(PRINT_BTH, "\n\n                        ---------Computing PSNR---------");
-    }
-
-    if (printvar == 0)
-    {
-        tprintf(PRINT_STD, "\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
-    }
-
-    if (printvar == 1)
-    {
-        tprintf(PRINT_BTH, "\n\nComparing %s to %s:\n                        \n", inputFile1, inputFile2);
-    }
-
-    if (printvar == 5)
-    {
-        tprintf(PRINT_BTH, "\n\nComparing %s to %s:                        \n\n", inputFile1, inputFile2);
-    }
-
-    if (printvar == 1 || printvar == 5 || printvar == 0)
-    {
-        if (frameStats == 3)
+        //Burn Frames untill Compressed frame offset reached - currently
+        //disabled by override of comp_offset
+        if (comp_offset > 0)
         {
-            tprintf(PRINT_STD, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
-        }
-        else
-        {
-            tprintf(PRINT_BTH, "File Has: %d total frames. \n Frame Offset 1 is 0\n Frame Offset 2 is 0\n Force UV Swap is %d\n Frame Statistics is %d:\n \n", frameCount, forceUVswap, frameStats);
-        }
-    }
-
-    ////////////////////////
-
-    __int64 *timeStamp2 = new __int64;
-    __int64 *timeEndStamp2 = new __int64;
-    int deblock_level2 = deblock_level;
-    int noise_level2 = noise_level;
-    int flags2 = flags;
-    int currentFrame2 = 0;
-
-    //////////////////////////////////////////New//////////////////////////////////////////
-    vpx_codec_ctx_t       decoder;
-    vpx_codec_iface_t       *iface = NULL;
-    const struct codec_item  *codec = codecs;
-    vpx_codec_iface_t  *ivf_iface = ifaces[0].iface;
-    vpx_codec_dec_cfg_t     cfg = {0};
-    iface = ivf_iface;
-
-    vp8_postproc_cfg_t ppcfg = {0};
-
-    ppcfg.deblocking_level = deblock_level2;
-    ppcfg.noise_level = noise_level2;
-    ppcfg.post_proc_flag = flags2;
-
-    if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, VPX_CODEC_USE_POSTPROC))
-    {
-        tprintf(PRINT_STD, "Failed to initialize decoder: %s\n", vpx_codec_error(&decoder));
-        fclose(RawFile);
-        fclose(CompFile);
-        delete timeStamp2;
-        delete timeEndStamp2;
-        vpx_img_free(&raw_img);
-        return EXIT_FAILURE;
-    }
-
-	if (vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg) != 0)
-    {
-        tprintf(PRINT_STD, "Failed to update decoder post processor settings\n");
-    }
-
-    /////////////////////Setup Temp YV12 Buffer to Resize if nessicary/////////////////////
-    vp8_scale_machine_specific_config();
-
-    YV12_BUFFER_CONFIG Temp_YV12;
-    YV12_BUFFER_CONFIG Temp_YV12_2;
-
-    memset(&Temp_YV12, 0, sizeof(Temp_YV12));
-    memset(&Temp_YV12_2, 0, sizeof(Temp_YV12_2));
-    ///////////////////////////////////////////////////////////////////////////////////////
-
-    vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
-    //////////////////////////////////////////New//////////////////////////////////////////
-
-    uint8_t               *CompBuff = NULL;
-    size_t               buf_sz = 0, buf_alloc_sz = 0;
-
-    while (!read_frame_dec(&input, &CompBuff, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
-    {
-        unsigned long lpdwFlags = 0;
-        unsigned long lpckid = 0;
-        long bytes1;
-        long bytes2;
-
-        bytes2 = buf_sz;
-        sumBytes2 += bytes2;
-
-        vpx_codec_iter_t  iter = NULL;
-        vpx_image_t    *img;
-
-        if (vpx_codec_decode(&decoder, (uint8_t *) CompBuff, buf_sz, NULL, 0))
-        {
-            const char *detail = vpx_codec_error_detail(&decoder);
-            tprintf(PRINT_STD, "Failed to decode frame: %s\n", vpx_codec_error(&decoder));
         }
 
-        if (img = vpx_codec_get_frame(&decoder, &iter))
+        ////////////////////////////////////////////////////////////////////////
+        ////////Printing////////
+        if (print_embl)
+            tprintf(print_out, "\n\n                        "
+            "---------Computing PSNR---------");
+
+        tprintf(print_out, "\n\nComparing %s to %s:\n                        "
+            "\n", input_file1, input_file2);
+        ////////////////////////
+        vp8_postproc_cfg_t ppcfg = {0};
+
+        ppcfg.deblocking_level = deblock_level;
+        ppcfg.noise_level = noise_level;
+        ppcfg.post_proc_flag = flags;
+
+        vpx_codec_ctx_t       decoder;
+        vpx_codec_iface_t       *iface = NULL;
+        const struct codec_item  *codec = codecs;
+        vpx_codec_iface_t  *ivf_iface = ifaces[0].iface;
+        vpx_codec_dec_cfg_t     cfg = {0};
+        iface = ivf_iface;
+
+        if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg,
+            VPX_CODEC_USE_POSTPROC))
         {
-            ++currentVideo1Frame;
+            tprintf(print_out, "Failed to initialize decoder: %s\n",
+                vpx_codec_error(&decoder));
+            fclose(raw_file);
+            fclose(comp_file);
+            vpx_img_free(&raw_img);
+            return EXIT_FAILURE;
+        }
 
-            image2yuvconfig(img, &Comp_YV12);
+        if (vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg) != 0)
+        {
+             tprintf(print_out, "Failed to update decoder post processor "
+                 "settings\n");
+        }
 
-            int TempBuffState = vpxt_yv12_alloc_frame_buffer(&Temp_YV12, Comp_YV12.y_width, Comp_YV12.y_height, VP8BORDERINPIXELS);
-            vp8_yv12_copy_frame(&Comp_YV12, &Temp_YV12);
+        ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
+        vp8_scale_machine_specific_config();
 
-            int resize_frame_width = 0;
-            int resize_frame_height = 0;
+        YV12_BUFFER_CONFIG temp_yv12;
+        YV12_BUFFER_CONFIG temp_yv12b;
 
-            //if frame not correct size resize it for psnr
-            if (img->d_w != RawWidth || img->d_h != RawHeight)
+        memset(&temp_yv12, 0, sizeof(temp_yv12));
+        memset(&temp_yv12b, 0, sizeof(temp_yv12b));
+        ////////////////////////////////////////////////////////////////////////
+
+        vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
+
+        uint8_t *comp_buff = NULL;
+        size_t buf_sz = 0, buf_alloc_sz = 0;
+        int current_raw_frame = 0;
+        int comp_frame_available = 1;
+
+        uint64_t raw_timestamp = 0;
+        uint64_t comp_timestamp = 0;
+
+        while (comp_frame_available)
+        {
+            if(read_frame_dec(&input, &comp_buff, &buf_sz, &buf_alloc_sz,
+                &comp_timestamp))
+                comp_frame_available = 0;
+
+            unsigned long lpdwFlags = 0;
+            unsigned long lpckid = 0;
+            long bytes1;
+            long bytes2;
+            int resized_frame = 0;
+            int dropped_frame = 0;
+
+            if (input.kind == WEBM_FILE){
+                raw_timestamp = current_raw_frame * 1000 * raw_scale / raw_rate;
+                raw_timestamp = raw_timestamp * 1000000;
+            }
+            else
+                raw_timestamp = current_raw_frame;
+
+            bytes2 = buf_sz;
+            sum_bytes2 += bytes2;
+
+            vpx_codec_iter_t  iter = NULL;
+            vpx_image_t    *img;
+
+            //make sure the timestamps sync otherwise process
+            //last shown compressed frame vs current raw frame
+            //for psnr calculations, turn off artifact detection
+            while(raw_timestamp <= comp_timestamp || !comp_frame_available)
             {
-                if (TempBuffState < 0)
+                if(comp_timestamp == raw_timestamp)
                 {
-                    printf("Could not allocate yv12 buffer for %i x %i\n", RawWidth, RawHeight);
-                    fclose(RawFile);
-                    fclose(CompFile);
-                    delete timeStamp2;
-                    delete timeEndStamp2;
-                    vpx_img_free(&raw_img);
+                    dropped_frame = 0;
 
-                    if (input.nestegg_ctx)
-                        nestegg_destroy(input.nestegg_ctx);
+                    if (vpx_codec_decode(&decoder,
+                        (uint8_t *) comp_buff, buf_sz, NULL, 0))
+                    {
+                        const char *detail = vpx_codec_error_detail(&decoder);
+                        tprintf(print_out, "Failed to decode frame: %s\n",
+                            vpx_codec_error(&decoder));
+                    }
 
-                    if (input.kind != WEBM_FILE)
-                        free(CompBuff);
+                    if (img = vpx_codec_get_frame(&decoder, &iter))
+                    {
+                        ++decoded_frames;
 
-                    return 0;
-                }
+                        image2yuvconfig(img, &comp_yv12);
 
-                int GCDInt1 = vpxt_gcd(img->d_w, RawWidth);
-                int GCDInt2 = vpxt_gcd(img->d_h, RawHeight);
+                        int TempBuffState = vpxt_yv12_alloc_frame_buffer(
+                            &temp_yv12, comp_yv12.y_width, comp_yv12.y_height,
+                            VP8BORDERINPIXELS);
 
-                //Possible Scales
-                /* 4-5 Scale in Width direction */
-                /* 3-4 Scale in Width direction */
-                /* 2-3 Scale in Width direction */
-                /* 3-5 Scale in Width direction */
-                /* 1-2 Scale in Width direction */
-                /* no scale in Width direction */
+                        vp8_yv12_copy_frame(&comp_yv12, &temp_yv12);
 
-                int resizeWidth = 0;
-                int resizeHeight = 0;
-                int WidthScale = 0;
-                int HeightScale = 0;
-                int WidthRatio = 0;
-                int HeightRatio = 0;
+                        int resize_frame_width = 0;
+                        int resize_frame_height = 0;
 
-                if((img->d_w / GCDInt1) == 1){
-                    if((RawWidth / GCDInt1) % 2 == 0){
-                        WidthScale = 2;
-                        WidthRatio = 1;
-                        resizeWidth = (RawWidth / GCDInt1) / 2;
+                        //if frame not correct size resize it for psnr
+                        if (img->d_w != raw_width || img->d_h != raw_height)
+                        {
+                            if (TempBuffState < 0)
+                            {
+                                tprintf(print_out, "Could not allocate yv12 "
+                                    "buffer for %i x %i\n", raw_width,
+                                    raw_height);
+
+                                fclose(raw_file);
+                                fclose(comp_file);
+                                vpx_img_free(&raw_img);
+
+                                if (input.nestegg_ctx)
+                                    nestegg_destroy(input.nestegg_ctx);
+
+                                if (input.kind != WEBM_FILE)
+                                    free(comp_buff);
+
+                                return 0;
+                            }
+
+                            int gcd_width = vpxt_gcd(img->d_w, raw_width);
+                            int gcd_height = vpxt_gcd(img->d_h, raw_height);
+
+                            //Possible Scales
+                            /* 4-5 Scale in Width direction */
+                            /* 3-4 Scale in Width direction */
+                            /* 2-3 Scale in Width direction */
+                            /* 3-5 Scale in Width direction */
+                            /* 1-2 Scale in Width direction */
+                            /* no scale in Width direction */
+
+                            int resize_width = 0;
+                            int resize_height = 0;
+                            int width_scale = 0;
+                            int height_scale = 0;
+                            int width_ratio = 0;
+                            int height_ratio = 0;
+
+                            if((img->d_w / gcd_width) == 1){
+                                if((raw_width / gcd_width) % 2 == 0){
+                                    width_scale = 2;
+                                    width_ratio = 1;
+                                    resize_width = (raw_width / gcd_width) / 2;
+                                }
+                            }
+                            else if((img->d_w / gcd_width) == 2){
+                                if((raw_width / gcd_width) % 3 == 0){
+                                    width_scale = 3;
+                                    width_ratio = 2;
+                                    resize_width = (raw_width / gcd_width) / 3;
+                                }
+                            }
+                            else if((img->d_w / gcd_width) == 3){
+                                if((raw_width / gcd_width) % 4 == 0){
+                                    width_scale = 4;
+                                    width_ratio = 3;
+                                    resize_width = (raw_width / gcd_width) / 4;
+                                }
+                                else if((raw_width / gcd_width) % 5 == 0){
+                                    width_scale = 5;
+                                    width_ratio = 3;
+                                    resize_width = (raw_width / gcd_width) / 5;
+                                }
+                            }
+                            else if((img->d_w / gcd_width) == 4){
+                                if((raw_width / gcd_width) % 5 == 0){
+                                    width_scale = 5;
+                                    width_ratio = 4;
+                                    resize_width = (raw_width / gcd_width) / 5;
+                                }
+                            }
+                            else{
+                                tprintf(print_out, "No scale match found for "
+                                    "width \n");
+                                return 0;
+                            }
+
+                            if((img->d_h / gcd_height) == 1){
+                                if((raw_height / gcd_height) % 2 == 0){
+                                    height_scale = 2;
+                                    height_ratio = 1;
+                                    resize_height = (raw_height / gcd_height)/2;
+                                }
+                            }
+                            else if((img->d_h / gcd_height) == 2){
+                                if((raw_height / gcd_height) % 3 == 0){
+                                    height_scale = 3;
+                                    height_ratio = 2;
+                                    resize_height = (raw_height / gcd_height)/3;
+                                }
+                            }
+                            else if((img->d_h / gcd_height) == 3){
+                                if((raw_height / gcd_height) % 4 == 0){
+                                    height_scale = 4;
+                                    height_ratio = 3;
+                                    resize_height = (raw_height / gcd_height)/4;
+                                }
+                                else if((raw_height / gcd_height) % 5 == 0){
+                                    height_scale = 5;
+                                    height_ratio = 3;
+                                    resize_height = (raw_height / gcd_height)/5;
+                                }
+                            }
+                            else if((img->d_h / gcd_height) == 4){
+                                if((raw_height / gcd_height) % 5 == 0){
+                                    height_scale = 5;
+                                    height_ratio = 4;
+                                    resize_height = (raw_height / gcd_height)/5;
+                                }
+                            }
+                            else{
+                                tprintf(print_out, "No scale match found for "
+                                    "height \n");
+                                return 0;
+                            }
+
+                            //resize YV12 untill it is scaled properly.
+                            while(resize_width || resize_height){
+
+                                resized_frame = 1;
+
+                                if(resize_width)
+                                    resize_frame_width = raw_width -
+                                    (raw_width / (width_scale/width_ratio))*
+                                    (resize_width-1);
+                                else
+                                    resize_frame_width = img->d_w;
+
+                                if(resize_height)
+                                    resize_frame_height = raw_height -
+                                    (raw_height / (height_scale/height_ratio))*
+                                    (resize_height-1);
+                                else
+                                    resize_frame_height = img->d_h;
+
+                                vpxt_yv12_alloc_frame_buffer(&temp_yv12b,
+                                    resize_frame_width, resize_frame_height,
+                                    VP8BORDERINPIXELS);
+
+                                //if resize width or height is done but still
+                                //need to resize the other set finished to 1:1
+                                if(!resize_width){
+                                    width_scale = 1;
+                                    width_ratio = 1;
+                                }
+                                if(!resize_height){
+                                    height_scale = 1;
+                                    height_ratio = 1;
+                                }
+
+                                vp8_yv12_scale_or_center(&temp_yv12,
+                                    &temp_yv12b, resize_frame_width,
+                                    resize_frame_height, 0, width_scale,
+                                    width_ratio, height_scale, height_ratio);
+
+                                if(resize_width)
+                                    resize_width--;
+                                if(resize_height)
+                                    resize_height--;
+
+                                vpxt_yv12_alloc_frame_buffer(&temp_yv12,
+                                    resize_frame_width, resize_frame_height,
+                                    VP8BORDERINPIXELS);
+                                vp8_yv12_copy_frame(&temp_yv12b, &temp_yv12);
+                            }
+
+                            comp_yv12 = temp_yv12;
+                        }
                     }
                 }
-                else if((img->d_w / GCDInt1) == 2){
-                    if((RawWidth / GCDInt1) % 3 == 0){
-                        WidthScale = 3;
-                        WidthRatio = 2;
-                        resizeWidth = (RawWidth / GCDInt1) / 3;
+                else
+                    dropped_frame = 1;
+
+                //run psnr if img returned(skip non visibile frames), dropped
+                //frame detected or if end of comp input file detected.
+                if(img || dropped_frame || !comp_frame_available)
+                {
+                    //////////////////Get YV12 Data For Raw File////////////////
+                    //if end of uncompressed file break out
+                    if(!read_frame_enc(raw_file, &raw_img, file_type, &y4m,
+                        &detect))
+                        break;
+
+                    image2yuvconfig(&raw_img, &raw_yv12);
+                    if (force_uvswap == 1){
+                        unsigned char *temp = raw_yv12.u_buffer;
+                        raw_yv12.u_buffer = raw_yv12.v_buffer;
+                        raw_yv12.v_buffer = temp;
                     }
-                }
-                else if((img->d_w / GCDInt1) == 3){
-                    if((RawWidth / GCDInt1) % 4 == 0){
-                        WidthScale = 4;
-                        WidthRatio = 3;
-                        resizeWidth = (RawWidth / GCDInt1) / 4;
+                    bytes1 = (raw_width * raw_height * 3) / 2;
+                    sum_bytes += bytes1;
+                    current_raw_frame = current_raw_frame + 1;
+                    if (input.kind == WEBM_FILE){
+                        raw_timestamp = current_raw_frame * 1000 *
+                            raw_scale / raw_rate;
+                        raw_timestamp = raw_timestamp * 1000000;
                     }
-                    else if((RawWidth / GCDInt1) % 5 == 0){
-                        WidthScale = 5;
-                        WidthRatio = 3;
-                        resizeWidth = (RawWidth / GCDInt1) / 5;
+                    else
+                        raw_timestamp = current_raw_frame;
+
+                    ///////////////////////////Preform PSNR Calc////////////////
+                    if (ssim_out)
+                    {
+                        double weight;
+                        double this_ssim = VP8_CalcSSIM_Tester(&raw_yv12,
+                            &comp_yv12, 1, &weight);
+                        summed_quality += this_ssim * weight ;
+                        summed_weights += weight;
                     }
-                }
-                else if((img->d_w / GCDInt1) == 4){
-                    if((RawWidth / GCDInt1) % 5 == 0){
-                        WidthScale = 5;
-                        WidthRatio = 4;
-                        resizeWidth = (RawWidth / GCDInt1) / 5;
-                    }
+
+                    double ypsnr = 0.0;
+                    double upsnr = 0.0;
+                    double vpsnr = 0.0;
+                    double sq_error = 0.0;
+                    double this_psnr = VP8_CalcPSNR_Tester(&raw_yv12,
+                        &comp_yv12, &ypsnr, &upsnr, &vpsnr, &sq_error);
+
+                    summed_ypsnr += ypsnr;
+                    summed_upsnr += upsnr;
+                    summed_vpsnr += vpsnr;
+                    summed_psnr += this_psnr;
+                    sum_sq_error += sq_error;
+                    ////////////////////////////////////////////////////////////
+
+                    ////////Printing////////
+                    tprintf(print_out, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
+                        "Y:%5.2f, U:%5.2f, V:%5.2f",
+                        current_raw_frame,
+                        bytes1 * 8.0,
+                        bytes2 * 8.0,
+                        this_psnr, 1.0 * ypsnr ,
+                        1.0 * upsnr ,
+                        1.0 * vpsnr);
+
+                    if(dropped_frame)
+                        tprintf(print_out, " D");
+
+                    if(resized_frame)
+                        tprintf(print_out, " R");
+
+                    tprintf(print_out, "\n");
+                    ////////////////////////
                 }
                 else{
-                    printf("No scale match found for width \n");
-                    return 0;
-                }
+                    //subtract one unit to move calculation along.
+                    current_raw_frame = current_raw_frame - 1;
 
-                if((img->d_h / GCDInt2) == 1){
-                    if((RawHeight / GCDInt2) % 2 == 0){
-                        HeightScale = 2;
-                        HeightRatio = 1;
-                        resizeHeight = (RawHeight / GCDInt2) / 2;
+                    if (input.kind == WEBM_FILE){
+                        raw_timestamp = current_raw_frame * 1000 *
+                            raw_scale / raw_rate;
+                        raw_timestamp = raw_timestamp * 1000000;
                     }
-                }
-                else if((img->d_h / GCDInt2) == 2){
-                    if((RawHeight / GCDInt2) % 3 == 0){
-                        HeightScale = 3;
-                        HeightRatio = 2;
-                        resizeHeight = (RawHeight / GCDInt2) / 3;
-                    }
-                }
-                else if((img->d_h / GCDInt2) == 3){
-                    if((RawHeight / GCDInt2) % 4 == 0){
-                        HeightScale = 4;
-                        HeightRatio = 3;
-                        resizeHeight = (RawHeight / GCDInt2) / 4;
-                    }
-                    else if((RawHeight / GCDInt2) % 5 == 0){
-                        HeightScale = 5;
-                        HeightRatio = 3;
-                        resizeHeight = (RawHeight / GCDInt2) / 5;
-                    }
-                }
-                else if((img->d_h / GCDInt2) == 4){
-                    if((RawHeight / GCDInt2) % 5 == 0){
-                        HeightScale = 5;
-                        HeightRatio = 4;
-                        resizeHeight = (RawHeight / GCDInt2) / 5;
-                    }
-                }
-                else{
-                    printf("No scale match found for height \n");
-                    return 0;
-                }
-
-                //resize YV12 untill it is scaled properly.
-                while(resizeWidth || resizeHeight){
-
-                    if(resizeWidth)
-                        resize_frame_width = RawWidth - (RawWidth / (WidthScale/WidthRatio))*(resizeWidth-1);
                     else
-                        resize_frame_width = img->d_w;
-
-                    if(resizeHeight)
-                        resize_frame_height = RawHeight - (RawHeight / (HeightScale/HeightRatio))*(resizeHeight-1);
-                    else
-                        resize_frame_height = img->d_h;
-
-                    vpxt_yv12_alloc_frame_buffer(&Temp_YV12_2, resize_frame_width, resize_frame_height, VP8BORDERINPIXELS);
-
-                    //if resize width or height is done but still need to
-                    //resize the other set finished to 1:1
-                    if(!resizeWidth){
-                        WidthScale = 1;
-                        WidthRatio = 1;
-                    }
-                    if(!resizeHeight){
-                        HeightScale = 1;
-                        HeightRatio = 1;
-                    }
-
-                    vp8_yv12_scale_or_center(&Temp_YV12, &Temp_YV12_2, resize_frame_width, resize_frame_height, 0, WidthScale, WidthRatio, HeightScale, HeightRatio);
-
-                    if(resizeWidth)
-                        resizeWidth--;
-                    if(resizeHeight)
-                        resizeHeight--;
-
-                    vpxt_yv12_alloc_frame_buffer(&Temp_YV12, resize_frame_width, resize_frame_height, VP8BORDERINPIXELS);
-                    vp8_yv12_copy_frame(&Temp_YV12_2, &Temp_YV12);
-                }
-
-                Comp_YV12 = Temp_YV12;
-            }
-
-            //////////////////////Get YV12 Data For Raw File//////////////////////
-            read_frame_enc(RawFile, &raw_img, file_type, &y4m, &detect);
-            image2yuvconfig(&raw_img, &Raw_YV12);
-            if (forceUVswap == 1){
-                unsigned char *temp = Raw_YV12.u_buffer;
-                Raw_YV12.u_buffer = Raw_YV12.v_buffer;
-                Raw_YV12.v_buffer = temp;
-            }
-            bytes1 = (RawWidth * RawHeight * 3) / 2;
-            sumBytes += bytes1;
-
-            ///////////////////////////Preform PSNR Calc///////////////////////////////////
-            if (SsimOut)
-            {
-                double weight;
-                double thisSsim = VP8_CalcSSIM_Tester(&Raw_YV12, &Comp_YV12, 1, &weight);
-                summedQuality += thisSsim * weight ;
-                summedWeights += weight;
-            }
-
-            double YPsnr = 0.0;
-            double UPsnr = 0.0;
-            double VPsnr = 0.0;
-            double SqError = 0.0;
-            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &Comp_YV12, &YPsnr, &UPsnr, &VPsnr, &SqError);
-
-            summedYPsnr += YPsnr;
-            summedUPsnr += UPsnr;
-            summedVPsnr += VPsnr;
-            summedPsnr += thisPsnr;
-            sumSqError += SqError;
-            ///////////////////////////////////////////////////////////////////////////////
-
-            ////////Printing////////
-            if (printvar == 1 || printvar == 5 || printvar == 0)
-            {
-                if (frameStats == 0)
-                {
-                    tprintf(PRINT_STD, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%7d of %7d  ",
-                            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                            currentVideo1Frame, frameCount
-                           );
-                }
-
-                if (frameStats == 1)
-                {
-                    tprintf(PRINT_BTH, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                            currentVideo1Frame,
-                            bytes1 * 8.0,
-                            bytes2 * 8.0,
-                            thisPsnr, 1.0 * YPsnr ,
-                            1.0 * UPsnr ,
-                            1.0 * VPsnr);
-                }
-
-                if (frameStats == 2)
-                {
-                    tprintf(PRINT_STD, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%7d of %7d  ",
-                            8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                            currentVideo1Frame, frameCount
-                           );
-
-                    fprintf(stderr, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                            currentVideo1Frame,
-                            bytes1 * 8.0,
-                            bytes2 * 8.0,
-                            thisPsnr, 1.0 * YPsnr ,
-                            1.0 * UPsnr ,
-                            1.0 * VPsnr);
-                }
-
-                if (frameStats == 3)
-                {
-                    tprintf(PRINT_STD, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, Y:%5.2f, U:%5.2f, V:%5.2f\n",
-                            currentVideo1Frame,
-                            bytes1 * 8.0,
-                            bytes2 * 8.0,
-                            thisPsnr, 1.0 * YPsnr ,
-                            1.0 * UPsnr ,
-                            1.0 * VPsnr);
+                        raw_timestamp = current_raw_frame;
                 }
             }
-
-            ////////////////////////
         }
-    }
 
-    //Over All PSNR Calc
-    double samples = 3.0 / 2 * currentVideo1Frame * Raw_YV12.y_width * Raw_YV12.y_height;
-    double avgPsnr = summedPsnr / currentVideo1Frame;
-    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
+        //Over All PSNR Calc
+        double samples = 3.0 / 2 * current_raw_frame * raw_yv12.y_width *
+            raw_yv12.y_height;
+        double avg_psnr = summed_psnr / current_raw_frame;
+        double total_psnr = VP8_Mse2Psnr_Tester(samples, 255.0, sum_sq_error);
 
-    if (summedWeights < 1.0)
-        summedWeights = 1.0;
+        if (summed_weights < 1.0)
+            summed_weights = 1.0;
 
-    double totalSSim = 100 * pow(summedQuality / summedWeights, 8.0);
+        double total_ssim = 100 * pow(summed_quality / summed_weights, 8.0);
 
-    ////////Printing////////
-    if (printvar == 1 || printvar == 5 || printvar == 0)
-    {
-        if (frameStats == 3)
-        {
-            tprintf(PRINT_STD, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-                    sumBytes * 8.0 / currentVideo1Frame*(RawRate / 2) / RawScale / 1000,                  //divided by two added when rate doubled to handle doubling of timestamp
-                    sumBytes2 * 8.0 / currentVideo1Frame*(CompRate / 2) / CompScale / 1000,               //divided by two added when rate doubled to handle doubling of timestamp
-                    avgPsnr,
-                    1.0 * summedYPsnr / currentVideo1Frame,
-                    1.0 * summedUPsnr / currentVideo1Frame,
-                    1.0 * summedVPsnr / currentVideo1Frame,
-                    totalPsnr);
-            tprintf(PRINT_STD, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
+        ////////Printing////////
+        tprintf(print_out, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, "
+            "Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
+            sum_bytes * 8.0 / current_raw_frame*(raw_rate) / raw_scale / 1000,
+            sum_bytes2 * 8.0 /current_raw_frame*(comp_rate) / comp_scale / 1000,
+            avg_psnr,
+            1.0 * summed_ypsnr / current_raw_frame,
+            1.0 * summed_upsnr / current_raw_frame,
+            1.0 * summed_vpsnr / current_raw_frame,
+            total_psnr);
 
-        }
-        else
-        {
-            tprintf(PRINT_BTH, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-                    sumBytes * 8.0 / currentVideo1Frame*(RawRate / 2) / RawScale / 1000,          //divided by two added when rate doubled to handle doubling of timestamp
-                    sumBytes2 * 8.0 / currentVideo1Frame*(CompRate / 2) / CompScale / 1000,       //divided by two added when rate doubled to handle doubling of timestamp
-                    avgPsnr,
-                    1.0 * summedYPsnr / currentVideo1Frame,
-                    1.0 * summedUPsnr / currentVideo1Frame,
-                    1.0 * summedVPsnr / currentVideo1Frame,
-                    totalPsnr);
-            tprintf(PRINT_BTH, SsimOut ? "SSIM: %8.2f\n" : "SSIM: Not run.", totalSSim);
-        }
-    }
+        tprintf(print_out, ssim_out ? "SSIM: %8.2f\n" : "SSIM: Not run.",
+            total_ssim);
 
-    if (printvar != 0)
-    {
-        tprintf(PRINT_BTH, "\n                        --------------------------------\n");
-    }
+        if (print_embl)
+            tprintf(print_out, "\n                        "
+            "--------------------------------\n");
+        ////////////////////////
 
-    if (SsimOut)
-        *SsimOut = totalSSim;
+        if (ssim_out)
+            *ssim_out = total_ssim;
 
-    ////////////////////////
-    fclose(RawFile);
-    fclose(CompFile);
-    delete timeStamp2;
-    delete timeEndStamp2;
-    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12);
-    vp8_yv12_de_alloc_frame_buffer(&Temp_YV12_2);
-    vpx_img_free(&raw_img);
+        fclose(raw_file);
+        fclose(comp_file);
+        vp8_yv12_de_alloc_frame_buffer(&temp_yv12);
+        vp8_yv12_de_alloc_frame_buffer(&temp_yv12b);
 
-    if(file_type == FILE_TYPE_Y4M)
-        y4m_input_close(&y4m);
+        if(file_type != FILE_TYPE_Y4M)
+            vpx_img_free(&raw_img);
 
-    vpx_codec_destroy(&decoder);
+        if(file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
 
-    if (input.nestegg_ctx)
-        nestegg_destroy(input.nestegg_ctx);
+        vpx_codec_destroy(&decoder);
 
-    if (input.kind != WEBM_FILE)
-        free(CompBuff);
+        if (input.nestegg_ctx)
+            nestegg_destroy(input.nestegg_ctx);
 
-    return totalPsnr;
+        if (input.kind != WEBM_FILE)
+            free(comp_buff);
+
+        return total_psnr;
 }
 double vpxt_data_rate(const char *inputFile, int DROuputSel)
 {
@@ -8859,8 +8890,10 @@ int vpxt_faux_decompress(const char *inputChar)
     //  }
     //}
 
+    uint64_t timestamp = 0;
+
     vpx_codec_dec_init(&decoder, iface, &cfg, 0);
-    read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz);
+    read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz, &timestamp);
     //read_frame_dec(infile, &buf, &buf_sz, &buf_alloc_sz, is_ivf);
     vpx_codec_decode(&decoder, buf, buf_sz, NULL, 0);
     vpx_codec_destroy(&decoder);
@@ -13636,7 +13669,7 @@ int vpxt_decompress(const char *inputchar, const char *outputchar, std::string D
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -13648,8 +13681,10 @@ int vpxt_decompress(const char *inputchar, const char *outputchar, std::string D
         return -1;
     }
 
+    uint64_t timestamp = 0;
+
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -13953,7 +13988,7 @@ int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, cons
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -13974,9 +14009,10 @@ int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, cons
     }
 
     int clonethedecoder = 0;
+    uint64_t timestamp = 0;
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -14535,7 +14571,7 @@ int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar,
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -14557,8 +14593,10 @@ int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar,
         write_ivf_file_header(outfile_drops, &enc_cfg, VP8_FOURCC, 0);
     }
 
+    uint64_t timestamp = 0;
+
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -14926,7 +14964,7 @@ int vpxt_decompress_resize(const char *inputchar, const char *outputchar, std::s
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -14950,7 +14988,9 @@ int vpxt_decompress_resize(const char *inputchar, const char *outputchar, std::s
     ///////////////////////////////////////////////////////////////////////////////////////
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+
+    uint64_t timestamp = 0;
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -15263,7 +15303,7 @@ int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar, int th
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -15276,7 +15316,8 @@ int vpxt_decompress_to_raw(const char *inputchar, const char *outputchar, int th
     }
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -15567,7 +15608,7 @@ int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *ou
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -15580,7 +15621,8 @@ int vpxt_decompress_to_raw_no_error_output(const char *inputchar, const char *ou
     }
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -15873,7 +15915,7 @@ int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -15886,7 +15928,8 @@ int vpxt_decompress_no_output(const char *inputchar, const char *outputchar, std
     }
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -16182,7 +16225,7 @@ unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar,
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -16195,12 +16238,13 @@ unsigned int vpxt_time_decompress(const char *inputchar, const char *outputchar,
     }
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
         struct vpx_usec_timer timer;
-        unsigned __int64 start, end;
+        uint64_t start, end;
 
         start = vpxt_get_cpu_tick();
         vpx_usec_timer_start(&timer);
@@ -16529,7 +16573,7 @@ unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     cfg.threads = threads;
 
@@ -16542,12 +16586,13 @@ unsigned int vpxt_decompress_time_and_output(const char *inputchar, const char *
     }
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
         struct vpx_usec_timer timer;
-        unsigned __int64 start, end;
+        uint64_t start, end;
 
         start = vpxt_get_cpu_tick();
         vpx_usec_timer_start(&timer);
@@ -16835,7 +16880,7 @@ int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar)
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
@@ -16846,7 +16891,8 @@ int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar)
     }
 
     /* Decode file */
-    while (!read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;
@@ -18512,7 +18558,7 @@ int vpxt_display_header_info(int argc, const char *const *argv)
     signature[3] = ' ';
 
     std::vector<unsigned int>     frameSize;
-    std::vector<unsigned __int64> timeStamp;
+    std::vector<uint64_t> timeStamp;
 
     FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") : set_binary_mode(stdin);
 
@@ -19637,11 +19683,13 @@ int vpxt_compare_enc(const char *inputFile1, const char *inputFile2, int fullche
     int currentVideoFrame = 0;
     int frame_avail_1 = 0;
     int frame_avail_2 = 0;
+    uint64_t timestamp1 = 0;
+    uint64_t timestamp2 = 0;
 
     while (!frame_avail_1 && !frame_avail_2)
     {
-        frame_avail_1 = read_frame_dec(&input_1, &buf_1, (size_t *)&buf_sz_1, (size_t *)&buf_alloc_sz_1);
-        frame_avail_2 = read_frame_dec(&input_2, &buf_2, (size_t *)&buf_sz_2, (size_t *)&buf_alloc_sz_2);
+        frame_avail_1 = read_frame_dec(&input_1, &buf_1, &buf_sz_1, &buf_alloc_sz_1, &timestamp1);
+        frame_avail_2 = read_frame_dec(&input_2, &buf_2, &buf_sz_2, &buf_alloc_sz_2, &timestamp2);
 
         if (frame_avail_1 || frame_avail_2)
         {
@@ -19970,7 +20018,7 @@ double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
         }
 
     unsigned int FrameSize = (width * height * 3) / 2;
-    unsigned __int64 TimeStamp = 0;
+    uint64_t TimeStamp = 0;
 
     if (vpx_codec_dec_init(&decoder, iface ? iface :  ifaces[0].iface, &cfg, postproc ? VPX_CODEC_USE_POSTPROC : 0))
     {
@@ -20113,7 +20161,7 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
     signature[3] = ' ';
 
     std::vector<unsigned int>     frameSize;
-    std::vector<unsigned __int64> timeStamp;
+    std::vector<uint64_t> timeStamp;
 
     FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") : set_binary_mode(stdin);
 
@@ -20198,10 +20246,11 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
     size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
+    uint64_t timestamp = 0;
 
     while (!frame_avail)
     {
-        frame_avail = read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz);
+        frame_avail = read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp);
 
         if (frame_avail)
             break;
@@ -20301,7 +20350,7 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
     signature[3] = ' ';
 
     std::vector<unsigned int>     frameSize;
-    std::vector<unsigned __int64> timeStamp;
+    std::vector<uint64_t> timeStamp;
 
     FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") : set_binary_mode(stdin);
 
@@ -20386,10 +20435,11 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
     size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
+    uint64_t timestamp = 0;
 
     while (!frame_avail)
     {
-        frame_avail = read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz);
+        frame_avail = read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp);
 
         if (frame_avail)
             break;
@@ -20568,10 +20618,11 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
     size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
+    uint64_t timestamp = 0;
 
     while (!frame_avail)
     {
-        frame_avail = read_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz);
+        frame_avail = read_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp);
 
         if (frame_avail)
             break;

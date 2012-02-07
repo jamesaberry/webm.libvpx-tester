@@ -245,10 +245,10 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
     double PSNR500;
     double PSNR1000;
 
-    PSNR0 = vpxt_psnr(input.c_str(), EncBreakOut0.c_str(), 0, 0, 1, NULL);
-    PSNR100 = vpxt_psnr(input.c_str(), EncBreakOut100.c_str(), 0, 0, 1, NULL);
-    PSNR500 = vpxt_psnr(input.c_str(), EncBreakOut500.c_str(), 0, 0, 1, NULL);
-    PSNR1000 = vpxt_psnr(input.c_str(), EncBreakOut1000.c_str(), 0, 0, 1, NULL);
+    PSNR0 = vpxt_psnr(input.c_str(), EncBreakOut0.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNR100 = vpxt_psnr(input.c_str(), EncBreakOut100.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNR500 = vpxt_psnr(input.c_str(), EncBreakOut500.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNR1000 = vpxt_psnr(input.c_str(), EncBreakOut1000.c_str(), 0, PRINT_BTH, 1, NULL);
 
     double dB1 = vpxt_abs_double(PSNR0 - PSNR100);
     double dB2 = vpxt_abs_double(PSNR100 - PSNR500);

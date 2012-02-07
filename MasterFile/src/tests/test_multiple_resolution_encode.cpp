@@ -154,9 +154,9 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
         return 10;
     }
 
-    double psnr1 = vpxt_psnr(input.c_str(), MultResEnc1.c_str(), 0, 0, 1, NULL);
-    double psnr2 = vpxt_psnr(input.c_str(), MultResEnc2.c_str(), 0, 0, 1, NULL);
-    double psnr3 = vpxt_psnr(input.c_str(), MultResEnc3.c_str(), 0, 0, 1, NULL);
+    double psnr1 = vpxt_psnr(input.c_str(), MultResEnc1.c_str(), 0, PRINT_BTH, 1, NULL);
+    double psnr2 = vpxt_psnr(input.c_str(), MultResEnc2.c_str(), 0, PRINT_BTH, 1, NULL);
+    double psnr3 = vpxt_psnr(input.c_str(), MultResEnc3.c_str(), 0, PRINT_BTH, 1, NULL);
 
     char MultResEnc1FN[256];
     char MultResEnc2FN[256];

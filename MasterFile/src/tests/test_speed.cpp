@@ -156,7 +156,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
 
                 GoodTotalcpu_tick[counter] = vpxt_cpu_tick_return(SpeedTestGoodQ.c_str(), 0);
-                GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
+                GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, PRINT_BTH, 1, NULL);
                 counter++;
             }
         }
@@ -176,7 +176,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
                 RealTotalcpu_tick[counter2] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, PRINT_BTH, 1, NULL);
                 counter--;
                 counter2++;
             }
@@ -230,7 +230,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, 0, 1, NULL);
+                    GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, PRINT_BTH, 1, NULL);
                 }
 
                 counter++;
@@ -265,7 +265,7 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
+                    RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, PRINT_BTH, 1, NULL);
                 }
 
                 counter--;

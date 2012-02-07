@@ -181,7 +181,7 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
             }
         }
 
-        double NewPSNR = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0, 0, 1, NULL);
+        double NewPSNR = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0, PRINT_BTH, 1, NULL);
 
         double NewDR = vpxt_data_rate(NewEncFile.c_str(), 1);
 
@@ -510,7 +510,7 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
             return 0;
         }
 
-        PSNRArr[0] = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0, 0, 1, NULL);
+        PSNRArr[0] = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0, PRINT_BTH, 1, NULL);
         PSNRArr[1] = vpxt_get_psnr(OldEncFile.c_str());
 
         tprintf(PRINT_BTH, "\nNew DataRate");

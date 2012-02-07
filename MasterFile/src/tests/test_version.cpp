@@ -235,10 +235,10 @@ int test_version(int argc, const char *const *argv, const std::string &WorkingDi
         return 10;
     }
 
-    PSNRArr[0] = vpxt_psnr(input.c_str(), Version0.c_str(), 0, 0, 1, NULL);
-    PSNRArr[1] = vpxt_psnr(input.c_str(), Version1.c_str(), 0, 0, 1, NULL);
-    PSNRArr[2] = vpxt_psnr(input.c_str(), Version2.c_str(), 0, 0, 1, NULL);
-    PSNRArr[3] = vpxt_psnr(input.c_str(), Version3.c_str(), 0, 0, 1, NULL);
+    PSNRArr[0] = vpxt_psnr(input.c_str(), Version0.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRArr[1] = vpxt_psnr(input.c_str(), Version1.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRArr[2] = vpxt_psnr(input.c_str(), Version2.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRArr[3] = vpxt_psnr(input.c_str(), Version3.c_str(), 0, PRINT_BTH, 1, NULL);
 
     tprintf(PRINT_BTH, "\n");
 

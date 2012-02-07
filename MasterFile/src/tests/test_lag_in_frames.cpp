@@ -161,9 +161,9 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         return 10;
     }
 
-    double LagInFrames0PSNR = vpxt_psnr(input.c_str(), LagInFrames0.c_str(), 0, 0, 1, NULL);
-    double LagInFrames1PSNR = vpxt_psnr(input.c_str(), LagInFrames1.c_str(), 0, 0, 1, NULL);
-    double LagInFrames2PSNR = vpxt_psnr(input.c_str(), LagInFrames2.c_str(), 0, 0, 1, NULL);
+    double LagInFrames0PSNR = vpxt_psnr(input.c_str(), LagInFrames0.c_str(), 0, PRINT_BTH, 1, NULL);
+    double LagInFrames1PSNR = vpxt_psnr(input.c_str(), LagInFrames1.c_str(), 0, PRINT_BTH, 1, NULL);
+    double LagInFrames2PSNR = vpxt_psnr(input.c_str(), LagInFrames2.c_str(), 0, PRINT_BTH, 1, NULL);
 
     double TenPer0 = LagInFrames0PSNR / 10;
     double TenPer1 = LagInFrames1PSNR / 10;

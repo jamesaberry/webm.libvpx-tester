@@ -208,12 +208,12 @@ int test_good_vs_best(int argc, const char *const *argv, const std::string &Work
     double PSNRG3;
     double PSNRB3;
 
-    PSNRG1 = vpxt_psnr(input.c_str(), GoodOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRB1 = vpxt_psnr(input.c_str(), BestOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRG2 = vpxt_psnr(input.c_str(), GoodOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRB2 = vpxt_psnr(input.c_str(), BestOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRG3 = vpxt_psnr(input.c_str(), GoodOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNRB3 = vpxt_psnr(input.c_str(), BestOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRG1 = vpxt_psnr(input.c_str(), GoodOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRB1 = vpxt_psnr(input.c_str(), BestOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRG2 = vpxt_psnr(input.c_str(), GoodOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRB2 = vpxt_psnr(input.c_str(), BestOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRG3 = vpxt_psnr(input.c_str(), GoodOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRB3 = vpxt_psnr(input.c_str(), BestOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
 
     //data rates not always in order so find smallest observed data rate
     float GoodSizeMin = GoodSize1;

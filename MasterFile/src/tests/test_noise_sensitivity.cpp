@@ -134,7 +134,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
             }
 
             tprintf(PRINT_BTH, "\n");
-            PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
+            PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, PRINT_BTH, 1, NULL);
             tprintf(PRINT_BTH, "\n");
             File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
             tprintf(PRINT_BTH, "\n");
@@ -172,7 +172,7 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
             {
 
                 tprintf(PRINT_BTH, "\n");
-                PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, 0, 1, NULL);
+                PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
                 tprintf(PRINT_BTH, "\n");

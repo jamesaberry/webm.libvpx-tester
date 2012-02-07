@@ -136,7 +136,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
+                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
@@ -176,7 +176,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, 0, 1, NULL);
+                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
@@ -264,7 +264,7 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
-	else if (fail == 2)
+    else if (fail == 2)
     {
         tprintf(PRINT_BTH, "\nMin Passed\n");
 

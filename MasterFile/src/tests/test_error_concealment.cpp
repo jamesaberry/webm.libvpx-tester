@@ -119,8 +119,8 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
     double PSNRClean;
     double PSNRDrops;
 
-    PSNRClean = vpxt_psnr(input.c_str(), ErrConComp.c_str(), 0, 0, 1, NULL);
-    PSNRDrops = vpxt_psnr_dec(input.c_str(), ErrConDec.c_str(), 0, 0, 1, NULL, 0, 0);
+    PSNRClean = vpxt_psnr(input.c_str(), ErrConComp.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRDrops = vpxt_psnr_dec(input.c_str(), ErrConDec.c_str(), 0, PRINT_BTH, 1, NULL, 0, 0);
 
     //tprintf(PRINT_BTH, "\n PSNRClean: %f PSNRDrops: %f\n",PSNRClean,PSNRDrops);
 

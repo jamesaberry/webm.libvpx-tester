@@ -116,8 +116,8 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
     double PSNRon;
     double PSNRoff;
 
-    PSNRon = vpxt_psnr(input.c_str(), ErrorOnOutFile.c_str(), 0, 0, 1, NULL);
-    PSNRoff = vpxt_psnr(input.c_str(), ErrorOffOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRon = vpxt_psnr(input.c_str(), ErrorOnOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRoff = vpxt_psnr(input.c_str(), ErrorOffOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
 
     float PSRNPerc = 100 * vpxt_abs_float((PSNRon - PSNRoff) / PSNRoff);
 

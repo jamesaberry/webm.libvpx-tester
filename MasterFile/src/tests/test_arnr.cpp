@@ -178,10 +178,10 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         return 10;
     }
 
-    double CompArnr0PSNR = vpxt_psnr(input.c_str(), CompArnr1AltRef0.c_str(), 0, 0, 1, NULL);
-    double CompArnr1PSNR = vpxt_psnr(input.c_str(), CompArnr1.c_str(), 0, 0, 1, NULL);
-    double CompArnr2PSNR = vpxt_psnr(input.c_str(), CompArnr2.c_str(), 0, 0, 1, NULL);
-    double CompArnr3PSNR = vpxt_psnr(input.c_str(), CompArnr3.c_str(), 0, 0, 1, NULL);
+    double CompArnr0PSNR = vpxt_psnr(input.c_str(), CompArnr1AltRef0.c_str(), 0, PRINT_BTH, 1, NULL);
+    double CompArnr1PSNR = vpxt_psnr(input.c_str(), CompArnr1.c_str(), 0, PRINT_BTH, 1, NULL);
+    double CompArnr2PSNR = vpxt_psnr(input.c_str(), CompArnr2.c_str(), 0, PRINT_BTH, 1, NULL);
+    double CompArnr3PSNR = vpxt_psnr(input.c_str(), CompArnr3.c_str(), 0, PRINT_BTH, 1, NULL);
 
     double CompArnr0DataRate = vpxt_data_rate(CompArnr1AltRef0.c_str(), 1);
     double CompArnr1DataRate = vpxt_data_rate(CompArnr1.c_str(), 1);

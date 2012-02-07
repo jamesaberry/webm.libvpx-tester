@@ -140,8 +140,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         return 10;
     }
 
-    PSNRArr[0] = vpxt_psnr(input.c_str(), Min10QuantOutFile.c_str(), 0, 0, 1, NULL);
-    PSNRArr[1] = vpxt_psnr(input.c_str(), Min60QuantOutFile.c_str(), 0, 0, 1, NULL);
+    PSNRArr[0] = vpxt_psnr(input.c_str(), Min10QuantOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRArr[1] = vpxt_psnr(input.c_str(), Min60QuantOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
 
     tprintf(PRINT_BTH, "\n");
     int Min10Q = vpxt_check_min_quantizer(Min10QuantOutFile.c_str(), 10);

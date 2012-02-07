@@ -130,7 +130,7 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
         return 10;
     }
 
-    double SpatialResampPSNR = vpxt_psnr(input.c_str(), Spatialon.c_str(), 0, 0, 1, NULL);
+    double SpatialResampPSNR = vpxt_psnr(input.c_str(), Spatialon.c_str(), 0, PRINT_BTH, 1, NULL);
 
     char SpatialonFileName[255];
     vpxt_file_name(Spatialon.c_str(), SpatialonFileName, 0);

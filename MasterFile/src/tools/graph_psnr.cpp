@@ -175,7 +175,7 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         }
 
         double ssimnumber = 0;
-        PSNRArr[x] = vpxt_psnr(input.c_str(), outputChar, 0, 2, 1, &ssimnumber);
+        PSNRArr[x] = vpxt_psnr(input.c_str(), outputChar, 0, PRINT_BTH, 1, &ssimnumber);
         SSIMArr[x] = ssimnumber;
         DataRateArr[x] = vpxt_data_rate(outputChar, 1);
         x++;

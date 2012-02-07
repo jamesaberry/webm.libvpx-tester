@@ -207,12 +207,12 @@ int test_two_pass_vs_two_pass_best(int argc, const char *const *argv, const std:
     double PSNRG3;
     double PSNRB3;
 
-    PSNRG1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRB1 = vpxt_psnr(input.c_str(), TwoPassBestOutFile1.c_str(), 1, 0, 1, NULL);
-    PSNRG2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRB2 = vpxt_psnr(input.c_str(), TwoPassBestOutFile2.c_str(), 1, 0, 1, NULL);
-    PSNRG3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, 0, 1, NULL);
-    PSNRB3 = vpxt_psnr(input.c_str(), TwoPassBestOutFile3.c_str(), 1, 0, 1, NULL);
+    PSNRG1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRB1 = vpxt_psnr(input.c_str(), TwoPassBestOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRG2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRB2 = vpxt_psnr(input.c_str(), TwoPassBestOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRG3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRB3 = vpxt_psnr(input.c_str(), TwoPassBestOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
 
     //data rates not always in order so find smallest observed data rate
     float GoodSizeMin = GoodSize1;

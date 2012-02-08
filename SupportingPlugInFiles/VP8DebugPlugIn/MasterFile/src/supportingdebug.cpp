@@ -207,7 +207,7 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
     double totalPsnr;
     std::cout << "\n\n";
     double ssimDummyVar = 0;
-    totalPsnr = vpxt_psnr(inputFile, outputFile, 0, 0, 1, NULL);
+    totalPsnr = vpxt_psnr(inputFile, outputFile, 0, PRINT_BTH, 1, NULL);
 
     //char TextFilechar1[255];
     std::string TextFilechar1 = "";

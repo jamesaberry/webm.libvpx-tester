@@ -13146,6 +13146,9 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
     int                  got_data;
     int                  flags = 0;
 
+    for(i = 0; i < NUM_ENCODERS; i++)
+        ebml[i].last_pts_ms = -1;
+
     /*Currently, only realtime mode is supported in multi-resolution encoding.*/
     int                  arg_deadline = VPX_DL_REALTIME;
 

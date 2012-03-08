@@ -1515,7 +1515,7 @@ static int read_frame_dec(struct input_ctx *input,
     return 1;
 }
 
-static int skim_frame_dec(struct input_ctx      *input, uint8_t               **buf, size_t                *buf_sz, size_t                *buf_alloc_sz)
+static int skim_frame_dec(struct input_ctx *input, uint8_t **buf, size_t *buf_sz, size_t *buf_alloc_sz, uint64_t *timestamp)
 {
     char     raw_hdr[IVF_FRAME_HDR_SZ];
     size_t          new_buf_sz;
@@ -1538,6 +1538,8 @@ static int skim_frame_dec(struct input_ctx      *input, uint8_t               **
                     return 1;
             }
             while (track != input->video_track);
+
+            *timestamp = input->pkt->timecode;
 
             if (nestegg_packet_count(input->pkt, &input->chunks))
                 return 1;
@@ -1566,6 +1568,7 @@ static int skim_frame_dec(struct input_ctx      *input, uint8_t               **
     else
     {
         new_buf_sz = mem_get_le32(raw_hdr);
+        *timestamp = mem_get_le32(raw_hdr+4);
 
         if (new_buf_sz > 256 * 1024 * 1024)
         {
@@ -3265,7 +3268,8 @@ int  vpxt_get_number_of_frames(const char *inputFile)
             return EXIT_FAILURE;
         }
 
-        while (!skim_frame_dec(&input, &buf, (size_t *) &buf_sz, (size_t *) &buf_alloc_sz))
+        uint64_t timestamp = 0;
+        while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
             length++;
 
         //printf("\nWebm Length: %i\n",length);
@@ -3572,7 +3576,8 @@ int  vpxt_raw_file_size(const char *inputFile)
             return EXIT_FAILURE;
         }
 
-        while (!skim_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+        uint64_t timestamp = 0;
+        while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
             size = size + buf_sz;
 
         //printf("\nWebm size: %i\n",size);
@@ -8545,7 +8550,8 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
     long nBytesMin = 999999;
     long nBytesMax = 0;
 
-    while (!skim_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         //fread(&ivf_fhRaw.frameSize, 1, 4, in);
         //fread(&ivf_fhRaw.timeStamp, 1, 8, in);
@@ -8685,7 +8691,8 @@ int vpxt_check_pbm(const char *inputFile, int bitRate, int maxBuffer, int preBuf
     int bitsInBuffer = preBuffer * bitRate;    //scale factors cancel (ms * kbps = bits)
     int maxBitsInBuffer = maxBuffer * bitRate; //scale factors cancel (ms * kbps = bits)
 
-    while (!skim_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         bitsInBuffer += bitsAddedPerFrame;
         bitsInBuffer -= buf_sz * 8; //buf_sz in kB
@@ -8815,7 +8822,8 @@ int vpxt_check_pbm_threshold(const char *inputFile, double bitRate, int maxBuffe
     int bitsInBuffer = preBuffer * bitRate;
     int maxBitsInBuffer = maxBuffer * bitRate;
 
-    while (!skim_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    uint64_t timestamp = 0;
+    while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         bitsInBuffer += bitsAddedPerFrame;
         bitsInBuffer -= buf_sz * 8;
@@ -18767,16 +18775,16 @@ int vpxt_display_header_info(int argc, const char *const *argv)
     size_t               buf_sz = 0, buf_alloc_sz = 0;
     int currentVideoFrame = 0;
     int frame_avail = 0;
+    uint64_t timestamp = 0;
 
     while (!frame_avail)
     {
-        frame_avail = skim_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz);
+        frame_avail = skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp);
 
         if (!frame_avail && (extrafileinfo == 1 || currentVideoFrame == 0))
         {
             frameSize.push_back(buf_sz);
-            timeStamp.push_back(0);
-            //timeStamp.push_back(input.pkt->timecode);
+            timeStamp.push_back(timestamp);
         }
         else
             frame_avail = 1;
@@ -18830,19 +18838,19 @@ int vpxt_display_header_info(int argc, const char *const *argv)
     {
         tprintf(PRINT_STD, "FRAME HEADER %i\n"
                 "Frame Size            - %i \n"
-                "Time Stamp            - %i \n"
+                "Time Stamp            - %llu \n"
                 "\n"
 
-                , currentVideoFrame, frameSize[currentVideoFrame], (int)timeStamp[currentVideoFrame]);
+                , currentVideoFrame, frameSize[currentVideoFrame], timeStamp[currentVideoFrame]);
 
         if (argc > 4)
         {
             tprintf(PRINT_ERR, "FRAME HEADER %i\n"
                     "Frame Size            - %i \n"
-                    "Time Stamp            - %i \n"
+                    "Time Stamp            - %llu \n"
                     "\n"
 
-                    , currentVideoFrame, frameSize[currentVideoFrame], (int)timeStamp[currentVideoFrame]);
+                    , currentVideoFrame, frameSize[currentVideoFrame], timeStamp[currentVideoFrame]);
         }
 
         currentVideoFrame++;
@@ -19131,11 +19139,13 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
                 , 12, length_1, length_2
                 , 12, unused_1, unused_2);
     }
+    uint64_t timestamp1 = 0;
+    uint64_t timestamp2 = 0;
 
     while (!frame_avail_1 && !frame_avail_2)
     {
-        frame_avail_1 = skim_frame_dec(&input_1, &buf_1, (size_t *)&buf_sz_1, (size_t *)&buf_alloc_sz_1);
-        frame_avail_2 = skim_frame_dec(&input_2, &buf_2, (size_t *)&buf_sz_2, (size_t *)&buf_alloc_sz_2);
+        frame_avail_1 = skim_frame_dec(&input_1, &buf_1, &buf_sz_1, &buf_alloc_sz_1, &timestamp1);
+        frame_avail_2 = skim_frame_dec(&input_2, &buf_2, &buf_sz_2, &buf_alloc_sz_2, &timestamp2);
 
         if (frame_avail_1 && frame_avail_2)
         {
@@ -19147,24 +19157,24 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
             tprintf(PRINT_STD,
                     "FRAME HEADER1 %-*i\n"
                     "Frame Size            - %-*i\n"
-                    "Time Stamp            - %-*i\n"
+                    "Time Stamp            - %-*llu\n"
                     "\n"
 
                     , 22, currentVideoFrame
                     , 12, buf_sz_1
-                    , 12, 0);
+                    , 12, timestamp1);
 
             if (argc == 6)
             {
                 tprintf(PRINT_ERR,
                         "FRAME HEADER1 %-*i\n"
                         "Frame Size            - %-*i\n"
-                        "Time Stamp            - %-*i\n"
+                        "Time Stamp            - %-*llu\n"
                         "\n"
 
                         , 22, currentVideoFrame
                         , 12, buf_sz_1
-                        , 12, 0);
+                        , 12, timestamp1);
             }
         }
 
@@ -19173,24 +19183,24 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
             tprintf(PRINT_STD,
                     "                                    FRAME HEADER2 %i\n"
                     "                                    Frame Size            - %i\n"
-                    "                                    Time Stamp            - %i\n"
+                    "                                    Time Stamp            - %llu\n"
                     "\n"
 
                     , currentVideoFrame
                     , buf_sz_2
-                    , 0);
+                    , timestamp2);
 
             if (argc == 6)
             {
                 tprintf(PRINT_ERR,
                         "                                    FRAME HEADER2 %i\n"
                         "                                    Frame Size            - %i\n"
-                        "                                    Time Stamp            - %i\n"
+                        "                                    Time Stamp            - %llu\n"
                         "\n"
 
                         , currentVideoFrame
                         , buf_sz_2
-                        , 0);
+                        , timestamp2);
             }
         }
 
@@ -19198,23 +19208,23 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
         {
             tprintf(PRINT_STD, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
                     "Frame Size            - %-*iFrame Size            - %i\n"
-                    "Time Stamp            - %-*iTime Stamp            - %i\n"
+                    "Time Stamp            - %-*lluTime Stamp            - %llu\n"
                     "\n"
 
                     , 22, currentVideoFrame, currentVideoFrame
                     , 12, buf_sz_1, buf_sz_2
-                    , 12, 0, 0);
+                    , 12, timestamp1, timestamp2);
 
             if (argc == 6)
             {
                 tprintf(PRINT_ERR, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
                         "Frame Size            - %-*iFrame Size            - %i\n"
-                        "Time Stamp            - %-*iTime Stamp            - %i\n"
+                        "Time Stamp            - %-*lluTime Stamp            - %llu\n"
                         "\n"
 
                         , 22, currentVideoFrame, currentVideoFrame
                         , 12, buf_sz_1, buf_sz_2
-                        , 12, 0, 0);
+                        , 12, timestamp1, timestamp2);
             }
         }
 
@@ -20161,9 +20171,10 @@ double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
 
     int resizedIMGCount = 0;
     int frame = 0;
+    uint64_t timestamp = 0;
 
     /* Decode file */
-    while (!skim_frame_dec(&input, &buf, (size_t *)&buf_sz, (size_t *)&buf_alloc_sz))
+    while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         vpx_codec_iter_t  iter = NULL;
         vpx_image_t    *img;

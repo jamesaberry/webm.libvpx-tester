@@ -361,6 +361,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_temporal_scalability.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_test_vector.cpp"
 					>
 				</File>
@@ -461,6 +465,10 @@
 					</File>
 					<File
 						RelativePath=".\src\util\vpx\vp8_multi_resolution_encoder.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\util\vpx\vp8_scalable_patterns.cpp"
 						>
 					</File>
 					<File

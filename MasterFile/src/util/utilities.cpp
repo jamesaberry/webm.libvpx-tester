@@ -171,6 +171,9 @@ extern "C"
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////MULIT ENC//////////////////////////////////
 #define NUM_ENCODERS 3
+//////////////////////////////////SCALE PART//////////////////////////////////
+static int mode_to_num_layers[9] = {2, 2, 3, 3, 3, 3, 5, 2, 3};
+#define TEMP_SCALE_ENCODERS 6
 //////////////////////////ENCODE-START//////////////////////////////////////////////////////////////////////////////////////////////
 enum video_file_type
 {
@@ -2208,6 +2211,79 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
 
     return 0;
 }
+int vpxt_api_config_to_core_config(vpx_codec_enc_cfg_t cfg, VP8_CONFIG &coreCfg)
+{
+    //Converts a api configuration to core configuration
+    coreCfg.multi_threaded = cfg.g_threads;
+    coreCfg.Version = cfg.g_profile;
+    coreCfg.error_resilient_mode = cfg.g_error_resilient;
+    coreCfg.allow_spatial_resampling = cfg.rc_resize_allowed;
+    coreCfg.resample_up_water_mark = cfg.rc_resize_up_thresh;
+    coreCfg.resample_down_water_mark = cfg.rc_resize_down_thresh;
+    coreCfg.target_bandwidth = cfg.rc_target_bitrate;
+    coreCfg.best_allowed_q = cfg.rc_min_quantizer;
+    coreCfg.worst_allowed_q = cfg.rc_max_quantizer;
+    coreCfg.over_shoot_pct = cfg.rc_overshoot_pct;
+    coreCfg.under_shoot_pct = cfg.rc_undershoot_pct;
+    coreCfg.maximum_buffer_size = cfg.rc_buf_sz;
+    coreCfg.starting_buffer_level  = cfg.rc_buf_initial_sz;
+    coreCfg.optimal_buffer_level  = cfg.rc_buf_optimal_sz;
+    coreCfg.two_pass_vbrbias      = cfg.rc_2pass_vbr_bias_pct;
+    coreCfg.two_pass_vbrmin_section    = cfg.rc_2pass_vbr_minsection_pct;
+    coreCfg.two_pass_vbrmax_section  = cfg.rc_2pass_vbr_maxsection_pct;
+
+    if (cfg.kf_mode == VPX_KF_FIXED)
+    {
+        coreCfg.auto_key = 0;
+    }
+
+    if (cfg.kf_mode == VPX_KF_AUTO)
+    {
+        coreCfg.auto_key = 1;
+    }
+
+    coreCfg.key_freq = cfg.kf_max_dist;
+
+    if(cfg.rc_min_quantizer == cfg.rc_max_quantizer)
+    {
+        coreCfg.fixed_q = cfg.rc_min_quantizer;
+    }
+
+    if (cfg.g_lag_in_frames == 0)
+    {
+        coreCfg.allow_lag = 0;
+    }
+    else
+    {
+        coreCfg.allow_lag = cfg.g_lag_in_frames;
+    }
+
+    if (cfg.rc_dropframe_thresh == 0)
+    {
+        coreCfg.allow_df = 0;
+    }
+    else
+    {
+        coreCfg.drop_frames_water_mark = cfg.rc_dropframe_thresh;
+    }
+
+    if (cfg.rc_end_usage == VPX_VBR)
+    {
+        coreCfg.end_usage = USAGE_LOCAL_FILE_PLAYBACK;
+    }
+
+    if (cfg.rc_end_usage == VPX_CBR)
+    {
+        coreCfg.end_usage = USAGE_STREAM_FROM_SERVER;
+    }
+
+    if (cfg.rc_end_usage == VPX_CQ)
+    {
+        coreCfg.end_usage = USAGE_CONSTRAINED_QUALITY;
+    }
+
+    return 0;
+}
 VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt, const char *inputfile, int display)
 {
     //Ranges can be found in validate_config in vp8_cx_iface.c
@@ -3913,6 +3989,8 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == SPEEDNUM) TestName = "test_speed";
 
+    if (TestNumber == TMPSCNUM) TestName = "test_temporal_scalability";
+
     if (TestNumber == TVECTNUM) TestName = "test_test_vector";
 
     if (TestNumber == TTVSFNUM) TestName = "test_thirtytwo_vs_sixtyfour";
@@ -4061,6 +4139,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.compare("test_speed") == 0)
             return SPEEDNUM;
+
+        if (id_test_str.compare("test_temporal_scalability") == 0)
+            return TMPSCNUM;
 
         if (id_test_str.compare("test_test_vector") == 0)
             return TVECTNUM;
@@ -4880,6 +4961,22 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
+                if (selector == TMPSCNUM)
+                {
+
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "TemporalScalability";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
                 if (selector == TVECTNUM)
                 {
 
@@ -4997,9 +5094,9 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != GQVBQNUM && selector != LGIFRNUM && selector != MAXQUNUM && selector != MEML1NUM && selector != MEML2NUM &&
                     selector != MINQUNUM && selector != MULTENUM && selector != MULTDNUM && selector != NVOPSNUM && selector != NVOECPTK &&
                     selector != NOISENUM && selector != OV2PSNUM && selector != PLYALNUM && selector != POSTPNUM && selector != RSDWMNUM &&
-                    selector != SPEEDNUM && selector != TVECTNUM && selector != TTVSFNUM && selector != RECBFNUM && selector != TV2BTNUM &&
-                    selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM && selector != VPXMINUM &&
-                    selector != MULRENUM)
+                    selector != SPEEDNUM && selector != TMPSCNUM && selector != TVECTNUM && selector != TTVSFNUM && selector != RECBFNUM &&
+                    selector != TV2BTNUM && selector != UNDSHNUM && selector != VERSINUM && selector != WMLMMNUM && selector != ALWSRNUM &&
+                    selector != VPXMINUM && selector != MULRENUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -5892,6 +5989,16 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 1;
 
         if (argNum == 9)
+            return 2;
+    }
+
+    //test_temporal_scalability
+    if (selector == TMPSCNUM)
+    {
+        if (argNum == 10)
+            return 1;
+
+        if (argNum == 11)
             return 2;
     }
 
@@ -6904,10 +7011,10 @@ double vpxt_psnr(const char *input_file1,
         {
         }
 
-        if((raw_rate/raw_scale)%(comp_rate/comp_scale) != 0){
+        /*if((raw_rate/raw_scale)%(comp_rate/comp_scale) != 0){
             tprintf(PRINT_BTH, "\nError: Raw File fps not multiple of Comp File fps\n");
             return 1;
-        }
+        }*/
 
         ////////////////////////////////////////////////////////////////////////
         ////////Printing////////
@@ -6969,6 +7076,8 @@ double vpxt_psnr(const char *input_file1,
 
         while (comp_frame_available)
         {
+            buf_sz = 0;
+
             if(read_frame_dec(&input, &comp_buff, &buf_sz, &buf_alloc_sz,
                 &comp_timestamp))
                 comp_frame_available = 0;
@@ -8081,6 +8190,8 @@ double vpxt_post_proc_psnr(const char *input_file1,
 
         while (comp_frame_available)
         {
+            buf_sz = 0;
+
             if(read_frame_dec(&input, &comp_buff, &buf_sz, &buf_alloc_sz,
                 &comp_timestamp))
                 comp_frame_available = 0;
@@ -13201,7 +13312,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFi
 
     return 0;
 }
-int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, std::string EncFormat)
+unsigned int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, std::string EncFormat)
 {
     const char *outfile_name[NUM_ENCODERS];
 
@@ -13259,6 +13370,8 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
     int                  frame_avail;
     int                  got_data;
     int                  flags = 0;
+    unsigned long        cx_time = 0;
+    unsigned int         total_cpu_time_used = 0;
 
     for(i = 0; i < NUM_ENCODERS; i++)
         ebml[i].last_pts_ms = -1;
@@ -13284,7 +13397,7 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
     dsf[1] controls down sampling from level 1 to level 2;
     dsf[2] is not used. */
     vpx_rational_t dsf[NUM_ENCODERS] = {{2, 1}, {2, 1}, {1, 1}};
-	/* Encode starting from which resolution level. Normally it is 0 that
+    /* Encode starting from which resolution level. Normally it is 0 that
      * means the original(highest) resolution. */
     int                  s_lvl = 0;
 
@@ -13295,7 +13408,7 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
     show_psnr = 0;//strtol(argv[NUM_ENCODERS + 4], NULL, 0);
     const struct codec_item  *codec_test = codecs;
 
-	/* Check to see if we need to encode all resolution levels */
+    /* Check to see if we need to encode all resolution levels */
     for (i=0; i<NUM_ENCODERS; i++)
     {
         if (target_bitrate[i])
@@ -13544,6 +13657,8 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
     {
         vpx_codec_iter_t iter[NUM_ENCODERS]={NULL};
         const vpx_codec_cx_pkt_t *pkt[NUM_ENCODERS];
+        struct vpx_usec_timer timer;
+        unsigned int start, end;
 
         flags = 0;
 
@@ -13567,8 +13682,14 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
         }
 
         /* Encode each frame at multi-levels */
+        start = vpxt_get_cpu_tick();
+        vpx_usec_timer_start(&timer);
         if(vpx_codec_encode(&codec[0], frame_avail? &raw[0] : NULL, frame_cnt, 1, flags, arg_deadline))
             return 0;
+        end = vpxt_get_cpu_tick();
+        cx_time += vpx_usec_timer_elapsed(&timer);
+
+        total_cpu_time_used = total_cpu_time_used + (end - start);
 
         for (i=NUM_ENCODERS-1; i>=0 ; i--)
         {
@@ -13655,9 +13776,641 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
         free(ebml[i].cue_list);
     }
 
-    return EXIT_SUCCESS;
+    tprintf(PRINT_BTH, "\n File completed: Time in Microseconds: %u, Fps: %d \n",
+            total_cpu_time_used, 1000 * frame_cnt / (total_cpu_time_used / 1000));
+    tprintf(PRINT_BTH, " Total CPU Ticks: %u\n", cx_time);
+
+    return cx_time;
 }
 
+unsigned int vpxt_compress_scalable_patterns(const char *inputFile, const char *outputFile2, int speed, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, std::string EncFormat, int layering_mode, int ScaleBitRate0, int ScaleBitRate1, int ScaleBitRate2, int ScaleBitRate3, int ScaleBitRate4)
+{
+
+    int write_webm = 1;
+    vpxt_lower_case_string(EncFormat);
+
+    if (EncFormat.compare("ivf") == 0)
+        write_webm = 0;
+
+    FILE                     *infile, *outfile[MAX_LAYERS];
+    vpx_codec_ctx_t           codec_enc;
+    const struct codec_item  *codec = codecs;
+    int                       arg_usage = 0;
+    vpx_codec_enc_cfg_t       cfg;
+    int                       frame_cnt = 0;
+    vpx_image_t               raw;
+    vpx_codec_err_t           res;
+    unsigned int              width;
+    unsigned int              height;
+    int                       frame_avail;
+    int                       got_data;
+    int                       flags = 0;
+    int                       i;
+    int                       pts = 0;              // PTS starts at 0
+    int                       frame_duration = 1;   // 1 timebase tick per frame
+    int                       frames_in_layer[MAX_LAYERS] = {0};
+    int                       layer_flags[MAX_PERIODICITY] = {0};
+    y4m_input                 y4m;
+    const char                *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
+    unsigned int               file_type, fourcc;
+    int                        arg_have_framerate = 0;
+    struct vpx_rational        arg_framerate = {30, 1};
+    int                        arg_use_i420 = 1;
+    EbmlGlobal                 ebml[TEMP_SCALE_ENCODERS] = {0};
+    stereo_format_t            stereo_fmt = STEREO_FORMAT_MONO;
+    uint32_t                   hash = 0;
+    unsigned long              cx_time = 0;
+    unsigned int               total_cpu_time_used = 0;
+    int                        print_count=0;
+    int                        flag_periodicity;
+    int                        max_intra_size_pct;
+
+    for(i = 0; i < TEMP_SCALE_ENCODERS; i++)
+        ebml[i].last_pts_ms = -1;
+
+    // Populate encoder configuration
+    res = vpx_codec_enc_config_default(codec->iface, &cfg, 0);
+    if(res) {
+        printf("Failed to get config: %s\n", vpx_codec_err_to_string(res));
+        return EXIT_FAILURE;
+    }
+
+    //These shoudl end up being passed in via cfg or oxcf eventualy.
+    cfg.ts_target_bitrate[0] = ScaleBitRate0;
+    cfg.ts_target_bitrate[1] = ScaleBitRate1;
+    cfg.ts_target_bitrate[2] = ScaleBitRate2;
+    cfg.ts_target_bitrate[3] = ScaleBitRate3;
+    cfg.ts_target_bitrate[4] = ScaleBitRate4;
+
+    // Timebase format e.g. 30fps: numerator=1, demoninator=30
+    if (!sscanf ("1", "%d", &cfg.g_timebase.num ))
+        return 0;
+    if (!sscanf ("30", "%d", &cfg.g_timebase.den ))
+        return 0;
+
+    // Real time parameters
+    cfg.rc_dropframe_thresh = 0;  // 30
+    cfg.rc_end_usage        = VPX_CBR;
+    cfg.rc_resize_allowed   = 0;
+    cfg.rc_min_quantizer    = 8;
+    cfg.rc_max_quantizer    = 56;
+    cfg.rc_undershoot_pct   = 100;
+    cfg.rc_overshoot_pct    = 15;
+    cfg.rc_buf_initial_sz   = 500;
+    cfg.rc_buf_optimal_sz   = 600;
+    cfg.rc_buf_sz           = 1000;
+
+    // Enable error resilient mode
+    cfg.g_error_resilient = 1;
+    cfg.g_lag_in_frames   = 0;
+    cfg.kf_mode           = VPX_KF_DISABLED;
+
+    // Disable automatic keyframe placement
+    cfg.kf_min_dist = cfg.kf_max_dist = 1000;
+
+    // Temporal scaling parameters:
+    // NOTE: The 3 prediction frames cannot be used interchangeably due to
+    // differences in the way they are handled throughout the code. The
+    // frames should be allocated to layers in the order LAST, GF, ARF.
+    // Other combinations work, but may produce slightly inferior results.
+    switch (layering_mode)
+    {
+
+    case 0:
+    {
+        // 2-layers, 2-frame period
+        int ids[2] = {0,1};
+        cfg.ts_number_layers     = 2;
+        cfg.ts_periodicity       = 2;
+        cfg.ts_rate_decimator[0] = 2;
+        cfg.ts_rate_decimator[1] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = cfg.ts_periodicity;
+#if 1
+        // 0=L, 1=GF, Intra-layer prediction enabled
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF;
+        layer_flags[1] = VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_UPD_LAST |
+                         VP8_EFLAG_NO_REF_ARF;
+#else
+        // 0=L, 1=GF, Intra-layer prediction disabled
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF;
+        layer_flags[1] = VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_UPD_LAST |
+                         VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_REF_LAST;
+#endif
+        break;
+    }
+
+    case 1:
+    {
+        // 2-layers, 3-frame period
+        int ids[3] = {0,1,1};
+        cfg.ts_number_layers     = 2;
+        cfg.ts_periodicity       = 3;
+        cfg.ts_rate_decimator[0] = 3;
+        cfg.ts_rate_decimator[1] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = cfg.ts_periodicity;
+
+        // 0=L, 1=GF, Intra-layer prediction enabled
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[1] =
+        layer_flags[2] = VP8_EFLAG_NO_REF_GF  |
+                         VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_ARF |
+                                                VP8_EFLAG_NO_UPD_LAST;
+        break;
+    }
+
+    case 2:
+    {
+        // 3-layers, 6-frame period
+        int ids[6] = {0,2,2,1,2,2};
+        cfg.ts_number_layers     = 3;
+        cfg.ts_periodicity       = 6;
+        cfg.ts_rate_decimator[0] = 6;
+        cfg.ts_rate_decimator[1] = 3;
+        cfg.ts_rate_decimator[2] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = cfg.ts_periodicity;
+
+        // 0=L, 1=GF, 2=ARF, Intra-layer prediction enabled
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[3] = VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_ARF |
+                                                VP8_EFLAG_NO_UPD_LAST;
+        layer_flags[1] =
+        layer_flags[2] =
+        layer_flags[4] =
+        layer_flags[5] = VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_LAST;
+        break;
+    }
+
+    case 3:
+    {
+        // 3-layers, 4-frame period
+        int ids[4] = {0,2,1,2};
+        cfg.ts_number_layers     = 3;
+        cfg.ts_periodicity       = 4;
+        cfg.ts_rate_decimator[0] = 4;
+        cfg.ts_rate_decimator[1] = 2;
+        cfg.ts_rate_decimator[2] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = cfg.ts_periodicity;
+
+        // 0=L, 1=GF, 2=ARF, Intra-layer prediction disabled
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[2] = VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_ARF |
+                         VP8_EFLAG_NO_UPD_LAST;
+        layer_flags[1] =
+        layer_flags[3] = VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF |
+                         VP8_EFLAG_NO_UPD_ARF;
+        break;
+    }
+
+    case 4:
+    {
+        // 3-layers, 4-frame period
+        int ids[4] = {0,2,1,2};
+        cfg.ts_number_layers     = 3;
+        cfg.ts_periodicity       = 4;
+        cfg.ts_rate_decimator[0] = 4;
+        cfg.ts_rate_decimator[1] = 2;
+        cfg.ts_rate_decimator[2] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = cfg.ts_periodicity;
+
+        // 0=L, 1=GF, 2=ARF, Intra-layer prediction enabled in layer 1,
+        // disabled in layer 2
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[2] = VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[1] =
+        layer_flags[3] = VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF |
+                         VP8_EFLAG_NO_UPD_ARF;
+        break;
+    }
+
+    case 5:
+    {
+        // 3-layers, 4-frame period
+        int ids[4] = {0,2,1,2};
+        cfg.ts_number_layers     = 3;
+        cfg.ts_periodicity       = 4;
+        cfg.ts_rate_decimator[0] = 4;
+        cfg.ts_rate_decimator[1] = 2;
+        cfg.ts_rate_decimator[2] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = cfg.ts_periodicity;
+
+        // 0=L, 1=GF, 2=ARF, Intra-layer prediction enabled
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[2] = VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[1] =
+        layer_flags[3] = VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF;
+        break;
+    }
+
+    case 6:
+    {
+        // NOTE: Probably of academic interest only
+
+        // 5-layers, 16-frame period
+        int ids[16] = {0,4,3,4,2,4,3,4,1,4,3,4,2,4,3,4};
+        cfg.ts_number_layers     = 5;
+        cfg.ts_periodicity       = 16;
+        cfg.ts_rate_decimator[0] = 16;
+        cfg.ts_rate_decimator[1] = 8;
+        cfg.ts_rate_decimator[2] = 4;
+        cfg.ts_rate_decimator[3] = 2;
+        cfg.ts_rate_decimator[4] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = cfg.ts_periodicity;
+
+        layer_flags[0]  = VPX_EFLAG_FORCE_KF;
+        layer_flags[1]  =
+        layer_flags[3]  =
+        layer_flags[5]  =
+        layer_flags[7]  =
+        layer_flags[9]  =
+        layer_flags[11] =
+        layer_flags[13] =
+        layer_flags[15] = VP8_EFLAG_NO_UPD_LAST |
+                          VP8_EFLAG_NO_UPD_GF   |
+                          VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[2]  =
+        layer_flags[6]  =
+        layer_flags[10] =
+        layer_flags[14] = VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_UPD_GF;
+        layer_flags[4]  =
+        layer_flags[12] = VP8_EFLAG_NO_REF_LAST |
+                          VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[8]  = VP8_EFLAG_NO_REF_LAST | VP8_EFLAG_NO_REF_GF;
+        break;
+    }
+
+    case 7:
+    {
+        // 2-layers
+        int ids[2] = {0,1};
+        cfg.ts_number_layers     = 2;
+        cfg.ts_periodicity       = 2;
+        cfg.ts_rate_decimator[0] = 2;
+        cfg.ts_rate_decimator[1] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = 8;
+
+        // 0=L, 1=GF
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[1] = VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[2] =
+        layer_flags[4] =
+        layer_flags[6] = VP8_EFLAG_NO_REF_GF  | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF  | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[3] =
+        layer_flags[5] = VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_UPD_LAST;
+        layer_flags[7] = VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF |
+                         VP8_EFLAG_NO_UPD_ARF |
+                         VP8_EFLAG_NO_UPD_ENTROPY;
+        break;
+    }
+
+    case 8:
+    {
+        // 3-layers
+        int ids[4] = {0,2,1,2};
+        cfg.ts_number_layers     = 3;
+        cfg.ts_periodicity       = 4;
+        cfg.ts_rate_decimator[0] = 4;
+        cfg.ts_rate_decimator[1] = 2;
+        cfg.ts_rate_decimator[2] = 1;
+        memcpy(cfg.ts_layer_id, ids, sizeof(ids));
+
+        flag_periodicity = 8;
+
+        // 0=L, 1=GF, 2=ARF
+        layer_flags[0] = VPX_EFLAG_FORCE_KF  |
+                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[1] = VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF;
+        layer_flags[2] = VP8_EFLAG_NO_REF_GF   | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[3] =
+        layer_flags[5] = VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF;
+        layer_flags[4] = VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[6] = VP8_EFLAG_NO_REF_ARF |
+                         VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ARF;
+        layer_flags[7] = VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF |
+                         VP8_EFLAG_NO_UPD_ARF |
+                         VP8_EFLAG_NO_UPD_ENTROPY;
+        break;
+    }
+    default:
+        break;
+    }
+
+    struct detect_buffer detect;
+
+        infile = strcmp(in_fn, "-") ? fopen(in_fn, "rb") : set_binary_mode(stdin);
+
+        if (!infile)
+        {
+            tprintf(PRINT_BTH, "Failed to open input file: %s", in_fn);
+            return -1;
+        }
+
+        detect.buf_read = fread(detect.buf, 1, 4, infile);
+        detect.position = 0;
+
+        unsigned int rate;
+        unsigned int scale;
+
+        if (detect.buf_read == 4 && file_is_y4m(infile, &y4m, detect.buf))
+        {
+            if (y4m_input_open(&y4m, infile, detect.buf, 4) >= 0)
+            {
+                file_type = FILE_TYPE_Y4M;
+                cfg.g_w = y4m.pic_w;
+                cfg.g_h = y4m.pic_h;
+
+                /* Use the frame rate from the file only if none was specified
+                * on the command-line.
+                */
+                if (!arg_have_framerate)
+                {
+                    rate = y4m.fps_n;
+                    scale = y4m.fps_d;
+                    arg_framerate.num = y4m.fps_n;
+                    arg_framerate.den = y4m.fps_d;
+                }
+
+                arg_use_i420 = 0;
+            }
+            else
+            {
+                fprintf(stderr, "Unsupported Y4M stream.\n");
+                return EXIT_FAILURE;
+            }
+        }
+        else if (detect.buf_read == 4 && file_is_ivf(infile, &fourcc, &cfg.g_w, &cfg.g_h, &detect, &scale, &rate))
+        {
+            file_type = FILE_TYPE_IVF;
+
+            switch (fourcc)
+            {
+            case 0x32315659:
+                arg_use_i420 = 0;
+                break;
+            case 0x30323449:
+                arg_use_i420 = 1;
+                break;
+            default:
+                fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
+                return EXIT_FAILURE;
+            }
+        }
+        else
+        {
+            file_type = FILE_TYPE_RAW;
+        }
+
+        if (!cfg.g_w || !cfg.g_h)
+        {
+            fprintf(stderr, "Specify stream dimensions with --width (-w) "
+                    " and --height (-h).\n");
+            return EXIT_FAILURE;
+        }
+
+    width = cfg.g_w;
+    height = cfg.g_h;
+
+    /*set timebase*/
+    cfg.g_timebase.den = rate;
+    cfg.g_timebase.num = scale;
+    arg_framerate.num = rate;
+    arg_framerate.den = scale;
+
+    /*check timebase*/
+    if(arg_framerate.num > cfg.g_timebase.den)
+    {
+        tprintf(PRINT_BTH,"Invalid timebase: %i/%i - changing to default:"
+            " %i/%i\n",cfg.g_timebase.num,cfg.g_timebase.den
+            , 1, arg_framerate.num);
+        cfg.g_timebase.den = arg_framerate.num;
+        cfg.g_timebase.num = 1;
+    }
+
+    std::string inputformat;
+    std::string outputformat;
+
+    if (write_webm == 1)
+        outputformat = "Webm";
+
+    if (write_webm == 0)
+        outputformat = "IVF";
+
+    if (file_type == FILE_TYPE_RAW)
+        inputformat = "Raw";
+
+    if (file_type == FILE_TYPE_Y4M)
+        inputformat = "Y4M";
+
+    if (file_type == FILE_TYPE_IVF)
+        inputformat = "IVF";
+
+        if (file_type == FILE_TYPE_Y4M)
+            /*The Y4M reader does its own allocation.
+            Just initialize this here to avoid problems if we never read any
+            frames.*/
+            memset(&raw, 0, sizeof(raw));
+        else
+            vpx_img_alloc(&raw, arg_use_i420 ? VPX_IMG_FMT_I420 : VPX_IMG_FMT_YV12,
+            cfg.g_w, cfg.g_h, 1);
+
+        for (i=0; i<cfg.ts_number_layers; i++)
+        {
+            char file_name[512];
+            sprintf (file_name, "%s_%d.%s", outputFile2, i, EncFormat.c_str());
+            outfile[i] = fopen(file_name, "wb");
+
+            if (!outfile[i]){
+                tprintf(PRINT_BTH, "Failed to open output file: %s", out_fn);
+                fclose(infile);
+                return -1;
+            }
+            if (write_webm){
+                ebml[i].stream = outfile[i];
+                write_webm_file_header(&ebml[i], &cfg, &arg_framerate, stereo_fmt);
+            }
+            else
+                write_ivf_file_header(outfile[i], &cfg, codec->fourcc, 0);
+        }
+
+    // Initialize codec
+    if (vpx_codec_enc_init (&codec_enc, codec->iface, &cfg, 0))
+        return 0;
+
+    // Cap CPU & first I-frame size
+    vpx_codec_control (&codec_enc, VP8E_SET_CPUUSED,                -6);
+    vpx_codec_control (&codec_enc, VP8E_SET_STATIC_THRESHOLD,      800);
+    vpx_codec_control (&codec_enc, VP8E_SET_NOISE_SENSITIVITY,       2);
+
+    max_intra_size_pct = (int) (((double)cfg.rc_buf_optimal_sz * 0.5)
+                         * ((double) cfg.g_timebase.den / cfg.g_timebase.num)
+                         / 10.0);
+
+    vpx_codec_control(&codec_enc, VP8E_SET_MAX_INTRA_BITRATE_PCT,
+                      max_intra_size_pct);
+
+    vpxt_api_config_to_core_config(cfg, oxcf);
+    tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth, oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+    tprintf(PRINT_BTH, "API Temporal Scalability - Compressing Raw %s File to VP8 %s Files: \n", inputformat.c_str(), outputformat.c_str());
+    /////////////////////////////////////OUTPUT PARAMATERS/////////////////////////////////////
+    std::string OutputsettingsFile = outputFile2;
+    OutputsettingsFile.append("_parameters_core.txt");
+    char OutputsettingsFileChar[255];
+
+    snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
+    vpxt_output_settings(OutputsettingsFileChar,  oxcf);
+    ///////////////////////////////////OUTPUT PARAMATERS API///////////////////////////////////
+    OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
+    OutputsettingsFile.append("_parameters_vpx.txt");
+    char OutputsettingsFileChar2[255];
+
+    snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
+    vpxt_output_settings_api(OutputsettingsFileChar2,  cfg);
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    frame_avail = 1;
+    while (frame_avail || got_data) {
+        unsigned int start, end;
+        struct vpx_usec_timer timer;
+        vpx_codec_iter_t iter = NULL;
+        const vpx_codec_cx_pkt_t *pkt;
+
+        flags = layer_flags[frame_cnt % flag_periodicity];
+
+        frame_avail = read_frame_enc(infile, &raw, file_type, &y4m, &detect);
+
+        start = vpxt_get_cpu_tick();
+        vpx_usec_timer_start(&timer);
+        if (vpx_codec_encode(&codec_enc, frame_avail? &raw : NULL, pts,
+                            1, flags, VPX_DL_REALTIME))
+                            return 0;
+        vpx_usec_timer_mark(&timer);
+        cx_time += vpx_usec_timer_elapsed(&timer);
+        end = vpxt_get_cpu_tick();
+
+        total_cpu_time_used = total_cpu_time_used + (end - start);
+
+        // Reset KF flag
+        if (layering_mode != 6)
+            layer_flags[0] &= ~VPX_EFLAG_FORCE_KF;
+
+        got_data = 0;
+        while ( (pkt = vpx_codec_get_cx_data(&codec_enc, &iter)) ) {
+            got_data = 1;
+            switch (pkt->kind) {
+            case VPX_CODEC_CX_FRAME_PKT:
+                for (i=cfg.ts_layer_id[frame_cnt % cfg.ts_periodicity];
+                                              i<cfg.ts_number_layers; i++)
+                {
+                    if (write_webm)
+                    {
+                        if (!ebml[i].debug)
+                            hash = murmur(pkt->data.frame.buf,
+                                          pkt->data.frame.sz, hash);
+
+                        write_webm_block(&ebml[i], &cfg, pkt);
+                    }
+                    else
+                    {
+                        write_ivf_frame_header(outfile[i], pkt);
+
+                        if (fwrite(pkt->data.frame.buf, 1,
+                                   pkt->data.frame.sz, outfile[i]));
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+            tprintf (PRINT_BTH, pkt->kind == VPX_CODEC_CX_FRAME_PKT
+                && (pkt->data.frame.flags & VPX_FRAME_IS_KEY)? "K":".");
+
+            print_count++;
+            if(print_count >= 79){
+                tprintf(PRINT_BTH, "\n");
+                print_count = 0;
+            }
+
+            fflush (stdout);
+        }
+        frame_cnt++;
+        pts += frame_duration;
+    }
+    printf ("\n");
+    fclose (infile);
+
+    printf ("Processed %d frames.\n",frame_cnt-1);
+    if (vpx_codec_destroy(&codec_enc))
+        return 0;
+
+    // Try to rewrite the output file headers with the actual frame count
+    if (file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
+    else
+        vpx_img_free(&raw);
+
+    for (i=0; i<cfg.ts_number_layers; i++)
+    {
+        if (write_webm){
+            write_webm_file_footer(&ebml[i], hash);
+        }
+        else{
+            if (!fseek(outfile[i], 0, SEEK_SET))
+                write_ivf_file_header(outfile[i], &cfg, codec->fourcc, frames_in_layer[i]);
+        }
+        fclose (outfile[i]);
+        free(ebml[i].cue_list);
+    }
+
+    tprintf(PRINT_BTH, "\n File completed: Time in Microseconds: %u, Fps: %d \n",
+            total_cpu_time_used, 1000 * frame_cnt / (total_cpu_time_used / 1000));
+    tprintf(PRINT_BTH, " Total CPU Ticks: %u\n", cx_time);
+
+    return cx_time;
+}
 int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat, int threads)
 {
     int                     use_y4m = 1;
@@ -21024,6 +21777,499 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
     }
 
     ////////////////////////////////////////////////////////
+}
+double vpxt_print_frame_statistics(const char *input_file1,
+                 const char *input_file2,
+                 const char *output_file,
+                 int force_uvswap,
+                 int print_out,
+                 int print_embl,
+                 int print_drop_frame,
+                 int print_resized_frame,
+                 int print_key_frame,
+                 int print_non_visible_frame,
+                 int print_frame_size)
+{
+    double summed_quality = 0;
+    double summed_weights = 0;
+    double summed_psnr = 0;
+    double summed_ypsnr = 0;
+    double summed_upsnr = 0;
+    double summed_vpsnr = 0;
+    double sum_sq_error = 0;
+    double sum_bytes = 0;
+    double sum_bytes2 = 0;
+
+    unsigned int             decoded_frames = 0;
+    int                      raw_offset = 0;
+    int                      comp_offset = 0;
+    unsigned int             maximumFrameCount = 0;
+    YV12_BUFFER_CONFIG       raw_yv12;
+    YV12_BUFFER_CONFIG       comp_yv12;
+    vpx_image_t              raw_img;
+    unsigned int             frameCount = 0;
+    unsigned int             file_type = FILE_TYPE_RAW;
+    unsigned int             fourcc    = 808596553;
+    struct                   detect_buffer detect;
+    unsigned int             raw_width = 0;
+    unsigned int             raw_height = 0;
+    unsigned int             raw_rate = 0;
+    unsigned int             raw_scale = 0;
+    y4m_input                y4m;
+    int                      arg_have_framerate = 0;
+    struct vpx_rational      arg_framerate = {30, 1};
+    int                      arg_use_i420 = 1;
+    FILE *out_file;
+
+    if(output_file)
+        out_file = fopen(output_file, "wb");
+
+    force_uvswap = 0;
+    ////////////////////////Initilize Raw File////////////////////////
+    FILE *raw_file = strcmp(input_file1, "-") ?
+        fopen(input_file1, "rb") : set_binary_mode(stdin);
+
+    if (!raw_file)
+    {
+        tprintf(print_out, "Failed to open input file: %s", input_file1);
+        return -1;
+    }
+
+    detect.buf_read = fread(detect.buf, 1, 4, raw_file);
+    detect.position = 0;
+
+    if (detect.buf_read == 4 && file_is_y4m(raw_file, &y4m, detect.buf))
+    {
+        if (y4m_input_open(&y4m, raw_file, detect.buf, 4) >= 0)
+        {
+            file_type = FILE_TYPE_Y4M;
+            raw_width = y4m.pic_w;
+            raw_height = y4m.pic_h;
+            raw_rate = y4m.fps_n;
+            raw_scale = y4m.fps_d;
+
+            /* Use the frame rate from the file only if none was specified
+            * on the command-line.
+            */
+            if (!arg_have_framerate)
+            {
+                arg_framerate.num = y4m.fps_n;
+                arg_framerate.den = y4m.fps_d;
+            }
+
+            arg_use_i420 = 0;
+        }
+        else
+        {
+            tprintf(print_out, "Unsupported Y4M stream.\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else if (detect.buf_read == 4 &&
+        file_is_ivf(raw_file, &fourcc, &raw_width, &raw_height, &detect,
+            &raw_scale, &raw_rate))
+    {
+        switch (fourcc)
+        {
+        case 0x32315659:
+            arg_use_i420 = 0;
+            break;
+        case 0x30323449:
+            arg_use_i420 = 1;
+            break;
+        default:
+            tprintf(print_out, "Unsupported fourcc (%08x) in IVF\n", fourcc);
+            return EXIT_FAILURE;
+        }
+
+        file_type = FILE_TYPE_IVF;
+    }
+    else
+    {
+        file_type = FILE_TYPE_RAW;
+    }
+
+    if (!raw_width || !raw_height)
+    {
+        tprintf(print_out, "Specify stream dimensions with --width (-w) "
+            " and --height (-h).\n");
+        return EXIT_FAILURE;
+    }
+
+    if(file_type != FILE_TYPE_Y4M)
+        vpx_img_alloc(&raw_img, IMG_FMT_I420, raw_width, raw_height, 1);
+
+    //Burn Frames untill Raw frame offset reached - currently disabled by
+    //override of raw_offset
+    if (raw_offset > 0)
+    {
+        for (int i = 0; i < raw_offset; i++)
+        {
+        }
+    }
+
+    //I420 hex-0x30323449 dec-808596553
+    //YV12 hex-0x32315659 dec-842094169
+    //if YV12 Do not swap Frames
+    if (fourcc == 842094169)
+        force_uvswap = 1;
+
+    ////////////////////////Initilize Compressed File////////////////////////
+    /* Open file */
+    FILE *comp_file = strcmp(input_file2, "-") ?
+        fopen(input_file2, "rb") : set_binary_mode(stdin);
+
+    if (!comp_file)
+    {
+        tprintf(print_out, "Failed to open input file: %s", input_file2);
+        return -1;
+    }
+
+    unsigned int            comp_fourcc;
+    unsigned int            comp_width;
+    unsigned int            comp_height;
+    unsigned int            comp_scale;
+    unsigned int            comp_rate;
+    struct input_ctx        input;
+
+    input.chunk = 0;
+    input.chunks = 0;
+    input.infile = NULL;
+    input.kind = RAW_FILE;
+    input.nestegg_ctx = 0;
+    input.pkt = 0;
+    input.video_track = 0;
+
+    input.infile = comp_file;
+
+    if (file_is_ivf_dec(comp_file, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
+        input.kind = IVF_FILE;
+    else if (file_is_webm(&input, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
+        input.kind = WEBM_FILE;
+    else if (file_is_raw(comp_file, &comp_fourcc, &comp_width, &comp_height,
+        &comp_scale, &comp_rate))
+        input.kind = RAW_FILE;
+    else
+    {
+        tprintf(print_out, "Unrecognized input file type.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input.kind == WEBM_FILE)
+        if (webm_guess_framerate(&input, &comp_scale, &comp_rate))
+        {
+            tprintf(print_out, "Failed to guess framerate -- error parsing "
+                "webm file?\n");
+            return EXIT_FAILURE;
+        }
+
+        //Burn Frames untill Compressed frame offset reached - currently
+        //disabled by override of comp_offset
+        if (comp_offset > 0)
+        {
+        }
+
+        //if((raw_rate/raw_scale)%(comp_rate/comp_scale) != 0){
+        //    tprintf(PRINT_BTH, "\nError: Raw File fps not multiple of Comp File fps\n");
+        //    return 1;
+        //}
+
+        ////////////////////////////////////////////////////////////////////////
+        ////////Printing////////
+        if (print_embl)
+            tprintf(print_out, "\n\n                        "
+                "---------Computing PSNR---------");
+
+        tprintf(print_out, "\n\nComparing %s to %s:\n                        \n"
+            , input_file1, input_file2);
+        ////////////////////////
+        int deblock_level2 = 0;
+        int noise_level2 = 0;
+        int flags2 = 0;
+        int currentFrame2 = 0;
+
+        vpx_codec_ctx_t       decoder;
+        vpx_codec_iface_t       *iface = NULL;
+        const struct codec_item  *codec = codecs;
+        vpx_codec_iface_t  *ivf_iface = ifaces[0].iface;
+        vpx_codec_dec_cfg_t     cfg = {0};
+        iface = ivf_iface;
+
+        vp8_postproc_cfg_t ppcfg = {0};
+
+        ppcfg.deblocking_level = deblock_level2;
+        ppcfg.noise_level = noise_level2;
+        ppcfg.post_proc_flag = flags2;
+
+        if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, 0))
+        {
+            tprintf(print_out, "Failed to initialize decoder: %s\n",
+                vpx_codec_error(&decoder));
+
+            fclose(raw_file);
+            fclose(comp_file);
+            vpx_img_free(&raw_img);
+            return EXIT_FAILURE;
+        }
+
+        ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
+        vp8_scale_machine_specific_config();
+
+        YV12_BUFFER_CONFIG temp_yv12;
+        YV12_BUFFER_CONFIG temp_yv12b;
+
+        memset(&temp_yv12, 0, sizeof(temp_yv12));
+        memset(&temp_yv12b, 0, sizeof(temp_yv12b));
+        ////////////////////////////////////////////////////////////////////////
+
+        vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
+
+        uint8_t *comp_buff = NULL;
+        size_t buf_sz = 0, buf_alloc_sz = 0;
+        int current_raw_frame = 0;
+        int comp_frame_available = 1;
+
+        uint64_t raw_timestamp = 0;
+        uint64_t comp_timestamp = 0;
+
+        while (comp_frame_available)
+        {
+            unsigned long lpdwFlags = 0;
+            unsigned long lpckid = 0;
+            long bytes1;
+            long bytes2;
+            int resized_frame = 0;
+            int dropped_frame = 0;
+            int non_visible_frame = 0;
+            int key_frame = 0;
+            buf_sz = 0;
+
+            VP8_HEADER oz;
+
+            if(read_frame_dec(&input, &comp_buff, &buf_sz, &buf_alloc_sz,
+                &comp_timestamp)){
+                    comp_frame_available = 0;
+            }
+
+            if(comp_frame_available){
+                memcpy(&oz, comp_buff, 3);
+
+                if(comp_frame_available && !oz.type)
+                    key_frame = 1;
+
+                if(comp_frame_available && !oz.show_frame)
+                    non_visible_frame = 1;
+            }
+
+            if (input.kind == WEBM_FILE){
+                raw_timestamp = current_raw_frame * 1000 * raw_scale / raw_rate;
+                raw_timestamp = raw_timestamp * 1000000;
+            }
+            else
+                raw_timestamp = current_raw_frame;
+
+            bytes2 = buf_sz;
+            sum_bytes2 += bytes2;
+
+            vpx_codec_iter_t  iter = NULL;
+            vpx_image_t    *img;
+
+            //make sure the timestamps sync otherwise process
+            //last shown compressed frame
+            while(raw_timestamp <= comp_timestamp || !comp_frame_available)
+            {
+                if(comp_timestamp == raw_timestamp)
+                {
+                    dropped_frame = 0;
+
+                    if (vpx_codec_decode(&decoder, (uint8_t *) comp_buff,
+                        buf_sz, NULL, 0))
+                    {
+                        const char *detail = vpx_codec_error_detail(&decoder);
+                        tprintf(print_out, "Failed to decode frame: %s\n",
+                            vpx_codec_error(&decoder));
+                    }
+
+                    if (img = vpx_codec_get_frame(&decoder, &iter))
+                    {
+                        ++decoded_frames;
+
+                        //if frame not correct size flag as resized
+                        if (img->d_w != raw_width || img->d_h != raw_height)
+                            resized_frame = 1;
+                    }
+                }
+                else
+                    dropped_frame = 1;
+
+                //keep getting frames from raw file
+                if(img || dropped_frame || !comp_frame_available)
+                {
+                    //////////////////Get YV12 Data For Raw File////////////////
+                    //if end of uncompressed file break out
+                    if(!read_frame_enc(raw_file, &raw_img, file_type, &y4m,
+                        &detect))
+                        break;
+
+                    bytes1 = (raw_width * raw_height * 3) / 2;
+                    sum_bytes += bytes1;
+
+                    current_raw_frame = current_raw_frame + 1;
+                    if (input.kind == WEBM_FILE){
+                        raw_timestamp = current_raw_frame * 1000 * raw_scale /
+                            raw_rate;
+                        raw_timestamp = raw_timestamp * 1000000;
+                    }
+                    else
+                        raw_timestamp = current_raw_frame;
+                }
+                else
+                {
+                    //if time stamps do not match find out why if droped
+                    //frame use last frame keep trying subtract one unit
+                    //to move along.  if invisible frame get next frame
+                    //and keep going.
+                    if (oz.show_frame){
+                        current_raw_frame = current_raw_frame - 1;
+
+                        if (input.kind == WEBM_FILE){
+                            raw_timestamp = current_raw_frame * 1000 * raw_scale /
+                                raw_rate;
+                            raw_timestamp = raw_timestamp * 1000000;
+                        }
+                        else
+                            raw_timestamp = current_raw_frame;
+                    }
+                    else{
+                        if(read_frame_dec(&input, &comp_buff, &buf_sz,
+                            &buf_alloc_sz, &comp_timestamp))
+                                comp_frame_available = 0;
+
+                        raw_timestamp = comp_timestamp;
+                        non_visible_frame = 1;
+                    }
+                }
+
+                ////////Printing////////
+                if(output_file)
+                {
+                    fprintf(out_file, "F:%5d", current_raw_frame);
+
+                    if(print_frame_size)
+                        fprintf(out_file, " 1:%6.0f 2:%6.0f",
+                        bytes1 * 8.0,
+                        bytes2 * 8.0);
+
+                    if(dropped_frame && print_drop_frame)
+                        fprintf(out_file, " D");
+
+                    if(!dropped_frame && resized_frame && print_resized_frame)
+                        fprintf(out_file, " R");
+
+                    if(!dropped_frame && key_frame && print_key_frame)
+                        fprintf(out_file, " K");
+
+                    if(!dropped_frame && non_visible_frame && print_non_visible_frame)
+                        fprintf(out_file, " N");
+
+                    fprintf(out_file, "\n");
+                }
+
+                tprintf(print_out, "F:%5d", current_raw_frame);
+
+                if(print_frame_size)
+                    tprintf(print_out, " 1:%6.0f 2:%6.0f",
+                    bytes1 * 8.0,
+                    bytes2 * 8.0);
+
+                if(dropped_frame && print_drop_frame)
+                    tprintf(print_out, " D");
+
+                if(!dropped_frame && resized_frame && print_resized_frame)
+                    tprintf(print_out, " R");
+
+                if(!dropped_frame && key_frame && print_key_frame)
+                    tprintf(print_out, " K");
+
+                if(!dropped_frame && non_visible_frame && print_non_visible_frame)
+                    tprintf(print_out, " N");
+
+                tprintf(print_out, "\n");
+                ////////////////////////
+            }
+        }
+
+        ////////Printing////////
+        if (print_embl)
+            tprintf(print_out, "\n                        "
+                "--------------------------------\n");
+        ////////////////////////
+
+        fclose(raw_file);
+        fclose(comp_file);
+        vp8_yv12_de_alloc_frame_buffer(&temp_yv12);
+        vp8_yv12_de_alloc_frame_buffer(&temp_yv12b);
+
+        if(file_type != FILE_TYPE_Y4M)
+            vpx_img_free(&raw_img);
+
+        if(file_type == FILE_TYPE_Y4M)
+            y4m_input_close(&y4m);
+
+        vpx_codec_destroy(&decoder);
+
+        if (input.nestegg_ctx)
+            nestegg_destroy(input.nestegg_ctx);
+
+        if (input.kind != WEBM_FILE)
+            free(comp_buff);
+
+        fclose(out_file);
+
+        return 0;
+}
+int vpxt_eval_frame_stats_temp_scale(const char *input_file, int pattern)
+{
+    int i;
+    int dropped_count = pattern;//for first frame
+    int dropped_current = 0;
+    int line_count = 0;
+    char buffer[256];
+    std::fstream infile;
+    infile.open(input_file);
+
+    while (!infile.eof())
+    {
+        i = 0;
+        dropped_current = 0;
+        infile.getline(buffer, 256);
+        line_count ++;
+
+        //evaluate line look for 'D'
+        while(buffer[i] && i < 256)
+        {
+            if(buffer[i] == 'D'){
+                dropped_current = 1;
+                dropped_count = dropped_count + 1;
+                break;
+            }
+            i++;
+        }
+        //if 'D' found
+        if(!dropped_current && buffer[0]){
+            //if the correct number of frames not droped return fail
+            if(dropped_count != pattern)
+                return 0;
+            else//otherwise reset and keep going
+                dropped_count = 0;
+        }
+
+    }
+
+    infile.close();
+    return 1;
 }
 int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
 {

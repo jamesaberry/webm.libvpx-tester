@@ -181,47 +181,48 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "   (2) test_allow_lag                       VPXTEnc\n");
     tprintf(PRINT_STD, "   (3) test_allow_spatial_resampling        VPXTDec\n");
     tprintf(PRINT_STD, "   (4) test_arnr                            \n");
-    tprintf(PRINT_STD, "   (5) test_auto_key_frame                  VPXMultiResEnc\n");
-    tprintf(PRINT_STD, "   (6) test_buffer_level                    VPXTMultiResEnc\n");
-    tprintf(PRINT_STD, "   (7) test_change_cpu_dec                  VPXTDecRESZ\n");
-    tprintf(PRINT_STD, "   (8) test_change_cpu_enc                  VPXTDecPARD\n");
-    tprintf(PRINT_STD, "   (9) test_constrained_quality             VPXTDec2Raw\n");
-    tprintf(PRINT_STD, "  (10) test_copy_set_reference              \n");
-    tprintf(PRINT_STD, "  (11) test_data_rate                       VPXTDataRate\n");
-    tprintf(PRINT_STD, "  (12) test_debug_matches_release           VPXTPSNR\n");
-    tprintf(PRINT_STD, "  (13) test_drop_frame_watermark            VPXTPSNRDEC\n");
-    tprintf(PRINT_STD, "  (14) test_encoder_break_out               VPXTCheckPBM\n");
-    tprintf(PRINT_STD, "  (15) test_error_concealment               \n");
-    tprintf(PRINT_STD, "  (16) test_error_resolution                Raw2Formatted\n");
-    tprintf(PRINT_STD, "  (17) test_extra_file                      Formatted2Raw\n");
-    tprintf(PRINT_STD, "  (18) test_fixed_quantizer                 Formatted2RawFrames\n");
-    tprintf(PRINT_STD, "  (19) test_force_key_frame                 CombineIndvFrames\n");
-    tprintf(PRINT_STD, "  (20) test_frame_size                      \n");
-    tprintf(PRINT_STD, "  (21) test_good_vs_best                    CompareEnc\n");
-    tprintf(PRINT_STD, "  (22) test_lag_in_frames                   CompareHeader\n");
-    tprintf(PRINT_STD, "  (23) test_max_quantizer                   DisplayHeader\n");
-    tprintf(PRINT_STD, "  (24) test_mem_leak                        \n");
-    tprintf(PRINT_STD, "  (25) test_mem_leak2                       DispKeyFrames\n");
-    tprintf(PRINT_STD, "  (26) test_min_quantizer                   DispResizedFrames\n");
-    tprintf(PRINT_STD, "  (27) test_multiple_resolution_encode      DispVisibleFrames\n");
-    tprintf(PRINT_STD, "  (28) test_multithreaded_dec               DispAltRefFrames\n");
-    tprintf(PRINT_STD, "  (29) test_multithreaded_enc               \n");
-    tprintf(PRINT_STD, "  (30) test_new_vs_old_enc_cpu_tick         CropRawClip\n");
-    tprintf(PRINT_STD, "  (31) test_new_vs_old_psnr                 PadRawClip\n");
-    tprintf(PRINT_STD, "  (32) test_noise_sensitivity               CutClip\n");
-    tprintf(PRINT_STD, "  (33) test_one_pass_vs_two_pass            PasteClip\n");
-    tprintf(PRINT_STD, "  (34) test_play_alternate                  \n");
-    tprintf(PRINT_STD, "  (35) test_post_processor                  PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (36) test_reconstruct_buffer              PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (37) test_resample_down_watermark         \n");
-    tprintf(PRINT_STD, "  (38) test_speed                           CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (39) test_test_vector                     PrintVersion\n");
-    tprintf(PRINT_STD, "  (40) test_thirtytwo_vs_sixtyfour          \n");
-    tprintf(PRINT_STD, "  (41) test_two_pass_vs_two_pass_best       VPXEncPar\n");
-    tprintf(PRINT_STD, "  (42) test_undershoot                      RandParFile\n");
-    tprintf(PRINT_STD, "  (43) test_version                         RandCompress\n");
-    tprintf(PRINT_STD, "  (44) test_vpx_matches_int                 GraphPSNR\n");
-    tprintf(PRINT_STD, "  (45) test_win_lin_mac_match               Help\n");
+    tprintf(PRINT_STD, "   (5) test_auto_key_frame                  VPXTTempScaleEnc\n");
+    tprintf(PRINT_STD, "   (6) test_buffer_level                    VPXMultiResEnc\n");
+    tprintf(PRINT_STD, "   (7) test_change_cpu_dec                  VPXTMultiResEnc\n");
+    tprintf(PRINT_STD, "   (8) test_change_cpu_enc                  VPXTDecRESZ\n");
+    tprintf(PRINT_STD, "   (9) test_constrained_quality             VPXTDecPARD\n");
+    tprintf(PRINT_STD, "  (10) test_copy_set_reference              VPXTDec2Raw\n");
+    tprintf(PRINT_STD, "  (11) test_data_rate                       \n");
+    tprintf(PRINT_STD, "  (12) test_debug_matches_release           VPXTDataRate\n");
+    tprintf(PRINT_STD, "  (13) test_drop_frame_watermark            VPXTPSNR\n");
+    tprintf(PRINT_STD, "  (14) test_encoder_break_out               VPXTPSNRDEC\n");
+    tprintf(PRINT_STD, "  (15) test_error_concealment               VPXTCheckPBM\n");
+    tprintf(PRINT_STD, "  (16) test_error_resolution                \n");
+    tprintf(PRINT_STD, "  (17) test_extra_file                      Raw2Formatted\n");
+    tprintf(PRINT_STD, "  (18) test_fixed_quantizer                 Formatted2Raw\n");
+    tprintf(PRINT_STD, "  (19) test_force_key_frame                 Formatted2RawFrames\n");
+    tprintf(PRINT_STD, "  (20) test_frame_size                      CombineIndvFrames\n");
+    tprintf(PRINT_STD, "  (21) test_good_vs_best                    \n");
+    tprintf(PRINT_STD, "  (22) test_lag_in_frames                   CompareEnc\n");
+    tprintf(PRINT_STD, "  (23) test_max_quantizer                   CompareHeader\n");
+    tprintf(PRINT_STD, "  (24) test_mem_leak                        DisplayHeader\n");
+    tprintf(PRINT_STD, "  (25) test_mem_leak2                       \n");
+    tprintf(PRINT_STD, "  (26) test_min_quantizer                   DispKeyFrames\n");
+    tprintf(PRINT_STD, "  (27) test_multiple_resolution_encode      DispResizedFrames\n");
+    tprintf(PRINT_STD, "  (28) test_multithreaded_dec               DispVisibleFrames\n");
+    tprintf(PRINT_STD, "  (29) test_multithreaded_enc               DispAltRefFrames\n");
+    tprintf(PRINT_STD, "  (30) test_new_vs_old_enc_cpu_tick         \n");
+    tprintf(PRINT_STD, "  (31) test_new_vs_old_psnr                 CropRawClip\n");
+    tprintf(PRINT_STD, "  (32) test_noise_sensitivity               PadRawClip\n");
+    tprintf(PRINT_STD, "  (33) test_one_pass_vs_two_pass            CutClip\n");
+    tprintf(PRINT_STD, "  (34) test_play_alternate                  PasteClip\n");
+    tprintf(PRINT_STD, "  (35) test_post_processor                  \n");
+    tprintf(PRINT_STD, "  (36) test_reconstruct_buffer              PlayDecIVF\n");
+    tprintf(PRINT_STD, "  (37) test_resample_down_watermark         PlayCompIVF\n");
+    tprintf(PRINT_STD, "  (38) test_speed                           \n");
+    tprintf(PRINT_STD, "  (39) test_temporal_scalability            CreateSampleTextFiles\n");
+    tprintf(PRINT_STD, "  (40) test_test_vector                     PrintVersion\n");
+    tprintf(PRINT_STD, "  (41) test_thirtytwo_vs_sixtyfour          \n");
+    tprintf(PRINT_STD, "  (42) test_two_pass_vs_two_pass_best       VPXEncPar\n");
+    tprintf(PRINT_STD, "  (43) test_undershoot                      RandParFile\n");
+    tprintf(PRINT_STD, "  (44) test_version                         RandCompress\n");
+    tprintf(PRINT_STD, "  (45) test_vpx_matches_int                 GraphPSNR\n");
+    tprintf(PRINT_STD, "  (46) test_win_lin_mac_match               Help\n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -274,6 +275,15 @@ void write_32bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
     fprintf(fp5, "%%%s@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA@webm@y4m\n", "test_win_lin_mac_match", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@400@600@0@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@400@600@0@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@3@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@6@400@600@1000@1500@2000@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@7@400@600@0@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@8@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
@@ -511,6 +521,15 @@ void write_64bit_quick_test(const std::string WorkingDir)
     fprintf(fp5, "%s@%i@..%cTestClips%cTestVectors\n", "test_test_vector", 2, slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n", "test_two_pass_vs_two_pass_best", slashChar(), slashChar());
     fprintf(fp5, "%%%i@..%cTestClips%csrc16.ivf@1@128@0@NA@NA@NA\n", "test_win_lin_mac_match", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@0@400@600@0@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@1@400@600@0@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@2@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@3@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@4@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@5@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@6@400@600@1000@1500@2000@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@7@400@600@0@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
+    fprintf(fp5, "%s@..%cTestClips%cBBB_720x480_2000F.ivf@8@400@600@1000@0@0@webm\n", "test_temporal_scalability", slashChar(), slashChar());
     fprintf(fp5, "%%%%%%%%%%%%%%Tests That Run Twice Per input File%%%%%%%%%%%%%%%%%%%\n");
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@0@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
     fprintf(fp5, "%s@..%cTestClips%csrc16.ivf@1@128@10@webm@y4m\n", "test_speed", slashChar(), slashChar());
@@ -1477,7 +1496,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                );
 
         if (printSummary)
-            vpxt_formated_print(HLPPRT, "");
+            vpxt_formated_print(HLPPRT, "The test creates a user input number of multiple resolution encoded files.  Then psnr calculations are done on the resultant files.  If all psnr values are above the minimum threshold, and increase as frame sizes increase, the test passes.");
     }
 
     if (selector == MULTDNUM)
@@ -1767,6 +1786,32 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test works for RealTime Mode and Good Quality Mode. For RealTime Mode the test creates compressions for CpuUsed Values from -1 to -16 and 0 to 16. For Good Quality Mode the test creates compressions for CpuUsed Values from 0 to 5. If compression speed increases as CpuUsed increases and all PSNRs are within 10%% of the previous, the test passes.");
+    }
+
+    if (selector == TMPSCNUM)
+    {
+        if (printSummary)
+            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
+        else
+            tprintf(PRINT_STD, " ");
+
+        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+
+        tprintf(PRINT_STD, "\n"
+            "    <Input File>\n"
+            "    <Layer Mode 0-6>\n"
+            "    <BitRate 0 (Modes 0-8)>\n"
+            "    <BitRate 1 (Modes 0-8)>\n"
+            "    <BitRate 2 (Modes 2-6&8, else 0)>\n"
+            "    <BitRate 3 (Mode 6, else 0)>\n"
+            "    <BitRate 4 (Mode 6, else 0)>\n"
+            "    <Encode Format - webm/ivf>\n"
+                "\n"
+               );
+
+        if (printSummary)
+            vpxt_formated_print(HLPPRT, "The test creates a user input number of temporally scaled encodes along with corresponding normal encodes.  The test then records frame statistics for the resultant temporally scaled encode along with psnr values for the both the temporally scaled encodes and normal encodes.  If the correct psnr relationships obtain, frame decimation occurs correctly, and the temporally scaled encodes time is within or less than a given range, the test passes.");
+
     }
 
     if (selector == TVECTNUM)
@@ -2808,6 +2853,31 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)//return 1 if string
         return 1;
     }
 
+    if (InputString.compare("vpxttempscaleenc") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  VPXT Temp Scale Enc\n\n"
+            "    <Input File>\n"
+            "    <Output Base>\n"
+            "    <Layer Mode 0-6>\n"
+            "    <BitRate 0 (Modes 0-6)>\n"
+            "    <BitRate 1 (Modes 0-6)>\n"
+            "    <BitRate 2 (Modes 2-6, else 0)>\n"
+            "    <BitRate 3 (Mode 6, else 0)>\n"
+            "    <BitRate 4 (Mode 6, else 0)>\n"
+            "    <Encode Format - webm/ivf>\n"
+            );
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
 
     return 0;
 }
@@ -2968,6 +3038,9 @@ void format_summary(const char *InputFileNameCharAr)
 
         if (TestTracker == TVECTNUM)
             TestTrackerName = "Test_Test_Vector";
+
+        if (TestTracker == TMPSCNUM)
+            TestTrackerName = "Test_Temporal_Scalability";
 
         if (TestTracker == TTVSFNUM)
             TestTrackerName = "Test_Thirtytwo_Vs_Sixtyfour";
@@ -3590,8 +3663,14 @@ int  main(int argc, const char *argv[])
     if (TestInputString.compare("vpxmultiresenc") == 0)                     //Multi Resolution Encode
         return tool_multi_res_enc(argc, argv);
 
+    if (TestInputString.compare("vpxscalepat") == 0)                        //Vp8 Scalable Patterns
+        return tool_vp8_scalable_patterns(argc, argv);
+
     if (TestInputString.compare("vpxtmultiresenc") == 0)                    //vpxt Multi Resolution Encode
         return tool_vpxt_multi_res_enc(argc, argv);
+
+    if (TestInputString.compare("vpxttempscaleenc") == 0)                    //vpxt Multi Resolution Encode
+        return tool_vpxt_temp_scale_enc(argc, argv);
 
     if (TestInputString.compare("vpxtenc") == 0)                            //Compresses an IVF Raw File to an IVF Compressed file
         return tool_vpxt_enc(argc, argv, WorkingDir);
@@ -3908,6 +3987,9 @@ int  main(int argc, const char *argv[])
 
     if (selector == SPEEDNUM)
         return test_speed(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+
+    if (selector == TMPSCNUM)
+        return test_temporal_scalability(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TVECTNUM)
         return test_test_vector(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);

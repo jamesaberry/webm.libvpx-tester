@@ -120,7 +120,8 @@ int vpxt_compress_no_error_output(const char *inputFile, const char *outputFile2
 unsigned int vpxt_time_compress(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, unsigned int &CPUTick, std::string EncFormat);
 int vpxt_compress_force_key_frame(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int forceKeyFrame, std::string EncFormat);
 int vpxt_compress_recon_buffer_check(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, int OutputRaw, std::string EncFormat);
-int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, std::string EncFormat);
+unsigned int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile2, int speed, int BitRate, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, std::string EncFormat);
+unsigned int vpxt_compress_scalable_patterns(const char *inputFile, const char *outputFile2, int speed, VP8_CONFIG &oxcf, const char *CompressString, int CompressInt, int RunQCheck, std::string EncFormat, int ScaleMode, int ScaleBitRate0, int ScaleBitRate1, int ScaleBitRate2, int ScaleBitRate3, int ScaleBitRate4);
 int vpxt_decompress(const char *inputchar, const char *outputchar, std::string DecFormat, int threads);
 int vpxt_decompress_copy_set(const char *inputchar, const char *outputchar, const char *outfile2, std::string DecFormat, int threads, int firstClone, int printVar);
 int vpxt_decompress_partial_drops(const char *inputchar, const char *outputchar, std::string DecFormat, int threads, int n, int m, int mode, int printVar, int outputParDropEnc);
@@ -150,6 +151,18 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector);
 double vpxt_display_key_frames(const char *inputFile, int Selector);
 int vpxt_lag_in_frames_check(const char *QuantInChar);
 int vpxt_dfwm_check(const char *InputFile, int printselect);
+double vpxt_print_frame_statistics(const char *input_file1,
+                 const char *input_file2,
+                 const char *output_file,
+                 int force_uvswap,
+                 int print_out,
+                 int print_embl,
+                 int print_drop_frame,
+                 int print_resized_frame,
+                 int print_key_frame,
+                 int print_non_visible_frame,
+                 int print_frame_size);
+int vpxt_eval_frame_stats_temp_scale(const char *input_file, int pattern);
 int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer);
 int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer);
 int vpxt_check_fixed_quantizer(const char *inputFile, int FixedQuantizer);

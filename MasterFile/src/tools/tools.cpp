@@ -73,6 +73,7 @@ extern int ivfenc(int argc, const char **argv_);
 extern void out_put(void *out, const uint8_t *buf, unsigned int len, int do_md5);
 //extern int vp8_multi_resolution_encoder(long width, long height, const char *input, const char *output[3]);
 extern int vp8_multi_resolution_encoder(int argc, char **argv);
+extern int vp8_scalable_patterns(int argc, char **argv);
 
 enum video_file_type
 {
@@ -4563,6 +4564,39 @@ int tool_vpxt_multi_res_enc(int argc, const char *const *argv)
 
     return 0;
 }
+int tool_vpxt_temp_scale_enc(int argc, const char *const *argv)
+{
+    char *CompressString = "Allow DF";
+
+    if (argc < 11)
+        return vpxt_tool_help(argv[1], 0);
+
+    std::string input = argv[2];
+    std::string output = argv[3];
+    std::string EncForm = argv[10];
+
+    int Mode = 0;
+    int speed = 0;
+
+    VP8_CONFIG opt;
+    vpxt_default_parameters(opt);
+
+    if (argc == 9)
+    {
+        opt = vpxt_input_settings(argv[8]);
+    }
+
+    int CompressInt = opt.allow_df;
+
+    opt.Mode = Mode;
+
+    vpxt_compress_scalable_patterns(input.c_str(), output.c_str(), speed,
+        opt, CompressString, CompressInt, 0, EncForm, atoi(argv[4]),
+        atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), atoi(argv[8]),
+        atoi(argv[9]));
+
+    return 0;
+}
 int tool_multi_res_enc(int argc, const char *const *argv)
 {
     int dummyargc = argc - 1;
@@ -4579,6 +4613,25 @@ int tool_multi_res_enc(int argc, const char *const *argv)
     }
 
     vp8_multi_resolution_encoder(dummyargc, (char **) DummyArgv);
+
+    return 0;
+}
+int tool_vp8_scalable_patterns(int argc, const char *const *argv)
+{
+    int dummyargc = argc - 1;
+
+    const char *DummyArgv[999];
+    DummyArgv[0] = argv[0];
+
+    int i = 2;
+
+    while (i < argc)
+    {
+        DummyArgv[i-1] = argv[i];
+        i++;
+    }
+
+    vp8_scalable_patterns(dummyargc, (char **) DummyArgv);
 
     return 0;
 }
@@ -6811,6 +6864,32 @@ int tool_random_stress_test(int argc, const char *const *argv)
         int RandLag2 = rand() % 26;
         int RandMultiThread = rand() % 4;
         int RandLagInFrames = rand() % 26;
+        int ScaleModeNum = rand() % 9;
+        int ScaleTB1 = 0;
+        int ScaleTB2 = 0;
+        int ScaleTB3 = 0;
+        int ScaleTB4 = 0;
+        int ScaleTB5 = 0;
+
+        if((ScaleModeNum >= 0 && ScaleModeNum < 2) || ScaleModeNum == 7)
+        {
+            ScaleTB2 = (rand() % 20 + 4) * 128;
+            ScaleTB1 = (ScaleTB2 * 60) / 100;
+        }
+        if((ScaleModeNum >= 2 && ScaleModeNum < 6)  || ScaleModeNum == 8)
+        {
+            ScaleTB3 = (rand() % 20 + 4) * 128;
+            ScaleTB2 = (ScaleTB3 * 60) / 100;
+            ScaleTB1 = (ScaleTB3 * 40) / 100;
+        }
+        if(ScaleModeNum == 6)
+        {
+            ScaleTB5 = (rand() % 20 + 4) * 128;
+            ScaleTB4 = (ScaleTB5 * 75) / 100;
+            ScaleTB3 = (ScaleTB5 * 50) / 100;
+            ScaleTB2 = (ScaleTB5 * 30) / 100;
+            ScaleTB1 = (ScaleTB5 * 20) / 100;
+        }
 
         if (ValidTestNumbers[RandTestNum] == AlWDFNUM)
         {
@@ -7482,6 +7561,29 @@ int tool_random_stress_test(int argc, const char *const *argv)
             outfile << "webm";
             outfile << "@";
             outfile << "y4m";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == TMPSCNUM)
+        {
+            outfile << "test_temporal_scalability@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ScaleModeNum;
+            outfile << "@";
+            outfile << ScaleTB1;
+            outfile << "@";
+            outfile << ScaleTB2;
+            outfile << "@";
+            outfile << ScaleTB3;
+            outfile << "@";
+            outfile << ScaleTB4;
+            outfile << "@";
+            outfile << ScaleTB5;
+            outfile << "@";
+            outfile << "webm";
             outfile << "@";
             outfile << RandSettingsFile.c_str();
             outfile << "\n";

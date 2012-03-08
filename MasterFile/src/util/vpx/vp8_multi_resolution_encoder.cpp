@@ -339,7 +339,8 @@ int vp8_multi_resolution_encoder(int argc, char **argv)
         write_ivf_file_header(outfile[i], &cfg[i], 0);
 
     /* Initialize multi-encoder */
-    if(vpx_codec_enc_init_multi(&codec[0], interface, &cfg[0], NUM_ENCODERS,
+    int s_lvl = 0;
+    if(vpx_codec_enc_init_multi(&codec[0], interface, &cfg[0], s_lvl, NUM_ENCODERS,
                                 (show_psnr ? VPX_CODEC_USE_PSNR : 0), &dsf[0]))
         die_codec(&codec[0], "Failed to initialize encoder");
 

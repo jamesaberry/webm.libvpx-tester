@@ -13284,6 +13284,9 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
     dsf[1] controls down sampling from level 1 to level 2;
     dsf[2] is not used. */
     vpx_rational_t dsf[NUM_ENCODERS] = {{2, 1}, {2, 1}, {1, 1}};
+	/* Encode starting from which resolution level. Normally it is 0 that
+     * means the original(highest) resolution. */
+    int                  s_lvl = 0;
 
     /* Open input video file for encoding */
     if(!(infile = fopen(inputFile, "rb")))
@@ -13291,6 +13294,22 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
 
     show_psnr = 0;//strtol(argv[NUM_ENCODERS + 4], NULL, 0);
     const struct codec_item  *codec_test = codecs;
+
+	/* Check to see if we need to encode all resolution levels */
+    for (i=0; i<NUM_ENCODERS; i++)
+    {
+        if (target_bitrate[i])
+            break;
+        else
+            s_lvl += 1;
+    }
+
+    if (s_lvl >= NUM_ENCODERS)
+    {
+        printf("No encoding: total number of encoders is 0!");
+        return 0;
+    }
+
     /* Populate default encoder configuration */
     for (i=0; i< NUM_ENCODERS; i++)
     {
@@ -13488,7 +13507,7 @@ int vpxt_compress_multi_resolution(const char *inputFile, const char *outputFile
     }
 
     /* Initialize multi-encoder */
-    if(vpx_codec_enc_init_multi(&codec[0], codec_test->iface, &cfg[0], NUM_ENCODERS,(show_psnr ? VPX_CODEC_USE_PSNR : 0), &dsf[0]))
+    if(vpx_codec_enc_init_multi(&codec[0], codec_test->iface, &cfg[0], s_lvl, NUM_ENCODERS,(show_psnr ? VPX_CODEC_USE_PSNR : 0), &dsf[0]))
         return 0;
 
     /* The extra encoding configuration parameters can be set as follows. */

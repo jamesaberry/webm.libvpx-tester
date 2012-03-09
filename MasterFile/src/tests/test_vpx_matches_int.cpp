@@ -205,11 +205,12 @@ int test_vpx_matches_int(int argc,
         if (EncForm.compare("ivf") == 0)
             VpxencProgramString.append("--ivf");
 
-        //run vpxenc comp
+        if(vpxt_file_is_yv12(input.c_str()))
+            VpxencProgramString.append(" --yv12");
 
+        //run vpxenc comp
         tprintf(PRINT_ERR, "\nAttempting to run: %s\n\n",
             VpxencProgramString.c_str());
-        //tprintf(PRINT_STD, "\n");
 
         fclose(fp);
 

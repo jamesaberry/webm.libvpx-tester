@@ -3227,6 +3227,64 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core,
 
     return 0;
 }
+int vpxt_file_is_yv12(const char *in_fn)
+{
+    FILE* infile = strcmp(in_fn, "-") ? fopen(in_fn, "rb") :
+        set_binary_mode(stdin);
+
+    if (!infile)
+    {
+        tprintf(PRINT_BTH, "Failed to open input file: %s", in_fn);
+        return -1;
+    }
+
+    struct detect_buffer detect;
+    detect.buf_read = fread(detect.buf, 1, 4, infile);
+    detect.position = 0;
+    unsigned int             file_type, fourcc;
+    y4m_input                y4m;
+
+    unsigned int rate;
+    unsigned int scale;
+    unsigned int width = 0;
+    unsigned int height = 0;
+
+    if (detect.buf_read == 4 && file_is_y4m(infile, &y4m, detect.buf))
+    {
+        if (y4m_input_open(&y4m, infile, detect.buf, 4) >= 0)
+        {
+            file_type = FILE_TYPE_Y4M;
+        }
+        else
+        {
+            fprintf(stderr, "Unsupported Y4M stream.\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else if (detect.buf_read == 4 && file_is_ivf(infile, &fourcc, &width,
+        &height, &detect, &scale, &rate))
+    {
+        file_type = FILE_TYPE_IVF;
+    }
+    else
+    {
+        file_type = FILE_TYPE_RAW;
+    }
+
+    fclose(infile);
+
+    switch (fourcc)
+    {
+    case 0x32315659:
+        return 1;
+    case 0x30323449:
+        return 0;
+    default:
+        fprintf(stderr, "Unsupported fourcc (%08x)\n", fourcc);
+    }
+
+    return 0;
+}
 //---------------------------IVF Header Data------------------------------------
 int vpxt_print_ivf_file_header(IVF_HEADER ivf)
 {

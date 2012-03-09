@@ -40,6 +40,7 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core,
                                     const char *input_api,
                                     char *vpxenc_parameters,
                                     int vpxenc_parameters_sz);
+int vpxt_file_is_yv12(const char *in_fn);
 //------------------------IVF Header Data---------------------------------------
 int vpxt_print_ivf_file_header(IVF_HEADER ivf);
 int vpxt_format_ivf_header_read(IVF_HEADER *ivf);

@@ -1,6 +1,10 @@
 #include "vpxt_test_declarations.h"
 
-int tool_graph_psnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int tool_graph_psnr(int argc,
+                    const char *const *argv,
+                    const std::string &WorkingDir,
+                    std::string FilesAr[],
+                    int TestType)
 {
     if (argc < 6 || argc > 8)
     {
@@ -61,7 +65,8 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -155,7 +160,9 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         snprintf(outputChar2, 255, "%s", OutPutStr3.c_str());
 
         unsigned int cpu_tick1 = 0;
-        EncTimeArr[x] = vpxt_time_compress(input.c_str(), outputChar , speed, opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1, EncForm);
+        EncTimeArr[x] = vpxt_time_compress(input.c_str(), outputChar, speed,
+            opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1,
+            EncForm);
 
         if (EncTimeArr[x] == -1)
         {
@@ -165,7 +172,8 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         }
 
         unsigned int cpu_tick2 = 0;
-        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick2, DecForm, 1);
+        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick2,
+            DecForm, 1);
 
         if (DecTimeArr[x] == -1)
         {
@@ -175,7 +183,8 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
         }
 
         double ssimnumber = 0;
-        PSNRArr[x] = vpxt_psnr(input.c_str(), outputChar, 0, PRINT_BTH, 1, &ssimnumber);
+        PSNRArr[x] = vpxt_psnr(input.c_str(), outputChar, 0, PRINT_BTH, 1,
+            &ssimnumber);
         SSIMArr[x] = ssimnumber;
         DataRateArr[x] = vpxt_data_rate(outputChar, 1);
         x++;
@@ -199,7 +208,9 @@ int tool_graph_psnr(int argc, const char *const *argv, const std::string &Workin
 
     while (x < ArrSize)
     {
-        tprintf(PRINT_BTH, " DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: %i \n DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x], EncTimeArr[x], DecTimeArr[x]);
+        tprintf(PRINT_BTH, " DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: "
+            "%i \n DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x],
+            EncTimeArr[x], DecTimeArr[x]);
         x++;
     }
 

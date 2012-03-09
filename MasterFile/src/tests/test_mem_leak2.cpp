@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak2(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_mem_leak2(int argc,
+                   const char *const *argv,
+                   const std::string &WorkingDir,
+                   std::string FilesAr[],
+                   int TestType,
+                   int DeleteIVF)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak2";
@@ -26,10 +31,11 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
-    //Get the exe's parent folder From argv[0] Paths for both exes will be the same
     vpxt_folder_name(argv[0], ExeCharMemLeak);
     std::string ExeCharMemLeakStr = ExeCharMemLeak;
 
@@ -49,36 +55,36 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
 #if defined(_WIN32)
     //Faux Compress
     ProgramMemLeakCheckEncStr = "\"\"";
-    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);            // Exe Path
-    ProgramMemLeakCheckEncStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);
+    ProgramMemLeakCheckEncStr.append(MemLeakExe);
     ProgramMemLeakCheckEncStr.append("\" fauxcompress \"");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXT1Str.c_str());  // Output txt file
+    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXT1Str.c_str());
     ProgramMemLeakCheckEncStr.append("\"\"");
     //Faux Decompress
     ProgramMemLeakCheckDecStr = "\"\"";
-    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr);            // Exe Path
-    ProgramMemLeakCheckDecStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr);
+    ProgramMemLeakCheckDecStr.append(MemLeakExe);
     ProgramMemLeakCheckDecStr.append("\" fauxdecompress \"");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXT2Str.c_str());  // Output txt file
+    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXT2Str.c_str());
     ProgramMemLeakCheckDecStr.append("\" \"");
-    ProgramMemLeakCheckDecStr.append(DecInFile);                    // Input faux dec file
+    ProgramMemLeakCheckDecStr.append(DecInFile);
     ProgramMemLeakCheckDecStr.append("\"\"");
 #else
     //Faux Compress
     ProgramMemLeakCheckEncStr = "\'";
-    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);            // Exe Path
-    ProgramMemLeakCheckEncStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckEncStr.append(ExeCharMemLeakStr);
+    ProgramMemLeakCheckEncStr.append(MemLeakExe);
     ProgramMemLeakCheckEncStr.append("\' fauxcompress \'");
-    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXT1Str.c_str());  // Output txt file
+    ProgramMemLeakCheckEncStr.append(MemLeakCheckTXT1Str.c_str());
     ProgramMemLeakCheckEncStr.append("\'");
     //Faux Decompress
     ProgramMemLeakCheckDecStr = "\'";
-    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr);            // Exe Path
-    ProgramMemLeakCheckDecStr.append(MemLeakExe);                   // Exe Name
+    ProgramMemLeakCheckDecStr.append(ExeCharMemLeakStr);
+    ProgramMemLeakCheckDecStr.append(MemLeakExe);
     ProgramMemLeakCheckDecStr.append("\' fauxdecompress \'");
-    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXT2Str.c_str());  // Output txt file
+    ProgramMemLeakCheckDecStr.append(MemLeakCheckTXT2Str.c_str());
     ProgramMemLeakCheckDecStr.append("\' \'");
-    ProgramMemLeakCheckDecStr.append(DecInFile);                    // Input faux dec file
+    ProgramMemLeakCheckDecStr.append(DecInFile);
     ProgramMemLeakCheckDecStr.append("\'");
 #endif
 
@@ -96,7 +102,8 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -122,7 +129,8 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -157,7 +165,8 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
 
     opt.target_bandwidth = BitRate ;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -199,7 +208,8 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
     {
         char MemLeakCheckTXTFileName[200];
         vpxt_file_name(MemLeakCheckTXT1Str.c_str(), MemLeakCheckTXTFileName, 0);
-        vpxt_formated_print(RESPRT, "File not found: %s - Failed", MemLeakCheckTXTFileName);
+        vpxt_formated_print(RESPRT, "File not found: %s - Failed",
+            MemLeakCheckTXTFileName);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -216,12 +226,14 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
 
         if (bufferString4.compare(0, 24, "_currently Allocated= 0;") == 0)
         {
-            vpxt_formated_print(RESPRT, "Encode Memory Currently Allocated == 0 - Passed");
+            vpxt_formated_print(RESPRT, "Encode Memory Currently Allocated == "
+                "0 - Passed");
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
-            vpxt_formated_print(RESPRT, "Encode Memory Currently Allocated != 0 - %s - Failed", bufferString4.c_str());
+            vpxt_formated_print(RESPRT, "Encode Memory Currently Allocated != "
+                "0 - %s - Failed", bufferString4.c_str());
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -233,7 +245,8 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
     {
         char MemLeakCheckTXTFileName[200];
         vpxt_file_name(MemLeakCheckTXT2Str.c_str(), MemLeakCheckTXTFileName, 0);
-        vpxt_formated_print(RESPRT, "File not found: %s - Failed", MemLeakCheckTXTFileName);
+        vpxt_formated_print(RESPRT, "File not found: %s - Failed",
+            MemLeakCheckTXTFileName);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -250,12 +263,14 @@ int test_mem_leak2(int argc, const char *const *argv, const std::string &Working
 
         if (bufferString5.compare(0, 24, "_currently Allocated= 0;") == 0)
         {
-            vpxt_formated_print(RESPRT, "Decode Memory Currently Allocated == 0 - Passed");
+            vpxt_formated_print(RESPRT, "Decode Memory Currently Allocated == "
+                "0 - Passed");
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
-            vpxt_formated_print(RESPRT, "Decode Memory Currently Allocated != 0 - %s - Failed", bufferString5.c_str());
+            vpxt_formated_print(RESPRT, "Decode Memory Currently Allocated != "
+                "0 - %s - Failed", bufferString5.c_str());
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }

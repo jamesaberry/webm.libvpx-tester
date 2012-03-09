@@ -1431,12 +1431,6 @@ int ivfenc(int argc, const char **argv_)
             else
                 vpx_img_alloc(&raw, arg_use_i420 ? VPX_IMG_FMT_I420 : VPX_IMG_FMT_YV12,
                               cfg.g_w, cfg.g_h, 1);
-
-            // This was added so that ivfenc will create monotically increasing
-            // timestamps.  Since we create new timestamps for alt-reference frames
-            // we need to make room in the series of timestamps.  Since there can
-            // only be 1 alt-ref frame ( current bitstream) multiplying by 2
-            // gives us enough room.
         }
 
         outfile = strcmp(out_fn, "-") ? fopen(out_fn, "wb") : set_binary_mode(stdout);

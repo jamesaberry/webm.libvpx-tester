@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_undershoot(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_undershoot(int argc,
+                    const char *const *argv,
+                    const std::string &WorkingDir,
+                    std::string FilesAr[],
+                    int TestType,
+                    int DeleteIVF)
 {
     char *CompressString = "Undershoot";
     char *MyDir = "test_undershoot";
@@ -22,7 +27,9 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string UnderShoot10 = CurTestDirStr;
@@ -51,7 +58,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -77,7 +85,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -92,7 +101,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
     opt.target_bandwidth = BitRate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -103,7 +113,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
         opt.under_shoot_pct = 10;
 
-        if (vpxt_compress(input.c_str(), UnderShoot10.c_str(), speed, BitRate, opt, CompressString, 10, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), UnderShoot10.c_str(), speed, BitRate,
+            opt, CompressString, 10, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -112,7 +123,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
         opt.under_shoot_pct = 100;
 
-        if (vpxt_compress(input.c_str(), UnderShoot100.c_str(), speed, BitRate, opt, CompressString, 100, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), UnderShoot100.c_str(), speed, BitRate,
+            opt, CompressString, 100, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -141,7 +153,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
     if (FileIndexOutputCharbytes < File2bytes)
     {
-        vpxt_formated_print(RESPRT, "File size 1:%i < File size 2:%i - Passed", FileIndexOutputCharbytes , File2bytes);
+        vpxt_formated_print(RESPRT, "File size 1:%i < File size 2:%i - Passed",
+            FileIndexOutputCharbytes , File2bytes);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
@@ -155,7 +168,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
 
     if (FileIndexOutputCharbytes == File2bytes)
     {
-        vpxt_formated_print(RESPRT, "No effect try different file - Indeterminate");
+        vpxt_formated_print(RESPRT, "No effect try different file - "
+            "Indeterminate");
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
@@ -168,7 +182,8 @@ int test_undershoot(int argc, const char *const *argv, const std::string &Workin
     }
     else
     {
-        vpxt_formated_print(RESPRT, "File size 1:%i > File size 2:%i - Failed", FileIndexOutputCharbytes , File2bytes);
+        vpxt_formated_print(RESPRT, "File size 1:%i > File size 2:%i - Failed",
+            FileIndexOutputCharbytes , File2bytes);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 

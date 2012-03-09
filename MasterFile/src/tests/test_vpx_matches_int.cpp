@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_vpx_matches_int(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_vpx_matches_int(int argc,
+                         const char *const *argv,
+                         const std::string &WorkingDir,
+                         std::string FilesAr[],
+                         int TestType,
+                         int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_vpx_matches_int";
@@ -25,7 +30,9 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string InternalComp = CurTestDirStr;
@@ -84,7 +91,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -110,7 +118,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -124,7 +133,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(vpxencPath.c_str()))
     {
-        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", vpxencPath.c_str());
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
+            vpxencPath.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -134,7 +144,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
     /////////////////Make Sure Exe File Exists///////////////
     if (!vpxt_file_exists_check(vpxdecPath.c_str()))
     {
-        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", vpxdecPath.c_str());
+        tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
+            vpxdecPath.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -144,7 +155,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
     /////////////////Make Sure ivf File Exists///////////////
     if (!vpxt_file_exists_check(input.c_str()))
     {
-        tprintf(PRINT_BTH, "\nInput encode file %s does not exist\n", input.c_str());
+        tprintf(PRINT_BTH, "\nInput encode file %s does not exist\n",
+            input.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -155,7 +167,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
 
     opt.target_bandwidth = BitRate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -165,7 +178,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
         opt.Mode = Mode;
         vpxt_determinate_parameters(opt);
 
-        if (vpxt_compress(input.c_str(), InternalComp.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), InternalComp.c_str(), speed, BitRate,
+            opt, CompressString, 0, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -174,15 +188,18 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
 
         //Get internal parameter file strings
         std::string InternalCompPar1;
-        int extLength = vpxt_remove_file_extension(InternalComp.c_str(), InternalCompPar1);
+        int extLength = vpxt_remove_file_extension(InternalComp.c_str(),
+            InternalCompPar1);
         InternalCompPar1.append("parameters_core.txt");
         std::string InternalCompPar2 = InternalCompPar1;
-        InternalCompPar2.erase(InternalCompPar2.length() - (15 + extLength), 15 + extLength);
+        InternalCompPar2.erase(InternalCompPar2.length() - (15 + extLength),
+            15 + extLength);
         InternalCompPar2.append("_parameters_vpx.txt");
 
         //convert internal parameters to vpxenc
         char VpxencParameters[1024];
-        vpxt_convert_par_file_to_vpxenc(InternalCompPar1.c_str(), InternalCompPar2.c_str(), VpxencParameters, 1024);
+        vpxt_convert_par_file_to_vpxenc(InternalCompPar1.c_str(),
+            InternalCompPar2.c_str(), VpxencParameters, 1024);
         VpxencProgramString.append(VpxencParameters);
 
         if (EncForm.compare("ivf") == 0)
@@ -190,7 +207,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
 
         //run vpxenc comp
 
-        tprintf(PRINT_ERR, "\nAttempting to run: %s\n\n", VpxencProgramString.c_str());
+        tprintf(PRINT_ERR, "\nAttempting to run: %s\n\n",
+            VpxencProgramString.c_str());
         //tprintf(PRINT_STD, "\n");
 
         fclose(fp);
@@ -200,11 +218,13 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
 
         if ((fp = freopen(TextfileString.c_str(), "a", stderr)) == NULL)
         {
-            tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+            tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                TextfileString.c_str());
             exit(1);
         }
 
-        tprintf(PRINT_ERR, "\nAttempting to run: %s\n\n", VpxdecProgramString.c_str());
+        tprintf(PRINT_ERR, "\nAttempting to run: %s\n\n",
+            VpxdecProgramString.c_str());
         vpxt_decompress(VpxEncComp.c_str(), InternalDec.c_str(), DecForm, 1);
     }
 
@@ -216,7 +236,7 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
-    int lngRCEnc = vpxt_compare_enc(InternalComp.c_str(), VpxEncComp.c_str(), 0);
+    int lngRCEnc = vpxt_compare_enc(InternalComp.c_str(), VpxEncComp.c_str(),0);
     int EncMatch = vpxt_print_compare_ivf_results(lngRCEnc, 1);
 
     tprintf(PRINT_BTH, "Comparing Decompression Files: ");
@@ -229,24 +249,28 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
 
     if (EncMatch == 1)
     {
-        vpxt_formated_print(RESPRT, "Internal Compression identical to Vpxenc Compression - Passed");
+        vpxt_formated_print(RESPRT, "Internal Compression identical to Vpxenc "
+            "Compression - Passed");
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Internal Compression not identical to Vpxenc Compression - Failed");
+        vpxt_formated_print(RESPRT, "Internal Compression not identical to "
+            "Vpxenc Compression - Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (DecMatch == 1)
     {
-        vpxt_formated_print(RESPRT, "Internal Decompression identical to Vpxenc Decompression - Passed");
+        vpxt_formated_print(RESPRT, "Internal Decompression identical to "
+            "Vpxenc Decompression - Passed");
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Internal Decompression not identical to Vpxenc Decompression - Failed");
+        vpxt_formated_print(RESPRT, "Internal Decompression not identical to "
+            "Vpxenc Decompression - Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -256,7 +280,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(4, InternalComp.c_str(), VpxEncComp.c_str(), VpxDec.c_str(), InternalDec.c_str());
+            vpxt_delete_files(4, InternalComp.c_str(), VpxEncComp.c_str(),
+            VpxDec.c_str(), InternalDec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -267,7 +292,8 @@ int test_vpx_matches_int(int argc, const char *const *argv, const std::string &W
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(4, InternalComp.c_str(), VpxEncComp.c_str(), VpxDec.c_str(), InternalDec.c_str());
+            vpxt_delete_files(4, InternalComp.c_str(), VpxEncComp.c_str(),
+            VpxDec.c_str(), InternalDec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

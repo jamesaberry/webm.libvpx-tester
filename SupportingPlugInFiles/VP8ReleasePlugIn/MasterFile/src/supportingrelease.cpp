@@ -22,7 +22,7 @@
 
 int IVF2Raw(char *inputFile, char *outputDir)
 {
-    int WriteIndFrames = 5;//atoi(argv[4]);
+    int WriteIndFrames = 5;
 
     FILE *in = fopen(inputFile, "rb");
     ///////////////////////////////////
@@ -43,23 +43,6 @@ int IVF2Raw(char *inputFile, char *outputDir)
     InitIVFHeader(&ivfhRaw);
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
     vpxt_format_ivf_header_read(&ivfhRaw);
-
-    /*printf( "IVF DataRate\n\n"
-    "FILE HEADER \n\n"
-    "File Header            - %c%c%c%c \n"
-    "File Format Version    - %i \n"
-    "File Header Size       - %i \n"
-    "Video Data FourCC      - %i \n"
-    "Video Image Width      - %i \n"
-    "Video Image Height     - %i \n"
-    "Frame Rate Rate        - %i \n"
-    "Frame Rate Scale       - %i \n"
-    "Video Length in Frames - %i \n"
-    "Unused                 - %c \n"
-    "\n\n"
-    ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.FourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-    ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
 
     IVF_FRAME_HEADER ivf_fhRaw;
 
@@ -163,10 +146,12 @@ void supportingReleaseOnError()
             "      <compress>\n"
             "      <decompress>\n"
             "\n"
-            "  Compress Release                                 Decompress Release\n"
+            "  Compress Release                                 Decompress "
+            "Release\n"
             "\n"
             "    <Inputfile>                                      <Inputfile>\n"
-            "    <Outputfile>                                     <Outputfile>\n"
+            "    <Outputfile>                                     <Outputfile>"
+            "\n"
             "    <Par File Origin 7 VP7 8 VP8>\n"
             "    <Par File>\n"
             "    <Extra Commands>\n"
@@ -176,7 +161,8 @@ void supportingReleaseOnError()
             "      <3 Record Compression Time and Run PSNR>\n"
             "\n"
             "\n"
-            "   Release Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+            "   Release Exe using: %s\n",
+            vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 }
 int supportingFileRunPSNR(char *inputFile, char *outputFile)
 {
@@ -185,14 +171,10 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
     double ssimDummyVar = 0;
     totalPsnr = vpxt_psnr(inputFile, outputFile, 0, PRINT_BTH, 1, NULL);
 
-    //char TextFilechar1[255];
     std::string TextFilechar1 = "";
     vpxt_remove_file_extension(outputFile, TextFilechar1);
     TextFilechar1.append("psnr.txt");
 
-    //char *FullName = strcat(TextFilechar1, "psnr.txt");
-
-    //std::ofstream outfile2(FullName);
     std::ofstream outfile2(TextFilechar1.c_str());
     outfile2 << totalPsnr;
     outfile2.close();
@@ -239,8 +221,10 @@ int main(int argc, char *argv[])
         vpxt_get_file_extension(outputFile, EncExt);
         EncExt.erase(0, 1); //remove period
 
-        tprintf(PRINT_BTH, "\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-        vpxt_time_compress(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick, EncExt);
+        tprintf(PRINT_BTH, "\nRelease Exe using: %s\n",
+            vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+        vpxt_time_compress(inputFile, outputFile, 0, opt.target_bandwidth, opt,
+            "VP8 Release", 0, 0, CPUTick, EncExt);
 
         if (ExtraCommand == 1 || ExtraCommand == 3)
             supportingFileRunPSNR(inputFile, outputFile);
@@ -256,7 +240,8 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        tprintf(PRINT_BTH, "\nRelease Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_dx_algo));
+        tprintf(PRINT_BTH, "\nRelease Exe using: %s\n",
+            vpx_codec_iface_name(&vpx_codec_vp8_dx_algo));
 
         char *inputFile = argv[2];
         char *outputFile = argv[3];
@@ -267,7 +252,8 @@ int main(int argc, char *argv[])
         vpxt_get_file_extension(outputFile, DecExt);
         DecExt.erase(0, 1); //remove period
 
-        vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt, 1);
+        vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick,
+            DecExt, 1);
 
         return 0;
     }

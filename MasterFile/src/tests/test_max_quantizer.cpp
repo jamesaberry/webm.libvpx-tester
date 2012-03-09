@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_max_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_max_quantizer(int argc,
+                       const char *const *argv,
+                       const std::string &WorkingDir,
+                       std::string FilesAr[],
+                       int TestType,
+                       int DeleteIVF)
 {
     char *CompressString = "Max Quantizer";
     char *MyDir = "test_max_quantizer";
@@ -22,7 +27,9 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string QuantOutBase = CurTestDirStr;
@@ -71,7 +78,8 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -97,10 +105,12 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(FileIndexStr, FileIndexOutputChar,
+                TestType);
             return 2;
         }
 
@@ -120,7 +130,8 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     int MaxQArr[10];
     int i = 0;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         while (n < 63)
@@ -136,7 +147,8 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, PRINT_BTH, 1, NULL);
+                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(),
+                    PSNRToggle, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
@@ -150,7 +162,6 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         while (n < 63)
         {
-
             opt.worst_allowed_q = n;
             //make sure min q is less than max
             while(opt.best_allowed_q > n)
@@ -165,10 +176,12 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             opt.Mode = Mode;
 
-            if (vpxt_compress(input.c_str(), QuantOutFile.c_str(), speed, BitRate, opt, CompressString, n, 1, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), QuantOutFile.c_str(), speed,
+                BitRate, opt, CompressString, n, 1, EncForm) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
 
@@ -176,7 +189,8 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
 
             if (TestType != 2)
             {
-                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(), PSNRToggle, PRINT_BTH, 1, NULL);
+                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(),
+                    PSNRToggle, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
@@ -209,22 +223,29 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         if (!(PSNRArr[i+1] <= PSNRArr[i]))
         {
-            if (PSNRArr[i+1] <= (PSNRArr[i] + (PSNRArr[i] * 0.01))) // if PSNRArr[i+1] greater than but within 1% - min pass
+            // if PSNRArr[i+1] greater than but within 1% - min pass
+            if (PSNRArr[i+1] <= (PSNRArr[i] + (PSNRArr[i] * 0.01)))
             {
-                vpxt_formated_print(RESPRT, "MaxQ %2i PSNR %.2f within 1%% of MaxQ %2i PSNR %.2f - MinPassed", MaxQDisplayValue + 8, PSNRArr[i+1], MaxQDisplayValue, PSNRArr[i]);
+                vpxt_formated_print(RESPRT, "MaxQ %2i PSNR %.2f within 1%% of "
+                    "MaxQ %2i PSNR %.2f - MinPassed", MaxQDisplayValue + 8,
+                    PSNRArr[i+1], MaxQDisplayValue, PSNRArr[i]);
                 tprintf(PRINT_BTH, "\n");
                 fail = 2;
             }
             else
             {
-                vpxt_formated_print(RESPRT, "MaxQ %2i %.2f > %.2f MaxQ %2i - Failed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
+                vpxt_formated_print(RESPRT, "MaxQ %2i %.2f > %.2f MaxQ %2i - "
+                    "Failed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i],
+                    MaxQDisplayValue);
                 tprintf(PRINT_BTH, "\n");
                 fail = 1;
             }
         }
         else
         {
-            vpxt_formated_print(RESPRT, "MaxQ %2i %.2f <= %.2f MaxQ %2i - Passed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i], MaxQDisplayValue);
+            vpxt_formated_print(RESPRT, "MaxQ %2i %.2f <= %.2f MaxQ %2i - "
+                "Passed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i],
+                MaxQDisplayValue);
             tprintf(PRINT_BTH, "\n");
         }
 
@@ -239,13 +260,15 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         if (MaxQArr[i] != -1)
         {
-            vpxt_formated_print(RESPRT, "MaxQ value exceded for MaxQ %2i - frame %i - Failed", MaxQDisplayValue, MaxQArr[i]);
+            vpxt_formated_print(RESPRT, "MaxQ value exceded for MaxQ %2i - "
+                "frame %i - Failed", MaxQDisplayValue, MaxQArr[i]);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
-            vpxt_formated_print(RESPRT, "MaxQ value not exceded for MaxQ %2i - Passed", MaxQDisplayValue, MaxQArr[i]);
+            vpxt_formated_print(RESPRT, "MaxQ value not exceded for MaxQ %2i "
+                "- Passed", MaxQDisplayValue, MaxQArr[i]);
             tprintf(PRINT_BTH, "\n");
         }
 
@@ -258,7 +281,9 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(), QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(), QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(),
+            QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(),
+            QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -269,7 +294,9 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
         tprintf(PRINT_BTH, "\nMin Passed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(), QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(), QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(),
+            QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(),
+            QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -280,7 +307,9 @@ int test_max_quantizer(int argc, const char *const *argv, const std::string &Wor
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(), QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(), QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(),
+            QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(),
+            QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

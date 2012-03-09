@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_thirtytwo_vs_sixtyfour(int argc,
+                                const char *const *argv,
+                                const std::string &WorkingDir,
+                                std::string FilesAr[],
+                                int TestType,
+                                int DeleteIVF)
 {
     char *CompressString = "ThirtyTwoVsSixtyFour";
     char *MyDir = "test_thirtytwo_vs_sixtyfour";
@@ -38,7 +43,9 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string FiletoEnc = "";
@@ -98,7 +105,8 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -131,7 +139,8 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
         opt.Mode = Mode;
         vpxt_determinate_parameters(opt);
 
-        if (vpxt_compress(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt,
+            "Mode", Mode, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -141,7 +150,8 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
         tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
-        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm, 1) == -1)
+        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm, 1) ==
+            -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -185,7 +195,8 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
 
     if (Enc32VsEnc64 >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i", Enc32VsEnc64);
+        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i",
+            Enc32VsEnc64);
         ENCFAIL++;
     }
 
@@ -211,7 +222,8 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
 
     if (Dec32VsDec64 >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i", Dec32VsDec64);
+        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i",
+            Dec32VsDec64);
         DECFAIL++;
     }
 
@@ -238,7 +250,8 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
 
     if (ENCFAIL > 0)
     {
-        vpxt_formated_print(RESPRT, "Not all encoded files are identical - Failed");
+        vpxt_formated_print(RESPRT, "Not all encoded files are identical - "
+            "Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -251,7 +264,8 @@ int test_thirtytwo_vs_sixtyfour(int argc, const char *const *argv, const std::st
 
     if (DECFAIL > 0)
     {
-        vpxt_formated_print(RESPRT, "Not all decoded files are identical - Failed");
+        vpxt_formated_print(RESPRT, "Not all decoded files are identical - "
+            "Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }

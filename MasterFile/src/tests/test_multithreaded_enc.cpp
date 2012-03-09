@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_multithreaded_enc(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_multithreaded_enc(int argc,
+                           const char *const *argv,
+                           const std::string &WorkingDir,
+                           std::string FilesAr[],
+                           int TestType,
+                           int DeleteIVF)
 {
     char *CompressString = "Multithreaded";
     char *MyDir = "test_multithreaded_enc";
@@ -28,7 +33,9 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string MultiThreadedOnOutFile = CurTestDirStr;
@@ -57,7 +64,8 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -77,7 +85,8 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
 
     if (!(CoreCount > 1))
     {
-        tprintf(PRINT_STD, "\nMultiple Cores not used Test aborted: %i\n", CoreCount);
+        tprintf(PRINT_STD, "\nMultiple Cores not used Test aborted: %i\n",
+            CoreCount);
         fclose(fp);
         return 0;
     }
@@ -90,7 +99,8 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -106,7 +116,8 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
     opt.target_bandwidth = BitRate;
     opt.end_usage = 0;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         Time1 = vpxt_time_return(MultiThreadedOnOutFile.c_str(), 0);
@@ -120,24 +131,30 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
             opt.multi_threaded = CoreCount;
             opt.cpu_used = -1;
             unsigned int cpu_tick1 = 0;
-            Time1 = vpxt_time_compress(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1, EncForm);
+            Time1 = vpxt_time_compress(input.c_str(),
+                MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt,
+                CompressString, opt.multi_threaded, 0, cpu_tick1, EncForm);
 
             if (Time1 == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
 
             opt.Mode = MODE_REALTIME;
             opt.multi_threaded = 0;
             unsigned int cpu_tick2 = 0;
-            Time2 = vpxt_time_compress(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2, EncForm);
+            Time2 = vpxt_time_compress(input.c_str(),
+                MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt,
+                CompressString, opt.multi_threaded, 0, cpu_tick2, EncForm);
 
             if (Time2 == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
         }
@@ -147,24 +164,30 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
             opt.Mode = MODE_GOODQUALITY;
             opt.multi_threaded = CoreCount;
             unsigned int cpu_tick1 = 0;
-            Time1 = vpxt_time_compress(input.c_str(), MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick1, EncForm);
+            Time1 = vpxt_time_compress(input.c_str(),
+                MultiThreadedOnOutFile.c_str(), MultiThreaded, BitRate, opt,
+                CompressString, opt.multi_threaded, 0, cpu_tick1, EncForm);
 
             if (Time1 == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
 
             opt.Mode = MODE_GOODQUALITY;
             opt.multi_threaded = 0;
             unsigned int cpu_tick2 = 0;
-            Time2 = vpxt_time_compress(input.c_str(), MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.multi_threaded, 0, cpu_tick2, EncForm);
+            Time2 = vpxt_time_compress(input.c_str(),
+                MultiThreadedOffOutFile.c_str(), MultiThreaded, BitRate, opt,
+                CompressString, opt.multi_threaded, 0, cpu_tick2, EncForm);
 
             if (Time2 == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
         }
@@ -190,15 +213,18 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
     if (Time1 == 0 || Time2 == 0)
     {
         if (Time1 == 0)
-            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed", Time1FileName, Time1);
+            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed",
+            Time1FileName, Time1);
 
         if (Time2 == 0)
-            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed", Time2FileName, Time2);
+            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed",
+            Time2FileName, Time2);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(),
+            MultiThreadedOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -208,12 +234,14 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
 
     if (Time1 < Time2)
     {
-        vpxt_formated_print(RESPRT, "%s time: %u < %s time2: %u - Passed", Time1FileName, Time1, Time2FileName, Time2);
+        vpxt_formated_print(RESPRT, "%s time: %u < %s time2: %u - Passed",
+            Time1FileName, Time1, Time2FileName, Time2);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(),
+            MultiThreadedOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -222,12 +250,14 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
 
     if (Time1 == Time2)
     {
-        vpxt_formated_print(RESPRT, "%s time: %u == %s time: %u - Indeterminate", Time1FileName, Time1, Time2FileName, Time2);
+        vpxt_formated_print(RESPRT, "%s time: %u == %s time: %u - Indeterminate"
+            , Time1FileName, Time1, Time2FileName, Time2);
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(),
+            MultiThreadedOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -236,12 +266,14 @@ int test_multithreaded_enc(int argc, const char *const *argv, const std::string 
 
     if (Time1 > Time2)
     {
-        vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed", Time1FileName, Time1, Time2FileName, Time2);
+        vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed",
+            Time1FileName, Time1, Time2FileName, Time2);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(), MultiThreadedOffOutFile.c_str());
+            vpxt_delete_files(2, MultiThreadedOnOutFile.c_str(),
+            MultiThreadedOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

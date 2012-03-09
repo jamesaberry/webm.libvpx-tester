@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_new_vs_old_psnr(int argc,
+                         const char *const *argv,
+                         const std::string &WorkingDir,
+                         std::string FilesAr[],
+                         int TestType,
+                         int DeleteIVF)
 {
 
     char *MyDir = "test_new_vs_old_psnr";
@@ -26,7 +31,9 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     char ExeChar[1024];
@@ -114,7 +121,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -140,7 +148,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -158,12 +167,15 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
     char InputGitLog[256];
     char OutputTestLog[256];
 
-    snprintf(InputTestLog, 255, "%s%s", ExeChar, "test_new_vs_old_psnr-log.txt");
+    snprintf(InputTestLog, 255, "%s%s", ExeChar,"test_new_vs_old_psnr-log.txt");
     snprintf(InputGitLog, 255, "%s%s", ExeChar, "libvpx-git-log.txt");
-    snprintf(OutputTestLog, 255, "%s%s", ExeChar, "test_new_vs_old_psnr-log-sync.txt");
+    snprintf(OutputTestLog, 255, "%s%s", ExeChar,
+        "test_new_vs_old_psnr-log-sync.txt");
 
-    //check to see if git-log.txt and new-vs-old-psnr-log exist.  If so use new method else use old.
-    if (vpxt_file_exists_check(InputGitLog) && vpxt_file_exists_check(InputTestLog))
+    //check to see if git-log.txt and new-vs-old-psnr-log exist.
+    //If so use new method else use old.
+    if (vpxt_file_exists_check(InputGitLog) &&
+        vpxt_file_exists_check(InputTestLog))
     {
         if (TestType == TEST_ONLY)
         {
@@ -173,15 +185,18 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
         {
             opt.Mode = Mode;
 
-            if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate,
+                opt, "VP8", 0, 0, EncForm) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
         }
 
-        double NewPSNR = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0, PRINT_BTH, 1, NULL);
+        double NewPSNR = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0,
+            PRINT_BTH, 1, NULL);
 
         double NewDR = vpxt_data_rate(NewEncFile.c_str(), 1);
 
@@ -210,11 +225,13 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
         }
 
         if (ArgumentString.substr(0, 1).compare(" ") == 0)
-            ArgumentString.erase(ArgumentString.begin(), ArgumentString.begin() + 1);
+            ArgumentString.erase(ArgumentString.begin(), ArgumentString.begin()
+            + 1);
 
         if (vpxt_init_new_vs_old_log(InputTestLog, ArgumentString) != 1)
         {
-            tprintf(PRINT_BTH, "\nNUMBER OF UNIQUE IDS NOT EQUAL 1: TEST ABORTED\n");
+            tprintf(PRINT_BTH, "\nNUMBER OF UNIQUE IDS NOT EQUAL 1: TEST "
+                "ABORTED\n");
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
@@ -222,15 +239,20 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
         std::vector<double> ValueList;
 
-        int sync_state = vpxt_sync_new_vs_old_log(InputTestLog, InputGitLog, OutputTestLog, UpdateString.c_str(), ArgumentString, "test_new_vs_old_psnr");
+        int sync_state = vpxt_sync_new_vs_old_log(InputTestLog, InputGitLog,
+            OutputTestLog, UpdateString.c_str(), ArgumentString,
+            "test_new_vs_old_psnr");
 
         if (sync_state == -1)
             ValueList.push_back(NewPSNR);
         else
         {
-            tprintf(PRINT_BTH, "\n\n-------------------------COMMIT-PSNR-LOG-------------------------\n\n");
-            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList, "test_new_vs_old_psnr");
-            tprintf(PRINT_BTH, "\n-----------------------------------------------------------------\n");
+            tprintf(PRINT_BTH, "\n\n-------------------------COMMIT-PSNR-LOG---"
+                "----------------------\n\n");
+            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList
+                , "test_new_vs_old_psnr");
+            tprintf(PRINT_BTH, "\n---------------------------------------------"
+                "--------------------\n");
         }
 
         if (ValueList.size() < 2)
@@ -254,7 +276,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
         /////////////////Make Sure Exe File Exists///////////////
         if (!vpxt_file_exists_check(oldexefullpath))
         {
-            tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[5]);
+            tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
+                argv[5]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -266,7 +289,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
         opt.target_bandwidth = BitRate;
         opt.auto_key = 1;
 
-        //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+        //Run Test only (Runs Test, Sets up test to be run, or skips compresion
+        //of files)
         if (TestType == TEST_ONLY)
         {
             //This test requires no preperation before a Test Only Run
@@ -277,20 +301,25 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
             {
                 opt.Mode = MODE_REALTIME;
 
-                if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+                if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed,
+                    BitRate, opt, "VP8", 0, 0, EncForm) == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar,
+                        TestType);
                     return 2;
                 }
 
-                vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                    ParFileNum);
 
                 fclose(fp);
 
-                if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                    NULL)
                 {
-                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                        TextfileString.c_str());
                     exit(1);
                 }
 
@@ -304,26 +333,29 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
             {
                 opt.Mode = MODE_GOODQUALITY;
 
-                if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+                if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed,
+                    BitRate, opt, "VP8", 0, 0, EncForm) == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar,
+                        TestType);
                     return 2;
                 }
 
-                vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                    ParFileNum);
 
                 fclose(fp);
 
-                if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                    NULL)
                 {
-                    tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                    tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                        TextfileString.c_str());
                     exit(1);
                 }
 
                 fprintf(stderr, " ");
-
-                //cout << "\n\n" << Program << "\n\n";
 
                 vpxt_run_exe(Program);
             }
@@ -332,14 +364,17 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
             {
                 opt.Mode = MODE_BESTQUALITY;
 
-                if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+                if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed,
+                    BitRate, opt, "VP8", 0, 0, EncForm) == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar,
+                        TestType);
                     return 2;
                 }
 
-                vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                    ParFileNum);
                 vpxt_run_exe(Program);
             }
 
@@ -349,41 +384,54 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
             if (Mode == 4)
             {
-                if (ParFileNum == 1) //The old encoding method for two pass required for the encoder to be called twice once to run the first pass then again for the second
+                //The old encoding method for two pass required for the encoder
+                //to be called twice once to run the first pass then again for
+                //the second
+                if (ParFileNum == 1)
                 {
                     opt.Mode = MODE_SECONDPASS;
                     opt.lag_in_frames = 10;
 
-                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed,
+                        BitRate, opt, "VP8", 0, 0, EncForm) == -1)
                     {
                         fclose(fp);
-                        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                        record_test_complete(FileIndexStr, FileIndexOutputChar,
+                            TestType);
                         return 2;
                     }
 
                     opt.Mode = MODE_FIRSTPASS;
-                    vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                    vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                        ParFileNum);
 
                     fclose(fp);
 
-                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                        NULL)
                     {
-                        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                            TextfileString.c_str());
                         exit(1);
                     }
 
                     fprintf(stderr, " ");
-
-                    vpxt_run_exe(FPF_Program);//this needs to be run to make this test compatable with old versions of vp8 that required the first pass to be called diffrently
+                    //this needs to be run to make this test compatable with old
+                    //versions of vp8 that required the first pass to be called
+                    //diffrently
+                    vpxt_run_exe(FPF_Program);
 
                     opt.Mode = MODE_SECONDPASS;
-                    vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                    vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                        ParFileNum);
 
                     fclose(fp);
 
-                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                        NULL)
                     {
-                        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                            TextfileString.c_str());
                         exit(1);
                     }
 
@@ -395,21 +443,26 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
                 {
                     opt.Mode = MODE_SECONDPASS;
 
-                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed,
+                        BitRate, opt, "VP8", 0, 0, EncForm) == -1)
                     {
                         fclose(fp);
-                        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                        record_test_complete(FileIndexStr, FileIndexOutputChar,
+                            TestType);
                         return 2;
                     }
 
                     opt.Mode = MODE_SECONDPASS;
-                    vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                    vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                        ParFileNum);
 
                     fclose(fp);
 
-                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                        NULL)
                     {
-                        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                            TextfileString.c_str());
                         exit(1);
                     }
 
@@ -421,41 +474,55 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
             if (Mode == 5)
             {
-                if (ParFileNum == 1) //The old encoding method for two pass required for the encoder to be called twice once to run the first pass then again for the second
+                //The old encoding method for two pass required for the encoder
+                //to be called twice once to run the first pass then again for
+                //the second
+                if (ParFileNum == 1)
                 {
                     opt.Mode = MODE_SECONDPASS_BEST;
                     opt.lag_in_frames = 10;
 
-                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed,
+                        BitRate, opt, "VP8", 0, 0, EncForm) == -1)
                     {
                         fclose(fp);
-                        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                        record_test_complete(FileIndexStr, FileIndexOutputChar,
+                            TestType);
                         return 2;
                     }
 
                     opt.Mode = 3;
-                    vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                    vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                        ParFileNum);
 
                     fclose(fp);
 
-                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                        NULL)
                     {
-                        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                            TextfileString.c_str());
                         exit(1);
                     }
 
                     fprintf(stderr, " ");
 
-                    vpxt_run_exe(FPF_Program);//this needs to be run to make this test compatable with old versions of vp8 that required the first pass to be called diffrently
+                    //this needs to be run to make this test compatable with old
+                    //versions of vp8 that required the first pass to be called
+                    //diffrently
+                    vpxt_run_exe(FPF_Program);
 
                     opt.Mode = MODE_SECONDPASS_BEST;
-                    vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                    vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                        ParFileNum);
 
                     fclose(fp);
 
-                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                        NULL)
                     {
-                        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                            TextfileString.c_str());
                         exit(1);
                     }
 
@@ -467,21 +534,26 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
                 {
                     opt.Mode = MODE_SECONDPASS_BEST;
 
-                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed, BitRate, opt, "VP8", 0, 0, EncForm) == -1)
+                    if (vpxt_compress(input.c_str(), NewEncFile.c_str(), speed,
+                        BitRate, opt, "VP8", 0, 0, EncForm) == -1)
                     {
                         fclose(fp);
-                        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                        record_test_complete(FileIndexStr, FileIndexOutputChar,
+                            TestType);
                         return 2;
                     }
 
                     opt.Mode = MODE_SECONDPASS_BEST;
-                    vpxt_output_compatable_settings(ParFile.c_str(), opt, ParFileNum);
+                    vpxt_output_compatable_settings(ParFile.c_str(), opt,
+                        ParFileNum);
 
                     fclose(fp);
 
-                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
+                    if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) ==
+                        NULL)
                     {
-                        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                            TextfileString.c_str());
                         exit(1);
                     }
 
@@ -510,7 +582,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
             return 0;
         }
 
-        PSNRArr[0] = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0, PRINT_BTH, 1, NULL);
+        PSNRArr[0] = vpxt_psnr(input.c_str(), NewEncFile.c_str(), 0, PRINT_BTH,
+            1, NULL);
         PSNRArr[1] = vpxt_get_psnr(OldEncFile.c_str());
 
         tprintf(PRINT_BTH, "\nNew DataRate");
@@ -524,7 +597,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
     if (Indeterminate == 1)
     {
-        vpxt_formated_print(RESPRT, "New PSNR: %.2f Old PSNR: Not Found - Indeterminate", PSNRArr[0]);
+        vpxt_formated_print(RESPRT, "New PSNR: %.2f Old PSNR: Not Found - "
+            "Indeterminate", PSNRArr[0]);
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
@@ -538,7 +612,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
 
     if (PSNRArr[0] >= PSNRArr[1])
     {
-        vpxt_formated_print(RESPRT, "New PSNR: %.2f >= Old PSNR: %.2f - Passed", PSNRArr[0], PSNRArr[1]);
+        vpxt_formated_print(RESPRT, "New PSNR: %.2f >= Old PSNR: %.2f - Passed",
+            PSNRArr[0], PSNRArr[1]);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
@@ -551,7 +626,8 @@ int test_new_vs_old_psnr(int argc, const char *const *argv, const std::string &W
     }
     else
     {
-        vpxt_formated_print(RESPRT, "New PSNR: %.2f < Old PSNR: %.2f - Failed", PSNRArr[0], PSNRArr[1]);
+        vpxt_formated_print(RESPRT, "New PSNR: %.2f < Old PSNR: %.2f - Failed",
+            PSNRArr[0], PSNRArr[1]);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 

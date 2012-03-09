@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_spatial_resampling(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_allow_spatial_resampling(int argc,
+                                  const char *const *argv,
+                                  const std::string &WorkingDir,
+                                  std::string FilesAr[],
+                                  int TestType,
+                                  int DeleteIVF)
 {
     char *CompressString = "Allow Spatial Resampling";
     char *MyDir = "test_allow_spatial_resampling";
@@ -22,7 +27,9 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string Spatialon = CurTestDirStr;
@@ -51,7 +58,8 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -77,7 +85,8 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -95,7 +104,8 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
     opt.resample_down_water_mark = 60;
     opt.resample_up_water_mark = 80;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -105,7 +115,8 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
         opt.Mode = Mode;
         opt.allow_spatial_resampling = 0;
 
-        if (vpxt_compress(input.c_str(), Spatialoff.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), Spatialoff.c_str(), speed, BitRate,
+            opt, CompressString, 0, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -114,7 +125,8 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
 
         opt.allow_spatial_resampling = 1;
 
-        if (vpxt_compress(input.c_str(), Spatialon.c_str(), speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), Spatialon.c_str(), speed, BitRate,
+            opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -130,54 +142,64 @@ int test_allow_spatial_resampling(int argc, const char *const *argv, const std::
         return 10;
     }
 
-    double SpatialResampPSNR = vpxt_psnr(input.c_str(), Spatialon.c_str(), 0, PRINT_BTH, 1, NULL);
+    double SpatialResampPSNR = vpxt_psnr(input.c_str(), Spatialon.c_str(), 0,
+        PRINT_BTH, 1, NULL);
 
     char SpatialonFileName[255];
     vpxt_file_name(Spatialon.c_str(), SpatialonFileName, 0);
     char SpatialoffFileName[255];
     vpxt_file_name(Spatialoff.c_str(), SpatialoffFileName, 0);
 
-    tprintf(PRINT_BTH, "\nChecking: %s for resized frames\n", SpatialonFileName);
-    int AllowSpatResampleONFramesResized = vpxt_display_resized_frames(Spatialon.c_str(), 1);
+    tprintf(PRINT_BTH, "\nChecking: %s for resized frames\n",
+        SpatialonFileName);
+    int AllowSpatResampleONFramesResized =
+        vpxt_display_resized_frames(Spatialon.c_str(), 1);
 
     tprintf(PRINT_BTH, "Checking: %s for resized frames\n", SpatialoffFileName);
-    int AllowSpatResampleOFFFramesResized = vpxt_display_resized_frames(Spatialoff.c_str(), 1);
+    int AllowSpatResampleOFFFramesResized =
+        vpxt_display_resized_frames(Spatialoff.c_str(), 1);
 
     int fail = 0;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (AllowSpatResampleONFramesResized > 0)
     {
-        vpxt_formated_print(RESPRT, "AllowSpatialResampleOn Frames Resized %i > 0 - Passed", AllowSpatResampleONFramesResized);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOn Frames Resized %i "
+            "> 0 - Passed", AllowSpatResampleONFramesResized);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "AllowSpatialResampleOn Frames Resized %i <= 0 - Failed", AllowSpatResampleONFramesResized);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOn Frames Resized %i "
+            "<= 0 - Failed", AllowSpatResampleONFramesResized);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (AllowSpatResampleOFFFramesResized == 0)
     {
-        vpxt_formated_print(RESPRT, "AllowSpatialResampleOff Frames Resized %i == 0 - Passed", AllowSpatResampleOFFFramesResized);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOff Frames Resized "
+            "%i == 0 - Passed", AllowSpatResampleOFFFramesResized);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "AllowSpatialResampleOff Frames Resized %i != 0 - Failed", AllowSpatResampleOFFFramesResized);
+        vpxt_formated_print(RESPRT, "AllowSpatialResampleOff Frames Resized "
+            "%i != 0 - Failed", AllowSpatResampleOFFFramesResized);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (SpatialResampPSNR > 15.0)
     {
-        vpxt_formated_print(RESPRT, "AllowSpatialResample PSNR: %f > 15.00 - Passed", SpatialResampPSNR);
+        vpxt_formated_print(RESPRT, "AllowSpatialResample PSNR: %f > 15.00 - "
+            "Passed", SpatialResampPSNR);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "AllowSpatialResample On PSNR: %f < 15.00 - Failed", SpatialResampPSNR);
+        vpxt_formated_print(RESPRT, "AllowSpatialResample On PSNR: %f < 15.00 -"
+            " Failed", SpatialResampPSNR);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }

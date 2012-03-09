@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_speed(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_speed(int argc,
+               const char *const *argv,
+               const std::string &WorkingDir,
+               std::string FilesAr[],
+               int TestType,
+               int DeleteIVF)
 {
     char *CompressString = "Cpu Used";
     char *MyDir = "test_speed";
@@ -30,7 +35,9 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string SpeedTestGoodQBase = CurTestDirStr;
@@ -86,7 +93,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -112,7 +120,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,7 +148,8 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
     double RealPSNRArr[17];
     double RealPSNRArrPos[18];
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         int counter = 0;
@@ -155,8 +165,11 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 SpeedTestGoodQ.append(CounterChar);
                 vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
 
-                GoodTotalcpu_tick[counter] = vpxt_cpu_tick_return(SpeedTestGoodQ.c_str(), 0);
-                GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, PRINT_BTH, 1, NULL);
+                GoodTotalcpu_tick[counter] =
+                    vpxt_cpu_tick_return(SpeedTestGoodQ.c_str(), 0);
+                GoodPSNRArr[counter] =
+                    vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1,
+                    PRINT_BTH, 1, NULL);
                 counter++;
             }
         }
@@ -175,29 +188,14 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 SpeedTestRealTime.append(CounterChar);
                 vpxt_enc_format_append(SpeedTestRealTime, EncForm);
 
-                RealTotalcpu_tick[counter2] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, PRINT_BTH, 1, NULL);
+                RealTotalcpu_tick[counter2] =
+                    vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
+                RealPSNRArr[counter2] =
+                    vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1,
+                    PRINT_BTH, 1, NULL);
                 counter--;
                 counter2++;
             }
-
-            //positive values for real time are not hard set and therefore shouldnt be included
-            /*counter = 0;
-
-            while (counter < 17)
-            {
-                char CounterChar[4];
-                vpxt_itoa_custom(counter, CounterChar, 10);
-
-                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
-                SpeedTestRealTime.append(CounterChar);
-                //SpeedTestRealTime.append(".ivf");
-                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
-
-                RealTotalcpu_tickPos[counter] = vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArrPos[counter] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
-                counter++;
-            }*/
         }
     }
     else
@@ -219,18 +217,22 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_GOODQUALITY;
-                unsigned int Time = vpxt_time_compress(input.c_str(), SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, GoodTotalcpu_tick[counter], EncForm);
+                unsigned int Time = vpxt_time_compress(input.c_str(),
+                    SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString,
+                    CompressInt, 0, GoodTotalcpu_tick[counter], EncForm);
 
                 if (Time == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar,
+                        TestType);
                     return 2;
                 }
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    GoodPSNRArr[counter] = vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1, PRINT_BTH, 1, NULL);
+                    GoodPSNRArr[counter] = vpxt_psnr(input.c_str(),
+                        SpeedTestGoodQ.c_str(), 1, PRINT_BTH, 1, NULL);
                 }
 
                 counter++;
@@ -254,56 +256,28 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
                 opt.cpu_used = counter;
                 CompressInt = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tick[counter2], EncForm);
+                unsigned int Time = vpxt_time_compress(input.c_str(),
+                    SpeedTestRealTime.c_str(), speed, BitRate, opt,
+                    CompressString, CompressInt, 0, RealTotalcpu_tick[counter2],
+                    EncForm);
 
                 if (Time == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar,
+                        TestType);
                     return 2;
                 }
 
                 if (TestType != 2 && TestType != 3)
                 {
-                    RealPSNRArr[counter2] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, PRINT_BTH, 1, NULL);
+                    RealPSNRArr[counter2] = vpxt_psnr(input.c_str(),
+                        SpeedTestRealTime.c_str(), 1, PRINT_BTH, 1, NULL);
                 }
 
                 counter--;
                 counter2++;
             }
-
-            //positive values for real time are not hard set and therefore shouldnt be included
-            /*counter = 0;
-
-            while (counter < 17)
-            {
-                char CounterChar[4];
-                vpxt_itoa_custom(counter, CounterChar, 10);
-
-                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
-                SpeedTestRealTime.append(CounterChar);
-                //SpeedTestRealTime.append(".ivf");
-                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
-
-                opt.cpu_used = counter;
-                CompressInt = opt.cpu_used;
-                opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress(input.c_str(), SpeedTestRealTime.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, RealTotalcpu_tickPos[counter], EncForm);
-
-                if (Time == -1)
-                {
-                    fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-                    return 2;
-                }
-
-                if (TestType != 2 && TestType != 3)
-                {
-                    RealPSNRArrPos[counter] = vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1, 0, 1, NULL);
-                }
-
-                counter++;
-            }*/
         }
     }
 
@@ -327,24 +301,37 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
         {
             if (GoodTotalcpu_tick[counter] < GoodTotalcpu_tick[counter-1])
             {
-                tprintf(PRINT_BTH, "      CpuUsed %*i Encode Tick: %i < CpuUsed %*i Encode Tick: %i\n", 2, counter, GoodTotalcpu_tick[counter], 2, counter - 1, GoodTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed %*i Encode Tick: %i < CpuUsed"
+                    " %*i Encode Tick: %i\n", 2, counter,
+                    GoodTotalcpu_tick[counter], 2, counter - 1,
+                    GoodTotalcpu_tick[counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "Fail: CpuUsed %*i Encode Tick: %i > CpuUsed %*i Encode Tick: %i\n", 2, counter, GoodTotalcpu_tick[counter], 2, counter - 1, GoodTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed %*i Encode Tick: %i > "
+                    "CpuUsed %*i Encode Tick: %i\n", 2, counter,
+                    GoodTotalcpu_tick[counter], 2, counter - 1,
+                    GoodTotalcpu_tick[counter-1]);
                 Fail = 1;
             }
 
             float PSNRPercent;
-            PSNRPercent = vpxt_abs_float(GoodPSNRArr[counter] - GoodPSNRArr[counter-1]) / GoodPSNRArr[counter-1];
+            PSNRPercent = vpxt_abs_float(GoodPSNRArr[counter] -
+                GoodPSNRArr[counter-1]) / GoodPSNRArr[counter-1];
 
             if (PSNRPercent < 0.1)
             {
-                tprintf(PRINT_BTH, "      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed %*i PSNR: %4.2f within 10%% "
+                    "of CpuUsed %*i PSNR: %4.2f\n", 2, counter,
+                    GoodPSNRArr[counter], 2, counter - 1,
+                    GoodPSNRArr[counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, GoodPSNRArr[counter], 2, counter - 1, GoodPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed %*i PSNR: %4.2f not within "
+                    "10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter,
+                    GoodPSNRArr[counter], 2, counter - 1,
+                    GoodPSNRArr[counter-1]);
                 Fail2 = 1;
             }
 
@@ -360,14 +347,21 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
         {
             if (RealTotalcpu_tick[counter] < RealTotalcpu_tick[counter-1])
             {
-                tprintf(PRINT_BTH, "      CpuUsed -%*i Encode Tick: %i < CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1, RealTotalcpu_tick[counter], 2, counter, RealTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed -%*i Encode Tick: %i < "
+                    "CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1,
+                    RealTotalcpu_tick[counter], 2, counter,
+                    RealTotalcpu_tick[counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i Encode Tick: %i > CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1, RealTotalcpu_tick[counter], 2, counter, RealTotalcpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i Encode Tick: %i > "
+                    "CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1,
+                    RealTotalcpu_tick[counter], 2, counter,
+                    RealTotalcpu_tick[counter-1]);
                 Fail++;
 
-                float TimePercent = (RealTotalcpu_tick[counter] - RealTotalcpu_tick[counter-1]);
+                float TimePercent = (RealTotalcpu_tick[counter] -
+                    RealTotalcpu_tick[counter-1]);
 
                 if (TimePercent < 0)
                 {
@@ -384,15 +378,20 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
             }
 
             float PSNRPercent;
-            PSNRPercent = vpxt_abs_float(RealPSNRArr[counter] - RealPSNRArr[counter-1]) / RealPSNRArr[counter-1];
+            PSNRPercent = vpxt_abs_float(RealPSNRArr[counter] -
+                RealPSNRArr[counter-1]) / RealPSNRArr[counter-1];
 
             if (PSNRPercent < 0.1)
             {
-                tprintf(PRINT_BTH, "      CpuUsed -%*i PSNR: %4.2f within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "      CpuUsed -%*i PSNR: %4.2f within 10%% "
+                    "of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1,
+                    RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i PSNR: %4.2f not within 10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1, RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
+                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i PSNR: %4.2f not within "
+                    "10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1,
+                    RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
                 Fail2++;
             }
 
@@ -400,53 +399,6 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
         }
 
         tprintf(PRINT_BTH, "\n\n");
-
-        //positive values for real time are not hard set and therefore shouldnt be included
-        /*counter = 1;
-
-        while (counter < 17)
-        {
-            if (RealTotalcpu_tickPos[counter] < RealTotalcpu_tickPos[counter-1])
-            {
-                tprintf(PRINT_BTH, "      CpuUsed %*i Encode Tick: %i < CpuUsed %*i Encode Tick: %i\n", 2, counter, RealTotalcpu_tickPos[counter], 2, counter - 1, RealTotalcpu_tickPos[counter-1]);
-            }
-            else
-            {
-
-                tprintf(PRINT_BTH, "Fail: CpuUsed %*i Encode Tick: %i > CpuUsed %*i Encode Tick: %i\n", 2, counter, RealTotalcpu_tickPos[counter], 2, counter - 1, RealTotalcpu_tickPos[counter-1]);
-                Fail++;
-
-                float TimePercent = (RealTotalcpu_tickPos[counter] - RealTotalcpu_tickPos[counter-1]);
-
-                if (TimePercent < 0)
-                {
-                    TimePercent = TimePercent * (-1);
-                }
-
-                if (TimePercent > (RealTotalcpu_tickPos[counter-1] / 10))
-                {
-                    Failb++;
-                }
-                else
-                {
-                }
-            }
-
-            float PSNRPercent;
-            PSNRPercent = vpxt_abs_float(RealPSNRArrPos[counter] - RealPSNRArrPos[counter-1]) / RealPSNRArrPos[counter-1];
-
-            if (PSNRPercent < 0.1)
-            {
-                tprintf(PRINT_BTH, "      CpuUsed %*i PSNR: %4.2f within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
-            }
-            else
-            {
-                tprintf(PRINT_BTH, "Fail: CpuUsed %*i PSNR: %4.2f not within 10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter, RealPSNRArrPos[counter], 2, counter - 1, RealPSNRArrPos[counter-1]);
-                Fail2++;
-            }
-
-            counter++;
-        }*/
     }
 
 
@@ -456,20 +408,23 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
         if (Fail == 0)
         {
-            vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed increases - Passed");
+            vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed "
+                "increases - Passed");
             tprintf(PRINT_BTH, "\n");
         }
 
         if (Fail < 4 && Fail != 0)
         {
-            vpxt_formated_print(RESPRT, "Enough encode ticks decrease as CpuUsed increases - Min Passed");
+            vpxt_formated_print(RESPRT, "Enough encode ticks decrease as "
+                "CpuUsed increases - Min Passed");
             tprintf(PRINT_BTH, "\n");
             pass = 2;
         }
 
         if (Fail >= 4)
         {
-            vpxt_formated_print(RESPRT, "Not enough encode ticks decrease as CpuUsed increases - Failed");
+            vpxt_formated_print(RESPRT, "Not enough encode ticks decrease as "
+                "CpuUsed increases - Failed");
             tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
@@ -482,21 +437,24 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
         if (Fail2 < 2 && Fail2 != 0)
         {
-            vpxt_formated_print(RESPRT, "Enough PSNRs are within 10%% - Min Passed");
+            vpxt_formated_print(RESPRT, "Enough PSNRs are within 10%% - "
+                "Min Passed");
             tprintf(PRINT_BTH, "\n");
             pass = 2;
         }
 
         if (Fail2 >= 2)
         {
-            vpxt_formated_print(RESPRT, "Not enough PSNRs are within 10%% - Failed");
+            vpxt_formated_print(RESPRT, "Not enough PSNRs are within 10%% - "
+                "Failed");
             tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
 
         if (Failb != 0)
         {
-            vpxt_formated_print(RESPRT, "Not all Encode speeds are within 10%% - Failed");
+            vpxt_formated_print(RESPRT, "Not all Encode speeds are within 10%% "
+                "- Failed");
             tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
@@ -508,24 +466,28 @@ int test_speed(int argc, const char *const *argv, const std::string &WorkingDir,
 
         if (Fail == 1)
         {
-            vpxt_formated_print(RESPRT, "Not all encode ticks decrease as CpuUsed increases - Failed");
+            vpxt_formated_print(RESPRT, "Not all encode ticks decrease as "
+                "CpuUsed increases - Failed");
             tprintf(PRINT_BTH, "\n");
             pass = 0;
         }
         else
         {
-            vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed increases - Passed");
+            vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed "
+                "increases - Passed");
             tprintf(PRINT_BTH, "\n");
         }
 
         if (Fail2 == 0)
         {
-            vpxt_formated_print(RESPRT, "All PSNR values are within 10%% of eachother - Passed");
+            vpxt_formated_print(RESPRT, "All PSNR values are within 10%% of "
+                "eachother - Passed");
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
-            vpxt_formated_print(RESPRT, "Not all PSNR values are within 10%% of eachother - Failed");
+            vpxt_formated_print(RESPRT, "Not all PSNR values are within 10%% "
+                "of eachother - Failed");
             tprintf(PRINT_BTH, "\n");
             pass = 0;
         }

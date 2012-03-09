@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_data_rate(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_data_rate(int argc,
+                   const char *const *argv,
+                   const std::string &WorkingDir,
+                   std::string FilesAr[],
+                   int TestType,
+                   int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_data_rate";
@@ -22,7 +27,9 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string TargetBitRate1 = CurTestDirStr;
@@ -45,7 +52,8 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -71,7 +79,8 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -95,7 +104,8 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
 
     int CompressInt = opt.allow_df;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -104,7 +114,8 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress(input.c_str(), TargetBitRate1.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), TargetBitRate1.c_str(), speed, BitRate,
+            opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -123,7 +134,8 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
     tprintf(PRINT_BTH, "\n");
 
     double FileDataRate = vpxt_data_rate(TargetBitRate1.c_str(), 1);
-    double DataRateProx = vpxt_abs_double(100 - vpxt_abs_double(((FileDataRate * 100) / BitRate)));
+    double DataRateProx = vpxt_abs_double(100 - vpxt_abs_double(((FileDataRate *
+        100) / BitRate)));
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
@@ -131,12 +143,16 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
     {
         if (FileDataRate < BitRate)
         {
-            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% lower than Target, DataRate is within %i%% of: %4.2f - Passed", FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% lower than "
+                "Target, DataRate is within %i%% of: %4.2f - Passed",
+                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
-            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater than Target, DataRate is within %i%% of: %4.2f - Passed", FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater "
+                "than Target, DataRate is within %i%% of: %4.2f - Passed",
+                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
             tprintf(PRINT_BTH, "\n");
         }
 
@@ -154,12 +170,16 @@ int test_data_rate(int argc, const char *const *argv, const std::string &Working
 
         if (FileDataRate < BitRate)
         {
-            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% less than Target, DataRate not within %i%% of: %4.2f - Failed \n", FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% less than "
+                "Target, DataRate not within %i%% of: %4.2f - Failed \n",
+                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
-            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater than Target, DataRate not within %i%% of: %4.2f - Failed \n", FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+            vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater "
+                "than Target, DataRate not within %i%% of: %4.2f - Failed \n",
+                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
             tprintf(PRINT_BTH, "\n");
         }
 

@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_encoder_break_out(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_encoder_break_out(int argc,
+                           const char *const *argv,
+                           const std::string &WorkingDir,
+                           std::string FilesAr[],
+                           int TestType,
+                           int DeleteIVF)
 {
     char *CompressString = "Encoder Break Out";
     char *MyDir = "test_encoder_break_out";
@@ -18,14 +23,15 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-
-    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string CurTestDirStr = "";
 
     std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string EncBreakOut0 = CurTestDirStr;
@@ -91,7 +97,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -117,7 +124,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -132,7 +140,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
     opt.target_bandwidth = BitRate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -143,7 +152,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         opt.encode_breakout = 0;
 
-        if (vpxt_compress(input.c_str(), EncBreakOut0.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), EncBreakOut0.c_str(), speed, BitRate,
+            opt, CompressString, 0, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -152,7 +162,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         opt.encode_breakout = 100;
 
-        if (vpxt_compress(input.c_str(), EncBreakOut100.c_str(), speed, BitRate, opt, CompressString, 100, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), EncBreakOut100.c_str(), speed, BitRate,
+            opt, CompressString, 100, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -161,7 +172,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         opt.encode_breakout = 500;
 
-        if (vpxt_compress(input.c_str(), EncBreakOut500.c_str(), speed, BitRate, opt, CompressString, 500, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), EncBreakOut500.c_str(), speed, BitRate,
+            opt, CompressString, 500, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -170,7 +182,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         opt.encode_breakout = 1000;
 
-        if (vpxt_compress(input.c_str(), EncBreakOut1000.c_str(), speed, BitRate, opt, CompressString, 1000, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), EncBreakOut1000.c_str(), speed,
+            BitRate, opt, CompressString, 1000, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -179,7 +192,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\nDecoding EncBreakOut0");
 
-        if (vpxt_decompress(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str(), DecForm, 1) == -1)
+        if (vpxt_decompress(EncBreakOut0.c_str(), EncBreakOut0_Dec.c_str(),
+            DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -188,7 +202,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\n\nDecoding EncBreakOut100");
 
-        if (vpxt_decompress(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str(), DecForm, 1) == -1)
+        if (vpxt_decompress(EncBreakOut100.c_str(), EncBreakOut100_Dec.c_str(),
+            DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -197,7 +212,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\n\nDecoding EncBreakOut500");
 
-        if (vpxt_decompress(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str(), DecForm, 1) == -1)
+        if (vpxt_decompress(EncBreakOut500.c_str(), EncBreakOut500_Dec.c_str(),
+            DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -206,7 +222,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
         tprintf(PRINT_BTH, "\n\nDecoding EncBreakOut1000");
 
-        if (vpxt_decompress(EncBreakOut1000.c_str(), EncBreakOut1000_Dec.c_str(), DecForm, 1) == -1)
+        if (vpxt_decompress(EncBreakOut1000.c_str(),
+            EncBreakOut1000_Dec.c_str(), DecForm, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -233,11 +250,14 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
     tprintf(PRINT_BTH, "\n");
     EncBreakOut0_Dec_FileSize = vpxt_raw_file_size(EncBreakOut0_Dec.c_str());
     tprintf(PRINT_BTH, "\n");
-    EncBreakOut100_Dec_FileSize = vpxt_raw_file_size(EncBreakOut100_Dec.c_str());
+    EncBreakOut100_Dec_FileSize =
+        vpxt_raw_file_size(EncBreakOut100_Dec.c_str());
     tprintf(PRINT_BTH, "\n");
-    EncBreakOut500_Dec_FileSize = vpxt_raw_file_size(EncBreakOut500_Dec.c_str());
+    EncBreakOut500_Dec_FileSize =
+        vpxt_raw_file_size(EncBreakOut500_Dec.c_str());
     tprintf(PRINT_BTH, "\n");
-    EncBreakOut1000_Dec_FileSize = vpxt_raw_file_size(EncBreakOut1000_Dec.c_str());
+    EncBreakOut1000_Dec_FileSize =
+        vpxt_raw_file_size(EncBreakOut1000_Dec.c_str());
     tprintf(PRINT_BTH, "\n");
 
     double PSNR0;
@@ -245,10 +265,14 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
     double PSNR500;
     double PSNR1000;
 
-    PSNR0 = vpxt_psnr(input.c_str(), EncBreakOut0.c_str(), 0, PRINT_BTH, 1, NULL);
-    PSNR100 = vpxt_psnr(input.c_str(), EncBreakOut100.c_str(), 0, PRINT_BTH, 1, NULL);
-    PSNR500 = vpxt_psnr(input.c_str(), EncBreakOut500.c_str(), 0, PRINT_BTH, 1, NULL);
-    PSNR1000 = vpxt_psnr(input.c_str(), EncBreakOut1000.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNR0 = vpxt_psnr(input.c_str(), EncBreakOut0.c_str(), 0, PRINT_BTH, 1,
+        NULL);
+    PSNR100 = vpxt_psnr(input.c_str(), EncBreakOut100.c_str(), 0, PRINT_BTH, 1,
+        NULL);
+    PSNR500 = vpxt_psnr(input.c_str(), EncBreakOut500.c_str(), 0, PRINT_BTH, 1,
+        NULL);
+    PSNR1000 = vpxt_psnr(input.c_str(), EncBreakOut1000.c_str(), 0, PRINT_BTH,
+        1, NULL);
 
     double dB1 = vpxt_abs_double(PSNR0 - PSNR100);
     double dB2 = vpxt_abs_double(PSNR100 - PSNR500);
@@ -262,10 +286,14 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
     tprintf(PRINT_BTH, "\n");
     tprintf(PRINT_BTH, "Raw Files Size Source  : %i \n", SourceFileSize);
-    tprintf(PRINT_BTH, "Raw Files Size PSNR0   : %i \n", EncBreakOut0_Dec_FileSize);
-    tprintf(PRINT_BTH, "Raw Files Size PSNR100 : %i \n", EncBreakOut100_Dec_FileSize);
-    tprintf(PRINT_BTH, "Raw Files Size PSNR500 : %i \n", EncBreakOut500_Dec_FileSize);
-    tprintf(PRINT_BTH, "Raw Files Size PSNR1000: %i \n", EncBreakOut1000_Dec_FileSize);
+    tprintf(PRINT_BTH, "Raw Files Size PSNR0   : %i \n",
+        EncBreakOut0_Dec_FileSize);
+    tprintf(PRINT_BTH, "Raw Files Size PSNR100 : %i \n",
+        EncBreakOut100_Dec_FileSize);
+    tprintf(PRINT_BTH, "Raw Files Size PSNR500 : %i \n",
+        EncBreakOut500_Dec_FileSize);
+    tprintf(PRINT_BTH, "Raw Files Size PSNR1000: %i \n",
+        EncBreakOut1000_Dec_FileSize);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
@@ -310,7 +338,8 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
     if (SourceFileSize != EncBreakOut1000_Dec_FileSize)
     {
-        vpxt_formated_print(RESPRT, "EncBreakOut1000 was not properly decoded.");
+        vpxt_formated_print(RESPRT, "EncBreakOut1000 was not properly "
+            "decoded.");
         tprintf(PRINT_BTH, "\n");
         Pass = 0;
     }
@@ -322,60 +351,69 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
 
     if (dB1 <= 2)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 0 PSNR and 100 PSNR are within 2 dB - Passed");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 0 PSNR and 100 PSNR are "
+            "within 2 dB - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
     if (dB1 >= 5)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 0 PSNR and 100 PSNR not within 5 dB - Failed");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 0 PSNR and 100 PSNR not "
+            "within 5 dB - Failed");
         tprintf(PRINT_BTH, "\n");
         Pass = 0;
     }
 
     if (dB1 > 2 && dB1 < 5)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 0 PSNR and 100 PSNR greater than 2 dB but less than 5 dB - Indeterminate");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 0 PSNR and 100 PSNR "
+            "greater than 2 dB but less than 5 dB - Indeterminate");
         tprintf(PRINT_BTH, "\n");
         IndCount++;
     }
 
     if (dB2 <= 2)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 100 PSNR and 500 PSNR are within 2 dB - Passed");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 100 PSNR and 500 PSNR "
+            "are within 2 dB - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
     if (dB2 >= 5)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 100 PSNR and 500 PSNR not within 5 dB - Failed");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 100 PSNR and 500 PSNR "
+            "not within 5 dB - Failed");
         tprintf(PRINT_BTH, "\n");
         Pass = 0;
     }
 
     if (dB2 > 2 && dB2 < 5)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 100 PSNR and 500 PSNR greater than 2 dB but less than 5 dB - Indeterminate");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 100 PSNR and 500 PSNR "
+            "greater than 2 dB but less than 5 dB - Indeterminate");
         tprintf(PRINT_BTH, "\n");
         IndCount++;
     }
 
     if (dB3 <= 2)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 500 PSNR and 1000 PSNR are within 2 dB - Passed");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 500 PSNR and 1000 PSNR "
+            "are within 2 dB - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
     if (dB3 >= 5)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 500 PSNR and 1000 PSNR not within 5 dB - Failed");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 500 PSNR and 1000 PSNR "
+            "not within 5 dB - Failed");
         tprintf(PRINT_BTH, "\n");
         Pass = 0;
     }
 
     if (dB3 > 2 && dB3 < 5)
     {
-        vpxt_formated_print(RESPRT, "Encoder Breakout 500 PSNR and 1000 PSNR greater than 2 dB but less than 5 dB: - Indeterminate");
+        vpxt_formated_print(RESPRT, "Encoder Breakout 500 PSNR and 1000 PSNR "
+            "greater than 2 dB but less than 5 dB: - Indeterminate");
         tprintf(PRINT_BTH, "\n");
         IndCount++;
     }
@@ -387,7 +425,11 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
             tprintf(PRINT_BTH, "\nPassed\n");
 
             if (DeleteIVF)
-                vpxt_delete_files(8, EncBreakOut0.c_str(), EncBreakOut100.c_str(), EncBreakOut500.c_str(), EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(), EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(), EncBreakOut1000_Dec.c_str());
+                vpxt_delete_files(8, EncBreakOut0.c_str(),
+                EncBreakOut100.c_str(), EncBreakOut500.c_str(),
+                EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(),
+                EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(),
+                EncBreakOut1000_Dec.c_str());
 
 
             fclose(fp);
@@ -399,7 +441,11 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
             tprintf(PRINT_BTH, "\nIndeterminate\n");
 
             if (DeleteIVF)
-                vpxt_delete_files(8, EncBreakOut0.c_str(), EncBreakOut100.c_str(), EncBreakOut500.c_str(), EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(), EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(), EncBreakOut1000_Dec.c_str());
+                vpxt_delete_files(8, EncBreakOut0.c_str(),
+                EncBreakOut100.c_str(), EncBreakOut500.c_str(),
+                EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(),
+                EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(),
+                EncBreakOut1000_Dec.c_str());
 
 
             fclose(fp);
@@ -412,7 +458,10 @@ int test_encoder_break_out(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(8, EncBreakOut0.c_str(), EncBreakOut100.c_str(), EncBreakOut500.c_str(), EncBreakOut1000.c_str(), EncBreakOut0_Dec.c_str(), EncBreakOut100_Dec.c_str(), EncBreakOut500_Dec.c_str(), EncBreakOut1000_Dec.c_str());
+            vpxt_delete_files(8, EncBreakOut0.c_str(), EncBreakOut100.c_str(),
+            EncBreakOut500.c_str(), EncBreakOut1000.c_str(),
+            EncBreakOut0_Dec.c_str(), EncBreakOut100_Dec.c_str(),
+            EncBreakOut500_Dec.c_str(), EncBreakOut1000_Dec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

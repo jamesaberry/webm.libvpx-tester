@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_change_cpu_enc(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_change_cpu_enc(int argc,
+                        const char *const *argv,
+                        const std::string &WorkingDir,
+                        std::string FilesAr[],
+                        int TestType,
+                        int DeleteIVF)
 {
 #if defined(ARM)
     printf("\nTEST NOT SUPPORTED FOR ARM.\n");
@@ -41,7 +46,9 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string ChangedCPUDec0OutFile = CurTestDirStr;
@@ -90,7 +97,8 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -116,7 +124,8 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -138,7 +147,8 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
     putenv("VPX_SIMD_CAPS=0");
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         std::vector<std::string> CompressonVector;
@@ -172,7 +182,8 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
         while (CurrentFile < CompressonVector.size())
         {
-            cpu_tick2 = vpxt_cpu_tick_return(CompressonVector[CurrentFile].c_str(), 0);
+            cpu_tick2 =
+                vpxt_cpu_tick_return(CompressonVector[CurrentFile].c_str(), 0);
 
             if (CurrentFile >= 1)
             {
@@ -180,16 +191,22 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
                 char CompFileIndexOutputChar[255];
                 char CompFile2[255];
-                vpxt_file_name(CompressonVector[CurrentFile-1].c_str(), CompFileIndexOutputChar, 0);
-                vpxt_file_name(CompressonVector[CurrentFile].c_str(), CompFile2, 0);
+                vpxt_file_name(CompressonVector[CurrentFile-1].c_str(),
+                    CompFileIndexOutputChar, 0);
+                vpxt_file_name(CompressonVector[CurrentFile].c_str(),
+                    CompFile2, 0);
 
-                tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
+                tprintf(PRINT_BTH, "\nComparing %s to %s\n",
+                    CompFileIndexOutputChar, CompFile2);
 
-                int lngRC = vpxt_compare_enc(CompressonVector[CurrentFile-1].c_str(), CompressonVector[CurrentFile].c_str(), 0);
+                int lngRC =
+                    vpxt_compare_enc(CompressonVector[CurrentFile-1].c_str(),
+                    CompressonVector[CurrentFile].c_str(), 0);
 
                 if (lngRC >= 0)
                 {
-                    tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: %i", lngRC);
+                    tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: "
+                        "%i", lngRC);
                     Fail = 1;
                 }
 
@@ -200,13 +217,15 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
                 if (lngRC == -2)
                 {
-                    tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File 1.\n");
+                    tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File 1."
+                        "\n");
                     Fail = 1;
                 }
 
                 if (lngRC == -3)
                 {
-                    tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File 2.\n");
+                    tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File 2."
+                        "\n");
                     Fail = 1;
                 }
             }
@@ -228,7 +247,9 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
         opt.arnr_max_frames = ArnrMaxframes;
 
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: NONE");
-        unsigned int Time1 = vpxt_time_compress(input.c_str(), OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick1, EncForm);
+        unsigned int Time1 = vpxt_time_compress(input.c_str(),
+            OutputStr.c_str(), speed, BitRate, opt, CompressString, CompressInt,
+            0, cpu_tick1, EncForm);
         CompressonVector.push_back(OutputStr);
 
         if (Time1 == -1)
@@ -315,13 +336,16 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
                 vpxt_enc_format_append(ChangedCPUDecNOutCurrent, EncForm);
 
                 opt.Mode = Mode;
-                unsigned int Time2 = vpxt_time_compress(input.c_str(), ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt, CompressString, CompressInt, 0, cpu_tick2, EncForm);
+                unsigned int Time2 = vpxt_time_compress(input.c_str(),
+                    ChangedCPUDecNOutCurrent.c_str(), speed, BitRate, opt,
+                    CompressString, CompressInt, 0, cpu_tick2, EncForm);
                 CompressonVector.push_back(ChangedCPUDecNOutCurrent);
 
                 if (Time2 == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                    record_test_complete(FileIndexStr, FileIndexOutputChar,
+                        TestType);
                     std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
                     Simd_Caps_Str.append(Simd_Caps_Orig_Char);
                     putenv((char*)Simd_Caps_Str.c_str());
@@ -331,18 +355,27 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
                 if (TestType != 2 && counter != 0)
                 {
                     char CompFileIndexOutputChar[255];
-                    vpxt_file_name(CompressonVector[CompressonVector.size()-1].c_str(), CompFileIndexOutputChar, 0);
+                    vpxt_file_name(
+                        CompressonVector[CompressonVector.size()-1].c_str(),
+                        CompFileIndexOutputChar, 0);
 
                     char CompFile2[255];
-                    vpxt_file_name(CompressonVector[CompressonVector.size()-2].c_str(), CompFile2, 0);
+                    vpxt_file_name(
+                        CompressonVector[CompressonVector.size()-2].c_str(),
+                        CompFile2, 0);
 
-                    tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompFileIndexOutputChar, CompFile2);
+                    tprintf(PRINT_BTH, "\nComparing %s to %s\n",
+                        CompFileIndexOutputChar, CompFile2);
 
-                    int lngRC = vpxt_compare_enc(CompressonVector[CompressonVector.size()-1].c_str(), CompressonVector[CompressonVector.size()-2].c_str(), 0);
+                    int lngRC =
+                        vpxt_compare_enc(
+                        CompressonVector[CompressonVector.size()-1].c_str(),
+                        CompressonVector[CompressonVector.size()-2].c_str(), 0);
 
                     if (lngRC >= 0)
                     {
-                        tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: %i on file number %i\n", lngRC, FileNumber);
+                        tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: "
+                            "%i on file number %i\n", lngRC, FileNumber);
                         Fail = 1;
                     }
 
@@ -353,13 +386,15 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
                     if (lngRC == -2)
                     {
-                        tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File 1.\n");
+                        tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File "
+                            "1.\n");
                         Fail = 1;
                     }
 
                     if (lngRC == -3)
                     {
-                        tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File 2.\n");
+                        tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File "
+                            "2.\n");
                         Fail = 1;
                     }
                 }
@@ -417,14 +452,16 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
 
     if (cpu_tick1 == cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "cpu_tick1: %u == cpu_tick2: %u - MinPassed", cpu_tick1, cpu_tick2);
+        vpxt_formated_print(RESPRT, "cpu_tick1: %u == cpu_tick2: %u - MinPassed"
+            , cpu_tick1, cpu_tick2);
         tprintf(PRINT_BTH, "\n");
         overallfail = 2;
     }
 
     if (cpu_tick1 != cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "cpu_tick1: %u != cpu_tick2: %u - Passed", cpu_tick1, cpu_tick2);
+        vpxt_formated_print(RESPRT, "cpu_tick1: %u != cpu_tick2: %u - Passed",
+            cpu_tick1, cpu_tick2);
         tprintf(PRINT_BTH, "\n");
     }
 
@@ -445,7 +482,10 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(8, ChangedCPUDec0OutFile.c_str(), OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(), OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(), OutputStr6.c_str());
+            vpxt_delete_files(8, ChangedCPUDec0OutFile.c_str(),
+            OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(),
+            OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(),
+            OutputStr6.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -459,7 +499,10 @@ int test_change_cpu_enc(int argc, const char *const *argv, const std::string &Wo
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(8, ChangedCPUDec0OutFile.c_str(), OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(), OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(), OutputStr6.c_str());
+            vpxt_delete_files(8, ChangedCPUDec0OutFile.c_str(),
+            OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(),
+            OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(),
+            OutputStr6.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

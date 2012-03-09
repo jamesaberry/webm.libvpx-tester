@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_one_pass_vs_two_pass(int argc,
+                              const char *const *argv,
+                              const std::string &WorkingDir,
+                              std::string FilesAr[],
+                              int TestType,
+                              int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_one_pass_vs_two_pass";
@@ -21,7 +26,9 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string OnePassOutFile1 = CurTestDirStr;
@@ -74,7 +81,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -100,7 +108,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -119,7 +128,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     int BitRate3 = BitRate + (BitRate * 0.3);
 
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -129,7 +139,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
         opt.Mode = 5;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress(input.c_str(), TwoPassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile1.c_str(), speed,
+            BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -138,7 +149,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress(input.c_str(), TwoPassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile2.c_str(), speed,
+            BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -147,7 +159,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress(input.c_str(), TwoPassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), TwoPassOutFile3.c_str(), speed,
+            BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -157,7 +170,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
         opt.Mode = 2;
         opt.target_bandwidth = BitRate1;
 
-        if (vpxt_compress(input.c_str(), OnePassOutFile1.c_str(), speed, BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), OnePassOutFile1.c_str(), speed,
+            BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -166,7 +180,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate2;
 
-        if (vpxt_compress(input.c_str(), OnePassOutFile2.c_str(), speed, BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), OnePassOutFile2.c_str(), speed,
+            BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -175,7 +190,8 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
 
         opt.target_bandwidth = BitRate3;
 
-        if (vpxt_compress(input.c_str(), OnePassOutFile3.c_str(), speed, BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), OnePassOutFile3.c_str(), speed,
+            BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -209,15 +225,19 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     double PSNROnePass2;
     double PSNROnePass3;
 
-    PSNRTwoPass1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
-    PSNRTwoPass2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
-    PSNRTwoPass3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
-    PSNROnePass1 = vpxt_psnr(input.c_str(), OnePassOutFile1.c_str(), 1, PRINT_BTH, 1, NULL);
-    PSNROnePass2 = vpxt_psnr(input.c_str(), OnePassOutFile2.c_str(), 1, PRINT_BTH, 1, NULL);
-    PSNROnePass3 = vpxt_psnr(input.c_str(), OnePassOutFile3.c_str(), 1, PRINT_BTH, 1, NULL);
+    PSNRTwoPass1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    PSNRTwoPass2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    PSNRTwoPass3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    PSNROnePass1 = vpxt_psnr(input.c_str(), OnePassOutFile1.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    PSNROnePass2 = vpxt_psnr(input.c_str(), OnePassOutFile2.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    PSNROnePass3 = vpxt_psnr(input.c_str(), OnePassOutFile3.c_str(), 1,
+        PRINT_BTH, 1, NULL);
 
-    //    double PSRNPerc = vpxt_abs_double(((PSNR2 - PSNR1) / PSNR1) * 100.00);
-    //    double BRPerc = vpxt_abs_double(((Size2 - Size1) / Size1) * 100.00);
     int Pass = 0;
 
     //data rates not always in order so find smallest observed data rate
@@ -274,11 +294,15 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
     else
         maxCommon = SizeTwoPassMax;
 
-    vpxt_solve_quadratic(SizeTwoPass1, SizeTwoPass2, SizeTwoPass3, PSNRTwoPass1, PSNRTwoPass2, PSNRTwoPass3, TwoPassA, TwoPassB, TwoPassC);
-    float TwoPassAreaVal = vpxt_area_under_quadratic(TwoPassA, TwoPassB, TwoPassC, minCommon, maxCommon);
+    vpxt_solve_quadratic(SizeTwoPass1, SizeTwoPass2, SizeTwoPass3, PSNRTwoPass1,
+        PSNRTwoPass2, PSNRTwoPass3, TwoPassA, TwoPassB, TwoPassC);
+    float TwoPassAreaVal = vpxt_area_under_quadratic(TwoPassA, TwoPassB,
+        TwoPassC, minCommon, maxCommon);
 
-    vpxt_solve_quadratic(SizeOnePass1, SizeOnePass2, SizeOnePass3, PSNROnePass1, PSNROnePass2, PSNROnePass3, OnePassA, OnePassB, OnePassC);
-    float OnePassAreaVal = vpxt_area_under_quadratic(OnePassA, OnePassB, OnePassC, minCommon, maxCommon);
+    vpxt_solve_quadratic(SizeOnePass1, SizeOnePass2, SizeOnePass3, PSNROnePass1,
+        PSNROnePass2, PSNROnePass3, OnePassA, OnePassB, OnePassC);
+    float OnePassAreaVal = vpxt_area_under_quadratic(OnePassA, OnePassB,
+        OnePassC, minCommon, maxCommon);
 
     tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"
@@ -304,29 +328,39 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
             , SizeOnePass3, PSNROnePass3
            );
 
-    tprintf(PRINT_BTH, "Two Pass Curve: y = %fx^2 + %fx + %f\n", TwoPassA, TwoPassB, TwoPassC);
-    tprintf(PRINT_BTH, "One Pass Curve: y = %fx^2 + %fx + %f\n", OnePassA, OnePassB, OnePassC);
-    tprintf(PRINT_BTH, "\nGood Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
-    tprintf(PRINT_BTH, "Best Quality area under curve for interval %.2f - %.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
+    tprintf(PRINT_BTH, "Two Pass Curve: y = %fx^2 + %fx + %f\n", TwoPassA,
+        TwoPassB, TwoPassC);
+    tprintf(PRINT_BTH, "One Pass Curve: y = %fx^2 + %fx + %f\n", OnePassA,
+        OnePassB, OnePassC);
+    tprintf(PRINT_BTH, "\nGood Quality area under curve for interval %.2f - "
+        "%.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
+    tprintf(PRINT_BTH, "Best Quality area under curve for interval %.2f - "
+        "%.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (TwoPassAreaVal == OnePassAreaVal)
     {
-        vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f == One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
+        vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f == One "
+            "Pass area under curve: %.2f - Failed", TwoPassAreaVal,
+            OnePassAreaVal);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (OnePassAreaVal < TwoPassAreaVal)
     {
-        vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f > One Pass area under curve: %.2f - Passed", TwoPassAreaVal, OnePassAreaVal);
+        vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f > One "
+            "Pass area under curve: %.2f - Passed", TwoPassAreaVal,
+            OnePassAreaVal);
         tprintf(PRINT_BTH, "\n");
         Pass = 1;
     }
 
     if (OnePassAreaVal > TwoPassAreaVal)
     {
-        vpxt_formated_print(RESPRT, "Two Pass  area under curve: %.2f < One Pass area under curve: %.2f - Failed", TwoPassAreaVal, OnePassAreaVal);
+        vpxt_formated_print(RESPRT, "Two Pass  area under curve: %.2f < One "
+            "Pass area under curve: %.2f - Failed", TwoPassAreaVal,
+            OnePassAreaVal);
         tprintf(PRINT_BTH, "\n");
     }
 
@@ -335,7 +369,10 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(6, OnePassOutFile1.c_str(), OnePassOutFile2.c_str(), OnePassOutFile3.c_str(), TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(), TwoPassOutFile3.c_str());
+            vpxt_delete_files(6, OnePassOutFile1.c_str(),
+            OnePassOutFile2.c_str(), OnePassOutFile3.c_str(),
+            TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(),
+            TwoPassOutFile3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -346,7 +383,10 @@ int test_one_pass_vs_two_pass(int argc, const char *const *argv, const std::stri
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(6, OnePassOutFile1.c_str(), OnePassOutFile2.c_str(), OnePassOutFile3.c_str(), TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(), TwoPassOutFile3.c_str());
+            vpxt_delete_files(6, OnePassOutFile1.c_str(),
+            OnePassOutFile2.c_str(), OnePassOutFile3.c_str(),
+            TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(),
+            TwoPassOutFile3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

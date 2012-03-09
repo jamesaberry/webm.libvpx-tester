@@ -1,8 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int tool_rand_comp(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType)
+int tool_rand_comp(int argc,
+                   const char *const *argv,
+                   const std::string &WorkingDir,
+                   std::string FilesAr[],
+                   int TestType)
 {
-
     char *CompressString = "RandomInput";
 
     if (argc != 3)
@@ -57,8 +60,10 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
     vpxt_file_name(input.c_str(), InputFileName, 0);
     std::string InputFileNameStr = InputFileName;
 
-    if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 4).compare(".ivf") == 0) //if file extension is present remove it
-        WorkingDir4.append(InputFileNameStr.substr(0, InputFileNameStr.length() - 4));
+    if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 4).compare(".ivf"
+        ) == 0) //if file extension is present remove it
+        WorkingDir4.append(InputFileNameStr.substr(0,
+        InputFileNameStr.length() - 4));
     else
         WorkingDir4.append(InputFileName);
 
@@ -83,7 +88,8 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -117,7 +123,8 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt,
+            CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -128,11 +135,11 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
     if (Mode == 1)
     {
         opt.Mode = MODE_GOODQUALITY;
-        //vpxt_output_settings(RandCompParOut,opt);
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt,
+            CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -143,11 +150,11 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
     if (Mode == 2)
     {
         opt.Mode = MODE_BESTQUALITY;
-        //vpxt_output_settings(RandCompParOut,opt);
         int speed = opt.multi_threaded;
         int BitRate = opt.target_bandwidth;
 
-        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt,
+            CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);
@@ -165,8 +172,8 @@ int tool_rand_comp(int argc, const char *const *argv, const std::string &Working
         int BitRate = opt.target_bandwidth;
         opt.Mode = MODE_SECONDPASS_BEST;
 
-        //vpxt_output_settings(RandCompParOut,opt);
-        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), RandComp, speed, BitRate, opt,
+            CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, TestType);

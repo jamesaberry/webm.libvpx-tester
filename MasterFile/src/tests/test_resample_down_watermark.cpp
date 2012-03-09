@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_resample_down_watermark(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_resample_down_watermark(int argc,
+                                 const char *const *argv,
+                                 const std::string &WorkingDir,
+                                 std::string FilesAr[],
+                                 int TestType,
+                                 int DeleteIVF)
 {
     char *CompressString = "Resample Down Watermark";
     char *MyDir = "test_resample_down_watermark";
@@ -22,7 +27,9 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string DownWaterSamp90OutFile = CurTestDirStr;
@@ -51,7 +58,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -77,7 +85,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -102,7 +111,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     opt.resample_up_water_mark = 100;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -113,7 +123,9 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
         opt.resample_down_water_mark = ResampleDownWaterMarkHigh;
 
-        if (vpxt_compress(input.c_str(), DownWaterSamp90OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), DownWaterSamp90OutFile.c_str(), speed,
+            BitRate, opt, CompressString, opt.resample_down_water_mark, 0,
+            EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -122,7 +134,9 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
         opt.resample_down_water_mark = ResampleDownWaterMarkLow;
 
-        if (vpxt_compress(input.c_str(), DownWaterSamp10OutFile.c_str(), speed, BitRate, opt, CompressString, opt.resample_down_water_mark, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), DownWaterSamp10OutFile.c_str(), speed,
+            BitRate, opt, CompressString, opt.resample_down_water_mark, 0,
+            EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -144,14 +158,21 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     char DownWaterSamp90Filename[255];
     vpxt_file_name(DownWaterSamp90OutFile.c_str(), DownWaterSamp90Filename, 0);
 
-    int DispKeyFrames10int = vpxt_display_key_frames(DownWaterSamp10OutFile.c_str(), 1);
-    int DispResized10int = vpxt_display_resized_frames(DownWaterSamp10OutFile.c_str(), 1);
-    int DispCheckPBMThr10int = vpxt_check_pbm_threshold(DownWaterSamp10OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkLow);
+    int DispKeyFrames10int =
+        vpxt_display_key_frames(DownWaterSamp10OutFile.c_str(), 1);
+    int DispResized10int =
+        vpxt_display_resized_frames(DownWaterSamp10OutFile.c_str(), 1);
+    int DispCheckPBMThr10int =
+        vpxt_check_pbm_threshold(DownWaterSamp10OutFile.c_str(),
+        opt.target_bandwidth, opt.maximum_buffer_size * 1000,
+        opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000,
+        ResampleDownWaterMarkLow);
     int RDWMCheck10int = 0;
 
     if (DispResized10int > 0)
     {
-        tprintf(PRINT_STD, "\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp10Filename);
+        tprintf(PRINT_STD, "\nChecking %s buffer for correct resize frame "
+            "placement:\n\n", DownWaterSamp10Filename);
         RDWMCheck10int = vpxt_dfwm_check(DownWaterSamp10OutFile.c_str(), 1);
     }
     else
@@ -159,14 +180,21 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
         RDWMCheck10int = -2;
     }
 
-    int DispKeyFrames90int = vpxt_display_key_frames(DownWaterSamp90OutFile.c_str(), 1);
-    int DispResized90int = vpxt_display_resized_frames(DownWaterSamp90OutFile.c_str(), 1);
-    int DispCheckPBMThr90int = vpxt_check_pbm_threshold(DownWaterSamp90OutFile.c_str(), opt.target_bandwidth, opt.maximum_buffer_size * 1000, opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000, ResampleDownWaterMarkHigh);
+    int DispKeyFrames90int =
+        vpxt_display_key_frames(DownWaterSamp90OutFile.c_str(), 1);
+    int DispResized90int =
+        vpxt_display_resized_frames(DownWaterSamp90OutFile.c_str(), 1);
+    int DispCheckPBMThr90int =
+        vpxt_check_pbm_threshold(DownWaterSamp90OutFile.c_str(),
+        opt.target_bandwidth, opt.maximum_buffer_size * 1000,
+        opt.starting_buffer_level * 1000, opt.optimal_buffer_level * 1000,
+        ResampleDownWaterMarkHigh);
     int RDWMCheck90int = -3;
 
     if (DispResized90int > 0)
     {
-        tprintf(PRINT_STD, "\nChecking %s buffer for correct resize frame placement:\n\n", DownWaterSamp90Filename);
+        tprintf(PRINT_STD, "\nChecking %s buffer for correct resize frame "
+            "placement:\n\n", DownWaterSamp90Filename);
         RDWMCheck90int = vpxt_dfwm_check(DownWaterSamp90OutFile.c_str(), 1);
     }
     else
@@ -174,18 +202,21 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
         RDWMCheck90int = -2;
     }
 
-    int fail = 0; //1 = failed // 2 = indt // 3 = track resize for 10 // track resize for 90
+    //1 = failed // 2 = indt // 3 = track resize for 10 // track resize for 90
+    int fail = 0;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (DispResized10int > 0 && DispResized90int > 0)
     {
-        vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned resized frames - Indeterminate");
+        vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned resized "
+            "frames - Indeterminate");
         tprintf(PRINT_BTH, "\n");
     }
 
     if (DispResized10int == 0 && DispResized90int > 0)
     {
-        vpxt_formated_print(RESPRT, "DWMS 10 returned no resized frames; DWMS 90 returned resized frames - Indeterminate");
+        vpxt_formated_print(RESPRT, "DWMS 10 returned no resized frames; DWMS "
+            "90 returned resized frames - Indeterminate");
         tprintf(PRINT_BTH, "\n");
         fail = 4;
         //indt
@@ -193,7 +224,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     if (DispResized10int > 0 && DispResized90int == 0)
     {
-        vpxt_formated_print(RESPRT, "DWMS 90 returned no resized frames; DWMS 10 returned resized frames - Failed");
+        vpxt_formated_print(RESPRT, "DWMS 90 returned no resized frames; DWMS "
+            "10 returned resized frames - Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
         //fail
@@ -201,21 +233,24 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     if (DispResized10int == 0 && DispResized90int == 0)
     {
-        vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned  no resized frames - Indeterminate");
+        vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned  no resized "
+            "frames - Indeterminate");
         tprintf(PRINT_BTH, "\n");
         fail = 2;
     }
 
     if (RDWMCheck10int == 0)
     {
-        vpxt_formated_print(RESPRT, "DWMS 10 resizes first frame at correct buffer location - Passed");
+        vpxt_formated_print(RESPRT, "DWMS 10 resizes first frame at correct "
+            "buffer location - Passed");
         tprintf(PRINT_BTH, "\n");
         //fail
     }
 
     if (RDWMCheck10int == 1)
     {
-        vpxt_formated_print(RESPRT, "DWMS 10 does not resize first frame at correct buffer location - Failed");
+        vpxt_formated_print(RESPRT, "DWMS 10 does not resize first frame at "
+            "correct buffer location - Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
         //fail
@@ -223,7 +258,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     if (RDWMCheck10int == -3)
     {
-        vpxt_formated_print(RESPRT, "DWMS 10 buffer threshold never reached - Indeterminate");
+        vpxt_formated_print(RESPRT, "DWMS 10 buffer threshold never reached - "
+            "Indeterminate");
         tprintf(PRINT_BTH, "\n");
         fail = 2;
         //fail
@@ -233,14 +269,16 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
     {
         if (fail == 4)
         {
-            vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at correct buffer location - Passed");
+            vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at "
+                "correct buffer location - Passed");
             tprintf(PRINT_BTH, "\n");
             fail = 3;
             //fail
         }
         else
         {
-            vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at correct buffer location - Passed");
+            vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at "
+                "correct buffer location - Passed");
             tprintf(PRINT_BTH, "\n");
             //fail
         }
@@ -248,7 +286,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     if (RDWMCheck90int == 1)
     {
-        vpxt_formated_print(RESPRT, "DWMS 90 does not resize first frame at correct buffer location - Failed");
+        vpxt_formated_print(RESPRT, "DWMS 90 does not resize first frame at "
+            "correct buffer location - Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 2;
         //fail
@@ -256,7 +295,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
 
     if (RDWMCheck90int == -3)
     {
-        vpxt_formated_print(RESPRT, "DWMS 90 buffer threshold never reached - Indeterminate");
+        vpxt_formated_print(RESPRT, "DWMS 90 buffer threshold never reached - "
+            "Indeterminate");
         tprintf(PRINT_BTH, "\n");
         fail = 2;
         //fail
@@ -267,7 +307,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(),
+            DownWaterSamp10OutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -279,7 +320,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
         tprintf(PRINT_BTH, "\nMin Passed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(),
+            DownWaterSamp10OutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -291,7 +333,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
         tprintf(PRINT_BTH, "\nIndeterminate\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(),
+            DownWaterSamp10OutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -302,7 +345,8 @@ int test_resample_down_watermark(int argc, const char *const *argv, const std::s
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(), DownWaterSamp10OutFile.c_str());
+            vpxt_delete_files(2, DownWaterSamp90OutFile.c_str(),
+            DownWaterSamp10OutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

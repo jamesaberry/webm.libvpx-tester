@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_force_key_frame(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_force_key_frame(int argc,
+                         const char *const *argv,
+                         const std::string &WorkingDir,
+                         std::string FilesAr[],
+                         int TestType,
+                         int DeleteIVF)
 {
     char *CompressString = "Key Frame Frequency";
     char *MyDir = "test_force_key_frame";
@@ -23,7 +28,9 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string ForceKeyFrame = CurTestDirStr;
@@ -52,7 +59,8 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -78,7 +86,8 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -94,7 +103,8 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
     opt.target_bandwidth = BitRate;
     opt.auto_key = 0;//1;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -104,7 +114,9 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
         opt.Mode = Mode;
         opt.key_freq = 0;//ForceKeyFrameInt;
 
-        if (vpxt_compress_force_key_frame(input.c_str(), ForceKeyFrame.c_str(), speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0, ForceKeyFrameInt, EncForm) == -1)
+        if (vpxt_compress_force_key_frame(input.c_str(), ForceKeyFrame.c_str(),
+            speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0,
+            ForceKeyFrameInt, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -122,14 +134,16 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
 
     vpxt_display_key_frames(ForceKeyFrame.c_str(), 1);
 
-    int fail = vpxt_check_force_key_frames(KeyFrameoutputfile.c_str(), ForceKeyFrameInt, ForceKeyFrame.c_str());
+    int fail = vpxt_check_force_key_frames(KeyFrameoutputfile.c_str(),
+        ForceKeyFrameInt, ForceKeyFrame.c_str());
 
     if (fail == 1)
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, ForceKeyFrame.c_str(), KeyFrameoutputfile.c_str());
+            vpxt_delete_files(2, ForceKeyFrame.c_str(),
+            KeyFrameoutputfile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -137,13 +151,15 @@ int test_force_key_frame(int argc, const char *const *argv, const std::string &W
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Key Frames occur only when Force Key Frame dictates: %i - Passed", ForceKeyFrameInt);
+        vpxt_formated_print(RESPRT, "Key Frames occur only when Force Key "
+            "Frame dictates: %i - Passed", ForceKeyFrameInt);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, ForceKeyFrame.c_str(), KeyFrameoutputfile.c_str());
+            vpxt_delete_files(2, ForceKeyFrame.c_str(),
+            KeyFrameoutputfile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

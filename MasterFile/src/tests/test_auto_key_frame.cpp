@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_auto_key_frame(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_auto_key_frame(int argc,
+                        const char *const *argv,
+                        const std::string &WorkingDir,
+                        std::string FilesAr[],
+                        int TestType,
+                        int DeleteIVF)
 {
     char *CompressString = "Auto Key Frame";
     char *MyDir = "test_auto_key_frame";
@@ -23,7 +28,9 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string AutoKeyFramingWorks1 = CurTestDirStr;
@@ -62,7 +69,8 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -88,7 +96,8 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -105,7 +114,8 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     opt.auto_key = 1;
     opt.key_freq = AutoKeyFramingInt;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -114,14 +124,16 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks1.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks1.c_str(), speed,
+            BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
-        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks2.c_str(), speed, BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks2.c_str(), speed,
+            BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -145,7 +157,8 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
 
     if (!inFileIndexOutputChar.good())
     {
-        tprintf(PRINT_BTH, "\nKey Frame File 1 Not Found: %s\n", KeyFrameTxtOut1.c_str());
+        tprintf(PRINT_BTH, "\nKey Frame File 1 Not Found: %s\n",
+            KeyFrameTxtOut1.c_str());
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -153,7 +166,8 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
 
     if (!infile2.good())
     {
-        tprintf(PRINT_BTH, "\nKey Frame File 2 Not Found: %s\n", KeyFrameTxtOut2.c_str());
+        tprintf(PRINT_BTH, "\nKey Frame File 2 Not Found: %s\n",
+            KeyFrameTxtOut2.c_str());
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
@@ -189,13 +203,15 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     infile2.close();
 
     char AutoKeyFramingWorks1FileName[255];
-    vpxt_file_name(AutoKeyFramingWorks1.c_str(), AutoKeyFramingWorks1FileName, 0);
+    vpxt_file_name(AutoKeyFramingWorks1.c_str(), AutoKeyFramingWorks1FileName,
+        0);
     char AutoKeyFramingWorks2FileName[255];
-    vpxt_file_name(AutoKeyFramingWorks2.c_str(), AutoKeyFramingWorks2FileName, 0);
+    vpxt_file_name(AutoKeyFramingWorks2.c_str(), AutoKeyFramingWorks2FileName,
+        0);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    //////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     int fail2 = 0;
     std::ifstream infile(KeyFrameTxtOut1.c_str());
 
@@ -234,7 +250,9 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
 
         if (vpxt_abs_int(y2 - x2) > AutoKeyFramingInt)
         {
-            vpxt_formated_print(RESPRT, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, x2, y2);
+            vpxt_formated_print(RESPRT, "Key Frames do not occur at least as "
+                "frequently as Auto Key Frame dictates: %i No key frames "
+                "between %i and %i - Failed", AutoKeyFramingInt, x2, y2);
             tprintf(PRINT_BTH, "\n");
             fail2 = 1;
         }
@@ -251,11 +269,14 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
         maxKeyFrame = y2;
     }
 
-    int NumberofFrames = vpxt_get_number_of_frames(AutoKeyFramingWorks1.c_str());
+    int NumberofFrames =vpxt_get_number_of_frames(AutoKeyFramingWorks1.c_str());
 
     if (NumberofFrames - 1 >= (maxKeyFrame + AutoKeyFramingInt))
     {
-        vpxt_formated_print(RESPRT, "Key Frames do not occur at least as frequently as Auto Key Frame dictates: %i No key frames between %i and %i - Failed", AutoKeyFramingInt, maxKeyFrame, NumberofFrames - 1);
+        vpxt_formated_print(RESPRT, "Key Frames do not occur at least as "
+            "frequently as Auto Key Frame dictates: %i No key frames between "
+            "%i and %i - Failed", AutoKeyFramingInt, maxKeyFrame,
+            NumberofFrames - 1);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -263,19 +284,23 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     ///////////////////////////////////////////////////////////////////////////
     if (fail2 == 0)
     {
-        vpxt_formated_print(RESPRT, "Key Frames occur at least as frequently as Auto Key Frame dictates: %i - Passed", AutoKeyFramingInt);
+        vpxt_formated_print(RESPRT, "Key Frames occur at least as frequently as"
+            " Auto Key Frame dictates: %i - Passed", AutoKeyFramingInt);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (fail == 0)
     {
-        vpxt_formated_print(RESPRT, "Key Frames occur at the same locations for %s and %s - Passed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
+        vpxt_formated_print(RESPRT, "Key Frames occur at the same locations "
+            "for %s and %s - Passed", AutoKeyFramingWorks1FileName,
+            AutoKeyFramingWorks2FileName);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, AutoKeyFramingWorks1.c_str(), AutoKeyFramingWorks2.c_str());
+            vpxt_delete_files(2, AutoKeyFramingWorks1.c_str(),
+            AutoKeyFramingWorks2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -283,13 +308,16 @@ int test_auto_key_frame(int argc, const char *const *argv, const std::string &Wo
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Key Frames do not occur at the same locations for %s and %s - Failed", AutoKeyFramingWorks1FileName, AutoKeyFramingWorks2FileName);
+        vpxt_formated_print(RESPRT, "Key Frames do not occur at the same "
+            "locations for %s and %s - Failed", AutoKeyFramingWorks1FileName,
+            AutoKeyFramingWorks2FileName);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, AutoKeyFramingWorks1.c_str(), AutoKeyFramingWorks2.c_str());
+            vpxt_delete_files(2, AutoKeyFramingWorks1.c_str(),
+            AutoKeyFramingWorks2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

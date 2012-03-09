@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_error_resolution(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_error_resolution(int argc,
+                          const char *const *argv,
+                          const std::string &WorkingDir,
+                          std::string FilesAr[],
+                          int TestType,
+                          int DeleteIVF)
 {
     char *CompressString = "Error Resilient Mode";
     char *MyDir = "test_error_resolution";
@@ -22,7 +27,9 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string ErrorOnOutFile = CurTestDirStr;
@@ -53,7 +60,8 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -87,7 +95,8 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
 
         opt.error_resilient_mode = 1;
 
-        if (vpxt_compress(input.c_str(), ErrorOnOutFile.c_str(), speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), ErrorOnOutFile.c_str(),
+            speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -96,7 +105,8 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
 
         opt.error_resilient_mode = 0;
 
-        if (vpxt_compress(input.c_str(), ErrorOffOutFile.c_str(), speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), ErrorOffOutFile.c_str(), speed,
+            BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -116,8 +126,10 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
     double PSNRon;
     double PSNRoff;
 
-    PSNRon = vpxt_psnr(input.c_str(), ErrorOnOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
-    PSNRoff = vpxt_psnr(input.c_str(), ErrorOffOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRon = vpxt_psnr(input.c_str(), ErrorOnOutFile.c_str(), 0, PRINT_BTH, 1,
+        NULL);
+    PSNRoff = vpxt_psnr(input.c_str(), ErrorOffOutFile.c_str(), 0, PRINT_BTH, 1,
+        NULL);
 
     float PSRNPerc = 100 * vpxt_abs_float((PSNRon - PSNRoff) / PSNRoff);
 
@@ -125,13 +137,15 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
 
     if (PSRNPerc < 10.00)
     {
-        vpxt_formated_print(RESPRT, "ErrorRes on PSNR is within 10%% of Error Res off PSNR: %.2f%% - Passed", PSRNPerc);
+        vpxt_formated_print(RESPRT, "ErrorRes on PSNR is within 10%% of Error "
+            "Res off PSNR: %.2f%% - Passed", PSRNPerc);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, ErrorOnOutFile.c_str(), ErrorOffOutFile.c_str());
+            vpxt_delete_files(2, ErrorOnOutFile.c_str(),
+            ErrorOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -139,13 +153,15 @@ int test_error_resolution(int argc, const char *const *argv, const std::string &
     }
     else
     {
-        vpxt_formated_print(RESPRT, "ErrorRes on PSNR is not within 10%% of Error Res off PSNR: %.2f%% - Failed", PSRNPerc);
+        vpxt_formated_print(RESPRT, "ErrorRes on PSNR is not within 10%% of "
+            "Error Res off PSNR: %.2f%% - Failed", PSRNPerc);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, ErrorOnOutFile.c_str(), ErrorOffOutFile.c_str());
+            vpxt_delete_files(2, ErrorOnOutFile.c_str(),
+            ErrorOffOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

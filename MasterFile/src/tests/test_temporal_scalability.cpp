@@ -2,126 +2,128 @@
 
 int test_temporal_scalability(int argc,
                               const char *const *argv,
-                              const std::string &working_dir,
-                              std::string files_ar[],
-                              int test_type,
-                              int delete_ivf)
+                              const std::string &WorkingDir,
+                              std::string FilesAr[],
+                              int TestType,
+                              int DeleteIVF)
 {
-    char *comp_out_str = "Allow Drop Frames";
-    char *test_dir = "test_temporal_scalability";
-    int input_ver = vpxt_check_arg_input(argv[1], argc);
+    char *CompressString = "Allow Drop Frames";
+    char *MyDir = "test_temporal_scalability";
+    int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
-    if (input_ver < 0)
+    if (inputCheck < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    //layer_mode is rate_num as used in vp8_scalable_patterns.exe
-    int layer_mode = atoi(argv[3]);
-    int temp_scale_br_0 = atoi(argv[4]);
-    int temp_scale_br_1 = atoi(argv[5]);
-    int temp_scale_br_2 = atoi(argv[6]);
-    int temp_scale_br_3 = atoi(argv[7]);
-    int temp_scale_br_4 = atoi(argv[8]);
-    std::string enc_format = argv[9];
+    int LayerMode = atoi(argv[3]);
+    int TempBitRate0 = atoi(argv[4]);
+    int TempBitRate1 = atoi(argv[5]);
+    int TempBitRate2 = atoi(argv[6]);
+    int TempBitRate3 = atoi(argv[7]);
+    int TempBitRate4 = atoi(argv[8]);
+    std::string EncForm = argv[9];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string cur_test_dir_str = "";
-    std::string file_index_str = "";
-    char main_test_dir_char[255] = "";
-    char file_index_output_char[255] = "";
+    std::string CurTestDirStr = "";
+    std::string FileIndexStr = "";
+    char MainTestDirChar[255] = "";
+    char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
-            cur_test_dir_str, file_index_str, main_test_dir_char,
-            file_index_output_char, files_ar) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+            CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+            FilesAr) == 11)
                 return 11;
 
-    int number_of_encodes = 0;
-    std::string temp_scale_out_base = cur_test_dir_str;
-    temp_scale_out_base += slashCharStr();
-    temp_scale_out_base += test_dir;
-    temp_scale_out_base += "_compression";
+    std::string TimeCompress = CurTestDirStr;
+    TimeCompress.append(slashCharStr());
+    TimeCompress.append(MyDir);
+    TimeCompress.append("_time_compare");
+    vpxt_enc_format_append(TimeCompress, EncForm);
 
-    std::vector<std::string> enc_vec;
-    std::vector<std::string> temp_scale_vec;
-    std::vector<std::string> temp_scale_fs_vec;
+    std::string TempScaleBase = CurTestDirStr;
+    TempScaleBase.append(slashCharStr());
+    TempScaleBase.append(MyDir);
+    TempScaleBase.append("_compression");
 
-    std::vector<std::string>::iterator str_it;
-    std::vector<std::string>::iterator str_it2;
+    std::string TempScale0 = TempScaleBase;
+    TempScale0.append("_0");
+    std::string TempScale0FS = TempScale0.c_str();
+    TempScale0FS.append("_FrameStats.txt");
+    std::string Enc0 = TempScale0.c_str();
+    Enc0.append("_compare");
+    vpxt_enc_format_append(Enc0, EncForm);
+    vpxt_enc_format_append(TempScale0, EncForm);
 
+    std::string TempScale1 = TempScaleBase;
+    TempScale1.append("_1");
+    std::string TempScale1FS = TempScale1.c_str();
+    TempScale1FS.append("_FrameStats.txt");
+    std::string Enc1 = TempScale1.c_str();
+    Enc1.append("_compare");
+    vpxt_enc_format_append(Enc1, EncForm);
+    vpxt_enc_format_append(TempScale1, EncForm);
 
-    if((layer_mode >= 0 && layer_mode < 2) || layer_mode == 7)
-        number_of_encodes = 2;
-    if((layer_mode >= 2 && layer_mode < 6) || layer_mode == 8)
-        number_of_encodes = 3;
-    if(layer_mode == 6)
-        number_of_encodes = 5;
+    std::string TempScale2 = TempScaleBase;
+    TempScale2.append("_2");
+    std::string TempScale2FS = TempScale2.c_str();
+    TempScale2FS.append("_FrameStats.txt");
+    std::string Enc2 = TempScale2.c_str();
+    Enc2.append("_compare");
+    vpxt_enc_format_append(Enc2, EncForm);
+    vpxt_enc_format_append(TempScale2, EncForm);
 
-    for(int i = 0; i < number_of_encodes; ++i){
-        char i_char[8];
-        vpxt_itoa_custom(i, i_char, 10);
+    std::string TempScale3 = TempScaleBase;
+    TempScale3.append("_3");
+    std::string TempScale3FS = TempScale3.c_str();
+    TempScale3FS.append("_FrameStats.txt");
+    std::string Enc3 = TempScale3.c_str();
+    Enc3.append("_compare");
+    vpxt_enc_format_append(Enc3, EncForm);
+    vpxt_enc_format_append(TempScale3, EncForm);
 
-        std::string temp_scale_str = cur_test_dir_str;
-        temp_scale_str += slashCharStr();
-        temp_scale_str += test_dir;
-        temp_scale_str += "_compression_";
-        temp_scale_str += i_char;
-
-        std::string temp_scale_fs_str = cur_test_dir_str;
-        temp_scale_fs_str += slashCharStr();
-        temp_scale_fs_str += test_dir;
-        temp_scale_fs_str += "_compression_";
-        temp_scale_fs_str += i_char;
-        temp_scale_fs_str +="_FrameStats.txt";
-
-        std::string enc_str = cur_test_dir_str;
-        enc_str += slashCharStr();
-        enc_str += test_dir;
-        enc_str += "_compression_";
-        enc_str += i_char;
-        enc_str += "_compare";
-
-        vpxt_enc_format_append(enc_str, enc_format);
-        vpxt_enc_format_append(temp_scale_str, enc_format);
-
-        temp_scale_vec.push_back(temp_scale_str);
-        temp_scale_fs_vec.push_back(temp_scale_fs_str);
-        enc_vec.push_back(enc_str);
-    }
+    std::string TempScale4 = TempScaleBase;
+    TempScale4.append("_4");
+    std::string TempScale4FS = TempScale4.c_str();
+    TempScale4FS.append("_FrameStats.txt");
+    std::string Enc4 = TempScale4.c_str();
+    Enc4.append("_compare");
+    vpxt_enc_format_append(Enc4, EncForm);
+    vpxt_enc_format_append(TempScale4, EncForm);
 
     /////////////OutPutfile////////////
-    std::string text_file_str = cur_test_dir_str;
-    text_file_str += slashCharStr();
-    text_file_str += test_dir;
+    std::string TextfileString = CurTestDirStr;
+    TextfileString.append(slashCharStr());
+    TextfileString.append(MyDir);
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
-        text_file_str += ".txt";
+    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
+        TextfileString.append(".txt");
     else
-        text_file_str += "_TestOnly.txt";
+        TextfileString.append("_TestOnly.txt");
 
     FILE *fp;
 
-    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            text_file_str.c_str());
+            TextfileString.c_str());
                 exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
-        print_header_full_test(argc, argv, main_test_dir_char);
+    if (TestType == TEST_AND_COMP)
+        print_header_full_test(argc, argv, MainTestDirChar);
 
-    if (test_type == COMP_ONLY)
-        print_header_compression_only(argc, argv, main_test_dir_char);
+    if (TestType == COMP_ONLY)
+        print_header_compression_only(argc, argv, MainTestDirChar);
 
-    if (test_type == TEST_ONLY)
-        print_header_test_only(argc, argv, cur_test_dir_str);
+    if (TestType == TEST_ONLY)
+        print_header_test_only(argc, argv, CurTestDirStr);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
@@ -129,7 +131,7 @@ int test_temporal_scalability(int argc,
     unsigned int enc_compress_time = 0;
 
     ///////////////////Use Custom Settings///////////////////
-    if (input_ver == 2)
+    if (inputCheck == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -137,8 +139,7 @@ int test_temporal_scalability(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
@@ -149,137 +150,276 @@ int test_temporal_scalability(int argc,
 
     //Run Test only (Runs Test, Sets up test to be run, or skips
     //compresion of files)
-    if (test_type == TEST_ONLY)
+    if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
+        //opt.Mode = Mode;
         opt.Mode = 0;
+        //opt.target_bandwidth = 256;
 
         scale_compress_time = vpxt_compress_scalable_patterns(input.c_str(),
-            temp_scale_out_base.c_str(), speed, opt, comp_out_str, 0, 0,
-            enc_format, layer_mode, temp_scale_br_0, temp_scale_br_1,
-            temp_scale_br_2, temp_scale_br_3, temp_scale_br_4);
+            TempScaleBase.c_str(), speed, opt, CompressString, 0, 0, EncForm,
+            LayerMode, TempBitRate0, TempBitRate1, TempBitRate2, TempBitRate3,
+            TempBitRate4);
 
         if (scale_compress_time == -1){
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
     }
 
-    if (test_type == COMP_ONLY)
+    if (TestType == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 10;
     }
 
-    std::vector<double> enc_psnr;
-    std::vector<double> temp_scale_psnr;
+    std::vector<double> TempScalePSNR;
+    std::vector<double> EncPSNR;
     std::vector<double> temp_scale_fs_results;
-    std::vector<int> eval_drop_vec;
 
-    int temp_bitrate_arr[5] =  {temp_scale_br_0, temp_scale_br_1,
-        temp_scale_br_2, temp_scale_br_3, temp_scale_br_4};
-
-    if(layer_mode == 0 || layer_mode == 8){
-        eval_drop_vec.push_back(1);
-        eval_drop_vec.push_back(0);
-    }
-    else if(layer_mode == 1){
-        eval_drop_vec.push_back(2);
-        eval_drop_vec.push_back(0);
-    }
-    else if(layer_mode == 2){
-        eval_drop_vec.push_back(5);
-        eval_drop_vec.push_back(2);
-        eval_drop_vec.push_back(0);
-    }
-    else if(layer_mode == 6){
-        eval_drop_vec.push_back(15);
-        eval_drop_vec.push_back(7);
-        eval_drop_vec.push_back(3);
-        eval_drop_vec.push_back(1);
-        eval_drop_vec.push_back(0);
-    }
-    else{
-        eval_drop_vec.push_back(3);
-        eval_drop_vec.push_back(1);
-        eval_drop_vec.push_back(0);
-    }
-
-    int j = 0;
     int delete_files_num = 0;
 
-    //encode standard compressions and do psnrs
-    for(str_it = enc_vec.begin(); str_it < enc_vec.end(); ++str_it)
+    if((LayerMode >= 0 && LayerMode < 2) || LayerMode == 7)
     {
-        unsigned int cpu_tick = 0;
-        opt.target_bandwidth = temp_bitrate_arr[j];
-        enc_compress_time = vpxt_time_compress(input.c_str(), (*str_it).c_str(),
-            0, temp_bitrate_arr[j], opt, comp_out_str, 0, 0, cpu_tick,
-            enc_format);
+        delete_files_num = 4;
+
+        unsigned int CPUTick = 0;
+        opt.target_bandwidth = TempBitRate0;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc0.c_str(), 0,
+            TempBitRate0, opt, CompressString, 0, 0, CPUTick, EncForm);
 
         if (enc_compress_time == -1){
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
-        enc_psnr.push_back(vpxt_psnr(input.c_str(), (*str_it).c_str(), 0,
+        CPUTick = 0;
+        opt.target_bandwidth = TempBitRate1;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc1.c_str(), 0,
+            TempBitRate1, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc0.c_str(), 0, PRINT_BTH,
+            1, NULL));
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc1.c_str(), 0, PRINT_BTH,
+            1, NULL));
+
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale0.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale1.c_str(), 0,
             PRINT_BTH, 1, NULL));
 
-        ++j;
-    }
+        vpxt_print_frame_statistics(input.c_str(), TempScale0.c_str(),
+            TempScale0FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+        vpxt_print_frame_statistics(input.c_str(), TempScale1.c_str(),
+            TempScale1FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
 
-    //run psnrs for temp scale compressions
-    for(str_it = temp_scale_vec.begin(); str_it < temp_scale_vec.end();++str_it)
-        temp_scale_psnr.push_back(vpxt_psnr(input.c_str(), (*str_it).c_str(), 0,
-        PRINT_BTH, 1, NULL));
-
-    //gather frame statistics for temp scale compressions
-    str_it2 = temp_scale_vec.begin();
-    for(str_it = temp_scale_fs_vec.begin(); str_it<temp_scale_fs_vec.end();
-        ++str_it){
-        vpxt_print_frame_statistics(input.c_str(), (*str_it2).c_str(),
-            (*str_it).c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
-
-        ++str_it2;
-    }
-
-    //evaluate frame satistics
-    std::vector<int>::iterator eval_drop_it = eval_drop_vec.begin();
-    for(str_it = temp_scale_fs_vec.begin(); str_it < temp_scale_fs_vec.end();
-        ++str_it){
         temp_scale_fs_results.push_back(
-            vpxt_eval_frame_stats_temp_scale((*str_it).c_str(), *eval_drop_it));
+            vpxt_eval_frame_stats_temp_scale(TempScale0FS.c_str(),
+            (LayerMode == 0 || LayerMode == 7)? 1 : 2));
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale1FS.c_str(), 0));
+    }
+    if((LayerMode >= 2 && LayerMode < 6) || LayerMode == 8)
+    {
+        delete_files_num = 6;
 
-        ++eval_drop_it;
+        unsigned int CPUTick = 0;
+        opt.target_bandwidth = TempBitRate0;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc0.c_str(),
+            0, TempBitRate0, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+         CPUTick = 0;
+         opt.target_bandwidth = TempBitRate1;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc1.c_str(), 0,
+            TempBitRate1, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+        CPUTick = 0;
+        opt.target_bandwidth = TempBitRate2;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc2.c_str(), 0,
+            TempBitRate2, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc0.c_str(), 0, PRINT_BTH,
+            1, NULL));
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc1.c_str(), 0, PRINT_BTH,
+            1, NULL));
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc2.c_str(), 0, PRINT_BTH,
+            1, NULL));
+
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale0.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale1.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale2.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+
+        vpxt_print_frame_statistics(input.c_str(), TempScale0.c_str(),
+            TempScale0FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+        vpxt_print_frame_statistics(input.c_str(), TempScale1.c_str(),
+            TempScale1FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+        vpxt_print_frame_statistics(input.c_str(), TempScale2.c_str(),
+            TempScale2FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale0FS.c_str(),
+            LayerMode == 2 ? 5 : 3));
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale1FS.c_str(),
+            LayerMode == 2 ? 2 : 1));
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale2FS.c_str(), 0));
+    }
+    if(LayerMode == 6)
+    {
+        delete_files_num = 10;
+
+        unsigned int CPUTick = 0;
+        opt.target_bandwidth = TempBitRate0;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc0.c_str(), 0,
+            TempBitRate0, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+         CPUTick = 0;
+         opt.target_bandwidth = TempBitRate1;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc1.c_str(), 0,
+            TempBitRate1, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+        CPUTick = 0;
+        opt.target_bandwidth = TempBitRate2;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc2.c_str(), 0,
+            TempBitRate2, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+        CPUTick = 0;
+        opt.target_bandwidth = TempBitRate3;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc3.c_str(), 0,
+            TempBitRate3, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+        CPUTick = 0;
+        opt.target_bandwidth = TempBitRate4;
+        enc_compress_time = vpxt_time_compress(input.c_str(), Enc4.c_str(), 0,
+            TempBitRate4, opt, CompressString, 0, 0, CPUTick, EncForm);
+
+        if (enc_compress_time == -1){
+            fclose(fp);
+            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            return 2;
+        }
+
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc0.c_str(), 0, PRINT_BTH,
+            1, NULL));
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc1.c_str(), 0, PRINT_BTH,
+            1, NULL));
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc2.c_str(), 0, PRINT_BTH,
+            1, NULL));
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc3.c_str(), 0, PRINT_BTH,
+            1, NULL));
+        EncPSNR.push_back(vpxt_psnr(input.c_str(), Enc4.c_str(), 0, PRINT_BTH,
+            1, NULL));
+
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale0.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale1.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale2.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale3.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+        TempScalePSNR.push_back(vpxt_psnr(input.c_str(), TempScale4.c_str(), 0,
+            PRINT_BTH, 1, NULL));
+
+        vpxt_print_frame_statistics(input.c_str(), TempScale0.c_str(),
+            TempScale0FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+        vpxt_print_frame_statistics(input.c_str(), TempScale1.c_str(),
+            TempScale1FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+        vpxt_print_frame_statistics(input.c_str(), TempScale2.c_str(),
+            TempScale2FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+        vpxt_print_frame_statistics(input.c_str(), TempScale3.c_str(),
+            TempScale3FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+        vpxt_print_frame_statistics(input.c_str(), TempScale4.c_str(),
+            TempScale4FS.c_str(), 0, NULL, 1, 1, 1, 1, 1, 1);
+
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale0FS.c_str(), 15));
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale1FS.c_str(), 7));
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale2FS.c_str(), 3));
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale3FS.c_str(), 1));
+        temp_scale_fs_results.push_back(
+            vpxt_eval_frame_stats_temp_scale(TempScale4FS.c_str(), 0));
     }
 
     tprintf(PRINT_BTH, "\n");
 
-    int i = 0;
+    int it;
 
-    //temp scale file name only vector
-    std::vector<std::string> temp_scale_fn_vec;
-    for(str_it = temp_scale_vec.begin();str_it < temp_scale_vec.end();++str_it){
-        char file_name_char[256];
-        vpxt_file_name((*str_it).c_str(), file_name_char, 0);
-        temp_scale_fn_vec.push_back(file_name_char);
-    }
+    char TempScaleChar[5][256];
+    vpxt_file_name(TempScale0.c_str(), TempScaleChar[0], 0);
+    vpxt_file_name(TempScale1.c_str(), TempScaleChar[1], 0);
+    vpxt_file_name(TempScale2.c_str(), TempScaleChar[2], 0);
+    vpxt_file_name(TempScale3.c_str(), TempScaleChar[3], 0);
+    vpxt_file_name(TempScale4.c_str(), TempScaleChar[4], 0);
 
-    //encode comp file name only vector
-    std::vector<std::string> enc_fn_vec;
-    for(str_it = enc_vec.begin(); str_it < enc_vec.end(); ++str_it){
-        char file_name_char[256];
-        vpxt_file_name((*str_it).c_str(), file_name_char, 0);
-        enc_fn_vec.push_back(file_name_char);
-    }
+    char EncChar[5][256];
+    vpxt_file_name(Enc0.c_str(), EncChar[0], 0);
+    vpxt_file_name(Enc1.c_str(), EncChar[1], 0);
+    vpxt_file_name(Enc2.c_str(), EncChar[2], 0);
+    vpxt_file_name(Enc3.c_str(), EncChar[3], 0);
+    vpxt_file_name(Enc4.c_str(), EncChar[4], 0);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
@@ -287,38 +427,39 @@ int test_temporal_scalability(int argc,
     //make sure speed is comperable to normal encode
     //make sure psnr values increase as # decimation dec
     //make sure psnr values obtain min quality assurence
-    //make sure psnr values compared to standard encodes are with in range
+    //make suer psnr values compared to standard encodes are with in range
 
     int fail = 0;
     int increase_fail = 0;
     int drop_frame_fail = 0;
-    std::vector<double>::iterator double_it;
-    std::vector<double>::iterator double_it2;
+
+    for ( it=0 ; it < TempScalePSNR.size()-1; it++ )
+        if(TempScalePSNR[it] > TempScalePSNR[it+1])
+            increase_fail = 1;
+
+    for ( it=0 ; it < temp_scale_fs_results.size()-1; it++ )
+        if(!temp_scale_fs_results[it])
+            drop_frame_fail = 1;
 
     //psnr min threashold check
-    str_it = temp_scale_fn_vec.begin();
-    for(double_it = temp_scale_psnr.begin(); double_it < temp_scale_psnr.end();
-        ++double_it){
-        if(*double_it < 15.0){
+    for ( it=0 ; it < TempScalePSNR.size(); it++ )
+    {
+        if(TempScalePSNR[it] < 15.0)
+        {
             vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 15.0 - Failed",
-                (*str_it).c_str(), *double_it);
+                TempScaleChar[it], TempScalePSNR[it]);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
-        else{
+        if(TempScalePSNR[it] >= 15.0)
+        {
             vpxt_formated_print(RESPRT, "%s PSNR: %.2f >= 15.0 - Passed",
-                (*str_it).c_str(), *double_it);
+                TempScaleChar[it], TempScalePSNR[it]);
             tprintf(PRINT_BTH, "\n");
         }
-
-        //increase psnr check
-        if(double_it < temp_scale_psnr.end()-1)
-            if(*double_it > *(double_it+1))
-                increase_fail = 1;
-
-        ++str_it;
     }
 
+    //increasing psnr check
     if (!increase_fail)
     {
         vpxt_formated_print(RESPRT, "All PSNRs increase correctly - Passed");
@@ -331,59 +472,56 @@ int test_temporal_scalability(int argc,
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
-
-    //evaluate temp scale psnrs vs normal encode psnrs
-    double_it2 = enc_psnr.begin();
-    str_it = temp_scale_fn_vec.begin();
-    str_it2 = enc_fn_vec.begin();
-    int comp_num = 0;
-    int temp_scale_psnr_size = temp_scale_psnr.size();
-    for(double_it = temp_scale_psnr.begin(); double_it < temp_scale_psnr.end();
-        ++double_it)
+    //evaluate psnrs vs normal encode
+    for ( it=TempScalePSNR.size() ; it > 0; it-- )
     {
         double range = 1.0;
+        char *TempScaleFileChar = "";
+        char *EncFileChar = "";
 
-        //adjust target bitrate range
-        if(comp_num == temp_scale_psnr_size - 1)
+        if(it == TempScalePSNR.size()){
             range = 0.10;
-        if(comp_num == temp_scale_psnr_size - 2)
+            TempScaleFileChar = TempScaleChar[it-1];
+            EncFileChar = EncChar[it-1];
+        }
+        if(it == TempScalePSNR.size()-1){
             range = 0.35;
-        if(comp_num == temp_scale_psnr_size - 3)
+            TempScaleFileChar = TempScaleChar[it-1];
+            EncFileChar = EncChar[it-1];
+        }
+        if(it == TempScalePSNR.size()-2){
             range = 0.40;
-        if(comp_num == temp_scale_psnr_size - 4)
+            TempScaleFileChar = TempScaleChar[it-1];
+            EncFileChar = EncChar[it-1];
+        }
+        if(it == TempScalePSNR.size()-3){
             range = 0.45;
-        if(comp_num == temp_scale_psnr_size - 5)
+            TempScaleFileChar = TempScaleChar[it-1];
+            EncFileChar = EncChar[it-1];
+        }
+        if(it == TempScalePSNR.size()-4){
             range = 0.50;
-
-        // if wihin x% - pass
-        if (*double_it >= (*double_it2 - (*double_it2 * range)))
+            TempScaleFileChar = TempScaleChar[it-1];
+            EncFileChar = EncChar[it-1];
+        }
+        // if within x% - pass
+        if (TempScalePSNR[it-1] >= (EncPSNR[it-1] - (EncPSNR[it-1] * range)))
         {
             vpxt_formated_print(RESPRT, "%s PSNR: %.2f is within at least "
-                "%.0f%% of %s PSNR: %.2f - Passed", (*str_it).c_str(),
-                *double_it, range*100, (*str_it2).c_str(), *double_it2);
+                "%.0f%% of %s PSNR: %.2f - Passed", TempScaleFileChar,
+                TempScalePSNR[it-1], range*100, EncFileChar, EncPSNR[it-1]);
         }
         else
         {
             vpxt_formated_print(RESPRT, "%s PSNR: %.2f is not within at least "
-                "%.0f%% of %s PSNR: %.2f - Failed", (*str_it).c_str(),
-                *double_it, range*100, (*str_it2).c_str(), *double_it2);
+                "%.0f%% of %s PSNR: %.2f - Failed", TempScaleFileChar,
+                TempScalePSNR[it-1], range*100, EncFileChar, EncPSNR[it-1]);
             fail = 1;
         }
-
-        ++comp_num;
-        ++str_it;
-        ++str_it2;
-        ++double_it2;
-
         tprintf(PRINT_BTH, "\n");
     }
 
     //frame decimation check
-    for(double_it = temp_scale_fs_results.begin(); double_it <
-        temp_scale_fs_results.end(); ++double_it){
-        if(!*double_it)
-            drop_frame_fail = 1;
-    }
     if (!drop_frame_fail)
     {
         vpxt_formated_print(RESPRT, "Decemation occurs correctly for all files"
@@ -392,22 +530,16 @@ int test_temporal_scalability(int argc,
     }
     else
     {
-        str_it = temp_scale_fn_vec.begin();
-        for(double_it = temp_scale_fs_results.begin();
-            double_it < temp_scale_fs_results.end(); ++double_it)
-        {
-            if(!*double_it){
+        for ( it=0 ; it < temp_scale_fs_results.size()-1; it++ ){
+            if(!temp_scale_fs_results[it]){
                 vpxt_formated_print(RESPRT, "Decemation does not occur"
-                    " correctly for %s - Failed", *str_it);
+                    " correctly for %s - Failed", TempScaleChar[it]);
                 tprintf(PRINT_BTH, "\n");
             }
-
-            ++str_it;
         }
 
         fail = 1;
     }
-
     //if scale compress time is less than or within 20% of normal compression
     //pass otherwise fail.
     if(scale_compress_time < enc_compress_time)
@@ -439,34 +571,53 @@ int test_temporal_scalability(int argc,
 
     tprintf(PRINT_BTH, "\n");
 
-    //delete encoded files if flagged
-    if (delete_ivf){
-        for(str_it = temp_scale_vec.begin(); str_it < temp_scale_vec.end();
-            ++str_it)
-            vpxt_delete_files(1, (*str_it).c_str());
-        for(str_it = enc_vec.begin(); str_it < enc_vec.end(); ++str_it)
-            vpxt_delete_files(1, (*str_it).c_str());
-    }
-
     if (fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
+        if (DeleteIVF)
+            if(delete_files_num == 4)
+                vpxt_delete_files(delete_files_num, TempScale0.c_str(),
+                    TempScale1.c_str(), Enc0.c_str(), Enc1.c_str());
+            else if(delete_files_num == 6)
+                vpxt_delete_files(delete_files_num, TempScale0.c_str(),
+                    TempScale1.c_str(), TempScale2.c_str(), Enc0.c_str(),
+                    Enc1.c_str(), Enc2.c_str());
+            else if (delete_files_num == 10)
+                vpxt_delete_files(delete_files_num, TempScale0.c_str(),
+                    TempScale1.c_str(), TempScale2.c_str(), TempScale3.c_str(),
+                    TempScale4.c_str(), Enc0.c_str(), Enc1.c_str(),
+                    Enc2.c_str(), Enc3.c_str(), Enc4.c_str());
+
         fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
+        if (DeleteIVF)
+            if(delete_files_num == 4)
+                vpxt_delete_files(delete_files_num, TempScale0.c_str(),
+                    TempScale1.c_str(), Enc0.c_str(), Enc1.c_str());
+            else if(delete_files_num == 6)
+                vpxt_delete_files(delete_files_num, TempScale0.c_str(),
+                    TempScale1.c_str(), TempScale2.c_str(), Enc0.c_str(),
+                    Enc1.c_str(), Enc2.c_str());
+            else if (delete_files_num == 10)
+                vpxt_delete_files(delete_files_num, TempScale0.c_str(),
+                    TempScale1.c_str(), TempScale2.c_str(), TempScale3.c_str(),
+                    TempScale4.c_str(), Enc0.c_str(), Enc1.c_str(),
+                    Enc2.c_str(), Enc3.c_str(), Enc4.c_str());
+
         fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
+        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 0;
     }
 
     fclose(fp);
 
-    record_test_complete(file_index_str, file_index_output_char, test_type);
+    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
     return 6;
 }

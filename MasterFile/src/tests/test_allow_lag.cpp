@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_allow_lag(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_allow_lag(int argc,
+                   const char *const *argv,
+                   const std::string &WorkingDir,
+                   std::string FilesAr[],
+                   int TestType,
+                   int DeleteIVF)
 {
     char *CompressString = "Allow Lag";
     char *MyDir = "test_allow_lag";
@@ -22,7 +27,9 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string AllowLagon = CurTestDirStr;
@@ -51,7 +58,8 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -77,7 +85,8 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -93,7 +102,8 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     opt.target_bandwidth = BitRate;
     opt.lag_in_frames = 10;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -103,7 +113,8 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
         opt.Mode = Mode;
         opt.allow_lag = 0;
 
-        if (vpxt_compress(input.c_str(), AllowLagoff.c_str(), speed, BitRate, opt, CompressString, 0, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), AllowLagoff.c_str(), speed, BitRate,
+            opt, CompressString, 0, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -112,7 +123,8 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
 
         opt.allow_lag = 1;
 
-        if (vpxt_compress(input.c_str(), AllowLagon.c_str(), speed, BitRate, opt, CompressString, 1, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), AllowLagon.c_str(), speed, BitRate,
+            opt, CompressString, 1, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -137,10 +149,14 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
     snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
 
     int LagInFramesFound = vpxt_lag_in_frames_check(QuantInChar);
-    int AllowLagONAltRefCount = vpxt_display_alt_ref_frames(AllowLagon.c_str(), 1);
-    int AllowLagOFFAltRefCount = vpxt_display_alt_ref_frames(AllowLagoff.c_str(), 1);
-    int VisibleFrameONCount = vpxt_display_visible_frames(AllowLagon.c_str(), 1);
-    int VisibleFrameOFFCount = vpxt_display_visible_frames(AllowLagoff.c_str(), 1);
+    int AllowLagONAltRefCount = vpxt_display_alt_ref_frames(AllowLagon.c_str(),
+        1);
+    int AllowLagOFFAltRefCount = vpxt_display_alt_ref_frames(AllowLagoff.c_str()
+        , 1);
+    int VisibleFrameONCount = vpxt_display_visible_frames(AllowLagon.c_str(),
+        1);
+    int VisibleFrameOFFCount = vpxt_display_visible_frames(AllowLagoff.c_str(),
+        1);
 
     char AllowLagonFilename[255];
     vpxt_file_name(AllowLagon.c_str(), AllowLagonFilename, 0);
@@ -155,49 +171,61 @@ int test_allow_lag(int argc, const char *const *argv, const std::string &Working
 
     if (LagInFramesFound == opt.lag_in_frames)
     {
-        vpxt_formated_print(RESPRT, "Correct number of LagInFrames (%i) detected in compression for %s - Passed", opt.lag_in_frames, AllowLagonFilename);
+        vpxt_formated_print(RESPRT, "Correct number of LagInFrames (%i) "
+            "detected in compression for %s - Passed", opt.lag_in_frames,
+            AllowLagonFilename);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Correct number of LagInFrames (%i) not detected in compression for %s - Failed", opt.lag_in_frames, AllowLagonFilename);
+        vpxt_formated_print(RESPRT, "Correct number of LagInFrames (%i) not "
+            "detected in compression for %s - Failed", opt.lag_in_frames,
+            AllowLagonFilename);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (AllowLagONAltRefCount > 0)
     {
-        vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - Passed", AllowLagonFilename);
+        vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s "
+            "- Passed", AllowLagonFilename);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Alternate reference frames do not exist for %s - Failed", AllowLagonFilename);
+        vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
+            "for %s - Failed", AllowLagonFilename);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (VisibleFrameONCount == VisibleFrameOFFCount)
     {
-        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i == Visible Frames for %s = %i - Passed", AllowLagonFilename, VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
+        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i == Visible "
+            "Frames for %s = %i - Passed", AllowLagonFilename,
+            VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i != Visible Frames for %s = %i - Failed", AllowLagonFilename, VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
+        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i != Visible "
+            "Frames for %s = %i - Failed", AllowLagonFilename,
+            VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (lngRC >= 0)
     {
-        vpxt_formated_print(RESPRT, "%s is not identical to %s - Passed", AllowLagonFilename, AllowLagoffFilename);
+        vpxt_formated_print(RESPRT, "%s is not identical to %s - Passed",
+            AllowLagonFilename, AllowLagoffFilename);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (lngRC == -1)
     {
-        vpxt_formated_print(RESPRT, "%s is identical to %s - Failed", AllowLagonFilename, AllowLagoffFilename);
+        vpxt_formated_print(RESPRT, "%s is identical to %s - Failed",
+            AllowLagonFilename, AllowLagoffFilename);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }

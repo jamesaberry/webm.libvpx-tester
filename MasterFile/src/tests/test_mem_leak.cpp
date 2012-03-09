@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_mem_leak(int argc,
+                  const char *const *argv,
+                  const std::string &WorkingDir,
+                  std::string FilesAr[],
+                  int TestType,
+                  int DeleteIVF)
 {
     //Needs Debug.exe
     char *MyDir = "test_mem_leak";
@@ -25,10 +30,10 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    //Get the exe's parent folder From argv[0] Paths for both exes will be the same
     vpxt_folder_name(argv[0], ExeCharMemLeak);
 
     /////////////////////////////////////////////////
@@ -67,54 +72,54 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     {
         //compression
         ProgramEncMemLeakCheckStr = "\"\"";
-        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
-        ProgramEncMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramEncMemLeakCheckStr.append(MemLeakExe);
         ProgramEncMemLeakCheckStr.append("\" memcompress \"");
-        ProgramEncMemLeakCheckStr.append(input.c_str());              // Input
+        ProgramEncMemLeakCheckStr.append(input.c_str());
         ProgramEncMemLeakCheckStr.append("\" \"");
-        ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());
         ProgramEncMemLeakCheckStr.append("\" 8 \"");
-        ProgramEncMemLeakCheckStr.append(MemLeakCheckParFileStr.c_str());        // Par File
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckParFileStr.c_str());
         ProgramEncMemLeakCheckStr.append("\" 0 \"");
-        ProgramEncMemLeakCheckStr.append(EncMemLeakCheckTxtStr.c_str());        // Mem Output File
+        ProgramEncMemLeakCheckStr.append(EncMemLeakCheckTxtStr.c_str());
         ProgramEncMemLeakCheckStr.append("\"\"");
         //decompression
         ProgramDecMemLeakCheckStr = "\"\"";
-        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
-        ProgramDecMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramDecMemLeakCheckStr.append(MemLeakExe);
         ProgramDecMemLeakCheckStr.append("\" memdecompress \"");
-        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());              // Input
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());
         ProgramDecMemLeakCheckStr.append("\" \"");
-        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFDECStr.c_str());        // Output
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFDECStr.c_str());
         ProgramDecMemLeakCheckStr.append("\" \"");
-        ProgramDecMemLeakCheckStr.append(DecMemLeakCheckTxtStr.c_str());        // Par File
+        ProgramDecMemLeakCheckStr.append(DecMemLeakCheckTxtStr.c_str());
         ProgramDecMemLeakCheckStr.append("\"\"");
     }
 #else
     {
         //compression
         ProgramEncMemLeakCheckStr = "\"";
-        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
-        ProgramEncMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramEncMemLeakCheckStr.append(MemLeakExe);
         ProgramEncMemLeakCheckStr.append("\" memcompress \"");
-        ProgramEncMemLeakCheckStr.append(input.c_str());              // Input
+        ProgramEncMemLeakCheckStr.append(input.c_str());
         ProgramEncMemLeakCheckStr.append("\" \"");
-        ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());        // Output
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());
         ProgramEncMemLeakCheckStr.append("\" 8 \"");
-        ProgramEncMemLeakCheckStr.append(MemLeakCheckParFileStr.c_str());        // Par File
+        ProgramEncMemLeakCheckStr.append(MemLeakCheckParFileStr.c_str());
         ProgramEncMemLeakCheckStr.append("\" 0 \"");
-        ProgramEncMemLeakCheckStr.append(EncMemLeakCheckTxtStr.c_str());        // Mem Output File
+        ProgramEncMemLeakCheckStr.append(EncMemLeakCheckTxtStr.c_str());
         ProgramEncMemLeakCheckStr.append("\"");
         //decompression
         ProgramDecMemLeakCheckStr = "\"";
-        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);  // Exe Path
-        ProgramDecMemLeakCheckStr.append(MemLeakExe);         // Exe Name
+        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramDecMemLeakCheckStr.append(MemLeakExe);
         ProgramDecMemLeakCheckStr.append("\" memdecompress \"");
-        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());              // Input
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());
         ProgramDecMemLeakCheckStr.append("\" \"");
-        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFDECStr.c_str());        // Output
+        ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFDECStr.c_str());
         ProgramDecMemLeakCheckStr.append("\" \"");
-        ProgramDecMemLeakCheckStr.append(DecMemLeakCheckTxtStr.c_str());        // Par File
+        ProgramDecMemLeakCheckStr.append(DecMemLeakCheckTxtStr.c_str());
         ProgramDecMemLeakCheckStr.append("\"");
     }
 #endif
@@ -133,7 +138,8 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -159,7 +165,8 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -194,7 +201,8 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
 
     opt.target_bandwidth = BitRate ;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -235,19 +243,22 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
 
     if (vpxt_check_mem_state(EncMemLeakCheckTxtStr, MemCompressResults) == -1)
     {
-        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr.c_str());
+        vpxt_formated_print(RESPRT, "%s not found - Failed",
+            EncMemLeakCheckTxtStr.c_str());
         fail = 1;
     }
     else
     {
         if (MemCompressResults.compare(0, 24, "_currently Allocated= 0;") == 0)
         {
-            vpxt_formated_print(RESPRT, "Compression Memory Currently Allocated == 0 - Passed");
+            vpxt_formated_print(RESPRT, "Compression Memory Currently "
+                "Allocated == 0 - Passed");
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
-            vpxt_formated_print(RESPRT, "Compression Memory Currently Allocated != 0 - %s - Failed", MemCompressResults.c_str());
+            vpxt_formated_print(RESPRT, "Compression Memory Currently "
+                "Allocated != 0 - %s - Failed", MemCompressResults.c_str());
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -255,19 +266,22 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
 
     if (vpxt_check_mem_state(DecMemLeakCheckTxtStr, MemDecompressResults) == -1)
     {
-        vpxt_formated_print(RESPRT, "%s not found - Failed", EncMemLeakCheckTxtStr.c_str());
+        vpxt_formated_print(RESPRT, "%s not found - Failed",
+            EncMemLeakCheckTxtStr.c_str());
         fail = 1;
     }
     else
     {
-        if (MemDecompressResults.compare(0, 24, "_currently Allocated= 0;") == 0)
+        if (MemDecompressResults.compare(0, 24, "_currently Allocated= 0;") ==0)
         {
-            vpxt_formated_print(RESPRT, "Decompression Memory Currently Allocated == 0 - Passed");
+            vpxt_formated_print(RESPRT, "Decompression Memory Currently "
+                "Allocated == 0 - Passed");
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
-            vpxt_formated_print(RESPRT, "Decompression Memory Currently Allocated != 0 - %s - Failed", MemDecompressResults.c_str());
+            vpxt_formated_print(RESPRT, "Decompression Memory Currently "
+                "Allocated != 0 - %s - Failed", MemDecompressResults.c_str());
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -278,7 +292,8 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, MemLeakCheckIVFDECStr.c_str(), MemLeakCheckIVFStr.c_str());
+            vpxt_delete_files(2, MemLeakCheckIVFDECStr.c_str(),
+            MemLeakCheckIVFStr.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -289,7 +304,8 @@ int test_mem_leak(int argc, const char *const *argv, const std::string &WorkingD
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, MemLeakCheckIVFDECStr.c_str(), MemLeakCheckIVFStr.c_str());
+            vpxt_delete_files(2, MemLeakCheckIVFDECStr.c_str(),
+            MemLeakCheckIVFStr.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

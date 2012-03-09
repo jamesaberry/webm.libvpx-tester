@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_min_quantizer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_min_quantizer(int argc,
+                       const char *const *argv,
+                       const std::string &WorkingDir,
+                       std::string FilesAr[],
+                       int TestType,
+                       int DeleteIVF)
 {
     char *CompressString = "Min Quantizer";
     char *MyDir = "test_min_quantizer";
@@ -22,7 +27,9 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string Min10QuantOutFile = CurTestDirStr;
@@ -51,7 +58,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -77,7 +85,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -97,7 +106,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
     if(opt.end_usage == 2)
         opt.end_usage = 1;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -111,7 +121,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         while(opt.worst_allowed_q < opt.best_allowed_q)
                 opt.worst_allowed_q = rand() % 64;
 
-        if (vpxt_compress(input.c_str(), Min10QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 10, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), Min10QuantOutFile.c_str(), speed,
+            BitRate, opt, CompressString, 10, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -123,7 +134,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         while(opt.worst_allowed_q < opt.best_allowed_q)
                 opt.worst_allowed_q = rand() % 64;
 
-        if (vpxt_compress(input.c_str(), Min60QuantOutFile.c_str(), speed, BitRate, opt, CompressString, 60, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), Min60QuantOutFile.c_str(), speed,
+            BitRate, opt, CompressString, 60, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -140,8 +152,10 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         return 10;
     }
 
-    PSNRArr[0] = vpxt_psnr(input.c_str(), Min10QuantOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
-    PSNRArr[1] = vpxt_psnr(input.c_str(), Min60QuantOutFile.c_str(), 0, PRINT_BTH, 1, NULL);
+    PSNRArr[0] = vpxt_psnr(input.c_str(), Min10QuantOutFile.c_str(), 0,
+        PRINT_BTH, 1, NULL);
+    PSNRArr[1] = vpxt_psnr(input.c_str(), Min60QuantOutFile.c_str(), 0,
+        PRINT_BTH, 1, NULL);
 
     tprintf(PRINT_BTH, "\n");
     int Min10Q = vpxt_check_min_quantizer(Min10QuantOutFile.c_str(), 10);
@@ -161,37 +175,43 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
 
     if (Min10Q != -1)
     {
-        vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed", Min10FileName);
+        vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed",
+            Min10FileName);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed", Min10FileName);
+        vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed",
+            Min10FileName);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (Min60Q != -1)
     {
-        vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed", Min60FileName);
+        vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed",
+            Min60FileName);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed", Min60FileName);
+        vpxt_formated_print(RESPRT, "All %s quantizers above MinQ - Passed",
+            Min60FileName);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (PSNRArr[0] <= PSNRArr[1])
     {
-        vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f <= MinQ 60 PSNR: %2.2f - Failed", PSNRArr[0], PSNRArr[1]);
+        vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f <= MinQ 60 PSNR: "
+            "%2.2f - Failed", PSNRArr[0], PSNRArr[1]);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f > MinQ 60 PSNR: %2.2f - Passed", PSNRArr[0], PSNRArr[1]);
+        vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f > MinQ 60 PSNR: %2.2f "
+            "- Passed", PSNRArr[0], PSNRArr[1]);
         tprintf(PRINT_BTH, "\n");
     }
 
@@ -200,7 +220,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, Min10QuantOutFile.c_str(), Min60QuantOutFile.c_str());
+            vpxt_delete_files(2, Min10QuantOutFile.c_str(),
+            Min60QuantOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -211,7 +232,8 @@ int test_min_quantizer(int argc, const char *const *argv, const std::string &Wor
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, Min10QuantOutFile.c_str(), Min60QuantOutFile.c_str());
+            vpxt_delete_files(2, Min10QuantOutFile.c_str(),
+            Min60QuantOutFile.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

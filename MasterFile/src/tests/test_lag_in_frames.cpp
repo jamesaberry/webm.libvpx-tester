@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_lag_in_frames(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_lag_in_frames(int argc,
+                       const char *const *argv,
+                       const std::string &WorkingDir,
+                       std::string FilesAr[],
+                       int TestType,
+                       int DeleteIVF)
 {
     char *CompressString = "Lag In Frames";
     char *MyDir = "test_lag_in_frames";
@@ -20,12 +25,14 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
 
     ////////////Formatting Test Specific Directory////////////
 
-    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string CurTestDirStr = "";
     std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     char laginframesbuff[255];
@@ -64,7 +71,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -90,7 +98,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -105,16 +114,19 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
 
     opt.target_bandwidth = BitRate;
 
-    if (LagInFrames1Val > 25 || LagInFrames2Val > 25 || LagInFrames2Val < 0 || LagInFrames1Val < 0)
+    if (LagInFrames1Val > 25 || LagInFrames2Val > 25 || LagInFrames2Val < 0 ||
+        LagInFrames1Val < 0)
     {
-        tprintf(PRINT_BTH, "\nLag in Frames settings must be between 0 and 25.\n");
+        tprintf(PRINT_BTH, "\nLag in Frames settings must be between 0 and "
+            "25.\n");
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
         return 2;
     }
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -126,7 +138,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         opt.allow_lag = 0;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress(input.c_str(), LagInFrames0.c_str(), speed, BitRate, opt, CompressString, 0, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), LagInFrames0.c_str(), speed, BitRate,
+            opt, CompressString, 0, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -136,7 +149,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames1Val;
 
-        if (vpxt_compress(input.c_str(), LagInFrames1.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), LagInFrames1.c_str(), speed, BitRate,
+            opt, CompressString, LagInFrames2Val, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -146,7 +160,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         opt.allow_lag = 1;
         opt.lag_in_frames = LagInFrames2Val;
 
-        if (vpxt_compress(input.c_str(), LagInFrames2.c_str(), speed, BitRate, opt, CompressString, LagInFrames2Val, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), LagInFrames2.c_str(), speed, BitRate,
+            opt, CompressString, LagInFrames2Val, 1, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -161,35 +176,32 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         return 10;
     }
 
-    double LagInFrames0PSNR = vpxt_psnr(input.c_str(), LagInFrames0.c_str(), 0, PRINT_BTH, 1, NULL);
-    double LagInFrames1PSNR = vpxt_psnr(input.c_str(), LagInFrames1.c_str(), 0, PRINT_BTH, 1, NULL);
-    double LagInFrames2PSNR = vpxt_psnr(input.c_str(), LagInFrames2.c_str(), 0, PRINT_BTH, 1, NULL);
+    double LagInFrames0PSNR = vpxt_psnr(input.c_str(), LagInFrames0.c_str(), 0,
+        PRINT_BTH, 1, NULL);
+    double LagInFrames1PSNR = vpxt_psnr(input.c_str(), LagInFrames1.c_str(), 0,
+        PRINT_BTH, 1, NULL);
+    double LagInFrames2PSNR = vpxt_psnr(input.c_str(), LagInFrames2.c_str(), 0,
+        PRINT_BTH, 1, NULL);
 
     double TenPer0 = LagInFrames0PSNR / 10;
     double TenPer1 = LagInFrames1PSNR / 10;
     double TenPer2 = LagInFrames2PSNR / 10;
 
-    int lngRC1 = vpxt_compare_enc(LagInFrames0.c_str(), LagInFrames1.c_str(), 0);
-    int lngRC2 = vpxt_compare_enc(LagInFrames1.c_str(), LagInFrames2.c_str(), 0);
+    int lngRC1 = vpxt_compare_enc(LagInFrames0.c_str(), LagInFrames1.c_str(),0);
+    int lngRC2 = vpxt_compare_enc(LagInFrames1.c_str(), LagInFrames2.c_str(),0);
 
     std::string QuantInStr0;
     vpxt_remove_file_extension(LagInFrames0.c_str(), QuantInStr0);
-    //std::string QuantInStr0 = LagInFrames0;
-    //QuantInStr0.erase(QuantInStr0.length() - 4, 4);
     QuantInStr0.append("quantizers.txt");
     int LagInFramesFound0 = vpxt_lag_in_frames_check(QuantInStr0.c_str());
 
     std::string QuantInStr1;
     vpxt_remove_file_extension(LagInFrames1.c_str(), QuantInStr1);
-    //std::string QuantInStr1 = LagInFrames1;
-    //QuantInStr1.erase(QuantInStr1.length() - 4, 4);
     QuantInStr1.append("quantizers.txt");
     int LagInFramesFound1 = vpxt_lag_in_frames_check(QuantInStr1.c_str());
 
     std::string QuantInStr2;
     vpxt_remove_file_extension(LagInFrames2.c_str(), QuantInStr2);
-    //std::string QuantInStr2 = LagInFrames2;
-    //QuantInStr2.erase(QuantInStr2.length() - 4, 4);
     QuantInStr2.append("quantizers.txt");
     int LagInFramesFound2 = vpxt_lag_in_frames_check(QuantInStr2.c_str());
 
@@ -208,98 +220,128 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
 
     if (LagInFramesFound0 == 0)
     {
-        vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed", LagInFrames0FileName, LagInFramesFound0);
+        vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed",
+            LagInFrames0FileName, LagInFramesFound0);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s improperly lagged frames %i - Failed", LagInFrames0FileName, LagInFramesFound0);
+        vpxt_formated_print(RESPRT, "%s improperly lagged frames %i - Failed",
+            LagInFrames0FileName, LagInFramesFound0);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (LagInFramesFound1 == LagInFrames1Val)
     {
-        vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed", LagInFrames1FileName, LagInFramesFound1);
+        vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed",
+            LagInFrames1FileName, LagInFramesFound1);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s improperly lagged %i frames - Failed", LagInFrames1FileName, LagInFramesFound1);
+        vpxt_formated_print(RESPRT, "%s improperly lagged %i frames - Failed",
+            LagInFrames1FileName, LagInFramesFound1);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (LagInFramesFound2 == LagInFrames2Val)
     {
-        vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed", LagInFrames2FileName, LagInFramesFound2);
+        vpxt_formated_print(RESPRT, "%s properly lagged %i frames - Passed",
+            LagInFrames2FileName, LagInFramesFound2);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s improperly lagged %i frames - Failed", LagInFrames2FileName, LagInFramesFound2);
+        vpxt_formated_print(RESPRT, "%s improperly lagged %i frames - Failed",
+            LagInFrames2FileName, LagInFramesFound2);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (lngRC1 == -1)
     {
-        vpxt_formated_print(RESPRT, "%s identical to %s - Failed", LagInFrames0FileName, LagInFrames1FileName);
+        vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
+            LagInFrames0FileName, LagInFrames1FileName);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed", LagInFrames0FileName, LagInFrames1FileName);
+        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed",
+            LagInFrames0FileName, LagInFrames1FileName);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (lngRC2 == -1)
     {
-        vpxt_formated_print(RESPRT, "%s identical to %s - Failed", LagInFrames1FileName, LagInFrames2FileName);
+        vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
+            LagInFrames1FileName, LagInFrames2FileName);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed", LagInFrames1FileName, LagInFrames2FileName);
+        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed",
+            LagInFrames1FileName, LagInFrames2FileName);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0) && LagInFrames1PSNR >= (LagInFrames0PSNR - TenPer0))
+    if (LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0) && LagInFrames1PSNR >=
+        (LagInFrames0PSNR - TenPer0))
     {
-        vpxt_formated_print(RESPRT, "PSNR for %s is within 10%% of PSNR for %s - %.2f < %.2f < %.2f - Passed", LagInFrames0FileName, LagInFrames1FileName, (LagInFrames0PSNR - TenPer0), LagInFrames1PSNR, (LagInFrames0PSNR + TenPer0));
+        vpxt_formated_print(RESPRT, "PSNR for %s is within 10%% of PSNR for %s "
+            "- %.2f < %.2f < %.2f - Passed", LagInFrames0FileName,
+            LagInFrames1FileName, (LagInFrames0PSNR - TenPer0),
+            LagInFrames1PSNR, (LagInFrames0PSNR + TenPer0));
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         if (!(LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0)))
         {
-            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName, LagInFrames1FileName, (LagInFrames0PSNR + TenPer0), LagInFrames1PSNR);
+            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of "
+                "PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName,
+                LagInFrames1FileName, (LagInFrames0PSNR + TenPer0),
+                LagInFrames1PSNR);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
-            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName, LagInFrames1FileName, LagInFrames1PSNR, (LagInFrames0PSNR - TenPer0));
+            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of "
+                "PSNR for %s - %.2f < %.2f - Failed", LagInFrames0FileName,
+                LagInFrames1FileName, LagInFrames1PSNR,
+                (LagInFrames0PSNR - TenPer0));
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
     }
 
-    if (LagInFrames2PSNR <= (LagInFrames1PSNR + TenPer1) && LagInFrames2PSNR >= (LagInFrames1PSNR - TenPer1))
+    if (LagInFrames2PSNR <= (LagInFrames1PSNR + TenPer1) && LagInFrames2PSNR >=
+        (LagInFrames1PSNR - TenPer1))
     {
-        vpxt_formated_print(RESPRT, "PSNR for %s is within 10%% of PSNR for %s - %.2f < %.2f < %.2f - Passed", LagInFrames1FileName, LagInFrames2FileName, (LagInFrames1PSNR - TenPer1), LagInFrames2PSNR, (LagInFrames1PSNR + TenPer1));
+        vpxt_formated_print(RESPRT, "PSNR for %s is within 10%% of PSNR for %s "
+            "- %.2f < %.2f < %.2f - Passed", LagInFrames1FileName,
+            LagInFrames2FileName, (LagInFrames1PSNR - TenPer1),
+            LagInFrames2PSNR, (LagInFrames1PSNR + TenPer1));
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         if (!(LagInFrames1PSNR <= (LagInFrames0PSNR + TenPer0)))
         {
-            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName, LagInFrames2FileName, (LagInFrames1PSNR + TenPer1), LagInFrames2PSNR);
+            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of "
+                "PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName,
+                LagInFrames2FileName, (LagInFrames1PSNR + TenPer1),
+                LagInFrames2PSNR);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
-            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName, LagInFrames2FileName, LagInFrames2PSNR, (LagInFrames1PSNR - TenPer1));
+            vpxt_formated_print(RESPRT, "PSNR for %s is not within 10%% of "
+                "PSNR for %s - %.2f < %.2f - Failed", LagInFrames1FileName,
+                LagInFrames2FileName, LagInFrames2PSNR,
+                (LagInFrames1PSNR - TenPer1));
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -310,7 +352,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, LagInFrames0.c_str(), LagInFrames1.c_str(), LagInFrames2.c_str());
+            vpxt_delete_files(3, LagInFrames0.c_str(), LagInFrames1.c_str(),
+            LagInFrames2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -321,7 +364,8 @@ int test_lag_in_frames(int argc, const char *const *argv, const std::string &Wor
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, LagInFrames0.c_str(), LagInFrames1.c_str(), LagInFrames2.c_str());
+            vpxt_delete_files(3, LagInFrames0.c_str(), LagInFrames1.c_str(),
+            LagInFrames2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

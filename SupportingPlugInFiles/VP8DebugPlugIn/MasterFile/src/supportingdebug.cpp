@@ -24,7 +24,7 @@
 
 int IVF2Raw(char *inputFile, char *outputDir)
 {
-    int WriteIndFrames = 5;//atoi(argv[4]);
+    int WriteIndFrames = 5;
 
     FILE *in = fopen(inputFile, "rb");
     ///////////////////////////////////
@@ -45,23 +45,6 @@ int IVF2Raw(char *inputFile, char *outputDir)
     InitIVFHeader(&ivfhRaw);
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
     vpxt_format_ivf_header_read(&ivfhRaw);
-
-    /*printf( "IVF DataRate\n\n"
-    "FILE HEADER \n\n"
-    "File Header            - %c%c%c%c \n"
-    "File Format Version    - %i \n"
-    "File Header Size       - %i \n"
-    "Video Data FourCC      - %i \n"
-    "Video Image Width      - %i \n"
-    "Video Image Height     - %i \n"
-    "Frame Rate Rate        - %i \n"
-    "Frame Rate Scale       - %i \n"
-    "Video Length in Frames - %i \n"
-    "Unused                 - %c \n"
-    "\n\n"
-    ,ivfhRaw.signature[0],ivfhRaw.signature[1],ivfhRaw.signature[2],ivfhRaw.signature[3]
-    ,ivfhRaw.version,ivfhRaw.headersize,ivfhRaw.FourCC,ivfhRaw.width,ivfhRaw.height,ivfhRaw.rate
-    ,ivfhRaw.scale,ivfhRaw.length,ivfhRaw.unused);*/
 
     IVF_FRAME_HEADER ivf_fhRaw;
 
@@ -169,10 +152,12 @@ void supportingDebugOnError()
             "      <fauxcompress>\n"
             "      <fauxdecompress>\n"
             "\n"
-            "  Compress Debug                                  Decompress Debug\n"
+            "  Compress Debug                                  Decompress Debug"
+			"\n"
             "\n"
             "    <Inputfile>                                      <Inputfile>\n"
-            "    <Outputfile>                                     <Outputfile>\n"
+            "    <Outputfile>                                     <Outputfile>"
+			"\n"
             "    <Par File Origin 7 VP7 8 VP8>\n"
             "    <Par File>\n"
             "    <Extra Commands>\n"
@@ -181,11 +166,14 @@ void supportingDebugOnError()
             "      <2 Record Compression Time only>\n"
             "      <3 Record Compression Time and Run PSNR>\n"
             "\n"
-            "  Compress Mem Leak Check                    Decompress Mem Leak Check\n"
+            "  Compress Mem Leak Check                    Decompress Mem Leak "
+			"Check\n"
             "\n"
             "    <Inputfile>                                      <Inputfile>\n"
-            "    <Outputfile>                                     <Outputfile>\n"
-            "    <Par File Origin 7 VP7 8 VP8>                    <Memory Output File>\n"
+            "    <Outputfile>                                     <Outputfile>"
+			"\n"
+            "    <Par File Origin 7 VP7 8 VP8>                    <Memory "
+			"Output File>\n"
             "    <Par File>\n"
             "    <Extra Commands>\n"
             "      <0 No Extra Commands>\n"
@@ -194,12 +182,15 @@ void supportingDebugOnError()
             "      <3 Record Compression Time and Run PSNR>\n"
             "    <Memory Output File>\n"
             "\n"
-            "  Faux Compress                                    Faux Decompress\n"
+            "  Faux Compress                                    Faux Decompres"
+			"s\n"
             "\n"
-            "    <mem output file>                                <mem output file>\n"
+			"    <mem output file>                                <mem output "
+			"file>\n"
             "\n"
             "\n"
-            "   Debug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo)
+            "   Debug Exe using: %s\n",
+			vpx_codec_iface_name(&vpx_codec_vp8_cx_algo)
            );
 }
 int supportingFileRunPSNR(char *inputFile, char *outputFile)
@@ -209,14 +200,10 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
     double ssimDummyVar = 0;
     totalPsnr = vpxt_psnr(inputFile, outputFile, 0, PRINT_BTH, 1, NULL);
 
-    //char TextFilechar1[255];
     std::string TextFilechar1 = "";
     vpxt_remove_file_extension(outputFile, TextFilechar1);
     TextFilechar1.append("psnr.txt");
 
-    //char *FullName = strcat(TextFilechar1, "psnr.txt");
-
-    //std::ofstream outfile2(FullName);
     std::ofstream outfile2(TextFilechar1.c_str());
     outfile2 << totalPsnr;
     outfile2.close();
@@ -326,7 +313,8 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        tprintf(PRINT_BTH, "\nDebug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+        tprintf(PRINT_BTH, "\nDebug Exe using: %s\n",
+			vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
 
         char *inputFile = argv[2];
         char *outputFile = argv[3];
@@ -362,13 +350,15 @@ int main(int argc, char *argv[])
             char *MemLeakCheckTXT = argv[7];
             //printf("\n Outputfile: %s\n",MemLeakCheckTXT);
             vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
-            vpxt_time_compress(inputFile, outputFile, opt.multi_threaded, opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick, EncExt);
+            vpxt_time_compress(inputFile, outputFile, opt.multi_threaded,
+				opt.target_bandwidth, opt, "VP8 Debug", 0, 0, CPUTick, EncExt);
             vpx_memory_tracker_dump();
         }
 
         //If Compress
         if (Compress.compare(argv[1]) == 0)
-            vpxt_time_compress(inputFile, outputFile, 0, opt.target_bandwidth, opt, "VP8 Release", 0, 0, CPUTick, EncExt);
+            vpxt_time_compress(inputFile, outputFile, 0, opt.target_bandwidth,
+			opt, "VP8 Release", 0, 0, CPUTick, EncExt);
 
         if (ExtraCommand == 1 || ExtraCommand == 3)
             supportingFileRunPSNR(inputFile, outputFile);
@@ -385,7 +375,8 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        tprintf(PRINT_BTH, "\nDebug Exe using: %s\n", vpx_codec_iface_name(&vpx_codec_vp8_dx_algo));
+        tprintf(PRINT_BTH, "\nDebug Exe using: %s\n",
+			vpx_codec_iface_name(&vpx_codec_vp8_dx_algo));
 
         char *inputFile = argv[2];
         char *outputFile = argv[3];
@@ -408,12 +399,14 @@ int main(int argc, char *argv[])
             char *MemLeakCheckTXT = argv[4];
             printf("\n Outputfile: %s\n", MemLeakCheckTXT);
             vpx_memory_tracker_set_log_type(0, MemLeakCheckTXT);
-            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt, 1);
+            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick,
+				DecExt, 1);
             vpx_memory_tracker_dump();
         }
 
         if (Decompress.compare(argv[1]) == 0)
-            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick, DecExt, 1);
+            vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick,
+			DecExt, 1);
 
         return 0;
     }

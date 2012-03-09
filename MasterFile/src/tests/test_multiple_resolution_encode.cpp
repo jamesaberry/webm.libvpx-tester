@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_multiple_resolution_encode(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_multiple_resolution_encode(int argc,
+                                    const char *const *argv,
+                                    const std::string &WorkingDir,
+                                    std::string FilesAr[],
+                                    int TestType,
+                                    int DeleteIVF)
 {
     char *CompressString = "Allow Spatial Resampling";
     char *MyDir = "test_multiple_resolution_encode";
@@ -28,7 +33,9 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string MultResEnc = CurTestDirStr;
@@ -85,7 +92,8 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -111,7 +119,8 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -124,13 +133,10 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
 
     /////////////////////////////////////////////////////////
 
-    //tprintf(PRINT_BTH, "%s\n",MultResEnc1.c_str());
-    //tprintf(PRINT_BTH, "%s\n",MultResEnc2.c_str());
-    //tprintf(PRINT_BTH, "%s\n",MultResEnc3.c_str());
-
     opt.target_bandwidth = BitRate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -138,7 +144,8 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
     else
     {
 
-        if (vpxt_compress_multi_resolution(input.c_str(), MultResEnc.c_str(), speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress_multi_resolution(input.c_str(), MultResEnc.c_str(),
+            speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -154,9 +161,12 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
         return 10;
     }
 
-    double psnr1 = vpxt_psnr(input.c_str(), MultResEnc1.c_str(), 0, PRINT_BTH, 1, NULL);
-    double psnr2 = vpxt_psnr(input.c_str(), MultResEnc2.c_str(), 0, PRINT_BTH, 1, NULL);
-    double psnr3 = vpxt_psnr(input.c_str(), MultResEnc3.c_str(), 0, PRINT_BTH, 1, NULL);
+    double psnr1 = vpxt_psnr(input.c_str(), MultResEnc1.c_str(), 0, PRINT_BTH,
+        1, NULL);
+    double psnr2 = vpxt_psnr(input.c_str(), MultResEnc2.c_str(), 0, PRINT_BTH,
+        1, NULL);
+    double psnr3 = vpxt_psnr(input.c_str(), MultResEnc3.c_str(), 0, PRINT_BTH,
+        1, NULL);
 
     char MultResEnc1FN[256];
     char MultResEnc2FN[256];
@@ -170,34 +180,40 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
 
     if (psnr1 > 25.0)
     {
-        vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed", MultResEnc1FN, psnr1);
+        vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed",
+            MultResEnc1FN, psnr1);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed", MultResEnc1FN, psnr1);
+        vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
+            MultResEnc1FN, psnr1);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     if (psnr2 > 25.0)
     {
-        vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed", MultResEnc2FN, psnr2);
+        vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed",
+            MultResEnc2FN, psnr2);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed", MultResEnc2FN, psnr2);
+        vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
+            MultResEnc2FN, psnr2);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     if (psnr3 > 25.0)
     {
-        vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed", MultResEnc3FN, psnr3);
+        vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed",
+            MultResEnc3FN, psnr3);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed", MultResEnc3FN, psnr3);
+        vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
+            MultResEnc3FN, psnr3);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -212,20 +228,23 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
     {
         if(psnr1 < psnr2 &&  psnr2 < psnr3)
         {
-            vpxt_formated_print(RESPRT, "%s: %.2f < %s: %.2f < %s: %.2f - Failed"
-            , MultResEnc1FN, psnr1, MultResEnc2FN, psnr2, MultResEnc3FN, psnr3);
+            vpxt_formated_print(RESPRT, "%s: %.2f < %s: %.2f < %s: %.2f - "
+                "Failed", MultResEnc1FN, psnr1, MultResEnc2FN, psnr2,
+                MultResEnc3FN, psnr3);
             tprintf(PRINT_BTH, "\n");
         }
         else if(psnr1 < psnr2)
         {
-            vpxt_formated_print(RESPRT, "%s: %.2f < %s: %.2f >= %s: %.2f - Failed"
-            , MultResEnc1FN, psnr1, MultResEnc2FN, psnr2, MultResEnc3FN, psnr3);
+            vpxt_formated_print(RESPRT, "%s: %.2f < %s: %.2f >= %s: %.2f - "
+               "Failed", MultResEnc1FN, psnr1, MultResEnc2FN, psnr2,
+               MultResEnc3FN, psnr3);
             tprintf(PRINT_BTH, "\n");
         }
         else if(psnr2 < psnr3)
         {
-            vpxt_formated_print(RESPRT, "%s: %.2f >= %s: %.2f < %s: %.2f - Failed"
-            , MultResEnc1FN, psnr1, MultResEnc2FN, psnr2, MultResEnc3FN, psnr3);
+            vpxt_formated_print(RESPRT, "%s: %.2f >= %s: %.2f < %s: %.2f - "
+                "Failed", MultResEnc1FN, psnr1, MultResEnc2FN, psnr2,
+                MultResEnc3FN, psnr3);
             tprintf(PRINT_BTH, "\n");
         }
         
@@ -237,7 +256,8 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, MultResEnc1.c_str(), MultResEnc2.c_str(), MultResEnc3.c_str());
+            vpxt_delete_files(3, MultResEnc1.c_str(), MultResEnc2.c_str(),
+            MultResEnc3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -248,7 +268,8 @@ int test_multiple_resolution_encode(int argc, const char *const *argv, const std
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, MultResEnc1.c_str(), MultResEnc2.c_str(), MultResEnc3.c_str());
+            vpxt_delete_files(3, MultResEnc1.c_str(), MultResEnc2.c_str(),
+            MultResEnc3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

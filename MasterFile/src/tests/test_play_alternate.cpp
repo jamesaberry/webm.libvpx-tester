@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_play_alternate(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_play_alternate(int argc,
+                        const char *const *argv,
+                        const std::string &WorkingDir,
+                        std::string FilesAr[],
+                        int TestType,
+                        int DeleteIVF)
 {
     char *CompressString = "Play Alternate";
     char *MyDir = "test_play_alternate";
@@ -19,12 +24,14 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
     int PlayAlternate2Val = 1;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string CurTestDirStr = "";
     std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     char playaltbuff[255];
@@ -58,7 +65,8 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -84,7 +92,8 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -102,7 +111,8 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
     opt.lag_in_frames = 10;
     opt.end_usage = 1;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -112,7 +122,8 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
         opt.Mode = Mode;
         opt.play_alternate = PlayAlternate1Val;
 
-        if (vpxt_compress(input.c_str(), PlayAlternate1.c_str(), speed, BitRate, opt, CompressString, PlayAlternate1Val, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), PlayAlternate1.c_str(), speed, BitRate,
+            opt, CompressString, PlayAlternate1Val, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -121,7 +132,8 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
 
         opt.play_alternate = PlayAlternate2Val;
 
-        if (vpxt_compress(input.c_str(), PlayAlternate2.c_str(), speed, BitRate, opt, CompressString, PlayAlternate2Val, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), PlayAlternate2.c_str(), speed, BitRate,
+            opt, CompressString, PlayAlternate2Val, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -136,14 +148,19 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
         return 10;
     }
 
-    int lngRC = vpxt_compare_enc(PlayAlternate2.c_str(), PlayAlternate1.c_str(), 0);
+    int lngRC = vpxt_compare_enc(PlayAlternate2.c_str(), PlayAlternate1.c_str(),
+        0);
 
     int fail = 0;
 
-    int PlayAlternateOnAltRefCount = vpxt_display_alt_ref_frames(PlayAlternate2.c_str(), 1);
-    int PlayAlternateOffAltRefCount = vpxt_display_alt_ref_frames(PlayAlternate1.c_str(), 1);
-    int VisibleFrameONCount = vpxt_display_visible_frames(PlayAlternate2.c_str(), 1);
-    int VisibleFrameOFFCount = vpxt_display_visible_frames(PlayAlternate1.c_str(), 1);
+    int PlayAlternateOnAltRefCount =
+        vpxt_display_alt_ref_frames(PlayAlternate2.c_str(), 1);
+    int PlayAlternateOffAltRefCount =
+        vpxt_display_alt_ref_frames(PlayAlternate1.c_str(), 1);
+    int VisibleFrameONCount =
+        vpxt_display_visible_frames(PlayAlternate2.c_str(), 1);
+    int VisibleFrameOFFCount =
+        vpxt_display_visible_frames(PlayAlternate1.c_str(), 1);
 
     char PlayAlternateOnFilename[255];
     vpxt_file_name(PlayAlternate2.c_str(), PlayAlternateOnFilename, 0);
@@ -154,36 +171,46 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
 
     if (PlayAlternateOnAltRefCount > 0)
     {
-        vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - Passed", PlayAlternateOnFilename);
+        vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - "
+            "Passed", PlayAlternateOnFilename);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Alternate reference frames do not exist for %s - Failed", PlayAlternateOnFilename);
+        vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
+            "for %s - Failed", PlayAlternateOnFilename);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (PlayAlternateOffAltRefCount > 0)
     {
-        vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - Failed", PlayAlternateOffFilename);
+        vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - "
+            "Failed", PlayAlternateOffFilename);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Alternate reference frames do not exist for %s - Passed", PlayAlternateOffFilename);
+        vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
+            "for %s - Passed", PlayAlternateOffFilename);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (VisibleFrameONCount == VisibleFrameOFFCount)
     {
-        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i == Visible Frames for %s = %i - Passed", PlayAlternateOnFilename, VisibleFrameONCount, PlayAlternateOffFilename, VisibleFrameOFFCount);
+        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i == Visible "
+            "Frames for %s = %i - Passed", PlayAlternateOnFilename,
+            VisibleFrameONCount, PlayAlternateOffFilename,
+            VisibleFrameOFFCount);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i != Visible Frames for %s = %i - Failed", PlayAlternateOnFilename, VisibleFrameONCount, PlayAlternateOffFilename, VisibleFrameOFFCount);
+        vpxt_formated_print(RESPRT, "Visible Frames for %s = %i != Visible "
+            "Frames for %s = %i - Failed", PlayAlternateOnFilename,
+            VisibleFrameONCount, PlayAlternateOffFilename,
+            VisibleFrameOFFCount);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -206,7 +233,7 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, PlayAlternate1.c_str(), PlayAlternate2.c_str());
+            vpxt_delete_files(2, PlayAlternate1.c_str(),PlayAlternate2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -217,7 +244,7 @@ int test_play_alternate(int argc, const char *const *argv, const std::string &Wo
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(2, PlayAlternate1.c_str(), PlayAlternate2.c_str());
+            vpxt_delete_files(2, PlayAlternate1.c_str(),PlayAlternate2.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

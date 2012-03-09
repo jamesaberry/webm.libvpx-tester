@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_arnr(int argc,
+              const char *const *argv,
+              const std::string &WorkingDir,
+              std::string FilesAr[],
+              int TestType,
+              int DeleteIVF)
 {
     char *CompressString = "Arnr Type";
     char *MyDir = "test_arnr";
@@ -26,7 +31,9 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string CompArnr1AltRef0 = CurTestDirStr;
@@ -67,7 +74,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -93,7 +101,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -108,7 +117,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     opt.target_bandwidth = BitRate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -124,7 +134,9 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 1;
         unsigned int cpu_tick0 = 0;
 
-        Time0 = vpxt_time_compress(input.c_str(), CompArnr1AltRef0.c_str(), speed, BitRate, opt, "Play Alternate", opt.arnr_type, 0, cpu_tick0, EncForm);
+        Time0 = vpxt_time_compress(input.c_str(), CompArnr1AltRef0.c_str(),
+            speed, BitRate, opt, "Play Alternate", opt.arnr_type, 0, cpu_tick0,
+            EncForm);
 
         if (Time1 == -1)
         {
@@ -137,7 +149,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 1;
         unsigned int cpu_tick1 = 0;
 
-        Time1 = vpxt_time_compress(input.c_str(), CompArnr1.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick1, EncForm);
+        Time1 = vpxt_time_compress(input.c_str(), CompArnr1.c_str(), speed,
+            BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick1, EncForm);
 
         if (Time1 == -1)
         {
@@ -149,7 +162,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 2;
         unsigned int cpu_tick2 = 0;
 
-        Time2 = vpxt_time_compress(input.c_str(), CompArnr2.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick2, EncForm);
+        Time2 = vpxt_time_compress(input.c_str(), CompArnr2.c_str(), speed,
+            BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick2, EncForm);
 
         if (Time2 == -1)
         {
@@ -161,7 +175,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         opt.arnr_type = 3;
         unsigned int cpu_tick3 = 0;
 
-        Time3 = vpxt_time_compress(input.c_str(), CompArnr3.c_str(), speed, BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick3, EncForm);
+        Time3 = vpxt_time_compress(input.c_str(), CompArnr3.c_str(), speed,
+            BitRate, opt, CompressString, opt.arnr_type, 0, cpu_tick3, EncForm);
 
         if (Time3 == -1)
         {
@@ -178,10 +193,14 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         return 10;
     }
 
-    double CompArnr0PSNR = vpxt_psnr(input.c_str(), CompArnr1AltRef0.c_str(), 0, PRINT_BTH, 1, NULL);
-    double CompArnr1PSNR = vpxt_psnr(input.c_str(), CompArnr1.c_str(), 0, PRINT_BTH, 1, NULL);
-    double CompArnr2PSNR = vpxt_psnr(input.c_str(), CompArnr2.c_str(), 0, PRINT_BTH, 1, NULL);
-    double CompArnr3PSNR = vpxt_psnr(input.c_str(), CompArnr3.c_str(), 0, PRINT_BTH, 1, NULL);
+    double CompArnr0PSNR = vpxt_psnr(input.c_str(), CompArnr1AltRef0.c_str(),
+        0, PRINT_BTH, 1, NULL);
+    double CompArnr1PSNR = vpxt_psnr(input.c_str(), CompArnr1.c_str(), 0,
+        PRINT_BTH, 1, NULL);
+    double CompArnr2PSNR = vpxt_psnr(input.c_str(), CompArnr2.c_str(), 0,
+        PRINT_BTH, 1, NULL);
+    double CompArnr3PSNR = vpxt_psnr(input.c_str(), CompArnr3.c_str(), 0,
+        PRINT_BTH, 1, NULL);
 
     double CompArnr0DataRate = vpxt_data_rate(CompArnr1AltRef0.c_str(), 1);
     double CompArnr1DataRate = vpxt_data_rate(CompArnr1.c_str(), 1);
@@ -198,8 +217,10 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
     vpxt_file_name(CompArnr2.c_str(), CompArnr2Name, 0);
     vpxt_file_name(CompArnr3.c_str(), CompArnr3Name, 0);
 
-    tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr1AltRef0Name, CompArnr1Name);
-    int Compare1 = vpxt_compare_enc(CompArnr1AltRef0.c_str(), CompArnr1.c_str(), 0);
+    tprintf(PRINT_BTH, "\nComparing %s to %s\n", CompArnr1AltRef0Name,
+        CompArnr1Name);
+    int Compare1 = vpxt_compare_enc(CompArnr1AltRef0.c_str(), CompArnr1.c_str(),
+        0);
 
     if (Compare1 >= 0)
         tprintf(PRINT_BTH, "\n Files differ at frame: %i\n", Compare1);
@@ -228,56 +249,65 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     if (Compare1 >= 0)
     {
-        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed", CompArnr1AltRef0Name, CompArnr1Name);
+        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed",
+            CompArnr1AltRef0Name, CompArnr1Name);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s identical to %s - Failed", CompArnr1AltRef0Name, CompArnr1Name);
+        vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
+            CompArnr1AltRef0Name, CompArnr1Name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (Compare2 >= 0)
     {
-        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed", CompArnr1Name, CompArnr2Name);
+        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed",
+            CompArnr1Name, CompArnr2Name);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s identical to %s - Failed", CompArnr1Name, CompArnr2Name);
+        vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
+            CompArnr1Name, CompArnr2Name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     if (Compare3 >= 0)
     {
-        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed", CompArnr2Name, CompArnr3Name);
+        vpxt_formated_print(RESPRT, "%s not identical to %s - Passed",
+            CompArnr2Name, CompArnr3Name);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s identical to %s - Failed", CompArnr2Name, CompArnr3Name);
+        vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
+            CompArnr2Name, CompArnr3Name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
-
-    if (CompArnr1PSNR > CompArnr0PSNR) // if greater than - pass
+    // if greater than - pass
+    if (CompArnr1PSNR > CompArnr0PSNR)
     {
-        vpxt_formated_print(RESPRT, "Arnr 1 PSNR: %.2f > Alt Ref 0 PSNR: %.2f - Passed", CompArnr1PSNR, CompArnr0PSNR);
+        vpxt_formated_print(RESPRT, "Arnr 1 PSNR: %.2f > Alt Ref 0 PSNR: %.2f "
+            "- Passed", CompArnr1PSNR, CompArnr0PSNR);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-
-        if (CompArnr1PSNR >= (CompArnr0PSNR - (CompArnr0PSNR * 0.05))) // if less than but within 5% - pass
+        // if less than but within 5% - pass
+        if (CompArnr1PSNR >= (CompArnr0PSNR - (CompArnr0PSNR * 0.05)))
         {
-            vpxt_formated_print(RESPRT, "Arnr 1 PSNR: %.2f is with in 5%% of Alt Ref 0 PSNR: %.2f - Passed", CompArnr1PSNR, CompArnr0PSNR);
+            vpxt_formated_print(RESPRT, "Arnr 1 PSNR: %.2f is with in 5%% of "
+                "Alt Ref 0 PSNR: %.2f - Passed", CompArnr1PSNR, CompArnr0PSNR);
             tprintf(PRINT_BTH, "\n");
         }
         else // if less than and not with in 5% - fail
         {
-            vpxt_formated_print(RESPRT, "Arnr 1 PSNR: %.2f not within 5%% of Alt Ref 0 PSNR: %.2f - Failed", CompArnr1PSNR, CompArnr0PSNR);
+            vpxt_formated_print(RESPRT, "Arnr 1 PSNR: %.2f not within 5%% of "
+                "Alt Ref 0 PSNR: %.2f - Failed", CompArnr1PSNR, CompArnr0PSNR);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -285,20 +315,23 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     if (CompArnr2PSNR > CompArnr0PSNR) // if greater than - pass
     {
-        vpxt_formated_print(RESPRT, "Arnr 2 PSNR: %.2f > Alt Ref 0 PSNR: %.2f - Passed", CompArnr2PSNR, CompArnr0PSNR);
+        vpxt_formated_print(RESPRT, "Arnr 2 PSNR: %.2f > Alt Ref 0 PSNR: %.2f "
+            "- Passed", CompArnr2PSNR, CompArnr0PSNR);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-
-        if (CompArnr2PSNR >= (CompArnr0PSNR - (CompArnr0PSNR * 0.05))) // if less than but within 5% - pass
+        // if less than but within 5% - pass
+        if (CompArnr2PSNR >= (CompArnr0PSNR - (CompArnr0PSNR * 0.05)))
         {
-            vpxt_formated_print(RESPRT, "Arnr 2 PSNR: %.2f is with in 5%% of Alt Ref 0 PSNR: %.2f - Passed", CompArnr2PSNR, CompArnr0PSNR);
+            vpxt_formated_print(RESPRT, "Arnr 2 PSNR: %.2f is with in 5%% of "
+                "Alt Ref 0 PSNR: %.2f - Passed", CompArnr2PSNR, CompArnr0PSNR);
             tprintf(PRINT_BTH, "\n");
         }
         else // if less than and not with in 5% - fail
         {
-            vpxt_formated_print(RESPRT, "Arnr 2 PSNR: %.2f not within 5%% of Alt Ref 0 PSNR: %.2f - Failed", CompArnr2PSNR, CompArnr0PSNR);
+            vpxt_formated_print(RESPRT, "Arnr 2 PSNR: %.2f not within 5%% of "
+                "Alt Ref 0 PSNR: %.2f - Failed", CompArnr2PSNR, CompArnr0PSNR);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -306,20 +339,23 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     if (CompArnr3PSNR > CompArnr0PSNR) // if greater than - pass
     {
-        vpxt_formated_print(RESPRT, "Arnr 3 PSNR: %.2f > Alt Ref 0 PSNR: %.2f - Passed", CompArnr3PSNR, CompArnr0PSNR);
+        vpxt_formated_print(RESPRT, "Arnr 3 PSNR: %.2f > Alt Ref 0 PSNR: %.2f "
+            "- Passed", CompArnr3PSNR, CompArnr0PSNR);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-
-        if (CompArnr3PSNR >= (CompArnr0PSNR - (CompArnr0PSNR * 0.05))) // if less than but within 5% - pass
+        // if less than but within 5% - pass
+        if (CompArnr3PSNR >= (CompArnr0PSNR - (CompArnr0PSNR * 0.05)))
         {
-            vpxt_formated_print(RESPRT, "Arnr 3 PSNR: %.2f is with in 5%% of Alt Ref 0 PSNR: %.2f - Passed", CompArnr3PSNR, CompArnr0PSNR);
+            vpxt_formated_print(RESPRT, "Arnr 3 PSNR: %.2f is with in 5%% of "
+                "Alt Ref 0 PSNR: %.2f - Passed", CompArnr3PSNR, CompArnr0PSNR);
             tprintf(PRINT_BTH, "\n");
         }
         else // if less than and not with in 5% - fail
         {
-            vpxt_formated_print(RESPRT, "Arnr 3 PSNR: %.2f not within 5%% of Alt Ref 0 PSNR: %.2f - Failed", CompArnr3PSNR, CompArnr0PSNR);
+            vpxt_formated_print(RESPRT, "Arnr 3 PSNR: %.2f not within 5%% of "
+                "Alt Ref 0 PSNR: %.2f - Failed", CompArnr3PSNR, CompArnr0PSNR);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -327,20 +363,25 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     if (CompArnr1DataRate < CompArnr0DataRate) // if less than - pass
     {
-        vpxt_formated_print(RESPRT, "Arnr 1 Data Rate: %.2f < Alt Ref 0 Data Rate: %.2f - Passed", CompArnr1DataRate, CompArnr0DataRate);
+        vpxt_formated_print(RESPRT, "Arnr 1 Data Rate: %.2f < Alt Ref 0 Data "
+            "Rate: %.2f - Passed", CompArnr1DataRate, CompArnr0DataRate);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-
-        if (CompArnr1PSNR <= (CompArnr0PSNR + (CompArnr0PSNR * 0.05))) // if greater than but within 5% - pass
+        // if greater than but within 5% - pass
+        if (CompArnr1PSNR <= (CompArnr0PSNR + (CompArnr0PSNR * 0.05)))
         {
-            vpxt_formated_print(RESPRT, "Arnr 1 Data Rate: %.2f is with in 5%% of Alt Ref 0 Data Rate: %.2f - Passed", CompArnr1DataRate, CompArnr0DataRate);
+            vpxt_formated_print(RESPRT, "Arnr 1 Data Rate: %.2f is with in 5%% "
+                "of Alt Ref 0 Data Rate: %.2f - Passed", CompArnr1DataRate,
+                CompArnr0DataRate);
             tprintf(PRINT_BTH, "\n");
         }
         else // if less than and not with in 5% - fail
         {
-            vpxt_formated_print(RESPRT, "Arnr 1 Data Rate: %.2f not within 5%% of Alt Ref 0 Data Rate: %.2f - Failed", CompArnr1DataRate, CompArnr0DataRate);
+            vpxt_formated_print(RESPRT, "Arnr 1 Data Rate: %.2f not within 5%% "
+                "of Alt Ref 0 Data Rate: %.2f - Failed", CompArnr1DataRate,
+                CompArnr0DataRate);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -348,20 +389,25 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     if (CompArnr2DataRate < CompArnr0DataRate) // if less than - pass
     {
-        vpxt_formated_print(RESPRT, "Arnr 2 Data Rate: %.2f < Alt Ref 0 Data Rate: %.2f - Passed", CompArnr2DataRate, CompArnr0DataRate);
+        vpxt_formated_print(RESPRT, "Arnr 2 Data Rate: %.2f < Alt Ref 0 Data "
+            "Rate: %.2f - Passed", CompArnr2DataRate, CompArnr0DataRate);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-
-        if (CompArnr2PSNR <= (CompArnr0PSNR + (CompArnr0PSNR * 0.05))) // if greater than but within 5% - pass
+        // if greater than but within 5% - pass
+        if (CompArnr2PSNR <= (CompArnr0PSNR + (CompArnr0PSNR * 0.05)))
         {
-            vpxt_formated_print(RESPRT, "Arnr 2 Data Rate: %.2f is with in 5%% of Alt Ref 0 Data Rate: %.2f - Passed", CompArnr2DataRate, CompArnr0DataRate);
+            vpxt_formated_print(RESPRT, "Arnr 2 Data Rate: %.2f is with in 5%% "
+                "of Alt Ref 0 Data Rate: %.2f - Passed", CompArnr2DataRate,
+                CompArnr0DataRate);
             tprintf(PRINT_BTH, "\n");
         }
         else // if less than and not with in 5% - fail
         {
-            vpxt_formated_print(RESPRT, "Arnr 2 Data Rate: %.2f not within 5%% of Alt Ref 0 Data Rate: %.2f - Failed", CompArnr2DataRate, CompArnr0DataRate);
+            vpxt_formated_print(RESPRT, "Arnr 2 Data Rate: %.2f not within 5%% "
+                "of Alt Ref 0 Data Rate: %.2f - Failed", CompArnr2DataRate,
+                CompArnr0DataRate);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -369,20 +415,25 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
 
     if (CompArnr3DataRate < CompArnr0DataRate) // if less than - pass
     {
-        vpxt_formated_print(RESPRT, "Arnr 3 Data Rate: %.2f < Alt Ref 0 Data Rate: %.2f - Passed", CompArnr3DataRate, CompArnr0DataRate);
+        vpxt_formated_print(RESPRT, "Arnr 3 Data Rate: %.2f < Alt Ref 0 Data "
+            "Rate: %.2f - Passed", CompArnr3DataRate, CompArnr0DataRate);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-
-        if (CompArnr3PSNR <= (CompArnr0PSNR + (CompArnr0PSNR * 0.05))) // if greater than but within 5% - pass
+        // if greater than but within 5% - pass
+        if (CompArnr3PSNR <= (CompArnr0PSNR + (CompArnr0PSNR * 0.05)))
         {
-            vpxt_formated_print(RESPRT, "Arnr 3 Data Rate: %.2f is with in 5%% of Alt Ref 0 Data Rate: %.2f - Passed", CompArnr3DataRate, CompArnr0DataRate);
+            vpxt_formated_print(RESPRT, "Arnr 3 Data Rate: %.2f is with in 5%% "
+                "of Alt Ref 0 Data Rate: %.2f - Passed", CompArnr3DataRate,
+                CompArnr0DataRate);
             tprintf(PRINT_BTH, "\n");
         }
         else // if less than and not with in 5% - fail
         {
-            vpxt_formated_print(RESPRT, "Arnr 3 Data Rate: %.2f not within 5%% of Alt Ref 0 Data Rate: %.2f - Failed", CompArnr3DataRate, CompArnr0DataRate);
+            vpxt_formated_print(RESPRT, "Arnr 3 Data Rate: %.2f not within 5%% "
+                "of Alt Ref 0 Data Rate: %.2f - Failed", CompArnr3DataRate,
+                CompArnr0DataRate);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -393,7 +444,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(4, CompArnr1AltRef0.c_str(), CompArnr1.c_str(), CompArnr2.c_str(), CompArnr3.c_str());
+            vpxt_delete_files(4, CompArnr1AltRef0.c_str(), CompArnr1.c_str(),
+            CompArnr2.c_str(), CompArnr3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -404,7 +456,8 @@ int test_arnr(int argc, const char *const *argv, const std::string &WorkingDir, 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(4, CompArnr1AltRef0.c_str(), CompArnr1.c_str(), CompArnr2.c_str(), CompArnr3.c_str());
+            vpxt_delete_files(4, CompArnr1AltRef0.c_str(), CompArnr1.c_str(),
+            CompArnr2.c_str(), CompArnr3.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -1,8 +1,12 @@
 #include "vpxt_test_declarations.h"
 
-int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_new_vs_old_enc_cpu_tick(int argc,
+                                 const char *const *argv,
+                                 const std::string &WorkingDir,
+                                 std::string FilesAr[],
+                                 int TestType,
+                                 int DeleteIVF)
 {
-
     char *MyDir = "test_new_vs_old_enc_cpu_tick";
     int inputCheck = vpxt_check_arg_input(argv[1], argc);
 
@@ -29,7 +33,9 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     char ExeChar[1024];
@@ -106,7 +112,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -132,7 +139,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -149,19 +157,24 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
     char InputGitLog[256];
     char OutputTestLog[256];
 
-    snprintf(InputTestLog, 255, "%s%s", ExeChar, "test_new_vs_old_enc_cpu_tick-log.txt");
+    snprintf(InputTestLog, 255, "%s%s", ExeChar,
+        "test_new_vs_old_enc_cpu_tick-log.txt");
     snprintf(InputGitLog, 255, "%s%s", ExeChar, "libvpx-git-log.txt");
-    snprintf(OutputTestLog, 255, "%s%s", ExeChar, "test_new_vs_old_enc_cpu_tick-log-sync.txt");
+    snprintf(OutputTestLog, 255, "%s%s", ExeChar,
+        "test_new_vs_old_enc_cpu_tick-log-sync.txt");
 
-    //check to see if git-log.txt and new-vs-old-time-log exist.  If so use new method else use old.
-    if (vpxt_file_exists_check(InputGitLog) && vpxt_file_exists_check(InputTestLog))
+    //check to see if git-log.txt and new-vs-old-time-log exist.
+    //If so use new method else use old.
+    if (vpxt_file_exists_check(InputGitLog) &&
+        vpxt_file_exists_check(InputTestLog))
     {
         //Make New Compression get time.
         opt.target_bandwidth = BitRate;
         opt.auto_key = 1;
         opt.cpu_used = -4;
 
-        //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+        //Run Test only (Runs Test, Sets up test to be run, or skips compresion
+        //of files)
         if (TestType == TEST_ONLY)
         {
             cpu_tick1 = vpxt_cpu_tick_return(outputVP8New.c_str(), 0);
@@ -174,12 +187,15 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         {
 
             opt.Mode = Mode;
-            unsigned int Time = vpxt_time_compress(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, EncForm);
+            unsigned int Time = vpxt_time_compress(input.c_str(),
+                outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0,
+                cpu_tick1, EncForm);
 
             if (Time == -1 || Time == 0)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
         }
@@ -204,13 +220,15 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         }
 
         if (ArgumentString.substr(0, 1).compare(" ") == 0)
-            ArgumentString.erase(ArgumentString.begin(), ArgumentString.begin() + 1);
+            ArgumentString.erase(ArgumentString.begin(), ArgumentString.begin()
+            + 1);
 
         printf("\n\nARG STR:%s\n\n", ArgumentString.c_str());
 
         if (vpxt_init_new_vs_old_log(InputTestLog, ArgumentString) != 1)
         {
-            tprintf(PRINT_BTH, "\nNUMBER OF UNIQUE IDS NOT EQUAL 1: TEST ABORTED\n");
+            tprintf(PRINT_BTH, "\nNUMBER OF UNIQUE IDS NOT EQUAL 1: TEST "
+                "ABORTED\n");
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
@@ -218,15 +236,20 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
         std::vector<double> ValueList;
 
-        int sync_state = vpxt_sync_new_vs_old_log(InputTestLog, InputGitLog, OutputTestLog, UpdateString.c_str(), ArgumentString, "test_new_vs_old_enc_cpu_tick");
+        int sync_state = vpxt_sync_new_vs_old_log(InputTestLog, InputGitLog,
+            OutputTestLog, UpdateString.c_str(), ArgumentString,
+            "test_new_vs_old_enc_cpu_tick");
 
         if (sync_state == -1)
             ValueList.push_back(cpu_tick1);
         else
         {
-            tprintf(PRINT_BTH, "\n\n---------------------COMMIT-TIME-LOG---------------------\n\n");
-            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList, "test_new_vs_old_enc_cpu_tick");
-            tprintf(PRINT_BTH, "\n---------------------------------------------------------\n");
+            tprintf(PRINT_BTH, "\n\n---------------------COMMIT-TIME-LOG-------"
+                "--------------\n\n");
+            vpxt_eval_new_vs_old_log(OutputTestLog, ArgumentString, 1, ValueList
+                , "test_new_vs_old_enc_cpu_tick");
+            tprintf(PRINT_BTH, "\n---------------------------------------------"
+                "------------\n");
         }
 
         if (ValueList.size() < 2)
@@ -251,7 +274,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         /////////////////Make Sure Exe File Exists///////////////
         if (!vpxt_file_exists_check(oldexefullpath))
         {
-            tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[5]);
+            tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
+                argv[5]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -264,7 +288,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         opt.auto_key = 1;
         opt.cpu_used = -4;
 
-        //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+        //Run Test only (Runs Test, Sets up test to be run, or skips compresion
+        //of files)
         if (TestType == TEST_ONLY)
         {
             cpu_tick1 = vpxt_cpu_tick_return(outputVP8New.c_str(), 0);
@@ -276,12 +301,15 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
         else
         {
             opt.Mode = Mode;
-            unsigned int Time = vpxt_time_compress(input.c_str(), outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0, cpu_tick1, EncForm);
+            unsigned int Time = vpxt_time_compress(input.c_str(),
+                outputVP8New.c_str(), speed, BitRate, opt, "VP8", 0, 0,
+                cpu_tick1, EncForm);
 
             if (Time == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
 
@@ -292,7 +320,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
             if ((fp = freopen(TextfileString.c_str(), "a+", stderr)) == NULL)
             {
-                tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+                tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+                    TextfileString.c_str());
                 exit(1);
             }
 
@@ -302,7 +331,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
             unsigned int Time2 = vpxt_time_return(outputVP8Old.c_str(), 0);
             cpu_tick2 = vpxt_cpu_tick_return(outputVP8Old.c_str(), 0);
 
-            tprintf(PRINT_BTH, "\n\nFile completed: Time in Microseconds: %u", Time2);
+            tprintf(PRINT_BTH, "\n\nFile completed: Time in Microseconds: %u",
+                Time2);
             tprintf(PRINT_BTH, "\n Total CPU Ticks: %u\n", cpu_tick2);
         }
     }
@@ -320,7 +350,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (Indeterminate == 1)
     {
-        vpxt_formated_print(RESPRT, "New speed: %.2u Old speed: Not Found - Indeterminate", cpu_tick1);
+        vpxt_formated_print(RESPRT, "New speed: %.2u Old speed: Not Found - "
+            "Indeterminate", cpu_tick1);
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
@@ -334,7 +365,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (cpu_tick1 < cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "New: %u is Faster than Old: %u - Passed", cpu_tick1, cpu_tick2);
+        vpxt_formated_print(RESPRT, "New: %u is Faster than Old: %u - Passed",
+            cpu_tick1, cpu_tick2);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
@@ -348,7 +380,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (cpu_tick1 < (cpu_tick2 + (cpu_tick2 * .05)))
     {
-        vpxt_formated_print(RESPRT, "New: %u is with in five percent of Old: %u - Passed", cpu_tick1, cpu_tick2);
+        vpxt_formated_print(RESPRT, "New: %u is with in five percent of Old: "
+            "%u - Passed", cpu_tick1, cpu_tick2);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
@@ -363,7 +396,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (cpu_tick1 > cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "Old: %u is Faster than New: %u - Failed", cpu_tick2, cpu_tick1);
+        vpxt_formated_print(RESPRT, "Old: %u is Faster than New: %u - Failed",
+            cpu_tick2, cpu_tick1);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 
@@ -377,7 +411,8 @@ int test_new_vs_old_enc_cpu_tick(int argc, const char *const *argv, const std::s
 
     if (cpu_tick1 == cpu_tick2)
     {
-        vpxt_formated_print(RESPRT, "Files Took the same amount of time - Passed");
+        vpxt_formated_print(RESPRT, "Files Took the same amount of time - "
+            "Passed");
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 

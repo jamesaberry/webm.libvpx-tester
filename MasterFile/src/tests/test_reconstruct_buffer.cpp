@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_reconstruct_buffer(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_reconstruct_buffer(int argc,
+                            const char *const *argv,
+                            const std::string &WorkingDir,
+                            std::string FilesAr[],
+                            int TestType,
+                            int DeleteIVF)
 {
     char *CompressString = "Allow Drop Frames";
     char *MyDir = "test_reconstruct_buffer";
@@ -18,12 +23,14 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
 
     ////////////Formatting Test Specific Directory////////////
 
-    std::string CurTestDirStr = ""; // <- All Options need to set a value for this
+    std::string CurTestDirStr = "";
     std::string FileIndexStr = "";
     char MainTestDirChar[255] = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string ReconBufferCompression = CurTestDirStr;
@@ -47,7 +54,8 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -73,7 +81,8 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -90,7 +99,8 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     opt.lag_in_frames = 0;
     opt.play_alternate = 0;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -99,7 +109,9 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress_recon_buffer_check(input.c_str(), ReconBufferCompression.c_str(), speed, BitRate, opt, CompressString, 0, 0, DeleteIVF, EncForm) == -1)
+        if (vpxt_compress_recon_buffer_check(input.c_str(),
+            ReconBufferCompression.c_str(), speed, BitRate, opt,
+            CompressString, 0, 0, DeleteIVF, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -121,8 +133,6 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
     std::ifstream ReconOutFile;
     std::string ReconOutStr;
     vpxt_remove_file_extension(ReconBufferCompression.c_str(), ReconOutStr);
-    //std::string ReconOutStr = ReconBufferCompression;
-    //ReconOutStr.erase(ReconOutStr.length() - 4, 4);
     ReconOutStr.append("ReconFrameState.txt");
 
     ReconOutFile.open(ReconOutStr.c_str());
@@ -139,7 +149,8 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
 
         if (State == 0)
         {
-            vpxt_formated_print(RESPRT, "Frame: %i Buffer: %c - Preview not identical to Decoded - Failed", Frame, BufferLetter);
+            vpxt_formated_print(RESPRT, "Frame: %i Buffer: %c - Preview not "
+                "identical to Decoded - Failed", Frame, BufferLetter);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
@@ -149,7 +160,8 @@ int test_reconstruct_buffer(int argc, const char *const *argv, const std::string
 
     if (fail == 0)
     {
-        vpxt_formated_print(RESPRT, "All preview frames are identical to decoded frames - Passed");
+        vpxt_formated_print(RESPRT, "All preview frames are identical to "
+            "decoded frames - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 

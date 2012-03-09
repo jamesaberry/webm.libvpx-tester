@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_debug_matches_release(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_debug_matches_release(int argc,
+                               const char *const *argv,
+                               const std::string &WorkingDir,
+                               std::string FilesAr[],
+                               int TestType,
+                               int DeleteIVF)
 {
     //Needs Debug.exe and Release.exe
     char *MyDir = "test_debug_matches_release";
@@ -24,7 +29,9 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     char ExeCharDebugRelease[1024];
@@ -214,7 +221,8 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -259,7 +267,8 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
 
     opt.target_bandwidth = BitRate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
@@ -296,11 +305,13 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
-    int lngRCEnc = vpxt_compare_enc(ReleaseOutputEnc.c_str(), DebugOutputEnc.c_str(), 0);
+    int lngRCEnc = vpxt_compare_enc(ReleaseOutputEnc.c_str(),
+        DebugOutputEnc.c_str(), 0);
     int EncMatch = vpxt_print_compare_ivf_results(lngRCEnc, 0);
 
     tprintf(PRINT_BTH, "Comparing Decompression Files: ");
-    int lngRCDec = vpxt_compare_dec(ReleaseOutputDec.c_str(), DebugOutputDec.c_str());
+    int lngRCDec = vpxt_compare_dec(ReleaseOutputDec.c_str(),
+        DebugOutputDec.c_str());
     int DecMatch = vpxt_print_compare_ivf_results(lngRCDec, 0);
 
     int fail = 0;
@@ -309,21 +320,25 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
 
     if (EncMatch == 1)
     {
-        vpxt_formated_print(RESPRT, "Debug Compression identical to Release Compression - Passed\n");
+        vpxt_formated_print(RESPRT, "Debug Compression identical to Release "
+            "Compression - Passed\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Debug Compression not identical to Release Compression - Failed");
+        vpxt_formated_print(RESPRT, "Debug Compression not identical to "
+            "Release Compression - Failed");
         fail = 1;
     }
 
     if (DecMatch == 1)
     {
-        vpxt_formated_print(RESPRT, "Debug Decompression identical to Release Decompression - Passed\n");
+        vpxt_formated_print(RESPRT, "Debug Decompression identical to Release "
+            "Decompression - Passed\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Debug Decmpression not identical to Release Decompression - Failed");
+        vpxt_formated_print(RESPRT, "Debug Decmpression not identical to "
+            "Release Decompression - Failed");
         fail = 1;
     }
 
@@ -332,7 +347,9 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(4, DebugOutputEnc.c_str(), ReleaseOutputEnc.c_str(), DebugOutputDec.c_str(), ReleaseOutputDec.c_str());
+            vpxt_delete_files(4, DebugOutputEnc.c_str(),
+            ReleaseOutputEnc.c_str(), DebugOutputDec.c_str(),
+            ReleaseOutputDec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -343,7 +360,9 @@ int test_debug_matches_release(int argc, const char *const *argv, const std::str
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(4, DebugOutputEnc.c_str(), ReleaseOutputEnc.c_str(), DebugOutputDec.c_str(), ReleaseOutputDec.c_str());
+            vpxt_delete_files(4, DebugOutputEnc.c_str(),
+            ReleaseOutputEnc.c_str(), DebugOutputDec.c_str(),
+            ReleaseOutputDec.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

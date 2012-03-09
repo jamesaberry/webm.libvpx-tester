@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_multithreaded_dec(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_multithreaded_dec(int argc,
+                           const char *const *argv,
+                           const std::string &WorkingDir,
+                           std::string FilesAr[],
+                           int TestType,
+                           int DeleteIVF)
 {
     char *CompressString = "TokenPart";
     char *MyDir = "test_multithreaded_dec";
@@ -29,7 +34,9 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string MultiThreadCompFile = CurTestDirStr;
@@ -65,7 +72,8 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -85,7 +93,8 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
 
     if (!(CoreCount > 1))
     {
-        tprintf(PRINT_STD, "\nMultiple Cores not used Test aborted: %i\n", CoreCount);
+        tprintf(PRINT_STD, "\nMultiple Cores not used Test aborted: %i\n",
+            CoreCount);
         fclose(fp);
         return 0;
     }
@@ -98,7 +107,8 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -114,11 +124,14 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
     opt.target_bandwidth = BitRate;
     opt.end_usage = 0;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
-        Time0Dec = vpxt_time_return(MultiThreadedOffOutFile_DecThread0.c_str(), 0);
-        TimeNDec = vpxt_time_return(MultiThreadedOffOutFile_DecThreadN.c_str(), 0);
+        Time0Dec = vpxt_time_return(MultiThreadedOffOutFile_DecThread0.c_str(),
+            0);
+        TimeNDec = vpxt_time_return(MultiThreadedOffOutFile_DecThreadN.c_str(),
+            0);
     }
     else
     {
@@ -133,10 +146,13 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
             opt.cpu_used = -1;
             unsigned int cpu_tick1 = 0;
 
-            if (vpxt_compress(input.c_str(), MultiThreadCompFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.token_partitions, 0, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), MultiThreadCompFile.c_str(),
+                MultiThreaded, BitRate, opt, CompressString,
+                opt.token_partitions, 0, EncForm) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
         }
@@ -151,10 +167,13 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
             opt.Mode = MODE_GOODQUALITY;
             unsigned int cpu_tick1 = 0;
 
-            if (vpxt_compress(input.c_str(), MultiThreadCompFile.c_str(), MultiThreaded, BitRate, opt, CompressString, opt.token_partitions, 0, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), MultiThreadCompFile.c_str(),
+                MultiThreaded, BitRate, opt, CompressString,
+                opt.token_partitions, 0, EncForm) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
         }
@@ -162,11 +181,14 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
 
     unsigned int DecCPUTick1 = 0;
     tprintf(PRINT_BTH, "\n\nDec Threads: 0");
-    Time0Dec = vpxt_decompress_time_and_output(MultiThreadCompFile.c_str(), MultiThreadedOffOutFile_DecThread0.c_str(), DecCPUTick1, DecForm, 0);
+    Time0Dec = vpxt_decompress_time_and_output(MultiThreadCompFile.c_str(),
+        MultiThreadedOffOutFile_DecThread0.c_str(), DecCPUTick1, DecForm, 0);
     tprintf(PRINT_BTH, "\nDec Time in ms: %i\n", Time0Dec);
     unsigned int DecCPUTick2 = 0;
     tprintf(PRINT_BTH, "\n\nDec Threads: %i", CoreCount);
-    TimeNDec = vpxt_decompress_time_and_output(MultiThreadCompFile.c_str(), MultiThreadedOffOutFile_DecThreadN.c_str(), DecCPUTick2, DecForm, CoreCount);
+    TimeNDec = vpxt_decompress_time_and_output(MultiThreadCompFile.c_str(),
+        MultiThreadedOffOutFile_DecThreadN.c_str(), DecCPUTick2, DecForm,
+        CoreCount);
     tprintf(PRINT_BTH, "\nDec Time in ms: %i\n", TimeNDec);
 
     //Create Compression only stop test short.
@@ -179,14 +201,18 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Decompression Files: ");
-    int CompareDecOutput = vpxt_compare_dec(MultiThreadedOffOutFile_DecThread0.c_str(), MultiThreadedOffOutFile_DecThreadN.c_str());
+    int CompareDecOutput =
+        vpxt_compare_dec(MultiThreadedOffOutFile_DecThread0.c_str(),
+        MultiThreadedOffOutFile_DecThreadN.c_str());
     int CompareDec = vpxt_print_compare_ivf_results(CompareDecOutput, 1);
 
     char Time0FileNameDec[255] = "";
     char TimeNFileNameDec[255] = "";
 
-    vpxt_file_name(MultiThreadedOffOutFile_DecThread0.c_str(), Time0FileNameDec, 0);
-    vpxt_file_name(MultiThreadedOffOutFile_DecThreadN.c_str(), TimeNFileNameDec, 0);
+    vpxt_file_name(MultiThreadedOffOutFile_DecThread0.c_str(), Time0FileNameDec,
+        0);
+    vpxt_file_name(MultiThreadedOffOutFile_DecThreadN.c_str(), TimeNFileNameDec,
+        0);
 
     int fail = 0;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
@@ -195,13 +221,15 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
     {
         if (Time0Dec == 0)
         {
-            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed", Time0FileNameDec, Time0Dec);
+            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed",
+                Time0FileNameDec, Time0Dec);
             tprintf(PRINT_BTH, "\n");
         }
 
         if (TimeNDec == 0)
         {
-            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed", TimeNFileNameDec, TimeNDec);
+            vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed",
+                TimeNFileNameDec, TimeNDec);
         }
 
         fail = 1;
@@ -209,13 +237,15 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
 
     if (TimeNDec < Time0Dec)
     {
-        vpxt_formated_print(RESPRT, "%s time: %u < %s time: %u - Passed", TimeNFileNameDec, TimeNDec, Time0FileNameDec, Time0Dec);
+        vpxt_formated_print(RESPRT, "%s time: %u < %s time: %u - Passed",
+            TimeNFileNameDec, TimeNDec, Time0FileNameDec, Time0Dec);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (Time0Dec == TimeNDec)
     {
-        vpxt_formated_print(RESPRT, "%s time: %u == %s time: %u - Indeterminate", Time0FileNameDec, Time0Dec, TimeNFileNameDec, TimeNDec);
+        vpxt_formated_print(RESPRT, "%s time: %u == %s time: %u - Indeterminate"
+            , Time0FileNameDec, Time0Dec, TimeNFileNameDec, TimeNDec);
         tprintf(PRINT_BTH, "\n");
 
         if (fail != 1)
@@ -224,7 +254,8 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
 
     if (TimeNDec > Time0Dec)
     {
-        vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed", TimeNFileNameDec, TimeNDec, Time0FileNameDec, Time0Dec);
+        vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed",
+            TimeNFileNameDec, TimeNDec, Time0FileNameDec, Time0Dec);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -232,12 +263,14 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
     //compare decodes
     if (CompareDec == 1)
     {
-        vpxt_formated_print(RESPRT, "%s identical to %s - Passed", Time0FileNameDec, TimeNFileNameDec);
+        vpxt_formated_print(RESPRT, "%s identical to %s - Passed",
+            Time0FileNameDec, TimeNFileNameDec);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "%s not identical to %s - Failed", Time0FileNameDec, TimeNFileNameDec);
+        vpxt_formated_print(RESPRT, "%s not identical to %s - Failed",
+            Time0FileNameDec, TimeNFileNameDec);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -249,7 +282,9 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, MultiThreadCompFile.c_str(), MultiThreadedOffOutFile_DecThread0.c_str(), MultiThreadedOffOutFile_DecThreadN.c_str());
+            vpxt_delete_files(3, MultiThreadCompFile.c_str(),
+            MultiThreadedOffOutFile_DecThread0.c_str(),
+            MultiThreadedOffOutFile_DecThreadN.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -261,7 +296,9 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, MultiThreadCompFile.c_str(), MultiThreadedOffOutFile_DecThread0.c_str(), MultiThreadedOffOutFile_DecThreadN.c_str());
+            vpxt_delete_files(3, MultiThreadCompFile.c_str(),
+            MultiThreadedOffOutFile_DecThread0.c_str(),
+            MultiThreadedOffOutFile_DecThreadN.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -273,7 +310,9 @@ int test_multithreaded_dec(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nIndeterminate\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, MultiThreadCompFile.c_str(), MultiThreadedOffOutFile_DecThread0.c_str(), MultiThreadedOffOutFile_DecThreadN.c_str());
+            vpxt_delete_files(3, MultiThreadCompFile.c_str(),
+            MultiThreadedOffOutFile_DecThread0.c_str(),
+            MultiThreadedOffOutFile_DecThreadN.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

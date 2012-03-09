@@ -49,8 +49,12 @@
 #define MAXTENUM 46
 
 /*Removed Tests
-#define PREPRNUM 32 //PreProcessorWorks        //removed 07 15 2010 - Combined with NoiseSensitivity
-#define ALWS2NUM  4 //AllowSpatialResampling2  //removed 07 15 2010 - Combined with AllowSpatialResampling
-#define CHGCPNUM  8 //ChangeCPUDec             //removed 07 15 2010 - Combined with CPUDecOnlyWorks
-#define ALTFRNUM  4 //AltFreqTest              //removed 08 12 2010 - AltFreq no longer accessable via API
+//removed 07 15 2010 - Combined with NoiseSensitivity
+#define PREPRNUM 32 //PreProcessorWorks
+//removed 07 15 2010 - Combined with AllowSpatialResampling
+#define ALWS2NUM  4 //AllowSpatialResampling2
+//removed 07 15 2010 - Combined with CPUDecOnlyWorks
+#define CHGCPNUM  8 //ChangeCPUDec
+//removed 08 12 2010 - AltFreq no longer accessable via API
+#define ALTFRNUM  4 //AltFreqTest
 */

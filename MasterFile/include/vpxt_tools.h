@@ -5,7 +5,8 @@
 int RawDataIVF(const char *input, const char *output);
 int DecoderCheck(int argc, const char *const *argv);
 int IVFParseandDelete(const char *DirName);
-int TxtParseandCopy(const char *DirName, const char *BaseOutputDir, int BaseInputStrLength);
+int TxtParseandCopy(const char *DirName, const char *BaseOutputDir,
+                    int BaseInputStrLength);
 int tool_array_cov_fail_list_to_full_list(int argc, const char *const *argv);
 int tool_array_cov_summary_file(int argc, const char *const *argv);
 int tool_api_compress(int argc, const char *const *argv);
@@ -16,7 +17,8 @@ int tool_compare_dec(int argc, const char *const *argv);
 int tool_compare_code_coverage(int argc, const char *const *argv);
 int tool_compare_header_info(int argc, const char *const *argv);
 int tool_display_header_info(int argc, const char *const *argv);
-int tool_compression_equiv(int argc, const char *const *argv, std::string WorkingDir);
+int tool_compression_equiv(int argc, const char *const *argv,
+                           std::string WorkingDir);
 int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir);
 int tool_vpxt_multi_res_enc(int argc, const char *const *argv);
 int tool_vpxt_temp_scale_enc(int argc, const char *const *argv);

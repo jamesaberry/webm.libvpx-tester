@@ -1,8 +1,12 @@
 #include "vpxt_test_declarations.h"
 
-int test_noise_sensitivity(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_noise_sensitivity(int argc,
+                           const char *const *argv,
+                           const std::string &WorkingDir,
+                           std::string FilesAr[],
+                           int TestType,
+                           int DeleteIVF)
 {
-
     char *CompressString = "Noise Sensitivity";
     char *MyDir = "test_noise_sensitivity";
     int inputCheck = vpxt_check_arg_input(argv[1], argc);
@@ -23,7 +27,9 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string NoiseSenseBase = CurTestDirStr;
@@ -67,7 +73,8 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -93,7 +100,8 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n", argv[argc-1]);
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
 
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -113,7 +121,8 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     double PSNRArr[7];
     int doOnce = 1;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of files)
+    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    //files)
     if (TestType == TEST_ONLY)
     {
         while (Noise != 7)
@@ -125,16 +134,14 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
             NoiseSenseOut.append(num);
             vpxt_enc_format_append(NoiseSenseOut, EncForm);
 
-            //char NoiseSenseOut[255];
-            //snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
-
             if (doOnce == 1)
             {
                 doOnce = 0;
             }
 
             tprintf(PRINT_BTH, "\n");
-            PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, PRINT_BTH, 1, NULL);
+            PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0,
+                PRINT_BTH, 1, NULL);
             tprintf(PRINT_BTH, "\n");
             File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
             tprintf(PRINT_BTH, "\n");
@@ -154,17 +161,16 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
             NoiseSenseOut.append(num);
             vpxt_enc_format_append(NoiseSenseOut, EncForm);
 
-            //char NoiseSenseOut[255];
-            //snprintf(NoiseSenseOut, 255, "%s", WorkingDir5.c_str());
-
             opt.Mode = Mode;
 
             opt.noise_sensitivity = Noise;
 
-            if (vpxt_compress(input.c_str(), NoiseSenseOut.c_str(), speed, BitRate, opt, CompressString, Noise, 0, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), NoiseSenseOut.c_str(), speed,
+                BitRate, opt, CompressString, Noise, 0, EncForm) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+                record_test_complete(FileIndexStr, FileIndexOutputChar,
+                    TestType);
                 return 2;
             }
 
@@ -172,7 +178,8 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
             {
 
                 tprintf(PRINT_BTH, "\n");
-                PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0, PRINT_BTH, 1, NULL);
+                PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(),
+                    0, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
                 File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
                 tprintf(PRINT_BTH, "\n");
@@ -192,7 +199,8 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
         return 10;
     }
 
-    //checks 0v1 | 1v2 | 2v3 | 3v4 | 4v5 | 5v6 Could be modified to check all against eachother if wanted.
+    //checks 0v1 | 1v2 | 2v3 | 3v4 | 4v5 | 5v6 Could be modified to check all
+    //against eachother if wanted.
     int n = 0;
     int fail = 0;
 
@@ -202,14 +210,16 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
     {
         if (PSNRArr[n] == PSNRArr[n+1] && File2bytes[n] == File2bytes[n+1])
         {
-            vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f == Noise %i PSNR %.4f - Failed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
+            vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f == Noise %i PSNR "
+                "%.4f - Failed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
 
         }
         else
         {
-            vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f != Noise %i PSNR %.4f - Passed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
+            vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f != Noise %i PSNR "
+                "%.4f - Passed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
             tprintf(PRINT_BTH, "\n");
         }
 
@@ -218,13 +228,15 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
 
     if (PSNRArr[0] <= PSNRArr[6])
     {
-        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f <= Noise 6 PSNR: %.4f - Failed", PSNRArr[0], PSNRArr[6]);
+        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f <= Noise 6 PSNR: "
+            "%.4f - Failed", PSNRArr[0], PSNRArr[6]);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f > Noise 6 PSNR: %.4f - Passed", PSNRArr[0], PSNRArr[6]);
+        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f > Noise 6 PSNR: "
+            "%.4f - Passed", PSNRArr[0], PSNRArr[6]);
         tprintf(PRINT_BTH, "\n");
     }
 
@@ -233,7 +245,9 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(), NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(), NoiseSense5.c_str(), NoiseSense6.c_str());
+            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(),
+            NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(),
+            NoiseSense5.c_str(), NoiseSense6.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -244,7 +258,9 @@ int test_noise_sensitivity(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(), NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(), NoiseSense5.c_str(), NoiseSense6.c_str());
+            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(),
+            NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(),
+            NoiseSense5.c_str(), NoiseSense6.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

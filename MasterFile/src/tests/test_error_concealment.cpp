@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_error_concealment(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_error_concealment(int argc,
+                           const char *const *argv,
+                           const std::string &WorkingDir,
+                           std::string FilesAr[],
+                           int TestType,
+                           int DeleteIVF)
 {
     char *CompressString = "Error Resilient Mode";
     char *MyDir = "test_error_concealment";
@@ -23,7 +28,9 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string ErrConComp = CurTestDirStr;
@@ -58,7 +65,8 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -92,14 +100,16 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
 
         opt.error_resilient_mode = 1;
 
-        if (vpxt_compress(input.c_str(), ErrConComp.c_str(), speed, BitRate, opt, CompressString, opt.error_resilient_mode, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), ErrConComp.c_str(), speed, BitRate,
+            opt, CompressString, opt.error_resilient_mode, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
             return 2;
         }
 
-        if (vpxt_decompress_partial_drops(ErrConComp.c_str(), ErrConDec.c_str(), DecForm, 1, 3, 5, 2, PRINT_BTH, 1) == -1)
+        if (vpxt_decompress_partial_drops(ErrConComp.c_str(), ErrConDec.c_str(),
+            DecForm, 1, 3, 5, 2, PRINT_BTH, 1) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -119,10 +129,10 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
     double PSNRClean;
     double PSNRDrops;
 
-    PSNRClean = vpxt_psnr(input.c_str(), ErrConComp.c_str(), 0, PRINT_BTH, 1, NULL);
-    PSNRDrops = vpxt_psnr_dec(input.c_str(), ErrConDec.c_str(), 0, PRINT_BTH, 1, NULL, 0, 0);
-
-    //tprintf(PRINT_BTH, "\n PSNRClean: %f PSNRDrops: %f\n",PSNRClean,PSNRDrops);
+    PSNRClean = vpxt_psnr(input.c_str(), ErrConComp.c_str(), 0, PRINT_BTH, 1,
+        NULL);
+    PSNRDrops = vpxt_psnr_dec(input.c_str(), ErrConDec.c_str(), 0, PRINT_BTH, 1,
+        NULL, 0, 0);
 
     float PSRNPerc = 100 * vpxt_abs_float((PSNRClean - PSNRDrops) / PSNRDrops);
 
@@ -132,24 +142,30 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
 
     if (PSRNPerc < 50.00)
     {
-        vpxt_formated_print(RESPRT, "No Partial Drop PSNR: %.2f is within 50%% of Partial Drop PSNR: %.2f - %.2f%% - Passed", PSNRClean, PSNRDrops, PSRNPerc);
+        vpxt_formated_print(RESPRT, "No Partial Drop PSNR: %.2f is within 50%% "
+            "of Partial Drop PSNR: %.2f - %.2f%% - Passed", PSNRClean,
+            PSNRDrops, PSRNPerc);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "No Partial Drop PSNR: %.2f is not within 50%% of Partial Drop PSNR: %.2f - %.2f%% - Failed", PSNRClean, PSNRDrops, PSRNPerc);
+        vpxt_formated_print(RESPRT, "No Partial Drop PSNR: %.2f is not within "
+            "50%% of Partial Drop PSNR: %.2f - %.2f%% - Failed", PSNRClean,
+            PSNRDrops, PSRNPerc);
         tprintf(PRINT_BTH, "\n");
         passed = 0;
     }
 
     if (PSNRDrops > 20.00)
     {
-        vpxt_formated_print(RESPRT, "Partial Drop PSNR is greater than 20.00: %.2f - Passed", PSNRDrops);
+        vpxt_formated_print(RESPRT, "Partial Drop PSNR is greater than 20.00: "
+            "%.2f - Passed", PSNRDrops);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Partial Drop PSNR is not greater than 20.00: %.2f - Failed", PSNRDrops);
+        vpxt_formated_print(RESPRT, "Partial Drop PSNR is not greater than "
+            "20.00: %.2f - Failed", PSNRDrops);
         tprintf(PRINT_BTH, "\n");
         passed = 0;
     }
@@ -159,7 +175,8 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nPassed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(), ErrConCompWPFD.c_str());
+            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(),
+            ErrConCompWPFD.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -170,7 +187,8 @@ int test_error_concealment(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_BTH, "\nFailed\n");
 
         if (DeleteIVF)
-            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(), ErrConCompWPFD.c_str());
+            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(),
+            ErrConCompWPFD.c_str());
 
         fclose(fp);
         record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);

@@ -1,6 +1,11 @@
 #include "vpxt_test_declarations.h"
 
-int test_win_lin_mac_match(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[], int TestType, int DeleteIVF)
+int test_win_lin_mac_match(int argc,
+                           const char *const *argv,
+                           const std::string &WorkingDir,
+                           std::string FilesAr[],
+                           int TestType,
+                           int DeleteIVF)
 {
     char *CompressString = "WinLinMacMatch";
     char *MyDir = "test_win_lin_mac_match";
@@ -49,7 +54,9 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir, CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
+        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
+        FilesAr) == 11)
         return 11;
 
     std::string FiletoEnc = "";
@@ -89,7 +96,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     FiletoEnc = LinEnc;
     FiletoDec = LinDec;
 
-    if (vpxt_file_exists_check(WinEnc) && vpxt_file_exists_check(WinDec) && vpxt_file_exists_check(MacEnc) && vpxt_file_exists_check(MacDec))
+    if (vpxt_file_exists_check(WinEnc) && vpxt_file_exists_check(WinDec) &&
+        vpxt_file_exists_check(MacEnc) && vpxt_file_exists_check(MacDec))
     {
         TestMode = 1;
     }
@@ -98,7 +106,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     FiletoEnc = WinEnc;
     FiletoDec = WinDec;
 
-    if (vpxt_file_exists_check(LinEnc) && vpxt_file_exists_check(LinDec) && vpxt_file_exists_check(MacEnc) && vpxt_file_exists_check(MacDec))
+    if (vpxt_file_exists_check(LinEnc) && vpxt_file_exists_check(LinDec) &&
+        vpxt_file_exists_check(MacEnc) && vpxt_file_exists_check(MacDec))
     {
         TestMode = 1;
     }
@@ -107,7 +116,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     FiletoEnc = MacEnc;
     FiletoDec = MacDec;
 
-    if (vpxt_file_exists_check(WinEnc) && vpxt_file_exists_check(WinDec) && vpxt_file_exists_check(LinEnc) && vpxt_file_exists_check(LinDec))
+    if (vpxt_file_exists_check(WinEnc) && vpxt_file_exists_check(WinDec) &&
+        vpxt_file_exists_check(LinEnc) && vpxt_file_exists_check(LinDec))
     {
         TestMode = 1;
     }
@@ -128,7 +138,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            TextfileString.c_str());
         exit(1);
     }
 
@@ -160,7 +171,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     {
         opt.Mode = Mode;
 
-        if (vpxt_compress(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt, "Mode", Mode, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt,
+            "Mode", Mode, 0, EncForm) == -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -170,7 +182,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
-        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm, 1) == -1)
+        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm, 1) ==
+            -1)
         {
             fclose(fp);
             record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
@@ -204,7 +217,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
     int ENCFAIL = 0;
     int DECFAIL = 0;
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), LinEnc.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinEnc.c_str(),LinEnc.c_str());
     int WinEncVsLinEnc = vpxt_compare_enc(WinEnc.c_str(), LinEnc.c_str(), 0);
 
     if (WinEncVsLinEnc == -1)
@@ -214,7 +227,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (WinEncVsLinEnc >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i", WinEncVsLinEnc);
+        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i",
+            WinEncVsLinEnc);
         ENCFAIL++;
     }
 
@@ -230,7 +244,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         ENCFAIL++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinEnc.c_str(), MacEnc.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s",LinEnc.c_str(),MacEnc.c_str());
     int LinEncVsMacEnc = vpxt_compare_enc(LinEnc.c_str(), MacEnc.c_str(), 0);
 
     if (LinEncVsMacEnc == -1)
@@ -240,7 +254,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (LinEncVsMacEnc >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i", LinEncVsMacEnc);
+        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i",
+            LinEncVsMacEnc);
         ENCFAIL++;
     }
 
@@ -256,7 +271,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         ENCFAIL++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinEnc.c_str(), MacEnc.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinEnc.c_str(),MacEnc.c_str());
     int WinEncVsMacEnc = vpxt_compare_enc(WinEnc.c_str(), MacEnc.c_str(), 0);
 
     if (WinEncVsMacEnc == -1)
@@ -266,7 +281,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (WinEncVsMacEnc >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i", WinEncVsMacEnc);
+        tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i",
+            WinEncVsMacEnc);
         ENCFAIL++;
     }
 
@@ -282,7 +298,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         ENCFAIL++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), LinDec.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinDec.c_str(),LinDec.c_str());
     int WinDecVsLinDec = vpxt_compare_enc(WinDec.c_str(), LinDec.c_str(), 0);
 
     if (WinDecVsLinDec == -1)
@@ -292,7 +308,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (WinDecVsLinDec >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i", WinDecVsLinDec);
+        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i",
+            WinDecVsLinDec);
         DECFAIL++;
     }
 
@@ -308,7 +325,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         DECFAIL++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s", LinDec.c_str(), MacDec.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s",LinDec.c_str(),MacDec.c_str());
     int LinDecVsMacDec = vpxt_compare_enc(LinDec.c_str(), MacDec.c_str(), 0);
 
     if (LinDecVsMacDec == -1)
@@ -318,7 +335,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (LinDecVsMacDec >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i", LinDecVsMacDec);
+        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i",
+            LinDecVsMacDec);
         DECFAIL++;
     }
 
@@ -334,7 +352,7 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
         DECFAIL++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s", WinDec.c_str(), MacDec.c_str());
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinDec.c_str(),MacDec.c_str());
     int WinDecVsMacDec = vpxt_compare_enc(WinDec.c_str(), MacDec.c_str(), 0);
 
     if (WinDecVsMacDec == -1)
@@ -344,7 +362,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (WinDecVsMacDec >= 0)
     {
-        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i", WinDecVsMacDec);
+        tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i",
+            WinDecVsMacDec);
         DECFAIL++;
     }
 
@@ -371,7 +390,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (ENCFAIL > 0)
     {
-        vpxt_formated_print(RESPRT, "Not all encoded files are identical - Failed");
+        vpxt_formated_print(RESPRT, "Not all encoded files are identical - "
+            "Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -384,7 +404,8 @@ int test_win_lin_mac_match(int argc, const char *const *argv, const std::string 
 
     if (DECFAIL > 0)
     {
-        vpxt_formated_print(RESPRT, "Not all decoded files are identical - Failed");
+        vpxt_formated_print(RESPRT, "Not all decoded files are identical - "
+            "Failed");
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }

@@ -1816,6 +1816,7 @@ static int webm_guess_framerate(struct input_ctx *input,
 
     unsigned char       *buf = NULL;
     size_t               buf_sz = 0;
+    int                  nestegg_pkt_read = 1;
 
     for (i = 0; tstamp < 1000000000 && i < 50;)
     {
@@ -1827,11 +1828,18 @@ static int webm_guess_framerate(struct input_ctx *input,
 
             do
             {
-                if (nestegg_read_packet(input->nestegg_ctx, &pkt) <= 0
-                    || nestegg_packet_track(pkt, &track))
+                nestegg_pkt_read = nestegg_read_packet(input->nestegg_ctx,&pkt);
+                if (nestegg_pkt_read <= 0)
+                    break;
+
+                if (nestegg_packet_track(pkt, &track))
                     return 1;
+
             }
             while (track != input->video_track);
+
+            if (nestegg_pkt_read <= 0)
+            break;
 
             nestegg_packet_tstamp(pkt, &tstamp);
 

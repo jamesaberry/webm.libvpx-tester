@@ -2,101 +2,98 @@
 
 int test_noise_sensitivity(int argc,
                            const char *const *argv,
-                           const std::string &WorkingDir,
-                           std::string FilesAr[],
-                           int TestType,
-                           int DeleteIVF)
+                           const std::string &working_dir,
+                           std::string files_ar[],
+                           int test_type,
+                           int delete_ivf)
 {
-    char *CompressString = "Noise Sensitivity";
-    char *MyDir = "test_noise_sensitivity";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Noise Sensitivity";
+    char *test_dir = "test_noise_sensitivity";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bit_rate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str = "";
+    char main_test_dir_char[255] = "";
+    std::string file_index_str = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string NoiseSenseBase = CurTestDirStr;
-    NoiseSenseBase.append(slashCharStr());
-    NoiseSenseBase.append(MyDir);
-    NoiseSenseBase.append("_compression_");
+    int max_noise = 1;
+    int temp_denoise = 1;
+    std::vector<std::string> noise_sense_vec;
 
-    std::string NoiseSense0 = NoiseSenseBase;
-    NoiseSense0.append("0");
-    vpxt_enc_format_append(NoiseSense0, EncForm);
-    std::string NoiseSense1 = NoiseSenseBase;
-    NoiseSense1.append("1");
-    vpxt_enc_format_append(NoiseSense1, EncForm);
-    std::string NoiseSense2 = NoiseSenseBase;
-    NoiseSense2.append("2");
-    vpxt_enc_format_append(NoiseSense2, EncForm);
-    std::string NoiseSense3 = NoiseSenseBase;
-    NoiseSense3.append("3");
-    vpxt_enc_format_append(NoiseSense3, EncForm);
-    std::string NoiseSense4 = NoiseSenseBase;
-    NoiseSense4.append("4");
-    vpxt_enc_format_append(NoiseSense4, EncForm);
-    std::string NoiseSense5 = NoiseSenseBase;
-    NoiseSense5.append("5");
-    vpxt_enc_format_append(NoiseSense5, EncForm);
-    std::string NoiseSense6 = NoiseSenseBase;
-    NoiseSense6.append("6");
-    vpxt_enc_format_append(NoiseSense6, EncForm);
+    std::string noise_sense_base = cur_test_dir_str;
+    noise_sense_base += slashCharStr();
+    noise_sense_base += test_dir;
+    noise_sense_base += "_compression_";
+
+#if !(CONFIG_TEMPORAL_DENOISING)
+        max_noise = 6;
+        temp_denoise = 0;
+#endif
+
+    for(int i = 0; i < max_noise+1; ++i){
+        char i_char[8];
+        vpxt_itoa_custom(i, i_char, 10);
+
+        std::string noise_sense = noise_sense_base;
+        noise_sense += i_char;
+        vpxt_enc_format_append(noise_sense, enc_format);
+        noise_sense_vec.push_back(noise_sense);
+    }
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str;
+    text_file_str.append(slashCharStr());
+    text_file_str.append(test_dir);
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str.append(".txt");
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str.append("_TestOnly.txt");
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -104,114 +101,101 @@ int test_noise_sensitivity(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bit_rate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bit_rate;
 
-    int Noise = 0;
-    long File2bytes[7];
-    double PSNRArr[7];
-    int doOnce = 1;
+    int noise = 0;
+    long file_size[7];
+    double noise_psnr[7];
+
+    //print if temp denoise or not
+    if(temp_denoise)
+        printf("\n\n Not using Temporal Denoising\n");
+    else
+        printf("\n\n Using Temporal Denoising\n");
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
-        while (Noise != 7)
+        while (noise != max_noise+1)
         {
-            char num[20];
-            vpxt_itoa_custom(Noise, num, 10);
-
-            std::string NoiseSenseOut = NoiseSenseBase;
-            NoiseSenseOut.append(num);
-            vpxt_enc_format_append(NoiseSenseOut, EncForm);
-
-            if (doOnce == 1)
-            {
-                doOnce = 0;
-            }
-
             tprintf(PRINT_BTH, "\n");
-            PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(), 0,
-                PRINT_BTH, 1, NULL);
+            noise_psnr[noise] = vpxt_psnr(input.c_str(),
+                noise_sense_vec[noise].c_str(), 0, PRINT_BTH, 1, NULL);
             tprintf(PRINT_BTH, "\n");
-            File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
+            file_size[noise] = vpxt_file_size(noise_sense_vec[noise].c_str(),
+                1);
             tprintf(PRINT_BTH, "\n");
 
-            Noise++;
+            noise++;
         }
     }
     else
     {
-        while (Noise != 7)
+        while (noise != max_noise+1)
         {
+            opt.Mode = mode;
+            opt.noise_sensitivity = noise;
 
-            char num[20];
-            vpxt_itoa_custom(Noise, num, 10);
-
-            std::string NoiseSenseOut = NoiseSenseBase;
-            NoiseSenseOut.append(num);
-            vpxt_enc_format_append(NoiseSenseOut, EncForm);
-
-            opt.Mode = Mode;
-
-            opt.noise_sensitivity = Noise;
-
-            if (vpxt_compress(input.c_str(), NoiseSenseOut.c_str(), speed,
-                BitRate, opt, CompressString, Noise, 0, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), noise_sense_vec[noise].c_str(),
+                speed, bit_rate, opt, comp_out_str, noise, 0, enc_format)== -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar,
-                    TestType);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
                 return 2;
             }
 
-            if (TestType != 2)
+            if (test_type != 2)
             {
-
                 tprintf(PRINT_BTH, "\n");
-                PSNRArr[Noise] = vpxt_psnr(input.c_str(), NoiseSenseOut.c_str(),
-                    0, PRINT_BTH, 1, NULL);
+                noise_psnr[noise] = vpxt_psnr(input.c_str(),
+                    noise_sense_vec[noise].c_str(), 0, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
-                File2bytes[Noise] = vpxt_file_size(NoiseSenseOut.c_str(), 1);
+                file_size[noise] = vpxt_file_size(
+                    noise_sense_vec[noise].c_str(), 1);
                 tprintf(PRINT_BTH, "\n");
             }
 
-            Noise++;
+            noise++;
         }
 
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
-    //checks 0v1 | 1v2 | 2v3 | 3v4 | 4v5 | 5v6 Could be modified to check all
-    //against eachother if wanted.
+    //checks 0v1
+    //or
+    //checks 0v1 | 1v2 | 2v3 | 3v4 | 4v5 | 5v6
     int n = 0;
     int fail = 0;
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    while (n != 6)
+    while (n < max_noise)
     {
-        if (PSNRArr[n] == PSNRArr[n+1] && File2bytes[n] == File2bytes[n+1])
+        if (noise_psnr[n] == noise_psnr[n+1] && file_size[n] == file_size[n+1])
         {
             vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f == Noise %i PSNR "
-                "%.4f - Failed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
+                "%.4f - Failed", n, noise_psnr[n], n + 1, noise_psnr[n+1]);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
 
@@ -219,55 +203,49 @@ int test_noise_sensitivity(int argc,
         else
         {
             vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f != Noise %i PSNR "
-                "%.4f - Passed", n, PSNRArr[n], n + 1, PSNRArr[n+1]);
+                "%.4f - Passed", n, noise_psnr[n], n + 1, noise_psnr[n+1]);
             tprintf(PRINT_BTH, "\n");
         }
 
         n++;
     }
 
-    if (PSNRArr[0] <= PSNRArr[6])
+    if (noise_psnr[0] <= noise_psnr[max_noise])
     {
-        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f <= Noise 6 PSNR: "
-            "%.4f - Failed", PSNRArr[0], PSNRArr[6]);
+        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f <= Noise %i PSNR: "
+            "%.4f - Failed", noise_psnr[0], max_noise, noise_psnr[max_noise]);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
-        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f > Noise 6 PSNR: "
-            "%.4f - Passed", PSNRArr[0], PSNRArr[6]);
+        vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f > Noise %i PSNR: "
+            "%.4f - Passed", noise_psnr[0], max_noise, noise_psnr[max_noise]);
         tprintf(PRINT_BTH, "\n");
     }
+
+    if (delete_ivf)
+        for(n = 0; n < max_noise; n++)
+            vpxt_delete_files(1, noise_sense_vec[noise]);
 
     if (fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(),
-            NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(),
-            NoiseSense5.c_str(), NoiseSense6.c_str());
-
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(7, NoiseSense0.c_str(), NoiseSense1.c_str(),
-            NoiseSense2.c_str(), NoiseSense3.c_str(), NoiseSense4.c_str(),
-            NoiseSense5.c_str(), NoiseSense6.c_str());
-
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

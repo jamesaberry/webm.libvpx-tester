@@ -2412,8 +2412,12 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
 
     if (opt.Mode == 0)
         opt.noise_sensitivity = 0;           //valid Range:
-    else                                     //if Not Real Time Mode 0 to 6
-        opt.noise_sensitivity = rand() % 7;  //if Real Time Mode 0 to 0
+    else                                     //if Real Time Mode 0 to 0
+#if CONFIG_TEMPORAL_DENOISING                //if Not Real Time and Temp De 0-1
+        opt.noise_sensitivity = rand() % 2;  //if Not Real Time not Temp De 0-6
+#else
+        opt.noise_sensitivity = rand() % 7;
+#endif
 
     if (opt.Mode == 0)
         opt.lag_in_frames = 0;                //valid Range:

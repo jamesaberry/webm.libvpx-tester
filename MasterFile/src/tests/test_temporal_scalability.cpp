@@ -185,7 +185,7 @@ int test_temporal_scalability(int argc,
     int temp_bitrate_arr[5] =  {temp_scale_br_0, temp_scale_br_1,
         temp_scale_br_2, temp_scale_br_3, temp_scale_br_4};
 
-    if(layer_mode == 0 || layer_mode == 8){
+    if(layer_mode == 0 || layer_mode == 7){
         eval_drop_vec.push_back(1);
         eval_drop_vec.push_back(0);
     }
@@ -398,7 +398,7 @@ int test_temporal_scalability(int argc,
         {
             if(!*double_it){
                 vpxt_formated_print(RESPRT, "Decemation does not occur"
-                    " correctly for %s - Failed", *str_it);
+                    " correctly for %s - Failed", (*str_it).c_str());
                 tprintf(PRINT_BTH, "\n");
             }
 

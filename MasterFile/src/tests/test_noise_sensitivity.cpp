@@ -226,7 +226,7 @@ int test_noise_sensitivity(int argc,
 
     if (delete_ivf)
         for(n = 0; n < max_noise; n++)
-            vpxt_delete_files(1, noise_sense_vec[noise]);
+            vpxt_delete_files(1, noise_sense_vec[n].c_str());
 
     if (fail == 0)
     {

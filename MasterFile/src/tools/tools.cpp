@@ -143,10 +143,8 @@ int RawDataIVF(const char *input, const char *output)
 }
 int DecoderCheck(int argc, const char *const *argv)
 {
-    char ExeLoc[255];
-    vpxt_folder_name(argv[0], ExeLoc);
-
-    std::string IVFSourceFile = ExeLoc;
+    std::string IVFSourceFile;
+    vpxt_folder_name(argv[0], &IVFSourceFile);
     IVFSourceFile.append("DecTestMaterial\\");
 
     std::string DecodeInputStr = IVFSourceFile;
@@ -9688,6 +9686,27 @@ int tool_random_stress_test(int argc, const char *const *argv)
         }
 
         if (ValidTestNumbers[RandTestNum] == NVOPSNUM)
+        {
+            outfile << "test_new_vs_old_psnr@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << VP8vOldest_PlugIn_RLib_RMode.c_str();
+            outfile << "@";
+            outfile << "2";
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
+        if (ValidTestNumbers[RandTestNum] == NVOTSNUM)
         {
             outfile << "test_new_vs_old_psnr@";
             outfile << RandIVFFile.c_str();

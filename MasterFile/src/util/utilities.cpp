@@ -2147,6 +2147,7 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     opt.end_usage = 1;
     opt.fixed_q = -1;
     opt.key_freq = 999999;
+
     opt.maximum_buffer_size = 6000;
     opt.Mode = 2;
     opt.noise_sensitivity = 0;
@@ -3459,14 +3460,16 @@ void vpxt_file_name(const char *input, char *FileName, int removeExt)
 }
 
 
-void vpxt_folder_name(const char *input, char *output)
+void vpxt_folder_name(const char *input, std::string *output_str)
 {
     //Gets the full name of the folder a file is in and returns it.
 
+    output_str->clear();
     int parser = 0;
     int slashcount = 0;
     int slashcount2 = 0;
     const char *Dir = input;
+    char output[1024];
 
     while (Dir[parser] != '\0')
     {
@@ -3487,11 +3490,9 @@ void vpxt_folder_name(const char *input, char *output)
             slashcount2++;
         }
 
-        output[parser] = Dir[parser];
+        *output_str += Dir[parser];
         parser++;
     }
-
-    output[parser] = '\0';
 
     return;
 }
@@ -4196,6 +4197,8 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == NVOPSNUM) TestName = "test_new_vs_old_psnr";
 
+    if (TestNumber == NVOTSNUM) TestName = "test_new_vs_old_temp_scale";
+
     if (TestNumber == NOISENUM) TestName = "test_noise_sensitivity";
 
     if (TestNumber == OV2PSNUM) TestName = "test_one_pass_vs_two_pass";
@@ -4337,6 +4340,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.compare("test_new_vs_old_psnr") == 0)
             return NVOPSNUM;
+
+        if (id_test_str.compare("test_new_vs_old_temp_scale") == 0)
+            return NVOTSNUM;
 
         if (id_test_str.compare("test_new_vs_old_enc_cpu_tick") == 0)
             return NVOECPTK;
@@ -5008,6 +5014,21 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
+                if (selector == NVOTSNUM)
+                {
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "NewVsOldTempScale";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
                 if (selector == NVOECPTK)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -5266,16 +5287,16 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != MAXQUNUM && selector != MEML1NUM &&
                     selector != MEML2NUM && selector != MINQUNUM &&
                     selector != MULTENUM && selector != MULTDNUM &&
-                    selector != NVOPSNUM && selector != NVOECPTK &&
-                    selector != NOISENUM && selector != OV2PSNUM &&
-                    selector != PLYALNUM && selector != POSTPNUM &&
-                    selector != RSDWMNUM && selector != SPEEDNUM &&
-                    selector != TMPSCNUM && selector != TVECTNUM &&
-                    selector != TTVSFNUM && selector != RECBFNUM &&
-                    selector != TV2BTNUM && selector != UNDSHNUM &&
-                    selector != VERSINUM && selector != WMLMMNUM &&
-                    selector != ALWSRNUM && selector != VPXMINUM &&
-                    selector != MULRENUM)
+                    selector != NVOPSNUM && selector != NVOTSNUM &&
+                    selector != NVOECPTK && selector != NOISENUM &&
+                    selector != OV2PSNUM && selector != PLYALNUM &&
+                    selector != POSTPNUM && selector != RSDWMNUM &&
+                    selector != SPEEDNUM && selector != TMPSCNUM &&
+                    selector != TVECTNUM && selector != TTVSFNUM &&
+                    selector != RECBFNUM && selector != TV2BTNUM &&
+                    selector != UNDSHNUM && selector != VERSINUM &&
+                    selector != WMLMMNUM && selector != ALWSRNUM &&
+                    selector != VPXMINUM && selector != MULRENUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -5687,23 +5708,52 @@ int  vpxt_sync_new_vs_old_log(const char *testlog,
 
     return 0;
 }
-double vpxt_get_new_vs_old_val(std::string fileline)
+double vpxt_get_new_vs_old_val(std::string fileline,
+                               std::vector<double> &ValueList,
+                               int &values_per_line)
 {
-    int lastNumPos = 0;
+    int last_num_pos = 0;
+    int last_space_pos = 0;
+    int is_number = 1;
+    double number = 0.0;
+    int new_values_per_line = 0;
 
-    while (41 + lastNumPos < fileline.length())
+    //loop through line stop at end
+    while (41 + last_num_pos < fileline.length())
     {
-        if (fileline.substr(41 + lastNumPos, 1).compare(" ") == 0)
-            break;
+        //look for spaces
+        if (fileline.substr(41 + last_num_pos, 1).compare(" ") == 0){
+            //alternate between number and its description if expecting number
+            //use last_space_pos and last_num_pos to get it.
+            if(is_number){
+                is_number = 0;
+                number = strtod(fileline.substr(41 + last_space_pos, 41 +
+                    last_num_pos - 1).c_str(), NULL);
 
-        lastNumPos = lastNumPos + 1;
+                //if valid number add it to vector and add one to values per
+                //line
+                if(number > 0.0){
+                    ValueList.push_back(number);
+                    ++new_values_per_line;
+                }
+            }
+            else{
+                is_number = 1;
+                last_space_pos = last_num_pos;
+            }
+        }
+
+        ++last_num_pos;
     }
 
-    if (lastNumPos == 0)
+    if(new_values_per_line > values_per_line)
+        values_per_line = new_values_per_line;
+
+    //if no input found after commit description return 0 else 1
+    if (last_num_pos == 0)
         return 0.0;
     else
-        return strtod(fileline.substr(41, 41 + lastNumPos - 1).c_str(), NULL);
-
+        return 1.0;
 }
 int  vpxt_eval_new_vs_old_log(const char *logfile,
                               std::string TestIDStr,
@@ -5725,6 +5775,7 @@ int  vpxt_eval_new_vs_old_log(const char *logfile,
     int contextLines = 0;
     int totalLines = 0;
     int FirstLineReached = 0;
+    int values_per_line = 1;
 
     while (!logFile.eof())
     {
@@ -5737,25 +5788,72 @@ int  vpxt_eval_new_vs_old_log(const char *logfile,
 
         if (correctCommit == 1)
         {
-            while (!logFile.eof() && (ValueList.size() < 2 || contextLines < 5)
-                && (ValueList.size() < 2 || totalLines < 30))
+            while (!logFile.eof() && (ValueList.size()/values_per_line < 2 ||
+                contextLines < 5) && (ValueList.size()/values_per_line < 2 ||
+                totalLines < 30))
             {
                 totalLines = totalLines + 1;
 
-                double value = vpxt_get_new_vs_old_val(logFileLine);
-
-                if (value > 0)
+                if(vpxt_get_new_vs_old_val(logFileLine, ValueList,
+                    values_per_line))
                 {
                     if (strncmp(logFileLine, versionStrSub.c_str(), 7) == 0 ||
                         FirstLineReached == 1)
                     {
                         if (FirstLineReached == 0)
-                            tprintf(PRINT_BTH, "%s <--\n", logFileLine);
+                        {
+                            std::string log_file_str = logFileLine;
+                            tprintf(PRINT_BTH, "%s", log_file_str.substr(0,40).c_str());
+
+                            std::string::iterator str_it;
+                            int spaces = -1;
+                            for(str_it = log_file_str.begin() + 40 ; str_it <
+                                log_file_str.end(); str_it++)
+                            {
+                                if(spaces == 4){
+                                    tprintf(PRINT_BTH, "\n");
+
+                                    for(int i=0; i<41; i++)
+                                        tprintf(PRINT_BTH, " ");
+
+                                    spaces = 0;
+                                }
+                                if(*str_it == ' ')
+                                    ++spaces;
+
+                                tprintf(PRINT_BTH, "%c", *str_it);
+                            }
+
+                            tprintf(PRINT_BTH, " <--\n");
+                        }
                         else
-                            tprintf(PRINT_BTH, "%s\n", logFileLine);
+                        {
+                            std::string log_file_str = logFileLine;
+                            tprintf(PRINT_BTH, "%s", log_file_str.substr(0,40).c_str());
+
+                            std::string::iterator str_it;
+                            int spaces = -1;
+                            for(str_it = log_file_str.begin() + 40 ; str_it <
+                                log_file_str.end(); str_it++)
+                            {
+                                if(spaces == 4){
+                                    tprintf(PRINT_BTH, "\n");
+
+                                    for(int i=0; i<41; i++)
+                                        tprintf(PRINT_BTH, " ");
+
+                                    spaces = 0;
+                                }
+                                if(*str_it == ' ')
+                                    ++spaces;
+
+                                tprintf(PRINT_BTH, "%c", *str_it);
+                            }
+
+                            tprintf(PRINT_BTH, "\n");
+                        }
 
                         FirstLineReached = 1;
-                        ValueList.push_back(value);
                         contextLines = contextLines + 1;
                     }
                 }
@@ -6087,6 +6185,16 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 1;
 
         if (argNum == 10)
+            return 2;
+    }
+
+    //test_new_vs_old_enc_cpu_tick
+    if (selector == NVOTSNUM)
+    {
+        if (argNum == 11)
+            return 1;
+
+        if (argNum == 12)
             return 2;
     }
 
@@ -10838,6 +10946,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
 
         if (pass == 1 && arg_passes == 2)
         {
+
             tprintf(PRINT_STD, "\nSecond Pass - ");
         }
 
@@ -11605,6 +11714,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
                 QuantOutFile.close();
 
             return -1;
+
         }
 
         if (stats_fn)
@@ -15485,6 +15595,7 @@ int vpxt_decompress_copy_set(const char *inputchar,
 
     if (summary || progress)
     {
+
         show_progress(frame_in, frame_out, dx_time);
         fprintf(stderr, "\n");
     }
@@ -21043,6 +21154,7 @@ double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
     InitIVFHeader(&ivfhRaw);
     fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
     vpxt_format_ivf_header_read(&ivfhRaw);
+
 
     IVF_FRAME_HEADER ivf_fhRaw;
 

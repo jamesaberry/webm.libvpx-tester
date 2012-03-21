@@ -34,9 +34,8 @@ int test_debug_matches_release(int argc,
         FilesAr) == 11)
         return 11;
 
-    char ExeCharDebugRelease[1024];
-    vpxt_folder_name(argv[0], ExeCharDebugRelease);
-    std::string ExeCharDebugReleaseString = ExeCharDebugRelease;
+    std::string ExeCharDebugReleaseString;
+    vpxt_folder_name(argv[0], &ExeCharDebugReleaseString);
 
     std::string DebugExeLoc = ExeCharDebugReleaseString;
     DebugExeLoc.append(ExeInputDebug);

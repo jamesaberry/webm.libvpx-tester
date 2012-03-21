@@ -37,9 +37,9 @@ int test_extra_file(int argc,
 #endif
 
     ////////tester directory////////
-    char TesterDirChar[255];
-    vpxt_folder_name(argv[0], TesterDirChar);
-    std::string TesterDirAllFiles = TesterDirChar;
+    std::string BaseDir;
+    vpxt_folder_name(argv[0], &BaseDir);
+    std::string TesterDirAllFiles = BaseDir;
 #if defined(_WIN32)
     TesterDirAllFiles.append("*");
 #endif
@@ -123,7 +123,7 @@ int test_extra_file(int argc,
     }
 
     //check Tester Dirctory
-    std::string TesterDirOPSNR = TesterDirChar;
+    std::string TesterDirOPSNR = BaseDir;
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", TesterDirOPSNR.c_str());
     TesterDirOPSNR.append("opsnr.stt");
 

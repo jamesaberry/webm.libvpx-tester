@@ -121,6 +121,7 @@ int run_multiple_tests(int argc,
     vpxt_test_funct_ptr[MULTENUM] = &test_multithreaded_enc;
     vpxt_test_funct_ptr[NVOECPTK] = &test_new_vs_old_enc_cpu_tick;
     vpxt_test_funct_ptr[NVOPSNUM] = &test_new_vs_old_psnr;
+    vpxt_test_funct_ptr[NVOTSNUM] = &test_new_vs_old_temp_scale;
     vpxt_test_funct_ptr[NOISENUM] = &test_noise_sensitivity;
     vpxt_test_funct_ptr[OV2PSNUM] = &test_one_pass_vs_two_pass;
     vpxt_test_funct_ptr[PLYALNUM] = &test_play_alternate;
@@ -170,6 +171,7 @@ int run_multiple_tests(int argc,
         "test_multithreaded_enc",
         "test_new_vs_old_enc_cpu_tick",
         "test_new_vs_old_psnr",
+        "test_new_vs_old_temp_scale",
         "test_noise_sensitivity",
         "test_one_pass_vs_two_pass",
         "test_play_alternate",

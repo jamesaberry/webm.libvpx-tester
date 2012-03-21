@@ -101,6 +101,9 @@ $(OBJDIR)/test_new_vs_old_psnr.o: $(TestsDir)/test_new_vs_old_psnr.cpp
 $(OBJDIR)/test_new_vs_old_enc_cpu_tick.o: $(TestsDir)/test_new_vs_old_enc_cpu_tick.cpp
 	$(GPP) -c $(TestsDir)/test_new_vs_old_enc_cpu_tick.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_enc_cpu_tick.o
 
+$(OBJDIR)/test_new_vs_old_temp_scale.o: $(TestsDir)/test_new_vs_old_temp_scale.cpp
+	$(GPP) -c $(TestsDir)/test_new_vs_old_temp_scale.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_new_vs_old_temp_scale.o
+
 $(OBJDIR)/test_noise_sensitivity.o: $(TestsDir)/test_noise_sensitivity.cpp
 	$(GPP) -c $(TestsDir)/test_noise_sensitivity.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_noise_sensitivity.o
 

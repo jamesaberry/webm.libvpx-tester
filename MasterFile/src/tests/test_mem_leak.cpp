@@ -26,7 +26,6 @@ int test_mem_leak(int argc,
     ////////////Formatting Test Specific Directory////////////
     std::string CurTestDirStr = "";
     char MainTestDirChar[255] = "";
-    char ExeCharMemLeak[1024] = "";
     std::string FileIndexStr = "";
     char FileIndexOutputChar[255] = "";
 
@@ -34,7 +33,8 @@ int test_mem_leak(int argc,
         CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar, FilesAr) == 11)
         return 11;
 
-    vpxt_folder_name(argv[0], ExeCharMemLeak);
+    std::string ExeMemLeakStr;
+    vpxt_folder_name(argv[0], &ExeMemLeakStr);
 
     /////////////////////////////////////////////////
     std::string MemLeakCheckIVFDECStr = CurTestDirStr;
@@ -72,7 +72,7 @@ int test_mem_leak(int argc,
     {
         //compression
         ProgramEncMemLeakCheckStr = "\"\"";
-        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramEncMemLeakCheckStr.append(ExeMemLeakStr.c_str());
         ProgramEncMemLeakCheckStr.append(MemLeakExe);
         ProgramEncMemLeakCheckStr.append("\" memcompress \"");
         ProgramEncMemLeakCheckStr.append(input.c_str());
@@ -85,7 +85,7 @@ int test_mem_leak(int argc,
         ProgramEncMemLeakCheckStr.append("\"\"");
         //decompression
         ProgramDecMemLeakCheckStr = "\"\"";
-        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramDecMemLeakCheckStr.append(ExeMemLeakStr.c_str());
         ProgramDecMemLeakCheckStr.append(MemLeakExe);
         ProgramDecMemLeakCheckStr.append("\" memdecompress \"");
         ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());
@@ -99,7 +99,7 @@ int test_mem_leak(int argc,
     {
         //compression
         ProgramEncMemLeakCheckStr = "\"";
-        ProgramEncMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramEncMemLeakCheckStr.append(ExeMemLeakStr.c_str());
         ProgramEncMemLeakCheckStr.append(MemLeakExe);
         ProgramEncMemLeakCheckStr.append("\" memcompress \"");
         ProgramEncMemLeakCheckStr.append(input.c_str());
@@ -112,7 +112,7 @@ int test_mem_leak(int argc,
         ProgramEncMemLeakCheckStr.append("\"");
         //decompression
         ProgramDecMemLeakCheckStr = "\"";
-        ProgramDecMemLeakCheckStr.append(ExeCharMemLeak);
+        ProgramDecMemLeakCheckStr.append(ExeMemLeakStr.c_str());
         ProgramDecMemLeakCheckStr.append(MemLeakExe);
         ProgramDecMemLeakCheckStr.append("\" memdecompress \"");
         ProgramDecMemLeakCheckStr.append(MemLeakCheckIVFStr.c_str());

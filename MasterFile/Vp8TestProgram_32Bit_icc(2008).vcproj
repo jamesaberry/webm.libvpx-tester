@@ -331,6 +331,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_new_vs_old_temp_scale.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_noise_sensitivity.cpp"
 					>
 				</File>

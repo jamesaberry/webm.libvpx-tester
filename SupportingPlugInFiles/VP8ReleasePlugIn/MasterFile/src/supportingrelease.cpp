@@ -183,8 +183,9 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
 }
 int main(int argc, char *argv[])
 {
-    std::string Compress = "compress";
-    std::string Decompress = "decompress";
+    std::string compress = "compress";
+    std::string decompress = "decompress";
+    std::string temp_scale_compress = "temp_scale_compress";
 
     if (argc < 3)
     {
@@ -192,7 +193,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (Compress.compare(argv[1]) == 0)
+    if (compress.compare(argv[1]) == 0)
     {
         if (argc < 7)
         {
@@ -232,7 +233,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (Decompress.compare(argv[1]) == 0)
+    if (decompress.compare(argv[1]) == 0)
     {
         if (argc < 3)
         {
@@ -254,6 +255,57 @@ int main(int argc, char *argv[])
 
         vpxt_decompress_time_and_output(inputFile, outputFile, CPUTick,
             DecExt, 1);
+
+        return 0;
+    }
+
+    if (temp_scale_compress.compare(argv[1]) == 0)
+    {
+        if (argc < 14)
+        {
+            supportingReleaseOnError();
+            return 0;
+        }
+
+        char *input_file = argv[2];
+        char *output_file_base = argv[3];
+        int layer_mode = atoi(argv[4]);
+        int temp_scale_bitrate_0 = atoi(argv[5]);
+        int temp_scale_bitrate_1 = atoi(argv[6]);
+        int temp_scale_bitrate_2 = atoi(argv[7]);
+        int temp_scale_bitrate_3 = atoi(argv[8]);
+        int temp_scale_bitrate_4 = atoi(argv[9]);
+        char * enc_format = argv[10];
+        int ParVer = atoi(argv[11]);
+        char *parfile = argv[12];
+        int ExtraCommand = atoi(argv[13]);
+
+        VP8_CONFIG opt;
+        vpxt_default_parameters(opt);
+        unsigned int CPUTick = 0;
+
+        if (ParVer == 7)
+            std::cout << "\n\nNot Yet Supported\n\n";
+
+        if (ParVer == 8)
+            opt = vpxt_input_settings(parfile);
+
+        tprintf(PRINT_BTH, "\nRelease Exe using: %s\n",
+            vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
+
+        unsigned int scale_compress_time = vpxt_compress_scalable_patterns(
+            input_file, output_file_base, 0, opt, "VP8",
+            0, 0, enc_format, layer_mode, temp_scale_bitrate_0,
+            temp_scale_bitrate_1, temp_scale_bitrate_2,
+            temp_scale_bitrate_3, temp_scale_bitrate_4);
+
+
+        std::string FullNameCpu = output_file_base;
+        FullNameCpu.append("_compression_cpu_tick.txt");
+
+        std::ofstream FullNameCpuFile(FullNameCpu.c_str());
+        FullNameCpuFile << scale_compress_time;
+        FullNameCpuFile.close();
 
         return 0;
     }

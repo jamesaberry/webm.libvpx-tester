@@ -50,7 +50,7 @@ int vpxt_format_frame_header_write(IVF_FRAME_HEADER &ivf_fh);
 //------------------------------File Management---------------------------------
 long vpxt_file_size(const char *inFile, int printbool);
 void vpxt_file_name(const char *input, char *FileName, int removeExt);
-void vpxt_folder_name(const char *input, char *output);
+void vpxt_folder_name(const char *input, std::string *output_str);
 int  vpxt_get_number_of_frames(const char *inputFile);
 int  vpxt_get_multi_res_width_height(const char *inputFile,
                                      int FileNumber,

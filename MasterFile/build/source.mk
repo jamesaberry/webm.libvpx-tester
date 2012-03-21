@@ -42,6 +42,7 @@ SRC = \
    $(TestsDir)/test_multithreaded_dec.cpp  \
    $(TestsDir)/test_new_vs_old_psnr.cpp  \
    $(TestsDir)/test_new_vs_old_enc_cpu_tick.cpp  \
+   $(TestsDir)/test_new_vs_old_temp_scale.cpp  \
    $(TestsDir)/test_noise_sensitivity.cpp  \
    $(TestsDir)/test_one_pass_vs_two_pass.cpp  \
    $(TestsDir)/test_play_alternate.cpp  \
@@ -114,6 +115,7 @@ SRCOBJ = \
    $(OBJDIR)/test_multithreaded_dec.o  \
    $(OBJDIR)/test_new_vs_old_psnr.o  \
    $(OBJDIR)/test_new_vs_old_enc_cpu_tick.o  \
+   $(OBJDIR)/test_new_vs_old_temp_scale.o  \
    $(OBJDIR)/test_noise_sensitivity.o  \
    $(OBJDIR)/test_one_pass_vs_two_pass.o  \
    $(OBJDIR)/test_play_alternate.o  \

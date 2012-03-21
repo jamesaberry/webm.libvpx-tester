@@ -36,8 +36,8 @@ int test_mem_leak2(int argc,
         FilesAr) == 11)
         return 11;
 
-    vpxt_folder_name(argv[0], ExeCharMemLeak);
-    std::string ExeCharMemLeakStr = ExeCharMemLeak;
+    std::string ExeCharMemLeakStr;
+    vpxt_folder_name(argv[0], &ExeCharMemLeakStr);
 
     std::string MemLeakCheckTXTBase = CurTestDirStr;
     MemLeakCheckTXTBase.append(slashCharStr());

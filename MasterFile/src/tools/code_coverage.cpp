@@ -3693,7 +3693,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         std::cout << "\nMD5 Checksums Identical for variable number: " << x << " - Fail\n";
         std::cerr << "\nMD5 Checksums Identical for variable number: " << x << " - Fail\n";
 
-        char rootDir[255];
+        std::string rootDir;
         vpxt_folder_name(argv[0], rootDir);
         std::string CoverageSummaryTextFile = rootDir;
         CoverageSummaryTextFile.append("CoverageSummary.txt");

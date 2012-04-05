@@ -9793,6 +9793,27 @@ int tool_random_stress_test(int argc, const char *const *argv)
             outfile << "\n";
         }
 
+        if (ValidTestNumbers[RandTestNum] == PSTMFNUM)
+        {
+            outfile << "test_post_processor@";
+            outfile << RandIVFFile.c_str();
+            outfile << "@";
+            outfile << ModeNum;
+            outfile << "@";
+            outfile << RandTBNum;
+            outfile << "@";
+            outfile << 10;
+            outfile << "@";
+            outfile << 200;
+            outfile << "@";
+            outfile << "webm";
+            outfile << "@";
+            outfile << "y4m";
+            outfile << "@";
+            outfile << RandSettingsFile.c_str();
+            outfile << "\n";
+        }
+
         if (ValidTestNumbers[RandTestNum] == RECBFNUM)
         {
             outfile << "test_reconstruct_buffer@";

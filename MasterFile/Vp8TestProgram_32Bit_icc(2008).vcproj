@@ -351,6 +351,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\tests\test_post_processor_mfqe.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\tests\test_reconstruct_buffer.cpp"
 					>
 				</File>

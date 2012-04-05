@@ -194,36 +194,40 @@ void vpxt_on_error_output()
         "\n");
     tprintf(PRINT_STD, "  (31) test_new_vs_old_psnr                 "
         "CropRawClip\n");
-    tprintf(PRINT_STD, "  (32) test_noise_sensitivity               "
+    tprintf(PRINT_STD, "  (32) test_new_vs_old_temp_scale           "
         "PadRawClip\n");
-    tprintf(PRINT_STD, "  (33) test_one_pass_vs_two_pass            "
+    tprintf(PRINT_STD, "  (33) test_noise_sensitivity               "
         "CutClip\n");
-    tprintf(PRINT_STD, "  (34) test_play_alternate                  "
+    tprintf(PRINT_STD, "  (34) test_one_pass_vs_two_pass            "
         "PasteClip\n");
-    tprintf(PRINT_STD, "  (35) test_post_processor                  "
+    tprintf(PRINT_STD, "  (35) test_play_alternate                  "
         "\n");
-    tprintf(PRINT_STD, "  (36) test_reconstruct_buffer              "
+    tprintf(PRINT_STD, "  (36) test_post_processor                  "
         "PlayDecIVF\n");
-    tprintf(PRINT_STD, "  (37) test_resample_down_watermark         "
+    tprintf(PRINT_STD, "  (37) test_post_processor_mfqe             "
         "PlayCompIVF\n");
-    tprintf(PRINT_STD, "  (38) test_speed                           "
+    tprintf(PRINT_STD, "  (38) test_reconstruct_buffer              "
         "\n");
-    tprintf(PRINT_STD, "  (39) test_temporal_scalability            "
+    tprintf(PRINT_STD, "  (39) test_resample_down_watermark         "
         "CreateSampleTextFiles\n");
-    tprintf(PRINT_STD, "  (40) test_test_vector                     "
+    tprintf(PRINT_STD, "  (40) test_speed                           "
         "PrintVersion\n");
-    tprintf(PRINT_STD, "  (41) test_thirtytwo_vs_sixtyfour          "
+    tprintf(PRINT_STD, "  (41) test_temporal_scalability            "
         "\n");
-    tprintf(PRINT_STD, "  (42) test_two_pass_vs_two_pass_best       "
+    tprintf(PRINT_STD, "  (42) test_test_vector                     "
         "VPXEncPar\n");
-    tprintf(PRINT_STD, "  (43) test_undershoot                      "
+    tprintf(PRINT_STD, "  (43) test_thirtytwo_vs_sixtyfour          "
         "RandParFile\n");
-    tprintf(PRINT_STD, "  (44) test_version                         "
+    tprintf(PRINT_STD, "  (44) test_two_pass_vs_two_pass_best       "
         "RandCompress\n");
-    tprintf(PRINT_STD, "  (45) test_vpx_matches_int                 "
+    tprintf(PRINT_STD, "  (45) test_undershoot                      "
         "GraphPSNR\n");
-    tprintf(PRINT_STD, "  (46) test_win_lin_mac_match               "
+    tprintf(PRINT_STD, "  (46) test_version                         "
         "Help\n");
+    tprintf(PRINT_STD, "  (47) test_vpx_matches_int                 "
+        "\n");
+    tprintf(PRINT_STD, "  (48) test_win_lin_mac_match               "
+        "\n");
 #if !defined(_WIN32)
     tprintf(PRINT_STD, "\n");
 #endif
@@ -405,6 +409,8 @@ void write_32bit_quick_test(const std::string WorkingDir)
         "test_noise_sensitivity", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
         "test_post_processor", slashChar(), slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@10@200@webm@y4m\n",
+        "test_post_processor_mfqe", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
         "test_reconstruct_buffer", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
@@ -484,6 +490,8 @@ void write_32bit_quick_test(const std::string WorkingDir)
         "test_noise_sensitivity", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n",
         "test_post_processor", slashChar(), slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@10@200@webm@y4m\n",
+        "test_post_processor_mfqe", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n",
         "test_reconstruct_buffer", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n",
@@ -557,6 +565,8 @@ void write_32bit_quick_test(const std::string WorkingDir)
         "test_noise_sensitivity", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n",
         "test_post_processor", slashChar(), slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@10@200@webm@y4m\n",
+        "test_post_processor_mfqe", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n",
         "test_reconstruct_buffer", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n",
@@ -917,6 +927,8 @@ void write_64bit_quick_test(const std::string WorkingDir)
         "test_noise_sensitivity", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
         "test_post_processor", slashChar(), slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@10@200@webm@y4m\n",
+        "test_post_processor_mfqe", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
         "test_reconstruct_buffer", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
@@ -998,6 +1010,8 @@ void write_64bit_quick_test(const std::string WorkingDir)
         "test_noise_sensitivity", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n",
         "test_post_processor", slashChar(), slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@10@200@webm@y4m\n",
+        "test_post_processor_mfqe", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n",
         "test_reconstruct_buffer", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@1@128@webm@y4m\n",
@@ -1071,6 +1085,8 @@ void write_64bit_quick_test(const std::string WorkingDir)
         "test_noise_sensitivity", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n",
         "test_post_processor", slashChar(), slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@10@200@webm@y4m\n",
+        "test_post_processor_mfqe", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n",
         "test_reconstruct_buffer", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@2@128@webm@y4m\n",
@@ -2211,6 +2227,29 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
                 "and Noise decompressions return a different PSNR than the No "
                 "Filtering Decompression but are within 10%%, the test "
                 "passes.");
+    }
+
+    if (selector == PSTMFNUM)
+    {
+        if (printSummary)
+            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
+        else
+            tprintf(PRINT_STD, " ");
+
+        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+
+        tprintf(PRINT_STD, "%s"
+                "    <Key Freq>\n"
+                "    <Max Intra Bitrate Pct>\n"
+                "    <Encode Format - webm/ivf>\n"
+                "    <Decode Format - y4m/ivf>\n"
+                "     <Optional Settings File>\n", print_base_opts.c_str());
+
+        if (printSummary)
+            vpxt_formated_print(HLPPRT, "The test creates a compression, then "
+                "then preforms psnr calculations using the mfqe post processing"
+                " flag and no post processing.  If the mfqe psnr is greater "
+                "than the no post processing psnr, the test passes.");
     }
 
     if (selector == RECBFNUM)
@@ -4674,6 +4713,10 @@ int  main(int argc, const char *argv[])
 
     if (selector == POSTPNUM)
         return test_post_processor(argc, argv, WorkingDir, EmptyAr, 1,
+        KEEP_IVF);
+
+    if (selector == PSTMFNUM)
+        return test_post_processor_mfqe(argc, argv, WorkingDir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == RECBFNUM)

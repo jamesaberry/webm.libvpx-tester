@@ -225,6 +225,12 @@ int test_post_processor(int argc,
                                std::string FilesAr[],
                                int TestType,
                                int DeleteIVF);
+int test_post_processor_mfqe(int argc,
+                                   const char *const *argv,
+                                   const std::string &WorkingDir,
+                                   std::string FilesAr[],
+                                   int TestType,
+                                   int DeleteIVF);
 int test_reconstruct_buffer(int argc,
                                    const char *const *argv,
                                    const std::string &WorkingDir,

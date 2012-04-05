@@ -35,19 +35,20 @@
 #define OV2PSNUM 34 //test_one_pass_vs_two_pass
 #define PLYALNUM 35 //test_play_alternate
 #define POSTPNUM 36 //test_post_processor
-#define RECBFNUM 37 //test_reconstruct_buffer
-#define RSDWMNUM 38 //test_resample_down_watermark
-#define SPEEDNUM 39 //test_speed
-#define TMPSCNUM 40 //test_temporal_scalability
-#define TVECTNUM 41 //test_test_vector
-#define TTVSFNUM 42 //test_thirtytwo_vs_sixtyfour
-#define TV2BTNUM 43 //test_two_pass_vs_two_pass_best
-#define UNDSHNUM 44 //test_undershoot
-#define VERSINUM 45 //test_version
-#define VPXMINUM 46 //test_vpx_matches_int
-#define WMLMMNUM 47 //test_win_lin_mac_match
+#define PSTMFNUM 37 //test_post_processor
+#define RECBFNUM 38 //test_reconstruct_buffer
+#define RSDWMNUM 39 //test_resample_down_watermark
+#define SPEEDNUM 40 //test_speed
+#define TMPSCNUM 41 //test_temporal_scalability
+#define TVECTNUM 42 //test_test_vector
+#define TTVSFNUM 43 //test_thirtytwo_vs_sixtyfour
+#define TV2BTNUM 44 //test_two_pass_vs_two_pass_best
+#define UNDSHNUM 45 //test_undershoot
+#define VERSINUM 46 //test_version
+#define VPXMINUM 47 //test_vpx_matches_int
+#define WMLMMNUM 48 //test_win_lin_mac_match
 
-#define MAXTENUM 47
+#define MAXTENUM 48
 
 /*Removed Tests
 //removed 07 15 2010 - Combined with NoiseSensitivity

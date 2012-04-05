@@ -1398,12 +1398,14 @@ static const arg_def_t pp_disp_b_modes = ARG_DEF(NULL, "pp-dbg-b-modes", 1,
         "Display only selected block modes");
 static const arg_def_t pp_disp_mvs = ARG_DEF(NULL, "pp-dbg-mvs", 1,
                                      "Draw only selected motion vectors");
+static const arg_def_t mfqe = ARG_DEF(NULL, "mfqe", 0,
+                                       "Enable multiframe quality enhancement");
 
 static const arg_def_t *vp8_pp_args[] =
 {
     &addnoise_level, &deblock, &demacroblock_level, &pp_debug_info,
-    &pp_disp_ref_frame, &pp_disp_mb_modes, &pp_disp_b_modes, &pp_disp_mvs,
-    NULL
+    &pp_disp_ref_frame, &pp_disp_mb_modes, &pp_disp_b_modes, &pp_disp_mvs, &mfqe
+    ,NULL
 };
 #endif
 static void usage_exit_dec()
@@ -4207,6 +4209,8 @@ int get_test_name(int TestNumber, std::string &TestName)
 
     if (TestNumber == POSTPNUM) TestName = "test_post_processor";
 
+    if (TestNumber == PSTMFNUM) TestName = "test_post_processor_mfqe";
+
     if (TestNumber == RECBFNUM) TestName = "test_reconstruct_buffer";
 
     if (TestNumber == RSDWMNUM) TestName = "test_resample_down_watermark";
@@ -4358,6 +4362,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.compare("test_post_processor") == 0)
             return POSTPNUM;
+
+        if (id_test_str.compare("test_post_processor_mfqe") == 0)
+            return PSTMFNUM;
 
         if (id_test_str.compare("test_reconstruct_buffer") == 0)
             return RECBFNUM;
@@ -5104,6 +5111,21 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
+                if (selector == PSTMFNUM)
+                {
+                    if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
+                    {
+                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr2[SelectorArInt] = "PostProcessorWorksMFQE";
+                        PassFail[PassFailInt] = trackthis1;
+                    }
+                    else
+                    {
+
+                        PassFail[PassFailInt] = -1;
+                    }
+                }
+
                 if (selector == RECBFNUM)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -5290,13 +5312,14 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != NVOPSNUM && selector != NVOTSNUM &&
                     selector != NVOECPTK && selector != NOISENUM &&
                     selector != OV2PSNUM && selector != PLYALNUM &&
-                    selector != POSTPNUM && selector != RSDWMNUM &&
-                    selector != SPEEDNUM && selector != TMPSCNUM &&
-                    selector != TVECTNUM && selector != TTVSFNUM &&
-                    selector != RECBFNUM && selector != TV2BTNUM &&
-                    selector != UNDSHNUM && selector != VERSINUM &&
-                    selector != WMLMMNUM && selector != ALWSRNUM &&
-                    selector != VPXMINUM && selector != MULRENUM)
+                    selector != POSTPNUM && selector != PSTMFNUM &&
+                    selector != RSDWMNUM && selector != SPEEDNUM &&
+                    selector != TMPSCNUM && selector != TVECTNUM &&
+                    selector != TTVSFNUM && selector != RECBFNUM &&
+                    selector != TV2BTNUM && selector != UNDSHNUM &&
+                    selector != VERSINUM && selector != WMLMMNUM &&
+                    selector != ALWSRNUM && selector != VPXMINUM &&
+                    selector != MULRENUM)
                 {
                     SelectorAr[SelectorArInt].append(buffer);
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -6245,6 +6268,16 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 1;
 
         if (argNum == 8)
+            return 2;
+    }
+
+    //test_post_processor_mfqe
+    if (selector == PSTMFNUM)
+    {
+        if (argNum == 9)
+            return 1;
+
+        if (argNum == 10)
             return 2;
     }
 

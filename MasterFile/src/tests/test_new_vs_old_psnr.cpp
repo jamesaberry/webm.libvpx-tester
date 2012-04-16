@@ -23,9 +23,9 @@ int test_new_vs_old_psnr(int argc,
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string cur_test_dir_str = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
     char main_test_dir_char[255] = "";
-    std::string file_index_str = "";
     char file_index_output_char[255] = "";
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
@@ -65,7 +65,7 @@ int test_new_vs_old_psnr(int argc,
     par_file += "_parameter_file.txt";
 
     std::string comand_line_str = exe_str;
-    std::string fpf_comand_line_str = "";
+    std::string fpf_comand_line_str;
 
 #if defined(_WIN32)
     {
@@ -204,7 +204,7 @@ int test_new_vs_old_psnr(int argc,
         snprintf(new_data_rate_char, 256, "%g", new_data_rate);
 
         //assemble psnr/data rate results string
-        std::string psnr_data_rate_result_str = "";
+        std::string psnr_data_rate_result_str;
         psnr_data_rate_result_str += new_psnr_char;
         psnr_data_rate_result_str += " psnr ";
         psnr_data_rate_result_str += new_data_rate_char;

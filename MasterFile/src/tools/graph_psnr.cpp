@@ -2,9 +2,9 @@
 
 int tool_graph_psnr(int argc,
                     const char *const *argv,
-                    const std::string &WorkingDir,
-                    std::string FilesAr[],
-                    int TestType)
+                    const std::string &working_dir,
+                    std::string files_ar[],
+                    int test_type)
 {
     if (argc < 6 || argc > 8)
     {
@@ -25,11 +25,11 @@ int tool_graph_psnr(int argc,
     ////////////Formatting Test Specific Directory////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
-    char *MyDir = "GraphPSNR";
-    std::string MainDirString = "";
+    char *test_dir = "GraphPSNR";
+    std::string MainDirString;
     char File1[255] = "";
 
-    snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
+    snprintf(WorkingDir2, 255, "%s", working_dir.c_str());
 
     int v = 0;
 
@@ -42,9 +42,8 @@ int tool_graph_psnr(int argc,
     WorkingDir3[v] = slashChar();
     WorkingDir3[v+1] = '\0';
     std::string WorkingDirString = WorkingDir3;
-    WorkingDirString.append(MyDir);
-    WorkingDirString.append(slashCharStr());
-    WorkingDirString.append(FilesAr[0]);
+    WorkingDirString += test_dir;
+    WorkingDirString += slashCharStr() + files_ar[0];
     WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
     std::string CreateDir2 = WorkingDirString;
@@ -52,38 +51,35 @@ int tool_graph_psnr(int argc,
     vpxt_make_dir_vpx(CreateDir2.c_str());
 
     /////////////OutPutfile////////////
-    std::string TextfileString = WorkingDirString;
+    std::string text_file_str = WorkingDirString + slashCharStr() + test_dir;
 
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
-    std::string OutPutStr = TextfileString;
-    TextfileString.append(".txt");
-
-    OutPutStr.append("_");
+    std::string OutPutStr = text_file_str;
+    text_file_str += ".txt";
+    OutPutStr += "_";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
+    if (test_type == 1)
     {
         print_header_full_test(argc, argv, WorkingDir3);
     }
 
-    if (TestType == 2)
+    if (test_type == 2)
     {
         print_header_compression_only(argc, argv, WorkingDir3);
     }
 
-    if (TestType == 3)
+    if (test_type == 3)
     {
         print_header_test_only(argc, argv, WorkingDirString);
     }
@@ -94,31 +90,31 @@ int tool_graph_psnr(int argc,
     int FirstBitRate = atoi(argv[3]);
     int LastBitRate = atoi(argv[4]);
     int BitRateStep = atoi(argv[5]);
-    std::string EncForm = argv[6];
-    std::string DecForm = argv[7];
+    std::string enc_format = argv[6];
+    std::string dec_format = argv[7];
     std::string ParFile = argv[8];
 
     int speed = 0;
 
-    char  FileNameChar[255];
-    vpxt_file_name(input.c_str(), FileNameChar, 0);
-    std::string InputName = FileNameChar;
+    char  file_name_char[255];
+    vpxt_file_name(input.c_str(), file_name_char, 0);
+    std::string InputName = file_name_char;
     InputName.resize(InputName.length() - 4, ' ');
-    OutPutStr.append(InputName.c_str());
+    OutPutStr += InputName;
     std::string ParFileOut = OutPutStr;
-    OutPutStr.append("_TBR");
+    OutPutStr += "_TBR";
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    double PSNRArr[100];
+    double psnr_arr[100];
     double SSIMArr[100];
     double DataRateArr[100];
     unsigned int EncTimeArr[100];
     unsigned int DecTimeArr[100];
 
 
-    char *CompressString = "Graph PSNR";
+    char *comp_out_str = "Graph PSNR";
 
     if (argc > 6)
     {
@@ -128,7 +124,7 @@ int tool_graph_psnr(int argc,
     opt.target_bandwidth = FirstBitRate;
 
     ///////////output Par file////////////////////
-    ParFileOut.append("_ParameterFile.txt");
+    ParFileOut += "_ParameterFile.txt";
     char ParFileOutChar[255];
     snprintf(ParFileOutChar, 255, "%s", ParFileOut.c_str());
     vpxt_output_settings(ParFileOutChar, opt);
@@ -147,11 +143,11 @@ int tool_graph_psnr(int argc,
         std::string OutPutStr2 = OutPutStr;
         char TBChar[8];
         vpxt_itoa_custom(opt.target_bandwidth, TBChar, 10);
-        OutPutStr2.append(TBChar);
+        OutPutStr2 += TBChar;
         std::string OutPutStr3 = OutPutStr2;
-        OutPutStr3.append("_Dec");
-        vpxt_enc_format_append(OutPutStr2, EncForm);
-        vpxt_dec_format_append(OutPutStr3, DecForm);
+        OutPutStr3 += "_Dec";
+        vpxt_enc_format_append(OutPutStr2, enc_format);
+        vpxt_dec_format_append(OutPutStr3, dec_format);
 
         char outputChar[255];
         snprintf(outputChar, 255, "%s", OutPutStr2.c_str());
@@ -159,31 +155,31 @@ int tool_graph_psnr(int argc,
         char outputChar2[255];
         snprintf(outputChar2, 255, "%s", OutPutStr3.c_str());
 
-        unsigned int cpu_tick1 = 0;
+        unsigned int cpu_tick_1 = 0;
         EncTimeArr[x] = vpxt_time_compress(input.c_str(), outputChar, speed,
-            opt.target_bandwidth, opt, CompressString, 0, 0, cpu_tick1,
-            EncForm);
+            opt.target_bandwidth, opt, comp_out_str, 0, 0, cpu_tick_1,
+            enc_format);
 
         if (EncTimeArr[x] == -1)
         {
             fclose(fp);
-            record_test_complete(MainDirString, File1, TestType);
+            record_test_complete(MainDirString, File1, test_type);
             return 2;
         }
 
-        unsigned int cpu_tick2 = 0;
-        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick2,
-            DecForm, 1);
+        unsigned int cpu_tick_2 = 0;
+        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick_2,
+            dec_format, 1);
 
         if (DecTimeArr[x] == -1)
         {
             fclose(fp);
-            record_test_complete(MainDirString, File1, TestType);
+            record_test_complete(MainDirString, File1, test_type);
             return 2;
         }
 
         double ssimnumber = 0;
-        PSNRArr[x] = vpxt_psnr(input.c_str(), outputChar, 0, PRINT_BTH, 1,
+        psnr_arr[x] = vpxt_psnr(input.c_str(), outputChar, 0, PRINT_BTH, 1,
             &ssimnumber);
         SSIMArr[x] = ssimnumber;
         DataRateArr[x] = vpxt_data_rate(outputChar, 1);
@@ -209,7 +205,7 @@ int tool_graph_psnr(int argc,
     while (x < ArrSize)
     {
         tprintf(PRINT_BTH, " DataRate: %.2f PSNR: %.2f SSIM: %.2f EncodeTime: "
-            "%i \n DecodeTime: %i\n", DataRateArr[x], PSNRArr[x], SSIMArr[x],
+            "%i \n DecodeTime: %i\n", DataRateArr[x], psnr_arr[x], SSIMArr[x],
             EncTimeArr[x], DecTimeArr[x]);
         x++;
     }
@@ -230,7 +226,7 @@ int tool_graph_psnr(int argc,
 
     while (x < ArrSize)
     {
-        tprintf(PRINT_BTH, "%.2f\n", PSNRArr[x]);
+        tprintf(PRINT_BTH, "%.2f\n", psnr_arr[x]);
         x++;
     }
 

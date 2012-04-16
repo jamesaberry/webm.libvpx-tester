@@ -2,66 +2,59 @@
 
 int test_error_resolution(int argc,
                           const char *const *argv,
-                          const std::string &WorkingDir,
-                          std::string FilesAr[],
-                          int TestType,
-                          int DeleteIVF)
+                          const std::string &working_dir,
+                          std::string files_ar[],
+                          int test_type,
+                          int delete_ivf)
 {
-    char *CompressString = "Error Resilient Mode";
-    char *MyDir = "test_error_resolution";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Error Resilient Mode";
+    char *test_dir = "test_error_resolution";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string ErrorOnOutFile = CurTestDirStr;
-    ErrorOnOutFile.append(slashCharStr());
-    ErrorOnOutFile.append(MyDir);
-    ErrorOnOutFile.append("_compression_1");
-    vpxt_enc_format_append(ErrorOnOutFile, EncForm);
+    std::string error_on_enc = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_1";
+    vpxt_enc_format_append(error_on_enc, enc_format);
 
-    std::string ErrorOffOutFile = CurTestDirStr;
-    ErrorOffOutFile.append(slashCharStr());
-    ErrorOffOutFile.append(MyDir);
-    ErrorOffOutFile.append("_compression_0");
-    vpxt_enc_format_append(ErrorOffOutFile, EncForm);
+    std::string error_off_enc = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_0";
+    vpxt_enc_format_append(error_off_enc, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
@@ -69,106 +62,108 @@ int test_error_resolution(int argc,
 
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s\n", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s\n", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
         opt.error_resilient_mode = 1;
 
-        if (vpxt_compress(input.c_str(), ErrorOnOutFile.c_str(),
-            speed, BitRate, opt, CompressString, 0, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), error_on_enc.c_str(),
+            speed, bitrate, opt, comp_out_str, 0, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt.error_resilient_mode = 0;
 
-        if (vpxt_compress(input.c_str(), ErrorOffOutFile.c_str(), speed,
-            BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), error_off_enc.c_str(), speed,
+            bitrate, opt, comp_out_str, 1, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
     tprintf(PRINT_BTH, "\n");
 
-    double PSNRon;
-    double PSNRoff;
+    double psnr_on;
+    double psnr_off;
 
-    PSNRon = vpxt_psnr(input.c_str(), ErrorOnOutFile.c_str(), 0, PRINT_BTH, 1,
+    psnr_on = vpxt_psnr(input.c_str(), error_on_enc.c_str(), 0, PRINT_BTH, 1,
         NULL);
-    PSNRoff = vpxt_psnr(input.c_str(), ErrorOffOutFile.c_str(), 0, PRINT_BTH, 1,
+    psnr_off = vpxt_psnr(input.c_str(), error_off_enc.c_str(), 0, PRINT_BTH, 1,
         NULL);
 
-    float PSRNPerc = 100 * vpxt_abs_float((PSNRon - PSNRoff) / PSNRoff);
+    float psnr_perc = 100 * vpxt_abs_float((psnr_on - psnr_off) / psnr_off);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (PSRNPerc < 10.00)
+    if (psnr_perc < 10.00)
     {
         vpxt_formated_print(RESPRT, "ErrorRes on PSNR is within 10%% of Error "
-            "Res off PSNR: %.2f%% - Passed", PSRNPerc);
+            "Res off PSNR: %.2f%% - Passed", psnr_perc);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, ErrorOnOutFile.c_str(),
-            ErrorOffOutFile.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, error_on_enc.c_str(),
+            error_off_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "ErrorRes on PSNR is not within 10%% of "
-            "Error Res off PSNR: %.2f%% - Failed", PSRNPerc);
+            "Error Res off PSNR: %.2f%% - Failed", psnr_perc);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, ErrorOnOutFile.c_str(),
-            ErrorOffOutFile.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, error_on_enc.c_str(),
+            error_off_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

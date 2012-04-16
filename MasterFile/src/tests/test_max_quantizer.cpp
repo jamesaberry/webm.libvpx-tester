@@ -2,106 +2,93 @@
 
 int test_max_quantizer(int argc,
                        const char *const *argv,
-                       const std::string &WorkingDir,
-                       std::string FilesAr[],
-                       int TestType,
-                       int DeleteIVF)
+                       const std::string &working_dir,
+                       std::string files_ar[],
+                       int test_type,
+                       int delete_ivf)
 {
-    char *CompressString = "Max Quantizer";
-    char *MyDir = "test_max_quantizer";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Max Quantizer";
+    char *test_dir = "test_max_quantizer";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string QuantOutBase = CurTestDirStr;
-    QuantOutBase.append(slashCharStr());
-    QuantOutBase.append(MyDir);
-    QuantOutBase.append("_compression_");
+    std::string quant_out_base = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_";
 
-    std::string QuantOut3 = QuantOutBase;
-    QuantOut3.append("4");
-    vpxt_enc_format_append(QuantOut3, EncForm);
-    std::string QuantOut11 = QuantOutBase;
-    QuantOut11.append("12");
-    vpxt_enc_format_append(QuantOut11, EncForm);
-    std::string QuantOut19 = QuantOutBase;
-    QuantOut19.append("20");
-    vpxt_enc_format_append(QuantOut19, EncForm);
-    std::string QuantOut27 = QuantOutBase;
-    QuantOut27.append("28");
-    vpxt_enc_format_append(QuantOut27, EncForm);
-    std::string QuantOut35 = QuantOutBase;
-    QuantOut35.append("36");
-    vpxt_enc_format_append(QuantOut35, EncForm);
-    std::string QuantOut43 = QuantOutBase;
-    QuantOut43.append("44");
-    vpxt_enc_format_append(QuantOut43, EncForm);
-    std::string QuantOut51 = QuantOutBase;
-    QuantOut51.append("52");
-    vpxt_enc_format_append(QuantOut51, EncForm);
-    std::string QuantOut59 = QuantOutBase;
-    QuantOut59.append("60");
-    vpxt_enc_format_append(QuantOut59, EncForm);
+    std::string quant_out_3 = quant_out_base + "4";
+    vpxt_enc_format_append(quant_out_3, enc_format);
+    std::string quant_out_11 = quant_out_base + "12";
+    vpxt_enc_format_append(quant_out_11, enc_format);
+    std::string quant_out_19 = quant_out_base = "20";
+    vpxt_enc_format_append(quant_out_19, enc_format);
+    std::string quant_out_27 = quant_out_base + "28";
+    vpxt_enc_format_append(quant_out_27, enc_format);
+    std::string quant_out_35 = quant_out_base + "36";
+    vpxt_enc_format_append(quant_out_35, enc_format);
+    std::string quant_out_43 = quant_out_base + "44";
+    vpxt_enc_format_append(quant_out_43, enc_format);
+    std::string quant_out_51 = quant_out_base + "52";
+    vpxt_enc_format_append(quant_out_51, enc_format);
+    std::string quant_out_59 = quant_out_base + "60";
+    vpxt_enc_format_append(quant_out_59, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -109,48 +96,47 @@ int test_max_quantizer(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar,
-                TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
     //make sure constrained quantizer mode is off
     if(opt.end_usage == 2)
         opt.end_usage = 1;
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
-    int PSNRToggle = 0;
     int n = 4;
-    double PSNRArr[10];
-    int MaxQArr[10];
+    double psnr_arr[10];
+    int max_q_arr[10];
     int i = 0;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         while (n < 63)
         {
             char num[20];
             vpxt_itoa_custom(n, num, 10);
 
-            std::string QuantOutFile = QuantOutBase;
-            QuantOutFile.append(num);
-            vpxt_enc_format_append(QuantOutFile, EncForm);
+            std::string quant_out_file = quant_out_base;
+            quant_out_file += *num;
+            vpxt_enc_format_append(quant_out_file, enc_format);
 
             tprintf(PRINT_BTH, "\n");
 
-            if (TestType != 2)
+            if (test_type != 2)
             {
-                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(),
-                    PSNRToggle, PRINT_BTH, 1, NULL);
+                psnr_arr[i] = vpxt_psnr(input.c_str(), quant_out_file.c_str(),
+                    0, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
-                MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
+                max_q_arr[i] = vpxt_check_max_quantizer(quant_out_file.c_str(), n);
                 tprintf(PRINT_BTH, "\n");
             }
 
@@ -170,29 +156,30 @@ int test_max_quantizer(int argc,
             char num[20];
             vpxt_itoa_custom(n, num, 10);
 
-            std::string QuantOutFile = QuantOutBase;
-            QuantOutFile.append(num);
-            vpxt_enc_format_append(QuantOutFile, EncForm);
+            std::string quant_out_file = quant_out_base;
+            quant_out_file += num;
+            vpxt_enc_format_append(quant_out_file, enc_format);
 
-            opt.Mode = Mode;
+            opt.Mode = mode;
 
-            if (vpxt_compress(input.c_str(), QuantOutFile.c_str(), speed,
-                BitRate, opt, CompressString, n, 1, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), quant_out_file.c_str(), speed,
+                bitrate, opt, comp_out_str, n, 1, enc_format) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar,
-                    TestType);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
                 return 2;
             }
 
             tprintf(PRINT_BTH, "\n");
 
-            if (TestType != 2)
+            if (test_type != 2)
             {
-                PSNRArr[i] = vpxt_psnr(input.c_str(), QuantOutFile.c_str(),
-                    PSNRToggle, PRINT_BTH, 1, NULL);
+                psnr_arr[i] = vpxt_psnr(input.c_str(), quant_out_file.c_str(),
+                    0, PRINT_BTH, 1, NULL);
                 tprintf(PRINT_BTH, "\n");
-                MaxQArr[i] = vpxt_check_max_quantizer(QuantOutFile.c_str(), n);
+                max_q_arr[i] = vpxt_check_max_quantizer(quant_out_file.c_str(),
+                    n);
                 tprintf(PRINT_BTH, "\n");
             }
 
@@ -203,40 +190,40 @@ int test_max_quantizer(int argc,
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
     tprintf(PRINT_BTH, "\n");
 
     i = 0;
-    int MaxQDisplayValue = 4;
+    int max_q_display_value = 4;
     int fail = 0;
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     while (i < 7)
     {
-        if (!(PSNRArr[i+1] <= PSNRArr[i]))
+        if (!(psnr_arr[i+1] <= psnr_arr[i]))
         {
-            // if PSNRArr[i+1] greater than but within 1% - min pass
-            if (PSNRArr[i+1] <= (PSNRArr[i] + (PSNRArr[i] * 0.01)))
+            // if psnr_arr[i+1] greater than but within 1% - min pass
+            if (psnr_arr[i+1] <= (psnr_arr[i] + (psnr_arr[i] * 0.01)))
             {
                 vpxt_formated_print(RESPRT, "MaxQ %2i PSNR %.2f within 1%% of "
-                    "MaxQ %2i PSNR %.2f - MinPassed", MaxQDisplayValue + 8,
-                    PSNRArr[i+1], MaxQDisplayValue, PSNRArr[i]);
+                    "MaxQ %2i PSNR %.2f - MinPassed", max_q_display_value + 8,
+                    psnr_arr[i+1], max_q_display_value, psnr_arr[i]);
                 tprintf(PRINT_BTH, "\n");
                 fail = 2;
             }
             else
             {
                 vpxt_formated_print(RESPRT, "MaxQ %2i %.2f > %.2f MaxQ %2i - "
-                    "Failed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i],
-                    MaxQDisplayValue);
+                    "Failed", max_q_display_value + 8, psnr_arr[i+1],
+                    psnr_arr[i], max_q_display_value);
                 tprintf(PRINT_BTH, "\n");
                 fail = 1;
             }
@@ -244,35 +231,35 @@ int test_max_quantizer(int argc,
         else
         {
             vpxt_formated_print(RESPRT, "MaxQ %2i %.2f <= %.2f MaxQ %2i - "
-                "Passed", MaxQDisplayValue + 8, PSNRArr[i+1], PSNRArr[i],
-                MaxQDisplayValue);
+                "Passed", max_q_display_value + 8, psnr_arr[i+1], psnr_arr[i],
+                max_q_display_value);
             tprintf(PRINT_BTH, "\n");
         }
 
         i++;
-        MaxQDisplayValue = MaxQDisplayValue + 8;
+        max_q_display_value = max_q_display_value + 8;
     }
 
     i = 0;
-    MaxQDisplayValue = 4;
+    max_q_display_value = 4;
 
     while (i < 8)
     {
-        if (MaxQArr[i] != -1)
+        if (max_q_arr[i] != -1)
         {
             vpxt_formated_print(RESPRT, "MaxQ value exceded for MaxQ %2i - "
-                "frame %i - Failed", MaxQDisplayValue, MaxQArr[i]);
+                "frame %i - Failed", max_q_display_value, max_q_arr[i]);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "MaxQ value not exceded for MaxQ %2i "
-                "- Passed", MaxQDisplayValue, MaxQArr[i]);
+                "- Passed", max_q_display_value, max_q_arr[i]);
             tprintf(PRINT_BTH, "\n");
         }
 
-        MaxQDisplayValue = MaxQDisplayValue + 8;
+        max_q_display_value = max_q_display_value + 8;
         i++;
     }
 
@@ -280,43 +267,43 @@ int test_max_quantizer(int argc,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(),
-            QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(),
-            QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, quant_out_3.c_str(), quant_out_11.c_str(),
+            quant_out_19.c_str(), quant_out_27.c_str(), quant_out_35.c_str(),
+            quant_out_43.c_str(), quant_out_51.c_str(), quant_out_59.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else if (fail == 2)
     {
         tprintf(PRINT_BTH, "\nMin Passed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(),
-            QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(),
-            QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, quant_out_3.c_str(), quant_out_11.c_str(),
+            quant_out_19.c_str(), quant_out_27.c_str(), quant_out_35.c_str(),
+            quant_out_43.c_str(), quant_out_51.c_str(), quant_out_59.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 8;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, QuantOut3.c_str(), QuantOut11.c_str(),
-            QuantOut19.c_str(), QuantOut27.c_str(), QuantOut35.c_str(),
-            QuantOut43.c_str(), QuantOut51.c_str(), QuantOut59.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, quant_out_3.c_str(), quant_out_11.c_str(),
+            quant_out_19.c_str(), quant_out_27.c_str(), quant_out_35.c_str(),
+            quant_out_43.c_str(), quant_out_51.c_str(), quant_out_59.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

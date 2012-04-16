@@ -2,72 +2,69 @@
 
 int test_frame_size(int argc,
                     const char *const *argv,
-                    const std::string &WorkingDir,
-                    std::string FilesAr[],
-                    int TestType,
-                    int DeleteIVF)
+                    const std::string &working_dir,
+                    std::string files_ar[],
+                    int test_type,
+                    int delete_ivf)
 {
-    char *CompressString = "Frame Size";
-    char *MyDir = "test_frame_size";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Frame Size";
+    char *test_dir = "test_frame_size";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int StartingWidth = atoi(argv[5]);
-    int StartingHeight = atoi(argv[6]);
-    std::string EncForm = argv[7];
-    std::string DecForm = argv[8];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    int starting_width = atoi(argv[5]);
+    int starting_height = atoi(argv[6]);
+    std::string enc_format = argv[7];
+    std::string dec_format = argv[8];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = ""; // <- All Options need to set a value for
+    std::string cur_test_dir_str; // <- All Options need to set a value for
     //this
-    std::string FileIndexStr = "";
-    char MainTestDirChar[255] = "";
-    char FileIndexOutputChar[255] = "";
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    char InputFileName[256] = "";
-    vpxt_file_name(input.c_str(), InputFileName, 1);
+    char input_file_name[256] = "";
+    vpxt_file_name(input.c_str(), input_file_name, 1);
 
-    std::string FrameSizeBase = CurTestDirStr;
-    FrameSizeBase.append(slashCharStr());
-    FrameSizeBase.append(InputFileName);
+    std::string frame_size_base = cur_test_dir_str;
+    frame_size_base += slashCharStr() + input_file_name;
 
-    char NewWidth[20];
-    char NewHeight[20];
-    std::string RawCrop[47];
-    std::string RawExt;
-    vpxt_get_file_extension(input.c_str(), RawExt);
+    char new_width[20];
+    char new_height[20];
+    std::string raw_crop[47];
+    std::string raw_ext;
+    vpxt_get_file_extension(input.c_str(), raw_ext);
 
     //height
     int counter = 0;
-    int FileNum = 1;
+    int file_num = 1;
 
     while (counter < 16)
     {
-        RawCrop[FileNum] = FrameSizeBase;
-        RawCrop[FileNum].append("_");
-        vpxt_itoa_custom(StartingWidth, NewWidth, 10); //width
-        RawCrop[FileNum].append(NewWidth);
-        RawCrop[FileNum].append("x");
-        vpxt_itoa_custom(StartingHeight - (counter), NewHeight, 10); //height
-        RawCrop[FileNum].append(NewHeight);
-        RawCrop[FileNum].append("_raw");
-        RawCrop[FileNum].append(RawExt);
+        vpxt_itoa_custom(starting_width, new_width, 10); //width
+        vpxt_itoa_custom(starting_height - (counter), new_height, 10); //height
 
+        raw_crop[file_num] = frame_size_base + "_";
+        raw_crop[file_num] += new_width;
+        raw_crop[file_num] +=  "x";
+        raw_crop[file_num] += new_height;
+        raw_crop[file_num] +=  "_raw" + raw_ext;
 
         counter++;
-        FileNum++;
+        file_num++;
     }
 
     //width
@@ -75,18 +72,17 @@ int test_frame_size(int argc,
 
     while (counter < 16)
     {
-        RawCrop[FileNum] = FrameSizeBase;
-        RawCrop[FileNum].append("_");
-        vpxt_itoa_custom(StartingWidth - (counter), NewWidth, 10); //width
-        RawCrop[FileNum].append(NewWidth);
-        RawCrop[FileNum].append("x");
-        vpxt_itoa_custom(StartingHeight, NewHeight, 10); //height
-        RawCrop[FileNum].append(NewHeight);
-        RawCrop[FileNum].append("_raw");
-        RawCrop[FileNum].append(RawExt);
+        vpxt_itoa_custom(starting_width - (counter), new_width, 10); //width
+        vpxt_itoa_custom(starting_height, new_height, 10); //height
+
+        raw_crop[file_num] = frame_size_base + "_";
+        raw_crop[file_num] += new_width;
+        raw_crop[file_num] +=  "x";
+        raw_crop[file_num] += new_height;
+        raw_crop[file_num] += "_raw" + raw_ext;
 
         counter++;
-        FileNum++;
+        file_num++;
     }
 
     //width and height
@@ -94,103 +90,100 @@ int test_frame_size(int argc,
 
     while (counter < 16)
     {
-        RawCrop[FileNum] = FrameSizeBase;
-        RawCrop[FileNum].append("_");
-        vpxt_itoa_custom(StartingWidth - (counter), NewWidth, 10); //width
-        RawCrop[FileNum].append(NewWidth);
-        RawCrop[FileNum].append("x");
-        vpxt_itoa_custom(StartingHeight - (counter), NewHeight, 10); //height
-        RawCrop[FileNum].append(NewHeight);
-        RawCrop[FileNum].append("_raw");
-        RawCrop[FileNum].append(RawExt);
+        vpxt_itoa_custom(starting_width - (counter), new_width, 10); //width
+        vpxt_itoa_custom(starting_height - (counter), new_height, 10); //height
+
+        raw_crop[file_num] = frame_size_base + "_";
+        raw_crop[file_num] += new_width;
+        raw_crop[file_num] += "x";
+        raw_crop[file_num] += new_height;
+        raw_crop[file_num] += "_raw" + raw_ext;
 
         counter++;
-        FileNum++;
+        file_num++;
     }
 
     //encoded file names
-    FileNum = 1;
-    std::string EncCrop[47];
+    file_num = 1;
+    std::string enc_crop[47];
 
-    while (FileNum < 47)
+    while (file_num < 47)
     {
-        EncCrop[FileNum] = RawCrop[FileNum];
-        EncCrop[FileNum].erase(EncCrop[FileNum].end() - 7,
-            EncCrop[FileNum].end());
-        EncCrop[FileNum].append("enc");
-        vpxt_enc_format_append(EncCrop[FileNum], EncForm);
-        FileNum++;
+        enc_crop[file_num] = raw_crop[file_num];
+        enc_crop[file_num].erase(enc_crop[file_num].end() - 7,
+            enc_crop[file_num].end());
+        enc_crop[file_num] += "enc";
+        vpxt_enc_format_append(enc_crop[file_num], enc_format);
+        file_num++;
     }
 
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
     //Make sure starting width and height are mults of 16
-    if ((StartingWidth % 16 != 0) && (StartingHeight % 16 != 0))
+    if ((starting_width % 16 != 0) && (starting_height % 16 != 0))
     {
         tprintf(PRINT_BTH, "\nError: Starting width and height are not "
             "multiples of 16\n\nFailed\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
-    if (StartingHeight % 16 != 0)
+    if (starting_height % 16 != 0)
     {
         tprintf(PRINT_BTH, "\nError: Starting height is not a multiple of "
             "16\n\nFailed\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
-    if (StartingWidth % 16 != 0)
+    if (starting_width % 16 != 0)
     {
         tprintf(PRINT_BTH, "\nError: Starting width is not a multiple of "
             "16\n\nFailed\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -198,29 +191,31 @@ int test_frame_size(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
-    double PSNRAr[46];
-    int RawCropNum = 1;
+    opt.target_bandwidth = bitrate;
+    double psnr_arr[46];
+    int raw_crop_num = 1;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //Get Prexisting psnr values
-        while (RawCropNum < 47)
+        while (raw_crop_num < 47)
         {
-            PSNRAr[RawCropNum-1] = vpxt_get_psnr(EncCrop[RawCropNum].c_str());
-            RawCropNum++;
+            psnr_arr[raw_crop_num-1] = vpxt_get_psnr(
+                enc_crop[raw_crop_num].c_str());
+            raw_crop_num++;
         }
     }
     else
@@ -228,56 +223,57 @@ int test_frame_size(int argc,
 
         //Create Raw Crops
         int x = 0;
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
         while (x < 16)
         {
             //Crop
-            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth,
-                StartingHeight - x);
-            vpxt_crop_raw_clip(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0,
-                StartingWidth, StartingHeight - x, 1, 1);
+            tprintf(PRINT_BTH, "\nCroping to %i %i", starting_width,
+                starting_height - x);
+            vpxt_crop_raw_clip(input.c_str(), raw_crop[raw_crop_num].c_str(), 0,
+                0, starting_width, starting_height - x, 1, 1);
 
             //Comp
-            char FileNameChar[256];
-            char FileNameChar2[256];
-            snprintf(FileNameChar, 256, RawCrop[RawCropNum].c_str());
-            vpxt_file_name(FileNameChar, FileNameChar2, 1);
+            char file_name_char[256];
+            char file_name_char_2[256];
+            snprintf(file_name_char, 256, raw_crop[raw_crop_num].c_str());
+            vpxt_file_name(file_name_char, file_name_char_2, 1);
 
-            tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
+            tprintf(PRINT_BTH, "\n\nCompressing %s", file_name_char_2);
 
-            if (vpxt_compress(RawCrop[RawCropNum].c_str(),
-                EncCrop[RawCropNum].c_str(), speed, BitRate, opt,
-                CompressString, 0, 0, EncForm) == -1)
+            if (vpxt_compress(raw_crop[raw_crop_num].c_str(),
+                enc_crop[raw_crop_num].c_str(), speed, bitrate, opt,
+                comp_out_str, 0, 0, enc_format) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar,
-                    TestType);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
                 return 2;
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(),
-                EncCrop[RawCropNum].c_str(), 0, PRINT_BTH, 1, NULL);
+            psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
+                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
 
-            std::string PSNROutFile;
-            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(), PSNROutFile);
-            PSNROutFile.append("psnr.txt");
+            std::string psnr_out_file;
+            vpxt_remove_file_extension(enc_crop[raw_crop_num].c_str(),
+                psnr_out_file);
+            psnr_out_file += "psnr.txt";
 
-            std::ofstream outfilePSNR(PSNROutFile.c_str());
-            outfilePSNR << PSNRAr[RawCropNum-1];
-            outfilePSNR.close();
+            std::ofstream out_file_psnr(psnr_out_file.c_str());
+            out_file_psnr << psnr_arr[raw_crop_num-1];
+            out_file_psnr.close();
 
             //Delete(file deletions are done here due to the number of files
             //that need to be generated)
-            if (DeleteIVF)
+            if (delete_ivf)
             {
-                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
-                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
+                vpxt_delete_files(1, raw_crop[raw_crop_num].c_str());
+                vpxt_delete_files(1, enc_crop[raw_crop_num].c_str());
             }
 
             x++;
-            RawCropNum++;
+            raw_crop_num++;
         }
 
         x = 1;
@@ -285,50 +281,51 @@ int test_frame_size(int argc,
         while (x < 16)
         {
             //Crop
-            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x,
-                StartingHeight);
-            vpxt_crop_raw_clip(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0,
-                StartingWidth - x, StartingHeight, 1, 1);
+            tprintf(PRINT_BTH, "\nCroping to %i %i", starting_width - x,
+                starting_height);
+            vpxt_crop_raw_clip(input.c_str(), raw_crop[raw_crop_num].c_str(), 0,
+                0, starting_width - x, starting_height, 1, 1);
 
             //Comp
-            char FileNameChar[256];
-            char FileNameChar2[256];
-            snprintf(FileNameChar, 256, EncCrop[RawCropNum].c_str());
-            vpxt_file_name(FileNameChar, FileNameChar2, 1);
+            char file_name_char[256];
+            char file_name_char_2[256];
+            snprintf(file_name_char, 256, enc_crop[raw_crop_num].c_str());
+            vpxt_file_name(file_name_char, file_name_char_2, 1);
 
-            tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
+            tprintf(PRINT_BTH, "\nCompressing %s", file_name_char_2);
 
-            if (vpxt_compress(RawCrop[RawCropNum].c_str(),
-                EncCrop[RawCropNum].c_str(), speed, BitRate, opt,
-                CompressString, 0, 0, EncForm) == -1)
+            if (vpxt_compress(raw_crop[raw_crop_num].c_str(),
+                enc_crop[raw_crop_num].c_str(), speed, bitrate, opt,
+                comp_out_str, 0, 0, enc_format) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar,
-                    TestType);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
                 return 2;
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(),
-                EncCrop[RawCropNum].c_str(), 0, PRINT_BTH, 1, NULL);
+            psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
+                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
 
-            std::string PSNROutFile;
-            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(),PSNROutFile);
-            PSNROutFile.append("psnr.txt");
+            std::string psnr_out_file;
+            vpxt_remove_file_extension(enc_crop[raw_crop_num].c_str(),
+                psnr_out_file);
+            psnr_out_file += "psnr.txt";
 
-            std::ofstream outfilePSNR(PSNROutFile.c_str());
-            outfilePSNR << PSNRAr[RawCropNum-1];
-            outfilePSNR.close();
+            std::ofstream out_file_psnr(psnr_out_file.c_str());
+            out_file_psnr << psnr_arr[raw_crop_num-1];
+            out_file_psnr.close();
 
             //Delete
-            if (DeleteIVF)
+            if (delete_ivf)
             {
-                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
-                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
+                vpxt_delete_files(1, raw_crop[raw_crop_num].c_str());
+                vpxt_delete_files(1, enc_crop[raw_crop_num].c_str());
             }
 
             x++;
-            RawCropNum++;
+            raw_crop_num++;
         }
 
         x = 1;
@@ -336,117 +333,120 @@ int test_frame_size(int argc,
         while (x < 16)
         {
             //Crop
-            tprintf(PRINT_BTH, "\nCroping to %i %i", StartingWidth - x,
-                StartingHeight - x);
-            vpxt_crop_raw_clip(input.c_str(), RawCrop[RawCropNum].c_str(), 0, 0,
-                StartingWidth - x, StartingHeight - x, 1, 1);
+            tprintf(PRINT_BTH, "\nCroping to %i %i", starting_width - x,
+                starting_height - x);
+            vpxt_crop_raw_clip(input.c_str(), raw_crop[raw_crop_num].c_str(), 0,
+                0, starting_width - x, starting_height - x, 1, 1);
 
             //Comp
-            char FileNameChar[256];
-            char FileNameChar2[256];
-            snprintf(FileNameChar, 256, RawCrop[RawCropNum].c_str());
-            vpxt_file_name(FileNameChar, FileNameChar2, 1);
+            char file_name_char[256];
+            char file_name_char_2[256];
+            snprintf(file_name_char, 256, raw_crop[raw_crop_num].c_str());
+            vpxt_file_name(file_name_char, file_name_char_2, 1);
 
-            tprintf(PRINT_BTH, "\nCompressing %s", FileNameChar2);
+            tprintf(PRINT_BTH, "\nCompressing %s", file_name_char_2);
 
-            if (vpxt_compress(RawCrop[RawCropNum].c_str(),
-                EncCrop[RawCropNum].c_str(), speed, BitRate, opt,
-                CompressString, 0, 0, EncForm) == -1)
+            if (vpxt_compress(raw_crop[raw_crop_num].c_str(),
+                enc_crop[raw_crop_num].c_str(), speed, bitrate, opt,
+                comp_out_str, 0, 0, enc_format) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar,TestType);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
                 return 2;
             }
 
             //PSNR
-            PSNRAr[RawCropNum-1] = vpxt_psnr(RawCrop[RawCropNum].c_str(),
-                EncCrop[RawCropNum].c_str(), 0, PRINT_BTH, 1, NULL);
+            psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
+                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
 
-            std::string PSNROutFile;
-            vpxt_remove_file_extension(EncCrop[RawCropNum].c_str(),PSNROutFile);
-            PSNROutFile.append("psnr.txt");
+            std::string psnr_out_file;
+            vpxt_remove_file_extension(enc_crop[raw_crop_num].c_str(),
+                psnr_out_file);
+            psnr_out_file += "psnr.txt";
 
-            std::ofstream outfilePSNR(PSNROutFile.c_str());
-            outfilePSNR << PSNRAr[RawCropNum-1];
-            outfilePSNR.close();
+            std::ofstream out_file_psnr(psnr_out_file.c_str());
+            out_file_psnr << psnr_arr[raw_crop_num-1];
+            out_file_psnr.close();
 
             //Delete
-            if (DeleteIVF)
+            if (delete_ivf)
             {
-                vpxt_delete_files(1, RawCrop[RawCropNum].c_str());
-                vpxt_delete_files(1, EncCrop[RawCropNum].c_str());
+                vpxt_delete_files(1, raw_crop[raw_crop_num].c_str());
+                vpxt_delete_files(1, enc_crop[raw_crop_num].c_str());
             }
 
             x++;
-            RawCropNum++;
+            raw_crop_num++;
         }
     }
 
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
-    int PercentFail = 0;
-    int MinPSNRFail = 0;
+    int percent_fail = 0;
+    int min_psnr_fail = 0;
 
-    RawCropNum = 1;
-    double FivePercentPSNR = (5 * PSNRAr[0]) / 100;
+    raw_crop_num = 1;
+    double five_percent_psnr = (5 * psnr_arr[0]) / 100;
 
-    while (RawCropNum < 47)
+    while (raw_crop_num < 47)
     {
-        char FileNameChar[256];
-        char FileNameChar2[256];
-        snprintf(FileNameChar, 256, EncCrop[RawCropNum].c_str());
-        vpxt_file_name(FileNameChar, FileNameChar2, 0);
+        char file_name_char[256];
+        char file_name_char_2[256];
+        snprintf(file_name_char, 256, enc_crop[raw_crop_num].c_str());
+        vpxt_file_name(file_name_char, file_name_char_2, 0);
 
-        if (RawCropNum == 1)
+        if (raw_crop_num == 1)
         {
-            tprintf(PRINT_STD, "\n\n PSNR %s: %.2f", FileNameChar2,
-                PSNRAr[RawCropNum-1]);
+            tprintf(PRINT_STD, "\n\n PSNR %s: %.2f", file_name_char_2,
+                psnr_arr[raw_crop_num-1]);
         }
-        else if (PSNRAr[RawCropNum-1] <  PSNRAr[0] + FivePercentPSNR &&
-            PSNRAr[RawCropNum-1] >  PSNRAr[0] - FivePercentPSNR)
+        else if (psnr_arr[raw_crop_num-1] <  psnr_arr[0] + five_percent_psnr &&
+            psnr_arr[raw_crop_num-1] >  psnr_arr[0] - five_percent_psnr)
         {
             tprintf(PRINT_BTH, "\n PSNR %s: %.2f within 5%% of %.2f - Passed",
-                FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
+                file_name_char_2, psnr_arr[raw_crop_num-1], psnr_arr[0]);
         }
         else
         {
             tprintf(PRINT_BTH, "\n PSNR %s: %.2f not within 5%% of %.2f - "
-                "Failed", FileNameChar2, PSNRAr[RawCropNum-1], PSNRAr[0]);
-            PercentFail = 1;
+                "Failed", file_name_char_2, psnr_arr[raw_crop_num-1],
+                psnr_arr[0]);
+            percent_fail = 1;
         }
 
-        RawCropNum++;
+        raw_crop_num++;
     }
 
     tprintf(PRINT_BTH, "\n\n");
 
-    RawCropNum = 1;
+    raw_crop_num = 1;
 
-    while (RawCropNum < 47)
+    while (raw_crop_num < 47)
     {
-        char FileNameChar[256];
-        char FileNameChar2[256];
-        snprintf(FileNameChar, 256, EncCrop[RawCropNum].c_str());
-        vpxt_file_name(FileNameChar, FileNameChar2, 0);
+        char file_name_char[256];
+        char file_name_char_2[256];
+        snprintf(file_name_char, 256, enc_crop[raw_crop_num].c_str());
+        vpxt_file_name(file_name_char, file_name_char_2, 0);
 
-        if (PSNRAr[RawCropNum-1] > 25.0)
+        if (psnr_arr[raw_crop_num-1] > 25.0)
         {
             tprintf(PRINT_BTH, "\n PSNR %s: %.2f > %.2f - Passed",
-                FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
+                file_name_char_2, psnr_arr[raw_crop_num-1], 25.0);
         }
         else
         {
             tprintf(PRINT_BTH, "\n PSNR %s: %.2f < %.2f - Failed",
-                FileNameChar2, PSNRAr[RawCropNum-1], 25.0);
-            MinPSNRFail = 1;
+                file_name_char_2, psnr_arr[raw_crop_num-1], 25.0);
+            min_psnr_fail = 1;
         }
 
-        RawCropNum++;
+        raw_crop_num++;
     }
 
 
@@ -455,21 +455,21 @@ int test_frame_size(int argc,
 
     int fail = 0;
 
-    if (PercentFail == 0)
+    if (percent_fail == 0)
     {
         vpxt_formated_print(RESPRT, "All PSNRs are within 5%% of %.2f - "
-            "Passed", PSNRAr[0]);
+            "Passed", psnr_arr[0]);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Not all PSNRs are within 5%% of %.2f - "
-            "Failed", PSNRAr[0]);
+            "Failed", psnr_arr[0]);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (MinPSNRFail == 0)
+    if (min_psnr_fail == 0)
     {
         vpxt_formated_print(RESPRT, "All PSNRs are greater than 25.0 - Passed");
         tprintf(PRINT_BTH, "\n");
@@ -487,7 +487,7 @@ int test_frame_size(int argc,
         tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
@@ -495,11 +495,11 @@ int test_frame_size(int argc,
         tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

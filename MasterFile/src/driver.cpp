@@ -22,8 +22,8 @@
 //CodeCoverage
 extern int tool_array_coverage(int argc,
                                const char *const *argv,
-                               const std::string &WorkingDir,
-                               std::string FilesAr[]);
+                               const std::string &working_dir,
+                               std::string files_ar[]);
 
 int create_working_folder(int argc, const char *argv[], char *WorkingDirChar)
 {
@@ -60,10 +60,10 @@ int create_working_folder(int argc, const char *argv[], char *WorkingDirChar)
     std::string Folder;
     vpxt_folder_name(argv[0], &Folder);
 
-    //add Date and Time
+    //add Date and time
     int number = 0;
 
-    Folder.append(DateAndTime3);
+    Folder += DateAndTime3;
     std::string FolderCheck = Folder;
 
     //Make sure folder doesnt already exist
@@ -73,9 +73,7 @@ int create_working_folder(int argc, const char *argv[], char *WorkingDirChar)
         char numberChar[255];
         vpxt_itoa_custom(number, numberChar, 10);
 
-        FolderCheck = Folder;
-        FolderCheck.append("_");
-        FolderCheck.append(numberChar);
+        FolderCheck = Folder + "_" + numberChar;
     }
 
     if (number != 0) //append sub number to end of folder name
@@ -83,12 +81,11 @@ int create_working_folder(int argc, const char *argv[], char *WorkingDirChar)
         char numberChar[255];
         vpxt_itoa_custom(number + 1, numberChar, 10);
 
-        Folder.append("_");
-        Folder.append(numberChar);
+        Folder += "_";
+        Folder += numberChar;
     }
 
-    Folder.append("\"");
-    Folder.append("\0");
+    Folder += "\"\0";
     snprintf(WorkingDirChar, 255, "%s", Folder.c_str());
 
     return 0;
@@ -234,18 +231,18 @@ void vpxt_on_error_output()
 
     return;
 }
-void write_32bit_quick_test(const std::string WorkingDir)
+void write_32bit_quick_test(const std::string working_dir)
 {
-    std::string TextfileString5;
-    vpxt_folder_name(WorkingDir.c_str(), &TextfileString5);
-    TextfileString5.append("QuickTest_32Bit.txt");
+    std::string text_file_str;
+    vpxt_folder_name(working_dir.c_str(), &text_file_str);
+    text_file_str += "QuickTest_32Bit.txt";
 
     FILE *fp;
 
-    if ((fp = fopen(TextfileString5.c_str(), "w")) == NULL)
+    if ((fp = fopen(text_file_str.c_str(), "w")) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString5.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
@@ -751,21 +748,21 @@ void write_32bit_quick_test(const std::string WorkingDir)
 
 
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n",
-        TextfileString5.c_str());
+        text_file_str.c_str());
     fclose(fp);
 }
-void write_64bit_quick_test(const std::string WorkingDir)
+void write_64bit_quick_test(const std::string working_dir)
 {
-    std::string TextfileString5;
-    vpxt_folder_name(WorkingDir.c_str(), &TextfileString5);
-    TextfileString5.append("QuickTest_64Bit.txt");
+    std::string text_file_str;
+    vpxt_folder_name(working_dir.c_str(), &text_file_str);
+    text_file_str += "QuickTest_64Bit.txt";
 
     FILE *fp;
 
-    if ((fp = fopen(TextfileString5.c_str(), "w")) == NULL)
+    if ((fp = fopen(text_file_str.c_str(), "w")) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString5.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
@@ -1271,15 +1268,15 @@ void write_64bit_quick_test(const std::string WorkingDir)
 
 
     tprintf(PRINT_STD, "\n\nQuick Test file created:\n%s\n\n",
-        TextfileString5.c_str());
+        text_file_str.c_str());
     fclose(fp);
 }
-int  print_quick_test_files(const std::string WorkingDir)
+int  print_quick_test_files(const std::string working_dir)
 {
     //32BitQuickRun
-    write_32bit_quick_test(WorkingDir);
+    write_32bit_quick_test(working_dir);
     //64BitQuickRun
-    write_64bit_quick_test(WorkingDir);
+    write_64bit_quick_test(working_dir);
 
     return 0;
 }
@@ -2107,11 +2104,11 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         tprintf(PRINT_STD, "\n"
             "    <Input File>\n"
             "    <Layer Mode 0-6>\n"
-            "    <BitRate 0 (Modes 0-8)>\n"
-            "    <BitRate 1 (Modes 0-8)>\n"
-            "    <BitRate 2 (Modes 2-6&8, else 0)>\n"
-            "    <BitRate 3 (Mode 6, else 0)>\n"
-            "    <BitRate 4 (Mode 6, else 0)>\n"
+            "    <bitrate 0 (Modes 0-8)>\n"
+            "    <bitrate 1 (Modes 0-8)>\n"
+            "    <bitrate 2 (Modes 2-6&8, else 0)>\n"
+            "    <bitrate 3 (Mode 6, else 0)>\n"
+            "    <bitrate 4 (Mode 6, else 0)>\n"
             "    <Exe File To Compare>\n"
             "    <Encode Format - webm/ivf>\n");
 
@@ -2344,11 +2341,11 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         tprintf(PRINT_STD, "\n"
             "    <Input File>\n"
             "    <Layer Mode 0-6>\n"
-            "    <BitRate 0 (Modes 0-8)>\n"
-            "    <BitRate 1 (Modes 0-8)>\n"
-            "    <BitRate 2 (Modes 2-6&8, else 0)>\n"
-            "    <BitRate 3 (Mode 6, else 0)>\n"
-            "    <BitRate 4 (Mode 6, else 0)>\n"
+            "    <bitrate 0 (Modes 0-8)>\n"
+            "    <bitrate 1 (Modes 0-8)>\n"
+            "    <bitrate 2 (Modes 2-6&8, else 0)>\n"
+            "    <bitrate 3 (Mode 6, else 0)>\n"
+            "    <bitrate 4 (Mode 6, else 0)>\n"
             "    <Encode Format - webm/ivf>\n");
 
         if (printSummary)
@@ -3381,7 +3378,7 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)
         tprintf(PRINT_STD,
                 "\n  Write IVF Frame Header\n\n"
                 "     <Output File>\n"
-                "     <Time Stamp>\n"
+                "     <time Stamp>\n"
                 "     <Frame Size>\n");
 
         if (printSummary)
@@ -3451,11 +3448,11 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)
             "    <Input File>\n"
             "    <Output Base>\n"
             "    <Layer Mode 0-6>\n"
-            "    <BitRate 0 (Modes 0-6)>\n"
-            "    <BitRate 1 (Modes 0-6)>\n"
-            "    <BitRate 2 (Modes 2-6, else 0)>\n"
-            "    <BitRate 3 (Mode 6, else 0)>\n"
-            "    <BitRate 4 (Mode 6, else 0)>\n"
+            "    <bitrate 0 (Modes 0-6)>\n"
+            "    <bitrate 1 (Modes 0-6)>\n"
+            "    <bitrate 2 (Modes 2-6, else 0)>\n"
+            "    <bitrate 3 (Mode 6, else 0)>\n"
+            "    <bitrate 4 (Mode 6, else 0)>\n"
             "    <Encode Format - webm/ivf>\n");
 
         if (printSummary)
@@ -3475,15 +3472,15 @@ void format_summary(const char *InputFileNameCharAr)
 {
     tprintf(PRINT_STD, "\n Formating Summary file.\n");
 
-    std::string InputFileName = InputFileNameCharAr;
+    std::string input_file_name = InputFileNameCharAr;
 
     std::string SummaryByTestOutput;
-    vpxt_remove_file_extension(InputFileName.c_str(), SummaryByTestOutput);
-    SummaryByTestOutput.append("expanded.txt");
+    vpxt_remove_file_extension(input_file_name.c_str(), SummaryByTestOutput);
+    SummaryByTestOutput += "expanded.txt";
 
     std::string TestsRun;
     vpxt_folder_name(InputFileNameCharAr, &TestsRun);
-    TestsRun.append("tests_run.txt");
+    TestsRun += "tests_run.txt";
 
     FILE *fp;
 
@@ -3494,9 +3491,9 @@ void format_summary(const char *InputFileNameCharAr)
         return;
     }
 
-    std::string LineBuffer = "";
-    std::string TestTrackerName = "";
-    std::string TestTrackerResult = "";
+    std::string LineBuffer;
+    std::string TestTrackerName;
+    std::string TestTrackerResult;
 
     int TestTracker = 1;
     int ResultTracker = 0;
@@ -3706,7 +3703,7 @@ void format_summary(const char *InputFileNameCharAr)
                 TestTrackerResult = "TestNotSupported";
 
             std::fstream FormatSummaryByTestFile;
-            FormatSummaryByTestFile.open(InputFileName.c_str());
+            FormatSummaryByTestFile.open(input_file_name.c_str());
 
             if (!FormatSummaryByTestFile)
             {
@@ -3811,7 +3808,7 @@ void format_summary(const char *InputFileNameCharAr)
                                 TestResultString.c_str());
                             fprintf(stderr, "%4s %-32s%-25s%s  "
                                 "Test Settings\n\n", "#", "            Test "
-                                "Name" , "     Date and Time", "Status");
+                                "Name" , "     Date and time", "Status");
                             PrintTestHeader2 = 0;
                         }
 
@@ -3841,7 +3838,7 @@ void format_summary(const char *InputFileNameCharAr)
                         while (!TestsRunFile.eof() && TestNumberCur !=
                             TestRunNumInt)
                         {
-                            std::string TestsRunString = "";
+                            std::string TestsRunString;
                             getline(TestsRunFile, TestsRunString);
                             std::string test = TestsRunString.substr(0, 1);
 
@@ -4068,7 +4065,7 @@ int  show_hidden_cmds()
     return 0;
 
 }
-int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
+int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
 {
     if (argc < 4)
     {
@@ -4105,11 +4102,9 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
     }
     else
     {
-        std::string inputCheck = "";
-        inputCheck.append(argv[3]);
-        inputCheck.append(slashCharStr().c_str());
-        inputCheck.append("tests_run.txt");
-        VaildInput = vpxt_run_multiple_tests_input_check(inputCheck.c_str(), 0);
+        std::string input_ver;
+        input_ver += argv[3] + slashCharStr() + "tests_run.txt";
+        VaildInput = vpxt_run_multiple_tests_input_check(input_ver.c_str(), 0);
 
         if (VaildInput <= 0)
         {
@@ -4130,17 +4125,16 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
             DeleteIVFFiles = 1;
     }
 
-    run_multiple_tests(argc, argv, WorkingDir.c_str(), VaildInput,
+    run_multiple_tests(argc, argv, working_dir.c_str(), VaildInput,
         DeleteIVFFiles);
 
-    std::string SummaryFile = WorkingDir;
+    std::string SummaryFile = working_dir;
 
     if (atoi(argv[2]) == 1)
     {
         char SummaryFileChar[255] = "";
         SummaryFile.erase(SummaryFile.end() - 1);
-        SummaryFile.append(slashCharStr());
-        SummaryFile.append("test_results.txt");
+        SummaryFile += slashCharStr() + "test_results.txt";
         snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
         format_summary(SummaryFileChar);
         return 0;
@@ -4151,8 +4145,7 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
 
         char SummaryFileChar[255] = "";
         SummaryFile.erase(SummaryFile.end() - 1);
-        SummaryFile.append(slashCharStr());
-        SummaryFile.append("compression_results.txt");
+        SummaryFile += slashCharStr() += "compression_results.txt";
         snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
         format_summary(SummaryFileChar);
         return 0;
@@ -4160,19 +4153,16 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
 
     if (atoi(argv[2]) == 4)
     {
-        std::string SummCompAndTest = "";
-        std::string SummComp = "";
-        std::string SummTest = "";
+        std::string SummCompAndTest;
+        std::string SummComp;
+        std::string SummTest;
 
-        SummCompAndTest = argv[3];
-        SummCompAndTest.append(slashCharStr());
-        SummCompAndTest.append("test_results.txt");     // Mode 1
-        SummComp = argv[3];
-        SummComp.append(slashCharStr());
-        SummComp.append("compression_results.txt");     // Mode 2
-        SummTest = argv[3];
-        SummTest.append(slashCharStr());
-        SummTest.append("compression_test_results.txt");// Mode 3
+        // Mode 1
+        SummCompAndTest = argv[3] + slashCharStr() + "test_results.txt";
+        // Mode 2
+        SummComp = argv[3] + slashCharStr() + "compression_results.txt";
+        // Mode 3
+        SummTest = argv[3] + slashCharStr() + "compression_test_results.txt";
 
         int TestRunning = 0;
         std::fstream SummCompAndTestFile;
@@ -4211,22 +4201,15 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string WorkingDir)
 
         if (TestRunning == 1)
         {
-            char SummaryFileChar[255] = "";
-            SummaryFile.append(slashCharStr());
-            SummaryFile.append("test_results.txt");
-            snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            format_summary(SummaryFileChar);
+            SummaryFile += slashCharStr() + "test_results.txt";
+            format_summary(SummaryFile.c_str());
             return 0;
         }
 
         if (TestRunning == 3)
         {
-
-            char SummaryFileChar[255] = "";
-            SummaryFile.append(slashCharStr());
-            SummaryFile.append("compression_test_results.txt");
-            snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-            format_summary(SummaryFileChar);
+            SummaryFile += slashCharStr() + "compression_test_results.txt";
+            format_summary(SummaryFile.c_str());
         }
     }
 
@@ -4243,10 +4226,9 @@ int  main(int argc, const char *argv[])
     std::string EmptyAr[1];
     char WorkingDirChar[256]  = "";
     create_working_folder(argc, argv, WorkingDirChar);
-    std::string WorkingDir = "";
-    WorkingDir.append(WorkingDirChar);
+    std::string working_dir = WorkingDirChar;
     std::string TestInputString(argv[1]);
-    std::string TestInputString2 = "";
+    std::string TestInputString2;
 
     if (argc > 2)
         TestInputString2 =  argv[2];
@@ -4256,7 +4238,7 @@ int  main(int argc, const char *argv[])
 
     if (TestInputString.compare("0") == 0)
     {
-        if (WorkingDir.length() > 175)
+        if (working_dir.length() > 175)
         {
             tprintf(PRINT_BTH, "\nError: Folder Path Length too long.\n");
             return 0;
@@ -4314,7 +4296,7 @@ int  main(int argc, const char *argv[])
 
     //Compresses an IVF Raw File to an IVF Compressed file
     if (TestInputString.compare("vpxtenc") == 0)
-        return tool_vpxt_enc(argc, argv, WorkingDir);
+        return tool_vpxt_enc(argc, argv, working_dir);
 
     //runs checkpbm (this needs to be looked at)
     if (TestInputString.compare("thresh") == 0)
@@ -4366,7 +4348,7 @@ int  main(int argc, const char *argv[])
 
     //Creates sample text files that include quick test and other templates
     if (TestInputString.compare("createsampletextfiles") == 0)
-        return print_quick_test_files(WorkingDir);
+        return print_quick_test_files(working_dir);
 
     //Modifies an ivf file cutting out a portion of the clip and saving it
     if (TestInputString.compare("cutclip") == 0)
@@ -4437,7 +4419,7 @@ int  main(int argc, const char *argv[])
 
     //Preforms Code Coverage Tests for data coverage if enabled
     if (TestInputString.compare("codecoverage") == 0)
-        return tool_array_coverage(argc, argv, WorkingDir, EmptyAr);
+        return tool_array_coverage(argc, argv, working_dir, EmptyAr);
 
     //Compares New Code Coverage Results to Old Code Coverage Results and
     //merges the files to an updated version
@@ -4457,13 +4439,9 @@ int  main(int argc, const char *argv[])
     if (TestInputString.compare("testvectorindex") == 0)
         return tool_test_vector_index(argc, argv);
 
-    //Makes sure that the Tester compressor matches ivfenc compressor
-    if (TestInputString.compare("compmatchesivfenc") == 0)
-        return tool_comp_matches_ivfenc(argc, argv);
-
     //makes sure that all variations of the compressor produce the same output
     if (TestInputString.compare("compressionequiv") == 0)
-        return tool_compression_equiv(argc, argv, WorkingDir);
+        return tool_compression_equiv(argc, argv, working_dir);
 
     //Prints the internal version number - make sure all libs built in same
     //multithreadedmode - properties  C++ CodeGen RuntimeLibrary
@@ -4526,11 +4504,11 @@ int  main(int argc, const char *argv[])
 
     //
     if (TestInputString.compare("graphpsnr") == 0)
-        return tool_graph_psnr(argc, argv, WorkingDir, EmptyAr, 1);
+        return tool_graph_psnr(argc, argv, working_dir, EmptyAr, 1);
 
     //
     if (TestInputString.compare("randcompress") == 0)
-        return tool_rand_comp(argc, argv, WorkingDir, EmptyAr, 1);
+        return tool_rand_comp(argc, argv, working_dir, EmptyAr, 1);
 
     //
     if (TestInputString.compare("randparfile") == 0)
@@ -4581,182 +4559,182 @@ int  main(int argc, const char *argv[])
     }
 
     if (selector == 0)
-        return vpxt_run_multi(argc, argv, WorkingDir);
+        return vpxt_run_multi(argc, argv, working_dir);
 
     if (selector == AlWDFNUM)
-        return test_allow_drop_frames(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_allow_drop_frames(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == ALWLGNUM)
-        return test_allow_lag(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_allow_lag(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ALWSRNUM)
-        return test_allow_spatial_resampling(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_allow_spatial_resampling(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == ARNRTNUM)
-        return test_arnr(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_arnr(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == AUTKFNUM)
-        return test_auto_key_frame(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_auto_key_frame(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == BUFLVNUM)
-        return test_buffer_level(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_buffer_level(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == CPUDENUM)
-        return test_change_cpu_dec(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_change_cpu_dec(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == CPUENNUM)
-        return test_change_cpu_enc(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_change_cpu_enc(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == CONQUNUM)
-        return test_constrained_quality(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_constrained_quality(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == COPSRNUM)
-        return test_copy_set_reference(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_copy_set_reference(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == DFWMWNUM)
-        return test_drop_frame_watermark(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_drop_frame_watermark(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == DTARTNUM)
-        return test_data_rate(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_data_rate(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == DBMRLNUM)
-        return test_debug_matches_release(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_debug_matches_release(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == ENCBONUM)
-        return test_encoder_break_out(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_encoder_break_out(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == ERRCONUM)
-        return test_error_concealment(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_error_concealment(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == ERRMWNUM)
-        return test_error_resolution(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_error_resolution(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == EXTFINUM)
-        return test_extra_file(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_extra_file(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == FIXDQNUM)
-        return test_fixed_quantizer(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_fixed_quantizer(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == FKEFRNUM)
-        return test_force_key_frame(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_force_key_frame(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == FRSZTNUM)
-        return test_frame_size(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_frame_size(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == GQVBQNUM)
-        return test_good_vs_best(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_good_vs_best(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == LGIFRNUM)
-        return test_lag_in_frames(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_lag_in_frames(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MAXQUNUM)
-        return test_max_quantizer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_max_quantizer(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MEML1NUM)
-        return test_mem_leak(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_mem_leak(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MEML2NUM)
-        return test_mem_leak2(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_mem_leak2(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MINQUNUM)
-        return test_min_quantizer(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_min_quantizer(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MULRENUM)
-        return test_multiple_resolution_encode(argc, argv, WorkingDir, EmptyAr,
+        return test_multiple_resolution_encode(argc, argv, working_dir, EmptyAr,
         1, KEEP_IVF);
 
     if (selector == MULTDNUM)
-        return test_multithreaded_dec(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_multithreaded_dec(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == MULTENUM)
-        return test_multithreaded_enc(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_multithreaded_enc(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == NVOPSNUM)
-        return test_new_vs_old_psnr(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_new_vs_old_psnr(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == NVOTSNUM)
-        return test_new_vs_old_temp_scale(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_new_vs_old_temp_scale(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == NVOECPTK)
-        return test_new_vs_old_enc_cpu_tick(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_new_vs_old_enc_cpu_tick(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == NOISENUM)
-        return test_noise_sensitivity(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_noise_sensitivity(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == OV2PSNUM)
-        return test_one_pass_vs_two_pass(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_one_pass_vs_two_pass(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == PLYALNUM)
-        return test_play_alternate(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_play_alternate(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == POSTPNUM)
-        return test_post_processor(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_post_processor(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == PSTMFNUM)
-        return test_post_processor_mfqe(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_post_processor_mfqe(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == RECBFNUM)
-        return test_reconstruct_buffer(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_reconstruct_buffer(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == RSDWMNUM)
-        return test_resample_down_watermark(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_resample_down_watermark(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == SPEEDNUM)
-        return test_speed(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_speed(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TMPSCNUM)
-        return test_temporal_scalability(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_temporal_scalability(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == TVECTNUM)
-        return test_test_vector(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_test_vector(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == TTVSFNUM)
-        return test_thirtytwo_vs_sixtyfour(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_thirtytwo_vs_sixtyfour(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == TV2BTNUM)
-        return test_two_pass_vs_two_pass_best(argc, argv, WorkingDir, EmptyAr,
+        return test_two_pass_vs_two_pass_best(argc, argv, working_dir, EmptyAr,
         1, KEEP_IVF);
 
     if (selector == UNDSHNUM)
-        return test_undershoot(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_undershoot(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == VERSINUM)
-        return test_version(argc, argv, WorkingDir, EmptyAr, 1, KEEP_IVF);
+        return test_version(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == VPXMINUM)
-        return test_vpx_matches_int(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_vpx_matches_int(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     if (selector == WMLMMNUM)
-        return test_win_lin_mac_match(argc, argv, WorkingDir, EmptyAr, 1,
+        return test_win_lin_mac_match(argc, argv, working_dir, EmptyAr, 1,
         KEEP_IVF);
 
     vpxt_on_error_output();

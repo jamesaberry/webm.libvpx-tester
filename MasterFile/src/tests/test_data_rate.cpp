@@ -2,80 +2,76 @@
 
 int test_data_rate(int argc,
                    const char *const *argv,
-                   const std::string &WorkingDir,
-                   std::string FilesAr[],
-                   int TestType,
-                   int DeleteIVF)
+                   const std::string &working_dir,
+                   std::string files_ar[],
+                   int test_type,
+                   int delete_ivf)
 {
-    char *CompressString = "Allow Drop Frames";
-    char *MyDir = "test_data_rate";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Allow Drop Frames";
+    char *test_dir = "test_data_rate";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    double BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    double bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string TargetBitRate1 = CurTestDirStr;
-    TargetBitRate1.append(slashCharStr());
-    TargetBitRate1.append(MyDir);
-    TargetBitRate1.append("_compression");
-    vpxt_enc_format_append(TargetBitRate1, EncForm);
+    std::string target_bitrate_enc = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression";
+    vpxt_enc_format_append(target_bitrate_enc, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -83,18 +79,19 @@ int test_data_rate(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    int TargetDataRatePercentage = 30;
-    opt.target_bandwidth = BitRate;
+    int target_data_rate_percent = 30;
+    opt.target_bandwidth = bitrate;
 
     ////////////////Data Rate Specific Settings////////////////
     opt.best_allowed_q = 0;
@@ -102,98 +99,99 @@ int test_data_rate(int argc,
     opt.allow_df = 1;
     ///////////////////////////////////////////////////////////
 
-    int CompressInt = opt.allow_df;
+    int compress_int = opt.allow_df;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
-        if (vpxt_compress(input.c_str(), TargetBitRate1.c_str(), speed, BitRate,
-            opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), target_bitrate_enc.c_str(), speed,
+            bitrate, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
     tprintf(PRINT_BTH, "\n");
 
-    double FileDataRate = vpxt_data_rate(TargetBitRate1.c_str(), 1);
-    double DataRateProx = vpxt_abs_double(100 - vpxt_abs_double(((FileDataRate *
-        100) / BitRate)));
+    double file_data_rate = vpxt_data_rate(target_bitrate_enc.c_str(), 1);
+    double data_rate_prox = vpxt_abs_double(100 - vpxt_abs_double(
+        ((file_data_rate * 100) / bitrate)));
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (DataRateProx < TargetDataRatePercentage)
+    if (data_rate_prox < target_data_rate_percent)
     {
-        if (FileDataRate < BitRate)
+        if (file_data_rate < bitrate)
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% lower than "
                 "Target, DataRate is within %i%% of: %4.2f - Passed",
-                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+                file_data_rate, data_rate_prox, target_data_rate_percent,
+                bitrate);
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater "
                 "than Target, DataRate is within %i%% of: %4.2f - Passed",
-                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+                file_data_rate, data_rate_prox, target_data_rate_percent, bitrate);
             tprintf(PRINT_BTH, "\n");
         }
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(1, TargetBitRate1.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(1, target_bitrate_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
-
-        if (FileDataRate < BitRate)
+        if (file_data_rate < bitrate)
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% less than "
                 "Target, DataRate not within %i%% of: %4.2f - Failed \n",
-                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+                file_data_rate, data_rate_prox, target_data_rate_percent, bitrate);
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater "
                 "than Target, DataRate not within %i%% of: %4.2f - Failed \n",
-                FileDataRate, DataRateProx, TargetDataRatePercentage, BitRate);
+                file_data_rate, data_rate_prox, target_data_rate_percent, bitrate);
             tprintf(PRINT_BTH, "\n");
         }
 
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(1, TargetBitRate1.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(1, target_bitrate_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

@@ -2,110 +2,96 @@
 
 int test_good_vs_best(int argc,
                       const char *const *argv,
-                      const std::string &WorkingDir,
-                      std::string FilesAr[],
-                      int TestType,
-                      int DeleteIVF)
+                      const std::string &working_dir,
+                      std::string files_ar[],
+                      int test_type,
+                      int delete_ivf)
 {
-    char *CompressString = "Allow Drop Frames";
-    char *MyDir = "test_good_vs_best";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Allow Drop Frames";
+    char *test_dir = "test_good_vs_best";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int BitRate = atoi(argv[3]);
-    std::string EncForm = argv[4];
+    int bitrate = atoi(argv[3]);
+    std::string enc_format = argv[4];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string GoodOutFile1 = CurTestDirStr;
-    GoodOutFile1.append(slashCharStr());
-    GoodOutFile1.append(MyDir);
-    GoodOutFile1.append("_compression_good_1");
-    vpxt_enc_format_append(GoodOutFile1, EncForm);
+    std::string good_out_file_1 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_good_1";
+    vpxt_enc_format_append(good_out_file_1, enc_format);
 
-    std::string GoodOutFile2 = CurTestDirStr;
-    GoodOutFile2.append(slashCharStr());
-    GoodOutFile2.append(MyDir);
-    GoodOutFile2.append("_compression_good_2");
-    vpxt_enc_format_append(GoodOutFile2, EncForm);
+    std::string good_out_file_2 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_good_2";
+    vpxt_enc_format_append(good_out_file_2, enc_format);
 
-    std::string GoodOutFile3 = CurTestDirStr;
-    GoodOutFile3.append(slashCharStr());
-    GoodOutFile3.append(MyDir);
-    GoodOutFile3.append("_compression_good_3");
-    vpxt_enc_format_append(GoodOutFile3, EncForm);
+    std::string good_out_file_3 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_good_3";
+    vpxt_enc_format_append(good_out_file_3, enc_format);
 
-    std::string BestOutFile1 = CurTestDirStr;
-    BestOutFile1.append(slashCharStr());
-    BestOutFile1.append(MyDir);
-    BestOutFile1.append("_compression_best_1");
-    vpxt_enc_format_append(BestOutFile1, EncForm);
+    std::string best_out_file_1 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_best_1";
+    vpxt_enc_format_append(best_out_file_1, enc_format);
 
-    std::string BestOutFile2 = CurTestDirStr;
-    BestOutFile2.append(slashCharStr());
-    BestOutFile2.append(MyDir);
-    BestOutFile2.append("_compression_best_2");
-    vpxt_enc_format_append(BestOutFile2, EncForm);
+    std::string best_out_file_2 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_best_2";
+    vpxt_enc_format_append(best_out_file_2, enc_format);
 
-    std::string BestOutFile3 = CurTestDirStr;
-    BestOutFile3.append(slashCharStr());
-    BestOutFile3.append(MyDir);
-    BestOutFile3.append("_compression_best_3");
-    vpxt_enc_format_append(BestOutFile3, EncForm);
+    std::string best_out_file_3 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_best_3";
+    vpxt_enc_format_append(best_out_file_3, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -113,192 +99,190 @@ int test_good_vs_best(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
-    int CompressInt = opt.allow_df;
-
-    int BitRate1 = BitRate - (BitRate * 0.3);
-    int BitRate2 = BitRate;
-    int BitRate3 = BitRate + (BitRate * 0.3);
+    int compress_int = opt.allow_df;
+    int bitrate_1 = bitrate - (bitrate * 0.3);
+    int bitrate_2 = bitrate;
+    int bitrate_3 = bitrate + (bitrate * 0.3);
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.target_bandwidth = BitRate1;
+        opt.target_bandwidth = bitrate_1;
         opt.Mode = MODE_GOODQUALITY;
 
-        if (vpxt_compress(input.c_str(), GoodOutFile1.c_str(), speed, BitRate1,
-            opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), good_out_file_1.c_str(), speed,
+            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate2;
+        opt.target_bandwidth = bitrate_2;
 
-        if (vpxt_compress(input.c_str(), GoodOutFile2.c_str(), speed, BitRate2,
-            opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), good_out_file_2.c_str(), speed,
+            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate3;
+        opt.target_bandwidth = bitrate_3;
 
-        if (vpxt_compress(input.c_str(), GoodOutFile3.c_str(), speed, BitRate3,
-            opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), good_out_file_3.c_str(), speed,
+            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate1;
+        opt.target_bandwidth = bitrate_1;
         opt.Mode = MODE_BESTQUALITY;
 
-        if (vpxt_compress(input.c_str(), BestOutFile1.c_str(), speed, BitRate1,
-            opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), best_out_file_1.c_str(), speed,
+            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate2;
+        opt.target_bandwidth = bitrate_2;
 
-        if (vpxt_compress(input.c_str(), BestOutFile2.c_str(), speed, BitRate2,
-            opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), best_out_file_2.c_str(), speed,
+            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate3;
+        opt.target_bandwidth = bitrate_3;
 
-        if (vpxt_compress(input.c_str(), BestOutFile3.c_str(), speed, BitRate3,
-            opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), best_out_file_3.c_str(), speed,
+            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
     tprintf(PRINT_BTH, "\n");
 
-    float GoodSize1 = vpxt_data_rate(GoodOutFile1.c_str(), 1);
-    float BestSize1 = vpxt_data_rate(BestOutFile1.c_str(), 1);
-    float GoodSize2 = vpxt_data_rate(GoodOutFile2.c_str(), 1);
-    float BestSize2 = vpxt_data_rate(BestOutFile2.c_str(), 1);
-    float GoodSize3 = vpxt_data_rate(GoodOutFile3.c_str(), 1);
-    float BestSize3 = vpxt_data_rate(BestOutFile3.c_str(), 1);
+    float good_size_1 = vpxt_data_rate(good_out_file_1.c_str(), 1);
+    float best_size_1 = vpxt_data_rate(best_out_file_1.c_str(), 1);
+    float good_size_2 = vpxt_data_rate(good_out_file_2.c_str(), 1);
+    float best_size_2 = vpxt_data_rate(best_out_file_2.c_str(), 1);
+    float good_size_3 = vpxt_data_rate(good_out_file_3.c_str(), 1);
+    float best_size_3 = vpxt_data_rate(best_out_file_3.c_str(), 1);
 
-    double PSNRG1;
-    double PSNRB1;
-    double PSNRG2;
-    double PSNRB2;
-    double PSNRG3;
-    double PSNRB3;
-
-    PSNRG1 = vpxt_psnr(input.c_str(), GoodOutFile1.c_str(), 1, PRINT_BTH, 1,
-        NULL);
-    PSNRB1 = vpxt_psnr(input.c_str(), BestOutFile1.c_str(), 1, PRINT_BTH, 1,
-        NULL);
-    PSNRG2 = vpxt_psnr(input.c_str(), GoodOutFile2.c_str(), 1, PRINT_BTH, 1,
-        NULL);
-    PSNRB2 = vpxt_psnr(input.c_str(), BestOutFile2.c_str(), 1, PRINT_BTH, 1,
-        NULL);
-    PSNRG3 = vpxt_psnr(input.c_str(), GoodOutFile3.c_str(), 1, PRINT_BTH, 1,
-        NULL);
-    PSNRB3 = vpxt_psnr(input.c_str(), BestOutFile3.c_str(), 1, PRINT_BTH, 1,
-        NULL);
+    double psnr_good_1 = vpxt_psnr(input.c_str(), good_out_file_1.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    double psnr_best_1 = vpxt_psnr(input.c_str(), best_out_file_1.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    double psnr_good_2 = vpxt_psnr(input.c_str(), good_out_file_2.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    double psnr_best_2 = vpxt_psnr(input.c_str(), best_out_file_2.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    double psnr_good_3 = vpxt_psnr(input.c_str(), good_out_file_3.c_str(), 1,
+        PRINT_BTH, 1, NULL);
+    double psnr_best_3 = vpxt_psnr(input.c_str(), best_out_file_3.c_str(), 1,
+        PRINT_BTH, 1, NULL);
 
     //data rates not always in order so find smallest observed data rate
-    float GoodSizeMin = GoodSize1;
-    float BestSizeMin = BestSize1;
+    float good_size_min = good_size_1;
+    float best_size_min = best_size_1;
 
-    if(GoodSize2 < GoodSizeMin)
-        GoodSizeMin = GoodSize2;
+    if(good_size_2 < good_size_min)
+        good_size_min = good_size_2;
 
-    if(GoodSize3 < GoodSizeMin)
-        GoodSizeMin = GoodSize3;
+    if(good_size_3 < good_size_min)
+        good_size_min = good_size_3;
 
-    if(BestSize2 < BestSizeMin)
-        BestSizeMin = BestSize2;
+    if(best_size_2 < best_size_min)
+        best_size_min = best_size_2;
 
-    if(BestSize3 < BestSizeMin)
-        BestSizeMin = BestSize3;
+    if(best_size_3 < best_size_min)
+        best_size_min = best_size_3;
 
     //data rates not always in order so find largest observed data rate
-    float GoodSizeMax = GoodSize3;
-    float BestSizeMax = BestSize3;
+    float good_size_max = good_size_3;
+    float best_size_max = best_size_3;
 
-    if(GoodSize2 > GoodSizeMax)
-        GoodSizeMax = GoodSize2;
+    if(good_size_2 > good_size_max)
+        good_size_max = good_size_2;
 
-    if(GoodSize1 > GoodSizeMax)
-        GoodSizeMax = GoodSize1;
+    if(good_size_1 > good_size_max)
+        good_size_max = good_size_1;
 
-    if(BestSize2 > BestSizeMax)
-        BestSizeMax = BestSize2;
+    if(best_size_2 > best_size_max)
+        best_size_max = best_size_2;
 
-    if(BestSize1 > BestSizeMax)
-        BestSizeMax = BestSize1;
+    if(best_size_1 > best_size_max)
+        best_size_max = best_size_1;
 
-    float GoodA = 0;
-    float GoodB = 0;
-    float GoodC = 0;
+    float good_a = 0;
+    float good_b = 0;
+    float good_c = 0;
 
-    float BestA = 0;
-    float BestB = 0;
-    float BestC = 0;
+    float best_a = 0;
+    float best_b = 0;
+    float best_c = 0;
 
-    float minCommon = 0;
-    float maxCommon = 0;
+    float min_common = 0;
+    float max_common = 0;
 
     //take area over same range we have decent data for.
-    if (GoodSizeMin > BestSizeMin)
-        minCommon = GoodSizeMin;
+    if (good_size_min > best_size_min)
+        min_common = good_size_min;
     else
-        minCommon = BestSizeMin;
+        min_common = best_size_min;
 
-    if (GoodSizeMax > BestSizeMax)
-        maxCommon = BestSizeMax;
+    if (good_size_max > best_size_max)
+        max_common = best_size_max;
     else
-        maxCommon = GoodSizeMax;
+        max_common = good_size_max;
 
-    vpxt_solve_quadratic(GoodSize1, GoodSize2, GoodSize3, PSNRG1, PSNRG2,
-        PSNRG3, GoodA, GoodB, GoodC);
-    float GoodAreaVal = vpxt_area_under_quadratic(GoodA, GoodB, GoodC,
-        minCommon, maxCommon);
+    vpxt_solve_quadratic(good_size_1, good_size_2, good_size_3, psnr_good_1,
+        psnr_good_2, psnr_good_3, good_a, good_b, good_c);
+    float good_area = vpxt_area_under_quadratic(good_a, good_b, good_c,
+        min_common, max_common);
 
-    vpxt_solve_quadratic(BestSize1, BestSize2, BestSize3, PSNRB1, PSNRB2,
-        PSNRB3, BestA, BestB, BestC);
-    float BestAreaVal = vpxt_area_under_quadratic(BestA, BestB, BestC,
-        minCommon, maxCommon);
+    vpxt_solve_quadratic(best_size_1, best_size_2, best_size_3, psnr_best_1,
+        psnr_best_2, psnr_best_3, best_a, best_b, best_c);
+    float best_area = vpxt_area_under_quadratic(best_a, best_b, best_c,
+        min_common, max_common);
 
     tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"
@@ -316,80 +300,82 @@ int test_good_vs_best(int argc,
             "(%.2f,%2.2f)\n"
             "\n"
             "\n"
-            , GoodSize1, PSNRG1
-            , GoodSize2, PSNRG2
-            , GoodSize3, PSNRG3
-            , BestSize1, PSNRB1
-            , BestSize2, PSNRB2
-            , BestSize3, PSNRB3
+            , good_size_1, psnr_good_1
+            , good_size_2, psnr_good_2
+            , good_size_3, psnr_good_3
+            , best_size_1, psnr_best_1
+            , best_size_2, psnr_best_2
+            , best_size_3, psnr_best_3
            );
 
-    tprintf(PRINT_BTH, "Good Quality Curve: y = %fx^2 + %fx + %f\n", GoodA,
-        GoodB, GoodC);
-    tprintf(PRINT_BTH, "Best Quality Curve: y = %fx^2 + %fx + %f\n", BestA,
-        BestB, BestC);
+    tprintf(PRINT_BTH, "Good Quality Curve: y = %fx^2 + %fx + %f\n", good_a,
+        good_b, good_c);
+    tprintf(PRINT_BTH, "Best Quality Curve: y = %fx^2 + %fx + %f\n", best_a,
+        best_b, best_c);
     tprintf(PRINT_BTH, "\nGood Quality area under curve for interval %.2f - "
-        "%.2f = %.2f\n", minCommon, maxCommon, GoodAreaVal);
+        "%.2f = %.2f\n", min_common, max_common, good_area);
     tprintf(PRINT_BTH, "Best Quality area under curve for interval %.2f - %.2f "
-        "= %.2f\n", minCommon, maxCommon, BestAreaVal);
+        "= %.2f\n", min_common, max_common, best_area);
 
-    int Pass = 0;
+    int pass = 0;
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (GoodAreaVal == BestAreaVal)
+    if (good_area == best_area)
     {
         vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f == "
-            "Good Quality area under curve: %.2f - Failed", BestAreaVal,
-            GoodAreaVal);
+            "Good Quality area under curve: %.2f - Failed", best_area,
+            good_area);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (BestAreaVal > GoodAreaVal)
+    if (best_area > good_area)
     {
         vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f > "
-            "Good Quality area under curve: %.2f - Passed", BestAreaVal,
-            GoodAreaVal);
+            "Good Quality area under curve: %.2f - Passed", best_area,
+            good_area);
         tprintf(PRINT_BTH, "\n");
-        Pass = 1;
+        pass = 1;
     }
 
-    if (BestAreaVal < GoodAreaVal)
+    if (best_area < good_area)
     {
         vpxt_formated_print(RESPRT, "Best Quality area under curve: %.2f < "
-            "Good Quality area under curve: %.2f - Failed", BestAreaVal,
-            GoodAreaVal);
+            "Good Quality area under curve: %.2f - Failed", best_area,
+            good_area);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (Pass == 1)
+    if (pass == 1)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(6, GoodOutFile2.c_str(), GoodOutFile3.c_str(),
-            GoodOutFile1.c_str(), BestOutFile1.c_str(), BestOutFile2.c_str(),
-            BestOutFile3.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(6, good_out_file_2.c_str(),
+            good_out_file_3.c_str(), good_out_file_1.c_str(),
+            best_out_file_1.c_str(), best_out_file_2.c_str(),
+            best_out_file_3.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(6, GoodOutFile2.c_str(), GoodOutFile3.c_str(),
-            GoodOutFile1.c_str(), BestOutFile1.c_str(), BestOutFile2.c_str(),
-            BestOutFile3.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(6, good_out_file_2.c_str(),
+            good_out_file_3.c_str(),
+            good_out_file_1.c_str(), best_out_file_1.c_str(),
+            best_out_file_2.c_str(), best_out_file_3.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

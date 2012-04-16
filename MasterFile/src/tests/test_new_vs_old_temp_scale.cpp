@@ -26,9 +26,9 @@ int test_new_vs_old_temp_scale(int argc,
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string cur_test_dir_str = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
     char main_test_dir_char[255] = "";
-    std::string file_index_str = "";
     char file_index_output_char[255] = "";
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
@@ -283,7 +283,7 @@ int test_new_vs_old_temp_scale(int argc,
     if(use_log)
     {
         //assemble psnr/data rate results string
-        std::string psnr_data_rate_result_str = "";
+        std::string psnr_data_rate_result_str;
         double_it2 = new_vs_old_temp_scale_data_rate_new.begin();
         for(double_it = new_vs_old_temp_scale_psnr_new.begin(); double_it <
             new_vs_old_temp_scale_psnr_new.end(); ++double_it)

@@ -2,82 +2,77 @@
 
 int test_reconstruct_buffer(int argc,
                             const char *const *argv,
-                            const std::string &WorkingDir,
-                            std::string FilesAr[],
-                            int TestType,
-                            int DeleteIVF)
+                            const std::string &working_dir,
+                            std::string files_ar[],
+                            int test_type,
+                            int delete_ivf)
 {
-    char *CompressString = "Allow Drop Frames";
-    char *MyDir = "test_reconstruct_buffer";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Allow Drop Frames";
+    char *test_dir = "test_reconstruct_buffer";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
 
-    std::string CurTestDirStr = "";
-    std::string FileIndexStr = "";
-    char MainTestDirChar[255] = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string ReconBufferCompression = CurTestDirStr;
-    ReconBufferCompression.append(slashCharStr());
-    ReconBufferCompression.append(MyDir);
-    ReconBufferCompression.append("_compression");
-    vpxt_enc_format_append(ReconBufferCompression, EncForm);
+    std::string recon_buffer_comp = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression";
+    vpxt_enc_format_append(recon_buffer_comp, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
-
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -85,44 +80,46 @@ int test_reconstruct_buffer(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.lag_in_frames = 0;
     opt.play_alternate = 0;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
         if (vpxt_compress_recon_buffer_check(input.c_str(),
-            ReconBufferCompression.c_str(), speed, BitRate, opt,
-            CompressString, 0, 0, DeleteIVF, EncForm) == -1)
+            recon_buffer_comp.c_str(), speed, bitrate, opt,
+            comp_out_str, 0, 0, delete_ivf, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
@@ -130,33 +127,32 @@ int test_reconstruct_buffer(int argc,
 
     int fail = 0;
 
-    std::ifstream ReconOutFile;
-    std::string ReconOutStr;
-    vpxt_remove_file_extension(ReconBufferCompression.c_str(), ReconOutStr);
-    ReconOutStr.append("ReconFrameState.txt");
+    std::ifstream recon_out_file;
+    std::string recon_out_str;
+    vpxt_remove_file_extension(recon_buffer_comp.c_str(), recon_out_str);
+    recon_out_str += "ReconFrameState.txt";
+    recon_out_file.open(recon_out_str.c_str());
 
-    ReconOutFile.open(ReconOutStr.c_str());
+    int frame;
+    char buffer_letter;
+    int state;
 
-    int Frame;
-    char BufferLetter;
-    int State;
-
-    while (!ReconOutFile.eof())
+    while (!recon_out_file.eof())
     {
-        ReconOutFile >> Frame;
-        ReconOutFile >> BufferLetter;
-        ReconOutFile >> State;
+        recon_out_file >> frame;
+        recon_out_file >> buffer_letter;
+        recon_out_file >> state;
 
-        if (State == 0)
+        if (state == 0)
         {
-            vpxt_formated_print(RESPRT, "Frame: %i Buffer: %c - Preview not "
-                "identical to Decoded - Failed", Frame, BufferLetter);
+            vpxt_formated_print(RESPRT, "frame: %i Buffer: %c - Preview not "
+                "identical to Decoded - Failed", frame, buffer_letter);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
     }
 
-    ReconOutFile.close();
+    recon_out_file.close();
 
     if (fail == 0)
     {
@@ -169,26 +165,26 @@ int test_reconstruct_buffer(int argc,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(1, ReconBufferCompression.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(1, recon_buffer_comp.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(1, ReconBufferCompression.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(1, recon_buffer_comp.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

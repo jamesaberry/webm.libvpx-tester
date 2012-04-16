@@ -2,121 +2,116 @@
 
 int test_speed(int argc,
                const char *const *argv,
-               const std::string &WorkingDir,
-               std::string FilesAr[],
-               int TestType,
-               int DeleteIVF)
+               const std::string &working_dir,
+               std::string files_ar[],
+               int test_type,
+               int delete_ivf)
 {
-    char *CompressString = "Cpu Used";
-    char *MyDir = "test_speed";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Cpu Used";
+    char *test_dir = "test_speed";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int LagInFramesInput = atoi(argv[5]);
-    std::string EncForm = argv[6];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    int lag_in_frames_input = atoi(argv[5]);
+    std::string enc_format = argv[6];
 
     int speed = 0;
-    int Fail = 0;
-    int Fail2 = 0;
-    int Failb = 0;
-    int Fail2b = 0;
+    int fail_1 = 0;
+    int fail_2 = 0;
+    int fail_3 = 0;
+    int fail_4 = 0;
 
-    if (Mode != 0 && Mode != 1)
+    if (mode != 0 && mode != 1)
         return vpxt_test_help(argv[1], 0);
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string SpeedTestGoodQBase = CurTestDirStr;
-    SpeedTestGoodQBase.append(slashCharStr());
-    SpeedTestGoodQBase.append(MyDir);
-    SpeedTestGoodQBase.append("_compression_cpu_used_");
+    std::string speed_test_good_quality_base = cur_test_dir_str + slashCharStr()
+        + test_dir + "_compression_cpu_used_";
 
-    std::string SpeedTestRealTimeBase = CurTestDirStr;
-    SpeedTestRealTimeBase.append(slashCharStr());
-    SpeedTestRealTimeBase.append(MyDir);
-    SpeedTestRealTimeBase.append("_compression_cpu_used_");
+    std::string speed_test_real_time_base = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_cpu_used_";
 
-    int speedCounter = 0;
-    std::string SpeedTestRealAR[34];
+    int speed_counter = 0;
+    std::string speed_test_real_time_str_arr[34];
 
-    while (speedCounter < 33)
+    while (speed_counter < 33)
     {
-        if (speedCounter < 17)
+        if (speed_counter < 17)
         {
-            char CounterChar[4];
-            vpxt_itoa_custom(speedCounter, CounterChar, 10);
+            char counter_char[4];
+            vpxt_itoa_custom(speed_counter, counter_char, 10);
 
-            SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
-            SpeedTestRealAR[speedCounter].append(CounterChar);
-            vpxt_enc_format_append(SpeedTestRealAR[speedCounter], EncForm);
+            speed_test_real_time_str_arr[speed_counter] =
+                speed_test_real_time_base + counter_char;
+            vpxt_enc_format_append(speed_test_real_time_str_arr[speed_counter],
+                enc_format);
         }
         else
         {
-            int counter = speedCounter - 16;
-            char CounterChar[4];
-            vpxt_itoa_custom(counter, CounterChar, 10);
+            int counter = speed_counter - 16;
+            char counter_char[4];
+            vpxt_itoa_custom(counter, counter_char, 10);
 
-            SpeedTestRealAR[speedCounter] = SpeedTestRealTimeBase;
-            SpeedTestRealAR[speedCounter].append("-");
-            SpeedTestRealAR[speedCounter].append(CounterChar);
-            vpxt_enc_format_append(SpeedTestRealAR[speedCounter], EncForm);
+            speed_test_real_time_str_arr[speed_counter] =
+                speed_test_real_time_base + "-" + counter_char;
+            vpxt_enc_format_append(speed_test_real_time_str_arr[speed_counter],
+                enc_format);
         }
 
-        speedCounter++;
+        speed_counter++;
     }
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -124,77 +119,78 @@ int test_speed(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
-    int CompressInt = opt.cpu_used;
-    opt.target_bandwidth = BitRate;
+    int compress_int = opt.cpu_used;
+    opt.target_bandwidth = bitrate;
     opt.Mode = MODE_GOODQUALITY;
-    opt.lag_in_frames = LagInFramesInput;
+    opt.lag_in_frames = lag_in_frames_input;
 
-    tprintf(PRINT_BTH, "\nLagInFrames: %i\n", LagInFramesInput);
+    tprintf(PRINT_BTH, "\nLagInFrames: %i\n", lag_in_frames_input);
 
-    unsigned int GoodTotalcpu_tick[7];
-    unsigned int RealTotalcpu_tick[17];
-    unsigned int RealTotalcpu_tickPos[18];
+    unsigned int good_quality_total_cpu_tick[7];
+    unsigned int real_time_total_cpu_tick[17];
+    unsigned int real_time_total_cpu_tick_pos[18];
 
-    double GoodPSNRArr[7];
-    double RealPSNRArr[17];
-    double RealPSNRArrPos[18];
+    double good_quality_psnr_arr[7];
+    double real_time_psnr_arr[17];
+    double real_time_psnr_arr_pos[18];
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         int counter = 0;
 
-        if (Mode == 1)
+        if (mode == 1)
         {
             while (counter < 6)
             {
-                char CounterChar[4];
-                vpxt_itoa_custom(counter, CounterChar, 10);
+                char counter_char[4];
+                vpxt_itoa_custom(counter, counter_char, 10);
 
-                std::string SpeedTestGoodQ = SpeedTestGoodQBase;
-                SpeedTestGoodQ.append(CounterChar);
-                vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
+                std::string speed_test_good_quality_str =
+                    speed_test_good_quality_base + counter_char;
+                vpxt_enc_format_append(speed_test_good_quality_str, enc_format);
 
-                GoodTotalcpu_tick[counter] =
-                    vpxt_cpu_tick_return(SpeedTestGoodQ.c_str(), 0);
-                GoodPSNRArr[counter] =
-                    vpxt_psnr(input.c_str(), SpeedTestGoodQ.c_str(), 1,
-                    PRINT_BTH, 1, NULL);
+                good_quality_total_cpu_tick[counter] =
+                    vpxt_cpu_tick_return(speed_test_good_quality_str.c_str(),0);
+                good_quality_psnr_arr[counter] =
+                    vpxt_psnr(input.c_str(), speed_test_good_quality_str.c_str()
+                    , 1, PRINT_BTH, 1, NULL);
                 counter++;
             }
         }
 
-        if (Mode == 0)
+        if (mode == 0)
         {
             counter = -1;
-            int counter2 = 0;
+            int counter_2 = 0;
 
             while (counter > -17)
             {
-                char CounterChar[4];
-                vpxt_itoa_custom(counter, CounterChar, 10);
+                char counter_char[4];
+                vpxt_itoa_custom(counter, counter_char, 10);
 
-                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
-                SpeedTestRealTime.append(CounterChar);
-                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
+                std::string speed_test_real_time_str = speed_test_real_time_base
+                    + counter_char;
+                vpxt_enc_format_append(speed_test_real_time_str, enc_format);
 
-                RealTotalcpu_tick[counter2] =
-                    vpxt_cpu_tick_return(SpeedTestRealTime.c_str(), 0);
-                RealPSNRArr[counter2] =
-                    vpxt_psnr(input.c_str(), SpeedTestRealTime.c_str(), 1,
+                real_time_total_cpu_tick[counter_2] =
+                    vpxt_cpu_tick_return(speed_test_real_time_str.c_str(), 0);
+                real_time_psnr_arr[counter_2] =
+                    vpxt_psnr(input.c_str(), speed_test_real_time_str.c_str(),1,
                     PRINT_BTH, 1, NULL);
+
                 counter--;
-                counter2++;
+                counter_2++;
             }
         }
     }
@@ -203,90 +199,93 @@ int test_speed(int argc,
 
         int counter = 0;
 
-        if (Mode == 1)
+        if (mode == 1)
         {
             while (counter < 6)
             {
-                char CounterChar[4];
-                vpxt_itoa_custom(counter, CounterChar, 10);
+                char counter_char[4];
+                vpxt_itoa_custom(counter, counter_char, 10);
 
-                std::string SpeedTestGoodQ = SpeedTestGoodQBase;
-                SpeedTestGoodQ.append(CounterChar);
-                vpxt_enc_format_append(SpeedTestGoodQ, EncForm);
+                std::string speed_test_good_quality_str =
+                    speed_test_good_quality_base + counter_char;
+                vpxt_enc_format_append(speed_test_good_quality_str, enc_format);
 
                 opt.cpu_used = counter;
-                CompressInt = opt.cpu_used;
+                compress_int = opt.cpu_used;
                 opt.Mode = MODE_GOODQUALITY;
-                unsigned int Time = vpxt_time_compress(input.c_str(),
-                    SpeedTestGoodQ.c_str(), speed, BitRate, opt, CompressString,
-                    CompressInt, 0, GoodTotalcpu_tick[counter], EncForm);
+                unsigned int time = vpxt_time_compress(input.c_str(),
+                    speed_test_good_quality_str.c_str(), speed, bitrate, opt,
+                    comp_out_str, compress_int, 0,
+                    good_quality_total_cpu_tick[counter], enc_format);
 
-                if (Time == -1)
+                if (time == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar,
-                        TestType);
+                    record_test_complete(file_index_str, file_index_output_char,
+                        test_type);
                     return 2;
                 }
 
-                if (TestType != 2 && TestType != 3)
+                if (test_type != 2 && test_type != 3)
                 {
-                    GoodPSNRArr[counter] = vpxt_psnr(input.c_str(),
-                        SpeedTestGoodQ.c_str(), 1, PRINT_BTH, 1, NULL);
+                    good_quality_psnr_arr[counter] = vpxt_psnr(input.c_str(),
+                        speed_test_good_quality_str.c_str(), 1, PRINT_BTH, 1,
+                        NULL);
                 }
 
                 counter++;
             }
         }
 
-        if (Mode == 0)
+        if (mode == 0)
         {
             counter = -1;
-            int counter2 = 0;
+            int counter_2 = 0;
 
             while (counter > -17)
             {
-                char CounterChar[4];
-                vpxt_itoa_custom(counter, CounterChar, 10);
+                char counter_char[4];
+                vpxt_itoa_custom(counter, counter_char, 10);
 
-                std::string SpeedTestRealTime = SpeedTestRealTimeBase;
-                SpeedTestRealTime.append(CounterChar);
-                vpxt_enc_format_append(SpeedTestRealTime, EncForm);
+                std::string speed_test_real_time_str = speed_test_real_time_base
+                    + counter_char;
+                vpxt_enc_format_append(speed_test_real_time_str, enc_format);
 
                 opt.cpu_used = counter;
-                CompressInt = opt.cpu_used;
+                compress_int = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
-                unsigned int Time = vpxt_time_compress(input.c_str(),
-                    SpeedTestRealTime.c_str(), speed, BitRate, opt,
-                    CompressString, CompressInt, 0, RealTotalcpu_tick[counter2],
-                    EncForm);
+                unsigned int time = vpxt_time_compress(input.c_str(),
+                    speed_test_real_time_str.c_str(), speed, bitrate, opt,
+                    comp_out_str, compress_int, 0,
+                    real_time_total_cpu_tick[counter_2], enc_format);
 
-                if (Time == -1)
+                if (time == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar,
-                        TestType);
+                    record_test_complete(file_index_str, file_index_output_char,
+                        test_type);
                     return 2;
                 }
 
-                if (TestType != 2 && TestType != 3)
+                if (test_type != 2 && test_type != 3)
                 {
-                    RealPSNRArr[counter2] = vpxt_psnr(input.c_str(),
-                        SpeedTestRealTime.c_str(), 1, PRINT_BTH, 1, NULL);
+                    real_time_psnr_arr[counter_2] = vpxt_psnr(input.c_str(),
+                        speed_test_real_time_str.c_str(), 1, PRINT_BTH, 1,
+                        NULL);
                 }
 
                 counter--;
-                counter2++;
+                counter_2++;
             }
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
@@ -295,104 +294,102 @@ int test_speed(int argc,
     int counter = 1;
     int pass = 1;
 
-    if (Mode == 1)
+    if (mode == 1)
     {
         while (counter < 6)
         {
-            if (GoodTotalcpu_tick[counter] < GoodTotalcpu_tick[counter-1])
+            if (good_quality_total_cpu_tick[counter] <
+                good_quality_total_cpu_tick[counter-1])
             {
                 tprintf(PRINT_BTH, "      CpuUsed %*i Encode Tick: %i < CpuUsed"
                     " %*i Encode Tick: %i\n", 2, counter,
-                    GoodTotalcpu_tick[counter], 2, counter - 1,
-                    GoodTotalcpu_tick[counter-1]);
+                    good_quality_total_cpu_tick[counter], 2, counter - 1,
+                    good_quality_total_cpu_tick[counter-1]);
             }
             else
             {
                 tprintf(PRINT_BTH, "Fail: CpuUsed %*i Encode Tick: %i > "
                     "CpuUsed %*i Encode Tick: %i\n", 2, counter,
-                    GoodTotalcpu_tick[counter], 2, counter - 1,
-                    GoodTotalcpu_tick[counter-1]);
-                Fail = 1;
+                    good_quality_total_cpu_tick[counter], 2, counter - 1,
+                    good_quality_total_cpu_tick[counter-1]);
+                fail_1 = 1;
             }
 
-            float PSNRPercent;
-            PSNRPercent = vpxt_abs_float(GoodPSNRArr[counter] -
-                GoodPSNRArr[counter-1]) / GoodPSNRArr[counter-1];
+            float psnr_percent;
+            psnr_percent = vpxt_abs_float(good_quality_psnr_arr[counter] -
+                good_quality_psnr_arr[counter-1]) /
+                good_quality_psnr_arr[counter-1];
 
-            if (PSNRPercent < 0.1)
+            if (psnr_percent < 0.1)
             {
                 tprintf(PRINT_BTH, "      CpuUsed %*i PSNR: %4.2f within 10%% "
                     "of CpuUsed %*i PSNR: %4.2f\n", 2, counter,
-                    GoodPSNRArr[counter], 2, counter - 1,
-                    GoodPSNRArr[counter-1]);
+                    good_quality_psnr_arr[counter], 2, counter - 1,
+                    good_quality_psnr_arr[counter-1]);
             }
             else
             {
                 tprintf(PRINT_BTH, "Fail: CpuUsed %*i PSNR: %4.2f not within "
                     "10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter,
-                    GoodPSNRArr[counter], 2, counter - 1,
-                    GoodPSNRArr[counter-1]);
-                Fail2 = 1;
+                    good_quality_psnr_arr[counter], 2, counter - 1,
+                    good_quality_psnr_arr[counter-1]);
+                fail_2 = 1;
             }
 
             counter++;
         }
     }
 
-    if (Mode == 0)
+    if (mode == 0)
     {
         counter = 1;
 
         while (counter < 16)
         {
-            if (RealTotalcpu_tick[counter] < RealTotalcpu_tick[counter-1])
+            if (real_time_total_cpu_tick[counter] <
+                real_time_total_cpu_tick[counter-1])
             {
                 tprintf(PRINT_BTH, "      CpuUsed -%*i Encode Tick: %i < "
                     "CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1,
-                    RealTotalcpu_tick[counter], 2, counter,
-                    RealTotalcpu_tick[counter-1]);
+                    real_time_total_cpu_tick[counter], 2, counter,
+                    real_time_total_cpu_tick[counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i Encode Tick: %i > "
+                tprintf(PRINT_BTH, "fail_1: CpuUsed -%*i Encode Tick: %i > "
                     "CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1,
-                    RealTotalcpu_tick[counter], 2, counter,
-                    RealTotalcpu_tick[counter-1]);
-                Fail++;
+                    real_time_total_cpu_tick[counter], 2, counter,
+                    real_time_total_cpu_tick[counter-1]);
+                fail_1++;
 
-                float TimePercent = (RealTotalcpu_tick[counter] -
-                    RealTotalcpu_tick[counter-1]);
+                float time_percent = (real_time_total_cpu_tick[counter] -
+                    real_time_total_cpu_tick[counter-1]);
 
-                if (TimePercent < 0)
-                {
-                    TimePercent = TimePercent * (-1);
-                }
+                if (time_percent < 0)
+                    time_percent = time_percent * (-1);
 
-                if (TimePercent > (RealTotalcpu_tick[counter-1] / 10))
-                {
-                    Failb++;
-                }
-                else
-                {
-                }
+                if (time_percent > (real_time_total_cpu_tick[counter-1] / 10))
+                    fail_3++;
             }
 
-            float PSNRPercent;
-            PSNRPercent = vpxt_abs_float(RealPSNRArr[counter] -
-                RealPSNRArr[counter-1]) / RealPSNRArr[counter-1];
+            float psnr_percent;
+            psnr_percent = vpxt_abs_float(real_time_psnr_arr[counter] -
+                real_time_psnr_arr[counter-1]) / real_time_psnr_arr[counter-1];
 
-            if (PSNRPercent < 0.1)
+            if (psnr_percent < 0.1)
             {
                 tprintf(PRINT_BTH, "      CpuUsed -%*i PSNR: %4.2f within 10%% "
                     "of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1,
-                    RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
+                    real_time_psnr_arr[counter], 2, counter,
+                    real_time_psnr_arr[counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "Fail: CpuUsed -%*i PSNR: %4.2f not within "
+                tprintf(PRINT_BTH, "fail_1: CpuUsed -%*i PSNR: %4.2f not within "
                     "10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1,
-                    RealPSNRArr[counter], 2, counter, RealPSNRArr[counter-1]);
-                Fail2++;
+                    real_time_psnr_arr[counter], 2, counter,
+                    real_time_psnr_arr[counter-1]);
+                fail_2++;
             }
 
             counter++;
@@ -402,18 +399,18 @@ int test_speed(int argc,
     }
 
 
-    if (Mode == 0)
+    if (mode == 0)
     {
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-        if (Fail == 0)
+        if (fail_1 == 0)
         {
             vpxt_formated_print(RESPRT, "All encode ticks decrease as CpuUsed "
                 "increases - Passed");
             tprintf(PRINT_BTH, "\n");
         }
 
-        if (Fail < 4 && Fail != 0)
+        if (fail_1 < 4 && fail_1 != 0)
         {
             vpxt_formated_print(RESPRT, "Enough encode ticks decrease as "
                 "CpuUsed increases - Min Passed");
@@ -421,7 +418,7 @@ int test_speed(int argc,
             pass = 2;
         }
 
-        if (Fail >= 4)
+        if (fail_1 >= 4)
         {
             vpxt_formated_print(RESPRT, "Not enough encode ticks decrease as "
                 "CpuUsed increases - Failed");
@@ -429,13 +426,13 @@ int test_speed(int argc,
             pass = 0;
         }
 
-        if (Fail2 == 0)
+        if (fail_2 == 0)
         {
             vpxt_formated_print(RESPRT, "All PSNRs are within 10%% - Passed");
             tprintf(PRINT_BTH, "\n");
         }
 
-        if (Fail2 < 2 && Fail2 != 0)
+        if (fail_2 < 2 && fail_2 != 0)
         {
             vpxt_formated_print(RESPRT, "Enough PSNRs are within 10%% - "
                 "Min Passed");
@@ -443,7 +440,7 @@ int test_speed(int argc,
             pass = 2;
         }
 
-        if (Fail2 >= 2)
+        if (fail_2 >= 2)
         {
             vpxt_formated_print(RESPRT, "Not enough PSNRs are within 10%% - "
                 "Failed");
@@ -451,7 +448,7 @@ int test_speed(int argc,
             pass = 0;
         }
 
-        if (Failb != 0)
+        if (fail_3 != 0)
         {
             vpxt_formated_print(RESPRT, "Not all Encode speeds are within 10%% "
                 "- Failed");
@@ -460,11 +457,11 @@ int test_speed(int argc,
         }
     }
 
-    if (Mode == 1)
+    if (mode == 1)
     {
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-        if (Fail == 1)
+        if (fail_1 == 1)
         {
             vpxt_formated_print(RESPRT, "Not all encode ticks decrease as "
                 "CpuUsed increases - Failed");
@@ -478,7 +475,7 @@ int test_speed(int argc,
             tprintf(PRINT_BTH, "\n");
         }
 
-        if (Fail2 == 0)
+        if (fail_2 == 0)
         {
             vpxt_formated_print(RESPRT, "All PSNR values are within 10%% of "
                 "eachother - Passed");
@@ -497,19 +494,19 @@ int test_speed(int argc,
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
+        if (delete_ivf)
         {
             int z = 0;
 
             while (z < 33)
             {
-                vpxt_delete_files(1, SpeedTestRealAR[z].c_str());
+                vpxt_delete_files(1, speed_test_real_time_str_arr[z].c_str());
                 z++;
             }
         }
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
@@ -517,42 +514,42 @@ int test_speed(int argc,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
+        if (delete_ivf)
         {
             int z = 0;
 
             while (z < 33)
             {
-                vpxt_delete_files(1, SpeedTestRealAR[z].c_str());
+                vpxt_delete_files(1, speed_test_real_time_str_arr[z].c_str());
                 z++;
             }
         }
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nMin Passed\n");
 
-        if (DeleteIVF)
+        if (delete_ivf)
         {
             int z = 0;
 
             while (z < 33)
             {
-                vpxt_delete_files(1, SpeedTestRealAR[z].c_str());
+                vpxt_delete_files(1, speed_test_real_time_str_arr[z].c_str());
                 z++;
             }
         }
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 8;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

@@ -2,98 +2,88 @@
 
 int test_drop_frame_watermark(int argc,
                               const char *const *argv,
-                              const std::string &WorkingDir,
-                              std::string FilesAr[],
-                              int TestType,
-                              int DeleteIVF)
+                              const std::string &working_dir,
+                              std::string files_ar[],
+                              int test_type,
+                              int delete_ivf)
 {
-    char *CompressString = "Drop Frames Watermark";
-    char *MyDir = "test_drop_frame_watermark";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Drop Frames Watermark";
+    char *test_dir = "test_drop_frame_watermark";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string DFWMOutFileBase = CurTestDirStr;
-    DFWMOutFileBase.append(slashCharStr());
-    DFWMOutFileBase.append(MyDir);
-    DFWMOutFileBase.append("_compression_");
+    std::string dfwm_out_file_base = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_";
 
-    std::string DFWMOutFile0   = DFWMOutFileBase;
-    DFWMOutFile0.append("0");
-    vpxt_enc_format_append(DFWMOutFile0, EncForm);
-    std::string DFWMOutFile20  = DFWMOutFileBase;
-    DFWMOutFile20.append("20");
-    vpxt_enc_format_append(DFWMOutFile20, EncForm);
-    std::string DFWMOutFile40  = DFWMOutFileBase;
-    DFWMOutFile40.append("40");
-    vpxt_enc_format_append(DFWMOutFile40, EncForm);
-    std::string DFWMOutFile60  = DFWMOutFileBase;
-    DFWMOutFile60.append("60");
-    vpxt_enc_format_append(DFWMOutFile60, EncForm);
-    std::string DFWMOutFile80  = DFWMOutFileBase;
-    DFWMOutFile80.append("80");
-    vpxt_enc_format_append(DFWMOutFile80, EncForm);
-    std::string DFWMOutFile100 = DFWMOutFileBase;
-    DFWMOutFile100.append("100");
-    vpxt_enc_format_append(DFWMOutFile100, EncForm);
+    std::string dfwm_out_file_0   = dfwm_out_file_base + "0";
+    vpxt_enc_format_append(dfwm_out_file_0, enc_format);
+    std::string dfwm_out_file_20  = dfwm_out_file_base + "20";
+    vpxt_enc_format_append(dfwm_out_file_20, enc_format);
+    std::string dfwm_out_file_40  = dfwm_out_file_base + "40";
+    vpxt_enc_format_append(dfwm_out_file_40, enc_format);
+    std::string dfwm_out_file_60  = dfwm_out_file_base + "60";
+    vpxt_enc_format_append(dfwm_out_file_60, enc_format);
+    std::string dfwm_out_file_80  = dfwm_out_file_base + "80";
+    vpxt_enc_format_append(dfwm_out_file_80, enc_format);
+    std::string dfwm_out_file_100 = dfwm_out_file_base + "100";
+    vpxt_enc_format_append(dfwm_out_file_100, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -101,51 +91,49 @@ int test_drop_frame_watermark(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.worst_allowed_q = 15;
     opt.allow_df = 1;
     opt.allow_spatial_resampling = 0;
     opt.end_usage = 0;
 
     int n = 100;
-    int PSNRToggle = 0;
-
     int i = 0;
-    long DMFW[6];
+    long dfwm_arr[6];
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         while (n >= 0)
         {
             ///////Update File Name///////
             char num[20];
             vpxt_itoa_custom(n, num, 10);
-            std::string DFWMOutFile = DFWMOutFileBase;
-            DFWMOutFile.append(num);
-            vpxt_enc_format_append(DFWMOutFile, EncForm);
+            std::string dfwm_out_file = dfwm_out_file_base;
+            dfwm_out_file += num;
+            vpxt_enc_format_append(dfwm_out_file, enc_format);
 
             tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
-            DMFW[i] = vpxt_file_size(DFWMOutFile.c_str(), 1);
+            dfwm_arr[i] = vpxt_file_size(dfwm_out_file.c_str(), 1);
             tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
 
             i++;
             n = n - 20;
 
-            DFWMOutFile.clear();
+            dfwm_out_file.clear();
         }
     }
     else
@@ -157,57 +145,56 @@ int test_drop_frame_watermark(int argc,
             ///////Update File Name///////
             char num[20];
             vpxt_itoa_custom(n, num, 10);
-            std::string DFWMOutFile = DFWMOutFileBase;
-            DFWMOutFile.append(num);
-            vpxt_enc_format_append(DFWMOutFile, EncForm);
+            std::string dfwm_out_file = dfwm_out_file_base;
+            dfwm_out_file += num;
+            vpxt_enc_format_append(dfwm_out_file, enc_format);
 
-            opt.Mode = Mode;
+            opt.Mode = mode;
 
-            if (vpxt_compress(input.c_str(), DFWMOutFile.c_str(), speed,
-                BitRate, opt, CompressString, n, 0, EncForm) == -1)
+            if (vpxt_compress(input.c_str(), dfwm_out_file.c_str(), speed,
+                bitrate, opt, comp_out_str, n, 0, enc_format) == -1)
             {
                 fclose(fp);
-                record_test_complete(FileIndexStr, FileIndexOutputChar,
-                    TestType);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
                 return 2;
             }
 
-            if (TestType != 2)
+            if (test_type != 2)
             {
                 tprintf(PRINT_STD, "\n");
                 fprintf(stderr, "\n");
-                DMFW[i] = vpxt_display_visible_frames(DFWMOutFile.c_str(), 1);
+                dfwm_arr[i] = vpxt_display_visible_frames(dfwm_out_file.c_str(), 1);
                 tprintf(PRINT_STD, "\n");
                 fprintf(stderr, "\n");
             }
 
             i++;
             n = n - 20;
-
-            DFWMOutFile.clear();
+            dfwm_out_file.clear();
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
     i = 0;
     n = 100;
-    int EqualBool = 0;
-    int testBool = 1;
+    int equal_count = 0;
+    int pass = 1;
 
     tprintf(PRINT_STD, "\n\n");
     fprintf(stderr, "\n\n");
 
     while (i < 6)
     {
-        tprintf(PRINT_STD, "DFWM%4i Visible Frames: %4i\n", n, DMFW[i]);
-        fprintf(stderr, "DFWM%4i Visible Frames: %4i\n", n, DMFW[i]);
+        tprintf(PRINT_STD, "DFWM%4i Visible Frames: %4i\n", n, dfwm_arr[i]);
+        fprintf(stderr, "DFWM%4i Visible Frames: %4i\n", n, dfwm_arr[i]);
         i++;
         n = n - 20;
     }
@@ -220,30 +207,30 @@ int test_drop_frame_watermark(int argc,
 
     while (i < 5)
     {
-        if (DMFW[i+1] == DMFW[i])
+        if (dfwm_arr[i+1] == dfwm_arr[i])
         {
-            EqualBool++;
+            equal_count++;
 
             vpxt_formated_print(RESPRT, "DFWM%4i: %4i = DFWM%4i: %4i - "
-                "Indeterminate", n - 20, DMFW[i+1], n, DMFW[i]);
+                "Indeterminate", n - 20, dfwm_arr[i+1], n, dfwm_arr[i]);
             tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
         }
 
-        if (DMFW[i+1] > DMFW[i])
+        if (dfwm_arr[i+1] > dfwm_arr[i])
         {
             vpxt_formated_print(RESPRT, "DFWM%4i: %4i > DFWM%4i: %4i - "
-                "Passed", n - 20, DMFW[i+1], n, DMFW[i]);
+                "Passed", n - 20, dfwm_arr[i+1], n, dfwm_arr[i]);
             tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
         }
 
-        if (DMFW[i+1] < DMFW[i])
+        if (dfwm_arr[i+1] < dfwm_arr[i])
         {
-            testBool = 0;
+            pass = 0;
 
             vpxt_formated_print(RESPRT, "DFWM%4i: %4i < DFWM%4i: %4i - "
-                "Failed", n - 20, DMFW[i+1], n, DMFW[i]);
+                "Failed", n - 20, dfwm_arr[i+1], n, dfwm_arr[i]);
             tprintf(PRINT_STD, "\n");
             fprintf(stderr, "\n");
         }
@@ -252,53 +239,53 @@ int test_drop_frame_watermark(int argc,
         n = n - 20;
     }
 
-    if (testBool == 0)
+    if (pass == 0)
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(6, DFWMOutFile0.c_str(), DFWMOutFile20.c_str(),
-            DFWMOutFile40.c_str(), DFWMOutFile60.c_str(), DFWMOutFile80.c_str(),
-            DFWMOutFile100.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(6, dfwm_out_file_0.c_str(), dfwm_out_file_20.c_str(),
+            dfwm_out_file_40.c_str(), dfwm_out_file_60.c_str(), dfwm_out_file_80.c_str(),
+            dfwm_out_file_100.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
     else
     {
-        if (EqualBool == 5)
+        if (equal_count == 5)
         {
             tprintf(PRINT_BTH, "\n\nUnknown: Drop-Frames-Watermark has no "
                 "effect, try different parameters \n");
 
-            if (DeleteIVF)
-                vpxt_delete_files(6, DFWMOutFile0.c_str(),
-                DFWMOutFile20.c_str(), DFWMOutFile40.c_str(),
-                DFWMOutFile60.c_str(), DFWMOutFile80.c_str(),
-                DFWMOutFile100.c_str());
+            if (delete_ivf)
+                vpxt_delete_files(6, dfwm_out_file_0.c_str(),
+                dfwm_out_file_20.c_str(), dfwm_out_file_40.c_str(),
+                dfwm_out_file_60.c_str(), dfwm_out_file_80.c_str(),
+                dfwm_out_file_100.c_str());
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
         else
         {
             tprintf(PRINT_BTH, "\nPassed\n");
 
-            if (DeleteIVF)
-                vpxt_delete_files(6, DFWMOutFile0.c_str(),
-                DFWMOutFile20.c_str(), DFWMOutFile40.c_str(),
-                DFWMOutFile60.c_str(), DFWMOutFile80.c_str(),
-                DFWMOutFile100.c_str());
+            if (delete_ivf)
+                vpxt_delete_files(6, dfwm_out_file_0.c_str(),
+                dfwm_out_file_20.c_str(), dfwm_out_file_40.c_str(),
+                dfwm_out_file_60.c_str(), dfwm_out_file_80.c_str(),
+                dfwm_out_file_100.c_str());
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 1;
         }
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

@@ -2,71 +2,64 @@
 
 int test_error_concealment(int argc,
                            const char *const *argv,
-                           const std::string &WorkingDir,
-                           std::string FilesAr[],
-                           int TestType,
-                           int DeleteIVF)
+                           const std::string &working_dir,
+                           std::string files_ar[],
+                           int test_type,
+                           int delete_ivf)
 {
-    char *CompressString = "Error Resilient Mode";
-    char *MyDir = "test_error_concealment";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Error Resilient Mode";
+    char *test_dir = "test_error_concealment";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
-    std::string DecForm = argv[6];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
+    std::string dec_format = argv[6];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string ErrConComp = CurTestDirStr;
-    ErrConComp.append(slashCharStr());
-    ErrConComp.append(MyDir);
-    ErrConComp.append("_compression");
-    vpxt_enc_format_append(ErrConComp, EncForm);
+    std::string error_con_enc = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression";
+    vpxt_enc_format_append(error_con_enc, enc_format);
 
-    std::string ErrConCompWPFD;
-    vpxt_remove_file_extension(ErrConComp.c_str(), ErrConCompWPFD);
-    ErrConCompWPFD.append("with_part_frame_drops.ivf");
+    std::string error_con_enc_wpfd;
+    vpxt_remove_file_extension(error_con_enc.c_str(), error_con_enc_wpfd);
+    error_con_enc_wpfd += "with_part_frame_drops.ivf";
 
-    std::string ErrConDec = CurTestDirStr;
-    ErrConDec.append(slashCharStr());
-    ErrConDec.append(MyDir);
-    ErrConDec.append("_decompression");
-    vpxt_dec_format_append(ErrConDec, DecForm);
+    std::string error_con_dec = cur_test_dir_str + slashCharStr() + test_dir +
+        "_decompression";
+    vpxt_dec_format_append(error_con_dec, dec_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
@@ -74,98 +67,101 @@ int test_error_concealment(int argc,
 
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s\n", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s\n", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
         opt.error_resilient_mode = 1;
 
-        if (vpxt_compress(input.c_str(), ErrConComp.c_str(), speed, BitRate,
-            opt, CompressString, opt.error_resilient_mode, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), error_con_enc.c_str(), speed, bitrate,
+            opt, comp_out_str, opt.error_resilient_mode, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        if (vpxt_decompress_partial_drops(ErrConComp.c_str(), ErrConDec.c_str(),
-            DecForm, 1, 3, 5, 2, PRINT_BTH, 1) == -1)
+        if (vpxt_decompress_partial_drops(error_con_enc.c_str(),
+            error_con_dec.c_str(), dec_format, 1, 3, 5, 2, PRINT_BTH, 1) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
     tprintf(PRINT_BTH, "\n");
 
-    double PSNRClean;
-    double PSNRDrops;
+    double psnr_clean;
+    double psnr_drops;
 
-    PSNRClean = vpxt_psnr(input.c_str(), ErrConComp.c_str(), 0, PRINT_BTH, 1,
-        NULL);
-    PSNRDrops = vpxt_psnr_dec(input.c_str(), ErrConDec.c_str(), 0, PRINT_BTH, 1,
-        NULL, 0, 0);
+    psnr_clean = vpxt_psnr(input.c_str(), error_con_enc.c_str(), 0, PRINT_BTH, 1
+        , NULL);
+    psnr_drops = vpxt_psnr_dec(input.c_str(), error_con_dec.c_str(), 0,
+        PRINT_BTH, 1, NULL, 0, 0);
 
-    float PSRNPerc = 100 * vpxt_abs_float((PSNRClean - PSNRDrops) / PSNRDrops);
+    float psnr_perc = 100 * vpxt_abs_float((psnr_clean - psnr_drops) /
+        psnr_drops);
 
     int passed = 1;
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (PSRNPerc < 50.00)
+    if (psnr_perc < 50.00)
     {
         vpxt_formated_print(RESPRT, "No Partial Drop PSNR: %.2f is within 50%% "
-            "of Partial Drop PSNR: %.2f - %.2f%% - Passed", PSNRClean,
-            PSNRDrops, PSRNPerc);
+            "of Partial Drop PSNR: %.2f - %.2f%% - Passed", psnr_clean,
+            psnr_drops, psnr_perc);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "No Partial Drop PSNR: %.2f is not within "
-            "50%% of Partial Drop PSNR: %.2f - %.2f%% - Failed", PSNRClean,
-            PSNRDrops, PSRNPerc);
+            "50%% of Partial Drop PSNR: %.2f - %.2f%% - Failed", psnr_clean,
+            psnr_drops, psnr_perc);
         tprintf(PRINT_BTH, "\n");
         passed = 0;
     }
 
-    if (PSNRDrops > 20.00)
+    if (psnr_drops > 20.00)
     {
         vpxt_formated_print(RESPRT, "Partial Drop PSNR is greater than 20.00: "
-            "%.2f - Passed", PSNRDrops);
+            "%.2f - Passed", psnr_drops);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Partial Drop PSNR is not greater than "
-            "20.00: %.2f - Failed", PSNRDrops);
+            "20.00: %.2f - Failed", psnr_drops);
         tprintf(PRINT_BTH, "\n");
         passed = 0;
     }
@@ -174,28 +170,28 @@ int test_error_concealment(int argc,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(),
-            ErrConCompWPFD.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(3, error_con_enc.c_str(), error_con_dec.c_str(),
+            error_con_enc_wpfd.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(3, ErrConComp.c_str(), ErrConDec.c_str(),
-            ErrConCompWPFD.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(3, error_con_enc.c_str(), error_con_dec.c_str(),
+            error_con_enc_wpfd.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

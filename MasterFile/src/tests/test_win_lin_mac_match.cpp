@@ -2,25 +2,25 @@
 
 int test_win_lin_mac_match(int argc,
                            const char *const *argv,
-                           const std::string &WorkingDir,
-                           std::string FilesAr[],
-                           int TestType,
-                           int DeleteIVF)
+                           const std::string &working_dir,
+                           std::string files_ar[],
+                           int test_type,
+                           int delete_ivf)
 {
-    char *CompressString = "WinLinMacMatch";
-    char *MyDir = "test_win_lin_mac_match";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "WinLinMacMatch";
+    char *test_dir = "test_win_lin_mac_match";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string basefolder = argv[5];
-    std::string ParameterFile = argv[6];
-    std::string EncForm = argv[7];
-    std::string DecForm = argv[8];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string base_folder = argv[5];
+    std::string parameter_file = argv[6];
+    std::string enc_format = argv[7];
+    std::string dec_format = argv[8];
 
     int speed = 0;
 
@@ -35,173 +35,157 @@ int test_win_lin_mac_match(int argc,
     arch = "-Arm7";
 #endif
 
-    basefolder.append(slashCharStr().c_str());
-    std::string versionstring = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    size_t versionPos = versionstring.find("v");
-    versionstring.substr(versionPos);
-    basefolder.append(versionstring.substr(versionPos));
-    basefolder.append(arch.c_str());
-    basefolder.append(slashCharStr().c_str());
-    basefolder.append("Mode");
-    basefolder.append(argv[3]);
-    basefolder.append(slashCharStr().c_str());
-    vpxt_make_dir(basefolder);
-    int TestMode = 0;
+    base_folder += slashCharStr();
+    std::string version_string = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
+    size_t version_pos = version_string.find("v");
+    version_string.substr(version_pos);
+    base_folder  += version_string.substr(version_pos) + arch + slashCharStr() +
+        "Mode" + argv[3] + slashCharStr();
+    vpxt_make_dir(base_folder);
+    int test_mode = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string FiletoEnc = "";
-    std::string FiletoDec = "";
+    std::string file_to_enc;
+    std::string file_to_dec;
 
-    std::string WinEnc = basefolder;
-    WinEnc.append(MyDir);
-    WinEnc.append("_compression_win");
-    vpxt_enc_format_append(WinEnc, EncForm);
+    std::string win_enc = base_folder + test_dir + "_compression_win";
+    vpxt_enc_format_append(win_enc, enc_format);
 
-    std::string LinEnc = basefolder;
-    LinEnc.append(MyDir);
-    LinEnc.append("_compression_lin");
-    vpxt_enc_format_append(LinEnc, EncForm);
+    std::string lin_enc = base_folder + test_dir + "_compression_lin";
+    vpxt_enc_format_append(lin_enc, enc_format);
 
-    std::string MacEnc = basefolder;
-    MacEnc.append(MyDir);
-    MacEnc.append("_compression_mac");
-    vpxt_enc_format_append(MacEnc, EncForm);
+    std::string mac_enc = base_folder + test_dir + "_compression_mac";
+    vpxt_enc_format_append(mac_enc, enc_format);
 
-    std::string WinDec = basefolder;
-    WinDec.append(MyDir);
-    WinDec.append("_decompression_win");
-    vpxt_dec_format_append(WinDec, DecForm);
+    std::string win_dec = base_folder + test_dir + "_decompression_win";
+    vpxt_dec_format_append(win_dec, dec_format);
 
-    std::string LinDec = basefolder;
-    LinDec.append(MyDir);
-    LinDec.append("_decompression_lin");
-    vpxt_dec_format_append(LinDec, DecForm);
+    std::string lin_dec = base_folder + test_dir + "_decompression_lin";
+    vpxt_dec_format_append(lin_dec, dec_format);
 
-    std::string MacDec = basefolder;
-    MacDec.append(MyDir);
-    MacDec.append("_decompression_mac");
-    vpxt_dec_format_append(MacDec, DecForm);
+    std::string mac_dec = base_folder + test_dir + "_decompression_mac";
+    vpxt_dec_format_append(mac_dec, dec_format);
 
 #if defined(linux)
-    FiletoEnc = LinEnc;
-    FiletoDec = LinDec;
+    file_to_enc = lin_enc;
+    file_to_dec = lin_dec;
 
-    if (vpxt_file_exists_check(WinEnc) && vpxt_file_exists_check(WinDec) &&
-        vpxt_file_exists_check(MacEnc) && vpxt_file_exists_check(MacDec))
+    if (vpxt_file_exists_check(win_enc) && vpxt_file_exists_check(win_dec) &&
+        vpxt_file_exists_check(mac_enc) && vpxt_file_exists_check(mac_dec))
     {
-        TestMode = 1;
+        test_mode = 1;
     }
 
 #elif defined(_WIN32)
-    FiletoEnc = WinEnc;
-    FiletoDec = WinDec;
+    file_to_enc = win_enc;
+    file_to_dec = win_dec;
 
-    if (vpxt_file_exists_check(LinEnc) && vpxt_file_exists_check(LinDec) &&
-        vpxt_file_exists_check(MacEnc) && vpxt_file_exists_check(MacDec))
+    if (vpxt_file_exists_check(lin_enc) && vpxt_file_exists_check(lin_dec) &&
+        vpxt_file_exists_check(mac_enc) && vpxt_file_exists_check(mac_dec))
     {
-        TestMode = 1;
+        test_mode = 1;
     }
 
 #elif defined(__APPLE__)
-    FiletoEnc = MacEnc;
-    FiletoDec = MacDec;
+    file_to_enc = mac_enc;
+    file_to_dec = mac_dec;
 
-    if (vpxt_file_exists_check(WinEnc) && vpxt_file_exists_check(WinDec) &&
-        vpxt_file_exists_check(LinEnc) && vpxt_file_exists_check(LinDec))
+    if (vpxt_file_exists_check(win_enc) && vpxt_file_exists_check(win_dec) &&
+        vpxt_file_exists_check(lin_enc) && vpxt_file_exists_check(lin_dec))
     {
-        TestMode = 1;
+        test_mode = 1;
     }
 
 #endif
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
     ///////////////////Use Custom Settings///////////////////
 
-    BitRate = opt.target_bandwidth;
+    bitrate = opt.target_bandwidth;
 
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
 
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
-        if (vpxt_compress(input.c_str(), FiletoEnc.c_str(), speed, BitRate, opt,
-            "Mode", Mode, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), file_to_enc.c_str(), speed, bitrate,
+            opt, "Mode", mode, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         tprintf(PRINT_STD, "\n");
         fprintf(stderr, "\n\nDecompressing VP8 IVF File to IVF File: \n");
 
-        if (vpxt_decompress(FiletoEnc.c_str(), FiletoDec.c_str(), DecForm, 1) ==
-            -1)
+        if (vpxt_decompress(file_to_enc.c_str(), file_to_dec.c_str(),
+            dec_format, 1) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
-    if (TestMode == 0)
+    if (test_mode == 0)
     {
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
@@ -210,185 +194,195 @@ int test_win_lin_mac_match(int argc,
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 2;
     }
 
-    int ENCFAIL = 0;
-    int DECFAIL = 0;
+    int enc_fail = 0;
+    int dec_fail = 0;
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinEnc.c_str(),LinEnc.c_str());
-    int WinEncVsLinEnc = vpxt_compare_enc(WinEnc.c_str(), LinEnc.c_str(), 0);
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", win_enc.c_str(),
+        lin_enc.c_str());
+    int win_enc_vs_lin_enc = vpxt_compare_enc(win_enc.c_str(), lin_enc.c_str(),
+        0);
 
-    if (WinEncVsLinEnc == -1)
-    {
+    if (win_enc_vs_lin_enc == -1)
         tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
-    }
 
-    if (WinEncVsLinEnc >= 0)
+    if (win_enc_vs_lin_enc >= 0)
     {
         tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i",
-            WinEncVsLinEnc);
-        ENCFAIL++;
+            win_enc_vs_lin_enc);
+        enc_fail++;
     }
 
-    if (WinEncVsLinEnc == -2)
+    if (win_enc_vs_lin_enc == -2)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
-        ENCFAIL++;
+        enc_fail++;
     }
 
-    if (WinEncVsLinEnc == -3)
+    if (win_enc_vs_lin_enc == -3)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
-        ENCFAIL++;
+        enc_fail++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s",LinEnc.c_str(),MacEnc.c_str());
-    int LinEncVsMacEnc = vpxt_compare_enc(LinEnc.c_str(), MacEnc.c_str(), 0);
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", lin_enc.c_str(),
+        mac_enc.c_str());
+    int lin_enc_vs_mac_enc = vpxt_compare_enc(lin_enc.c_str(), mac_enc.c_str(),
+        0);
 
-    if (LinEncVsMacEnc == -1)
+    if (lin_enc_vs_mac_enc == -1)
     {
         tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
-    if (LinEncVsMacEnc >= 0)
+    if (lin_enc_vs_mac_enc >= 0)
     {
         tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i",
-            LinEncVsMacEnc);
-        ENCFAIL++;
+            lin_enc_vs_mac_enc);
+        enc_fail++;
     }
 
-    if (LinEncVsMacEnc == -2)
+    if (lin_enc_vs_mac_enc == -2)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
-        ENCFAIL++;
+        enc_fail++;
     }
 
-    if (LinEncVsMacEnc == -3)
+    if (lin_enc_vs_mac_enc == -3)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
-        ENCFAIL++;
+        enc_fail++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinEnc.c_str(),MacEnc.c_str());
-    int WinEncVsMacEnc = vpxt_compare_enc(WinEnc.c_str(), MacEnc.c_str(), 0);
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", win_enc.c_str(),
+        mac_enc.c_str());
+    int win_enc_vs_mac_enc = vpxt_compare_enc(win_enc.c_str(), mac_enc.c_str(),
+        0);
 
-    if (WinEncVsMacEnc == -1)
+    if (win_enc_vs_mac_enc == -1)
     {
         tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
-    if (WinEncVsMacEnc >= 0)
+    if (win_enc_vs_mac_enc >= 0)
     {
         tprintf(PRINT_BTH, "\n\nFail: Encoded files differ at frame: %i",
-            WinEncVsMacEnc);
-        ENCFAIL++;
+            win_enc_vs_mac_enc);
+        enc_fail++;
     }
 
-    if (WinEncVsMacEnc == -2)
+    if (win_enc_vs_mac_enc == -2)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
-        ENCFAIL++;
+        enc_fail++;
     }
 
-    if (WinEncVsMacEnc == -3)
+    if (win_enc_vs_mac_enc == -3)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
-        ENCFAIL++;
+        enc_fail++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinDec.c_str(),LinDec.c_str());
-    int WinDecVsLinDec = vpxt_compare_enc(WinDec.c_str(), LinDec.c_str(), 0);
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", win_dec.c_str(),
+        lin_dec.c_str());
+    int win_dec_vs_lin_dec = vpxt_compare_enc(win_dec.c_str(), lin_dec.c_str(),
+        0);
 
-    if (WinDecVsLinDec == -1)
+    if (win_dec_vs_lin_dec == -1)
     {
         tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
-    if (WinDecVsLinDec >= 0)
+    if (win_dec_vs_lin_dec >= 0)
     {
         tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i",
-            WinDecVsLinDec);
-        DECFAIL++;
+            win_dec_vs_lin_dec);
+        dec_fail++;
     }
 
-    if (WinDecVsLinDec == -2)
+    if (win_dec_vs_lin_dec == -2)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
-        DECFAIL++;
+        dec_fail++;
     }
 
-    if (WinDecVsLinDec == -3)
+    if (win_dec_vs_lin_dec == -3)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
-        DECFAIL++;
+        dec_fail++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s",LinDec.c_str(),MacDec.c_str());
-    int LinDecVsMacDec = vpxt_compare_enc(LinDec.c_str(), MacDec.c_str(), 0);
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", lin_dec.c_str(),
+        mac_dec.c_str());
+    int lin_dec_vs_mac_dec = vpxt_compare_enc(lin_dec.c_str(), mac_dec.c_str(),
+        0);
 
-    if (LinDecVsMacDec == -1)
+    if (lin_dec_vs_mac_dec == -1)
     {
         tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
-    if (LinDecVsMacDec >= 0)
+    if (lin_dec_vs_mac_dec >= 0)
     {
         tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i",
-            LinDecVsMacDec);
-        DECFAIL++;
+            lin_dec_vs_mac_dec);
+        dec_fail++;
     }
 
-    if (LinDecVsMacDec == -2)
+    if (lin_dec_vs_mac_dec == -2)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
-        DECFAIL++;
+        dec_fail++;
     }
 
-    if (LinDecVsMacDec == -3)
+    if (lin_dec_vs_mac_dec == -3)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
-        DECFAIL++;
+        dec_fail++;
     }
 
-    tprintf(PRINT_BTH, "\n\nComparing %s and %s",WinDec.c_str(),MacDec.c_str());
-    int WinDecVsMacDec = vpxt_compare_enc(WinDec.c_str(), MacDec.c_str(), 0);
+    tprintf(PRINT_BTH, "\n\nComparing %s and %s", win_dec.c_str(),
+        mac_dec.c_str());
+    int win_dec_vs_mac_dec = vpxt_compare_enc(win_dec.c_str(), mac_dec.c_str(),
+        0);
 
-    if (WinDecVsMacDec == -1)
+    if (win_dec_vs_mac_dec == -1)
     {
         tprintf(PRINT_BTH, "\n\nFiles are Identical\n");
     }
 
-    if (WinDecVsMacDec >= 0)
+    if (win_dec_vs_mac_dec >= 0)
     {
         tprintf(PRINT_BTH, "\n\nFail: Decoded files differ at frame: %i",
-            WinDecVsMacDec);
-        DECFAIL++;
+            win_dec_vs_mac_dec);
+        dec_fail++;
     }
 
-    if (WinDecVsMacDec == -2)
+    if (win_dec_vs_mac_dec == -2)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 2 ends before File 1.\n");
-        DECFAIL++;
+        dec_fail++;
     }
 
-    if (WinDecVsMacDec == -3)
+    if (win_dec_vs_mac_dec == -3)
     {
         tprintf(PRINT_BTH, "\n\nFail: File 1 ends before File 2.\n");
-        DECFAIL++;
+        dec_fail++;
     }
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
     int fail = 0;
 
-    if (ENCFAIL == 0)
+    if (enc_fail == 0)
     {
         vpxt_formated_print(RESPRT, "All encoded files are identical - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (ENCFAIL > 0)
+    if (enc_fail > 0)
     {
         vpxt_formated_print(RESPRT, "Not all encoded files are identical - "
             "Failed");
@@ -396,13 +390,13 @@ int test_win_lin_mac_match(int argc,
         fail = 1;
     }
 
-    if (DECFAIL == 0)
+    if (dec_fail == 0)
     {
         vpxt_formated_print(RESPRT, "All decoded files are identical - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (DECFAIL > 0)
+    if (dec_fail > 0)
     {
         vpxt_formated_print(RESPRT, "Not all decoded files are identical - "
             "Failed");
@@ -415,7 +409,7 @@ int test_win_lin_mac_match(int argc,
         tprintf(PRINT_BTH, "\nFailed\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
     else
@@ -423,11 +417,11 @@ int test_win_lin_mac_match(int argc,
         tprintf(PRINT_BTH, "\nPassed\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

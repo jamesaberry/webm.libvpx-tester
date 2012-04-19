@@ -21,6 +21,10 @@
 #include "EbmlIDs.h"
 #include "nestegg.h"
 #include "mem_ops.h"
+extern "C" {
+#include "vpx_rtcd.h"
+}
+
 #include <cmath>
 #include <cassert>
 #include <iostream>
@@ -172,7 +176,6 @@ extern "C"
         int width,
         int height,
         int border);
-    extern void vp8_scale_machine_specific_config(void);
     extern int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf);
     extern vpx_codec_iface_t vpx_enc_vp8_algo;
     extern void vp8_yv12_scale_or_center(YV12_BUFFER_CONFIG *src_yuv_config,
@@ -184,10 +187,29 @@ extern "C"
         int HRatio,
         int VScale,
         int VRatio);
+#ifndef vp8_yv12_copy_frame
     extern void vp8_yv12_copy_frame(YV12_BUFFER_CONFIG *src_ybc,
         YV12_BUFFER_CONFIG *dst_ybc);
+    extern void vp8_scale_machine_specific_config(void);
+#endif
     extern void *vpx_memalign(size_t align, size_t size);
 }
+
+
+static void initialize_scaler()
+{
+#ifndef vp8_yv12_copy_frame
+    // Relying on the fact that there's no asm implementation of
+    // vp8_yv12_copy_frame on x86, so it will be #defined to
+    // vp8_yv12_copy_frame_c in commits where the scaler has been moved
+    // to the RTCD system. This workaround can be removed after we're
+    // past this transition.
+    vp8_scale_machine_specific_config();
+#else
+    vpx_rtcd();
+#endif
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////MULIT ENC//////////////////////////////////
 #define NUM_ENCODERS 3
@@ -7317,7 +7339,7 @@ double vpxt_psnr(const char *input_file1,
         }
 
         ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
-        vp8_scale_machine_specific_config();
+        initialize_scaler();
 
         YV12_BUFFER_CONFIG temp_yv12;
         YV12_BUFFER_CONFIG temp_yv12b;
@@ -8448,7 +8470,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
         }
 
         ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
-        vp8_scale_machine_specific_config();
+        initialize_scaler();
 
         YV12_BUFFER_CONFIG temp_yv12;
         YV12_BUFFER_CONFIG temp_yv12b;
@@ -16249,7 +16271,7 @@ int vpxt_decompress_resize(const char *inputchar,
     }
 
     /////////////////////Setup yv12_buffer_dest to Resize if nessicary//////////
-    vp8_scale_machine_specific_config();
+    initialize_scaler();
     YV12_BUFFER_CONFIG yv12_buffer_source;
     memset(&yv12_buffer_source, 0, sizeof(yv12_buffer_source));
     YV12_BUFFER_CONFIG yv12_buffer_dest;
@@ -22400,7 +22422,7 @@ double vpxt_print_frame_statistics(const char *input_file1,
         }
 
         ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
-        vp8_scale_machine_specific_config();
+        initialize_scaler();
 
         YV12_BUFFER_CONFIG temp_yv12;
         YV12_BUFFER_CONFIG temp_yv12b;

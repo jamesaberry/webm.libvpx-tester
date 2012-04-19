@@ -12,68 +12,8 @@
 #ifndef VPXSCALE_H
 #define VPXSCALE_H
 
-#include "yv12config.h"
-#include "yv12extend.h"
-void vp8cx_horizontal_line_4_5_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_4_5_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_last_vertical_band_4_5_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_horizontal_line_2_3_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_2_3_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_last_vertical_band_2_3_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_horizontal_line_3_5_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_3_5_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_last_vertical_band_3_5_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_horizontal_line_3_4_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_3_4_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_last_vertical_band_3_4_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_horizontal_line_1_2_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_1_2_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_last_vertical_band_1_2_scale_c(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_horizontal_line_5_4_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_5_4_scale_c(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_horizontal_line_5_3_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_5_3_scale_c(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_horizontal_line_2_1_scale_c(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vp8cx_vertical_band_2_1_scale_c(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vp8cx_vertical_band_2_1_scale_i_c(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
+#include "vpx_scale/yv12config.h"
 
-
-extern void (*vp8_vertical_band_4_5_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_last_vertical_band_4_5_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_vertical_band_2_3_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_last_vertical_band_2_3_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_vertical_band_3_5_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_last_vertical_band_3_5_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_vertical_band_3_4_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_last_vertical_band_3_4_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_horizontal_line_1_2_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-extern void (*vp8_horizontal_line_3_4_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-extern void (*vp8_horizontal_line_3_5_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-extern void (*vp8_horizontal_line_2_3_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-extern void (*vp8_horizontal_line_4_5_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-extern void (*vp8_vertical_band_1_2_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_last_vertical_band_1_2_scale)(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_vertical_band_5_4_scale)(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_vertical_band_5_3_scale)(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_vertical_band_2_1_scale)(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_vertical_band_2_1_scale_i)(unsigned char *source, unsigned int src_pitch, unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-extern void (*vp8_horizontal_line_2_1_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-extern void (*vp8_horizontal_line_5_3_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-extern void (*vp8_horizontal_line_5_4_scale)(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-
-void horizontal_line_4_5_scale_armv4(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void horizontal_line_2_3_scale_armv4(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void horizontal_line_3_5_scale_armv4(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void horizontal_line_3_4_scale_armv4(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void horizontal_line_1_2_scale_armv4(const unsigned char *source, unsigned int source_width, unsigned char *dest, unsigned int dest_width);
-void vertical_band_4_5_scale_armv4(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vertical_band_2_3_scale_armv4(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vertical_band_3_5_scale_armv4(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vertical_band_3_4_scale_armv4(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-void vertical_band_1_2_scale_armv4(unsigned char *dest, unsigned int dest_pitch, unsigned int dest_width);
-
-
-extern void  dmachine_specific_config(int mmx_enabled, int xmm_enabled, int wmt_enabled);
 extern void vp8_yv12_scale_or_center
 (
     YV12_BUFFER_CONFIG *src_yuv_config,
@@ -98,6 +38,5 @@ extern void vp8_scale_frame
     unsigned int vratio,
     unsigned int interlaced
 );
-extern void vp8_scale_machine_specific_config(void);
 
 #endif

@@ -126,6 +126,7 @@ int run_multiple_tests(int argc,
     vpxt_test_funct_ptr[OV2PSNUM] = &test_one_pass_vs_two_pass;
     vpxt_test_funct_ptr[PLYALNUM] = &test_play_alternate;
     vpxt_test_funct_ptr[POSTPNUM] = &test_post_processor;
+    vpxt_test_funct_ptr[PSTMFNUM] = &test_post_processor_mfqe;
     vpxt_test_funct_ptr[RECBFNUM] = &test_reconstruct_buffer;
     vpxt_test_funct_ptr[RSDWMNUM] = &test_resample_down_watermark;
     vpxt_test_funct_ptr[SPEEDNUM] = &test_speed;
@@ -176,6 +177,7 @@ int run_multiple_tests(int argc,
         "test_one_pass_vs_two_pass",
         "test_play_alternate",
         "test_post_processor",
+        "test_post_processor_mfqe",
         "test_reconstruct_buffer",
         "test_resample_down_watermark",
         "test_speed",

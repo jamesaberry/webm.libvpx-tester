@@ -47,6 +47,7 @@ SRC = \
    $(TestsDir)/test_one_pass_vs_two_pass.cpp  \
    $(TestsDir)/test_play_alternate.cpp  \
    $(TestsDir)/test_post_processor.cpp  \
+   $(TestsDir)/test_post_processor_mfqe.cpp  \
    $(TestsDir)/test_reconstruct_buffer.cpp  \
    $(TestsDir)/test_resample_down_watermark.cpp  \
    $(TestsDir)/test_temporal_scalability.cpp  \
@@ -120,6 +121,7 @@ SRCOBJ = \
    $(OBJDIR)/test_one_pass_vs_two_pass.o  \
    $(OBJDIR)/test_play_alternate.o  \
    $(OBJDIR)/test_post_processor.o  \
+   $(OBJDIR)/test_post_processor_mfqe.o  \
    $(OBJDIR)/test_reconstruct_buffer.o  \
    $(OBJDIR)/test_resample_down_watermark.o  \
    $(OBJDIR)/test_temporal_scalability.o  \

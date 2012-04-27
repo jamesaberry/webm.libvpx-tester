@@ -116,6 +116,9 @@ $(OBJDIR)/test_play_alternate.o: $(TestsDir)/test_play_alternate.cpp
 $(OBJDIR)/test_post_processor.o: $(TestsDir)/test_post_processor.cpp
 	$(GPP) -c $(TestsDir)/test_post_processor.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_post_processor.o
 
+$(OBJDIR)/test_post_processor_mfqe.o: $(TestsDir)/test_post_processor_mfqe.cpp
+	$(GPP) -c $(TestsDir)/test_post_processor_mfqe.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_post_processor_mfqe.o
+
 $(OBJDIR)/test_reconstruct_buffer.o: $(TestsDir)/test_reconstruct_buffer.cpp
 	$(GPP) -c $(TestsDir)/test_reconstruct_buffer.cpp $(INCLUDE)  $(LFLAGS) -o $(OBJDIR)/test_reconstruct_buffer.o
 

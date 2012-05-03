@@ -163,15 +163,19 @@ then
 	#copy include files over
 	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_config.h" "$DIR/libvpx-tester/MasterFile/include/release-32/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_version.h" "$DIR/libvpx-tester/MasterFile/include/release-32/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_rtcd.h" "$DIR/libvpx-tester/MasterFile/include/release-32/vpx_rtcd.h"
 	
 	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32/vpx_rtcd.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_rtcd.h"
 	
 	cp -f "$DIR/libvpx-vs9-build-Win32-old/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win32-old/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32-old/vpx_rtcd.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_rtcd.h"
 	
 	cp -f "$DIR/libvpx-vs9-build-Win32-Debug/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win32-Debug/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win32-Debug/vpx_rtcd.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_rtcd.h"
 	
 	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_32Bit(2008).sln" /t:Clean
 	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_32Bit(2008).sln" /t:Rebuild /p:Configuration=Release
@@ -287,15 +291,19 @@ then
 	#copy include files over
 	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_config.h" "$DIR/libvpx-tester/MasterFile/include/release-64/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_version.h" "$DIR/libvpx-tester/MasterFile/include/release-64/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_rtcd.h" "$DIR/libvpx-tester/MasterFile/include/release-64/vpx_rtcd.h"
 	
 	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64/vpx_rtcd.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_rtcd.h"
 	
 	cp -f "$DIR/libvpx-vs9-build-Win64-old/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win64-old/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64-old/vpx_rtcd.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_rtcd.h"
 	
 	cp -f "$DIR/libvpx-vs9-build-Win64-Debug/vpx_config.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_config.h"
 	cp -f "$DIR/libvpx-vs9-build-Win64-Debug/vpx_version.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_version.h"
+	cp -f "$DIR/libvpx-vs9-build-Win64-Debug/vpx_rtcd.h" "$DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_rtcd.h"
 
 	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_64Bit(2008).sln" /t:Clean
 	"MSBuild.exe" "libvpx-tester\MasterFile\Vp8TestProgram_64Bit(2008).sln" /t:Rebuild /p:Configuration=Release

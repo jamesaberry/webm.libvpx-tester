@@ -160,15 +160,19 @@ then
 	#copy include files over
 	cp -f $DIR/libvpx-build-Lin32/vpx_config.h $DIR/libvpx-tester/MasterFile/include/release-32/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin32/vpx_version.h $DIR/libvpx-tester/MasterFile/include/release-32/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin32/vpx_rtcd.h $DIR/libvpx-tester/MasterFile/include/release-32/vpx_rtcd.h
 	
 	cp -f $DIR/libvpx-build-Lin32/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin32/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin32/vpx_rtcd.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-32/vpx_rtcd.h
 	
 	cp -f $DIR/libvpx-build-Lin32-old/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin32-old/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin32-old/vpx_rtcd.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-32/vpx_rtcd.h
 	
 	cp -f $DIR/libvpx-build-Lin32-Debug/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin32-Debug/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin32-Debug/vpx_rtcd.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-32/vpx_rtcd.h
 
 	cd $DIR/libvpx-tester/
 	chmod 777 make_Linux_API_32Bit
@@ -273,15 +277,19 @@ then
 	#copy include files over
 	cp -f $DIR/libvpx-build-Lin64/vpx_config.h $DIR/libvpx-tester/MasterFile/include/release-64/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin64/vpx_version.h $DIR/libvpx-tester/MasterFile/include/release-64/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin64/vpx_rtcd.h $DIR/libvpx-tester/MasterFile/include/release-64/vpx_rtcd.h
 
 	cp -f $DIR/libvpx-build-Lin64/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin64/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin64/vpx_rtcd.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-new-64/vpx_rtcd.h
 
 	cp -f $DIR/libvpx-build-Lin64-old/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin64-old/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin64-old/vpx_rtcd.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8ReleasePlugIn/MasterFile/include/release-old-64/vpx_rtcd.h
 
 	cp -f $DIR/libvpx-build-Lin64-Debug/vpx_config.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_config.h
 	cp -f $DIR/libvpx-build-Lin64-Debug/vpx_version.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_version.h
+	cp -f $DIR/libvpx-build-Lin64-Debug/vpx_rtcd.h $DIR/libvpx-tester/SupportingPlugInFiles/VP8DebugPlugIn/MasterFile/include/debug-64/vpx_rtcd.h
 
 	cd $DIR/libvpx-tester/
 	chmod 777 make_Linux_API_64Bit

@@ -18,8 +18,8 @@ int tool_compare_code_coverage(int argc, const char *const *argv);
 int tool_compare_header_info(int argc, const char *const *argv);
 int tool_display_header_info(int argc, const char *const *argv);
 int tool_compression_equiv(int argc, const char *const *argv,
-                           std::string WorkingDir);
-int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir);
+                           std::string working_dir);
+int tool_vpxt_enc(int argc, const char *const *argv, std::string working_dir);
 int tool_vpxt_multi_res_enc(int argc, const char *const *argv);
 int tool_vpxt_temp_scale_enc(int argc, const char *const *argv);
 int tool_multi_res_enc(int argc, const char *const *argv);

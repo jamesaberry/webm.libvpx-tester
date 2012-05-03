@@ -5,29 +5,11 @@
 int run_multiple_tests(int argc,
                        const char *argv[],
                        std::string working_dir,
-                       int NumberofTests,
-                       int DeleteIVFFiles)
+                       int number_of_tests,
+                       int delete_ivf_files)
 {
-    if (argc < 5)
-    {
-        if (argc < 4)
-        {
-            tprintf(PRINT_STD,
-                "  run_multipule_tests \n\n"
-                "    <Test Type>\n"
-                "      <1 - Create Files and Run Tests>\n"
-                "        <Input Text File>\n"
-                "      <2 - Create Files only>\n"
-                "        <Input Text File>\n"
-                "      <3 - Run Tests For Existing Files>\n"
-                "        <Input Test Directory>\n"
-                "      <4 - Resume Test>\n"
-                "        <Input Test Directory>\n"
-                "\n");
-
-            return TEST_FAILED;
-        }
-    }
+    if (argc < 4)
+        return vpxt_test_help(argv[1], 0);
 
     if (working_dir.length() > 175)
     {
@@ -38,7 +20,7 @@ int run_multiple_tests(int argc,
     char buffer[512] = "";
     char buffer2[512] = "";
 
-    int *pass_fail_arr = new int[NumberofTests+2];
+    int *pass_fail_arr = new int[number_of_tests+2];
 
     std::string summ_comp_and_test;
     std::string summ_comp;
@@ -85,7 +67,7 @@ int run_multiple_tests(int argc,
     char *test_dir = "Summary";
 
     int (*vpxt_test_funct_ptr[MAXTENUM+1])(int, const char *const*,
-        const std::string &, std::string[], int, int) = {NULL};
+        const std::string &, const std::string, int, int) = {NULL};
     vpxt_test_funct_ptr[AlWDFNUM] = &test_allow_drop_frames;
     vpxt_test_funct_ptr[ALWLGNUM] = &test_allow_lag;
     vpxt_test_funct_ptr[ALWSRNUM] = &test_allow_spatial_resampling;
@@ -774,8 +756,8 @@ int run_multiple_tests(int argc,
                     run_time_1 = vpxt_get_time();
 
                 pass_fail_arr[pass_fail_int] = vpxt_test_funct_ptr[selector]
-                (dummy_arg_var, (char **)dummy_argv, TestDir, time_stamp_arr_2,
-                    test_type, DeleteIVFFiles);
+                (dummy_arg_var, (char **)dummy_argv, TestDir,
+                    time_stamp_arr_2[0], test_type, delete_ivf_files);
 
                 if (record_run_times == 1){
                     run_time_2 = vpxt_get_time();
@@ -999,13 +981,9 @@ int run_multiple_tests(int argc,
                 bufferstring.erase(0);
 
                 if (test_type == TEST_ONLY)
-                {
                     bufferstring.insert(0, "-");
-                }
                 else
-                {
                     bufferstring.insert(0, "+");
-                }
 
                 working_text_file << bufferstring.c_str() ;
                 working_text_file.seekg(file_pos_track_2);

@@ -3,7 +3,7 @@
 int test_multiple_resolution_encode(int argc,
                                     const char *const *argv,
                                     const std::string &working_dir,
-                                    std::string files_ar[],
+                                    const std::string sub_folder_str,
                                     int test_type,
                                     int delete_ivf)
 {
@@ -27,7 +27,7 @@ int test_multiple_resolution_encode(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific Directory////////////
+    ////////////Formatting Test Specific directory////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -35,7 +35,7 @@ int test_multiple_resolution_encode(int argc,
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
-        file_index_output_char, files_ar) == 11)
+        file_index_output_char, sub_folder_str) == 11)
         return TEST_ERRFM;
 
     char width_1_char[10];

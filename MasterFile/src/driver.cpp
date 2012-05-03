@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "vpxt_test_definitions.h"
+#include "vpxt_test_declarations.h"
 #include "vpxt_test_list.h"
 #include "vpxt_utilities.h"
 #include "vpxt_driver.h"
@@ -19,104 +20,97 @@
 #include <sys/types.h>
 #endif
 
-//CodeCoverage
-extern int tool_array_coverage(int argc,
-                               const char *const *argv,
-                               const std::string &working_dir,
-                               std::string files_ar[]);
-
 int create_working_folder(int argc, const char *argv[], char *working_dir_char)
 {
-    ///////////////////////////////////Create Working Folder////////////////////
+    ///////////////////////////////////Create Working folder////////////////////
 
-    //Get Date and time info and convert it to a string removing colons in time
-    time_t rawtime;
-    struct tm *timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    std::string DateAndTime = asctime(timeinfo);
+    // Get Date and time info and convert it to a string removing colons in time
+    time_t raw_time;
+    struct tm *time_info;
+    time(&raw_time);
+    time_info = localtime(&raw_time);
+    std::string date_and_time = asctime(time_info);
 
-    //remove colons in time string
-    char DateAndTimeCharArray[255];
+    // remove colons in time string
+    char date_and_time_char_arr[255];
     int w = 0;
 
-    while (DateAndTime.c_str()[w] != '\n')
+    while (date_and_time.c_str()[w] != '\n')
     {
-        if (DateAndTime.c_str()[w] == ':' || DateAndTime.c_str()[w] == ' ')
+        if (date_and_time.c_str()[w] == ':' || date_and_time.c_str()[w] == ' ')
         {
-            DateAndTimeCharArray[w] = '_';
+            date_and_time_char_arr[w] = '_';
         }
         else
         {
-            DateAndTimeCharArray[w] = DateAndTime.c_str()[w];
+            date_and_time_char_arr[w] = date_and_time.c_str()[w];
         }
 
         w = w + 1;
     }
 
-    DateAndTimeCharArray[w] = '\0';
-    std::string DateAndTime3 = DateAndTimeCharArray;
+    date_and_time_char_arr[w] = '\0';
+    std::string date_and_time3 = date_and_time_char_arr;
 
-    std::string Folder;
-    vpxt_folder_name(argv[0], &Folder);
+    std::string folder;
+    vpxt_folder_name(argv[0], &folder);
 
-    //add Date and time
+    // add Date and time
     int number = 0;
 
-    Folder += DateAndTime3;
-    std::string FolderCheck = Folder;
+    folder += date_and_time3;
+    std::string folder_check = folder;
 
-    //Make sure folder doesnt already exist
-    while (vpxt_folder_exist_check(FolderCheck))
+    // Make sure folder doesnt already exist
+    while (vpxt_folder_exist_check(folder_check))
     {
         number = number + 1;
-        char numberChar[255];
-        vpxt_itoa_custom(number, numberChar, 10);
+        char num_char[255];
+        vpxt_itoa_custom(number, num_char, 10);
 
-        FolderCheck = Folder + "_" + numberChar;
+        folder_check = folder + "_" + num_char;
     }
 
-    if (number != 0) //append sub number to end of folder name
+    if (number != 0) // append sub number to end of folder name
     {
-        char numberChar[255];
-        vpxt_itoa_custom(number + 1, numberChar, 10);
+        char num_char[255];
+        vpxt_itoa_custom(number + 1, num_char, 10);
 
-        Folder += "_";
-        Folder += numberChar;
+        folder += "_";
+        folder += num_char;
     }
 
-    Folder += "\"\0";
-    snprintf(working_dir_char, 255, "%s", Folder.c_str());
+    folder += "\"\0";
+    snprintf(working_dir_char, 255, "%s", folder.c_str());
 
     return 0;
 }
 std::string date_string()
 {
-    time_t rawtime;
-    struct tm *timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    char *DateAndTime = asctime(timeinfo);
+    time_t raw_time;
+    struct tm *time_info;
+    time(&raw_time);
+    time_info = localtime(&raw_time);
+    char *date_and_time = asctime(time_info);
 
     //remove colons in time string
-    char DateAndTimeCharArray[255];
+    char date_and_time_char_arr[255];
     int w = 0;
 
-    while (DateAndTime[w] != '\n')
+    while (date_and_time[w] != '\n')
     {
-        if (DateAndTime[w] == ':' || DateAndTime[w] == ' ')
-            DateAndTimeCharArray[w] = '_';
+        if (date_and_time[w] == ':' || date_and_time[w] == ' ')
+            date_and_time_char_arr[w] = '_';
         else
-            DateAndTimeCharArray[w] = DateAndTime[w];
+            date_and_time_char_arr[w] = date_and_time[w];
 
         w = w + 1;
     }
 
-    DateAndTimeCharArray[w] = '\"';
-    DateAndTimeCharArray[w+1] = '\0';
+    date_and_time_char_arr[w] = '\"';
+    date_and_time_char_arr[w+1] = '\0';
 
-    return DateAndTimeCharArray;
-
+    return date_and_time_char_arr;
 }
 void vpxt_on_error_output()
 {
@@ -138,91 +132,91 @@ void vpxt_on_error_output()
     tprintf(PRINT_STD, "   (4) test_arnr                            "
         "\n");
     tprintf(PRINT_STD, "   (5) test_auto_key_frame                  "
-        "VPXTTempScaleEnc\n");
+        "VPXTempScaleEnc\n");
     tprintf(PRINT_STD, "   (6) test_buffer_level                    "
-        "VPXMultiResEnc\n");
+        "VPXTTempScaleEnc\n");
     tprintf(PRINT_STD, "   (7) test_change_cpu_dec                  "
-        "VPXTMultiResEnc\n");
+        "VPXMultiResEnc\n");
     tprintf(PRINT_STD, "   (8) test_change_cpu_enc                  "
-        "VPXTDecRESZ\n");
+        "VPXTMultiResEnc\n");
     tprintf(PRINT_STD, "   (9) test_constrained_quality             "
-        "VPXTDecPARD\n");
+        "VPXTDecRESZ\n");
     tprintf(PRINT_STD, "  (10) test_copy_set_reference              "
-        "VPXTDec2Raw\n");
+        "VPXTDecPARD\n");
     tprintf(PRINT_STD, "  (11) test_data_rate                       "
-        "\n");
+        "VPXTDec2Raw\n");
     tprintf(PRINT_STD, "  (12) test_debug_matches_release           "
-        "VPXTDataRate\n");
+        "\n");
     tprintf(PRINT_STD, "  (13) test_drop_frame_watermark            "
-        "VPXTPSNR\n");
+        "VPXTDataRate\n");
     tprintf(PRINT_STD, "  (14) test_encoder_break_out               "
-        "VPXTPSNRDEC\n");
+        "VPXTPSNR\n");
     tprintf(PRINT_STD, "  (15) test_error_concealment               "
-        "VPXTCheckPBM\n");
+        "VPXTPSNRDEC\n");
     tprintf(PRINT_STD, "  (16) test_error_resolution                "
-        "\n");
+        "VPXTCheckPBM\n");
     tprintf(PRINT_STD, "  (17) test_extra_file                      "
-        "Raw2Formatted\n");
+        "\n");
     tprintf(PRINT_STD, "  (18) test_fixed_quantizer                 "
-        "Formatted2Raw\n");
+        "Raw2Formatted\n");
     tprintf(PRINT_STD, "  (19) test_force_key_frame                 "
-        "Formatted2RawFrames\n");
+        "Formatted2Raw\n");
     tprintf(PRINT_STD, "  (20) test_frame_size                      "
-        "CombineIndvFrames\n");
+        "Formatted2RawFrames\n");
     tprintf(PRINT_STD, "  (21) test_good_vs_best                    "
-        "\n");
+        "CombineIndvFrames\n");
     tprintf(PRINT_STD, "  (22) test_lag_in_frames                   "
-        "CompareEnc\n");
+        "\n");
     tprintf(PRINT_STD, "  (23) test_max_quantizer                   "
-        "CompareHeader\n");
+        "CompareEnc\n");
     tprintf(PRINT_STD, "  (24) test_mem_leak                        "
-        "DisplayHeader\n");
+        "CompareHeader\n");
     tprintf(PRINT_STD, "  (25) test_mem_leak2                       "
-        "\n");
+        "DisplayHeader\n");
     tprintf(PRINT_STD, "  (26) test_min_quantizer                   "
-        "DispKeyFrames\n");
+        "\n");
     tprintf(PRINT_STD, "  (27) test_multiple_resolution_encode      "
-        "DispResizedFrames\n");
+        "DispKeyFrames\n");
     tprintf(PRINT_STD, "  (28) test_multithreaded_dec               "
-        "DispVisibleFrames\n");
+        "DispResizedFrames\n");
     tprintf(PRINT_STD, "  (29) test_multithreaded_enc               "
-        "DispAltRefFrames\n");
+        "DispVisibleFrames\n");
     tprintf(PRINT_STD, "  (30) test_new_vs_old_enc_cpu_tick         "
-        "\n");
+        "DispAltRefFrames\n");
     tprintf(PRINT_STD, "  (31) test_new_vs_old_psnr                 "
-        "CropRawClip\n");
+        "\n");
     tprintf(PRINT_STD, "  (32) test_new_vs_old_temp_scale           "
-        "PadRawClip\n");
+        "CropRawClip\n");
     tprintf(PRINT_STD, "  (33) test_noise_sensitivity               "
-        "CutClip\n");
+        "PadRawClip\n");
     tprintf(PRINT_STD, "  (34) test_one_pass_vs_two_pass            "
-        "PasteClip\n");
+        "CutClip\n");
     tprintf(PRINT_STD, "  (35) test_play_alternate                  "
-        "\n");
+        "PasteClip\n");
     tprintf(PRINT_STD, "  (36) test_post_processor                  "
-        "PlayDecIVF\n");
+        "\n");
     tprintf(PRINT_STD, "  (37) test_post_processor_mfqe             "
-        "PlayCompIVF\n");
+        "PlayDecIVF\n");
     tprintf(PRINT_STD, "  (38) test_reconstruct_buffer              "
-        "\n");
+        "PlayCompIVF\n");
     tprintf(PRINT_STD, "  (39) test_resample_down_watermark         "
-        "CreateSampleTextFiles\n");
+        "\n");
     tprintf(PRINT_STD, "  (40) test_speed                           "
-        "PrintVersion\n");
+        "CreateSampleTextFiles\n");
     tprintf(PRINT_STD, "  (41) test_temporal_scalability            "
-        "\n");
+        "PrintVersion\n");
     tprintf(PRINT_STD, "  (42) test_test_vector                     "
-        "VPXEncPar\n");
-    tprintf(PRINT_STD, "  (43) test_thirtytwo_vs_sixtyfour          "
-        "RandParFile\n");
-    tprintf(PRINT_STD, "  (44) test_two_pass_vs_two_pass_best       "
-        "RandCompress\n");
-    tprintf(PRINT_STD, "  (45) test_undershoot                      "
-        "GraphPSNR\n");
-    tprintf(PRINT_STD, "  (46) test_version                         "
-        "Help\n");
-    tprintf(PRINT_STD, "  (47) test_vpx_matches_int                 "
         "\n");
+    tprintf(PRINT_STD, "  (43) test_thirtytwo_vs_sixtyfour          "
+        "VPXEncPar\n");
+    tprintf(PRINT_STD, "  (44) test_two_pass_vs_two_pass_best       "
+        "RandParFile\n");
+    tprintf(PRINT_STD, "  (45) test_undershoot                      "
+        "RandCompress\n");
+    tprintf(PRINT_STD, "  (46) test_version                         "
+        "GraphPSNR\n");
+    tprintf(PRINT_STD, "  (47) test_vpx_matches_int                 "
+        "Help\n");
     tprintf(PRINT_STD, "  (48) test_win_lin_mac_match               "
         "\n");
 #if !defined(_WIN32)
@@ -230,6 +224,34 @@ void vpxt_on_error_output()
 #endif
 
     return;
+}
+int  show_hidden_cmds()
+{
+    tprintf(PRINT_STD, "\n\n"
+        "    Hidden Commands \n"
+        "\n"
+        "Thres\n"
+        "DispFrameData\n"
+        "DispDropedFrames\n"
+        "GetFrameCount\n"
+        "\n"
+        "TestFileInputCheck\n"
+        "RandomStressTest\n"
+        "FormatSummary\n"
+        "\n"
+        "Quad\n"
+        "CompareDec\n"
+        "PrintCpuInfo\n"
+        "\n"
+        "CopyAllTxtFiles\n"
+        "\n"
+        "CombineIndvFrames\n"
+        "WriteIvfFileHeader\n"
+        "WriteIvfFrameHeader\n"
+        "WriteFrameData\n"
+        "\n");
+    return 0;
+
 }
 void write_32bit_quick_test(const std::string working_dir)
 {
@@ -1280,51 +1302,56 @@ int  print_quick_test_files(const std::string working_dir)
 
     return 0;
 }
-int  vpxt_test_help(const char *InputChar, int printSummary)
+int  vpxt_test_help(const char *input_char, int printSummary)
 {
-    std::string TestInputString = InputChar;
-    int selector = vpxt_identify_test(InputChar);
+    std::string input_str = input_char;
+    int selector = vpxt_identify_test(input_char);
     std::string print_base_opts = "\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "          (2)One Pass Best Quality\n"
-                "          (3)Two Pass - First Pass\n"
-                "          (4)Two Pass\n"
-                "          (5)Two Pass Best Quality\n"
-                "    <Target Bit Rate>\n";
+        "    <Input File>\n"
+        "    <Mode>\n"
+        "          (0)Realtime/Live Encoding\n"
+        "          (1)Good Quality Fast Encoding\n"
+        "          (2)One Pass Best Quality\n"
+        "          (3)Two Pass - First Pass\n"
+        "          (4)Two Pass\n"
+        "          (5)Two Pass Best Quality\n"
+        "    <Target Bit Rate>\n";
 
-    if (TestInputString.compare("0") == 0)
+    get_test_name(selector, input_str);
+
+    if (selector == RTFFINUM)
     {
-        vpxt_cap_string_print(PRINT_STD, "  %s", InputChar);
+        if (printSummary)
+            tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
+        else
+            tprintf(PRINT_STD, " ");
+
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
+
         tprintf(PRINT_STD,
-                "\nUse:\n\n"
-                " 0 run_multipule_tests \n\n"
-                "    <Test Type>\n"
-                "         <1 - Create Files and Run Tests>\n"
-                "         <2 - Create Files only>\n"
-                "         <3 - Run Tests For Existing Files - Requires Input "
-                "Test Directory>\n"
-                "    <Input Text File>\n"
-                "    <Optional - Input Test Directory>\n");
+            "\n"
+            "    <Test Type>\n"
+            "         <1 - Create Files and Run Tests>\n"
+            "         <2 - Create Files only>\n"
+            "         <3 - Run Tests For Existing Files - Requires Input "
+            "Test directory>\n"
+            "    <Input Text File>\n"
+            "    <Optional - Input Test directory>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test runs tests from an input file"
-                " and summarizes the results. The test can be run in four modes"
-                ": Mode 1 = Create compressions and run tests, Mode 2 = Create "
-                "compressions only, Mode 3 = Run tests on pre-existing "
-                "compressions, and Mode 4 = Resume tests in progress. To create"
-                " a template driver text file use the command "
-                "`CreateSampleTextFiles`.");
+            " and summarizes the results. The test can be run in four modes"
+            ": Mode 1 = Create compressions and run tests, Mode 2 = Create "
+            "compressions only, Mode 3 = Run tests on pre-existing "
+            "compressions, and Mode 4 = Resume tests in progress. To create"
+            " a template driver text file use the command "
+            "`CreateSampleTextFiles`.");
 
 #if !defined(_WIN32)
         tprintf(PRINT_STD, "\n");
 #endif
         return 0;
     }
-
-    get_test_name(selector, TestInputString);
 
     if (selector == AlWDFNUM)
     {
@@ -1333,19 +1360,19 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with Allow Drop Frames on, the second with Allow "
-                "Drop Frames off. It then records and compares the number of "
-                "frames each compression has. If Allow Drop Frames on has fewer"
-                " frames than Allow Drop Frames off, the test passes.");
+            "the first with Allow Drop Frames on, the second with Allow "
+            "Drop Frames off. It then records and compares the number of "
+            "frames each compression has. If Allow Drop Frames on has fewer"
+            " frames than Allow Drop Frames off, the test passes.");
     }
 
     if (selector == ALWLGNUM)
@@ -1355,21 +1382,21 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with Allow Lag equal to 0, the second with Allow "
-                "Lag equal to 1. If the correct number of lagged frames are "
-                "detected via quantizer output, alternate reference frames "
-                "exist for Allow Lag on, Allow Lag on has the same number of "
-                "visible frames as Allow Lag off, and Allow Lag on is not "
-                "identical to Allow Lag off, the test passes.");
+            "the first with Allow Lag equal to 0, the second with Allow "
+            "Lag equal to 1. If the correct number of lagged frames are "
+            "detected via quantizer output, alternate reference frames "
+            "exist for Allow Lag on, Allow Lag on has the same number of "
+            "visible frames as Allow Lag off, and Allow Lag on is not "
+            "identical to Allow Lag off, the test passes.");
     }
 
     if (selector == ALWSRNUM)
@@ -1379,22 +1406,22 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with Allow Spatial Resampling off, the second with "
-                "Allow Spatial Resampling on. The test then records the number "
-                "of resized frames for each and computes the PSNR for Allow "
-                "Spatial Resampling on. If Allow Spatial Resampling on has "
-                "resized frames, Allow Spatial Resampling off does not have "
-                "resized frames and Allow Spatial Resampling on has a PSNR "
-                "greater than 15, the test passes.");
+            "the first with Allow Spatial Resampling off, the second with "
+            "Allow Spatial Resampling on. The test then records the number "
+            "of resized frames for each and computes the PSNR for Allow "
+            "Spatial Resampling on. If Allow Spatial Resampling on has "
+            "resized frames, Allow Spatial Resampling off does not have "
+            "resized frames and Allow Spatial Resampling on has a PSNR "
+            "greater than 15, the test passes.");
     }
 
     if (selector == ARNRTNUM)
@@ -1404,26 +1431,26 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "    <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "    <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates four compressions: "
-                "the first with Alternate Reference Frames off, the second "
-                "with Alternate Reference Frames on and an ARNR Type equal to "
-                "one, the third with Alternate Reference Frames on and an ARNR "
-                "Type equal to two, the fourth with Alternate Reference Frames "
-                "on and an ARNR Type equal to three.  The test then computes "
-                "PSNR values and Data Rates for all files.  If all compressions"
-                " are not identical, all PSNR values increase as ARNR Type "
-                "increases or are within five percent of the Alternate "
-                "Reference Frames off compression, and Data Rates decrease as "
-                "ARNR Type increases or are within five percent of the "
-                "Alternate Reference Frames off compression, the test passes.");
+            "the first with Alternate Reference Frames off, the second "
+            "with Alternate Reference Frames on and an ARNR Type equal to "
+            "one, the third with Alternate Reference Frames on and an ARNR "
+            "Type equal to two, the fourth with Alternate Reference Frames "
+            "on and an ARNR Type equal to three.  The test then computes "
+            "PSNR values and Data Rates for all files.  If all compressions"
+            " are not identical, all PSNR values increase as ARNR Type "
+            "increases or are within five percent of the Alternate "
+            "Reference Frames off compression, and Data Rates decrease as "
+            "ARNR Type increases or are within five percent of the "
+            "Alternate Reference Frames off compression, the test passes.");
     }
 
     if (selector == AUTKFNUM)
@@ -1433,20 +1460,20 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions "
-                "with identical parameters, using user input Auto Key Frames. "
-                "The test then records the placement of each compression's key "
-                "frames. If both compressions' key frames occur in identical "
-                "locations and at least as frequently as Auto Key Frame "
-                "dictates, the test passes.");
+            "with identical parameters, using user input Auto Key Frames. "
+            "The test then records the placement of each compression's key "
+            "frames. If both compressions' key frames occur in identical "
+            "locations and at least as frequently as Auto Key Frame "
+            "dictates, the test passes.");
 
     }
 
@@ -1457,17 +1484,17 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression and "
-                "runs CheckPBM on it. If no buffer underrun is detected, the "
-                "test passes.");
+            "runs CheckPBM on it. If no buffer underrun is detected, the "
+            "test passes.");
 
     }
 
@@ -1478,21 +1505,21 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Version>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Version>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression of the "
-                "user input version (0-3) and then decompresses it using mmx, "
-                "sse, sse2, sse3, ssse3 and sse4_1 instruction sets. The test "
-                "then compares them against one another. If all compressions "
-                "are identical and the times to decompress them are not, the "
-                "test passes.");
+            "user input version (0-3) and then decompresses it using mmx, "
+            "sse, sse2, sse3, ssse3 and sse4_1 instruction sets. The test "
+            "then compares them against one another. If all compressions "
+            "are identical and the times to decompress them are not, the "
+            "test passes.");
 
     }
 
@@ -1503,19 +1530,19 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Version>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Version>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates compressions of the "
-                "user input version (0-3) using mmx, sse, sse2, sse3, ssse3 and"
-                " sse4_1 instruction sets. If all compressions are identical "
-                "and compression times are not, the test passes.");
+            "user input version (0-3) using mmx, sse, sse2, sse3, ssse3 and"
+            " sse4_1 instruction sets. If all compressions are identical "
+            "and compression times are not, the test passes.");
     }
 
     if (selector == CONQUNUM)
@@ -1525,20 +1552,20 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Constrained Quantizer>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Constrained Quantizer>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with constrained quality off, the second with user "
-                "input constrained quality.  The test then records their PSNRs "
-                "and Data Rates.  If linear PSNR per Data Rate is greater for "
-                "user input Constrained Quality, the test passes.");
+            "the first with constrained quality off, the second with user "
+            "input constrained quality.  The test then records their PSNRs "
+            "and Data Rates.  If linear PSNR per Data Rate is greater for "
+            "user input Constrained Quality, the test passes.");
     }
 
     if (selector == COPSRNUM)
@@ -1548,22 +1575,22 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <First Copy Frame>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <First Copy Frame>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression with "
-                "error resilient on and then decompresses it using "
-                "vpxt_decompress_copy_set.  At the First Copy Frame the decoder"
-                " is copied to decoder_copy and run syncronusly with the "
-                "original.  So long as the First Copy Frame is reached and all "
-                "decoded original and copy frames after the First Copy Frame "
-                "are identical the test passes.");
+            "error resilient on and then decompresses it using "
+            "vpxt_decompress_copy_set.  At the First Copy Frame the decoder"
+            " is copied to decoder_copy and run syncronusly with the "
+            "original.  So long as the First Copy Frame is reached and all "
+            "decoded original and copy frames after the First Copy Frame "
+            "are identical the test passes.");
     }
 
     if (selector == DTARTNUM)
@@ -1573,17 +1600,17 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression and "
-                "records its data rate. If the compression's data rate is "
-                "within 30%% of the input target bandwidth, the test passes.");
+            "records its data rate. If the compression's data rate is "
+            "within 30%% of the input target bandwidth, the test passes.");
 
     }
 
@@ -1594,23 +1621,23 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> "
-                "<PARAMETER FILE>\n"
-                "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> "
-                "<PARAMETER FILE>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Debug Executable - Must take <INPUT FILE> <OUTPUT FILE> "
+            "<PARAMETER FILE>\n"
+            "    <Release Executable-Must take <INPUT FILE> <OUTPUT FILE> "
+            "<PARAMETER FILE>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first using an executable built using the newest release "
-                "library, the second using an executable built using the newest"
-                " debug library. If the two compressions are identical, the "
-                "test passes.");
+            "the first using an executable built using the newest release "
+            "library, the second using an executable built using the newest"
+            " debug library. If the two compressions are identical, the "
+            "test passes.");
 
     }
 
@@ -1621,18 +1648,18 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates 6 compressions with "
-                "DFWM values of 100, 80, 60, 40, 20 and 0, and records their "
-                "sizes. If each successively lower DFWM compression has an "
-                "equal or larger size than the previous, the test passes.");
+            "DFWM values of 100, 80, 60, 40, 20 and 0, and records their "
+            "sizes. If each successively lower DFWM compression has an "
+            "equal or larger size than the previous, the test passes.");
 
     }
 
@@ -1643,24 +1670,24 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates four compressions: "
-                "the first has an EncodeBreakout of 0, the second "
-                "EncodeBreakout of 100, the third EncodeBreakout of 500 and the"
-                " fourth EncodeBreakout of 1000. Decompressions of the encoded"
-                " files are then carried out and PSNR values are calculated. If"
-                " the decompressions run successfully and the PSNR values of "
-                "each successive EncodeBreakout trial are within 2 dB, the test"
-                "passes. If the PSNRs are greater than 2 dB but less than 5 dB"
-                " the test is inconclusive; if the PSNRs have greater than a 5"
-                " dB difference the test fails.");
+            "the first has an EncodeBreakout of 0, the second "
+            "EncodeBreakout of 100, the third EncodeBreakout of 500 and the"
+            " fourth EncodeBreakout of 1000. Decompressions of the encoded"
+            " files are then carried out and PSNR values are calculated. If"
+            " the decompressions run successfully and the PSNR values of "
+            "each successive EncodeBreakout trial are within 2 dB, the test"
+            "passes. If the PSNRs are greater than 2 dB but less than 5 dB"
+            " the test is inconclusive; if the PSNRs have greater than a 5"
+            " dB difference the test fails.");
     }
 
     if (selector == ERRCONUM)
@@ -1670,18 +1697,18 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression with "
-                "error resilient mode on and then decompresses it with partial "
-                "frame drops.  Psnrs are calculated for both the decoded file "
-                "and encoded file.  If the psnr of the decoded file is with in "
-                "50% of the psnr of the encoded file, the test passes.");
+            "error resilient mode on and then decompresses it with partial "
+            "frame drops.  Psnrs are calculated for both the decoded file "
+            "and encoded file.  If the psnr of the decoded file is with in "
+            "50% of the psnr of the encoded file, the test passes.");
 
     }
 
@@ -1692,18 +1719,18 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with Error Resilient Mode off, the second with Error"
-                " Resilient Mode on. The test then records their PSNR values. "
-                "If their PSNRs are within 10%% of each other, the test "
-                "passes.");
+            "the first with Error Resilient Mode off, the second with Error"
+            " Resilient Mode on. The test then records their PSNR values. "
+            "If their PSNRs are within 10%% of each other, the test "
+            "passes.");
 
     }
 
@@ -1714,20 +1741,20 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a two-pass "
-                "compression and checks for extra files in the current "
-                "directory, the directory the executable is located in, and the"
-                " directory the output file is written to. If no extra files "
-                "are found, the test passes.");
+            "compression and checks for extra files in the current "
+            "directory, the directory the executable is located in, and the"
+            " directory the output file is written to. If no extra files "
+            "are found, the test passes.");
     }
 
     if (selector == FIXDQNUM)
@@ -1737,23 +1764,23 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <FixedQ 1>\n"
-                "    <FixedQ 2>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <FixedQ 1>\n"
+            "    <FixedQ 2>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions "
-                "each with user input Fixed Quantizers, and records the "
-                "quantizers used to encode each frame. The test then records "
-                "the compressions' sizes. If all quantizers for each "
-                "compression match the input Fixed Quantizer, and the smaller "
-                "quantizer's compression has a larger file size, the test "
-                "passes.");
+            "each with user input Fixed Quantizers, and records the "
+            "quantizers used to encode each frame. The test then records "
+            "the compressions' sizes. If all quantizers for each "
+            "compression match the input Fixed Quantizer, and the smaller "
+            "quantizer's compression has a larger file size, the test "
+            "passes.");
     }
 
     if (selector == FKEFRNUM)
@@ -1763,20 +1790,20 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <ForceKeyFrame>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <ForceKeyFrame>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression using "
-                "a user-input value as a Force Key Frame Interval. The Test "
-                "then records the placement of all key frames in the "
-                "compression. If key frames occur only when Force Key Frame "
-                "dictates, the test passes.");
+            "a user-input value as a Force Key Frame Interval. The Test "
+            "then records the placement of all key frames in the "
+            "compression. If key frames occur only when Force Key Frame "
+            "dictates, the test passes.");
 
     }
 
@@ -1787,24 +1814,24 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Starting Width-must be a mult of 16>\n"
-                "    <Starting Height-must be a mult of 16>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Starting Width-must be a mult of 16>\n"
+            "    <Starting Height-must be a mult of 16>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates forty-six cropped "
-                "raw ivf or y4m files from a user inputfile, starting height, "
-                "and starting width (where starting height and starting width "
-                "must be multiples of 16).  The test then creates compressions "
-                "for each raw file and computes its PSNR.  If all compressions "
-                "PSNRs are within five percent of the starting width/height "
-                "file's PSNR and all PSNRs are greater than 25 the test "
-                "passes.");
+            "raw ivf or y4m files from a user inputfile, starting height, "
+            "and starting width (where starting height and starting width "
+            "must be multiples of 16).  The test then creates compressions "
+            "for each raw file and computes its PSNR.  If all compressions "
+            "PSNRs are within five percent of the starting width/height "
+            "file's PSNR and all PSNRs are greater than 25 the test "
+            "passes.");
     }
 
     if (selector == GQVBQNUM)
@@ -1814,27 +1841,27 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Target Bit Rate>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates six compressions: "
-                "the first and fourth compressions for 30%% less than the input"
-                " target bandwidth at good quality and best quality, the second"
-                " and fifth compressions for the input target bandwidth at good"
-                " quality and best quality, and the third and sixth at 30%% "
-                "more than the input target bandwidth at good quality and best "
-                "quality. The test then records each file's data rate and PSNR,"
-                " and computes the area under the curve for the common interval"
-                " between the good quality curve and best quality curve. If the"
-                " area under the best quality curve is greater than the area "
-                "under the good quality curve, the test passes.");
+            "the first and fourth compressions for 30%% less than the input"
+            " target bandwidth at good quality and best quality, the second"
+            " and fifth compressions for the input target bandwidth at good"
+            " quality and best quality, and the third and sixth at 30%% "
+            "more than the input target bandwidth at good quality and best "
+            "quality. The test then records each file's data rate and PSNR,"
+            " and computes the area under the curve for the common interval"
+            " between the good quality curve and best quality curve. If the"
+            " area under the best quality curve is greater than the area "
+            "under the good quality curve, the test passes.");
     }
 
     if (selector == LGIFRNUM)
@@ -1844,26 +1871,26 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Lag in Frames 1>\n"
-                "    <Lag in Frames 2>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Lag in Frames 1>\n"
+            "    <Lag in Frames 2>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates three compressions: "
-                "the first with Allow Lag set to 0, the second and third with "
-                "Allow Lag set to 1. The second compression uses the first "
-                "user-input Lag in Frames value for its Lag in frames and the "
-                "third uses the second user-input value for its Lag in Frames. "
-                "The test outputs each file's quantizer values for each encoded"
-                " frame. If none of the files are identical, the PSNRs of each "
-                "successive file are within 10%% of the last, and the quantizer"
-                " output shows that the proper number of frames were lagged, "
-                "the test passes.");
+            "the first with Allow Lag set to 0, the second and third with "
+            "Allow Lag set to 1. The second compression uses the first "
+            "user-input Lag in Frames value for its Lag in frames and the "
+            "third uses the second user-input value for its Lag in Frames. "
+            "The test outputs each file's quantizer values for each encoded"
+            " frame. If none of the files are identical, the PSNRs of each "
+            "successive file are within 10%% of the last, and the quantizer"
+            " output shows that the proper number of frames were lagged, "
+            "the test passes.");
     }
 
     if (selector == MAXQUNUM)
@@ -1873,23 +1900,23 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates nine compressions, "
-                "the first with a Max Quantizer equal to 4 and each subsequent "
-                "file with a Max Quantizer 8 greater than the last until 63. "
-                "The test records the individual quantizer values for each "
-                "encoded frame. If the PSNRs of each Max Quantizer compression "
-                "from 4 to 63 increase as Max Quantizer decreases (or are "
-                "within 1 %% of eachother) and the recorded quantizers for each"
-                " file do not exceed their corresponding Max Quantizer for all "
-                "compressions, the test passes.");
+            "the first with a Max Quantizer equal to 4 and each subsequent "
+            "file with a Max Quantizer 8 greater than the last until 63. "
+            "The test records the individual quantizer values for each "
+            "encoded frame. If the PSNRs of each Max Quantizer compression "
+            "from 4 to 63 increase as Max Quantizer decreases (or are "
+            "within 1 %% of eachother) and the recorded quantizers for each"
+            " file do not exceed their corresponding Max Quantizer for all "
+            "compressions, the test passes.");
 
     }
 
@@ -1900,19 +1927,19 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Newest Debug executable>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Newest Debug executable>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression using "
-                "the debug executable to check memory usage and records the "
-                "results to an output file. If no memory leaks are found, the "
-                "test passes.");
+            "the debug executable to check memory usage and records the "
+            "results to an output file. If no memory leaks are found, the "
+            "test passes.");
     }
 
     if (selector == MEML2NUM)
@@ -1922,17 +1949,17 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Mem Leak Check Exe>\n"
-                "\n");
+            "    <Mem Leak Check Exe>\n"
+            "\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test uses the debug executable to "
-                "open and close 10,000 instances of the encoder and 10,000 "
-                "instances of the decoder, and then checks for no memory leaks."
-                " If there are no leaks, the test passes.");
+            "open and close 10,000 instances of the encoder and 10,000 "
+            "instances of the decoder, and then checks for no memory leaks."
+            " If there are no leaks, the test passes.");
     }
 
     if (selector == MINQUNUM)
@@ -1942,20 +1969,20 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with a Min Quantizer equal to 10, the second with a "
-                "Min Quantizer equal to 60. It records the quantizer used for "
-                "each frame of the compression. If the first file has a higher "
-                "PSNR than the second file and every quantizer for both files "
-                "is above the corresponding Min Quantizer, the test passes.");
+            "the first with a Min Quantizer equal to 10, the second with a "
+            "Min Quantizer equal to 60. It records the quantizer used for "
+            "each frame of the compression. If the first file has a higher "
+            "PSNR than the second file and every quantizer for both files "
+            "is above the corresponding Min Quantizer, the test passes.");
     }
 
     if (selector == MULRENUM)
@@ -1965,21 +1992,21 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Target Bit Rate>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a user input number "
-                "of multiple resolution encoded files.  Then psnr calculations "
-                "are done on the resultant files.  If all psnr values are above"
-                " the minimum threshold, and increase as frame sizes increase, "
-                "the test passes.");
+            "of multiple resolution encoded files.  Then psnr calculations "
+            "are done on the resultant files.  If all psnr values are above"
+            " the minimum threshold, and increase as frame sizes increase, "
+            "the test passes.");
     }
 
     if (selector == MULTDNUM)
@@ -1989,27 +2016,27 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Number of Cores to Use>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "    <Target Bit Rate>\n"
+            "    <Number of Cores to Use>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression with a "
-                "user input number of token partitions.  It then preforms two "
-                "decompressions on this compression.  The first decompression "
-                "using 0 threads,  The second decompression using a user input "
-                "number of threads.  If the user input number of threads takes "
-                "less time to decompress and the two decompressions are "
-                "identical, the test passes.");
+            "user input number of token partitions.  It then preforms two "
+            "decompressions on this compression.  The first decompression "
+            "using 0 threads,  The second decompression using a user input "
+            "number of threads.  If the user input number of threads takes "
+            "less time to decompress and the two decompressions are "
+            "identical, the test passes.");
     }
 
     if (selector == MULTENUM)
@@ -2019,25 +2046,25 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Number of Cores to Use>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "    <Target Bit Rate>\n"
+            "    <Number of Cores to Use>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first using a MultiThreaded equal to 2, the second using a"
-                " MultiThreaded equal to 0. The test then compares the times to"
-                " compress each. If MultiThreaded 2 is faster than 0, the test "
-                "passes.");
+            "the first using a MultiThreaded equal to 2, the second using a"
+            " MultiThreaded equal to 0. The test then compares the times to"
+            " compress each. If MultiThreaded 2 is faster than 0, the test "
+            "passes.");
     }
 
     if (selector == NVOECPTK)
@@ -2047,24 +2074,24 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "    <Exe File To Compare>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Target Bit Rate>\n"
+            "    <Exe File To Compare>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression using "
-                "the newest version of VP8.  It then compares the encode time "
-                "for this compression against an old encode time obtained "
-                "either from a log file or by running another identical encode "
-                "using an old executable. If the new compression's encode time "
-                "is faster than the old compressions encode time, the test "
-                "passes.");
+            "the newest version of VP8.  It then compares the encode time "
+            "for this compression against an old encode time obtained "
+            "either from a log file or by running another identical encode "
+            "using an old executable. If the new compression's encode time "
+            "is faster than the old compressions encode time, the test "
+            "passes.");
     }
 
     if (selector == NVOPSNUM)
@@ -2074,22 +2101,22 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Exe File To Compare>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Exe File To Compare>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression using "
-                "the newest version of VP8. It then compares the psnr values "
-                "for this compression against an old PSNR value obtained either"
-                " from a log file or by running another identical encode using "
-                "an old executable.  If the new compression's PSNR is greater "
-                "than the old compressions PSNR (or within 1%%), the test "
-                "passes.");
+            "the newest version of VP8. It then compares the psnr values "
+            "for this compression against an old PSNR value obtained either"
+            " from a log file or by running another identical encode using "
+            "an old executable.  If the new compression's PSNR is greater "
+            "than the old compressions PSNR (or within 1%%), the test "
+            "passes.");
     }
 
     if (selector == NVOTSNUM)
@@ -2099,7 +2126,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
             "    <Input File>\n"
@@ -2114,14 +2141,14 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a user input number "
-                "of temporally scaled encodes.  It then compares the PSNR "
-                "values and encode times for these compressions against old "
-                "psnr values and encode times obtain either from a log file or "
-                "by running another set of identical encodes using an old "
-                "executable.  If the new compression's PSNR is greater than "
-                "the old compressions PSNR (or within 1%%), and the new "
-                "compressions encode time is faster than the old, the test "
-                "passes.");
+            "of temporally scaled encodes.  It then compares the PSNR "
+            "values and encode times for these compressions against old "
+            "psnr values and encode times obtain either from a log file or "
+            "by running another set of identical encodes using an old "
+            "executable.  If the new compression's PSNR is greater than "
+            "the old compressions PSNR (or within 1%%), and the new "
+            "compressions encode time is faster than the old, the test "
+            "passes.");
     }
 
     if (selector == NOISENUM)
@@ -2131,19 +2158,19 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates seven compressions "
-                "with Noise Sensitivity values from 0 to 6 and computes PSNR "
-                "values for each. If all compressions have differing PSNR "
-                "values and Noise Sensitivity 0 has a higher PSNR than Noise "
-                "Sensitivity 6, the test passes.");
+            "with Noise Sensitivity values from 0 to 6 and computes PSNR "
+            "values for each. If all compressions have differing PSNR "
+            "values and Noise Sensitivity 0 has a higher PSNR than Noise "
+            "Sensitivity 6, the test passes.");
     }
 
     if (selector == OV2PSNUM)
@@ -2153,29 +2180,29 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Target Bit Rate>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates six compressions: "
-                "the first and fourth compressions for 30%% less than the input"
-                " target bandwidth at one-pass good quality and two-pass good "
-                "quality, the second and fifth compressions for the input "
-                "target bandwidth at one-pass good quality and two-pass good "
-                "quality, and the third and sixth at 30%% more than the input "
-                "target bandwidth at one-pass good quality and two-pass good "
-                "quality. The test then records each file's data rate and PSNR "
-                "and computes the area under the curve for the common interval "
-                "between the one-pass good quality curve and the two-pass good "
-                "quality curve. If the area under the two-pass good quality "
-                "curve is greater than the area under the one-pass good quality"
-                " curve, the test passes.");
+            "the first and fourth compressions for 30%% less than the input"
+            " target bandwidth at one-pass good quality and two-pass good "
+            "quality, the second and fifth compressions for the input "
+            "target bandwidth at one-pass good quality and two-pass good "
+            "quality, and the third and sixth at 30%% more than the input "
+            "target bandwidth at one-pass good quality and two-pass good "
+            "quality. The test then records each file's data rate and PSNR "
+            "and computes the area under the curve for the common interval "
+            "between the one-pass good quality curve and the two-pass good "
+            "quality curve. If the area under the two-pass good quality "
+            "curve is greater than the area under the one-pass good quality"
+            " curve, the test passes.");
     }
 
     if (selector == PLYALNUM)
@@ -2185,22 +2212,22 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with Play Alternate equal to 0, the second with Play"
-                " Alternate equal to 1. The test then records the placement of "
-                "alternate reference frames and visible frames for both "
-                "compressions. If alternate reference frames exist for "
-                "Play Alternate = 1 and not for Play Alternate = 0, visible "
-                "frames for Play Alternate 1 and Play Alternate 2 are equal, "
-                "and the files are not identical, the test passes.");
+            "the first with Play Alternate equal to 0, the second with Play"
+            " Alternate equal to 1. The test then records the placement of "
+            "alternate reference frames and visible frames for both "
+            "compressions. If alternate reference frames exist for "
+            "Play Alternate = 1 and not for Play Alternate = 0, visible "
+            "frames for Play Alternate 1 and Play Alternate 2 are equal, "
+            "and the files are not identical, the test passes.");
     }
 
     if (selector == POSTPNUM)
@@ -2210,20 +2237,20 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression, then "
-                "creates a No Filtering decompression, and decompressions for "
-                "Deblock and Noise levels ranging from 0 to 15. If all Deblock "
-                "and Noise decompressions return a different PSNR than the No "
-                "Filtering Decompression but are within 10%%, the test "
-                "passes.");
+            "creates a No Filtering decompression, and decompressions for "
+            "Deblock and Noise levels ranging from 0 to 15. If all Deblock "
+            "and Noise decompressions return a different PSNR than the No "
+            "Filtering Decompression but are within 10%%, the test "
+            "passes.");
     }
 
     if (selector == PSTMFNUM)
@@ -2233,20 +2260,20 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Key Freq>\n"
-                "    <Max Intra Bitrate Pct>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Key Freq>\n"
+            "    <Max Intra Bitrate Pct>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression, then "
-                "then preforms psnr calculations using the mfqe post processing"
-                " flag and no post processing.  If the mfqe psnr is greater "
-                "than the no post processing psnr, the test passes.");
+            "then preforms psnr calculations using the mfqe post processing"
+            " flag and no post processing.  If the mfqe psnr is greater "
+            "than the no post processing psnr, the test passes.");
     }
 
     if (selector == RECBFNUM)
@@ -2256,21 +2283,21 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a compression and "
-                "internally compares the compressor's preview frames to the "
-                "decoded output produced by decompressing the compressor's "
-                "encoded frame. The state of each frame is recorded to a text "
-                "file. If the contents of all preview frames are identical to "
-                "the content of all decoded frames, the test passes.");
+            "internally compares the compressor's preview frames to the "
+            "decoded output produced by decompressing the compressor's "
+            "encoded frame. The state of each frame is recorded to a text "
+            "file. If the contents of all preview frames are identical to "
+            "the content of all decoded frames, the test passes.");
     }
 
     if (selector == RSDWMNUM)
@@ -2280,23 +2307,23 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with resample-down-watermark set to 90, the second "
-                "with resample-down-watermark set to 10. The test then records "
-                "the frames at which the file buffer reaches the designated "
-                "thresholds, the location of key frames, and location of "
-                "resized frames for both files. If the first resized frame "
-                "occurs on the first instance where the frame prior to a key "
-                "frame reaches the correct buffer saturation for both "
-                "compressions, the test passes.");
+            "the first with resample-down-watermark set to 90, the second "
+            "with resample-down-watermark set to 10. The test then records "
+            "the frames at which the file buffer reaches the designated "
+            "thresholds, the location of key frames, and location of "
+            "resized frames for both files. If the first resized frame "
+            "occurs on the first instance where the frame prior to a key "
+            "frame reaches the correct buffer saturation for both "
+            "compressions, the test passes.");
     }
 
     if (selector == SPEEDNUM)
@@ -2306,27 +2333,27 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Lag in Frames>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "    <Target Bit Rate>\n"
+            "    <Lag in Frames>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test works for RealTime Mode and "
-                "Good Quality Mode. For RealTime Mode the test creates "
-                "compressions for CpuUsed Values from -1 to -16 and 0 to 16. "
-                "For Good Quality Mode the test creates compressions for "
-                "CpuUsed Values from 0 to 5. If compression speed increases as "
-                "CpuUsed increases and all PSNRs are within 10%% of the "
-                "previous, the test passes.");
+            "Good Quality Mode. For RealTime Mode the test creates "
+            "compressions for CpuUsed Values from -1 to -16 and 0 to 16. "
+            "For Good Quality Mode the test creates compressions for "
+            "CpuUsed Values from 0 to 5. If compression speed increases as "
+            "CpuUsed increases and all PSNRs are within 10%% of the "
+            "previous, the test passes.");
     }
 
     if (selector == TMPSCNUM)
@@ -2336,7 +2363,7 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
             "    <Input File>\n"
@@ -2350,13 +2377,13 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates a user input number "
-                "of temporally scaled encodes along with corresponding normal "
-                "encodes.  The test then records frame statistics for the "
-                "resultant temporally scaled encode along with psnr values for "
-                "the both the temporally scaled encodes and normal encodes.  If"
-                " the correct psnr relationships obtain, frame decimation "
-                "occurs correctly, and the temporally scaled encodes time is "
-                "within or less than a given range, the test passes.");
+            "of temporally scaled encodes along with corresponding normal "
+            "encodes.  The test then records frame statistics for the "
+            "resultant temporally scaled encode along with psnr values for "
+            "the both the temporally scaled encodes and normal encodes.  If"
+            " the correct psnr relationships obtain, frame decimation "
+            "occurs correctly, and the temporally scaled encodes time is "
+            "within or less than a given range, the test passes.");
 
     }
 
@@ -2367,18 +2394,18 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Threads>\n"
-                "    <Input Directory>\n");
+            "    <Threads>\n"
+            "    <Input directory>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test decodes each VP8 Test Vector "
-                "using the number of threads input and Checks its MD5 checksum "
-                "against the expected value. If all Test Vectors decode "
-                "properly and all MD5 checksums match their expected values, "
-                "the test passes.");
+            "using the number of threads input and Checks its MD5 checksum "
+            "against the expected value. If all Test Vectors decode "
+            "properly and all MD5 checksums match their expected values, "
+            "the test passes.");
     }
 
     if (selector == TTVSFNUM)
@@ -2388,27 +2415,27 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Output Directory>\n"
-                "    <Settings File>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n");
+            "    <Input File>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "    <Target Bit Rate>\n"
+            "    <Output directory>\n"
+            "    <Settings File>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test is run in one of two modes. "
-                "The first creates either a thirty two or sixty four bit "
-                "compression and decompression to be tested by the second mode."
-                "The second mode creates either a thirty two or sixty four bit "
-                "compression and decompression, and then compares them to "
-                "previously encoded and decoded files. If the files are "
-                "identical, the test passes.");
+            "The first creates either a thirty two or sixty four bit "
+            "compression and decompression to be tested by the second mode."
+            "The second mode creates either a thirty two or sixty four bit "
+            "compression and decompression, and then compares them to "
+            "previously encoded and decoded files. If the files are "
+            "identical, the test passes.");
     }
 
     if (selector == TV2BTNUM)
@@ -2418,29 +2445,29 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Target Bit Rate>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n");
+            "    <Input File>\n"
+            "    <Target Bit Rate>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates six compressions: "
-                "the first and fourth compressions for 30%% less than the input"
-                " target bandwidth at two-pass good quality and two-pass best "
-                "quality, the second and fifth compressions for the input "
-                "target bandwidth at two-pass good quality and two-pass best "
-                "quality, and the third and sixth at 30%% more than the input "
-                "target bandwidth at two-pass good quality and two-pass best "
-                "quality. The test then records each file's data rate and PSNR "
-                "and computes the area under the curve for the common interval "
-                "between the two-pass good quality curve and the two-pass best "
-                "quality curve. If the area under the two-pass best quality "
-                "curve is greater than the area under the two-pass good quality"
-                " curve, the test passes.");
+            "the first and fourth compressions for 30%% less than the input"
+            " target bandwidth at two-pass good quality and two-pass best "
+            "quality, the second and fifth compressions for the input "
+            "target bandwidth at two-pass good quality and two-pass best "
+            "quality, and the third and sixth at 30%% more than the input "
+            "target bandwidth at two-pass good quality and two-pass best "
+            "quality. The test then records each file's data rate and PSNR "
+            "and computes the area under the curve for the common interval "
+            "between the two-pass good quality curve and the two-pass best "
+            "quality curve. If the area under the two-pass best quality "
+            "curve is greater than the area under the two-pass good quality"
+            " curve, the test passes.");
     }
 
     if (selector == UNDSHNUM)
@@ -2450,19 +2477,19 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates two compressions: "
-                "the first with an undershoot equal to 10, the second with an "
-                "undershoot equal to 100. If the Undershoot 100 compression's "
-                "file size is greater than the Undershoot 10 compression's file"
-                " size, the test passes.");
+            "the first with an undershoot equal to 10, the second with an "
+            "undershoot equal to 100. If the Undershoot 100 compression's "
+            "file size is greater than the Undershoot 10 compression's file"
+            " size, the test passes.");
     }
 
     if (selector == VERSINUM)
@@ -2472,21 +2499,21 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test creates four compressions: "
-                "the first with Version equal to 0, the second with Version "
-                "equal to 1, the third with Version equal to 2, and the fourth "
-                "with Version equal to 3. The test then decodes each and "
-                "records the time it took to do so. If each successive Version "
-                "takes less time than the prior to decode and has a lower PSNR,"
-                " the test passes.");
+            "the first with Version equal to 0, the second with Version "
+            "equal to 1, the third with Version equal to 2, and the fourth "
+            "with Version equal to 3. The test then decodes each and "
+            "records the time it took to do so. If each successive Version "
+            "takes less time than the prior to decode and has a lower PSNR,"
+            " the test passes.");
     }
 
     if (selector == VPXMINUM)
@@ -2496,25 +2523,25 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "%s"
-                "    <Vpxenc Executable>\n"
-                "    <Vpxdec Executable>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "     <Optional Settings File>\n", print_base_opts.c_str());
+            "    <Vpxenc Executable>\n"
+            "    <Vpxdec Executable>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "     <Optional Settings File>\n", print_base_opts.c_str());
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test takes a raw input file along "
-                "with vpxenc and vpxdec paths and produces two encode files and"
-                " two decode files.  The first encode file is produced using "
-                "the testers internal compressor.  The second encode file is "
-                "produced using the passed in vpxenc path.  The first decode "
-                "file is produced using the passed in vpxdec path.  The second "
-                "decode file is produced using the testers internal decoder.  "
-                "The test then compares the encoded and decoded files.  If all "
-                "decoded and encoded files are identical the test passes.");
+            "with vpxenc and vpxdec paths and produces two encode files and"
+            " two decode files.  The first encode file is produced using "
+            "the testers internal compressor.  The second encode file is "
+            "produced using the passed in vpxenc path.  The first decode "
+            "file is produced using the passed in vpxdec path.  The second "
+            "decode file is produced using the testers internal decoder.  "
+            "The test then compares the encoded and decoded files.  If all "
+            "decoded and encoded files are identical the test passes.");
     }
 
     if (selector == WMLMMNUM)
@@ -2524,27 +2551,27 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
         else
             tprintf(PRINT_STD, " ");
 
-        vpxt_cap_string_print(PRINT_STD, " %s\n", TestInputString.c_str());
+        vpxt_cap_string_print(PRINT_STD, " %s\n", input_str.c_str());
 
         tprintf(PRINT_STD, "\n"
-                "    <Input File>\n"
-                "    <Mode>\n"
-                "          (0)Realtime/Live Encoding\n"
-                "          (1)Good Quality Fast Encoding\n"
-                "    <Target Bit Rate>\n"
-                "    <Output Directory>\n"
-                "    <Settings File>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Decode Format - y4m/ivf>\n");
+            "    <Input File>\n"
+            "    <Mode>\n"
+            "          (0)Realtime/Live Encoding\n"
+            "          (1)Good Quality Fast Encoding\n"
+            "    <Target Bit Rate>\n"
+            "    <Output directory>\n"
+            "    <Settings File>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Decode Format - y4m/ivf>\n");
 
         if (printSummary)
             vpxt_formated_print(HLPPRT, "The test can be run in two test "
-                "modes. The first, Mode 0, creates platform-specific "
-                "compressions and decompressions to be tested on another "
-                "platform. The second mode, Mode 1, creates platform-specific "
-                "compressions and decompressions, and then compares them to "
-                "previously encoded and decoded files created by Mode 0. If "
-                "the files are identical, the test passes.");
+            "modes. The first, Mode 0, creates platform-specific "
+            "compressions and decompressions to be tested on another "
+            "platform. The second mode, Mode 1, creates platform-specific "
+            "compressions and decompressions, and then compares them to "
+            "previously encoded and decoded files created by Mode 0. If "
+            "the files are identical, the test passes.");
     }
 
 #if !defined(_WIN32)
@@ -2556,711 +2583,17 @@ int  vpxt_test_help(const char *InputChar, int printSummary)
 
     return 0;
 }
-int  vpxt_tool_help(const char *InputChar, int printSummary)
+int  vpxt_tool_help(const char *input_char, int printSummary)
 {
     //return 1 if string found return 0 if string not found if string not
     //found TestHelp will be run through.
-    std::string InputString = InputChar;
-    vpxt_lower_case_string(InputString);
+    std::string input_str = input_char;
+    vpxt_lower_case_string(input_str);
 
-    if (InputString.compare("vpxtenc") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT Compress\n\n"
-                "    <(1)Normal Compress |(2)TimeCompress>\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Bit Rate>\n"
-                "    <Mode>\n"
-                "    <Encode Format - webm/ivf>\n"
-                "    <Optional - Parameter File>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in a raw IVF or "
-                "Y4M file and produce an encoded IVF or WEBM file using the "
-                "given mode and bitrate. Default encode settings can be "
-                "overridden by specifying a parameter file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtdec") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT Decompress\n\n"
-                "    <Input File>\n"
-                "    <Output File>\n"
-                "    <Decode Format - y4m/ivf>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
-                "or WEBM file and output a decoded IVF or Y4M file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtdecpard") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT Decompress Partial Drops\n\n"
-                "    <Input File>\n"
-                "    <Output File>\n"
-                "    <Decode Format - y4m/ivf>\n"
-                "    <Parameter 1>\n"
-                "    <Parameter 2>\n"
-                "    <Mode (0-2)>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
-                "or WEBM file and output a decoded IVF or Y4M file with user "
-                "input partial drops.  The first parameter signifies the "
-                "numerator of the ratio of frames to drop for mode 0, the "
-                "starting frame for mode 1 and the percentage to randomly drop "
-                "for mode 2.  The second parameter signifies the denominator of"
-                " the ratio of frames to drop for mode 0, the last frame to "
-                "drop for mode 1 and the random seed for mode 2.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtdecresz") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT Decompress Resize\n\n"
-                "    <Input File>\n"
-                "    <Output File>\n"
-                "    <Decode Format - y4m/ivf>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
-                "or WEBM file and output a decoded IVF or Y4M file making sure "
-                "to correctly scale up any resized encoded frames.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtdec2raw") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT Decompress to Raw \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
-                "or WEBM file and output a decoded raw file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtdatarate") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT DataRate \n\n"
-                "    <Input File>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in an IVF or WEBM "
-                "file and compute its average, min, max, and file data rates.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtpsnr") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT PSNR\n\n"
-                "     <Source File>\n"
-                "     <Compressed File>\n"
-                "     <Run SSIM - 0|1>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will compute an encoded IVF "
-                "or WEBM file's PSNR using the encoded file's IVF or Y4M source"
-                " file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtpsnrdec") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT PSNR DEC\n\n"
-                "     <Source File>\n"
-                "     <Decoded Compressed File>\n"
-                "     <Run SSIM - 0|1>\n"
-                "     <Width    - optional>\n"
-                "     <Height   - optional>\n"
-                "     <SWAP UV  - optional>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will compute a decoded IVF "
-                "or WEBM file's PSNR using the encoded file's IVF or Y4M source"
-                " file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtcheckpbm") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  VPXT Check PBM\n\n"
-                "     <Input File>\n"
-                "     <Bitrate         (kbps)>\n"
-                "     <Max Buffer Size (ms)>\n"
-                "     <Prebuffer Size  (ms)>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will run CheckPBM to ensure "
-                "a buffer underrun won't occur.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("raw2formatted") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Raw To Formatted\n\n"
-                "    <Input File>\n"
-                "    <OutPutDir>\n"
-                "    <IVF/Y4M>\n"
-                "    <Width>\n"
-                "    <Height>\n"
-                "    <FrameRate>\n"
-                "    <FourCC>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in a raw file and "
-                "produce a raw IVF or Y4M file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("formatted2raw") == 0)
+    if (input_str.compare("vpxenc") == 0)
     {
         tprintf(PRINT_STD, "\n"
-                "  Formatted To Raw \n\n"
-                "    <Input File>\n"
-                "    <Output File>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in an IVF or Y4M "
-                "file and produce a raw file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("formatted2rawframes") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Formatted To RawFrames\n\n"
-                "    <Input File>\n"
-                "    <OutPutDir>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in an IVF or Y4M "
-                "file and produce individual raw frames for each frame that "
-                "exists in a user-specified directory.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("combineindvframes") == 0)
-    {
-        tprintf(PRINT_STD, "\n  Combine Indv Frames");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will combine all individual "
-                "decoded frames in a directory into a single raw file in "
-                "numerical order.");
-
-        tprintf(PRINT_STD,
-                "\n"
-                "   Usage:\n"
-                "\n"
-                "    <Input Directory>\n"
-                "    <Name Base>\n"
-                "    <File Extension - include .>\n"
-                "    <First Frame - Include preceding zeros>\n"
-                "    <Last  Frame - Include preceding zeros>\n"
-                "    <Output File>\n"
-                "\n"
-                "\n"
-                "     Example: \n"
-                "\n"
-                "       First File Name 1: img-720x480-0003.i420\n"
-                "       Last File Name 2: img-720x480-0223.i420\n"
-                "\n"
-                "       Input Directory = Directory files are located in\n"
-                "       Name Base = img-720x480-\n"
-                "       File Extension = .i420\n"
-                "       First Frame = 0003\n"
-                "       Last Frame = 0223\n"
-                "       Output File = Path to desired output file\n");
-
-#if !defined(_WIN32)
-        tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("compareenc") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Compare Enc\n\n"
-                "     <inputfile1>\n"
-                "     <inputfile2>\n"
-                "     <full 1/0>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will compare the video "
-                "content of two IVF or WEBM files and will display if they are "
-                "identical or, if they differ, the first frame they differ "
-                "at.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("compareheader") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Compare Header Info \n\n"
-                "    <inputfile1>\n"
-                "    <inputfile2>\n"
-                "    <Full File Info 1/yes-0/no>\n"
-                "    <OutputFile>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will compare the file and "
-                "frame headers of two IVF or WEBM files.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("displayheader") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Display Header Info \n\n"
-                "    <Input File>\n"
-                "    <Full File Info 1/yes-0/no>\n"
-                "    <Optional Outputfile>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will display the file and "
-                "frame headers of an IVF or WEBM file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("dispkeyframes") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Display Key Frames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will display the location "
-                "of key frames within an IVF or WEBM file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("dispresizedframes") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Display Resized Frames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will display the location "
-                "of resized frames within an IVF or WEBM file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("dispvisibleframes") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Display Visible Frames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will display the location "
-                "of visible frames within an IVF or WEBM file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("dispaltrefframes") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Display AltRef Frames \n\n"
-                "    <Input IVF File>\n"
-                "    <Write to file 0 | 1 Print to screen>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will display the location "
-                "of alternate reference frames within an IVF or WEBM file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-
-    if (InputString.compare("cutclip") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Cut Clip\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Starting Frame>\n"
-                "    <Ending Frame>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will cut a portion of an "
-                "IVF or Y4M file starting at Starting Frame and ending at "
-                "Ending Frame to a new output file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("pasteclip") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Paste Clip\n\n"
-                "    <Inputfile1>\n"
-                "    <Inputfile2>\n"
-                "    <Outputfile>\n"
-                "    <First Paste Frame>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will paste the contents of "
-                "Inputfile2 into Inputfile1 starting at Inputfile1's First "
-                "Paste Frame to a new output file for raw IVF and Y4M files.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("playdecivf") == 0)
-    {
-#if defined(_WIN32)
-        tprintf(PRINT_STD,
-                "\n  Play Dec IVF\n\n"
-                "    <Input File>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will convert an "
-                "uncompressed IVF or Y4M file to a raw YUV file and play it "
-                "using tmnplay or mplayer.  Please be sure to put a copy of "
-                "tmnplay in your C:\\bin directory.  Tmnplay can be found in "
-                "the TestClips directory.");
-
-#else
-        tprintf(PRINT_STD, "\n  PlayDecIVF");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This Tool will convert an "
-                "uncompressed ivf file to a raw yuv file and play it using "
-                "mplayer.  To install mplayer open a command console and "
-                "type:");
-
-        tprintf(PRINT_STD, "\n    svn checkout svn://svn.mplayerhq.hu/mplayer/"
-            "trunk mplayer\n"
-                "    cd mplayer\n"
-                "    ./configure\n"
-                "    make\n"
-                "    make install\n");
-
-        tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("playcompivf") == 0)
-    {
-#if defined(_WIN32)
-        tprintf(PRINT_STD,
-                "\n  Play Comp IVF\n\n"
-                "    <Input File>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will convert a compressed "
-                "IVF or WEBM file to a raw YUV file and play it using tmnplay "
-                "or mplayer.  Please be sure to put a copy of tmnplay in your "
-                "C:\\bin directory.  Tmnplay can be found in the TestClips "
-                "directory.");
-
-#else
-        tprintf(PRINT_STD, "\n  PlayCompIVF");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This Tool will convert a compressed "
-                "ivf file to a raw yuv file and play it using mplayer.  To "
-                "install mplayer open a command console and type:");
-
-        tprintf(PRINT_STD, "\n    svn checkout svn://svn.mplayerhq.hu/mplayer/"
-            "trunk mplayer\n"
-                "    cd mplayer\n"
-                "    ./configure\n"
-                "    make\n"
-                "    make install\n");
-
-        tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("createsampletextfiles") == 0)
-    {
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will create sample text "
-                "files.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("printversion") == 0)
-    {
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will print the version of "
-                "VP8 being used by the tester.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("randparfile") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Random Par File\n\n"
-                "    <Output Par File>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will create a valid VP8 "
-                "random parameter file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("randcompress") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Random Compress\n\n"
-                "    <Input File>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will create a compression "
-                "using random parameters for an input IVF or Y4M file.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("graphpsnr") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  Graph PSNR\n\n"
-                "    <Inputfile 1>\n"
-                "    <Starting Bit Rate>\n"
-                "    <Ending Bit Rate>\n"
-                "    <Bit Rate Step>\n"
-                "    <Optional - Par Input>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool creates a series of "
-                "compressions from user-input values for starting bit rate, "
-                "ending bit rate, and an increment. Output files are created, "
-                "and the utility computes and outputs the data rates and PSNRs "
-                "of the files.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("testvectorindex") == 0)
-    {
-        tprintf(PRINT_STD, "\n  TestVectorIndex\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This Utility makes use of the "
-                "TestVectorsIndividualRunsResults Directory to locate the first"
-                " report of a line being covered by a test vector and reports "
-                "relevant information about it.");
-
-        /*printf("\n  Valid Files to check include:\n"
-        "     alloccommon\n"
-        "     blockd\n"
-        "     dboolhuff\n"
-        "     decodemv\n"
-        "     decodframe\n"
-        "     demode\n"
-        "     dequantize\n"
-        "     detokenize\n"
-        "     dsystemdependent\n"
-        "     entropy\n"
-        "     entropymode\n"
-        "     extend\n"
-        "     filter_c\n"
-        "     findnearmv\n"
-        "     getproc\n"
-        "     idctllm\n"
-        "     loopfilter\n"
-        "     mbpitch\n"
-        "     onyxd_if\n"
-        "     postproc\n"
-        "     quant_common\n"
-        "     recon\n"
-        "     reconinter\n"
-        "     reconintra\n"
-        "     reconintra4x4\n"
-        "     Segmentation_common\n"
-        "     swapyv12buffer\n"
-        "     systemdependent\n"
-        "     textblit\n"
-        "     threading\n"
-        "     treecoder\n"
-        "     treereader\n"
-        "     yv12config\n"
-        "     yv12extend\n\n");*/
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxenc") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-                "  VPXEnc\n");
+            "  VPXEnc\n");
 
         if (printSummary)
             vpxt_formated_print(TOLPRT, "VPXEnc.exe clone");
@@ -3268,15 +2601,14 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)
 #if !defined(_WIN32)
         else
             tprintf(PRINT_STD, "\n");
-
 #endif
         return 1;
     }
 
-    if (InputString.compare("vpxdec") == 0)
+    if (input_str.compare("vpxdec") == 0)
     {
         tprintf(PRINT_STD,
-                "\n  VPXDec\n");
+            "\n  VPXDec\n");
 
         if (printSummary)
             vpxt_formated_print(TOLPRT, "VPXDec.exe clone");
@@ -3284,155 +2616,27 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)
 #if !defined(_WIN32)
         else
             tprintf(PRINT_STD, "\n");
-
 #endif
         return 1;
     }
 
-    if (InputString.compare("croprawclip") == 0)
+    if (input_str.compare("vpxtenc") == 0)
     {
         tprintf(PRINT_STD,
-                "\n  Crop Raw Clip\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <xoffset>\n"
-                "    <yoffset>\n"
-                "    <New Frame Width>\n"
-                "    <New Frame Height>\n"
-                "    <Raw/IVF 0-Raw 1-IVF>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in a raw IVF or "
-                "Y4M file and produce a cropped raw IVF or Y4M file using the "
-                "input size parameters.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("padrawclip") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Pad Raw Clip\n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <New Frame Width>\n"
-                "    <New Frame Height>\n"
-                "    <Raw/IVF 0-Raw 1-IVF>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will take in a raw IVF or "
-                "Y4M file and produce a padded raw IVF or Y4M file using the "
-                "input size parameters.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxencpar") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Convert Parameter File to vpxenc settings\n\n"
-                "     <input core file>\n"
-                "     <input api file>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "This tool will convert tester "
-            "parameters into vpxenc parameters.");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("writeivffileheader") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Write IVF File Header\n\n"
-                "     <Output File>\n"
-                "     <Width>\n"
-                "     <Height>\n"
-                "     <Scale>\n"
-                "     <Rate>\n"
-                "     <Length>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "");
-
-        return 1;
-    }
-
-    if (InputString.compare("writeivfframeheader") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Write IVF Frame Header\n\n"
-                "     <Output File>\n"
-                "     <time Stamp>\n"
-                "     <Frame Size>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "");
-
-        return 1;
-    }
-
-    if (InputString.compare("writeframedata") == 0)
-    {
-        tprintf(PRINT_STD,
-                "\n  Write IVF Frame Data\n\n"
-                "     <Input File>\n"
-                "     <Output File>\n"
-                "     <Frame Size>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "");
-
-        return 1;
-    }
-
-    if (InputString.compare("multiresenc") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-            "  Multi Resolution Encoder\n\n"
-            "    <Width>\n"
-            "    <Height>\n"
+            "\n  VPXT Compress\n\n"
+            "    <(1)Normal Compress |(2)TimeCompress>\n"
             "    <Input File>\n"
-            "    <Output 1>\n"
-            "    <Output 2>\n"
-            "    <Output 3>\n");
-
-        if (printSummary)
-            vpxt_formated_print(TOLPRT, "");
-
-#if !defined(_WIN32)
-        else
-            tprintf(PRINT_STD, "\n");
-#endif
-        return 1;
-    }
-
-    if (InputString.compare("vpxtmultiresenc") == 0)
-    {
-        tprintf(PRINT_STD, "\n"
-            "  VPXT Multi Resolution Encoder\n\n"
-            "    <Input File>\n"
-            "    <Output>\n"
+            "    <outputfile>\n"
             "    <Bit Rate>\n"
-            "    <Encode Format - webm/ivf>\n");
+            "    <Mode>\n"
+            "    <Encode Format - webm/ivf>\n"
+            "    <Optional - Parameter File>\n");
 
         if (printSummary)
-            vpxt_formated_print(TOLPRT, "");
+            vpxt_formated_print(TOLPRT, "This tool will take in a raw IVF or "
+            "Y4M file and produce an encoded IVF or WEBM file using the "
+            "given mode and bitrate. Default encode settings can be "
+            "overridden by specifying a parameter file.");
 
 #if !defined(_WIN32)
         else
@@ -3441,7 +2645,41 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)
         return 1;
     }
 
-    if (InputString.compare("vpxttempscaleenc") == 0)
+    if (input_str.compare("vpxtdec") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT Decompress\n\n"
+            "    <Input File>\n"
+            "    <Output File>\n"
+            "    <Decode Format - y4m/ivf>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
+            "or WEBM file and output a decoded IVF or Y4M file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtempscaleenc") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  VPX Temp Scale Enc\n\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "vp8_scalable_patterns.exe clone");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxttempscaleenc") == 0)
     {
         tprintf(PRINT_STD, "\n"
             "  VPXT Temp Scale Enc\n\n"
@@ -3465,332 +2703,1090 @@ int  vpxt_tool_help(const char *InputChar, int printSummary)
         return 1;
     }
 
+    if (input_str.compare("vpxmultiresenc") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  VPX Multi Resolution Encoder\n\n"
+            "    <Width>\n"
+            "    <Height>\n"
+            "    <Input File>\n"
+            "    <Output 1>\n"
+            "    <Output 2>\n"
+            "    <Output 3>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtmultiresenc") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  VPXT Multi Resolution Encoder\n\n"
+            "    <Input File>\n"
+            "    <Output>\n"
+            "    <Bit Rate>\n"
+            "    <Encode Format - webm/ivf>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtdecresz") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT Decompress Resize\n\n"
+            "    <Input File>\n"
+            "    <Output File>\n"
+            "    <Decode Format - y4m/ivf>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
+            "or WEBM file and output a decoded IVF or Y4M file making sure "
+            "to correctly scale up any resized encoded frames.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtdecpard") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT Decompress Partial Drops\n\n"
+            "    <Input File>\n"
+            "    <Output File>\n"
+            "    <Decode Format - y4m/ivf>\n"
+            "    <Parameter 1>\n"
+            "    <Parameter 2>\n"
+            "    <Mode (0-2)>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
+            "or WEBM file and output a decoded IVF or Y4M file with user "
+            "input partial drops.  The first parameter signifies the "
+            "numerator of the ratio of frames to drop for mode 0, the "
+            "starting frame for mode 1 and the percentage to randomly drop "
+            "for mode 2.  The second parameter signifies the denominator of"
+            " the ratio of frames to drop for mode 0, the last frame to "
+            "drop for mode 1 and the random seed for mode 2.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtdec2raw") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT Decompress to Raw \n\n"
+            "    <Input File>\n"
+            "    <outputfile>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in an encoded IVF "
+            "or WEBM file and output a decoded raw file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtdatarate") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT DataRate \n\n"
+            "    <Input File>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in an IVF or WEBM "
+            "file and compute its average, min, max, and file data rates.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtpsnr") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT PSNR\n\n"
+            "     <Source File>\n"
+            "     <Compressed File>\n"
+            "     <Run SSIM - 0|1>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will compute an encoded IVF "
+            "or WEBM file's PSNR using the encoded file's IVF or Y4M source"
+            " file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtpsnrdec") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT PSNR DEC\n\n"
+            "     <Source File>\n"
+            "     <Decoded Compressed File>\n"
+            "     <Run SSIM - 0|1>\n"
+            "     <Width    - optional>\n"
+            "     <Height   - optional>\n"
+            "     <SWAP UV  - optional>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will compute a decoded IVF "
+            "or WEBM file's PSNR using the encoded file's IVF or Y4M source"
+            " file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxtcheckpbm") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  VPXT Check PBM\n\n"
+            "     <Input File>\n"
+            "     <Bitrate         (kbps)>\n"
+            "     <Max Buffer Size (ms)>\n"
+            "     <Prebuffer Size  (ms)>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will run CheckPBM to ensure "
+            "a buffer underrun won't occur.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("raw2formatted") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Raw To Formatted\n\n"
+            "    <Input File>\n"
+            "    <OutPutDir>\n"
+            "    <IVF/Y4M>\n"
+            "    <Width>\n"
+            "    <Height>\n"
+            "    <FrameRate>\n"
+            "    <FourCC>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in a raw file and "
+            "produce a raw IVF or Y4M file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("formatted2raw") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Formatted To Raw \n\n"
+            "    <Input File>\n"
+            "    <Output File>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in an IVF or Y4M "
+            "file and produce a raw file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("formatted2rawframes") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Formatted To RawFrames\n\n"
+            "    <Input File>\n"
+            "    <OutPutDir>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in an IVF or Y4M "
+            "file and produce individual raw frames for each frame that "
+            "exists in a user-specified directory.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("combineindvframes") == 0)
+    {
+        tprintf(PRINT_STD, "\n  Combine Indv Frames");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will combine all individual "
+            "decoded frames in a directory into a single raw file in "
+            "numerical order.");
+
+        tprintf(PRINT_STD,
+            "\n"
+            "   Usage:\n"
+            "\n"
+            "    <Input directory>\n"
+            "    <Name Base>\n"
+            "    <File Extension - include .>\n"
+            "    <First Frame - Include preceding zeros>\n"
+            "    <Last  Frame - Include preceding zeros>\n"
+            "    <Output File>\n"
+            "\n"
+            "\n"
+            "     Example: \n"
+            "\n"
+            "       First File Name 1: img-720x480-0003.i420\n"
+            "       Last File Name 2: img-720x480-0223.i420\n"
+            "\n"
+            "       Input directory = directory files are located in\n"
+            "       Name Base = img-720x480-\n"
+            "       File Extension = .i420\n"
+            "       First Frame = 0003\n"
+            "       Last Frame = 0223\n"
+            "       Output File = Path to desired output file\n");
+
+#if !defined(_WIN32)
+        tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("compareenc") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Compare Enc\n\n"
+            "     <inputfile1>\n"
+            "     <inputfile2>\n"
+            "     <full 1/0>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will compare the video "
+            "content of two IVF or WEBM files and will display if they are "
+            "identical or, if they differ, the first frame they differ "
+            "at.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("compareheader") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Compare Header Info \n\n"
+            "    <inputfile1>\n"
+            "    <inputfile2>\n"
+            "    <Full File Info 1/yes-0/no>\n"
+            "    <OutputFile>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will compare the file and "
+            "frame headers of two IVF or WEBM files.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("displayheader") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Display Header Info \n\n"
+            "    <Input File>\n"
+            "    <Full File Info 1/yes-0/no>\n"
+            "    <Optional Outputfile>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will display the file and "
+            "frame headers of an IVF or WEBM file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("dispkeyframes") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Display Key Frames \n\n"
+            "    <Input IVF File>\n"
+            "    <Write to file 0 | 1 Print to screen>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will display the location "
+            "of key frames within an IVF or WEBM file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("dispresizedframes") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Display Resized Frames \n\n"
+            "    <Input IVF File>\n"
+            "    <Write to file 0 | 1 Print to screen>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will display the location "
+            "of resized frames within an IVF or WEBM file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("dispvisibleframes") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Display Visible Frames \n\n"
+            "    <Input IVF File>\n"
+            "    <Write to file 0 | 1 Print to screen>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will display the location "
+            "of visible frames within an IVF or WEBM file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("dispaltrefframes") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Display AltRef Frames \n\n"
+            "    <Input IVF File>\n"
+            "    <Write to file 0 | 1 Print to screen>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will display the location "
+            "of alternate reference frames within an IVF or WEBM file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("croprawclip") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Crop Raw Clip\n\n"
+            "    <Input File>\n"
+            "    <outputfile>\n"
+            "    <xoffset>\n"
+            "    <yoffset>\n"
+            "    <New Frame Width>\n"
+            "    <New Frame Height>\n"
+            "    <Raw/IVF 0-Raw 1-IVF>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in a raw IVF or "
+            "Y4M file and produce a cropped raw IVF or Y4M file using the "
+            "input size parameters.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("padrawclip") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Pad Raw Clip\n\n"
+            "    <Input File>\n"
+            "    <outputfile>\n"
+            "    <New Frame Width>\n"
+            "    <New Frame Height>\n"
+            "    <Raw/IVF 0-Raw 1-IVF>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will take in a raw IVF or "
+            "Y4M file and produce a padded raw IVF or Y4M file using the "
+            "input size parameters.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("cutclip") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Cut Clip\n\n"
+            "    <Input File>\n"
+            "    <outputfile>\n"
+            "    <Starting Frame>\n"
+            "    <Ending Frame>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will cut a portion of an "
+            "IVF or Y4M file starting at Starting Frame and ending at "
+            "Ending Frame to a new output file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("pasteclip") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Paste Clip\n\n"
+            "    <Inputfile1>\n"
+            "    <Inputfile2>\n"
+            "    <Outputfile>\n"
+            "    <First Paste Frame>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will paste the contents of "
+            "Inputfile2 into Inputfile1 starting at Inputfile1's First "
+            "Paste Frame to a new output file for raw IVF and Y4M files.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("playdecivf") == 0)
+    {
+#if defined(_WIN32)
+        tprintf(PRINT_STD,
+            "\n  Play Dec IVF\n\n"
+            "    <Input File>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will convert an "
+            "uncompressed IVF or Y4M file to a raw YUV file and play it "
+            "using tmnplay or mplayer.  Please be sure to put a copy of "
+            "tmnplay in your C:\\bin directory.  Tmnplay can be found in "
+            "the TestClips directory.");
+
+#else
+        tprintf(PRINT_STD, "\n  PlayDecIVF");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This Tool will convert an "
+            "uncompressed ivf file to a raw yuv file and play it using "
+            "mplayer.  To install mplayer open a command console and "
+            "type:");
+
+        tprintf(PRINT_STD, "\n    svn checkout svn://svn.mplayerhq.hu/mplayer/"
+            "trunk mplayer\n"
+            "    cd mplayer\n"
+            "    ./configure\n"
+            "    make\n"
+            "    make install\n");
+
+        tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("playcompivf") == 0)
+    {
+#if defined(_WIN32)
+        tprintf(PRINT_STD,
+            "\n  Play Comp IVF\n\n"
+            "    <Input File>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will convert a compressed "
+            "IVF or WEBM file to a raw YUV file and play it using tmnplay "
+            "or mplayer.  Please be sure to put a copy of tmnplay in your "
+            "C:\\bin directory.  Tmnplay can be found in the TestClips "
+            "directory.");
+
+#else
+        tprintf(PRINT_STD, "\n  PlayCompIVF");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This Tool will convert a compressed "
+            "ivf file to a raw yuv file and play it using mplayer.  To "
+            "install mplayer open a command console and type:");
+
+        tprintf(PRINT_STD, "\n    svn checkout svn://svn.mplayerhq.hu/mplayer/"
+            "trunk mplayer\n"
+            "    cd mplayer\n"
+            "    ./configure\n"
+            "    make\n"
+            "    make install\n");
+
+        tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("createsampletextfiles") == 0)
+    {
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will create sample text "
+            "files.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("printversion") == 0)
+    {
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will print the version of "
+            "VP8 being used by the tester.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("vpxencpar") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Convert Parameter File to vpxenc settings\n\n"
+            "     <input core file>\n"
+            "     <input api file>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will convert tester "
+            "parameters into vpxenc parameters.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("randparfile") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Random Par File\n\n"
+            "    <Output Par File>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will create a valid VP8 "
+            "random parameter file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("randcompress") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Random Compress\n\n"
+            "    <Input File>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool will create a compression "
+            "using random parameters for an input IVF or Y4M file.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    if (input_str.compare("graphpsnr") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Graph PSNR\n\n"
+            "    <Inputfile 1>\n"
+            "    <Starting Bit Rate>\n"
+            "    <Ending Bit Rate>\n"
+            "    <Bit Rate Step>\n"
+            "    <Optional - Par Input>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "This tool creates a series of "
+            "compressions from user-input values for starting bit rate, "
+            "ending bit rate, and an increment. Output files are created, "
+            "and the utility computes and outputs the data rates and PSNRs "
+            "of the files.");
+
+#if !defined(_WIN32)
+        else
+            tprintf(PRINT_STD, "\n");
+#endif
+        return 1;
+    }
+
+    /////////////////////////////////Hidden Commands////////////////////////////////
+
+    if (input_str.compare("copyalltxtfiles") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Copy All Txt Files\n\n"
+            "    <Input directory>\n"
+            "    <Output directory>\n"
+            );
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+    if (input_str.compare("dispdropedframes") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Display Dropped Frames \n\n"
+            "    <Input IVF File>\n"
+            "    <Write to file 1 | 0 Print to screen>\n"
+            "\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+    if (input_str.compare("dispframedata") == 0)
+    {
+        tprintf(PRINT_STD, "\n"
+            "  Display Frame Data \n\n"
+            "    <Input IVF File>\n"
+            "\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+
+    if (input_str.compare("writeivffileheader") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Write IVF File Header\n\n"
+            "     <Output File>\n"
+            "     <Width>\n"
+            "     <Height>\n"
+            "     <Scale>\n"
+            "     <Rate>\n"
+            "     <Length>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+
+    if (input_str.compare("writeivfframeheader") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Write IVF Frame Header\n\n"
+            "     <Output File>\n"
+            "     <time Stamp>\n"
+            "     <Frame Size>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
+
+    if (input_str.compare("writeframedata") == 0)
+    {
+        tprintf(PRINT_STD,
+            "\n  Write IVF Frame Data\n\n"
+            "     <Input File>\n"
+            "     <Output File>\n"
+            "     <Frame Size>\n");
+
+        if (printSummary)
+            vpxt_formated_print(TOLPRT, "");
+
+        return 1;
+    }
 
     return 0;
 }
-void format_summary(const char *InputFileNameCharAr)
+void format_summary(const char *input_file_name_char)
 {
     tprintf(PRINT_STD, "\n Formating Summary file.\n");
 
-    std::string input_file_name = InputFileNameCharAr;
+    std::string input_file_name = input_file_name_char;
 
-    std::string SummaryByTestOutput;
-    vpxt_remove_file_extension(input_file_name.c_str(), SummaryByTestOutput);
-    SummaryByTestOutput += "expanded.txt";
+    std::string sum_by_test_output;
+    vpxt_remove_file_extension(input_file_name.c_str(), sum_by_test_output);
+    sum_by_test_output += "expanded.txt";
 
-    std::string TestsRun;
-    vpxt_folder_name(InputFileNameCharAr, &TestsRun);
-    TestsRun += "tests_run.txt";
+    std::string tests_run;
+    vpxt_folder_name(input_file_name_char, &tests_run);
+    tests_run += "tests_run.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(SummaryByTestOutput.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(sum_by_test_output.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open summary out put file: %s\n",
-            SummaryByTestOutput.c_str());
+            sum_by_test_output.c_str());
         return;
     }
 
-    std::string LineBuffer;
-    std::string TestTrackerName;
-    std::string TestTrackerResult;
+    std::string line_buf;
+    std::string test_track_name;
+    std::string test_track_result;
 
-    int TestTracker = 1;
-    int ResultTracker = 0;
+    int test_track = 1;
+    int result_track = 0;
 
     //loop through all existing tests alphabeticaly
-    while (TestTracker <= MAXTENUM)
+    while (test_track <= MAXTENUM)
     {
-        ResultTracker = 0;
+        result_track = 0;
 
-        bool PrintTestHeader1 = 1;
+        bool print_test_header_1 = 1;
 
         //This iterates through all possible tests run using the test tracker
         //names to specify which was run the number is only to drive
         //The iteration through and does not represent test number
-        if (TestTracker == AlWDFNUM)
-            TestTrackerName = "Test_Allow_Drop_Frames";
+        if (test_track == AlWDFNUM)
+            test_track_name = "Test_Allow_Drop_Frames";
 
-        if (TestTracker == ALWLGNUM)
-            TestTrackerName = "Test_Allow_Lag";
+        if (test_track == ALWLGNUM)
+            test_track_name = "Test_Allow_Lag";
 
-        if (TestTracker == ALWSRNUM)
-            TestTrackerName = "Test_Allow_Spatial_Resampling";
+        if (test_track == ALWSRNUM)
+            test_track_name = "Test_Allow_Spatial_Resampling";
 
-        if (TestTracker == ARNRTNUM)
-            TestTrackerName = "Test_Arnr";
+        if (test_track == ARNRTNUM)
+            test_track_name = "Test_Arnr";
 
-        if (TestTracker == AUTKFNUM)
-            TestTrackerName = "Test_Auto_Key_Frame";
+        if (test_track == AUTKFNUM)
+            test_track_name = "Test_Auto_Key_Frame";
 
-        if (TestTracker == BUFLVNUM)
-            TestTrackerName = "Test_Buffer_Level";
+        if (test_track == BUFLVNUM)
+            test_track_name = "Test_Buffer_Level";
 
-        if (TestTracker == CPUDENUM)
-            TestTrackerName = "Test_Change_Cpu_Dec";
+        if (test_track == CPUDENUM)
+            test_track_name = "Test_Change_Cpu_Dec";
 
-        if (TestTracker == CPUENNUM)
-            TestTrackerName = "Test_Change_Cpu_Enc";
+        if (test_track == CPUENNUM)
+            test_track_name = "Test_Change_Cpu_Enc";
 
-        if (TestTracker == CONQUNUM)
-            TestTrackerName = "Test_Constrained_Quality";
+        if (test_track == CONQUNUM)
+            test_track_name = "Test_Constrained_Quality";
 
-        if (TestTracker == COPSRNUM)
-            TestTrackerName = "Test_Copy_Set_Reference";
+        if (test_track == COPSRNUM)
+            test_track_name = "Test_Copy_Set_Reference";
 
-        if (TestTracker == DTARTNUM)
-            TestTrackerName = "Test_Data_Rate";
+        if (test_track == DTARTNUM)
+            test_track_name = "Test_Data_Rate";
 
-        if (TestTracker == DBMRLNUM)
-            TestTrackerName = "Test_Debug_Matches_Release";
+        if (test_track == DBMRLNUM)
+            test_track_name = "Test_Debug_Matches_Release";
 
-        if (TestTracker == DFWMWNUM)
-            TestTrackerName = "Test_Drop_Frame_Watermark";
+        if (test_track == DFWMWNUM)
+            test_track_name = "Test_Drop_Frame_Watermark";
 
-        if (TestTracker == ENCBONUM)
-            TestTrackerName = "Test_Encoder_Break_Out";
+        if (test_track == ENCBONUM)
+            test_track_name = "Test_Encoder_Break_Out";
 
-        if (TestTracker == ERRCONUM)
-            TestTrackerName = "Test_Error_Concealment";
+        if (test_track == ERRCONUM)
+            test_track_name = "Test_Error_Concealment";
 
-        if (TestTracker == ERRMWNUM)
-            TestTrackerName = "Test_Error_Resolution";
+        if (test_track == ERRMWNUM)
+            test_track_name = "Test_Error_Resolution";
 
-        if (TestTracker == EXTFINUM)
-            TestTrackerName = "Test_Extra_File";
+        if (test_track == EXTFINUM)
+            test_track_name = "Test_Extra_File";
 
-        if (TestTracker == FIXDQNUM)
-            TestTrackerName = "Test_Fixed_Quantizer";
+        if (test_track == FIXDQNUM)
+            test_track_name = "Test_Fixed_Quantizer";
 
-        if (TestTracker == FKEFRNUM)
-            TestTrackerName = "Test_Force_Key_frame";
+        if (test_track == FKEFRNUM)
+            test_track_name = "Test_Force_Key_frame";
 
-        if (TestTracker == FRSZTNUM)
-            TestTrackerName = "Test_Frame_Size";
+        if (test_track == FRSZTNUM)
+            test_track_name = "Test_Frame_Size";
 
-        if (TestTracker == GQVBQNUM)
-            TestTrackerName = "Test_Good_Vs_Best";
+        if (test_track == GQVBQNUM)
+            test_track_name = "Test_Good_Vs_Best";
 
-        if (TestTracker == LGIFRNUM)
-            TestTrackerName = "Test_Lag_In_Frames";
+        if (test_track == LGIFRNUM)
+            test_track_name = "Test_Lag_In_Frames";
 
-        if (TestTracker == MAXQUNUM)
-            TestTrackerName = "Test_Max_Quantizer";
+        if (test_track == MAXQUNUM)
+            test_track_name = "Test_Max_Quantizer";
 
-        if (TestTracker == MEML1NUM)
-            TestTrackerName = "Test_Mem_Leak";
+        if (test_track == MEML1NUM)
+            test_track_name = "Test_Mem_Leak";
 
-        if (TestTracker == MEML2NUM)
-            TestTrackerName = "Test_Mem_Leak2";
+        if (test_track == MEML2NUM)
+            test_track_name = "Test_Mem_Leak2";
 
-        if (TestTracker == MINQUNUM)
-            TestTrackerName = "Test_Min_Quantizer";
+        if (test_track == MINQUNUM)
+            test_track_name = "Test_Min_Quantizer";
 
-        if (TestTracker == MULRENUM)
-            TestTrackerName = "Test_Multiple_Resolution_Encode";
+        if (test_track == MULRENUM)
+            test_track_name = "Test_Multiple_Resolution_Encode";
 
-        if (TestTracker == MULTDNUM)
-            TestTrackerName = "Test_Multithreaded_Dec";
+        if (test_track == MULTDNUM)
+            test_track_name = "Test_Multithreaded_Dec";
 
-        if (TestTracker == MULTENUM)
-            TestTrackerName = "Test_Multithreaded_Enc";
+        if (test_track == MULTENUM)
+            test_track_name = "Test_Multithreaded_Enc";
 
-        if (TestTracker == NVOPSNUM)
-            TestTrackerName = "Test_New_Vs_Old_Psnr";
+        if (test_track == NVOPSNUM)
+            test_track_name = "Test_New_Vs_Old_Psnr";
 
-        if (TestTracker == NVOTSNUM)
-            TestTrackerName = "Test_New_Vs_Old_Temp_Scale";
+        if (test_track == NVOTSNUM)
+            test_track_name = "Test_New_Vs_Old_Temp_Scale";
 
-        if (TestTracker == NVOECPTK)
-            TestTrackerName = "Test_New_Vs_Old_Enc_Cpu_Tick";
+        if (test_track == NVOECPTK)
+            test_track_name = "Test_New_Vs_Old_Enc_Cpu_Tick";
 
-        if (TestTracker == NOISENUM)
-            TestTrackerName = "Test_Noise_Sensitivity";
+        if (test_track == NOISENUM)
+            test_track_name = "Test_Noise_Sensitivity";
 
-        if (TestTracker == OV2PSNUM)
-            TestTrackerName = "Test_One_Pass_Vs_Two_Pass";
+        if (test_track == OV2PSNUM)
+            test_track_name = "Test_One_Pass_Vs_Two_Pass";
 
-        if (TestTracker == PLYALNUM)
-            TestTrackerName = "Test_Play_Alternate";
+        if (test_track == PLYALNUM)
+            test_track_name = "Test_Play_Alternate";
 
-        if (TestTracker == POSTPNUM)
-            TestTrackerName = "Test_Post_Processor";
+        if (test_track == POSTPNUM)
+            test_track_name = "Test_Post_Processor";
 
-        if (TestTracker == RECBFNUM)
-            TestTrackerName = "Test_Reconstruct_Buffer";
+        if (test_track == RECBFNUM)
+            test_track_name = "Test_Reconstruct_Buffer";
 
-        if (TestTracker == RSDWMNUM)
-            TestTrackerName = "Test_Resample_Down_Watermark";
+        if (test_track == RSDWMNUM)
+            test_track_name = "Test_Resample_Down_Watermark";
 
-        if (TestTracker == SPEEDNUM)
-            TestTrackerName = "Test_Speed";
+        if (test_track == SPEEDNUM)
+            test_track_name = "Test_Speed";
 
-        if (TestTracker == TMPSCNUM)
-            TestTrackerName = "Test_Test_Vector";
+        if (test_track == TMPSCNUM)
+            test_track_name = "Test_Test_Vector";
 
-        if (TestTracker == TVECTNUM)
-            TestTrackerName = "Test_Temporal_Scalability";
+        if (test_track == TVECTNUM)
+            test_track_name = "Test_Temporal_Scalability";
 
-        if (TestTracker == TTVSFNUM)
-            TestTrackerName = "Test_Thirtytwo_Vs_Sixtyfour";
+        if (test_track == TTVSFNUM)
+            test_track_name = "Test_Thirtytwo_Vs_Sixtyfour";
 
-        if (TestTracker == TV2BTNUM)
-            TestTrackerName = "Test_Two_Pass_Vs_Two_Pass_Best";
+        if (test_track == TV2BTNUM)
+            test_track_name = "Test_Two_Pass_Vs_Two_Pass_Best";
 
-        if (TestTracker == UNDSHNUM)
-            TestTrackerName = "Test_Undershoot";
+        if (test_track == UNDSHNUM)
+            test_track_name = "Test_Undershoot";
 
-        if (TestTracker == VERSINUM)
-            TestTrackerName = "Test_Version";
+        if (test_track == VERSINUM)
+            test_track_name = "Test_Version";
 
-        if (TestTracker == VERSINUM)
-            TestTrackerName = "Test_Vpx_Matches_Int";
+        if (test_track == VERSINUM)
+            test_track_name = "Test_Vpx_Matches_Int";
 
-        if (TestTracker == WMLMMNUM)
-            TestTrackerName = "Test_Win_Lin_Mac_Match";
+        if (test_track == WMLMMNUM)
+            test_track_name = "Test_Win_Lin_Mac_Match";
 
-        int PassedTrack = 0;
-        int FailedTrack = 0;
-        int IndeterminateTrack = 0;
-        int SeeComboRunLogTrack = 0;
-        int SeePSNRLogTrack = 0;
-        int RandomTestCompletedTrack = 0;
-        int CompressionMadeTrack = 0;
-        int ErrorFileMismatchTrack = 0;
-        int TestNotSupportedTrack = 0;
-        int MinTestPassed = 0;
+        int track_passed = 0;
+        int track_failed = 0;
+        int track_indter = 0;
+        int track_combo_run = 0;
+        int track_psnr_log = 0;
+        int track_rand_test = 0;
+        int track_comp_made = 0;
+        int track_err_file_mismatch = 0;
+        int track_test_not_supported = 0;
+        int track_min_pass = 0;
 
         //loop though all possible results
-        while (ResultTracker < 13)
+        while (result_track < 13)
         {
-            if (ResultTracker == 1)
-                TestTrackerResult = "Passed";
+            if (result_track == TEST_PASSED)
+                test_track_result = "Passed";
 
-            if (ResultTracker == 0)
-                TestTrackerResult = "Failed";
+            if (result_track == TEST_FAILED)
+                test_track_result = "Failed";
 
-            if (ResultTracker == 2)
-                TestTrackerResult = "Indeterminate";
+            if (result_track == TEST_INDT)
+                test_track_result = "Indeterminate";
 
-            if (ResultTracker == 3)
-                TestTrackerResult = "SeeComboRunLog";
+            if (result_track == TEST_COMBO)
+                test_track_result = "SeeComboRunLog";
 
-            if (ResultTracker == 4)
-                TestTrackerResult = "SeePSNRLog";
+            if (result_track == TEST_PSNRL)
+                test_track_result = "SeePSNRLog";
 
-            if (ResultTracker == 5)
-                TestTrackerResult = "RandomTestCompleted";
+            if (result_track == TEST_RANDT)
+                test_track_result = "RandomTestCompleted";
 
-            if (ResultTracker == 6)
-                TestTrackerResult = "";
+            if (result_track == TEST_ERROR)
+                test_track_result = "";
 
-            if (ResultTracker == 7)
-                TestTrackerResult = "";
+            if (result_track == TEST_MINPA)
+                test_track_result = "track_min_pass";
 
-            if (ResultTracker == 8)
-                TestTrackerResult = "MinTestPassed";
+            if (result_track == TEST_COMPM)
+                test_track_result = "CompressionMade";
 
-            if (ResultTracker == 9)
-                TestTrackerResult = "";
+            if (result_track == TEST_ERRFM)
+                test_track_result = "ErrorFileMismatch";
 
-            if (ResultTracker == 10)
-                TestTrackerResult = "CompressionMade";
+            if (result_track == TEST_TSTNS)
+                test_track_result = "TestNotSupported";
 
-            if (ResultTracker == 11)
-                TestTrackerResult = "ErrorFileMismatch";
+            std::fstream format_summary_by_test_file;
+            format_summary_by_test_file.open(input_file_name.c_str());
 
-            if (ResultTracker == 12)
-                TestTrackerResult = "TestNotSupported";
-
-            std::fstream FormatSummaryByTestFile;
-            FormatSummaryByTestFile.open(input_file_name.c_str());
-
-            if (!FormatSummaryByTestFile)
+            if (!format_summary_by_test_file)
             {
                 tprintf(PRINT_STD, "Cannot open input file.");
                 return;
             }
 
             int p = 0;
-            bool PrintTestHeader2 = 1;
+            bool print_test_header_2 = 1;
 
             //read in and throw away header
             while (p < 11)
             {
-                //FormatSummaryByTestFile.getline(buffer, 1024);
-                getline(FormatSummaryByTestFile, LineBuffer);
+                //format_summary_by_test_file.getline(buffer, 1024);
+                getline(format_summary_by_test_file, line_buf);
                 p = p + 1;
             }
 
-            while (!FormatSummaryByTestFile.eof() && LineBuffer[0] != '-')
+            while (!format_summary_by_test_file.eof() && line_buf[0] != '-')
             {
-                getline(FormatSummaryByTestFile, LineBuffer);
+                getline(format_summary_by_test_file, line_buf);
 
-                if (LineBuffer.length() > 60)
+                if (line_buf.length() > 60)
                 {
                     unsigned int n = 5;
 
-                    while (n < 39 && LineBuffer[n] != ' ')
+                    while (n < 39 && line_buf[n] != ' ')
                         n = n + 1;
 
-                    std::string TestReadString = LineBuffer.substr(5, n - 5);
+                    std::string test_read_string = line_buf.substr(5, n - 5);
 
                     n = 62;
 
-                    while (n < 194 && LineBuffer[n] != ' ' != 0 && n <
-                        LineBuffer.length())
+                    while (n < 194 && line_buf[n] != ' ' != 0 && n <
+                        line_buf.length())
                         n = n + 1;
 
-                    std::string TestResultString = LineBuffer.substr(62, n -
+                    std::string test_result_string = line_buf.substr(62, n -
                         62);
 
                     //check to see if names and states match up
-                    if (TestReadString.compare(TestTrackerName) == 0 &&
-                        TestResultString.compare(TestTrackerResult) == 0)
+                    if (test_read_string.compare(test_track_name) == 0 &&
+                        test_result_string.compare(test_track_result) == 0)
                     {
-                        if (ResultTracker == 1)
-                            PassedTrack = PassedTrack + 1;
+                        if (result_track == 1)
+                            track_passed = track_passed + 1;
 
-                        if (ResultTracker == 0)
-                            FailedTrack = FailedTrack + 1;
+                        if (result_track == 0)
+                            track_failed = track_failed + 1;
 
-                        if (ResultTracker == 2)
-                            IndeterminateTrack = IndeterminateTrack + 1;
+                        if (result_track == 2)
+                            track_indter = track_indter + 1;
 
-                        if (ResultTracker == 3)
-                            SeeComboRunLogTrack = SeeComboRunLogTrack + 1;
+                        if (result_track == 3)
+                            track_combo_run = track_combo_run + 1;
 
-                        if (ResultTracker == 4)
-                            SeePSNRLogTrack = SeePSNRLogTrack + 1;
+                        if (result_track == 4)
+                            track_psnr_log = track_psnr_log + 1;
 
-                        if (ResultTracker == 8)
-                            MinTestPassed = MinTestPassed + 1;
+                        if (result_track == 8)
+                            track_min_pass = track_min_pass + 1;
 
-                        if (ResultTracker == 10)
-                            CompressionMadeTrack = CompressionMadeTrack + 1;
+                        if (result_track == 10)
+                            track_comp_made = track_comp_made + 1;
 
-                        if (ResultTracker == 11)
-                            ErrorFileMismatchTrack = ErrorFileMismatchTrack + 1;
+                        if (result_track == 11)
+                            track_err_file_mismatch = track_err_file_mismatch +
+                            1;
 
-                        if (ResultTracker == 12)
-                            TestNotSupportedTrack = TestNotSupportedTrack + 1;
+                        if (result_track == 12)
+                            track_test_not_supported = track_test_not_supported
+                            + 1;
 
-                        if (PrintTestHeader1)
+                        if (print_test_header_1)
                         {
                             //print test header
-                            int leftLineSize = 75 - (TestReadString.size() / 2);
+                            int left_line_size = 75 - (test_read_string.size() /
+                                2);
                             int counter = 0;
 
                             fprintf(stderr, "\n\n");
 
-                            while (counter < leftLineSize)
+                            while (counter < left_line_size)
                             {
                                 fprintf(stderr, "=");
                                 counter = counter + 1;
                             }
 
-                            fprintf(stderr, "%s", TestReadString.c_str());
-                            counter = counter + TestReadString.size();
+                            fprintf(stderr, "%s", test_read_string.c_str());
+                            counter = counter + test_read_string.size();
 
                             while (counter < 150)
                             {
@@ -3799,302 +3795,224 @@ void format_summary(const char *InputFileNameCharAr)
                             }
 
                             fprintf(stderr, "\n");
-                            PrintTestHeader1 = 0;
+                            print_test_header_1 = 0;
                         }
 
-                        if (PrintTestHeader2)
+                        if (print_test_header_2)
                         {
                             fprintf(stderr, "\n %s:\n\n",
-                                TestResultString.c_str());
+                                test_result_string.c_str());
                             fprintf(stderr, "%4s %-32s%-25s%s  "
                                 "Test Settings\n\n", "#", "            Test "
                                 "Name" , "     Date and time", "Status");
-                            PrintTestHeader2 = 0;
+                            print_test_header_2 = 0;
                         }
 
-                        fprintf(stderr, "%s ", LineBuffer.c_str());
+                        fprintf(stderr, "%s ", line_buf.c_str());
 
                         ////Get the correct Test Input settings and output//////
                         ////them to summary.////////////////////////////////////
-                        std::fstream TestsRunFile;
-                        TestsRunFile.open(TestsRun.c_str(), std::fstream::in);
+                        std::fstream tests_run_file;
+                        tests_run_file.open(tests_run.c_str(),
+                            std::fstream::in);
 
-                        if (!TestsRunFile)
+                        if (!tests_run_file)
                         {
-                            TestsRunFile.close();
-                            FormatSummaryByTestFile.close();
+                            tests_run_file.close();
+                            format_summary_by_test_file.close();
                             fclose(fp);
                             tprintf(PRINT_BTH, "\nFile creation Canceled: "
-                                "Cannot find %s\n", TestsRun.c_str());
+                                "Cannot find %s\n", tests_run.c_str());
                             return;
                         }
 
-                        int TestRunNumInt = 0;
-                        std::stringstream TestRunNum(LineBuffer.substr(0, 4));
-                        TestRunNum >> TestRunNumInt;
+                        int test_run_num_int = 0;
+                        std::stringstream TestRunNum(line_buf.substr(0, 4));
+                        TestRunNum >> test_run_num_int;
 
-                        int TestNumberCur = -1;
+                        int test_num_cur = -1;
 
-                        while (!TestsRunFile.eof() && TestNumberCur !=
-                            TestRunNumInt)
+                        while (!tests_run_file.eof() && test_num_cur !=
+                            test_run_num_int)
                         {
-                            std::string TestsRunString;
-                            getline(TestsRunFile, TestsRunString);
-                            std::string test = TestsRunString.substr(0, 1);
+                            std::string tests_run_string;
+                            getline(tests_run_file, tests_run_string);
+                            std::string test = tests_run_string.substr(0, 1);
 
-                            if (TestsRunString[0] == '+')
-                                TestNumberCur = TestNumberCur + 1;
+                            if (tests_run_string[0] == '+')
+                                test_num_cur = test_num_cur + 1;
 
-                            if (TestNumberCur == TestRunNumInt)
+                            if (test_num_cur == test_run_num_int)
                             {
-                                TestsRunString[0] = ' ';
+                                tests_run_string[0] = ' ';
                                 unsigned int t = 0;
 
-                                while (t < TestsRunString.length())
+                                while (t < tests_run_string.length())
                                 {
-                                    if (TestsRunString[t] == '@')
-                                        TestsRunString[t] = ' ';
+                                    if (tests_run_string[t] == '@')
+                                        tests_run_string[t] = ' ';
 
                                     t = t + 1;
                                 }
 
-                                fprintf(stderr, "%s\n", TestsRunString.c_str());
+                                fprintf(stderr, "%s\n", tests_run_string.c_str());
                             }
                         }
 
-                        TestsRunFile.close();
+                        tests_run_file.close();
                         ////////////////////////////////////////////////////////
                     }
                 }
             }
 
-            FormatSummaryByTestFile.close();
-            ResultTracker = ResultTracker + 1;
+            format_summary_by_test_file.close();
+            result_track = result_track + 1;
         }
 
-        int PassorFailExist = 0;
-        int CompressExist = 0;
-        int PrintOutput = 0;
+        int pass_or_fail_exist = 0;
+        int compress_exist = 0;
+        int print_output = 0;
 
-        if (PassedTrack != 0)
+        if (track_passed != 0)
         {
-            PassorFailExist = 1;
-            PrintOutput = 1;
+            pass_or_fail_exist = 1;
+            print_output = 1;
         }
 
-        if (FailedTrack != 0)
+        if (track_failed != 0)
         {
-            PassorFailExist = 1;
-            PrintOutput = 1;
+            pass_or_fail_exist = 1;
+            print_output = 1;
         }
 
-        if (IndeterminateTrack != 0)
+        if (track_indter != 0)
         {
-            PassorFailExist = 1;
-            PrintOutput = 1;
+            pass_or_fail_exist = 1;
+            print_output = 1;
         }
 
-        if (SeeComboRunLogTrack != 0)
-            PrintOutput = 1;
+        if (track_combo_run != 0)
+            print_output = 1;
 
-        if (SeePSNRLogTrack != 0)
-            PrintOutput = 1;
+        if (track_psnr_log != 0)
+            print_output = 1;
 
-        if (RandomTestCompletedTrack != 0)
-            PrintOutput = 1;
+        if (track_rand_test != 0)
+            print_output = 1;
 
-        if (CompressionMadeTrack != 0)
+        if (track_comp_made != 0)
         {
-            CompressExist = 1;
-            PrintOutput = 1;
+            compress_exist = 1;
+            print_output = 1;
         }
 
-        if (ErrorFileMismatchTrack != 0)
-            PrintOutput = 1;
+        if (track_err_file_mismatch != 0)
+            print_output = 1;
 
-        if (TestNotSupportedTrack != 0)
-            PrintOutput = 1;
+        if (track_test_not_supported != 0)
+            print_output = 1;
 
-        if (MinTestPassed != 0)
-            PrintOutput = 1;
+        if (track_min_pass != 0)
+            print_output = 1;
 
-        if (PrintOutput == 1)
+        if (print_output == 1)
         {
-            if (!CompressExist == 1)
+            if (!compress_exist == 1)
             {
                 fprintf(stderr, "\n\n\n%s Summary:\n\n",
-                    TestTrackerName.c_str());
-                fprintf(stderr, "Passed: %i\n", PassedTrack);
-                fprintf(stderr, "Failed: %i\n", FailedTrack);
-                fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
+                    test_track_name.c_str());
+                fprintf(stderr, "Passed: %i\n", track_passed);
+                fprintf(stderr, "Failed: %i\n", track_failed);
+                fprintf(stderr, "Indeterminate: %i\n", track_indter);
 
-                if (SeeComboRunLogTrack != 0)
-                    fprintf(stderr, "SeeComboRunLogTrack: %i\n",
-                    SeeComboRunLogTrack);
+                if (track_combo_run != 0)
+                    fprintf(stderr, "track_combo_run: %i\n",
+                    track_combo_run);
 
-                if (SeePSNRLogTrack != 0)
-                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
+                if (track_psnr_log != 0)
+                    fprintf(stderr, "track_psnr_log: %i\n", track_psnr_log);
 
-                if (RandomTestCompletedTrack != 0)
-                    fprintf(stderr, "RandomTestCompletedTrack: %i\n",
-                    RandomTestCompletedTrack);
+                if (track_rand_test != 0)
+                    fprintf(stderr, "track_rand_test: %i\n",
+                    track_rand_test);
 
-                if (CompressionMadeTrack != 0)
-                    fprintf(stderr, "CompressionMadeTrack: %i\n",
-                    CompressionMadeTrack);
+                if (track_comp_made != 0)
+                    fprintf(stderr, "track_comp_made: %i\n",
+                    track_comp_made);
 
-                if (ErrorFileMismatchTrack != 0)
-                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n",
-                    ErrorFileMismatchTrack);
+                if (track_err_file_mismatch != 0)
+                    fprintf(stderr, "track_err_file_mismatch: %i\n",
+                    track_err_file_mismatch);
 
-                if (TestNotSupportedTrack != 0)
-                    fprintf(stderr, "TestNotSupportedTrack: %i\n",
-                    TestNotSupportedTrack);
+                if (track_test_not_supported != 0)
+                    fprintf(stderr, "track_test_not_supported: %i\n",
+                    track_test_not_supported);
 
-                if (MinTestPassed != 0)
-                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
+                if (track_min_pass != 0)
+                    fprintf(stderr, "track_min_pass: %i\n", track_min_pass);
             }
             else
             {
                 fprintf(stderr, "\n\n\n%s Summary:\n\n",
-                    TestTrackerName.c_str());
+                    test_track_name.c_str());
 
-                if (PassedTrack != 0)
-                    fprintf(stderr, "Passed: %i\n", PassedTrack);
+                if (track_passed != 0)
+                    fprintf(stderr, "Passed: %i\n", track_passed);
 
-                if (FailedTrack != 0)
-                    fprintf(stderr, "Failed: %i\n", FailedTrack);
+                if (track_failed != 0)
+                    fprintf(stderr, "Failed: %i\n", track_failed);
 
-                if (IndeterminateTrack != 0)
-                    fprintf(stderr, "Indeterminate: %i\n", IndeterminateTrack);
+                if (track_indter != 0)
+                    fprintf(stderr, "Indeterminate: %i\n", track_indter);
 
-                if (SeeComboRunLogTrack != 0)
-                    fprintf(stderr, "SeeComboRunLogTrack: %i\n",
-                    SeeComboRunLogTrack);
+                if (track_combo_run != 0)
+                    fprintf(stderr, "track_combo_run: %i\n",
+                    track_combo_run);
 
-                if (SeePSNRLogTrack != 0)
-                    fprintf(stderr, "SeePSNRLogTrack: %i\n", SeePSNRLogTrack);
+                if (track_psnr_log != 0)
+                    fprintf(stderr, "track_psnr_log: %i\n", track_psnr_log);
 
-                if (RandomTestCompletedTrack != 0)
-                    fprintf(stderr, "RandomTestCompletedTrack: %i\n",
-                    RandomTestCompletedTrack);
+                if (track_rand_test != 0)
+                    fprintf(stderr, "track_rand_test: %i\n",
+                    track_rand_test);
 
-                if (CompressionMadeTrack != 0)
-                    fprintf(stderr, "CompressionMadeTrack: %i\n",
-                    CompressionMadeTrack);
+                if (track_comp_made != 0)
+                    fprintf(stderr, "track_comp_made: %i\n",
+                    track_comp_made);
 
-                if (ErrorFileMismatchTrack != 0)
-                    fprintf(stderr, "ErrorFileMismatchTrack: %i\n",
-                    ErrorFileMismatchTrack);
+                if (track_err_file_mismatch != 0)
+                    fprintf(stderr, "track_err_file_mismatch: %i\n",
+                    track_err_file_mismatch);
 
-                if (TestNotSupportedTrack != 0)
-                    fprintf(stderr, "TestNotSupportedTrack: %i\n",
-                    TestNotSupportedTrack);
+                if (track_test_not_supported != 0)
+                    fprintf(stderr, "track_test_not_supported: %i\n",
+                    track_test_not_supported);
 
-                if (MinTestPassed != 0)
-                    fprintf(stderr, "MinTestPassed: %i\n", MinTestPassed);
+                if (track_min_pass != 0)
+                    fprintf(stderr, "track_min_pass: %i\n", track_min_pass);
             }
 
             fprintf(stderr, "\n\n");
         }
 
-        TestTracker = TestTracker + 1;
+        test_track = test_track + 1;
     }
 
     fclose(fp);
     return;
 }
-int  show_hidden_cmds()
-{
-    tprintf(PRINT_STD, "\n\n"
-            "    Hidden Commands \n"
-            "\n"
-            "      <Compression/Decompression>"
-            "\n"
-            "         APICOMPRESS              "
-            "-IVFEnc Clone using API 2.0\n"
-            "         APIDECOMPRESS            "
-            "-IVFDec Clone using API 2.0\n"
-            "\n"
-            "      <Test Vector Tools>"
-            "\n"
-            "         CodeCoverage             "
-            "-Array Coverage Tests\n"
-            "         CompareCodeCoverage      "
-            "-Compares New to Old Code Coverage Results\n"
-            "         FormatCodeCoverageFile   "
-            "-Formats Code Coverage to Uniform Format\n"
-            "         IVFDECTestVectorCheck    "
-            "-Checks Checksums for Dir of Dec Test Vectors\n"
-            "         TestVectorIndex          "
-            "-Returns Test Vector that covers File & Line\n"
-            "         ArrayCovFailListToFull   "
-            "-Converts Fail List to Full Pass and Fail\n"
-            "         ArrayCovSummaryFile      "
-            "-Checks and records New Array Activations\n"
-            "\n"
-            "      <Verification Tools>"
-            "\n"
-            "         CompMatchesIVFenc        "
-            "-Checks that IVFEnc matches Tester Encoder\n"
-            "         CompressionEquiv         "
-            "-Checks that each Tester Encoder is the same\n"
-            "         PrintVersion             "
-            "-Prints Internal VP8 Version Number\n"
-            "         Test0InputTextCheck      "
-            "-Tests a Mode 0 input to make sure its valid\n"
-            "\n"
-            "      <Misc>"
-            "\n"
-            "         ConvertParmFileToIVFenc  "
-            "-Converts Tester Par File to IVFEnc Par File\n"
-            "         CopyAllTxtFiles          "
-            "-Copies all Txt Files in a Dir with file str\n"
-            "         VPXTDec2Raw              "
-            "-Decode an IVF file to a RAW File\n"
-            "         DeleteAllIVFFiles        "
-            "-Deletes all IVF Files in a dir DANGEROUS!!!\n"
-            "         Raw2Formatted            "
-            "-Converts a RAW File to an IVF File\n"
-            "         SideBySideText           "
-            "-Creates a txt file with two input coloums\n"
-            "         Formatted2RawFrames      "
-            "-Writes out individual Frame data to a dir\n"
-
-            "\n");
-    return 0;
-
-}
 int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
 {
     if (argc < 4)
+        return vpxt_test_help(argv[1], 0);
+
+    int valid_input = 0;
+
+    if (atoi(argv[2]) != RESU_TEST && atoi(argv[2]) != TEST_ONLY)
     {
-        tprintf(PRINT_STD,
-                "  run_multipule_tests \n\n"
-                "    <Test Type>\n"
-                "      <1 - Create Files and Run Tests>\n"
-                "        <Input Text File>\n"
-                "        <Delete IVF Files| 0=no 1=yes>\n"
-                "      <2 - Create Files only>\n"
-                "        <Input Text File>\n"
-                "      <3 - Run Tests For Existing Files>\n"
-                "        <Input Test Directory>\n"
-                "        <Delete IVF Files| 0=no 1=yes>\n"
-                "      <4 - Resume Test>\n"
-                "        <Input Test Directory>\n"
-                "        <Delete IVF Files| 0=no 1=yes>\n"
-                "\n");
+        valid_input = vpxt_run_multiple_tests_input_check(argv[3], 0);
 
-        return 0;
-    }
-
-    int VaildInput = 0;
-
-    if (atoi(argv[2]) != 4 && atoi(argv[2]) != 3)
-    {
-        VaildInput = vpxt_run_multiple_tests_input_check(argv[3], 0);
-
-        if (VaildInput <= 0)
+        if (valid_input <= 0)
         {
             tprintf(PRINT_STD, "\nExternal Test Runner Aborted\n\n");
             return 0;
@@ -4104,9 +4022,9 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
     {
         std::string input_ver;
         input_ver += argv[3] + slashCharStr() + "tests_run.txt";
-        VaildInput = vpxt_run_multiple_tests_input_check(input_ver.c_str(), 0);
+        valid_input = vpxt_run_multiple_tests_input_check(input_ver.c_str(), 0);
 
-        if (VaildInput <= 0)
+        if (valid_input <= 0)
         {
             tprintf(PRINT_STD, "\nExternal Test Runner Aborted\n\n");
             return 0;
@@ -4114,102 +4032,96 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
     }
 
     //check to see if we should run a lean multi run
-    int DeleteIVFFiles = 0;
+    int delete_ivf_files = 0;
 
     if (argc > 4)
     {
-        std::string LeanCheck = argv[4];
-        vpxt_lower_case_string(LeanCheck);
+        std::string lean_check = argv[4];
+        vpxt_lower_case_string(lean_check);
 
-        if (LeanCheck.compare("lean") == 0)
-            DeleteIVFFiles = 1;
+        if (lean_check.compare("lean") == 0)
+            delete_ivf_files = 1;
     }
 
-    run_multiple_tests(argc, argv, working_dir.c_str(), VaildInput,
-        DeleteIVFFiles);
+    run_multiple_tests(argc, argv, working_dir.c_str(), valid_input,
+        delete_ivf_files);
 
-    std::string SummaryFile = working_dir;
+    std::string summary_file = working_dir;
 
-    if (atoi(argv[2]) == 1)
+    if (atoi(argv[2]) == FULL_TEST)
     {
-        char SummaryFileChar[255] = "";
-        SummaryFile.erase(SummaryFile.end() - 1);
-        SummaryFile += slashCharStr() + "test_results.txt";
-        snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-        format_summary(SummaryFileChar);
+        char summary_file_char[255] = "";
+        summary_file.erase(summary_file.end() - 1);
+        summary_file += slashCharStr() + "test_results.txt";
+        snprintf(summary_file_char, 255, "%s", summary_file.c_str());
+        format_summary(summary_file_char);
         return 0;
     }
 
-    if (atoi(argv[2]) == 3)
+    if (atoi(argv[2]) == TEST_ONLY)
     {
-
-        char SummaryFileChar[255] = "";
-        SummaryFile.erase(SummaryFile.end() - 1);
-        SummaryFile += slashCharStr() += "compression_results.txt";
-        snprintf(SummaryFileChar, 255, "%s", SummaryFile.c_str());
-        format_summary(SummaryFileChar);
+        char summary_file_char[255] = "";
+        summary_file.erase(summary_file.end() - 1);
+        summary_file += slashCharStr() += "compression_results.txt";
+        snprintf(summary_file_char, 255, "%s", summary_file.c_str());
+        format_summary(summary_file_char);
         return 0;
     }
 
-    if (atoi(argv[2]) == 4)
+    if (atoi(argv[2]) == RESU_TEST)
     {
-        std::string SummCompAndTest;
-        std::string SummComp;
-        std::string SummTest;
+        std::string sum_comp_and_test;
+        std::string sum_comp;
+        std::string sum_test;
 
         // Mode 1
-        SummCompAndTest = argv[3] + slashCharStr() + "test_results.txt";
+        sum_comp_and_test = argv[3] + slashCharStr() + "test_results.txt";
         // Mode 2
-        SummComp = argv[3] + slashCharStr() + "compression_results.txt";
+        sum_comp = argv[3] + slashCharStr() + "compression_results.txt";
         // Mode 3
-        SummTest = argv[3] + slashCharStr() + "compression_test_results.txt";
+        sum_test = argv[3] + slashCharStr() + "compression_test_results.txt";
 
-        int TestRunning = 0;
-        std::fstream SummCompAndTestFile;
-        SummCompAndTestFile.open(SummCompAndTest.c_str());
+        int test_running = NO_TEST;
 
-        if (SummCompAndTestFile)
+        //if sum comp and test file exists then full test
+        std::fstream sum_comp_and_testFile;
+        sum_comp_and_testFile.open(sum_comp_and_test.c_str());
+
+        if (sum_comp_and_testFile)
+            test_running = FULL_TEST;
+
+        //if sum test file exists then test only
+        std::fstream sum_testFile;
+        sum_testFile.open(sum_test.c_str());
+
+        if (sum_testFile)
+            test_running = TEST_ONLY;
+
+        //if sum comp file exits and not test only then comp only
+        std::fstream sum_compFile;
+        sum_compFile.open(sum_comp.c_str());
+
+        if (sum_compFile)
+            if (test_running != TEST_ONLY)
+                test_running = COMP_ONLY;
+
+        sum_comp_and_testFile.close();
+        sum_testFile.close();
+        sum_compFile.close();
+
+        summary_file = argv[3];
+
+        if (test_running == FULL_TEST)
         {
-            TestRunning = 1;
-        }
-
-        std::fstream SummTestFile;
-        SummTestFile.open(SummTest.c_str());
-
-        if (SummTestFile)
-        {
-            TestRunning = 3;
-        }
-
-        std::fstream SummCompFile;
-        SummCompFile.open(SummComp.c_str());
-
-        if (SummCompFile)
-        {
-            if (TestRunning != 3)
-            {
-                TestRunning = 2;
-            }
-
-        }
-
-        SummCompAndTestFile.close();
-        SummTestFile.close();
-        SummCompFile.close();
-
-        SummaryFile = argv[3];
-
-        if (TestRunning == 1)
-        {
-            SummaryFile += slashCharStr() + "test_results.txt";
-            format_summary(SummaryFile.c_str());
+            summary_file += slashCharStr() + "test_results.txt";
+            format_summary(summary_file.c_str());
             return 0;
         }
 
-        if (TestRunning == 3)
+        if (test_running == TEST_ONLY)
         {
-            SummaryFile += slashCharStr() + "compression_test_results.txt";
-            format_summary(SummaryFile.c_str());
+            summary_file += slashCharStr() + "compression_test_results.txt";
+            format_summary(summary_file.c_str());
         }
     }
 
@@ -4223,31 +4135,31 @@ int  main(int argc, const char *argv[])
         return 0;
     }
 
-    std::string EmptyAr[1];
+    const std::string sub_folder_str;
     char working_dir_char[256]  = "";
     create_working_folder(argc, argv, working_dir_char);
     std::string working_dir = working_dir_char;
-    std::string TestInputString(argv[1]);
-    std::string TestInputString2;
+    std::string input_1_str(argv[1]);
+    std::string input_2_str;
 
     if (argc > 2)
-        TestInputString2 =  argv[2];
+        input_2_str =  argv[2];
 
-    vpxt_lower_case_string(TestInputString);
-    vpxt_lower_case_string(TestInputString2);
+    vpxt_lower_case_string(input_1_str);
+    vpxt_lower_case_string(input_2_str);
 
-    if (TestInputString.compare("0") == 0)
+    if (input_1_str.compare("0") == 0)
     {
         if (working_dir.length() > 175)
         {
-            tprintf(PRINT_BTH, "\nError: Folder Path Length too long.\n");
+            tprintf(PRINT_BTH, "\nError: folder Path Length too long.\n");
             return 0;
         }
     }
 
     ///////////////////////////Help/////////////////////////////////////////////
 
-    if (TestInputString.compare("help") == 0)
+    if (input_1_str.compare("help") == 0)
     {
         vpxt_on_error_output();
         vpxt_formated_print(TOLPRT, "To run tests input the number to the left "
@@ -4258,484 +4170,435 @@ int  main(int argc, const char *argv[])
         return 0;
     }
 
-    if (TestInputString2.compare("help") == 0)
+    if (input_2_str.compare("help") == 0)
     {
-        int ToolHelpCheck = vpxt_tool_help(TestInputString.c_str(), 1);
-
+        int ToolHelpCheck = vpxt_tool_help(input_1_str.c_str(), 1);
         if (!ToolHelpCheck)
-        {
             vpxt_test_help(argv[1], 1);
-        }
 
         return 0;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////Tools///////////////////////////////////
     ////////////////////Public Commands/////////////////////////
+    //vpxenc clone
+    if (input_1_str.compare("vpxenc") == 0)
+        return tool_run_ivfenc(argc, argv);
 
-    //Solves Quadradic
-    if (TestInputString.compare("quad") == 0)
-        return tool_solve_quad();
+    //vpxdec clone
+    if (input_1_str.compare("vpxdec") == 0)
+        return tool_run_ivfdec(argc, argv);
 
-    //Multi Resolution Encode
-    if (TestInputString.compare("vpxmultiresenc") == 0)
-        return tool_multi_res_enc(argc, argv);
+    //Compresses an IVF Raw File to an IVF Compressed file
+    if (input_1_str.compare("vpxtenc") == 0)
+        return tool_vpxt_enc(argc, argv, working_dir);
 
-    //Vp8 Scalable Patterns
-    if (TestInputString.compare("vpxscalepat") == 0)
+    //Decompresses an IVF Compressed file to an IVF Raw File
+    if (input_1_str.compare("vpxtdec") == 0)
+        return tool_vpxt_dec(argc, argv);
+
+    //Vp8 Scalable Patterns clone
+    if (input_1_str.compare("vpxtempscaleenc") == 0)
         return tool_vp8_scalable_patterns(argc, argv);
 
     //vpxt Multi Resolution Encode
-    if (TestInputString.compare("vpxtmultiresenc") == 0)
-        return tool_vpxt_multi_res_enc(argc, argv);
-
-    //vpxt Multi Resolution Encode
-    if (TestInputString.compare("vpxttempscaleenc") == 0)
+    if (input_1_str.compare("vpxttempscaleenc") == 0)
         return tool_vpxt_temp_scale_enc(argc, argv);
 
-    //Compresses an IVF Raw File to an IVF Compressed file
-    if (TestInputString.compare("vpxtenc") == 0)
-        return tool_vpxt_enc(argc, argv, working_dir);
+    //Multi Resolution Encode
+    if (input_1_str.compare("vpxmultiresenc") == 0)
+        return tool_multi_res_enc(argc, argv);
 
-    //runs checkpbm (this needs to be looked at)
-    if (TestInputString.compare("thresh") == 0)
-        return tool_run_thresh(argc, argv);
-
-    //Decompresses an IVF Compressed file to an IVF Raw File
-    if (TestInputString.compare("vpxtdec") == 0)
-        return tool_vpxt_dec(argc, argv);
-
-     //Decompresses an IVF Compressed file to an IVF Raw File ERROR CONCEALMENT
-    if (TestInputString.compare("vpxtdecpard") == 0)
-        return tool_vpxt_dec_part_drop(argc, argv);
+    //vpxt Multi Resolution Encode
+    if (input_1_str.compare("vpxtmultiresenc") == 0)
+        return tool_vpxt_multi_res_enc(argc, argv);
 
     //Decompresses an IVF Compressed file to an IVF Raw File WITH RESIZE
-    if (TestInputString.compare("vpxtdecresz") == 0)
+    if (input_1_str.compare("vpxtdecresz") == 0)
         return tool_vpxt_dec_resize(argc, argv);
 
-     //Computes Data Rate for an input IVF File
-    if (TestInputString.compare("vpxtdatarate") == 0)
+    //Decompresses an IVF Compressed file to an IVF Raw File ERROR CONCEALMENT
+    if (input_1_str.compare("vpxtdecpard") == 0)
+        return tool_vpxt_dec_part_drop(argc, argv);
+
+    //Decodes IVF File to Raw File
+    if (input_1_str.compare("vpxtdec2raw") == 0)
+        return tool_vpxt_dec_to_raw(argc, argv);
+
+    //Computes Data Rate for an input IVF File
+    if (input_1_str.compare("vpxtdatarate") == 0)
         return tool_vpxt_data_rate(argc, argv);
 
     //Computes PSNR for two input files
-    if (TestInputString.compare("vpxtpsnr") == 0)
+    if (input_1_str.compare("vpxtpsnr") == 0)
         return tool_vpxt_psnr_run(argc, argv);
 
     //Computes Decoded PSNR for two input files
-    if (TestInputString.compare("vpxtpsnrdec") == 0)
+    if (input_1_str.compare("vpxtpsnrdec") == 0)
         return tool_vpxt_psnr_run_dec(argc, argv);
 
     //Computes PBM For an input file
-    if (TestInputString.compare("vpxtcheckpbm") == 0)
+    if (input_1_str.compare("vpxtcheckpbm") == 0)
         return tool_vpxt_check_pbm_run(argc, argv);
 
+    //Converts an IVF File to a Raw File
+    if (input_1_str.compare("raw2formatted") == 0)
+        return tool_raw_to_formatted(argc, argv);
+
+    //Converts an ivf file to a raw file
+    if (input_1_str.compare("formatted2raw") == 0)
+        return tool_formatted_to_raw(argc, argv);
+
+    //Converts an ivf file to a raw file
+    if (input_1_str.compare("formatted2rawframes") == 0)
+        return tool_formatted_to_raw_frames(argc, argv);
+
+    //Compares two ivf files
+    if (input_1_str.compare("compareenc") == 0)
+        return tool_compare_enc(argc, argv);
+
     //Compares the Headers of two ivf files
-    if (TestInputString.compare("compareheader") == 0)
+    if (input_1_str.compare("compareheader") == 0)
         return tool_compare_header_info(argc, argv);
 
     //Displays the header contents of an ivf file
-    if (TestInputString.compare("displayheader") == 0)
+    if (input_1_str.compare("displayheader") == 0)
         return tool_display_header_info(argc, argv);
 
-    //Compares two ivf files
-    if (TestInputString.compare("compareenc") == 0)
-        return tool_compare_enc(argc, argv);
-
-    //Compares two ivf files
-    if (TestInputString.compare("comparedec") == 0)
-        return tool_compare_dec(argc, argv);
-
-    //Creates sample text files that include quick test and other templates
-    if (TestInputString.compare("createsampletextfiles") == 0)
-        return print_quick_test_files(working_dir);
-
-    //Modifies an ivf file cutting out a portion of the clip and saving it
-    if (TestInputString.compare("cutclip") == 0)
-        return tool_cut_ivf(argc, argv);
-
-    //Modifies an ivf file croping part of the clip
-    if (TestInputString.compare("croprawclip") == 0)
-        return tool_crop_raw_clip(argc, argv);
-
-    //Modifies an ivf file by padding it
-    if (TestInputString.compare("padrawclip") == 0)
-        return tool_pad_raw_clip(argc, argv);
-
-    //Modifies an ivf file by pasting a clip into it
-    if (TestInputString.compare("pasteclip") == 0)
-        return tool_paste_clip(argc, argv);
+    //Displays which frames are key frames for an input compressed ivf file
+    if (input_1_str.compare("dispkeyframes") == 0)
+        return tool_disp_key_frames(argc, argv);
 
     //Compresses an IVF Raw File to an IVF Compressed file
-    if (TestInputString.compare("dispresizedframes") == 0)
+    if (input_1_str.compare("dispresizedframes") == 0)
         return tool_disp_resized_frames(argc, argv);
 
     //Compresses an IVF Raw File to an IVF Compressed file
-    if (TestInputString.compare("dispdropedframes") == 0)
-        return tool_disp_droped_frames(argc, argv);
-
-    //Compresses an IVF Raw File to an IVF Compressed file
-    if (TestInputString.compare("dispvisibleframes") == 0)
+    if (input_1_str.compare("dispvisibleframes") == 0)
         return tool_disp_visible_frames(argc, argv);
 
     //Compresses an IVF Raw File to an IVF Compressed file
-    if (TestInputString.compare("dispaltrefframes") == 0)
+    if (input_1_str.compare("dispaltrefframes") == 0)
         return tool_disp_alt_ref_frames(argc, argv);
 
-     //Displays which frames are key frames for an input compressed ivf file
-    if (TestInputString.compare("dispkeyframes") == 0)
-        return tool_disp_key_frames(argc, argv);
+    //Modifies an ivf file croping part of the clip
+    if (input_1_str.compare("croprawclip") == 0)
+        return tool_crop_raw_clip(argc, argv);
 
-    //Displays which frames are key frames for an input compressed ivf file
-    if (TestInputString.compare("dispframedata") == 0)
-        return tool_disp_frame_data(argc, argv);
+    //Modifies an ivf file by padding it
+    if (input_1_str.compare("padrawclip") == 0)
+        return tool_pad_raw_clip(argc, argv);
 
-    //Formats a test results output file by test and result
-    if (TestInputString.compare("formatsummary") == 0)
-        return tool_format_summary(argc, argv);
+    //Modifies an ivf file cutting out a portion of the clip and saving it
+    if (input_1_str.compare("cutclip") == 0)
+        return tool_cut_ivf(argc, argv);
 
-    //Converts an ivf file to a raw file
-    if (TestInputString.compare("formatted2raw") == 0)
-        return tool_formatted_to_raw(argc, argv);
-
-    //Plays a compressed ivf file (Decodes the file to an ivf then converts
-    //that ivf to a raw then used tnmplay.exe to play that file.)
-    if (TestInputString.compare("playcompivf") == 0)
-        return tool_play_comp_ivf(argc, argv);
+    //Modifies an ivf file by pasting a clip into it
+    if (input_1_str.compare("pasteclip") == 0)
+        return tool_paste_clip(argc, argv);
 
     // Plays a Decoded ivf file (Converts the file to a Raw file and uses
     //tmnplay.exe to play the file)
-    if (TestInputString.compare("playdecivf") == 0)
+    if (input_1_str.compare("playdecivf") == 0)
         return tool_play_dec_ivf(argc, argv);
 
-    //converts Tester Parameter file to a vpxenc ParFile
-    if (TestInputString.compare("vpxencpar") == 0)
-        return tool_convert_par_file_to_vpxenc(argc, argv);
+    //Plays a compressed ivf file (Decodes the file to an ivf then converts
+    //that ivf to a raw then used tnmplay.exe to play that file.)
+    if (input_1_str.compare("playcompivf") == 0)
+        return tool_play_comp_ivf(argc, argv);
 
-    ////////////////////Hidden Commands/////////////////////////
-     //Shows Hidden Commands
-    if (TestInputString.compare("showhidden") == 0)
-        return show_hidden_cmds();
-
-    //Preforms Code Coverage Tests for data coverage if enabled
-    if (TestInputString.compare("codecoverage") == 0)
-        return tool_array_coverage(argc, argv, working_dir, EmptyAr);
-
-    //Compares New Code Coverage Results to Old Code Coverage Results and
-    //merges the files to an updated version
-    if (TestInputString.compare("comparecodecoverage") == 0)
-        return tool_compare_code_coverage(argc, argv);
-
-    //Formats Cygwin Code Coverage files to the same format as regular linux
-    if (TestInputString.compare("formatcodecoveragefile") == 0)
-        return tool_format_code_coverage_file(argc, argv);
-
-    //
-    if (TestInputString.compare("ivfdectestvectorcheck") == 0)
-        return tool_ivf_dec_test_vector_check(argc, argv);
-
-    //Will search a data base and return the Test Vector that covers an input
-    //File and Line Number
-    if (TestInputString.compare("testvectorindex") == 0)
-        return tool_test_vector_index(argc, argv);
-
-    //makes sure that all variations of the compressor produce the same output
-    if (TestInputString.compare("compressionequiv") == 0)
-        return tool_compression_equiv(argc, argv, working_dir);
+    //Creates sample text files that include quick test and other templates
+    if (input_1_str.compare("createsampletextfiles") == 0)
+        return print_quick_test_files(working_dir);
 
     //Prints the internal version number - make sure all libs built in same
     //multithreadedmode - properties  C++ CodeGen RuntimeLibrary
-    if (TestInputString.compare("printversion") == 0)
+    if (input_1_str.compare("printversion") == 0)
         return print_version();
 
+    //converts Tester Parameter file to a vpxenc ParFile
+    if (input_1_str.compare("vpxencpar") == 0)
+        return tool_convert_par_file_to_vpxenc(argc, argv);
+
+    //creates a random valid parameter file
+    if (input_1_str.compare("randparfile") == 0)
+        return tool_create_rand_par_file(argc, argv);
+
+    //runs a compression using random configuration
+    if (input_1_str.compare("randcompress") == 0)
+        return tool_rand_comp(argc, argv, working_dir, sub_folder_str, 1);
+
+    //creates a set of psnr to data rate data points 
+    if (input_1_str.compare("graphpsnr") == 0)
+        return tool_graph_psnr(argc, argv, working_dir, sub_folder_str, 1);
+
+    ////////////////////Hidden Commands/////////////////////////
+    //Shows Hidden Commands
+    if (input_1_str.compare("showhidden") == 0)
+        return show_hidden_cmds();
+
+    //runs threshold check (this needs to be looked at)
+    if (input_1_str.compare("thresh") == 0)
+        return tool_run_thresh(argc, argv);
+
+    //Displays which frames are key frames for an input compressed ivf file
+    if (input_1_str.compare("dispframedata") == 0)
+        return tool_disp_frame_data(argc, argv);
+
+    //displays dropped frames
+    if (input_1_str.compare("dispdropedframes") == 0)
+        return tool_disp_droped_frames(argc, argv);
+
+    //gets the number of frames a file has
+    if (input_1_str.compare("getframecount") == 0)
+        return vpxt_get_number_of_frames(argv[2]);
+
     //Checks to make sure a Multi Run Input file has the correct format
-    if (TestInputString.compare("test0inputcheck") == 0)
+    if (input_1_str.compare("testfileinputcheck") == 0)
         return vpxt_run_multiple_tests_input_check(argv[2], 1);
 
-    //converts Tester Parameter file to a IVFenc ParFile - obsolete
-    if (TestInputString.compare("convertparfiletoivfenc") == 0)
-        return tool_convert_par_file_to_ivfenc(argc, argv);
+    //creates a set of random tests
+    if (input_1_str.compare("randomstresstest") == 0)
+        return tool_random_stress_test(argc, argv);
+
+    //Formats a test results output file by test and result
+    if (input_1_str.compare("formatsummary") == 0)
+        return tool_format_summary(argc, argv);
+
+    //Solves Quadradic
+    if (input_1_str.compare("quad") == 0)
+        return tool_solve_quad();
+
+    //Compares two dec ivf files
+    if (input_1_str.compare("comparedec") == 0)
+        return tool_compare_dec(argc, argv);
+
+    //print which instruction sets are available on machine
+    if (input_1_str.compare("printcpuinfo") == 0)
+        return tool_print_cpu_info();
 
     //Copies all text files in a directory to a new directory preserving file
     //structure
-    if (TestInputString.compare("copyalltxtfiles") == 0)
+    if (input_1_str.compare("copyalltxtfiles") == 0)
         return tool_copy_all_txt_files(argc, argv);
 
-    //Decodes IVF File to Raw File
-    if (TestInputString.compare("vpxtdec2raw") == 0)
-        return tool_vpxt_dec_to_raw(argc, argv);
-
-    //Deletes all IVF files in a directory be very care with this function!
-    if (TestInputString.compare("deleteallivffiles") == 0)
-        return tool_delete_all_ivf_files(argc, argv);
-
-    //Converts an IVF File to a Raw File
-    if (TestInputString.compare("raw2formatted") == 0)
-        return tool_raw_to_formatted(argc, argv);
-
-    //Prints out the input from two text files side by side as coloums to an
-    //output txt file
-    if (TestInputString.compare("sidebysidetext") == 0)
-        return tool_side_by_side_text(argc, argv);
-
-    //Converts an ivf file to a raw file
-    if (TestInputString.compare("formatted2rawframes") == 0)
-        return tool_formatted_to_raw_frames(argc, argv);
-
-    //
-    if (TestInputString.compare("arraycovfaillisttofull") == 0)
-        return tool_array_cov_fail_list_to_full_list(argc, argv);
-
-    //
-    if (TestInputString.compare("arraycovsummaryfile") == 0)
-        return tool_array_cov_summary_file(argc, argv);
-
-    //
-    if (TestInputString.compare("winmemmonformat") == 0)
-        return tool_win_mem_mon_format(argc, argv);
-
-    //
-    if (TestInputString.compare("winmemmongraph") == 0)
-        return tool_win_mem_mon_graph(argc, argv);
-
-    //
-    if (TestInputString.compare("combineindvframes") == 0)
+    //combines as set of frames to a raw file
+    if (input_1_str.compare("combineindvframes") == 0)
         return tool_combine_indv_frames(argc, argv);
 
-    //
-    if (TestInputString.compare("graphpsnr") == 0)
-        return tool_graph_psnr(argc, argv, working_dir, EmptyAr, 1);
-
-    //
-    if (TestInputString.compare("randcompress") == 0)
-        return tool_rand_comp(argc, argv, working_dir, EmptyAr, 1);
-
-    //
-    if (TestInputString.compare("randparfile") == 0)
-        return tool_create_rand_par_file(argc, argv);
-
-    //
-    if (TestInputString.compare("vpxdec") == 0)
-        return tool_run_ivfdec(argc, argv);
-
-    //
-    if (TestInputString.compare("vpxenc") == 0)
-        return tool_run_ivfenc(argc, argv);
-
-    //
-    if (TestInputString.compare("printcpuinfo") == 0)
-        return tool_print_cpu_info();
-
-    //
-    if (TestInputString.compare("randomstresstest") == 0)
-        return tool_random_stress_test(argc, argv);
-
-    //
-    if (TestInputString.compare("getframecount") == 0)
-        return vpxt_get_number_of_frames(argv[2]);
-
-    //
-    if (TestInputString.compare("writeivffileheader") == 0)
+    //write ivf file header data to a file
+    if (input_1_str.compare("writeivffileheader") == 0)
         return tool_vpxt_write_ivf_file_header(argc, argv);
 
-    //
-    if (TestInputString.compare("writeivfframeheader") == 0)
+    //write ivf frame header data to a file
+    if (input_1_str.compare("writeivfframeheader") == 0)
         return tool_vpxt_write_ivf_frame_header(argc, argv);
 
-    //
-    if (TestInputString.compare("writeframedata") == 0)
+    //write frame data to a file
+    if (input_1_str.compare("writeframedata") == 0)
         return tool_vpxt_write_frame_data(argc, argv);
 
     tprintf(PRINT_STD, "\n");
 
-    ////////////////////////////////////////////////////////////////////////////
-
     int selector = vpxt_identify_test(argv[1]);
-
     if (selector > MAXTENUM || selector < 0)
     {
         vpxt_on_error_output();
         return 0;
     }
 
-    if (selector == 0)
+    if (selector == RTFFINUM)
         return vpxt_run_multi(argc, argv, working_dir);
 
     if (selector == AlWDFNUM)
-        return test_allow_drop_frames(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_allow_drop_frames(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     if (selector == ALWLGNUM)
-        return test_allow_lag(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_allow_lag(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == ALWSRNUM)
-        return test_allow_spatial_resampling(argc, argv, working_dir, EmptyAr, 1
-        , KEEP_IVF);
+        return test_allow_spatial_resampling(argc, argv, working_dir,
+        sub_folder_str, 1 , KEEP_IVF);
 
     if (selector == ARNRTNUM)
-        return test_arnr(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_arnr(argc, argv, working_dir, sub_folder_str, 1, KEEP_IVF);
 
     if (selector == AUTKFNUM)
-        return test_auto_key_frame(argc, argv, working_dir, EmptyAr, 1,
+        return test_auto_key_frame(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == BUFLVNUM)
-        return test_buffer_level(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_buffer_level(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == CPUDENUM)
-        return test_change_cpu_dec(argc, argv, working_dir, EmptyAr, 1,
+        return test_change_cpu_dec(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == CPUENNUM)
-        return test_change_cpu_enc(argc, argv, working_dir, EmptyAr, 1,
+        return test_change_cpu_enc(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == CONQUNUM)
-        return test_constrained_quality(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_constrained_quality(argc, argv, working_dir, sub_folder_str
+        , 1, KEEP_IVF);
 
     if (selector == COPSRNUM)
-        return test_copy_set_reference(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_copy_set_reference(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     if (selector == DFWMWNUM)
-        return test_drop_frame_watermark(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_drop_frame_watermark(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
 
     if (selector == DTARTNUM)
-        return test_data_rate(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_data_rate(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == DBMRLNUM)
-        return test_debug_matches_release(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_debug_matches_release(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
 
     if (selector == ENCBONUM)
-        return test_encoder_break_out(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_encoder_break_out(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     if (selector == ERRCONUM)
-        return test_error_concealment(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_error_concealment(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     if (selector == ERRMWNUM)
-        return test_error_resolution(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_error_resolution(argc, argv, working_dir, sub_folder_str, 1
+        , KEEP_IVF);
 
     if (selector == EXTFINUM)
-        return test_extra_file(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_extra_file(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == FIXDQNUM)
-        return test_fixed_quantizer(argc, argv, working_dir, EmptyAr, 1,
+        return test_fixed_quantizer(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == FKEFRNUM)
-        return test_force_key_frame(argc, argv, working_dir, EmptyAr, 1,
+        return test_force_key_frame(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == FRSZTNUM)
-        return test_frame_size(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_frame_size(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == GQVBQNUM)
-        return test_good_vs_best(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_good_vs_best(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == LGIFRNUM)
-        return test_lag_in_frames(argc, argv, working_dir, EmptyAr, 1,KEEP_IVF);
+        return test_lag_in_frames(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == MAXQUNUM)
-        return test_max_quantizer(argc, argv, working_dir, EmptyAr, 1,KEEP_IVF);
+        return test_max_quantizer(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == MEML1NUM)
-        return test_mem_leak(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_mem_leak(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == MEML2NUM)
-        return test_mem_leak2(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_mem_leak2(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == MINQUNUM)
-        return test_min_quantizer(argc, argv, working_dir, EmptyAr, 1,KEEP_IVF);
+        return test_min_quantizer(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == MULRENUM)
-        return test_multiple_resolution_encode(argc, argv, working_dir, EmptyAr,
-        1, KEEP_IVF);
+        return test_multiple_resolution_encode(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
 
     if (selector == MULTDNUM)
-        return test_multithreaded_dec(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_multithreaded_dec(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     if (selector == MULTENUM)
-        return test_multithreaded_enc(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_multithreaded_enc(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     if (selector == NVOPSNUM)
-        return test_new_vs_old_psnr(argc, argv, working_dir, EmptyAr, 1,
+        return test_new_vs_old_psnr(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == NVOTSNUM)
-        return test_new_vs_old_temp_scale(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_new_vs_old_temp_scale(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
 
     if (selector == NVOECPTK)
-        return test_new_vs_old_enc_cpu_tick(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_new_vs_old_enc_cpu_tick(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
 
     if (selector == NOISENUM)
-        return test_noise_sensitivity(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_noise_sensitivity(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     if (selector == OV2PSNUM)
-        return test_one_pass_vs_two_pass(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_one_pass_vs_two_pass(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
 
     if (selector == PLYALNUM)
-        return test_play_alternate(argc, argv, working_dir, EmptyAr, 1,
+        return test_play_alternate(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == POSTPNUM)
-        return test_post_processor(argc, argv, working_dir, EmptyAr, 1,
+        return test_post_processor(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == PSTMFNUM)
-        return test_post_processor_mfqe(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_post_processor_mfqe(argc, argv, working_dir, sub_folder_str
+        , 1, KEEP_IVF);
 
     if (selector == RECBFNUM)
-        return test_reconstruct_buffer(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
-
-    if (selector == RSDWMNUM)
-        return test_resample_down_watermark(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
-
-    if (selector == SPEEDNUM)
-        return test_speed(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
-
-    if (selector == TMPSCNUM)
-        return test_temporal_scalability(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
-
-    if (selector == TVECTNUM)
-        return test_test_vector(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
-
-    if (selector == TTVSFNUM)
-        return test_thirtytwo_vs_sixtyfour(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
-
-    if (selector == TV2BTNUM)
-        return test_two_pass_vs_two_pass_best(argc, argv, working_dir, EmptyAr,
+        return test_reconstruct_buffer(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
+    if (selector == RSDWMNUM)
+        return test_resample_down_watermark(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
+
+    if (selector == SPEEDNUM)
+        return test_speed(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
+
+    if (selector == TMPSCNUM)
+        return test_temporal_scalability(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
+
+    if (selector == TVECTNUM)
+        return test_test_vector(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
+
+    if (selector == TTVSFNUM)
+        return test_thirtytwo_vs_sixtyfour(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
+
+    if (selector == TV2BTNUM)
+        return test_two_pass_vs_two_pass_best(argc, argv, working_dir,
+        sub_folder_str, 1, KEEP_IVF);
+
     if (selector == UNDSHNUM)
-        return test_undershoot(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_undershoot(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == VERSINUM)
-        return test_version(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_version(argc, argv, working_dir, sub_folder_str, 1,
+        KEEP_IVF);
 
     if (selector == VPXMINUM)
-        return test_vpx_matches_int(argc, argv, working_dir, EmptyAr, 1,
+        return test_vpx_matches_int(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
     if (selector == WMLMMNUM)
-        return test_win_lin_mac_match(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_win_lin_mac_match(argc, argv, working_dir, sub_folder_str,
+        1, KEEP_IVF);
 
     vpxt_on_error_output();
     return 0;

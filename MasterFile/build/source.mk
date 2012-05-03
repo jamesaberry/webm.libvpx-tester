@@ -62,7 +62,6 @@ SRC = \
    $(ToolDir)/run_multiple_tests.cpp \
    $(ToolDir)/rand_comp.cpp \
    $(ToolDir)/graph_psnr.cpp \
-   $(ToolDir)/code_coverage.cpp \
    $(ToolDir)/tools.cpp \
    $(IvfDir)/md5_utils.cpp \
    $(UtlDir)/utilities.cpp \
@@ -136,7 +135,6 @@ SRCOBJ = \
    $(OBJDIR)/run_multiple_tests.o \
    $(OBJDIR)/rand_comp.o \
    $(OBJDIR)/graph_psnr.o \
-   $(OBJDIR)/code_coverage.o \
    $(OBJDIR)/tools.o \
    $(OBJDIR)/md5_utils.o \
    $(OBJDIR)/utilities.o \

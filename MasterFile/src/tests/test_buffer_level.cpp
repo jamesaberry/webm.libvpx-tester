@@ -3,7 +3,7 @@
 int test_buffer_level(int argc,
                       const char *const *argv,
                       const std::string &working_dir,
-                      std::string files_ar[],
+                      const std::string sub_folder_str,
                       int test_type,
                       int delete_ivf)
 {
@@ -27,7 +27,7 @@ int test_buffer_level(int argc,
     char char_calc_pre_buff[32];
     char char_bit_rate[32];
 
-    ////////////Formatting Test Specific Directory////////////
+    ////////////Formatting Test Specific directory////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -35,7 +35,7 @@ int test_buffer_level(int argc,
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
-        file_index_output_char, files_ar) == 11)
+        file_index_output_char, sub_folder_str) == 11)
         return TEST_ERRFM;
 
     std::string buffer_lvl_works_enc = cur_test_dir_str + slashCharStr() +

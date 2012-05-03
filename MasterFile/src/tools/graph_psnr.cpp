@@ -3,7 +3,7 @@
 int tool_graph_psnr(int argc,
                     const char *const *argv,
                     const std::string &working_dir,
-                    std::string files_ar[],
+                    const std::string sub_folder_str,
                     int test_type)
 {
     if (argc < 6 || argc > 8)
@@ -22,7 +22,7 @@ int tool_graph_psnr(int argc,
         return 0;
     }
 
-    ////////////Formatting Test Specific Directory////////////
+    ////////////Formatting Test Specific directory////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *test_dir = "GraphPSNR";
@@ -43,12 +43,12 @@ int tool_graph_psnr(int argc,
     WorkingDir3[v+1] = '\0';
     std::string WorkingDirString = WorkingDir3;
     WorkingDirString += test_dir;
-    WorkingDirString += slashCharStr() + files_ar[0];
+    WorkingDirString += slashCharStr() + sub_folder_str;
     WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
-    std::string CreateDir2 = WorkingDirString;
-    CreateDir2.insert(0, "md \"");
-    vpxt_make_dir_vpx(CreateDir2.c_str());
+    std::string create_dir_2 = WorkingDirString;
+    create_dir_2.insert(0, "md \"");
+    vpxt_make_dir_vpx(create_dir_2.c_str());
 
     /////////////OutPutfile////////////
     std::string text_file_str = WorkingDirString + slashCharStr() + test_dir;
@@ -168,8 +168,8 @@ int tool_graph_psnr(int argc,
         }
 
         unsigned int cpu_tick_2 = 0;
-        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick_2,
-            dec_format, 1);
+        DecTimeArr[x] = vpxt_time_decompress(outputChar, outputChar2, cpu_tick_2
+            , dec_format, 1);
 
         if (DecTimeArr[x] == -1)
         {

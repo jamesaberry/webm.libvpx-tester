@@ -405,10 +405,6 @@
 				Name="tools"
 				>
 				<File
-					RelativePath=".\src\tools\code_coverage.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\tools\graph_psnr.cpp"
 					>
 				</File>

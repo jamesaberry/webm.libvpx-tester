@@ -3,7 +3,7 @@
 int tool_rand_comp(int argc,
                    const char *const *argv,
                    const std::string &working_dir,
-                   std::string files_ar[],
+                   const std::string sub_folder_str,
                    int test_type)
 {
     char *comp_out_str = "RandomInput";
@@ -22,7 +22,7 @@ int tool_rand_comp(int argc,
     std::string input = argv[2];
     std::string enc_format = argv[3];
 
-    ////////////Formatting Test Specific Directory////////////
+    ////////////Formatting Test Specific directory////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *test_dir = "RandComp";
@@ -43,12 +43,12 @@ int tool_rand_comp(int argc,
     WorkingDir3[v+1] = '\0';
     std::string WorkingDirString = WorkingDir3;
     WorkingDirString += test_dir;
-    WorkingDirString += slashCharStr() + files_ar[0];
+    WorkingDirString += slashCharStr() + sub_folder_str;
     WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
-    std::string CreateDir2 = WorkingDirString;
-    CreateDir2.insert(0, "md \"");
-    vpxt_make_dir_vpx(CreateDir2.c_str());
+    std::string create_dir_2 = WorkingDirString;
+    create_dir_2.insert(0, "md \"");
+    vpxt_make_dir_vpx(create_dir_2.c_str());
 
     std::string WorkingDir4 = WorkingDirString + slashCharStr();
     std::string WorkingDir5 = WorkingDirString;

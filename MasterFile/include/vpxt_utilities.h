@@ -117,13 +117,13 @@ int vpxt_get_cur_dir(std::string &CurrentDir);
 int vpxt_make_dir(std::string CreateDir);
 int vpxt_make_dir_vpx(std::string CreateDir2);
 void vpxt_run_exe(std::string RunExe);
-int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector,
-                           std::string Directory);
+int vpxt_list_files_in_dir(std::vector<std::string> &file_name_vector,
+                           std::string directory);
 int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles,
-                                 std::string Directory);
+                                 std::string directory);
 int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles,
                                        std::vector<std::string> &FilesFound,
-                                       std::string Directory);
+                                       std::string directory);
 //---------------------------IVF------------------------------------------------
 int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12);
 double vpxt_psnr(const char *inputFile1,
@@ -173,17 +173,17 @@ int vpxt_faux_decompress(const char *inputChar);
 //----------------------------Test Functions------------------------------------
 int initialize_test_directory(int argc,
                               const char *const *argv,
-                              int TestType,
-                              const std::string &WorkingDir,
+                              int test_type,
+                              const std::string &working_dir,
                               const char *MyDir,
                               std::string &CurTestDirStr,
                               std::string &FileIndexStr,
                               char MainTestDirChar[255],
                               char FileIndexOutputChar[255],
-                              std::string FilesAr[]);
+                              const std::string sub_folder_str);
 void record_test_complete(const std::string MainDirstring,
                           const char *FileIndexOutputChar,
-                          int TestType);
+                          int test_type);
 int print_version();
 void print_header_info();
 void print_header_info_to_file(const char *FileName);

@@ -2405,15 +2405,15 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
     }
     else
     {
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
-        vpxt_format_ivf_header_read(&ivfhRaw);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), GetWHinfile);
+        vpxt_format_ivf_header_read(&ivf_h_raw);
 
-        w       = ivfhRaw.width;
-        h       = ivfhRaw.height;
-        fr      = (ivfhRaw.rate / ivfhRaw.scale);
-        length  = ivfhRaw.length;
+        w       = ivf_h_raw.width;
+        h       = ivf_h_raw.height;
+        fr      = (ivf_h_raw.rate / ivf_h_raw.scale);
+        length  = ivf_h_raw.length;
 
         if (length == 0)
             length = 1;
@@ -2652,10 +2652,10 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
 
     return opt;
 }
-VP8_CONFIG vpxt_input_settings(const char *inputFile)
+VP8_CONFIG vpxt_input_settings(const char *input_file)
 {
     // Reads an input file and sets VP8_CONFIG accordingly
-    std::ifstream infile2(inputFile);
+    std::ifstream infile2(input_file);
 
     std::string Garbage;
 
@@ -2755,11 +2755,11 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile)
 
     return opt;
 }
-int vpxt_output_settings(const char *outputFile, VP8_CONFIG opt)
+int vpxt_output_settings(const char *output_file, VP8_CONFIG opt)
 {
     //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
 
-    std::ofstream outfile(outputFile);
+    std::ofstream outfile(output_file);
 
     outfile <<  opt.target_bandwidth << " TargetBandwidth\n";
     outfile <<  opt.noise_sensitivity << " NoiseSensitivity\n";
@@ -2811,14 +2811,14 @@ int vpxt_output_settings(const char *outputFile, VP8_CONFIG opt)
     outfile.close();
     return 0;
 }
-int vpxt_output_compatable_settings(const char *outputFile,
+int vpxt_output_compatable_settings(const char *output_file,
                                     VP8_CONFIG opt,
                                     int ParVersionNum)
 {
     //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
     //Tester Uses prebuilt executables from prior builds
 
-    std::ofstream outfile(outputFile);
+    std::ofstream outfile(output_file);
 
     outfile <<  opt.target_bandwidth << " TargetBandwidth\n";
     outfile <<  opt.noise_sensitivity << " NoiseSensitivity\n";
@@ -2868,7 +2868,7 @@ int vpxt_output_compatable_settings(const char *outputFile,
     //not included in default settings file
     if (ParVersionNum == 1)
     {
-        std::string DummyFPFFile = outputFile;
+        std::string DummyFPFFile = output_file;
         DummyFPFFile += ".fpf";
         outfile << "Test" << " FirstPassFile\n";
     }
@@ -2884,11 +2884,11 @@ int vpxt_output_compatable_settings(const char *outputFile,
     outfile.close();
     return 0;
 }
-int vpxt_output_settings_api(const char *outputFile, vpx_codec_enc_cfg_t cfg)
+int vpxt_output_settings_api(const char *output_file, vpx_codec_enc_cfg_t cfg)
 {
     //Saves all vpx_codec_enc_cfg_t settings to a settings file
 
-    std::ofstream outfile(outputFile);
+    std::ofstream outfile(output_file);
 
     outfile << cfg.g_usage << "\tg_usage\n";
     outfile << cfg.g_threads << "\tg_threads\n";
@@ -2926,11 +2926,11 @@ int vpxt_output_settings_api(const char *outputFile, vpx_codec_enc_cfg_t cfg)
     return 0;
 }
 
-int vpxt_input_settings_api(const char *inputFile, vpx_codec_enc_cfg_t &cfg)
+int vpxt_input_settings_api(const char *input_file, vpx_codec_enc_cfg_t &cfg)
 {
     //Saves all vpx_codec_enc_cfg_t settings to a settings file
 
-    std::ifstream infile(inputFile);
+    std::ifstream infile(input_file);
     std::string Garbage;
     int IntValue;
 
@@ -3020,11 +3020,11 @@ int vpxt_input_settings_api(const char *inputFile, vpx_codec_enc_cfg_t &cfg)
     infile.close();
     return 0;
 }
-int vpxt_output_settings_ivfenc(const char *outputFile, VP8_CONFIG opt)
+int vpxt_output_settings_ivfenc(const char *output_file, VP8_CONFIG opt)
 {
     //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
 
-    std::ofstream outfile(outputFile);
+    std::ofstream outfile(output_file);
 
     outfile << "TargetBandwidth " << opt.target_bandwidth << "\n";
     outfile << "NoiseSensitivity " << opt.noise_sensitivity <<  "\n";
@@ -3518,7 +3518,7 @@ void vpxt_folder_name(const char *input, std::string *output_str)
     return;
 }
 
-int  vpxt_get_number_of_frames(const char *inputFile)
+int  vpxt_get_number_of_frames(const char *input_file)
 {
     //Get frame count from y4m ivf and or webm return -1 on error
 
@@ -3550,12 +3550,12 @@ int  vpxt_get_number_of_frames(const char *inputFile)
     int                      arg_have_framerate = 0;
 
     /* Open file */
-    infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -3641,14 +3641,14 @@ int  vpxt_get_number_of_frames(const char *inputFile)
     if (file_type == FILE_TYPE_IVF)
     {
         rewind(infile);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), infile);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        //printf("\nIVF Length: %i\n",ivfhRaw.length);
+        //printf("\nIVF Length: %i\n",ivf_h_raw.length);
 
         fclose(infile);
-        return ivfhRaw.length;
+        return ivf_h_raw.length;
     }
 
     vpx_image_t raw;
@@ -3689,7 +3689,7 @@ int  vpxt_get_number_of_frames(const char *inputFile)
 
     return -1;
 }
-int  vpxt_get_multi_res_width_height(const char *inputFile,
+int  vpxt_get_multi_res_width_height(const char *input_file,
                                      int FileNumber,
                                      unsigned int &width,
                                      unsigned int &height)
@@ -3717,12 +3717,12 @@ int  vpxt_get_multi_res_width_height(const char *inputFile,
     int                      arg_use_i420 = 1;
     struct vpx_rational      arg_framerate = {30, 1};
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -3837,7 +3837,7 @@ int  vpxt_get_multi_res_width_height(const char *inputFile,
 
     return 0;
 }
-int  vpxt_raw_file_size(const char *inputFile)
+int  vpxt_raw_file_size(const char *input_file)
 {
     //Get frame count from y4m ivf and or webm return -1 on error
 
@@ -3866,12 +3866,12 @@ int  vpxt_raw_file_size(const char *inputFile)
     int CharCount = 0;
 
     /* Open file */
-    infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -3944,11 +3944,11 @@ int  vpxt_raw_file_size(const char *inputFile)
     if (file_type == FILE_TYPE_IVF)
     {
         rewind(infile);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), infile);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        //printf("\nIVF Length: %i\n",ivfhRaw.length);
+        //printf("\nIVF Length: %i\n",ivf_h_raw.length);
 
         while (1)
         {
@@ -4153,7 +4153,7 @@ int vpxt_timestamp_compare(const std::string TimeStampNow,
 }
 int get_test_name(int TestNumber, std::string &TestName)
 {
-    if (TestNumber == RTFFINUM) TestName = "RunTestsFromFile";
+    if (TestNumber == RTFFINUM) TestName = "run_multiple_tests";
 
     if (TestNumber == AlWDFNUM) TestName = "test_allow_drop_frames";
 
@@ -4256,9 +4256,9 @@ int get_test_name(int TestNumber, std::string &TestName)
 int vpxt_identify_test(const char *test_char)
 {
     // parse through possible options
-    //  if input is number return number
-    //  if input is string check for number string coresponds to return that
-    //  on error/cant find number string coresponds to return -1
+    // if input is number return number
+    // if input is string check for number string coresponds to return that
+    // on error/cant find number string coresponds to return -1
 
     if (atoi(test_char) != 0)
         return atoi(test_char);
@@ -4272,6 +4272,9 @@ int vpxt_identify_test(const char *test_char)
 
         if (id_test_str.substr(0, 1).compare("+") == 0)
             id_test_str.erase(0, 1);
+
+        if (id_test_str.compare("run_multiple_tests") == 0)
+            return RTFFINUM;
 
         if (id_test_str.compare("test_allow_drop_frames") == 0)
             return AlWDFNUM;
@@ -4493,8 +4496,6 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
     int SelectorArInt = 0;
     int y;
     int PassFailReturn = 1;
-
-
 
     std::fstream infile;
     infile.open(input);
@@ -5560,33 +5561,33 @@ int  vpxt_init_new_vs_old_log(const char *input, std::string TestIDStr)
     //returns the number of instances TestIDStr was found in the input file
     //if no instances are found one will be created and the number 1 will be
     //retunred as output.
-    std::fstream inputFile;
-    inputFile.open(input, std::fstream::in);
+    std::fstream input_file;
+    input_file.open(input, std::fstream::in);
 
     char inputFileLine[256];
-    inputFile.getline(inputFileLine, 256);
+    input_file.getline(inputFileLine, 256);
 
     int numberOfUniqueIDs = 0;
 
     //loop through log file for TestIDStr to make sure that log entry exists
-    while (!inputFile.eof())
+    while (!input_file.eof())
     {
         if (TestIDStr.compare(inputFileLine) == 0)
             numberOfUniqueIDs = numberOfUniqueIDs + 1;
 
-        inputFile.getline(inputFileLine, 256);
+        input_file.getline(inputFileLine, 256);
     }
 
-    inputFile.close();
+    input_file.close();
 
     if (numberOfUniqueIDs != 0)
         return numberOfUniqueIDs;
 
     //if log entry does not exist create it and return that only 1 entry exists
-    std::fstream outputFile;
-    outputFile.open(input, std::fstream::out | std::fstream::app);
-    outputFile << TestIDStr.c_str() << "\n";
-    outputFile.close();
+    std::fstream output_file;
+    output_file.open(input, std::fstream::out | std::fstream::app);
+    output_file << TestIDStr.c_str() << "\n";
+    output_file.close();
 
     return 1;
 }
@@ -6476,9 +6477,7 @@ float vpxt_abs_float(float input)
 double vpxt_abs_double(double input)
 {
     if (input < 0)
-    {
         input = input * -1.0;
-    }
 
     return input;
 }
@@ -6646,50 +6645,50 @@ char slashChar()
 
     return '\\';
 }
-void vpxt_delete_files(int argcount, ...)
+void vpxt_delete_files(int arg_count, ...)
 {
     va_list vl;
-    va_start(vl, argcount);
+    va_start(vl, arg_count);
     tprintf(PRINT_BTH, "\n");
     int i;
 
-    for (i = 0; i < argcount; ++i)
+    for (i = 0; i < arg_count; ++i)
     {
-        std::string FileToDelete = va_arg(vl, const char *);
+        std::string file_to_delete = va_arg(vl, const char *);
 
-        if (remove(FileToDelete.c_str()) == 0)
+        if (remove(file_to_delete.c_str()) == 0)
             tprintf(PRINT_BTH, "* %s - Successfully Deleted\n\n",
-            FileToDelete.c_str());
+            file_to_delete.c_str());
         else
             tprintf(PRINT_BTH, "- Error: %s - Not Deleted\n\n",
-            FileToDelete.c_str());
+            file_to_delete.c_str());
     }
 
     va_end(vl);
 }
-void vpxt_delete_files_quiet(int argcount, ...)
+void vpxt_delete_files_quiet(int arg_count, ...)
 {
     va_list vl;
-    va_start(vl, argcount);
+    va_start(vl, arg_count);
     tprintf(PRINT_BTH, "\n");
     int i;
 
-    for (i = 0; i < argcount; ++i)
+    for (i = 0; i < arg_count; ++i)
     {
-        std::string FileToDelete = va_arg(vl, const char *);
-        remove(FileToDelete.c_str());
+        std::string file_to_delete = va_arg(vl, const char *);
+        remove(file_to_delete.c_str());
     }
 
     va_end(vl);
 }
 void vpxt_copy_file(const char *input, const char *output)
 {
-    std::ifstream inputFile(input, std::ios::binary);
-    std::ofstream outputFile(output, std::ios::binary);
-    outputFile << inputFile.rdbuf();
+    std::ifstream input_file(input, std::ios::binary);
+    std::ofstream output_file(output, std::ios::binary);
+    output_file << input_file.rdbuf();
 
-    inputFile.close();
-    outputFile.close();
+    input_file.close();
+    output_file.close();
 
     return;
 }
@@ -6697,45 +6696,41 @@ unsigned int vpxt_get_high_res_timer_tick()
 {
 #if defined(_WIN32)
     LARGE_INTEGER pf;                       // Performance Counter Frequency
-    LARGE_INTEGER currentTime;
-    unsigned int currentTick;
+    LARGE_INTEGER current_time;
+    unsigned int current_tick;
 
     if (QueryPerformanceFrequency(&pf))
     {
         // read the counter and TSC at start
-        QueryPerformanceCounter(&currentTime);
-        currentTick  = currentTime.LowPart;
+        QueryPerformanceCounter(&current_time);
+        current_tick  = current_time.LowPart;
     }
     else
     {
-        currentTick = timeGetTime();
+        current_tick = timeGetTime();
     }
 
-    return currentTick;
+    return current_tick;
 #else
     struct timeval tv;
     gettimeofday(&tv, 0);
     return (0xffffffff & (tv.tv_sec * 1000000 + tv.tv_usec)) ;
 #endif
 }
-unsigned int vpxt_get_time_in_micro_sec(unsigned int startTick,
-                                        unsigned int stopTick)
+unsigned int vpxt_get_time_in_micro_sec(unsigned int start_tick,
+                                        unsigned int stop_tick)
 {
 #if defined(_WIN32)
     LARGE_INTEGER pf;
-    uint64_t duration = stopTick - startTick;
+    uint64_t duration = stop_tick - start_tick;
 
     if (QueryPerformanceFrequency(&pf))
-    {
         return (unsigned int)(duration * 1000000 /  pf.LowPart);
-    }
     else
-    {
         return (unsigned int)(duration * 1000);
-    }
 
 #else
-    long long duration = stopTick - startTick;
+    long long duration = stop_tick - start_tick;
     return duration;
 #endif
 }
@@ -6743,16 +6738,17 @@ unsigned int vpxt_get_cpu_tick()
 {
 #if defined(_WIN32)
 
-    FILETIME CreationTime;
-    FILETIME ExitTime;
-    FILETIME KernelTime;
-    FILETIME UserTime;
+    FILETIME creation_time;
+    FILETIME exit_time;
+    FILETIME kernel_time;
+    FILETIME user_time;
 
-    GetProcessTimes(GetCurrentProcess(), &CreationTime, &ExitTime, &KernelTime, &UserTime);
+    GetProcessTimes(GetCurrentProcess(), &creation_time, &exit_time,
+        &kernel_time, &user_time);
 
-    //UserTime is meaured in groupings of 100 nano seconds, so 10^-9 * 100
+    //user_time is meaured in groupings of 100 nano seconds, so 10^-9 * 100
     // = 10^-7 so to get to 10^-6 res divide by 10
-    return UserTime.dwLowDateTime / 10;
+    return user_time.dwLowDateTime / 10;
 
 #else
     return clock();
@@ -6767,108 +6763,105 @@ unsigned int vpxt_get_time()
 int vpxt_get_cur_dir(std::string &CurrentDir)
 {
 #if defined(_WIN32)
-    TCHAR CurrentDirChar[MAX_PATH] = "";
+    TCHAR current_dir_char[MAX_PATH] = "";
 
-    if (!::GetCurrentDirectory(sizeof(CurrentDirChar) - 1, CurrentDirChar))
+    if (!::GetCurrentDirectory(sizeof(current_dir_char) - 1, current_dir_char))
     {
         tprintf(PRINT_BTH, "Could not get current directory");
         return 0;
     }
 
-    CurrentDir = CurrentDirChar;
+    CurrentDir = current_dir_char;
 #else
-    char CurrentDirChar[256];
-    getcwd(CurrentDirChar, 256);
-    CurrentDir = CurrentDirChar;
+    char current_dir_char[256];
+    getcwd(current_dir_char, 256);
+    CurrentDir = current_dir_char;
 #endif
     return 0;
 }
-int vpxt_make_dir(std::string CreateDir)
+int vpxt_make_dir(std::string create_dir)
 {
 #if defined(_WIN32)
     /////////////////////////////////////
-    CreateDir.insert(0, "mkdir \"");
-    CreateDir += "\"";
-    system(CreateDir.c_str());
+    create_dir.insert(0, "mkdir \"");
+    create_dir += "\"";
+    system(create_dir.c_str());
     /////////////////////////////////////
 #elif defined(linux)
-    CreateDir.insert(0, "mkdir -p \"");
-    CreateDir += "\"";
-    system(CreateDir.c_str());
+    create_dir.insert(0, "mkdir -p \"");
+    create_dir += "\"";
+    system(create_dir.c_str());
 #elif defined(__APPLE__)
-    CreateDir.insert(0, "mkdir -p \"");
-    CreateDir += "\"";
-    system(CreateDir.c_str());
+    create_dir.insert(0, "mkdir -p \"");
+    create_dir += "\"";
+    system(create_dir.c_str());
 #elif defined(_PPC)
-    CreateDir.insert(0, "mkdir -p \"");
-    CreateDir += "\"";
-    system(CreateDir.c_str());
+    create_dir.insert(0, "mkdir -p \"");
+    create_dir += "\"";
+    system(create_dir.c_str());
 #endif
     return 0;
 }
-int vpxt_make_dir_vpx(std::string CreateDir2)
+int vpxt_make_dir_vpx(std::string create_dir_2)
 {
 #if defined(_WIN32)
     /////////////////////////////////////
-    CreateDir2.erase(0, 4);
-    CreateDir2.insert(0, "mkdir \"");
-    CreateDir2 += "\"";
-    system(CreateDir2.c_str());
+    create_dir_2.erase(0, 4);
+    create_dir_2.insert(0, "mkdir \"");
+    create_dir_2 += "\"";
+    system(create_dir_2.c_str());
     /////////////////////////////////////
 #elif defined(linux)
-    CreateDir2.erase(0, 4);
-    CreateDir2.insert(0, "mkdir -p \"");
-    CreateDir2 += "\"";
-    system(CreateDir2.c_str());
+    create_dir_2.erase(0, 4);
+    create_dir_2.insert(0, "mkdir -p \"");
+    create_dir_2 += "\"";
+    system(create_dir_2.c_str());
 #elif defined(__APPLE__)
-    CreateDir2.erase(0, 4);
-    CreateDir2.insert(0, "mkdir -p \"");
-    CreateDir2 += "\"";
-    system(CreateDir2.c_str());
+    create_dir_2.erase(0, 4);
+    create_dir_2.insert(0, "mkdir -p \"");
+    create_dir_2 += "\"";
+    system(create_dir_2.c_str());
 #elif defined(_PPC)
-    CreateDir2.erase(0, 4);
-    CreateDir2.insert(0, "mkdir -p \"");
-    CreateDir2 += "\"";
-    system(CreateDir2.c_str());
+    create_dir_2.erase(0, 4);
+    create_dir_2.insert(0, "mkdir -p \"");
+    create_dir_2 += "\"";
+    system(create_dir_2.c_str());
 #endif
 
     return 0;
 }
 
-void vpxt_run_exe(std::string RunExe)
+void vpxt_run_exe(std::string run_exe)
 {
-    tprintf(PRINT_STD, "\nAtempting to run: %s\n\n", RunExe.c_str());
+    tprintf(PRINT_STD, "\nAtempting to run: %s\n\n", run_exe.c_str());
 #if defined(_WIN32)
-    system(RunExe.c_str());
+    system(run_exe.c_str());
 #elif defined(linux)
-    system(RunExe.c_str());
+    system(run_exe.c_str());
 #elif defined(__APPLE__)
-
-    system(RunExe.c_str());
-
+    system(run_exe.c_str());
 #elif defined(_PPC)
-
-    system(RunExe.c_str());
+    system(run_exe.c_str());
 #endif
 
     return;
 }
-int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector,
-                           std::string Directory)
+int vpxt_list_files_in_dir(std::vector<std::string> &file_name_vector,
+                           std::string directory)
 {
 #if defined(_WIN32)
-    std::string RawDirectory = Directory + "\\";
-    Directory += "\\*";
+    std::string RawDirectory = directory + "\\";
+    directory += "\\*";
     WIN32_FIND_DATA FileData;
     HANDLE hFind;
     std::string FileName;
-    hFind = FindFirstFile(Directory.c_str(), &FileData);
+    hFind = FindFirstFile(directory.c_str(), &FileData);
 
     while (FileName.compare(FileData.cFileName) != 0)
     {
         FileName = FileData.cFileName;
         std::string FullFileName = RawDirectory + FileName;
-        FileNameVector.push_back(FullFileName);
+        file_name_vector.push_back(FullFileName);
         FindNextFile(hFind, &FileData);
     }
 
@@ -6876,13 +6869,13 @@ int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector,
     DIR *FileData;
     struct dirent *hFind;
     std::string FileName;
-    FileData = opendir(Directory.c_str());
+    FileData = opendir(directory.c_str());
     hFind = readdir(FileData);
 
     while (FileName.compare(hFind->d_name) != 0)
     {
         FileName = hFind->d_name;
-        FileNameVector.push_back(FileName);
+        file_name_vector.push_back(FileName);
         hFind = readdir(FileData);
 
         if (hFind == NULL)
@@ -6896,7 +6889,7 @@ int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector,
     return 0;
 }
 int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles,
-                                 std::string Directory)
+                                 std::string directory)
 {
 
 #if defined(_WIN32)
@@ -6904,7 +6897,7 @@ int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles,
     HANDLE hFind;
     std::string FileName;
 
-    hFind = FindFirstFile(Directory.c_str(), &FileData);
+    hFind = FindFirstFile(directory.c_str(), &FileData);
 
     while (FileName.compare(FileData.cFileName) != 0)
     {
@@ -6919,7 +6912,7 @@ int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles,
     struct dirent *hFind;
     std::string FileName;
 
-    FileData = opendir(Directory.c_str());
+    FileData = opendir(directory.c_str());
     hFind = readdir(FileData);
 
     while (FileName.compare(hFind->d_name) != 0)
@@ -6942,7 +6935,7 @@ int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles,
 }
 int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles,
                                        std::vector<std::string> &FilesFound,
-                                       std::string Directory)
+                                       std::string directory)
 {
     //Function returns the number of non ignored files found on success
     //-1 on error
@@ -6953,7 +6946,7 @@ int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles,
     WIN32_FIND_DATA FileData;
     HANDLE hFind;
 
-    hFind = FindFirstFile(Directory.c_str(), &FileData);
+    hFind = FindFirstFile(directory.c_str(), &FileData);
 
     while (FileName.compare(FileData.cFileName) != 0)
     {
@@ -6985,7 +6978,7 @@ int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles,
     DIR *FileData;
     struct dirent *hFind;
 
-    FileData = opendir(Directory.c_str());
+    FileData = opendir(directory.c_str());
     hFind = readdir(FileData);
 
     std::string FileName;
@@ -7802,7 +7795,7 @@ double vpxt_psnr_dec(const char *inputFile1,
     forceUVswap = 0;
 
     ////////////////////////Initilize Raw File////////////////////////
-    unsigned int frameCount = 0;//ivfhRaw.length;
+    unsigned int frameCount = 0;//ivf_h_raw.length;
 
     unsigned int             file_type, fourcc;
     struct detect_buffer detect;
@@ -7924,7 +7917,7 @@ double vpxt_psnr_dec(const char *inputFile1,
     }
 
     ////////////////////////Initilize CompRaw File////////////////////////
-    //unsigned int frameCount = 0;//ivfhRaw.length;
+    //unsigned int frameCount = 0;//ivf_h_raw.length;
 
     unsigned int             compraw_file_type, compraw_fourcc;
     struct detect_buffer compraw_detect;
@@ -8904,7 +8897,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
 
         return total_psnr;
 }
-double vpxt_data_rate(const char *inputFile, int DROuputSel)
+double vpxt_data_rate(const char *input_file, int DROuputSel)
 {
     if (DROuputSel != 2)
     {
@@ -8912,7 +8905,7 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
 
         char FileNameOnly[256];
 
-        vpxt_file_name(inputFile, FileNameOnly, 0);
+        vpxt_file_name(input_file, FileNameOnly, 0);
         tprintf(PRINT_BTH, "Data Rate for: %s", FileNameOnly);
     }
 
@@ -8920,7 +8913,7 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
     int frameCount = 0;
     int byteRec = 0;
 
-    long PosSize = vpxt_file_size(inputFile, 0);
+    long PosSize = vpxt_file_size(input_file, 0);
     ///////////////////////////////////
     unsigned int            width;
     unsigned int            height;
@@ -8941,12 +8934,12 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
     input.pkt = 0;
     input.video_track = 0;
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -9050,7 +9043,7 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
     return Avg;
 }
 
-int vpxt_check_pbm(const char *inputFile,
+int vpxt_check_pbm(const char *input_file,
                    int bitRate,
                    int64_t maxBuffer,
                    int64_t preBuffer)
@@ -9078,12 +9071,12 @@ int vpxt_check_pbm(const char *inputFile,
     input.pkt = 0;
     input.video_track = 0;
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -9113,7 +9106,7 @@ int vpxt_check_pbm(const char *inputFile,
     int frameCount = 0;
     int byteRec = 0;
 
-    //frameCount = ivfhRaw.length;
+    //frameCount = ivf_h_raw.length;
     int nFrameFail = 0;
 
     bool checkOverrun = false;
@@ -9174,7 +9167,7 @@ int vpxt_check_pbm(const char *inputFile,
     fclose(infile);
     return -11;
 }
-int vpxt_check_pbm_threshold(const char *inputFile,
+int vpxt_check_pbm_threshold(const char *input_file,
                              double bitRate,
                              int64_t maxBuffer,
                              int64_t preBuffer,
@@ -9182,10 +9175,10 @@ int vpxt_check_pbm_threshold(const char *inputFile,
                              int Threshold)
 {
     std::string ResizeInStr;
-    vpxt_remove_file_extension(inputFile, ResizeInStr);
+    vpxt_remove_file_extension(input_file, ResizeInStr);
     ResizeInStr += "CheckPBMThresh.txt";
-    char outputFile[255] = "";
-    snprintf(outputFile, 255, "%s", ResizeInStr.c_str());
+    char output_file[255] = "";
+    snprintf(output_file, 255, "%s", ResizeInStr.c_str());
 
     FILE *out;
 
@@ -9193,7 +9186,7 @@ int vpxt_check_pbm_threshold(const char *inputFile,
 
     if (PrintSwitch == 1)
     {
-        out = fopen(outputFile, "w");
+        out = fopen(output_file, "w");
     }
 
     unsigned int            width;
@@ -9215,12 +9208,12 @@ int vpxt_check_pbm_threshold(const char *inputFile,
     input.pkt = 0;
     input.video_track = 0;
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -9409,7 +9402,7 @@ int initialize_test_directory(int argc,
                               std::string &file_index_str,
                               char main_test_dir_char[255],
                               char file_index_output_char[255],
-                              std::string files_ar[])
+                              const std::string sub_folder_str)
 {
     //Initilizes cur_test_dir_str, file_index_str, main_test_dir_char, and
     //file_index_output_char to proper values.
@@ -9436,12 +9429,12 @@ int initialize_test_directory(int argc,
         file_index_str += "FileIndex.txt";
         ////////////////////////////////////////////////////////////////////////
         cur_test_dir_str = main_test_dir_char;
-        cur_test_dir_str += test_dir + slashCharStr() + files_ar[0];
+        cur_test_dir_str += test_dir + slashCharStr() + sub_folder_str;
         cur_test_dir_str.erase(cur_test_dir_str.length() - 1, 1);
 
-        std::string CreateDir2 = cur_test_dir_str;
-        CreateDir2.insert(0, "md \"");
-        vpxt_make_dir_vpx(CreateDir2.c_str());
+        std::string create_dir_2 = cur_test_dir_str;
+        create_dir_2.insert(0, "md \"");
+        vpxt_make_dir_vpx(create_dir_2.c_str());
 
         ///////////////////Records FileLocations for MultiPlat Test/////////////
         if (test_type == COMP_ONLY)
@@ -10019,7 +10012,7 @@ int  vpxt_lower_case_string(std::string &input)
 }
 //---------------------------------Enc/Dec--------------------------------------
 #ifdef API
-int vpxt_compress(const char *inputFile,
+int vpxt_compress(const char *input_file,
                   const char *outputFile2,
                   int speed, int bitrate,
                   VP8_CONFIG &oxcf,
@@ -10065,7 +10058,7 @@ int vpxt_compress(const char *inputFile,
     EbmlGlobal               ebml = {0};
     uint32_t                 hash = 0;
     vpx_codec_ctx_t          encoder;
-    const char              *in_fn = inputFile, *out_fn = outputFile2;
+    const char              *in_fn = input_file, *out_fn = outputFile2;
     const char              *stats_fn = NULL;
     FILE                    *infile, *outfile;
     vpx_codec_enc_cfg_t      cfg;
@@ -10619,7 +10612,7 @@ int vpxt_compress(const char *inputFile,
 
     return 0;
 }
-int vpxt_compress_no_error_output(const char *inputFile,
+int vpxt_compress_no_error_output(const char *input_file,
                                   const char *outputFile2,
                                   int speed, int bitrate,
                                   VP8_CONFIG &oxcf,
@@ -10665,7 +10658,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
     EbmlGlobal               ebml = {0};
     uint32_t                 hash = 0;
     vpx_codec_ctx_t          encoder;
-    const char              *in_fn = inputFile, *out_fn = outputFile2;
+    const char              *in_fn = input_file, *out_fn = outputFile2;
     const char              *stats_fn = NULL;
     FILE                    *infile, *outfile;
     vpx_codec_enc_cfg_t      cfg;
@@ -11224,7 +11217,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
 
     return 0;
 }
-unsigned int vpxt_time_compress(const char *inputFile,
+unsigned int vpxt_time_compress(const char *input_file,
                                 const char *outputFile2,
                                 int speed, int bitrate,
                                 VP8_CONFIG &oxcf,
@@ -11270,7 +11263,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
     EbmlGlobal               ebml = {0};
     uint32_t                 hash = 0;
     vpx_codec_ctx_t          encoder;
-    const char              *in_fn = inputFile, *out_fn = outputFile2, *stats_fn = NULL;
+    const char              *in_fn = input_file, *out_fn = outputFile2, *stats_fn = NULL;
     FILE                    *infile, *outfile;
     vpx_codec_enc_cfg_t      cfg;
     vpx_codec_err_t          res;
@@ -11854,7 +11847,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
 
     return cx_time;
 }
-int vpxt_compress_force_key_frame(const char *inputFile,
+int vpxt_compress_force_key_frame(const char *input_file,
                                   const char *outputFile2,
                                   int speed, int bitrate,
                                   VP8_CONFIG &oxcf,
@@ -11900,7 +11893,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
     EbmlGlobal               ebml = {0};
     uint32_t                 hash = 0;
     vpx_codec_ctx_t          encoder;
-    const char              *in_fn = inputFile, *out_fn = outputFile2;
+    const char              *in_fn = input_file, *out_fn = outputFile2;
     const char              *stats_fn = NULL;
     FILE                    *infile, *outfile;
     vpx_codec_enc_cfg_t      cfg;
@@ -12467,7 +12460,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
 
     return 0;
 }
-int vpxt_compress_recon_buffer_check(const char *inputFile,
+int vpxt_compress_recon_buffer_check(const char *input_file,
                                      const char *outputFile2,
                                      int speed, int bitrate,
                                      VP8_CONFIG &oxcf,
@@ -12516,7 +12509,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
     EbmlGlobal               ebml = {0};
     uint32_t                 hash = 0;
     vpx_codec_ctx_t          encoder;
-    const char              *in_fn = inputFile, *out_fn =outputFile2Str.c_str();
+    const char              *in_fn = input_file, *out_fn =outputFile2Str.c_str();
     const char              *stats_fn = NULL;
     FILE                    *infile, *outfile;
     vpx_codec_enc_cfg_t      cfg;
@@ -13382,7 +13375,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
 
     return 0;
 }
-unsigned int vpxt_compress_multi_resolution(const char *inputFile,
+unsigned int vpxt_compress_multi_resolution(const char *input_file,
                                             const char *outputFile2,
                                             int speed, int bitrate,
                                             VP8_CONFIG &oxcf,
@@ -13475,7 +13468,7 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
     int                  s_lvl = 0;
 
     /* Open input video file for encoding */
-    if(!(infile = fopen(inputFile, "rb")))
+    if(!(infile = fopen(input_file, "rb")))
         return 0;
 
     show_psnr = 0;//strtol(argv[NUM_ENCODERS + 4], NULL, 0);
@@ -13870,7 +13863,7 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
     return cx_time;
 }
 
-unsigned int vpxt_compress_scalable_patterns(const char *inputFile,
+unsigned int vpxt_compress_scalable_patterns(const char *input_file,
                                              const char *outputFile2,
                                              int speed, VP8_CONFIG &oxcf,
                                              const char *comp_out_str,
@@ -13910,7 +13903,7 @@ unsigned int vpxt_compress_scalable_patterns(const char *inputFile,
     int                       frames_in_layer[MAX_LAYERS] = {0};
     int                       layer_flags[MAX_PERIODICITY] = {0};
     y4m_input                 y4m;
-    const char               *in_fn = inputFile, *out_fn = outputFile2;
+    const char               *in_fn = input_file, *out_fn = outputFile2;
     const char               *stats_fn = NULL;
     unsigned int              file_type, fourcc;
     int                       arg_have_framerate = 0;
@@ -18032,14 +18025,14 @@ fail:
 }
 #endif
 //---------------------------------Tools----------------------------------------
-int vpxt_cut_clip(const char *inputFile,
-                  const char *outputFile,
+int vpxt_cut_clip(const char *input_file,
+                  const char *output_file,
                   int StartingFrame,
                   int EndingFrame)
 {
     bool verbose = 1;
 
-    FILE *in = fopen(inputFile, "rb");
+    FILE *in = fopen(input_file, "rb");
 
     if (in == NULL)
     {
@@ -18047,7 +18040,7 @@ int vpxt_cut_clip(const char *inputFile,
         return 0;
     }
 
-    FILE *out = fopen(outputFile, "wb");
+    FILE *out = fopen(output_file, "wb");
 
     if (out == NULL)
     {
@@ -18160,10 +18153,10 @@ int vpxt_cut_clip(const char *inputFile,
     if (file_type == FILE_TYPE_IVF)
     {
         rewind(in);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in);
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     currentVideoFrame = 1;
@@ -18253,11 +18246,11 @@ int vpxt_cut_clip(const char *inputFile,
     {
         rewind(in);
         rewind(out);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        ivfhRaw.length = framesWritten;
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in);
+        ivf_h_raw.length = framesWritten;
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     fclose(in);
@@ -18266,8 +18259,8 @@ int vpxt_cut_clip(const char *inputFile,
 
     return(0);
 }
-int vpxt_crop_raw_clip(const char *inputFile,
-                       const char *outputFile,
+int vpxt_crop_raw_clip(const char *input_file,
+                       const char *output_file,
                        int xoffset, int yoffset,
                        int newFrameWidth,
                        int newFrameHeight,
@@ -18276,7 +18269,7 @@ int vpxt_crop_raw_clip(const char *inputFile,
 {
     bool verbose = 1;
 
-    FILE *in = fopen(inputFile, "rb");
+    FILE *in = fopen(input_file, "rb");
 
     if (in == NULL)
     {
@@ -18284,7 +18277,7 @@ int vpxt_crop_raw_clip(const char *inputFile,
         return 0;
     }
 
-    FILE *out = fopen(outputFile, "wb");
+    FILE *out = fopen(output_file, "wb");
 
     if (out == NULL)
     {
@@ -18421,10 +18414,10 @@ int vpxt_crop_raw_clip(const char *inputFile,
     if (file_type == FILE_TYPE_IVF)
     {
         rewind(in);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in);
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     currentVideoFrame = 1;
@@ -18523,13 +18516,13 @@ int vpxt_crop_raw_clip(const char *inputFile,
     {
         rewind(in);
         rewind(out);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        ivfhRaw.length = framesWritten;
-        ivfhRaw.width = newFrameWidth;
-        ivfhRaw.height = newFrameHeight;
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in);
+        ivf_h_raw.length = framesWritten;
+        ivf_h_raw.width = newFrameWidth;
+        ivf_h_raw.height = newFrameHeight;
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     fclose(in);
@@ -18537,8 +18530,8 @@ int vpxt_crop_raw_clip(const char *inputFile,
 
     return(0);
 }
-int vpxt_pad_raw_clip(const char *inputFile,
-                      const char *outputFile,
+int vpxt_pad_raw_clip(const char *input_file,
+                      const char *output_file,
                       int newFrameWidth,
                       int newFrameHeight,
                       int FileIsIVF,
@@ -18546,7 +18539,7 @@ int vpxt_pad_raw_clip(const char *inputFile,
 {
     bool verbose = 1;
 
-    FILE *in = fopen(inputFile, "rb");
+    FILE *in = fopen(input_file, "rb");
 
     if (in == NULL)
     {
@@ -18554,7 +18547,7 @@ int vpxt_pad_raw_clip(const char *inputFile,
         return 0;
     }
 
-    FILE *out = fopen(outputFile, "wb");
+    FILE *out = fopen(output_file, "wb");
 
     if (out == NULL)
     {
@@ -18689,10 +18682,10 @@ int vpxt_pad_raw_clip(const char *inputFile,
     if (file_type == FILE_TYPE_IVF)
     {
         rewind(in);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in);
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     currentVideoFrame = 1;
@@ -18832,13 +18825,13 @@ int vpxt_pad_raw_clip(const char *inputFile,
     {
         rewind(in);
         rewind(out);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-        ivfhRaw.length = framesWritten;
-        ivfhRaw.width = newFrameWidth;
-        ivfhRaw.height = newFrameHeight;
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in);
+        ivf_h_raw.length = framesWritten;
+        ivf_h_raw.width = newFrameWidth;
+        ivf_h_raw.height = newFrameHeight;
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     fclose(in);
@@ -18850,7 +18843,7 @@ int vpxt_pad_raw_clip(const char *inputFile,
 }
 int vpxt_paste_clip(const char *inputFile1,
                     const char *inputFile2,
-                    const char *outputFile,
+                    const char *output_file,
                     int StartingFrame)
 {
     bool verbose = 1;
@@ -18871,7 +18864,7 @@ int vpxt_paste_clip(const char *inputFile1,
         return 0;
     }
 
-    FILE *out = fopen(outputFile, "wb");
+    FILE *out = fopen(output_file, "wb");
 
     if (out == NULL)
     {
@@ -19080,10 +19073,10 @@ int vpxt_paste_clip(const char *inputFile1,
     if (file_type1 == FILE_TYPE_IVF)
     {
         rewind(in1);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in1);
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in1);
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     vpx_image_t raw;
@@ -19163,11 +19156,11 @@ int vpxt_paste_clip(const char *inputFile1,
     {
         rewind(in1);
         rewind(out);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), in1);
-        ivfhRaw.length = framesWritten;
-        fwrite((char *)& ivfhRaw, 1, sizeof(ivfhRaw), out);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in1);
+        ivf_h_raw.length = framesWritten;
+        fwrite((char *)& ivf_h_raw, 1, sizeof(ivf_h_raw), out);
     }
 
     fclose(in1);
@@ -19177,12 +19170,12 @@ int vpxt_paste_clip(const char *inputFile1,
 
     return(0);
 }
-int vpxt_formatted_to_raw(const std::string inputFile,
-                          const std::string outputFile)
+int vpxt_formatted_to_raw(const std::string input_file,
+                          const std::string output_file)
 {
     bool verbose = 1;
 
-    FILE *in = fopen(inputFile.c_str(), "rb");
+    FILE *in = fopen(input_file.c_str(), "rb");
 
     if (in == NULL)
     {
@@ -19190,7 +19183,7 @@ int vpxt_formatted_to_raw(const std::string inputFile,
         return 0;
     }
 
-    FILE *out = fopen(outputFile.c_str(), "wb");
+    FILE *out = fopen(output_file.c_str(), "wb");
 
     if (out == NULL)
     {
@@ -19342,15 +19335,15 @@ int vpxt_formatted_to_raw(const std::string inputFile,
 
     return(0);
 }
-int vpxt_formatted_to_raw_frames(const std::string inputFile,
-                                 const std::string outputFile)
+int vpxt_formatted_to_raw_frames(const std::string input_file,
+                                 const std::string output_file)
 {
-    int frameLength = vpxt_get_number_of_frames(inputFile.c_str());
+    int frameLength = vpxt_get_number_of_frames(input_file.c_str());
     int LastFrameDecPlaces = vpxt_decimal_places(frameLength);
 
     bool verbose = 1;
 
-    FILE *in = fopen(inputFile.c_str(), "rb");
+    FILE *in = fopen(input_file.c_str(), "rb");
 
     if (in == NULL)
     {
@@ -19457,7 +19450,7 @@ int vpxt_formatted_to_raw_frames(const std::string inputFile,
         vpxt_itoa_custom(height, heightchar, 10);
 
         std::string FrameFileName;
-        vpxt_remove_file_extension(outputFile.c_str(), FrameFileName);
+        vpxt_remove_file_extension(output_file.c_str(), FrameFileName);
         FrameFileName.erase(FrameFileName.length() - 1, 1);
         FrameFileName += "-";
         FrameFileName += widthchar;
@@ -19537,8 +19530,8 @@ int vpxt_formatted_to_raw_frames(const std::string inputFile,
 }
 int vpxt_display_header_info(int argc, const char *const *argv)
 {
-    char inputFile[256] = "";
-    strncpy(inputFile, argv[2], 256);
+    char input_file[256] = "";
+    strncpy(input_file, argv[2], 256);
     int extrafileinfo = 0;
 
     FILE *fp;
@@ -19548,12 +19541,12 @@ int vpxt_display_header_info(int argc, const char *const *argv)
 
     if (argc > 4)
     {
-        char outputFile[256] = "";
-        strncpy(outputFile, argv[4], 256);
+        char output_file[256] = "";
+        strncpy(output_file, argv[4], 256);
 
-        if ((fp = freopen(outputFile, "w", stderr)) == NULL)
+        if ((fp = freopen(output_file, "w", stderr)) == NULL)
         {
-            tprintf(PRINT_STD, "Cannot open out put file: %s\n", outputFile);
+            tprintf(PRINT_STD, "Cannot open out put file: %s\n", output_file);
             exit(1);
         }
     }
@@ -19577,12 +19570,12 @@ int vpxt_display_header_info(int argc, const char *const *argv)
     std::vector<unsigned int>     frameSize;
     std::vector<uint64_t> timeStamp;
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -19631,23 +19624,23 @@ int vpxt_display_header_info(int argc, const char *const *argv)
     if (input.kind == IVF_FILE)
     {
         rewind(infile);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), infile);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        version = ivfhRaw.version;
-        headersize = ivfhRaw.headersize;
-        fourcc = ivfhRaw.four_cc;
-        width = ivfhRaw.width;
-        height = ivfhRaw.height;
-        rate = ivfhRaw.rate;
-        scale = ivfhRaw.scale;
-        length = ivfhRaw.length;
+        version = ivf_h_raw.version;
+        headersize = ivf_h_raw.headersize;
+        fourcc = ivf_h_raw.four_cc;
+        width = ivf_h_raw.width;
+        height = ivf_h_raw.height;
+        rate = ivf_h_raw.rate;
+        scale = ivf_h_raw.scale;
+        length = ivf_h_raw.length;
 
-        signature[0] = ivfhRaw.signature[0];
-        signature[1] = ivfhRaw.signature[1];
-        signature[2] = ivfhRaw.signature[2];
-        signature[3] = ivfhRaw.signature[3];
+        signature[0] = ivf_h_raw.signature[0];
+        signature[1] = ivf_h_raw.signature[1];
+        signature[2] = ivf_h_raw.signature[2];
+        signature[3] = ivf_h_raw.signature[3];
     }
 
     uint8_t               *buf = NULL;
@@ -20876,11 +20869,11 @@ int vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
     int frameCount = 0;
     int byteRec = 0;
 
-    IVF_HEADER ivfhRaw;
+    IVF_HEADER ivf_h_raw;
 
-    InitIVFHeader(&ivfhRaw);
-    fread(&ivfhRaw, 1, sizeof(ivfhRaw), in);
-    vpxt_format_ivf_header_read(&ivfhRaw);
+    InitIVFHeader(&ivf_h_raw);
+    fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), in);
+    vpxt_format_ivf_header_read(&ivf_h_raw);
 
 
     IVF_FRAME_HEADER ivf_fhRaw;
@@ -20889,11 +20882,11 @@ int vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
     fread(&ivf_fhRaw.timeStamp, 1, 8, in);
     vpxt_format_frame_header_read(ivf_fhRaw);
 
-    frameCount = ivfhRaw.length;
+    frameCount = ivf_h_raw.length;
 
     long nSamples = frameCount;
-    long lRateNum = ivfhRaw.rate;
-    long lRateDenom = ivfhRaw.scale;
+    long lRateNum = ivf_h_raw.rate;
+    long lRateDenom = ivf_h_raw.scale;
 
     long nSamplesPerBlock = 1;
 
@@ -21138,12 +21131,12 @@ fail:
 
     return resizedIMGCount;
 }
-int vpxt_display_visible_frames(const char *inputFile, int Selector)
+int vpxt_display_visible_frames(const char *input_file, int Selector)
 {
     // 0 = just display
     // 1 = write to file
     std::string VisInStr;
-    vpxt_remove_file_extension(inputFile, VisInStr);
+    vpxt_remove_file_extension(input_file, VisInStr);
     VisInStr += "visible_frames.txt";
 
     int VisableCount = 0;
@@ -21180,12 +21173,12 @@ int vpxt_display_visible_frames(const char *inputFile, int Selector)
     std::vector<unsigned int>     frameSize;
     std::vector<uint64_t> timeStamp;
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -21241,23 +21234,23 @@ int vpxt_display_visible_frames(const char *inputFile, int Selector)
     if (input.kind == IVF_FILE)
     {
         rewind(infile);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), infile);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        version = ivfhRaw.version;
-        headersize = ivfhRaw.headersize;
-        fourcc = ivfhRaw.four_cc;
-        width = ivfhRaw.width;
-        height = ivfhRaw.height;
-        rate = ivfhRaw.rate;
-        scale = ivfhRaw.scale;
-        length = ivfhRaw.length;
+        version = ivf_h_raw.version;
+        headersize = ivf_h_raw.headersize;
+        fourcc = ivf_h_raw.four_cc;
+        width = ivf_h_raw.width;
+        height = ivf_h_raw.height;
+        rate = ivf_h_raw.rate;
+        scale = ivf_h_raw.scale;
+        length = ivf_h_raw.length;
 
-        signature[0] = ivfhRaw.signature[0];
-        signature[1] = ivfhRaw.signature[1];
-        signature[2] = ivfhRaw.signature[2];
-        signature[3] = ivfhRaw.signature[3];
+        signature[0] = ivf_h_raw.signature[0];
+        signature[1] = ivf_h_raw.signature[1];
+        signature[2] = ivf_h_raw.signature[2];
+        signature[3] = ivf_h_raw.signature[3];
     }
 
     uint8_t               *buf = NULL;
@@ -21323,16 +21316,16 @@ fail:
 
     return VisableCount;
 }
-int vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
+int vpxt_display_alt_ref_frames(const char *input_file, int Selector)
 {
     // 0 = just display
     // 1 = write to file
 
     std::string AltRefInStr;
-    vpxt_remove_file_extension(inputFile, AltRefInStr);
+    vpxt_remove_file_extension(input_file, AltRefInStr);
     AltRefInStr += "alt_ref_frames.txt";
-    char outputFile[255] = "";
-    snprintf(outputFile, 255, "%s", AltRefInStr.c_str());
+    char output_file[255] = "";
+    snprintf(output_file, 255, "%s", AltRefInStr.c_str());
 
     int AltRefCount = 0;
 
@@ -21368,12 +21361,12 @@ int vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
     std::vector<unsigned int>     frameSize;
     std::vector<uint64_t> timeStamp;
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -21429,23 +21422,23 @@ int vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
     if (input.kind == IVF_FILE)
     {
         rewind(infile);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), infile);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        version = ivfhRaw.version;
-        headersize = ivfhRaw.headersize;
-        fourcc = ivfhRaw.four_cc;
-        width = ivfhRaw.width;
-        height = ivfhRaw.height;
-        rate = ivfhRaw.rate;
-        scale = ivfhRaw.scale;
-        length = ivfhRaw.length;
+        version = ivf_h_raw.version;
+        headersize = ivf_h_raw.headersize;
+        fourcc = ivf_h_raw.four_cc;
+        width = ivf_h_raw.width;
+        height = ivf_h_raw.height;
+        rate = ivf_h_raw.rate;
+        scale = ivf_h_raw.scale;
+        length = ivf_h_raw.length;
 
-        signature[0] = ivfhRaw.signature[0];
-        signature[1] = ivfhRaw.signature[1];
-        signature[2] = ivfhRaw.signature[2];
-        signature[3] = ivfhRaw.signature[3];
+        signature[0] = ivf_h_raw.signature[0];
+        signature[1] = ivf_h_raw.signature[1];
+        signature[2] = ivf_h_raw.signature[2];
+        signature[3] = ivf_h_raw.signature[3];
     }
 
     uint8_t               *buf = NULL;
@@ -21511,15 +21504,15 @@ fail:
 
     return AltRefCount;
 }
-int vpxt_display_key_frames(const char *inputFile, int Selector)
+int vpxt_display_key_frames(const char *input_file, int Selector)
 {
     int keyframecount = 0;
 
     std::string KeyInStr;
-    vpxt_remove_file_extension(inputFile, KeyInStr);
+    vpxt_remove_file_extension(input_file, KeyInStr);
     KeyInStr += "key_frames.txt";
-    char outputFile[255] = "";
-    snprintf(outputFile, 255, "%s", KeyInStr.c_str());
+    char output_file[255] = "";
+    snprintf(output_file, 255, "%s", KeyInStr.c_str());
 
     std::ofstream outfile;
 
@@ -21550,12 +21543,12 @@ int vpxt_display_key_frames(const char *inputFile, int Selector)
     signature[2] = ' ';
     signature[3] = ' ';
 
-    FILE *infile = strcmp(inputFile, "-") ? fopen(inputFile, "rb") :
+    FILE *infile = strcmp(input_file, "-") ? fopen(input_file, "rb") :
         set_binary_mode(stdin);
 
     if (!infile)
     {
-        tprintf(PRINT_BTH, "Failed to open input file: %s", inputFile);
+        tprintf(PRINT_BTH, "Failed to open input file: %s", input_file);
         return -1;
     }
 
@@ -21611,23 +21604,23 @@ int vpxt_display_key_frames(const char *inputFile, int Selector)
     if (input.kind == IVF_FILE)
     {
         rewind(infile);
-        IVF_HEADER ivfhRaw;
-        InitIVFHeader(&ivfhRaw);
-        fread(&ivfhRaw, 1, sizeof(ivfhRaw), infile);
+        IVF_HEADER ivf_h_raw;
+        InitIVFHeader(&ivf_h_raw);
+        fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        version = ivfhRaw.version;
-        headersize = ivfhRaw.headersize;
-        fourcc = ivfhRaw.four_cc;
-        width = ivfhRaw.width;
-        height = ivfhRaw.height;
-        rate = ivfhRaw.rate;
-        scale = ivfhRaw.scale;
-        length = ivfhRaw.length;
+        version = ivf_h_raw.version;
+        headersize = ivf_h_raw.headersize;
+        fourcc = ivf_h_raw.four_cc;
+        width = ivf_h_raw.width;
+        height = ivf_h_raw.height;
+        rate = ivf_h_raw.rate;
+        scale = ivf_h_raw.scale;
+        length = ivf_h_raw.length;
 
-        signature[0] = ivfhRaw.signature[0];
-        signature[1] = ivfhRaw.signature[1];
-        signature[2] = ivfhRaw.signature[2];
-        signature[3] = ivfhRaw.signature[3];
+        signature[0] = ivf_h_raw.signature[0];
+        signature[1] = ivf_h_raw.signature[1];
+        signature[2] = ivf_h_raw.signature[2];
+        signature[3] = ivf_h_raw.signature[3];
     }
 
     uint8_t               *buf = NULL;
@@ -22365,15 +22358,15 @@ int vpxt_eval_frame_stats_temp_scale(const char *input_file, int pattern)
     infile.close();
     return 1;
 }
-int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
+int vpxt_check_min_quantizer(const char *input_file, int MinQuantizer)
 {
     char QuantDispNameChar[255] = "";
-    vpxt_file_name(inputFile, QuantDispNameChar, 0);
+    vpxt_file_name(input_file, QuantDispNameChar, 0);
 
     tprintf(PRINT_BTH, "Checking %s min quantizer:\n", QuantDispNameChar);
 
     std::string QuantInStr;
-    vpxt_remove_file_extension(inputFile, QuantInStr);
+    vpxt_remove_file_extension(input_file, QuantInStr);
     QuantInStr += "quantizers.txt";
 
     std::ifstream infile(QuantInStr.c_str());
@@ -22420,15 +22413,15 @@ int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
     infile.close();
     return -1;//result > -1 -> fail | result = -1 pass
 }
-int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer)
+int vpxt_check_max_quantizer(const char *input_file, int MaxQuantizer)
 {
     char QuantDispNameChar[255] = "";
-    vpxt_file_name(inputFile, QuantDispNameChar, 0);
+    vpxt_file_name(input_file, QuantDispNameChar, 0);
 
     tprintf(PRINT_BTH, "Checking %s max quantizer:\n", QuantDispNameChar);
 
     std::string QuantInStr;
-    vpxt_remove_file_extension(inputFile, QuantInStr);
+    vpxt_remove_file_extension(input_file, QuantInStr);
     QuantInStr += "quantizers.txt";
 
     std::ifstream infile(QuantInStr.c_str());
@@ -22475,15 +22468,15 @@ int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer)
     infile.close();
     return -1;//result > -1 -> fail | result = -1 pass
 }
-int vpxt_check_fixed_quantizer(const char *inputFile, int FixedQuantizer)
+int vpxt_check_fixed_quantizer(const char *input_file, int FixedQuantizer)
 {
     char QuantDispNameChar[255] = "";
-    vpxt_file_name(inputFile, QuantDispNameChar, 0);
+    vpxt_file_name(input_file, QuantDispNameChar, 0);
 
     tprintf(PRINT_BTH, "Checking %s fixed quantizer:", QuantDispNameChar);
 
     std::string QuantInStr;
-    vpxt_remove_file_extension(inputFile, QuantInStr);
+    vpxt_remove_file_extension(input_file, QuantInStr);
     QuantInStr += "quantizers.txt";
 
     std::ifstream infile(QuantInStr.c_str());

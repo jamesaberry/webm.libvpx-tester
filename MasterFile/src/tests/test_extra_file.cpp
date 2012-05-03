@@ -3,7 +3,7 @@
 int test_extra_file(int argc,
                     const char *const *argv,
                     const std::string &working_dir,
-                    std::string files_ar[],
+                    const std::string sub_folder_str,
                     int test_type,
                     int delete_ivf)
 {
@@ -17,7 +17,7 @@ int test_extra_file(int argc,
     std::string input = argv[2];
     std::string enc_format = argv[3];
 
-    ////////////Formatting Test Specific Directory////////////
+    ////////////Formatting Test Specific directory////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -25,7 +25,7 @@ int test_extra_file(int argc,
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
-        file_index_output_char, files_ar) == 11)
+        file_index_output_char, sub_folder_str) == 11)
         return TEST_ERRFM;
 
     ////////compression directory////////
@@ -96,7 +96,7 @@ int test_extra_file(int argc,
 
     //////////////////////////Delete opsnr.stt//////////////////////////////////
 
-    //check Current Directory
+    //check Current directory
     std::string current_dir_opsnr = current_dir + slashCharStr();
 
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ",
@@ -131,7 +131,7 @@ int test_extra_file(int argc,
         tprintf(PRINT_BTH, "opsnr.stt File found and deleted. \n");
     }
 
-    //check Compression Directory
+    //check Compression directory
     std::string comp_dir_opsnr = compression_dir;
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", comp_dir_opsnr.c_str());
     comp_dir_opsnr += "opsnr.stt";

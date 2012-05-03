@@ -83,7 +83,7 @@ double vp8_ssim
     else
         plane_summed_weights = (height - 7) * (width - 7);
 
-    //some prologue for the main loop
+    // some prologue for the main loop
     temp = 8 * width;
 
     img1_sum_ptr1      = img1_sum + temp;
@@ -107,7 +107,7 @@ double vp8_ssim
         img12_mul_sum_ptr1[x] = 0;
     }
 
-    //the main loop
+    // the main loop
     for (y = 1; y < height; y++)
     {
         img1 += stride_img1;

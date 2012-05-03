@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int tool_graph_psnr(int argc,
-                    const char *const *argv,
+                    const char** argv,
                     const std::string &working_dir,
                     const std::string sub_folder_str,
                     int test_type)
@@ -22,7 +22,7 @@ int tool_graph_psnr(int argc,
         return 0;
     }
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *test_dir = "GraphPSNR";
@@ -50,7 +50,7 @@ int tool_graph_psnr(int argc,
     create_dir_2.insert(0, "md \"");
     vpxt_make_dir_vpx(create_dir_2.c_str());
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = WorkingDirString + slashCharStr() + test_dir;
 
     std::string OutPutStr = text_file_str;
@@ -123,7 +123,7 @@ int tool_graph_psnr(int argc,
 
     opt.target_bandwidth = FirstBitRate;
 
-    ///////////output Par file////////////////////
+    /////////// Output Par File ////////////////////
     ParFileOut += "_ParameterFile.txt";
     char ParFileOutChar[255];
     snprintf(ParFileOutChar, 255, "%s", ParFileOut.c_str());

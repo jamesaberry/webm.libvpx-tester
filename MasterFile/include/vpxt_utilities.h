@@ -86,6 +86,8 @@ int  vpxt_eval_new_vs_old_log(const char *logfile,
                               std::string testName);
 int  vpxt_check_arg_input(const char *testName, int argNum);
 int vpxt_remove_char_spaces(const char *input, char *output, int maxsize);
+void replace_substring(const std::string& old_str, const std::string& new_str,
+                         std::string* str);
 //---------------------------Math-----------------------------------------------
 int vpxt_decimal_places(int InputNumber);
 int vpxt_gcd(int a, int b);
@@ -102,7 +104,7 @@ int vpxt_solve_quadratic(double X1,
                          double &B,
                          double &C);
 double vpxt_area_under_quadratic(double A, double B, double C, double X1,
-								 double X2);
+                                 double X2);
 char *vpxt_itoa_custom(int value, char *result, int base);
 //---------------------------Cross Plat-----------------------------------------
 void vpxt_delete_files(int argcount, ...);
@@ -172,7 +174,7 @@ int vpxt_faux_compress();
 int vpxt_faux_decompress(const char *inputChar);
 //----------------------------Test Functions------------------------------------
 int initialize_test_directory(int argc,
-                              const char *const *argv,
+                              const char** argv,
                               int test_type,
                               const std::string &working_dir,
                               const char *MyDir,
@@ -188,13 +190,13 @@ int print_version();
 void print_header_info();
 void print_header_info_to_file(const char *FileName);
 void print_header_full_test(int argc,
-                            const char *const *argv,
+                            const char** argv,
                             std::string WorkingDir3);
 void print_header_compression_only(int argc,
-                                   const char *const *argv,
+                                   const char** argv,
                                    std::string WorkingDir3);
 void print_header_test_only(int argc,
-                            const char *const *argv,
+                            const char** argv,
                             std::string  WorkingDir3);
 void check_time_stamp(int SelectorArInt,
                       std::string *SelectorAr,
@@ -351,8 +353,8 @@ int vpxt_formatted_to_raw(const std::string inputFile,
                           const std::string outputDir);
 int vpxt_formatted_to_raw_frames(std::string inputFile,
                                  std::string outputDir);
-int vpxt_display_header_info(int argc, const char *const *argv);
-int vpxt_compare_header_info(int argc, const char *const *argv);
+int vpxt_display_header_info(int argc, const char** argv);
+int vpxt_compare_header_info(int argc, const char** argv);
 int vpxt_compare_dec(const char *inputFile1, const char *inputFile2);
 int vpxt_compare_enc(const char *inputFile1,
                      const char *inputFile2, int fullcheck);

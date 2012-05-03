@@ -42,7 +42,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stdarg.h>
 
-//////////////////////////////////MULIT ENC//////////////////////////////////
+////////////////////////////////// MULIT ENC //////////////////////////////////
 #include "basic_types.h"
 #include "scale.h"
 #include "cpu_id.h"
@@ -122,7 +122,7 @@ typedef unsigned int  DWORD;
 #define USE_POSIX_MMAP 1
 #endif
 
-////////////////////////////////Endian Conversions//////////////////////////////
+/////////////////////////////// Endian Conversions /////////////////////////////
 #ifdef _PPC
 # define make_endian_16(a)          \
     (((unsigned int)(a & 0xff)) << 8) | (((unsigned int)(a & 0xff00)) >> 8)
@@ -212,12 +212,12 @@ static void initialize_scaler()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////MULIT ENC//////////////////////////////////
+////////////////////////////////// MULIT ENC //////////////////////////////////
 #define NUM_ENCODERS 3
 //////////////////////////////////SCALE PART//////////////////////////////////
 static int mode_to_num_layers[9] = {2, 2, 3, 3, 3, 3, 5, 2, 3};
 #define TEMP_SCALE_ENCODERS 6
-//////////////////////////ENCODE-START//////////////////////////////////////////
+///////////////////////// ENCODE-START /////////////////////////////////////////
 enum video_file_type
 {
     FILE_TYPE_RAW,
@@ -801,8 +801,8 @@ static void Ebml_StartSubElement(EbmlGlobal *glob,
                                  EbmlLoc *ebmlLoc,
                                  unsigned long class_id)
 {
-    //todo this is always taking 8 bytes, this may need later optimization
-    //this is a key that says length unknown
+    // todo this is always taking 8 bytes, this may need later optimization
+    // this is a key that says length unknown
     uint64_t unknownLen =  LITERALU64(0x01FFFFFFFFFFFFFF);
 
     Ebml_WriteID(glob, class_id);
@@ -861,7 +861,7 @@ static void write_webm_seek_info(EbmlGlobal *ebml)
         Ebml_EndSubElement(ebml, &start);
     }
     {
-        //segment info
+        // segment info
         EbmlLoc startInfo;
         uint64_t frame_time;
         char version_string[64];
@@ -898,16 +898,16 @@ static void write_webm_file_header(EbmlGlobal *glob,
         EbmlLoc start;
         Ebml_StartSubElement(glob, &start, EBML);
         Ebml_SerializeUnsigned(glob, EBMLVersion, 1);
-        Ebml_SerializeUnsigned(glob, EBMLReadVersion, 1); //EBML Read Version
-        Ebml_SerializeUnsigned(glob, EBMLMaxIDLength, 4); //EBML Max ID Length
-        Ebml_SerializeUnsigned(glob, EBMLMaxSizeLength, 8); //EBML Max Size Len
-        Ebml_SerializeString(glob, DocType, "webm"); //Doc Type
-        Ebml_SerializeUnsigned(glob, DocTypeVersion, 2); //Doc Type Version
-        Ebml_SerializeUnsigned(glob, DocTypeReadVersion, 2); //Doc Type Read Ver
+        Ebml_SerializeUnsigned(glob, EBMLReadVersion, 1); // EBML Read Version
+        Ebml_SerializeUnsigned(glob, EBMLMaxIDLength, 4); // EBML Max ID Length
+        Ebml_SerializeUnsigned(glob, EBMLMaxSizeLength, 8); // EBML Max Size Len
+        Ebml_SerializeString(glob, DocType, "webm"); // Doc Type
+        Ebml_SerializeUnsigned(glob, DocTypeVersion, 2); // Doc Type Version
+        Ebml_SerializeUnsigned(glob, DocTypeReadVersion, 2); // Doc Type Read Ver
         Ebml_EndSubElement(glob, &start);
     }
     {
-        Ebml_StartSubElement(glob, &glob->startSegment, Segment); //segment
+        Ebml_StartSubElement(glob, &glob->startSegment, Segment); // segment
         glob->position_reference = ftello(glob->stream);
         glob->framerate = *fps;
         write_webm_seek_info(glob);
@@ -925,7 +925,7 @@ static void write_webm_file_header(EbmlGlobal *glob,
                 Ebml_SerializeUnsigned(glob, TrackNumber, trackNumber);
                 glob->track_id_pos = ftello(glob->stream);
                 Ebml_SerializeUnsigned32(glob, TrackUID, trackID);
-                Ebml_SerializeUnsigned(glob, TrackType, 1); //video is always 1
+                Ebml_SerializeUnsigned(glob, TrackType, 1); // video is always 1
                 Ebml_SerializeString(glob, CodecID, "V_VP8");
                 {
                     unsigned int pixelWidth = cfg->g_w;
@@ -938,9 +938,9 @@ static void write_webm_file_header(EbmlGlobal *glob,
                     Ebml_SerializeUnsigned(glob, PixelHeight, pixelHeight);
                     Ebml_SerializeUnsigned(glob, StereoMode, stereo_fmt);
                     Ebml_SerializeFloat(glob, FrameRate, frameRate);
-                    Ebml_EndSubElement(glob, &videoStart); //Video
+                    Ebml_EndSubElement(glob, &videoStart); // Video
                 }
-                Ebml_EndSubElement(glob, &start); //Track Entry
+                Ebml_EndSubElement(glob, &start); // Track Entry
             }
             Ebml_EndSubElement(glob, &trackStart);
         }
@@ -982,7 +982,7 @@ static void write_webm_block(EbmlGlobal                *glob,
         glob->cluster_open = 1;
         glob->cluster_timecode = pts_ms;
         glob->cluster_pos = ftello(glob->stream);
-        Ebml_StartSubElement(glob, &glob->startCluster, Cluster); //cluster
+        Ebml_StartSubElement(glob, &glob->startCluster, Cluster); // cluster
         Ebml_SerializeUnsigned(glob, Timecode, glob->cluster_timecode);
 
         /* Save a cue point if this is a keyframe. */
@@ -1359,8 +1359,8 @@ static void usage_exit_enc()
 }
 
 
-///////////////////////////ENCODE-END///////////////////////////////////////////
-//////////////////////////DECODE-START//////////////////////////////////////////
+////////////////////////// ENCODE-END //////////////////////////////////////////
+////////////////////////// DECODE-START ////////////////////////////////////////
 static const struct
 {
     char const *name;
@@ -2102,7 +2102,7 @@ void throw_packets(unsigned char *frame,
         return;
     }
 
-    //putc('|', stdout);
+    // putc('|', stdout);
     tprintf(printVar, "|");
     /* parse uncompressed 3 bytes */
     tmp = (frame[2] << 16) | (frame[1] << 8) | frame[0];
@@ -2120,7 +2120,7 @@ void throw_packets(unsigned char *frame,
         for (i = 0; i < *kept; i++)
             tprintf(printVar, ".");
 
-        //putc('.', stdout);
+        // putc('.', stdout);
         return;
     }
 
@@ -2134,13 +2134,13 @@ void throw_packets(unsigned char *frame,
             loss_pos += pkg_size;
             (*kept)++;
             tprintf(printVar, ".");
-            //putc('.', stdout);
+            // putc('.', stdout);
         }
         else
         {
             (*thrown)++;
             tprintf(printVar, "X");
-            //putc('X', stdout);
+            // putc('X', stdout);
         }
 
         pos += pkg_size;
@@ -2150,8 +2150,8 @@ void throw_packets(unsigned char *frame,
     memset(frame + loss_pos, 0, *size - loss_pos);
     *size = loss_pos;
 }
-///////////////////////////DECODE-END///////////////////////////////////////////
-//---------------------------------VP8 Settings---------------------------------
+/////////////////////////// DECODE-END /////////////////////////////////////////
+// --------------------------------VP8 Settings---------------------------------
 void vpxt_default_parameters(VP8_CONFIG &opt)
 {
     opt.allow_lag = 1;
@@ -2189,7 +2189,7 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
     opt.under_shoot_pct = 100;
     opt.Version = 0;
 
-    //not included in default settings file
+    // not included in default settings file
     opt.Height = 0;
     opt.multi_threaded = 0;
     opt.Width = 0;
@@ -2208,10 +2208,10 @@ void vpxt_default_parameters(VP8_CONFIG &opt)
 }
 void vpxt_determinate_parameters(VP8_CONFIG &opt)
 {
-    opt.noise_sensitivity = 0; //Noise sensitivity not currently det.-2011-07-20
-    opt.multi_threaded = 0;    //Multithread not currently det.      -2011-07-27
-    //Make sure valid cpu_used settings are used                     -2011-07-27
-    //(negative cpu_used should be deterministic for realtime)
+    opt.noise_sensitivity = 0; // Noise sensitivity not currently det.2011-07-20
+    opt.multi_threaded = 0;    // Multithread not currently det.      2011-07-27
+    // Make sure valid cpu_used settings are used                     2011-07-27
+    // (negative cpu_used should be deterministic for realtime)
     if (opt.Mode == 0)
         if (opt.cpu_used > 0)
             opt.cpu_used = opt.cpu_used * -1;
@@ -2220,7 +2220,7 @@ void vpxt_determinate_parameters(VP8_CONFIG &opt)
 }
 int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
 {
-    //Converts a core configuration to api configuration
+    // Converts a core configuration to api configuration
 
     cfg->g_threads = coreCfg.multi_threaded;
     cfg->g_profile = coreCfg.Version;
@@ -2309,7 +2309,7 @@ int vpxt_core_config_to_api_config(VP8_CONFIG coreCfg, vpx_codec_enc_cfg_t *cfg)
 }
 int vpxt_api_config_to_core_config(vpx_codec_enc_cfg_t cfg, VP8_CONFIG &coreCfg)
 {
-    //Converts a api configuration to core configuration
+    // Converts a api configuration to core configuration
     coreCfg.multi_threaded = cfg.g_threads;
     coreCfg.Version = cfg.g_profile;
     coreCfg.error_resilient_mode = cfg.g_error_resilient;
@@ -2384,9 +2384,9 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
                                   const char *inputfile,
                                   int display)
 {
-    //Ranges can be found in validate_config in vp8_cx_iface.c
+    // Ranges can be found in validate_config in vp8_cx_iface.c
 
-    //////////////////////////////////Randomly Generated\\\\\\\\\\\\\\\\\\\\\
+    ////////////////////////////////// Randomly Generated \\\\\\\\\\\\\\\\\\\\\
 
     srand(vpxt_get_high_res_timer_tick());
     int w = 0;
@@ -2433,34 +2433,34 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
     opt.Width = w;
     opt.Height = h;
 
-    opt.Mode = rand() % 5;                   //valid Range: (0 to 4)
+    opt.Mode = rand() % 5;                   // valid Range: (0 to 4)
 
     if (opt.Mode == 0)
-        opt.noise_sensitivity = 0;           //valid Range:
-    else                                     //if Real time Mode 0 to 0
-#if CONFIG_TEMPORAL_DENOISING                //if Not Real time and Temp De 0-1
-        opt.noise_sensitivity = rand() % 2;  //if Not Real time not Temp De 0-6
+        opt.noise_sensitivity = 0;           // valid Range:
+    else                                     // if Real time Mode 0 to 0
+#if CONFIG_TEMPORAL_DENOISING                // if Not Real time and Temp De 0-1
+        opt.noise_sensitivity = rand() % 2;  // if Not Real time not Temp De 0-6
 #else
         opt.noise_sensitivity = rand() % 7;
 #endif
 
     if (opt.Mode == 0)
-        opt.lag_in_frames = 0;                //valid Range:
-    else                                      //if Not Real time Mode 0 to 25
-        opt.lag_in_frames = rand() % 26;      //if Real time Mode 0 to 0
+        opt.lag_in_frames = 0;                // valid Range:
+    else                                      // if Not Real time Mode 0 to 25
+        opt.lag_in_frames = rand() % 26;      // if Real time Mode 0 to 0
 
     if (opt.lag_in_frames > 0)
-        opt.allow_lag = 1;                    //valid Range:
-    else                                      //if Not Real time Mode 0 to 1
-        opt.allow_lag = 0;                    //if Real time Mode 0
+        opt.allow_lag = 1;                    // valid Range:
+    else                                      // if Not Real time Mode 0 to 1
+        opt.allow_lag = 0;                    // if Real time Mode 0
 
     if (opt.Mode == 0)
     {
-        opt.cpu_used = rand() % 13 + 4;       //valid Range:
+        opt.cpu_used = rand() % 13 + 4;       // valid Range:
 
-        if (rand() % 2)                       //if Not Real time Mode -16 to 16
-            opt.cpu_used = opt.cpu_used * -1; //if Real time Mode -16 to -4 or
-                                              //4 to 16
+        if (rand() % 2)                       // if Not Real time Mode -16 to 16
+            opt.cpu_used = opt.cpu_used * -1; // if Real time Mode -16 to -4 or
+                                              // 4 to 16
     }
     else
     {
@@ -2470,18 +2470,18 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
             opt.cpu_used = opt.cpu_used * -1;
     }
 
-    if (rand() % 21 == 20) //1 out of 20 chance of a fixed q
+    if (rand() % 21 == 20) // 1 out of 20 chance of a fixed q
     {
-        opt.fixed_q = rand() % 64;//valid Range: 0 to 63 or -1(-1 = fixedQ off)
-        opt.best_allowed_q = opt.fixed_q;     //valid Range: 0 to 63
-        opt.worst_allowed_q = opt.fixed_q;    //valid Range: 0 to 63
-        opt.cq_level = opt.worst_allowed_q;   //valid Range: 0 to 63
+        opt.fixed_q = rand() % 64;// valid Range: 0 to 63 or -1(-1 = fixedQ off)
+        opt.best_allowed_q = opt.fixed_q;     // valid Range: 0 to 63
+        opt.worst_allowed_q = opt.fixed_q;    // valid Range: 0 to 63
+        opt.cq_level = opt.worst_allowed_q;   // valid Range: 0 to 63
     }
     else
     {
-        opt.fixed_q = -1; //valid Range: 0 to 63 or -1 (-1 = fixedQ off)
-        opt.worst_allowed_q   = rand() % 64;  //valid Range: 0 to 63
-        opt.best_allowed_q = rand() % 64;     //valid Range:0 to 63
+        opt.fixed_q = -1; // valid Range: 0 to 63 or -1 (-1 = fixedQ off)
+        opt.worst_allowed_q   = rand() % 64;  // valid Range: 0 to 63
+        opt.best_allowed_q = rand() % 64;     // valid Range:0 to 63
 
         while (opt.best_allowed_q > opt.worst_allowed_q)
         {
@@ -2489,49 +2489,49 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
             opt.worst_allowed_q   = rand() % 64;
         }
 
-        //valid Range: opt.best_allowed_q to opt.worst_allowed_q
+        // valid Range: opt.best_allowed_q to opt.worst_allowed_q
         opt.cq_level = 0;
         while(opt.cq_level < opt.best_allowed_q
               || opt.cq_level > opt.worst_allowed_q)
             opt.cq_level   = rand() % 64;
     }
 
-    opt.auto_key = rand() % 2;                //valid Range: 0 to 1
-    opt.multi_threaded =  rand() % 65;        //valid Range: 0 to 64
-    opt.over_shoot_pct = rand() % 101;        //valid Range: 0 to 100
-    opt.under_shoot_pct = rand() % 101;       //valid Range: 0 to 100
-    opt.allow_df = rand() % 2;                //valid Range: 0 to 1
+    opt.auto_key = rand() % 2;                // valid Range: 0 to 1
+    opt.multi_threaded =  rand() % 65;        // valid Range: 0 to 64
+    opt.over_shoot_pct = rand() % 101;        // valid Range: 0 to 100
+    opt.under_shoot_pct = rand() % 101;       // valid Range: 0 to 100
+    opt.allow_df = rand() % 2;                // valid Range: 0 to 1
 
     if (opt.allow_df > 0)
-        opt.drop_frames_water_mark = rand() % 101; //valid Range: 0 to 100
+        opt.drop_frames_water_mark = rand() % 101; // valid Range: 0 to 100
     else
         opt.drop_frames_water_mark = 0;
 
-    opt.allow_spatial_resampling = rand() % 2;//valid Range: 0 to 1
-    opt.resample_up_water_mark = rand() % 101;//valid Range: 0 to 100
-    opt.resample_down_water_mark = rand() % 101;//valid Range:  0 to 100
-    opt.two_pass_vbrbias = rand() % 101;      //valid Range: 0 to 100
-    opt.encode_breakout = rand() % 101;       //valid Range:
-    opt.end_usage = rand() % 3;               //valid Range: 0 to 2
-    opt.Version = rand() % 4;                 //valid Range: 0 to 3
-    opt.Sharpness = rand() % 8;               //valid Range: 0 to 7
-    opt.play_alternate = rand() % 2;          //valid Range: 0 to 1
-    opt.token_partitions = rand() % 4;        //valid Range: 0 to 3
-    opt.error_resilient_mode = rand() % 101;  //valid Range: 0 to 100
+    opt.allow_spatial_resampling = rand() % 2;// valid Range: 0 to 1
+    opt.resample_up_water_mark = rand() % 101;// valid Range: 0 to 100
+    opt.resample_down_water_mark = rand() % 101;// valid Range:  0 to 100
+    opt.two_pass_vbrbias = rand() % 101;      // valid Range: 0 to 100
+    opt.encode_breakout = rand() % 101;       // valid Range:
+    opt.end_usage = rand() % 3;               // valid Range: 0 to 2
+    opt.Version = rand() % 4;                 // valid Range: 0 to 3
+    opt.Sharpness = rand() % 8;               // valid Range: 0 to 7
+    opt.play_alternate = rand() % 2;          // valid Range: 0 to 1
+    opt.token_partitions = rand() % 4;        // valid Range: 0 to 3
+    opt.error_resilient_mode = rand() % 101;  // valid Range: 0 to 100
 
     int TBUpperBound = ((w * h) / (320 * 240) * 2048);
 
     if (TBUpperBound == 0)
         TBUpperBound = 1;
 
-    //valid Range: No Max so based on resolution
+    // valid Range: No Max so based on resolution
     opt.target_bandwidth = rand() %  TBUpperBound + 1;
-    //valid Range: No Max so based on number of frames
+    // valid Range: No Max so based on number of frames
     opt.key_freq = rand() % length + 2;
 
-    opt.arnr_max_frames = rand() % 16;        //valid Range: 0 to 15
-    opt.arnr_strength = rand() % 7;           //valid Range: 6
-    opt.arnr_type = rand() % 3 + 1;           //valid Range: 1 to 3
+    opt.arnr_max_frames = rand() % 16;        // valid Range: 0 to 15
+    opt.arnr_strength = rand() % 7;           // valid Range: 6
+    opt.arnr_type = rand() % 3 + 1;           // valid Range: 1 to 3
 
     opt.maximum_buffer_size = 6000;
     opt.starting_buffer_level = 4000;
@@ -2544,8 +2544,8 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
     opt.gold_q = 28;
     opt.key_q = 12;
 
-    //valid Range: 0 to 1500 (soft range limit most reasonable value between
-    //100 and 1500)
+    // valid Range: 0 to 1500 (soft range limit most reasonable value between
+    // 100 and 1500)
     opt.rc_max_intra_bitrate_pct = rand() % 1501;
 
     if (display != 2)
@@ -2757,7 +2757,7 @@ VP8_CONFIG vpxt_input_settings(const char *input_file)
 }
 int vpxt_output_settings(const char *output_file, VP8_CONFIG opt)
 {
-    //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
+    // Saves all VP8_CONFIG settings to a settings file readable by InputSettings
 
     std::ofstream outfile(output_file);
 
@@ -2798,7 +2798,7 @@ int vpxt_output_settings(const char *output_file, VP8_CONFIG opt)
     outfile <<  opt.multi_threaded << " MultiThreaded\n";
     outfile <<  opt.error_resilient_mode << " ErrorResilientMode\n";
 
-    //not included in default settings file
+    // not included in default settings file
     outfile << opt.Height << " Height\n";
     outfile << opt.Width << " Width\n";
 
@@ -2815,8 +2815,8 @@ int vpxt_output_compatable_settings(const char *output_file,
                                     VP8_CONFIG opt,
                                     int ParVersionNum)
 {
-    //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
-    //Tester Uses prebuilt executables from prior builds
+    // Saves all VP8_CONFIG settings to a settings file readable by
+    // InputSettings Tester Uses prebuilt executables from prior builds
 
     std::ofstream outfile(output_file);
 
@@ -2865,7 +2865,7 @@ int vpxt_output_compatable_settings(const char *output_file,
     outfile <<  opt.multi_threaded << " MultiThreaded\n";
     outfile <<  opt.error_resilient_mode << " ErrorResilientMode\n";
 
-    //not included in default settings file
+    // not included in default settings file
     if (ParVersionNum == 1)
     {
         std::string DummyFPFFile = output_file;
@@ -2886,7 +2886,7 @@ int vpxt_output_compatable_settings(const char *output_file,
 }
 int vpxt_output_settings_api(const char *output_file, vpx_codec_enc_cfg_t cfg)
 {
-    //Saves all vpx_codec_enc_cfg_t settings to a settings file
+    // Saves all vpx_codec_enc_cfg_t settings to a settings file
 
     std::ofstream outfile(output_file);
 
@@ -2928,7 +2928,7 @@ int vpxt_output_settings_api(const char *output_file, vpx_codec_enc_cfg_t cfg)
 
 int vpxt_input_settings_api(const char *input_file, vpx_codec_enc_cfg_t &cfg)
 {
-    //Saves all vpx_codec_enc_cfg_t settings to a settings file
+    // Saves all vpx_codec_enc_cfg_t settings to a settings file
 
     std::ifstream infile(input_file);
     std::string Garbage;
@@ -3022,7 +3022,7 @@ int vpxt_input_settings_api(const char *input_file, vpx_codec_enc_cfg_t &cfg)
 }
 int vpxt_output_settings_ivfenc(const char *output_file, VP8_CONFIG opt)
 {
-    //Saves all VP8_CONFIG settings to a settings file readable by InputSettings
+    // Saves all VP8_CONFIG settings to a settings file readable by InputSettings
 
     std::ofstream outfile(output_file);
 
@@ -3092,130 +3092,130 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core,
 
     int endofstr = 0;
 
-    //--debug                          //Debug mode (makes output deterministic)
-    //--output=<arg>                   //Output filename
-    //--codec=<arg>                    //Codec to use
+    //--debug                         // Debug mode (makes output deterministic)
+    //--output=<arg>                  // Output filename
+    //--codec=<arg>                   // Codec to use
     if (opt.Mode > 2)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--passes=2 ");                //Number of passes (1/2)
+        "--passes=2 ");               // Number of passes (1/2)
 
-    //--pass=<arg>                     //Pass to execute (1/2)
-    //--fpf=<arg>                      //First pass statistics file name
-    //--limit=<arg>                    //Stop encoding after n input frames
-    //--deadline=<arg>                 //Deadline per frame (usec)
+    //--pass=<arg>                    // Pass to execute (1/2)
+    //--fpf=<arg>                     // First pass statistics file name
+    //--limit=<arg>                   // Stop encoding after n input frames
+    //--deadline=<arg>                // Deadline per frame (usec)
     if (opt.Mode == 2 || opt.Mode == 5)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--best ");                    //Use Best Quality Deadline
+        "--best ");                   // Use Best Quality Deadline
 
     if (opt.Mode == 1 || opt.Mode == 4)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--good ");                    //Use Good Quality Deadline
+        "--good ");                   // Use Good Quality Deadline
 
     if (opt.Mode == 0)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--rt ");                      //Use Realtime Quality Deadline
+        "--rt ");                     // Use Realtime Quality Deadline
 
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--verbose ");                 //Show encoder parameters
-    //--psnr                           //Show PSNR in status line
+        "--verbose ");                // Show encoder parameters
+    //--psnr                          // Show PSNR in status line
 
-    //Encoder Global Options:
-    //--yv12                           //Input file is YV12
-    //--i420                           //Input file is I420 (default)
+    // Encoder Global Options:
+    //--yv12                          // Input file is YV12
+    //--i420                          // Input file is I420 (default)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--usage=%i ", cfg.g_usage);   //Usage profile number to use
+        "--usage=%i ", cfg.g_usage);  // Usage profile number to use
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--threads=%i ", opt.multi_threaded); //Max number of threads to use
+        "--threads=%i ", opt.multi_threaded); // Max number of threads to use
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--profile=%i ", opt.Version); //Bitstream profile number to use
+        "--profile=%i ", opt.Version); // Bitstream profile number to use
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--width=%i ", opt.Width);     //Frame width
+        "--width=%i ", opt.Width);     // Frame width
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--height=%i ", opt.Height);   //Frame height
+        "--height=%i ", opt.Height);   // Frame height
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--timebase=%i/%i ", cfg.g_timebase.num, cfg.g_timebase.den);
-                                       //Stream timebase (frame duration)
+                                       // Stream timebase (frame duration)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--fps=%i/%i ", cfg.g_timebase.den, cfg.g_timebase.num);
-                                       //Stream frame rate (rate/scale)
+                                       // Stream frame rate (rate/scale)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--error-resilient=%i ", opt.error_resilient_mode);
-                                       //Enable error resiliency features
+                                       // Enable error resiliency features
 
     if (opt.allow_lag == 0)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--lag-in-frames=%i ", 0);     //Max number of frames to lag
+        "--lag-in-frames=%i ", 0);     // Max number of frames to lag
     else
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--lag-in-frames=%i ", opt.lag_in_frames); //Max number of frames to lag
+        "--lag-in-frames=%i ", opt.lag_in_frames); // Max num frames to lag
 
-    //Rate Control Options:
+    // Rate Control Options:
     if (opt.allow_df == 0)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--drop-frame=%i ", 0);        //Temporal resampling threshold (buf %)
+        "--drop-frame=%i ", 0);        // Temporal resampling threshold (buf %)
     else
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--drop-frame=%i ", opt.drop_frames_water_mark);
-                                       //Temporal resampling threshold (buf %)
+                                       // Temporal resampling threshold (buf %)
 
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--resize-allowed=%i ", opt.allow_spatial_resampling);
-                                      //Spatial resampling enabled (bool)
+                                      // Spatial resampling enabled (bool)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--resize-up=%i ", opt.resample_up_water_mark);
-                                      //Upscale threshold (buf %)
+                                      // Upscale threshold (buf %)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--resize-down=%i ", opt.resample_down_water_mark);
-                                      //Downscale threshold (buf %)
+                                      // Downscale threshold (buf %)
 
     if (opt.end_usage == USAGE_LOCAL_FILE_PLAYBACK)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--end-usage=%i ", VPX_VBR);  //VBR=0 | CBR=1
+        "--end-usage=%i ", VPX_VBR);  // VBR=0 | CBR=1
 
     if (opt.end_usage == USAGE_STREAM_FROM_SERVER)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--end-usage=%i ", VPX_CBR);  //VBR=0 | CBR=1
+        "--end-usage=%i ", VPX_CBR);  // VBR=0 | CBR=1
 
     if (opt.end_usage == USAGE_CONSTRAINED_QUALITY)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--end-usage=%i ", VPX_CQ);   //VBR=0 | CBR=1
+        "--end-usage=%i ", VPX_CQ);   // VBR=0 | CBR=1
 
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--target-bitrate=%i ", opt.target_bandwidth); //Bitrate (kbps)
+        "--target-bitrate=%i ", opt.target_bandwidth); // Bitrate (kbps)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--min-q=%i ", opt.best_allowed_q);           //Minimum (best) quantizer
+        "--min-q=%i ", opt.best_allowed_q);           // Min(best) quantizer
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--max-q=%i ", opt.worst_allowed_q);         //Maximum (worst) quantizer
+        "--max-q=%i ", opt.worst_allowed_q);         // Max(worst) quantizer
 
     if (opt.fixed_q != -1)
     {
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-            "--min-q=%i ", opt.fixed_q); //Minimum (best) quantizer
+            "--min-q=%i ", opt.fixed_q); // Minimum (best) quantizer
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-            "--max-q=%i ", opt.fixed_q); //Maximum (worst) quantizer
+            "--max-q=%i ", opt.fixed_q); // Maximum (worst) quantizer
     }
 
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--undershoot-pct=%i ", opt.under_shoot_pct);
-                                      //Datarate undershoot (min) target (%)
+                                      // Datarate undershoot (min) target (%)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--overshoot-pct=%i ", cfg.rc_overshoot_pct);
-                                      //Datarate overshoot (max) target (%)
+                                      // Datarate overshoot (max) target (%)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--buf-sz=%i ", opt.maximum_buffer_size); //Client buffer size (ms)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--buf-initial-sz=%i ", opt.starting_buffer_level);
-                                      //Client initial buffer size (ms)
+                                      // Client initial buffer size (ms)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--buf-optimal-sz=%i ", opt.optimal_buffer_level);
-                                      //Client optimal buffer size (ms)
+                                      // Client optimal buffer size (ms)
 
-    //Twopass Rate Control Options:
+    // Twopass Rate Control Options:
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--bias-pct=%i ", opt.two_pass_vbrbias); //CBR/VBR bias (0=CBR, 100=VBR)
+        "--bias-pct=%i ", opt.two_pass_vbrbias); // CBR/VBR bias(0=CBR, 100=VBR)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--minsection-pct=%i ", opt.two_pass_vbrmin_section);
-                                      //GOP min bitrate (% of target)
+                                      // GOP min bitrate (% of target)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--maxsection-pct=%i ", opt.two_pass_vbrmax_section);
                                       //GOP max bitrate (% of target)
@@ -3223,38 +3223,38 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core,
     //Keyframe Placement Options:
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--kf-min-dist=%i ", cfg.kf_min_dist);
-                                      //Minimum keyframe interval (frames)
+                                      // Minimum keyframe interval (frames)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--kf-max-dist=%i ", opt.key_freq); //Maximum keyframe interval (frames)
+        "--kf-max-dist=%i ", opt.key_freq); // Maximum keyframe interval(frames)
 
     if (opt.auto_key == 0)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--disable-kf ");             //Disable keyframe placement
+        "--disable-kf ");             // Disable keyframe placement
 
-    //VP8 Specific Options:
+    // VP8 Specific Options:
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--cpu-used=%i ", opt.cpu_used); //CPU Used (-16..16)
+        "--cpu-used=%i ", opt.cpu_used); // CPU Used (-16..16)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--auto-alt-ref=%i ", opt.play_alternate);
-                                      //Enable automatic alt reference frames
+                                      // Enable automatic alt reference frames
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--noise-sensitivity=%i ", opt.noise_sensitivity);
-                                      //Noise sensitivity (frames to blur)
+                                      // Noise sensitivity (frames to blur)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--sharpness=%i ", opt.Sharpness); //Filter sharpness (0-7)
+        "--sharpness=%i ", opt.Sharpness); // Filter sharpness (0-7)
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--static-thresh=%i ", opt.encode_breakout);
-                                      //Motion detection threshold
+                                      // Motion detection threshold
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--token-parts=%i ", opt.token_partitions);
-                                      //Number of token partitions to use, log2
+                                      // Number of token partitions to use, log2
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--arnr-maxframes=%i ", opt.arnr_max_frames);  //AltRef Max Frames
+        "--arnr-maxframes=%i ", opt.arnr_max_frames);  // AltRef Max Frames
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--arnr-strength=%i ", opt.arnr_strength);     //AltRef Strength
+        "--arnr-strength=%i ", opt.arnr_strength);     // AltRef Strength
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
-        "--arnr-type=%i ", opt.arnr_type);             //AltRef Type
-    //--tune=<arg>                    //Material to favor - psnr, ssim
+        "--arnr-type=%i ", opt.arnr_type);             // AltRef Type
+    //--tune=<arg>                    // Material to favor - psnr, ssim
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--cq-level=%i ", opt.cq_level);
     endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
@@ -3320,7 +3320,7 @@ int vpxt_file_is_yv12(const char *in_fn)
 
     return 0;
 }
-//---------------------------IVF Header Data------------------------------------
+// ---------------------------IVF Header Data-----------------------------------
 int vpxt_print_ivf_file_header(IVF_HEADER ivf)
 {
     tprintf(PRINT_STD, "IVF FIle Header Data\n\n"
@@ -3344,7 +3344,7 @@ int vpxt_print_ivf_file_header(IVF_HEADER ivf)
 int vpxt_format_ivf_header_read(IVF_HEADER *ivf)
 {
 #ifdef _PPC
-    //std::cout << "\n\n\n\n\nPPC DEFINED\n\n\n\n\n";
+    // std::cout << "\n\n\n\n\nPPC DEFINED\n\n\n\n\n";
     // For big endian systems need to swap bytes on height and width
     ivf->width  = ((ivf->width & 0xff) << 8)  | ((ivf->width >> 8) & 0xff);
     ivf->height = ((ivf->height & 0xff) << 8) | ((ivf->height >> 8) & 0xff);
@@ -3371,8 +3371,8 @@ int vpxt_format_ivf_header_write(IVF_HEADER &ivf)
 
     if (ivf.four_cc != 842094169 && ivf.four_cc != 808596553)
     {
-        //tprintf(  PRINT_STD, "\nUtil_FourCC: %i",ivf.four_cc);
-        //tprintf(  PRINT_STD, "\nini vp8 fourcc\n");
+        // tprintf(  PRINT_STD, "\nUtil_FourCC: %i",ivf.four_cc);
+        // tprintf(  PRINT_STD, "\nini vp8 fourcc\n");
         ivf.four_cc     = MAKEFOURCC('V', 'P', '8', '0');
     }
 
@@ -3394,7 +3394,7 @@ int vpxt_format_frame_header_read(IVF_FRAME_HEADER &ivf_fh)
                         ((ivf_fh.timeStamp >> 48) & 0xff) <<  8 |   \
                         ((ivf_fh.timeStamp >> 56) & 0xff));
 
-    //std::cout << "POWERPC-Read\n";
+    // std::cout << "POWERPC-Read\n";
 #endif
 
     return 0;
@@ -3408,10 +3408,10 @@ int vpxt_format_frame_header_write(IVF_FRAME_HEADER &ivf_fh)
 
     return 0;
 }
-//------------------------File Management---------------------------------------
+// -----------------------File Management---------------------------------------
 long vpxt_file_size(const char *inFile, int printbool)
 {
-    //finds and returns the size of a file with output.
+    // finds and returns the size of a file with output.
     char FileNameinFile[256];
     vpxt_file_name(inFile, FileNameinFile, 0);
 
@@ -3438,7 +3438,7 @@ long vpxt_file_size(const char *inFile, int printbool)
 }
 void vpxt_file_name(const char *input, char *FileName, int removeExt)
 {
-    //Extracts only the files name from its full path.
+    // Extracts only the files name from its full path.
 
     int parser = 0;
     int slashcount = 0;
@@ -3484,7 +3484,7 @@ void vpxt_file_name(const char *input, char *FileName, int removeExt)
 
 void vpxt_folder_name(const char *input, std::string *output_str)
 {
-    //Gets the full name of the folder a file is in and returns it.
+    // Gets the full name of the folder a file is in and returns it.
 
     output_str->clear();
     int parser = 0;
@@ -3520,7 +3520,7 @@ void vpxt_folder_name(const char *input, std::string *output_str)
 
 int  vpxt_get_number_of_frames(const char *input_file)
 {
-    //Get frame count from y4m ivf and or webm return -1 on error
+    // Get frame count from y4m ivf and or webm return -1 on error
 
     int length = 0;
     int use_y4m = 1;
@@ -3578,7 +3578,7 @@ int  vpxt_get_number_of_frames(const char *input_file)
             &timestamp))
             length++;
 
-        //printf("\nWebm Length: %i\n",length);
+        // printf("\nWebm Length: %i\n",length);
         fclose(infile);
 
         if (input.nestegg_ctx)
@@ -3645,7 +3645,7 @@ int  vpxt_get_number_of_frames(const char *input_file)
         InitIVFHeader(&ivf_h_raw);
         fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        //printf("\nIVF Length: %i\n",ivf_h_raw.length);
+        // printf("\nIVF Length: %i\n",ivf_h_raw.length);
 
         fclose(infile);
         return ivf_h_raw.length;
@@ -3670,7 +3670,7 @@ int  vpxt_get_number_of_frames(const char *input_file)
             length++;
         }
 
-        //printf("\nY4M Length: %i\n",length);
+        // printf("\nY4M Length: %i\n",length);
         fclose(infile);
 
         vpx_img_free(&raw);
@@ -3694,13 +3694,13 @@ int  vpxt_get_multi_res_width_height(const char *input_file,
                                      unsigned int &width,
                                      unsigned int &height)
 {
-    unsigned char  signature[4];    //='DKIF';
-    unsigned short version = 0;     // -
-    unsigned short headersize = 0;  // -
-    unsigned int fourcc = 0;        //good
-    unsigned int rate = 0;          //good
-    unsigned int scale = 0;         //good
-    unsigned int length = 0;        //other measure
+    unsigned char  signature[4];    // ='DKIF';
+    unsigned short version = 0;     //  -
+    unsigned short headersize = 0;  //  -
+    unsigned int fourcc = 0;        // good
+    unsigned int rate = 0;          // good
+    unsigned int scale = 0;         // good
+    unsigned int length = 0;        // other measure
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -3820,15 +3820,15 @@ int  vpxt_get_multi_res_width_height(const char *input_file,
 
     for (i=0; i< FileNumber; i++)
     {
-        //printf("width[%i]: %i\n", i, starting_width[i]);
-        //printf("height[%i]: %i\n", i, starting_height[i]);
+        // printf("width[%i]: %i\n", i, starting_width[i]);
+        // printf("height[%i]: %i\n", i, starting_height[i]);
 
         width = starting_width[i];
         height = starting_height[i];
     }
 
-    //printf("width[%i]: %i\n", FileNumber, width);
-    //printf("height[%i]: %i\n", FileNumber, height);
+    // printf("width[%i]: %i\n", FileNumber, width);
+    // printf("height[%i]: %i\n", FileNumber, height);
 
     fclose(infile);
 
@@ -3839,7 +3839,7 @@ int  vpxt_get_multi_res_width_height(const char *input_file,
 }
 int  vpxt_raw_file_size(const char *input_file)
 {
-    //Get frame count from y4m ivf and or webm return -1 on error
+    // Get frame count from y4m ivf and or webm return -1 on error
 
     int size = 0;
     int use_y4m = 1;
@@ -3894,7 +3894,7 @@ int  vpxt_raw_file_size(const char *input_file)
             &timestamp))
             size = size + buf_sz;
 
-        //printf("\nWebm size: %i\n",size);
+        // printf("\nWebm size: %i\n",size);
         fclose(infile);
         return size;
     }
@@ -3927,7 +3927,7 @@ int  vpxt_raw_file_size(const char *input_file)
                 scale = y4m.fps_d;
             }
 
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
         }
         else
         {
@@ -3948,7 +3948,7 @@ int  vpxt_raw_file_size(const char *input_file)
         InitIVFHeader(&ivf_h_raw);
         fread(&ivf_h_raw, 1, sizeof(ivf_h_raw), infile);
 
-        //printf("\nIVF Length: %i\n",ivf_h_raw.length);
+        // printf("\nIVF Length: %i\n",ivf_h_raw.length);
 
         while (1)
         {
@@ -3964,7 +3964,7 @@ int  vpxt_raw_file_size(const char *input_file)
             size = size + ivf_fhRaw.frameSize;
         }
 
-        //printf("\nIVF Size: %i\n",size);
+        // printf("\nIVF Size: %i\n",size);
 
         fclose(infile);
         return size;
@@ -3988,7 +3988,7 @@ int  vpxt_raw_file_size(const char *input_file)
             size = size + (width * height * 3 / 2);
         }
 
-        //printf("\nY4M Size: %i\n",size);
+        // printf("\nY4M Size: %i\n",size);
         fclose(infile);
         vpx_img_free(&raw);
         y4m_input_close(&y4m);
@@ -4006,9 +4006,9 @@ int  vpxt_raw_file_size(const char *input_file)
 }
 int vpxt_remove_file_extension(const char *In, std::string &Out)
 {
-    //Takes in the full name of a file and writes the directory and file name
-    //(without its extention) to the second input.
-    //return extension length on success
+    // Takes in the full name of a file and writes the directory and file name
+    // (without its extention) to the second input.
+    // return extension length on success
     int parser = 0;
     int lastDot = 0;
 
@@ -4027,15 +4027,15 @@ int vpxt_remove_file_extension(const char *In, std::string &Out)
 
     Out += "_";
 
-    //printf("\nOutput: %s\n",Out.c_str());
+    // printf("\nOutput: %s\n",Out.c_str());
 
     return parser - lastDot;
 }
 
 int vpxt_get_file_extension(const char *In, std::string &Out)
 {
-    //Takes in the full name of a file and write the extention
-    //to out return value is size of ext
+    // Takes in the full name of a file and write the extention
+    // to out return value is size of ext
     int parser = 0;
     int lastDot = 0;
 
@@ -4079,7 +4079,7 @@ int vpxt_dec_format_append(std::string &InputString, std::string DecFormat)
 }
 std::string vpxt_extract_date_time(const std::string InputStr)
 {
-    //Extracts only the files name from its full path.
+    // Extracts only the files name from its full path.
 
 #if defined(_WIN32)
     enum { len = 255 };
@@ -4153,103 +4153,103 @@ int vpxt_timestamp_compare(const std::string TimeStampNow,
 }
 int get_test_name(int TestNumber, std::string &TestName)
 {
-    if (TestNumber == RTFFINUM) TestName = "run_multiple_tests";
+    if (TestNumber == kTestMultiRun) TestName = "run_multiple_tests";
 
-    if (TestNumber == AlWDFNUM) TestName = "test_allow_drop_frames";
+    if (TestNumber == kTestAllowDropFrames) TestName = "test_allow_drop_frames";
 
-    if (TestNumber == ALWLGNUM) TestName = "test_allow_lag";
+    if (TestNumber == kTestAllowLag) TestName = "test_allow_lag";
 
-    if (TestNumber == ALWSRNUM) TestName = "test_allow_spatial_resampling";
+    if (TestNumber == kTestAllowSpatialResampling) TestName = "test_allow_spatial_resampling";
 
-    if (TestNumber == ARNRTNUM) TestName = "test_arnr";
+    if (TestNumber == kTestArnr) TestName = "test_arnr";
 
-    if (TestNumber == AUTKFNUM) TestName = "test_auto_key_frame";
+    if (TestNumber == kTestAutoKeyFrame) TestName = "test_auto_key_frame";
 
-    if (TestNumber == BUFLVNUM) TestName = "test_buffer_level";
+    if (TestNumber == kTestBufferLevel) TestName = "test_buffer_level";
 
-    if (TestNumber == CPUDENUM) TestName = "test_change_cpu_dec";
+    if (TestNumber == kTestChangeCpuDec) TestName = "test_change_cpu_dec";
 
-    if (TestNumber == CPUENNUM) TestName = "test_change_cpu_enc";
+    if (TestNumber == kTestChangeCpuEnc) TestName = "test_change_cpu_enc";
 
-    if (TestNumber == CONQUNUM) TestName = "test_constrained_quality";
+    if (TestNumber == kTestConstrainedQuality) TestName = "test_constrained_quality";
 
-    if (TestNumber == COPSRNUM) TestName = "test_copy_set_reference";
+    if (TestNumber == kTestCopySetReference) TestName = "test_copy_set_reference";
 
-    if (TestNumber == DTARTNUM) TestName = "test_data_rate";
+    if (TestNumber == kTestDataRate) TestName = "test_data_rate";
 
-    if (TestNumber == DBMRLNUM) TestName = "test_debug_matches_release";
+    if (TestNumber == kTestDebugMatchesRelease) TestName = "test_debug_matches_release";
 
-    if (TestNumber == DFWMWNUM) TestName = "test_drop_frame_watermark";
+    if (TestNumber == kTestDropFrameWaterMark) TestName = "test_drop_frame_watermark";
 
-    if (TestNumber == ENCBONUM) TestName = "test_encoder_break_out";
+    if (TestNumber == kTestEncoderBreakout) TestName = "test_encoder_break_out";
 
-    if (TestNumber == ERRCONUM) TestName = "test_error_concealment";
+    if (TestNumber == kTestErrorConcealment) TestName = "test_error_concealment";
 
-    if (TestNumber == ERRMWNUM) TestName = "test_error_resolution";
+    if (TestNumber == kTestErrorResolution) TestName = "test_error_resolution";
 
-    if (TestNumber == EXTFINUM) TestName = "test_extra_file";
+    if (TestNumber == kTestExtraFile) TestName = "test_extra_file";
 
-    if (TestNumber == FIXDQNUM) TestName = "test_fixed_quantizer";
+    if (TestNumber == kTestFixedQuantizer) TestName = "test_fixed_quantizer";
 
-    if (TestNumber == FKEFRNUM) TestName = "test_force_key_frame";
+    if (TestNumber == kTestForcedKeyFrame) TestName = "test_force_key_frame";
 
-    if (TestNumber == FRSZTNUM) TestName = "test_frame_size";
+    if (TestNumber == kTestFrameSize) TestName = "test_frame_size";
 
-    if (TestNumber == GQVBQNUM) TestName = "test_good_vs_best";
+    if (TestNumber == kTestGoodVsBest) TestName = "test_good_vs_best";
 
-    if (TestNumber == LGIFRNUM) TestName = "test_lag_in_frames";
+    if (TestNumber == kTestLagInFrames) TestName = "test_lag_in_frames";
 
-    if (TestNumber == MAXQUNUM) TestName = "test_max_quantizer";
+    if (TestNumber == kTestMaxQuantizer) TestName = "test_max_quantizer";
 
-    if (TestNumber == MEML1NUM) TestName = "test_mem_leak";
+    if (TestNumber == kTestMemLeak) TestName = "test_mem_leak";
 
-    if (TestNumber == MEML2NUM) TestName = "test_mem_leak2";
+    if (TestNumber == kTestMemLeak2) TestName = "test_mem_leak2";
 
-    if (TestNumber == MINQUNUM) TestName = "test_min_quantizer";
+    if (TestNumber == kTestMinQuantizer) TestName = "test_min_quantizer";
 
-    if (TestNumber == MULRENUM) TestName = "test_multiple_resolution_encode";
+    if (TestNumber == kTestMultiResolutionEncode) TestName = "test_multiple_resolution_encode";
 
-    if (TestNumber == MULTDNUM) TestName = "test_multithreaded_dec";
+    if (TestNumber == kTestMultiThreadedDec) TestName = "test_multithreaded_dec";
 
-    if (TestNumber == MULTENUM) TestName = "test_multithreaded_enc";
+    if (TestNumber == kTestMultiThreadedEnc) TestName = "test_multithreaded_enc";
 
-    if (TestNumber == NVOECPTK) TestName = "test_new_vs_old_enc_cpu_tick";
+    if (TestNumber == kTestNewVsOldEncCpuTick) TestName = "test_new_vs_old_enc_cpu_tick";
 
-    if (TestNumber == NVOPSNUM) TestName = "test_new_vs_old_psnr";
+    if (TestNumber == kTestNewVsOldPsnr) TestName = "test_new_vs_old_psnr";
 
-    if (TestNumber == NVOTSNUM) TestName = "test_new_vs_old_temp_scale";
+    if (TestNumber == kTestNewVsOldTempScale) TestName = "test_new_vs_old_temp_scale";
 
-    if (TestNumber == NOISENUM) TestName = "test_noise_sensitivity";
+    if (TestNumber == kTestNoiseSensitivity) TestName = "test_noise_sensitivity";
 
-    if (TestNumber == OV2PSNUM) TestName = "test_one_pass_vs_two_pass";
+    if (TestNumber == kTestOnePassVsTwoPass) TestName = "test_one_pass_vs_two_pass";
 
-    if (TestNumber == PLYALNUM) TestName = "test_play_alternate";
+    if (TestNumber == kTestPlayAlternate) TestName = "test_play_alternate";
 
-    if (TestNumber == POSTPNUM) TestName = "test_post_processor";
+    if (TestNumber == kTestPostProcessor) TestName = "test_post_processor";
 
-    if (TestNumber == PSTMFNUM) TestName = "test_post_processor_mfqe";
+    if (TestNumber == kTestPostProcessorMfqe) TestName = "test_post_processor_mfqe";
 
-    if (TestNumber == RECBFNUM) TestName = "test_reconstruct_buffer";
+    if (TestNumber == kTestReconstructBuffer) TestName = "test_reconstruct_buffer";
 
-    if (TestNumber == RSDWMNUM) TestName = "test_resample_down_watermark";
+    if (TestNumber == kTestResampleDownWatermark) TestName = "test_resample_down_watermark";
 
-    if (TestNumber == SPEEDNUM) TestName = "test_speed";
+    if (TestNumber == kTestSpeed) TestName = "test_speed";
 
-    if (TestNumber == TMPSCNUM) TestName = "test_temporal_scalability";
+    if (TestNumber == kTestTemporalScalability) TestName = "test_temporal_scalability";
 
-    if (TestNumber == TVECTNUM) TestName = "test_test_vector";
+    if (TestNumber == kTestTestVector) TestName = "test_test_vector";
 
-    if (TestNumber == TTVSFNUM) TestName = "test_thirtytwo_vs_sixtyfour";
+    if (TestNumber == kTestThirtytwoVsSixtyfour) TestName = "test_thirtytwo_vs_sixtyfour";
 
-    if (TestNumber == TV2BTNUM) TestName = "test_two_pass_vs_two_pass_best";
+    if (TestNumber == kTestTwoPassVsTwoPassBest) TestName = "test_two_pass_vs_two_pass_best";
 
-    if (TestNumber == UNDSHNUM) TestName = "test_undershoot";
+    if (TestNumber == kTestUndershoot) TestName = "test_undershoot";
 
-    if (TestNumber == VERSINUM) TestName = "test_version";
+    if (TestNumber == kTestVersion) TestName = "test_version";
 
-    if (TestNumber == VPXMINUM) TestName = "test_vpx_matches_int";
+    if (TestNumber == kTestVpxMatchesInt) TestName = "test_vpx_matches_int";
 
-    if (TestNumber == WMLMMNUM) TestName = "test_win_lin_mac_match";
+    if (TestNumber == kTestWinLinMacMatch) TestName = "test_win_lin_mac_match";
 
     return 0;
 }
@@ -4265,7 +4265,7 @@ int vpxt_identify_test(const char *test_char)
     else
     {
         char test_char_no_space[255];
-        //make sure no white spaces
+        // make sure no white spaces
         vpxt_remove_char_spaces(test_char, test_char_no_space, 255);
         std::string id_test_str = test_char_no_space;
         vpxt_lower_case_string(id_test_str);
@@ -4274,151 +4274,151 @@ int vpxt_identify_test(const char *test_char)
             id_test_str.erase(0, 1);
 
         if (id_test_str.compare("run_multiple_tests") == 0)
-            return RTFFINUM;
+            return kTestMultiRun;
 
         if (id_test_str.compare("test_allow_drop_frames") == 0)
-            return AlWDFNUM;
+            return kTestAllowDropFrames;
 
         if (id_test_str.compare("test_allow_lag") == 0)
-            return ALWLGNUM;
+            return kTestAllowLag;
 
         if (id_test_str.compare("test_allow_spatial_resampling") == 0)
-            return ALWSRNUM;
+            return kTestAllowSpatialResampling;
 
         if (id_test_str.compare("test_arnr") == 0)
-            return ARNRTNUM;
+            return kTestArnr;
 
         if (id_test_str.compare("test_auto_key_frame") == 0)
-            return AUTKFNUM;
+            return kTestAutoKeyFrame;
 
         if (id_test_str.compare("test_buffer_level") == 0)
-            return BUFLVNUM;
+            return kTestBufferLevel;
 
         if (id_test_str.compare("test_change_cpu_dec") == 0)
-            return CPUDENUM;
+            return kTestChangeCpuDec;
 
         if (id_test_str.compare("test_change_cpu_enc") == 0)
-            return CPUENNUM;
+            return kTestChangeCpuEnc;
 
         if (id_test_str.compare("test_constrained_quality") == 0)
-            return CONQUNUM;
+            return kTestConstrainedQuality;
 
         if (id_test_str.compare("test_copy_set_reference") == 0)
-            return COPSRNUM;
+            return kTestCopySetReference;
 
         if (id_test_str.compare("test_data_rate") == 0)
-            return DTARTNUM;
+            return kTestDataRate;
 
         if (id_test_str.compare("test_debug_matches_release") == 0)
-            return DBMRLNUM;
+            return kTestDebugMatchesRelease;
 
         if (id_test_str.compare("test_drop_frame_watermark") == 0)
-            return DFWMWNUM;
+            return kTestDropFrameWaterMark;
 
         if (id_test_str.compare("test_encoder_break_out") == 0)
-            return ENCBONUM;
+            return kTestEncoderBreakout;
 
         if (id_test_str.compare("test_error_concealment") == 0)
-            return ERRCONUM;
+            return kTestErrorConcealment;
 
         if (id_test_str.compare("test_error_resolution") == 0)
-            return ERRMWNUM;
+            return kTestErrorResolution;
 
         if (id_test_str.compare("test_extra_file") == 0)
-            return EXTFINUM;
+            return kTestExtraFile;
 
         if (id_test_str.compare("test_fixed_quantizer") == 0)
-            return FIXDQNUM;
+            return kTestFixedQuantizer;
 
         if (id_test_str.compare("test_force_key_frame") == 0)
-            return FKEFRNUM;
+            return kTestForcedKeyFrame;
 
         if (id_test_str.compare("test_frame_size") == 0)
-            return FRSZTNUM;
+            return kTestFrameSize;
 
         if (id_test_str.compare("test_good_vs_best") == 0)
-            return GQVBQNUM;
+            return kTestGoodVsBest;
 
         if (id_test_str.compare("test_lag_in_frames") == 0)
-            return LGIFRNUM;
+            return kTestLagInFrames;
 
         if (id_test_str.compare("test_max_quantizer") == 0)
-            return MAXQUNUM;
+            return kTestMaxQuantizer;
 
         if (id_test_str.compare("test_mem_leak") == 0)
-            return MEML1NUM;
+            return kTestMemLeak;
 
         if (id_test_str.compare("test_mem_leak2") == 0)
-            return MEML2NUM;
+            return kTestMemLeak2;
 
         if (id_test_str.compare("test_min_quantizer") == 0)
-            return MINQUNUM;
+            return kTestMinQuantizer;
 
         if (id_test_str.compare("test_multiple_resolution_encode") == 0)
-            return MULRENUM;
+            return kTestMultiResolutionEncode;
 
         if (id_test_str.compare("test_multithreaded_dec") == 0)
-            return MULTDNUM;
+            return kTestMultiThreadedDec;
 
         if (id_test_str.compare("test_multithreaded_enc") == 0)
-            return MULTENUM;
+            return kTestMultiThreadedEnc;
 
         if (id_test_str.compare("test_new_vs_old_psnr") == 0)
-            return NVOPSNUM;
+            return kTestNewVsOldPsnr;
 
         if (id_test_str.compare("test_new_vs_old_temp_scale") == 0)
-            return NVOTSNUM;
+            return kTestNewVsOldTempScale;
 
         if (id_test_str.compare("test_new_vs_old_enc_cpu_tick") == 0)
-            return NVOECPTK;
+            return kTestNewVsOldEncCpuTick;
 
         if (id_test_str.compare("test_noise_sensitivity") == 0)
-            return NOISENUM;
+            return kTestNoiseSensitivity;
 
         if (id_test_str.compare("test_one_pass_vs_two_pass") == 0)
-            return OV2PSNUM;
+            return kTestOnePassVsTwoPass;
 
         if (id_test_str.compare("test_play_alternate") == 0)
-            return PLYALNUM;
+            return kTestPlayAlternate;
 
         if (id_test_str.compare("test_post_processor") == 0)
-            return POSTPNUM;
+            return kTestPostProcessor;
 
         if (id_test_str.compare("test_post_processor_mfqe") == 0)
-            return PSTMFNUM;
+            return kTestPostProcessorMfqe;
 
         if (id_test_str.compare("test_reconstruct_buffer") == 0)
-            return RECBFNUM;
+            return kTestReconstructBuffer;
 
         if (id_test_str.compare("test_resample_down_watermark") == 0)
-            return RSDWMNUM;
+            return kTestResampleDownWatermark;
 
         if (id_test_str.compare("test_speed") == 0)
-            return SPEEDNUM;
+            return kTestSpeed;
 
         if (id_test_str.compare("test_temporal_scalability") == 0)
-            return TMPSCNUM;
+            return kTestTemporalScalability;
 
         if (id_test_str.compare("test_test_vector") == 0)
-            return TVECTNUM;
+            return kTestTestVector;
 
         if (id_test_str.compare("test_thirtytwo_vs_sixtyfour") == 0)
-            return TTVSFNUM;
+            return kTestThirtytwoVsSixtyfour;
 
         if (id_test_str.compare("test_two_pass_vs_two_pass_best") == 0)
-            return TV2BTNUM;
+            return kTestTwoPassVsTwoPassBest;
 
         if (id_test_str.compare("test_undershoot") == 0)
-            return UNDSHNUM;
+            return kTestUndershoot;
 
         if (id_test_str.compare("test_version") == 0)
-            return VERSINUM;
+            return kTestVersion;
 
         if (id_test_str.compare("test_vpx_matches_int") == 0)
-            return VPXMINUM;
+            return kTestVpxMatchesInt;
 
         if (id_test_str.compare("test_win_lin_mac_match") == 0)
-            return WMLMMNUM;
+            return kTestWinLinMacMatch;
 
         if (id_test_str.compare("0") == 0)
             return 0;
@@ -4428,10 +4428,10 @@ int vpxt_identify_test(const char *test_char)
 }
 int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 {
-    //function returns number of tests found if input is correct -1 if not
-    //correct and -3 if there is an error
+    // function returns number of tests found if input is correct -1 if not
+    // correct and -3 if there is an error
 
-    /////////////////////Read Number of Tests///////////////////////////////////
+    ///////////////////// Read Number of Tests /////////////////////////////////
     std::fstream infile2;
     infile2.open(input);
 
@@ -4451,12 +4451,12 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
         int Buffer0CharAscii = buffer3[0];
 
-        //skips over any line starting with a % in the input file to allow for
-        //comenting
+        // skips over any line starting with a % in the input file to allow for
+        // comenting
         if (Buffer0CharAscii == 37 || Buffer0CharAscii == '\0' ||
             Buffer0CharAscii == '\r')
         {
-            //lines_skipped_cnt++;
+            // lines_skipped_cnt++;
         }
         else
         {
@@ -4484,7 +4484,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
     int DummyArgvVar = 1;
     int CommentBool = 0;
 
-    int PassFail[999];                //= new int[numberoftests+2];
+    int PassFail[999];                // = new int[numberoftests+2];
     int PassFailInt = 0;
     int TestsRun = 0;
 
@@ -4526,8 +4526,8 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
         int Buffer0CharAscii = buffer[0];
 
-        //skips over any line starting with a % in the input file to allow for
-        //comenting
+        // skips over any line starting with a % in the input file to allow for
+        // comenting
         if (Buffer0CharAscii == 37 || Buffer0CharAscii == '\0' ||
             Buffer0CharAscii == '\r')
         {
@@ -4537,7 +4537,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
         {
             Buf1Var = 0;
 
-            //parses through gotline and seperates commands out
+            // parses through gotline and seperates commands out
             while (buffer[Buf1Var] != '\0' && buffer[Buf1Var] != '\r')
             {
                 int Buf2Var = 0;
@@ -4572,8 +4572,8 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 y++;
             }
 
-            //this is for Mode 3 test only mode in order to find the right
-            //TimeStamp
+            // this is for Mode 3 test only mode in order to find the right
+            // TimeStamp
             ////////////////////////////////////////////////////////////////////
             if (CommentBool == 0)
             {
@@ -4589,7 +4589,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                 }
 
-                if (selector == AlWDFNUM)
+                if (selector == kTestAllowDropFrames)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4604,7 +4604,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == ALWLGNUM)
+                if (selector == kTestAllowLag)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4619,7 +4619,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == ALWSRNUM)
+                if (selector == kTestAllowSpatialResampling)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4634,7 +4634,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == ARNRTNUM)
+                if (selector == kTestArnr)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4649,7 +4649,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == AUTKFNUM)
+                if (selector == kTestAutoKeyFrame)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4664,7 +4664,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == BUFLVNUM)
+                if (selector == kTestBufferLevel)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4679,7 +4679,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == CPUDENUM)
+                if (selector == kTestChangeCpuDec)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4694,7 +4694,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == CPUENNUM)
+                if (selector == kTestChangeCpuEnc)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4709,7 +4709,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == CONQUNUM)
+                if (selector == kTestConstrainedQuality)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4724,7 +4724,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == COPSRNUM)
+                if (selector == kTestCopySetReference)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4739,7 +4739,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == DFWMWNUM)
+                if (selector == kTestDropFrameWaterMark)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4754,7 +4754,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == DTARTNUM)
+                if (selector == kTestDataRate)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4769,7 +4769,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == DBMRLNUM)
+                if (selector == kTestDebugMatchesRelease)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4784,7 +4784,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == ENCBONUM)
+                if (selector == kTestEncoderBreakout)
                 {
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -4800,7 +4800,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == ERRCONUM)
+                if (selector == kTestErrorConcealment)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4815,7 +4815,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == ERRMWNUM)
+                if (selector == kTestErrorResolution)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4830,7 +4830,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == EXTFINUM)
+                if (selector == kTestExtraFile)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4845,7 +4845,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == FIXDQNUM)
+                if (selector == kTestFixedQuantizer)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4860,7 +4860,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == FKEFRNUM)
+                if (selector == kTestForcedKeyFrame)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4875,7 +4875,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == FRSZTNUM)
+                if (selector == kTestFrameSize)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4890,7 +4890,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == GQVBQNUM)
+                if (selector == kTestGoodVsBest)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4904,7 +4904,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == LGIFRNUM)
+                if (selector == kTestLagInFrames)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4919,7 +4919,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MAXQUNUM)
+                if (selector == kTestMaxQuantizer)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4934,7 +4934,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MEML1NUM)
+                if (selector == kTestMemLeak)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4949,7 +4949,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MEML2NUM)
+                if (selector == kTestMemLeak2)
                 {
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -4965,7 +4965,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MINQUNUM)
+                if (selector == kTestMinQuantizer)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4980,7 +4980,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MULRENUM)
+                if (selector == kTestMultiResolutionEncode)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -4995,7 +4995,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MULTDNUM)
+                if (selector == kTestMultiThreadedDec)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5010,7 +5010,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == MULTENUM)
+                if (selector == kTestMultiThreadedEnc)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5025,7 +5025,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == NVOPSNUM)
+                if (selector == kTestNewVsOldPsnr)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5040,7 +5040,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == NVOTSNUM)
+                if (selector == kTestNewVsOldTempScale)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5055,7 +5055,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == NVOECPTK)
+                if (selector == kTestNewVsOldEncCpuTick)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5070,7 +5070,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == NOISENUM)
+                if (selector == kTestNoiseSensitivity)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5085,7 +5085,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == OV2PSNUM)
+                if (selector == kTestOnePassVsTwoPass)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5100,7 +5100,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == PLYALNUM)
+                if (selector == kTestPlayAlternate)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5115,7 +5115,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == POSTPNUM)
+                if (selector == kTestPostProcessor)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5130,7 +5130,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == PSTMFNUM)
+                if (selector == kTestPostProcessorMfqe)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5145,7 +5145,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == RECBFNUM)
+                if (selector == kTestReconstructBuffer)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5160,7 +5160,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == RSDWMNUM)
+                if (selector == kTestResampleDownWatermark)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5175,7 +5175,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == SPEEDNUM)
+                if (selector == kTestSpeed)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5189,7 +5189,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == TMPSCNUM)
+                if (selector == kTestTemporalScalability)
                 {
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -5205,7 +5205,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == TVECTNUM)
+                if (selector == kTestTestVector)
                 {
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -5221,7 +5221,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == TTVSFNUM)
+                if (selector == kTestThirtytwoVsSixtyfour)
                 {
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
@@ -5237,7 +5237,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == TV2BTNUM)
+                if (selector == kTestTwoPassVsTwoPassBest)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5252,7 +5252,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == UNDSHNUM)
+                if (selector == kTestUndershoot)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5267,7 +5267,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == VERSINUM)
+                if (selector == kTestVersion)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5282,7 +5282,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == VPXMINUM)
+                if (selector == kTestVpxMatchesInt)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5297,7 +5297,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                if (selector == WMLMMNUM)
+                if (selector == kTestWinLinMacMatch)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
@@ -5312,33 +5312,33 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     }
                 }
 
-                //Make sure that all tests input are vaild tests by checking
-                //the list (make sure to add new tests here!)
-                if (selector != RTFFINUM && selector != AlWDFNUM &&
-                    selector != ALWLGNUM && selector != FRSZTNUM &&
-                    selector != ARNRTNUM && selector != AUTKFNUM &&
-                    selector != BUFLVNUM && selector != CPUDENUM &&
-                    selector != CPUENNUM && selector != CONQUNUM &&
-                    selector != COPSRNUM && selector != DFWMWNUM &&
-                    selector != DTARTNUM && selector != DBMRLNUM &&
-                    selector != ENCBONUM && selector != ERRCONUM &&
-                    selector != ERRMWNUM && selector != EXTFINUM &&
-                    selector != FIXDQNUM && selector != FKEFRNUM &&
-                    selector != GQVBQNUM && selector != LGIFRNUM &&
-                    selector != MAXQUNUM && selector != MEML1NUM &&
-                    selector != MEML2NUM && selector != MINQUNUM &&
-                    selector != MULTENUM && selector != MULTDNUM &&
-                    selector != NVOPSNUM && selector != NVOTSNUM &&
-                    selector != NVOECPTK && selector != NOISENUM &&
-                    selector != OV2PSNUM && selector != PLYALNUM &&
-                    selector != POSTPNUM && selector != PSTMFNUM &&
-                    selector != RSDWMNUM && selector != SPEEDNUM &&
-                    selector != TMPSCNUM && selector != TVECTNUM &&
-                    selector != TTVSFNUM && selector != RECBFNUM &&
-                    selector != TV2BTNUM && selector != UNDSHNUM &&
-                    selector != VERSINUM && selector != WMLMMNUM &&
-                    selector != ALWSRNUM && selector != VPXMINUM &&
-                    selector != MULRENUM)
+                // Make sure that all tests input are vaild tests by checking
+                // the list (make sure to add new tests here!)
+                if (selector != kTestMultiRun && selector != kTestAllowDropFrames &&
+                    selector != kTestAllowLag && selector != kTestFrameSize &&
+                    selector != kTestArnr && selector != kTestAutoKeyFrame &&
+                    selector != kTestBufferLevel && selector != kTestChangeCpuDec &&
+                    selector != kTestChangeCpuEnc && selector != kTestConstrainedQuality &&
+                    selector != kTestCopySetReference && selector != kTestDropFrameWaterMark &&
+                    selector != kTestDataRate && selector != kTestDebugMatchesRelease &&
+                    selector != kTestEncoderBreakout && selector != kTestErrorConcealment &&
+                    selector != kTestErrorResolution && selector != kTestExtraFile &&
+                    selector != kTestFixedQuantizer && selector != kTestForcedKeyFrame &&
+                    selector != kTestGoodVsBest && selector != kTestLagInFrames &&
+                    selector != kTestMaxQuantizer && selector != kTestMemLeak &&
+                    selector != kTestMemLeak2 && selector != kTestMinQuantizer &&
+                    selector != kTestMultiThreadedEnc && selector != kTestMultiThreadedDec &&
+                    selector != kTestNewVsOldPsnr && selector != kTestNewVsOldTempScale &&
+                    selector != kTestNewVsOldEncCpuTick && selector != kTestNoiseSensitivity &&
+                    selector != kTestOnePassVsTwoPass && selector != kTestPlayAlternate &&
+                    selector != kTestPostProcessor && selector != kTestPostProcessorMfqe &&
+                    selector != kTestResampleDownWatermark && selector != kTestSpeed &&
+                    selector != kTestTemporalScalability && selector != kTestTestVector &&
+                    selector != kTestThirtytwoVsSixtyfour && selector != kTestReconstructBuffer &&
+                    selector != kTestTwoPassVsTwoPassBest && selector != kTestUndershoot &&
+                    selector != kTestVersion && selector != kTestWinLinMacMatch &&
+                    selector != kTestAllowSpatialResampling && selector != kTestVpxMatchesInt &&
+                    selector != kTestMultiResolutionEncode)
                 {
                     SelectorAr[SelectorArInt] += buffer;
                     SelectorAr2[SelectorArInt] = "Test Not Found";
@@ -5367,20 +5367,20 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
         y++;
     }
 
-    //more info if == 1 then will display text file statistics if 0 then will
-    //not 0 ment for File Check prior to running External Test runner to ensure
-    //input is correct
+    // more info if == 1 then will display text file statistics if 0 then will
+    // not 0 ment for File Check prior to running External Test runner to ensure
+    // input is correct
     if (MoreInfo == 0)
     {
         if (PassFailReturn == 0)
         {
 
             infile.close();
-            //delete [] PassFail;
-            //delete [] StringAr;
-            //delete [] SelectorAr;
-            //delete [] SelectorAr2;
-            //return 0;
+            // delete [] PassFail;
+            // delete [] StringAr;
+            // delete [] SelectorAr;
+            // delete [] SelectorAr2;
+            // return 0;
             return -1;
 
         }
@@ -5389,10 +5389,10 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
             if (PassFailInt == 0)
             {
                 tprintf(PRINT_STD, "Test File Specified is empty.");
-                //delete [] PassFail;
-                //delete [] StringAr;
-                //delete [] SelectorAr;
-                //delete [] SelectorAr2;
+                // delete [] PassFail;
+                // delete [] StringAr;
+                // delete [] SelectorAr;
+                // delete [] SelectorAr2;
                 return 0;
             }
             else
@@ -5401,11 +5401,11 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 tprintf(PRINT_STD, "\nAll %i Tests in text file: %s - "
                     "are properly Formatted\n\n", y, input);
 
-                //return 1;
-                //delete [] PassFail;
-                //delete [] StringAr;   //will cause error
-                //delete [] SelectorAr; //will cause error
-                //delete [] SelectorAr2;
+                // return 1;
+                // delete [] PassFail;
+                // delete [] StringAr;   //will cause error
+                // delete [] SelectorAr; //will cause error
+                // delete [] SelectorAr2;
                 infile.close();
                 return SelectorArInt;
             }
@@ -5419,11 +5419,11 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
             tprintf(PRINT_STD, "\nFile Contains %i Tests\n", SelectorArInt);
             tprintf(PRINT_STD, "\nFile Contains %i Lines\n", trackthis1);
             infile.close();
-            //delete [] PassFail;
-            //delete [] StringAr;
-            //delete [] SelectorAr;
-            //delete [] SelectorAr2;
-            //return 0;
+            // delete [] PassFail;
+            // delete [] StringAr;
+            // delete [] SelectorAr;
+            // delete [] SelectorAr2;
+            // return 0;
             return -1;
         }
         else
@@ -5473,7 +5473,7 @@ int vpxt_folder_exist_check(const std::string FolderName)
 }
 void vpxt_subfolder_name(const char *input, char *FileName)
 {
-    //extracts name of last two folders a target file is in and returns it
+    // extracts name of last two folders a target file is in and returns it
     int parser = 0;
     int slashcount = 0;
     int slashcount2 = 0;
@@ -5514,13 +5514,13 @@ void vpxt_subfolder_name(const char *input, char *FileName)
 }
 void vpxt_test_name(char *input, char *FileName)
 {
-    //Gets the directory test name from an input sting
+    // Gets the directory test name from an input sting
     int parser = 0;
     int slashcount = 0;
     int slashcount2 = 0;
     char OpSlashChar;
 
-    //find out what the default shash char is then define the oposite slash char
+    // find out what the default shash char is then define the oposite slashchar
     if (slashChar() == '\\')
     {
         OpSlashChar = '/';
@@ -5531,8 +5531,8 @@ void vpxt_test_name(char *input, char *FileName)
         OpSlashChar = '\\';
     }
 
-    //Parse through stirng replaceing any instance of an oposite slash char with
-    //a correct slash char in order to run cross plat.
+    // Parse through stirng replaceing any instance of an oposite slash char
+    // with a correct slash char in order to run cross plat.
     while (input[parser] != '\0')
     {
         if (input[parser] == OpSlashChar)
@@ -5543,7 +5543,7 @@ void vpxt_test_name(char *input, char *FileName)
         parser++;
     }
 
-    //continue with the function after proper initialization.
+    // continue with the function after proper initialization.
     parser = 0;
 
     while (input[parser] != '\0' && input[parser] != slashChar())
@@ -5558,9 +5558,9 @@ void vpxt_test_name(char *input, char *FileName)
 }
 int  vpxt_init_new_vs_old_log(const char *input, std::string TestIDStr)
 {
-    //returns the number of instances TestIDStr was found in the input file
-    //if no instances are found one will be created and the number 1 will be
-    //retunred as output.
+    // returns the number of instances TestIDStr was found in the input file
+    // if no instances are found one will be created and the number 1 will be
+    // retunred as output.
     std::fstream input_file;
     input_file.open(input, std::fstream::in);
 
@@ -5569,7 +5569,7 @@ int  vpxt_init_new_vs_old_log(const char *input, std::string TestIDStr)
 
     int numberOfUniqueIDs = 0;
 
-    //loop through log file for TestIDStr to make sure that log entry exists
+    // loop through log file for TestIDStr to make sure that log entry exists
     while (!input_file.eof())
     {
         if (TestIDStr.compare(inputFileLine) == 0)
@@ -5583,7 +5583,7 @@ int  vpxt_init_new_vs_old_log(const char *input, std::string TestIDStr)
     if (numberOfUniqueIDs != 0)
         return numberOfUniqueIDs;
 
-    //if log entry does not exist create it and return that only 1 entry exists
+    // if log entry does not exist create it and return that only 1 entry exists
     std::fstream output_file;
     output_file.open(input, std::fstream::out | std::fstream::app);
     output_file << TestIDStr.c_str() << "\n";
@@ -5626,14 +5626,14 @@ int  vpxt_sync_new_vs_old_log(const char *testlog,
 
     while (!gitlogFile.eof() || !testlogFile.eof())
     {
-        //if we are at the correct test log (ident by input vars)
+        // if we are at the correct test log (ident by input vars)
         if (TestIDStr.compare(testlogFileLine) == 0)
             correctTest = 1;
-        //if we are at the correct commit id (ident by partial version str)
+        // if we are at the correct commit id (ident by partial version str)
         if (correctTest == 1)
             if (strncmp(testlogFileLine, versionStrSub.c_str(), 7) == 0)
                 correctCommit = 1;
-        //if we are at the correct commit id (ident by partial version str)
+        // if we are at the correct commit id (ident by partial version str)
         if (correctTest == 1)
             if (strncmp(gitlogFileLine, versionStrSub.c_str(), 7) == 0)
                 correctCommit = 1;
@@ -5641,15 +5641,15 @@ int  vpxt_sync_new_vs_old_log(const char *testlog,
         char gitlogFileLineCommit[41] = "";
         char testlogFileLineCommit[41] = "";
 
-        //formatted lines to print
+        // formatted lines to print
         strncpy(gitlogFileLineCommit, gitlogFileLine, 40);
         strncpy(testlogFileLineCommit, testlogFileLine, 40);
 
-        //if we come to a test identification line finish writing git history
-        //if applicable and reset git log to start the next run through.
+        // if we come to a test identification line finish writing git history
+        // if applicable and reset git log to start the next run through.
         if (strncmp(testlogFileLine, testName.c_str(), testName.length()) == 0)
         {
-            if (firstheader != 1) //igore first instance
+            if (firstheader != 1) // igore first instance
             {
                 if (writenext == 0)
                 {
@@ -5703,8 +5703,8 @@ int  vpxt_sync_new_vs_old_log(const char *testlog,
         }
         else
         {
-            //if git and new-vs-old log commits are the same print the log info
-            //and advance both
+            // if git and new-vs-old log commits are the same print the log info
+            // and advance both
             if (strncmp(testlogFileLine, gitlogFileLine, 40) == 0)
             {
                 if (correctCommit == 1 && correctTest == 1)
@@ -5725,8 +5725,8 @@ int  vpxt_sync_new_vs_old_log(const char *testlog,
             }
             else
             {
-                //if git and new-vs-old are not the same print the git info and
-                //advance git
+                // if git and new-vs-old are not the same print the git info and
+                // advance git
 
                 if (correctCommit == 1 && correctTest == 1)
                 {
@@ -5760,20 +5760,20 @@ double vpxt_get_new_vs_old_val(std::string fileline,
     double number = 0.0;
     int new_values_per_line = 0;
 
-    //loop through line stop at end
+    // loop through line stop at end
     while (41 + last_num_pos < fileline.length())
     {
-        //look for spaces
+        // look for spaces
         if (fileline.substr(41 + last_num_pos, 1).compare(" ") == 0){
-            //alternate between number and its description if expecting number
-            //use last_space_pos and last_num_pos to get it.
+            // alternate between number and its description if expecting number
+            // use last_space_pos and last_num_pos to get it.
             if(is_number){
                 is_number = 0;
                 number = strtod(fileline.substr(41 + last_space_pos, 41 +
                     last_num_pos - 1).c_str(), NULL);
 
-                //if valid number add it to vector and add one to values per
-                //line
+                // if valid number add it to vector and add one to values per
+                // line
                 if(number > 0.0){
                     ValueList.push_back(number);
                     ++new_values_per_line;
@@ -5791,7 +5791,7 @@ double vpxt_get_new_vs_old_val(std::string fileline,
     if(new_values_per_line > values_per_line)
         values_per_line = new_values_per_line;
 
-    //if no input found after commit description return 0 else 1
+    // if no input found after commit description return 0 else 1
     if (last_num_pos == 0)
         return 0.0;
     else
@@ -5905,7 +5905,7 @@ int  vpxt_eval_new_vs_old_log(const char *logfile,
                 if (!logFile.eof())
                     logFile.getline(logFileLine, 256);
 
-                //if reach next test break out.
+                // if reach next test break out.
                 if (strncmp(logFileLine, testName.c_str(), testName.length())
                     == 0)
                 {
@@ -5927,11 +5927,11 @@ int  vpxt_eval_new_vs_old_log(const char *logfile,
 }
 int  vpxt_check_arg_input(const char *testName, int argNum)
 {
-    //return 1 if correct number of inputs 2 if par file input and - 1 if fail
+    // return 1 if correct number of inputs 2 if par file input and - 1 if fail
     int selector = vpxt_identify_test(testName);
 
-    //test_allow_drop_frames
-    if (selector == AlWDFNUM)
+    // test_allow_drop_frames
+    if (selector == kTestAllowDropFrames)
     {
         if (argNum == 7)
             return 1;
@@ -5940,8 +5940,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_allow_lag
-    if (selector == ALWLGNUM)
+    // test_allow_lag
+    if (selector == kTestAllowLag)
     {
         if (argNum == 7)
             return 1;
@@ -5950,8 +5950,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_allow_spatial_resampling
-    if (selector == ALWSRNUM)
+    // test_allow_spatial_resampling
+    if (selector == kTestAllowSpatialResampling)
     {
         if (argNum == 7)
             return 1;
@@ -5960,8 +5960,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_arnr
-    if (selector == ARNRTNUM)
+    // test_arnr
+    if (selector == kTestArnr)
     {
         if (argNum == 7)
             return 1;
@@ -5970,8 +5970,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_auto_key_frame
-    if (selector == AUTKFNUM)
+    // test_auto_key_frame
+    if (selector == kTestAutoKeyFrame)
     {
         if (argNum == 8)
             return 1;
@@ -5980,8 +5980,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_buffer_level
-    if (selector == BUFLVNUM)
+    // test_buffer_level
+    if (selector == kTestBufferLevel)
     {
         if (argNum == 7)
             return 1;
@@ -5990,8 +5990,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_change_cpu_dec
-    if (selector == CPUDENUM)
+    // test_change_cpu_dec
+    if (selector == kTestChangeCpuDec)
     {
         if (argNum == 8)
             return 1;
@@ -6000,8 +6000,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_change_cpu_enc
-    if (selector == CPUENNUM)
+    // test_change_cpu_enc
+    if (selector == kTestChangeCpuEnc)
     {
         if (argNum == 8)
             return 1;
@@ -6010,8 +6010,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_constrained_quality
-    if (selector == CONQUNUM)
+    // test_constrained_quality
+    if (selector == kTestConstrainedQuality)
     {
         if (argNum == 8)
             return 1;
@@ -6020,8 +6020,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_copy_set_reference
-    if (selector == COPSRNUM)
+    // test_copy_set_reference
+    if (selector == kTestCopySetReference)
     {
         if (argNum == 8)
             return 1;
@@ -6030,8 +6030,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_data_rate
-    if (selector == DFWMWNUM)
+    // test_data_rate
+    if (selector == kTestDropFrameWaterMark)
     {
         if (argNum == 7)
             return 1;
@@ -6040,8 +6040,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_debug_matches_release
-    if (selector == DTARTNUM)
+    // test_debug_matches_release
+    if (selector == kTestDataRate)
     {
         if (argNum == 7)
             return 1;
@@ -6050,8 +6050,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_drop_frame_watermark
-    if (selector == DBMRLNUM)
+    // test_drop_frame_watermark
+    if (selector == kTestDebugMatchesRelease)
     {
         if (argNum == 9)
             return 1;
@@ -6060,8 +6060,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_encoder_break_out
-    if (selector == ENCBONUM)
+    // test_encoder_break_out
+    if (selector == kTestEncoderBreakout)
     {
         if (argNum == 7)
             return 1;
@@ -6070,8 +6070,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_error_concealment
-    if (selector == ERRCONUM)
+    // test_error_concealment
+    if (selector == kTestErrorConcealment)
     {
         if (argNum == 7)
             return 1;
@@ -6080,8 +6080,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_error_resolution
-    if (selector == ERRMWNUM)
+    // test_error_resolution
+    if (selector == kTestErrorResolution)
     {
         if (argNum == 7)
             return 1;
@@ -6090,8 +6090,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_extra_file
-    if (selector == EXTFINUM)
+    // test_extra_file
+    if (selector == kTestExtraFile)
     {
         if (argNum == 5)
             return 1;
@@ -6100,8 +6100,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_fixed_quantizer
-    if (selector == FIXDQNUM)
+    // test_fixed_quantizer
+    if (selector == kTestFixedQuantizer)
     {
         if (argNum == 9)
             return 1;
@@ -6110,8 +6110,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_force_key_frame
-    if (selector == FKEFRNUM)
+    // test_force_key_frame
+    if (selector == kTestForcedKeyFrame)
     {
         if (argNum == 8)
             return 1;
@@ -6120,8 +6120,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_frame_size
-    if (selector == FRSZTNUM)
+    // test_frame_size
+    if (selector == kTestFrameSize)
     {
         if (argNum == 9)
             return 1;
@@ -6130,8 +6130,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_good_vs_best
-    if (selector == GQVBQNUM)
+    // test_good_vs_best
+    if (selector == kTestGoodVsBest)
     {
         if (argNum == 6)
             return 1;
@@ -6140,8 +6140,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_lag_in_frames
-    if (selector == LGIFRNUM)
+    // test_lag_in_frames
+    if (selector == kTestLagInFrames)
     {
         if (argNum == 9)
             return 1;
@@ -6150,8 +6150,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_max_quantizer
-    if (selector == MAXQUNUM)
+    // test_max_quantizer
+    if (selector == kTestMaxQuantizer)
     {
         if (argNum == 7)
             return 1;
@@ -6160,8 +6160,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_mem_leak
-    if (selector == MEML1NUM)
+    // test_mem_leak
+    if (selector == kTestMemLeak)
     {
         if (argNum == 8)
             return 1;
@@ -6170,8 +6170,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_mem_leak2
-    if (selector == MEML2NUM)
+    // test_mem_leak2
+    if (selector == kTestMemLeak2)
     {
         if (argNum == 3)
             return 1;
@@ -6180,8 +6180,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_min_quantizer
-    if (selector == MINQUNUM)
+    // test_min_quantizer
+    if (selector == kTestMinQuantizer)
     {
         if (argNum == 7)
             return 1;
@@ -6190,8 +6190,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_multiple_resolution_encode
-    if (selector == MULRENUM)
+    // test_multiple_resolution_encode
+    if (selector == kTestMultiResolutionEncode)
     {
         if (argNum == 6)
             return 1;
@@ -6200,8 +6200,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_multithreaded_dec
-    if (selector == MULTDNUM)
+    // test_multithreaded_dec
+    if (selector == kTestMultiThreadedDec)
     {
         if (argNum == 8)
             return 1;
@@ -6210,8 +6210,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_multithreaded_enc
-    if (selector == MULTENUM)
+    // test_multithreaded_enc
+    if (selector == kTestMultiThreadedEnc)
     {
         if (argNum == 8)
             return 1;
@@ -6220,8 +6220,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_new_vs_old_enc_cpu_tick
-    if (selector == NVOPSNUM)
+    // test_new_vs_old_enc_cpu_tick
+    if (selector == kTestNewVsOldPsnr)
     {
         if (argNum == 9)
             return 1;
@@ -6230,8 +6230,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_new_vs_old_enc_cpu_tick
-    if (selector == NVOTSNUM)
+    // test_new_vs_old_enc_cpu_tick
+    if (selector == kTestNewVsOldTempScale)
     {
         if (argNum == 11)
             return 1;
@@ -6240,8 +6240,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_new_vs_old_psnr
-    if (selector == NVOECPTK)
+    // test_new_vs_old_psnr
+    if (selector == kTestNewVsOldEncCpuTick)
     {
         if (argNum == 9)
             return 1;
@@ -6250,8 +6250,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_noise_sensitivity
-    if (selector == NOISENUM)
+    // test_noise_sensitivity
+    if (selector == kTestNoiseSensitivity)
     {
         if (argNum == 7)
             return 1;
@@ -6260,8 +6260,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_one_pass_vs_two_pass
-    if (selector == OV2PSNUM)
+    // test_one_pass_vs_two_pass
+    if (selector == kTestOnePassVsTwoPass)
     {
         if (argNum == 6)
             return 1;
@@ -6270,8 +6270,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_play_alternate
-    if (selector == PLYALNUM)
+    // test_play_alternate
+    if (selector == kTestPlayAlternate)
     {
         if (argNum == 7)
             return 1;
@@ -6280,8 +6280,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_post_processor
-    if (selector == POSTPNUM)
+    // test_post_processor
+    if (selector == kTestPostProcessor)
     {
         if (argNum == 7)
             return 1;
@@ -6290,8 +6290,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_post_processor_mfqe
-    if (selector == PSTMFNUM)
+    // test_post_processor_mfqe
+    if (selector == kTestPostProcessorMfqe)
     {
         if (argNum == 9)
             return 1;
@@ -6300,8 +6300,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_reconstruct_buffer
-    if (selector == RECBFNUM)
+    // test_reconstruct_buffer
+    if (selector == kTestReconstructBuffer)
     {
         if (argNum == 7)
             return 1;
@@ -6310,8 +6310,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_resample_down_watermark
-    if (selector == RSDWMNUM)
+    // test_resample_down_watermark
+    if (selector == kTestResampleDownWatermark)
     {
         if (argNum == 7)
             return 1;
@@ -6320,8 +6320,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_speed
-    if (selector == SPEEDNUM)
+    // test_speed
+    if (selector == kTestSpeed)
     {
         if (argNum == 8)
             return 1;
@@ -6330,8 +6330,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_temporal_scalability
-    if (selector == TMPSCNUM)
+    // test_temporal_scalability
+    if (selector == kTestTemporalScalability)
     {
         if (argNum == 10)
             return 1;
@@ -6340,13 +6340,13 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_test_vector
-    if (selector == TVECTNUM)
+    // test_test_vector
+    if (selector == kTestTestVector)
         if ((argNum == 4))
             return 1;
 
-    //test_test_vector
-    if (selector == TTVSFNUM)
+    // test_test_vector
+    if (selector == kTestThirtytwoVsSixtyfour)
     {
         if (argNum == 9)
             return 1;
@@ -6355,8 +6355,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_two_pass_vs_two_pass_best
-    if (selector == TV2BTNUM)
+    // test_two_pass_vs_two_pass_best
+    if (selector == kTestTwoPassVsTwoPassBest)
     {
         if (argNum == 6)
             return 1;
@@ -6365,8 +6365,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_undershoot
-    if (selector == UNDSHNUM)
+    // test_undershoot
+    if (selector == kTestUndershoot)
     {
         if (argNum == 7)
             return 1;
@@ -6375,8 +6375,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_version
-    if (selector == VERSINUM)
+    // test_version
+    if (selector == kTestVersion)
     {
         if (argNum == 7)
             return 1;
@@ -6385,8 +6385,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_win_lin_mac_match
-    if (selector == VPXMINUM)
+    // test_win_lin_mac_match
+    if (selector == kTestVpxMatchesInt)
     {
         if (argNum == 9)
             return 1;
@@ -6395,8 +6395,8 @@ int  vpxt_check_arg_input(const char *testName, int argNum)
             return 2;
     }
 
-    //test_win_lin_mac_match
-    if (selector == WMLMMNUM)
+    // test_win_lin_mac_match
+    if (selector == kTestWinLinMacMatch)
     {
         if (argNum == 9)
             return 1;
@@ -6426,13 +6426,24 @@ int vpxt_remove_char_spaces(const char *input, char *output, int maxsize)
 
     return 0;
 }
-//-------------------Math-------------------------------------------------------
+void replace_substring(const std::string& old_str, const std::string& new_str,
+                         std::string* str) {
+    if (!str) return;
+    // search for |old_str| in |str|.
+    size_t pos = 0;
+    while((pos = str->find(old_str, pos)) != std::string::npos)
+    {
+       str->replace(pos, old_str.length(), new_str);
+       pos += new_str.length();
+    }
+  }
+// ------------------Math-------------------------------------------------------
 int vpxt_decimal_places(int InputNumber)
 {
     int y = 0;
     int totaltensplaces = 0;
 
-    //find out how many decimal places
+    // find out how many decimal places
     while (y >= 0)
     {
         y = InputNumber - (int)pow(10.0, totaltensplaces);
@@ -6481,15 +6492,8 @@ double vpxt_abs_double(double input)
 
     return input;
 }
-int vpxt_solve_quadratic(double X1,
-                         double X2,
-                         double X3,
-                         double Y1,
-                         double Y2,
-                         double Y3,
-                         double &A,
-                         double &B,
-                         double &C)
+int vpxt_solve_quadratic(double X1, double X2, double X3, double Y1, double Y2,
+                         double Y3, double &A, double &B, double &C)
 {
     A = ((Y2 - Y1) * (X1 - X3) + (Y3 - Y1) * (X2 - X1)) / ((X1 - X3) *
         ((X2 * X2) - (X1 * X1)) + (X2 - X1) * ((X3 * X3) - (X1 * X1)));
@@ -6498,7 +6502,8 @@ int vpxt_solve_quadratic(double X1,
 
     return 0;
 }
-double vpxt_area_under_quadratic(double A, double B, double C, double X1, double X2)
+double vpxt_area_under_quadratic(double A, double B, double C, double X1,
+                                 double X2)
 {
     double Area1 = ((A * X1 * X1 * X1) / 3) + ((B * X1 * X1) / 2) + C * X1;
     double Area2 = ((A * X2 * X2 * X2) / 3) + ((B * X2 * X2) / 2) + C * X2;
@@ -6534,12 +6539,12 @@ char *vpxt_itoa_custom(int value, char *result, int base)
 
     return result;
 }
-//----------------------------Cross Plat----------------------------------------
+// ---------------------------Cross Plat----------------------------------------
 void tprintf(int PrintSelection, const char *fmt, ...)
 {
-    //Output for python
-    //FILE * STDOUT_File;
-    //STDOUT_File = fopen ("PathToPythonTxtFile","a");
+    // Output for python
+    // FILE * STDOUT_File;
+    // STDOUT_File = fopen ("PathToPythonTxtFile","a");
 
     char buffer[2048];
     buffer[0] = NULL;
@@ -6577,7 +6582,7 @@ void tprintf(int PrintSelection, const char *fmt, ...)
 
         if (PrintSelection == PRINT_BTH)
         {
-            //fputs (bufferStr2.c_str(),STDOUT_File);
+            // fputs (bufferStr2.c_str(),STDOUT_File);
             printf("%s", bufferStr.c_str());
             fprintf(stderr, "%s", bufferStr2.c_str());
         }
@@ -6589,7 +6594,7 @@ void tprintf(int PrintSelection, const char *fmt, ...)
 
         if (PrintSelection == PRINT_STD)
         {
-            //fputs (bufferStr2.c_str(),STDOUT_File);
+            // fputs (bufferStr2.c_str(),STDOUT_File);
             printf("%s", bufferStr.c_str());
         }
     }
@@ -6612,7 +6617,7 @@ void tprintf(int PrintSelection, const char *fmt, ...)
         }
     }
 
-    //fclose(STDOUT_File);
+    // fclose(STDOUT_File);
     va_end(ap);
 }
 std::string slashCharStr()
@@ -6746,7 +6751,7 @@ unsigned int vpxt_get_cpu_tick()
     GetProcessTimes(GetCurrentProcess(), &creation_time, &exit_time,
         &kernel_time, &user_time);
 
-    //user_time is meaured in groupings of 100 nano seconds, so 10^-9 * 100
+    // user_time is meaured in groupings of 100 nano seconds, so 10^-9 * 100
     // = 10^-7 so to get to 10^-6 res divide by 10
     return user_time.dwLowDateTime / 10;
 
@@ -6907,7 +6912,7 @@ int vpxt_add_dir_files_to_ignore(std::vector<std::string> &IgnoredFiles,
     }
 
 #else
-    //Record all files in the current directory.
+    // Record all files in the current directory.
     DIR *FileData;
     struct dirent *hFind;
     std::string FileName;
@@ -6937,8 +6942,8 @@ int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles,
                                        std::vector<std::string> &FilesFound,
                                        std::string directory)
 {
-    //Function returns the number of non ignored files found on success
-    //-1 on error
+    // Function returns the number of non ignored files found on success
+    // -1 on error
 
 #if defined(_WIN32)
     int Fail = 0;
@@ -7020,7 +7025,7 @@ int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles,
 
     return FilesFound.size();
 }
-//--------------------Evaluation------------------------------------------------
+// -------------------Evaluation------------------------------------------------
 int vpxt_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf,
                                  int width,
                                  int height,
@@ -7170,7 +7175,7 @@ double vpxt_psnr(const char *input_file1,
     int                      arg_use_i420 = 1;
 
     force_uvswap = 0;
-    ////////////////////////Initilize Raw File////////////////////////
+    //////////////////////// Initilize Raw File ////////////////////////
     FILE *raw_file = strcmp(input_file1, "-") ?
         fopen(input_file1, "rb") : set_binary_mode(stdin);
 
@@ -7244,8 +7249,8 @@ double vpxt_psnr(const char *input_file1,
     if(file_type != FILE_TYPE_Y4M)
         vpx_img_alloc(&raw_img, IMG_FMT_I420, raw_width, raw_height, 1);
 
-    //Burn Frames untill Raw frame offset reached - currently disabled by
-    //override of raw_offset
+    // Burn Frames untill Raw frame offset reached - currently disabled by
+    // override of raw_offset
     if (raw_offset > 0)
     {
         for (int i = 0; i < raw_offset; i++)
@@ -7253,13 +7258,13 @@ double vpxt_psnr(const char *input_file1,
         }
     }
 
-    //I420 hex-0x30323449 dec-808596553
-    //YV12 hex-0x32315659 dec-842094169
-    //if YV12 Do not swap Frames
+    // I420 hex-0x30323449 dec-808596553
+    // YV12 hex-0x32315659 dec-842094169
+    // if YV12 Do not swap Frames
     if (fourcc == 842094169)
         force_uvswap = 1;
 
-    ////////////////////////Initilize Compressed File////////////////////////
+    //////////////////////// Initilize Compressed File ////////////////////////
     /* Open file */
     FILE *comp_file = strcmp(input_file2, "-") ?
         fopen(input_file2, "rb") : set_binary_mode(stdin);
@@ -7310,14 +7315,14 @@ double vpxt_psnr(const char *input_file1,
             return EXIT_FAILURE;
         }
 
-        //Burn Frames untill Compressed frame offset reached - currently
-        //disabled by override of comp_offset
+        // Burn Frames untill Compressed frame offset reached - currently
+        // disabled by override of comp_offset
         if (comp_offset > 0)
         {
         }
 
         ////////////////////////////////////////////////////////////////////////
-        ////////Printing////////
+        //////// Printing ////////
         if (print_embl)
             tprintf(print_out, "\n\n                        "
                 "---------Computing PSNR---------");
@@ -7403,9 +7408,9 @@ double vpxt_psnr(const char *input_file1,
             vpx_codec_iter_t  iter = NULL;
             vpx_image_t    *img;
 
-            //make sure the timestamps sync otherwise process
-            //last shown compressed frame vs current raw frame
-            //for psnr calculations, turn off artifact detection
+            // make sure the timestamps sync otherwise process
+            // last shown compressed frame vs current raw frame
+            // for psnr calculations, turn off artifact detection
             while(raw_timestamp <= comp_timestamp || !comp_frame_available)
             {
                 if(comp_timestamp == raw_timestamp)
@@ -7435,7 +7440,7 @@ double vpxt_psnr(const char *input_file1,
                         int resize_frame_width = 0;
                         int resize_frame_height = 0;
 
-                        //if frame not correct size resize it for psnr
+                        // if frame not correct size resize it for psnr
                         if (img->d_w != raw_width || img->d_h != raw_height)
                         {
                             if (TempBuffState < 0)
@@ -7460,7 +7465,7 @@ double vpxt_psnr(const char *input_file1,
                             int gcd_width = vpxt_gcd(img->d_w, raw_width);
                             int gcd_height = vpxt_gcd(img->d_h, raw_height);
 
-                            //Possible Scales
+                            // Possible Scales
                             /* 4-5 Scale in Width direction */
                             /* 3-4 Scale in Width direction */
                             /* 2-3 Scale in Width direction */
@@ -7553,7 +7558,7 @@ double vpxt_psnr(const char *input_file1,
                                 return 0;
                             }
 
-                            //resize YV12 untill it is scaled properly.
+                            // resize YV12 untill it is scaled properly.
                             while(resize_width || resize_height){
 
                                 resized_frame = 1;
@@ -7575,8 +7580,8 @@ double vpxt_psnr(const char *input_file1,
                                     resize_frame_width, resize_frame_height,
                                     VP8BORDERINPIXELS);
 
-                                //if resize width or height is done but still
-                                //need to resize the other set finished to 1:1
+                                // if resize width or height is done but still
+                                // need to resize the other set finished to 1:1
                                 if(!resize_width){
                                     width_scale = 1;
                                     width_ratio = 1;
@@ -7609,12 +7614,12 @@ double vpxt_psnr(const char *input_file1,
                 else
                     dropped_frame = 1;
 
-                //run psnr if img returned(skip non visibile frames), dropped
-                //frame detected or if end of comp input file detected.
+                // run psnr if img returned(skip non visibile frames), dropped
+                // frame detected or if end of comp input file detected.
                 if(img || dropped_frame || !comp_frame_available)
                 {
-                    //////////////////Get YV12 Data For Raw File////////////////
-                    //if end of uncompressed file break out
+                    //////////////// Get YV12 Data For Raw File ////////////////
+                    // if end of uncompressed file break out
                     if(!read_frame_enc(raw_file, &raw_img, file_type, &y4m,
                         &detect))
                         break;
@@ -7636,7 +7641,7 @@ double vpxt_psnr(const char *input_file1,
                     else
                         raw_timestamp = current_raw_frame;
 
-                    ///////////////////////////Preform PSNR Calc////////////////
+                    ///////////////////////// Preform PSNR Calc ////////////////
                     if (ssim_out)
                     {
                         double weight;
@@ -7660,7 +7665,7 @@ double vpxt_psnr(const char *input_file1,
                     sum_sq_error += sq_error;
                     ////////////////////////////////////////////////////////////
 
-                    ////////Printing////////
+                    //////// Printing ////////
                     tprintf(print_out, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
                         "Y:%5.2f, U:%5.2f, V:%5.2f",
                         current_raw_frame,
@@ -7681,10 +7686,10 @@ double vpxt_psnr(const char *input_file1,
                 }
                 else
                 {
-                    //if time stamps do not match find out why if droped
-                    //frame process psnr on last frame keep trying
-                    //subtract one unit to move calculation along.
-                    //if invisible frame get next frame and keep trying.
+                    // if time stamps do not match find out why if droped
+                    // frame process psnr on last frame keep trying
+                    // subtract one unit to move calculation along.
+                    // if invisible frame get next frame and keep trying.
                     VP8_HEADER oz;
                     memcpy(&oz, comp_buff, 3);
 
@@ -7711,7 +7716,7 @@ double vpxt_psnr(const char *input_file1,
             }
         }
 
-        //Over All PSNR Calc
+        // Over All PSNR Calc
         double samples = 3.0 / 2 * current_raw_frame * raw_yv12.y_width *
             raw_yv12.y_height;
         double avg_psnr = summed_psnr / current_raw_frame;
@@ -7722,7 +7727,7 @@ double vpxt_psnr(const char *input_file1,
 
         double total_ssim = 100 * pow(summed_quality / summed_weights, 8.0);
 
-        ////////Printing////////
+        //////// Printing ////////
         tprintf(print_out, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, "
             "Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
             sum_bytes * 8.0 / current_raw_frame*(raw_rate) / raw_scale / 1000,
@@ -7774,7 +7779,7 @@ double vpxt_psnr_dec(const char *inputFile1,
                      int height)
 {
     if (frameStats != 3)
-        frameStats = 1;//Overide to print individual frames to screen
+        frameStats = 1; // Overide to print individual frames to screen
 
     double summedQuality = 0;
     double summedWeights = 0;
@@ -7794,8 +7799,8 @@ double vpxt_psnr_dec(const char *inputFile1,
     int original_forceUVswap = forceUVswap;
     forceUVswap = 0;
 
-    ////////////////////////Initilize Raw File////////////////////////
-    unsigned int frameCount = 0;//ivf_h_raw.length;
+    //////////////////////// Initilize Raw File ////////////////////////
+    unsigned int frameCount = 0; // ivf_h_raw.length;
 
     unsigned int             file_type, fourcc;
     struct detect_buffer detect;
@@ -7894,8 +7899,8 @@ double vpxt_psnr_dec(const char *inputFile1,
     Raw_YV12.u_buffer = raw_img.planes[PLANE_U];
     Raw_YV12.v_buffer = raw_img.planes[PLANE_V];
 
-    //Burn Frames untill Raw frame offset reached - currently disabled by
-    //override of RawFrameOffset
+    // Burn Frames untill Raw frame offset reached - currently disabled by
+    // override of RawFrameOffset
     if (RawFrameOffset > 0)
     {
         for (int i = 0; i < RawFrameOffset; i++)
@@ -7903,11 +7908,11 @@ double vpxt_psnr_dec(const char *inputFile1,
         }
     }
 
-    //I420 hex-0x30323449 dec-808596553
-    //YV12 hex-0x32315659 dec-842094169
+    // I420 hex-0x30323449 dec-808596553
+    // YV12 hex-0x32315659 dec-842094169
 
     if (fourcc == 842094169)
-        forceUVswap = 1;   //if YV12 Do not swap Frames
+        forceUVswap = 1;   // if YV12 Do not swap Frames
 
     if (forceUVswap == 1)
     {
@@ -7916,8 +7921,8 @@ double vpxt_psnr_dec(const char *inputFile1,
         Raw_YV12.v_buffer = temp;
     }
 
-    ////////////////////////Initilize CompRaw File////////////////////////
-    //unsigned int frameCount = 0;//ivf_h_raw.length;
+    //////////////////////// Initilize CompRaw File ////////////////////////
+    // unsigned int frameCount = 0; // ivf_h_raw.length;
 
     unsigned int             compraw_file_type, compraw_fourcc;
     struct detect_buffer compraw_detect;
@@ -8019,14 +8024,14 @@ double vpxt_psnr_dec(const char *inputFile1,
     compraw_YV12.u_buffer = compraw_img.planes[PLANE_U];
     compraw_YV12.v_buffer = compraw_img.planes[PLANE_V];
 
-    //Burn Frames untill Compressed frame offset reached - currently disabled by
-    //override of CompressedFrameOffset
+    // Burn Frames untill Compressed frame offset reached - currently disabled
+    // by override of CompressedFrameOffset
     if (CompressedFrameOffset > 0)
     {
     }
 
     if (compraw_fourcc == 842094169)
-        forceUVswap = 1;   //if YV12 Do not swap Frames
+        forceUVswap = 1;   // if YV12 Do not swap Frames
 
     if (forceUVswap == 1)
     {
@@ -8036,7 +8041,7 @@ double vpxt_psnr_dec(const char *inputFile1,
     }
 
     /////////////////////////////////////////////////////////////////////////
-    ////////Printing////////
+    //////// Printing ////////
     if (printvar != 0)
     {
         tprintf(PRINT_BTH, "\n\n                        "
@@ -8116,13 +8121,13 @@ double vpxt_psnr_dec(const char *inputFile1,
 
             ++currentVideo1Frame;
 
-            //////////////////////Get YV12 Data For Raw File////////////////////
-            bytes1 = (RawWidth * RawHeight * 3) / 2; //ivf_fhRaw.frameSize;
+            //////////////////// Get YV12 Data For Raw File ////////////////////
+            bytes1 = (RawWidth * RawHeight * 3) / 2; // ivf_fhRaw.frameSize;
             bytes2 = (RawWidth * RawHeight * 3) / 2;
             sumBytes += bytes1;
             sumBytes2 += bytes2;
 
-            ///////////////////////////Preform PSNR Calc////////////////////////
+            ///////////////////////// Preform PSNR Calc ////////////////////////
             if (SsimOut)
             {
                 double weight;
@@ -8146,7 +8151,7 @@ double vpxt_psnr_dec(const char *inputFile1,
             sumSqError += SqError;
             ////////////////////////////////////////////////////////////////////
 
-            ////////Printing////////
+            //////// Printing ////////
             if (printvar == 1 || printvar == 5 || printvar == 0)
             {
                 if (frameStats == 0)
@@ -8188,11 +8193,11 @@ double vpxt_psnr_dec(const char *inputFile1,
         }
         else
         {
-            //delete [] CompBuff;
+            // delete [] CompBuff;
         }
     }
 
-    //Over All PSNR Calc
+    // Over All PSNR Calc
     double samples = 3.0 / 2 * currentVideo1Frame * Raw_YV12.y_width *
         Raw_YV12.y_height;
     double avgPsnr = summedPsnr / currentVideo1Frame;
@@ -8203,7 +8208,7 @@ double vpxt_psnr_dec(const char *inputFile1,
 
     double totalSSim = 100 * pow(summedQuality / summedWeights, 8.0);
 
-    ////////Printing////////
+    //////// Printing ////////
     if (printvar == 1 || printvar == 5 || printvar == 0)
     {
         if (frameStats == 3)
@@ -8294,7 +8299,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
     int                      arg_use_i420 = 1;
 
     force_uvswap = 0;
-    ////////////////////////Initilize Raw File////////////////////////
+    //////////////////////// Initilize Raw File ////////////////////////
     FILE *raw_file = strcmp(input_file1, "-") ?
         fopen(input_file1, "rb") : set_binary_mode(stdin);
 
@@ -8368,8 +8373,8 @@ double vpxt_post_proc_psnr(const char *input_file1,
     if(file_type != FILE_TYPE_Y4M)
         vpx_img_alloc(&raw_img, IMG_FMT_I420, raw_width, raw_height, 1);
 
-    //Burn Frames untill Raw frame offset reached - currently disabled by
-    //override of raw_offset
+    // Burn Frames untill Raw frame offset reached - currently disabled by
+    // override of raw_offset
     if (raw_offset > 0)
     {
         for (int i = 0; i < raw_offset; i++)
@@ -8377,13 +8382,13 @@ double vpxt_post_proc_psnr(const char *input_file1,
         }
     }
 
-    //I420 hex-0x30323449 dec-808596553
-    //YV12 hex-0x32315659 dec-842094169
-    //if YV12 Do not swap Frames
+    // I420 hex-0x30323449 dec-808596553
+    // YV12 hex-0x32315659 dec-842094169
+    // if YV12 Do not swap Frames
     if (fourcc == 842094169)
         force_uvswap = 1;
 
-    ////////////////////////Initilize Compressed File////////////////////////
+    //////////////////////// Initilize Compressed File ////////////////////////
     /* Open file */
     FILE *comp_file = strcmp(input_file2, "-") ?
         fopen(input_file2, "rb") : set_binary_mode(stdin);
@@ -8440,14 +8445,14 @@ double vpxt_post_proc_psnr(const char *input_file1,
             return 1;
         }
 
-        //Burn Frames untill Compressed frame offset reached - currently
-        //disabled by override of comp_offset
+        // Burn Frames untill Compressed frame offset reached - currently
+        // disabled by override of comp_offset
         if (comp_offset > 0)
         {
         }
 
         ////////////////////////////////////////////////////////////////////////
-        ////////Printing////////
+        //////// Printing ////////
         if (print_embl)
             tprintf(print_out, "\n\n                        "
             "---------Computing PSNR---------");
@@ -8534,9 +8539,9 @@ double vpxt_post_proc_psnr(const char *input_file1,
             vpx_codec_iter_t  iter = NULL;
             vpx_image_t    *img;
 
-            //make sure the timestamps sync otherwise process
-            //last shown compressed frame vs current raw frame
-            //for psnr calculations, turn off artifact detection
+            // make sure the timestamps sync otherwise process
+            // last shown compressed frame vs current raw frame
+            // for psnr calculations, turn off artifact detection
             while(raw_timestamp <= comp_timestamp || !comp_frame_available)
             {
                 if(comp_timestamp == raw_timestamp)
@@ -8566,7 +8571,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
                         int resize_frame_width = 0;
                         int resize_frame_height = 0;
 
-                        //if frame not correct size resize it for psnr
+                        // if frame not correct size resize it for psnr
                         if (img->d_w != raw_width || img->d_h != raw_height)
                         {
                             if (TempBuffState < 0)
@@ -8591,7 +8596,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
                             int gcd_width = vpxt_gcd(img->d_w, raw_width);
                             int gcd_height = vpxt_gcd(img->d_h, raw_height);
 
-                            //Possible Scales
+                            // Possible Scales
                             /* 4-5 Scale in Width direction */
                             /* 3-4 Scale in Width direction */
                             /* 2-3 Scale in Width direction */
@@ -8684,7 +8689,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
                                 return 0;
                             }
 
-                            //resize YV12 untill it is scaled properly.
+                            // resize YV12 untill it is scaled properly.
                             while(resize_width || resize_height){
 
                                 resized_frame = 1;
@@ -8707,8 +8712,8 @@ double vpxt_post_proc_psnr(const char *input_file1,
                                     resize_frame_width, resize_frame_height,
                                     VP8BORDERINPIXELS);
 
-                                //if resize width or height is done but still
-                                //need to resize the other set finished to 1:1
+                                // if resize width or height is done but still
+                                // need to resize the other set finished to 1:1
                                 if(!resize_width){
                                     width_scale = 1;
                                     width_ratio = 1;
@@ -8741,12 +8746,12 @@ double vpxt_post_proc_psnr(const char *input_file1,
                 else
                     dropped_frame = 1;
 
-                //run psnr if img returned(skip non visibile frames), dropped
-                //frame detected or if end of comp input file detected.
+                // run psnr if img returned(skip non visibile frames), dropped
+                // frame detected or if end of comp input file detected.
                 if(img || dropped_frame || !comp_frame_available)
                 {
-                    //////////////////Get YV12 Data For Raw File////////////////
-                    //if end of uncompressed file break out
+                    ///////////////// Get YV12 Data For Raw File ///////////////
+                    // if end of uncompressed file break out
                     if(!read_frame_enc(raw_file, &raw_img, file_type, &y4m,
                         &detect))
                         break;
@@ -8768,7 +8773,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
                     else
                         raw_timestamp = current_raw_frame;
 
-                    ///////////////////////////Preform PSNR Calc////////////////
+                    ///////////////////////// Preform PSNR Calc ////////////////
                     if (ssim_out)
                     {
                         double weight;
@@ -8792,7 +8797,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
                     sum_sq_error += sq_error;
                     ////////////////////////////////////////////////////////////
 
-                    ////////Printing////////
+                    //////// Printing ////////
                     tprintf(print_out, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
                         "Y:%5.2f, U:%5.2f, V:%5.2f",
                         current_raw_frame,
@@ -8813,10 +8818,10 @@ double vpxt_post_proc_psnr(const char *input_file1,
                 }
                 else
                 {
-                    //if time stamps do not match find out why if droped
-                    //frame process psnr on last frame keep trying
-                    //subtract one unit to move calculation along.
-                    //if invisible frame get next frame and keep trying.
+                    // if time stamps do not match find out why if droped
+                    // frame process psnr on last frame keep trying
+                    // subtract one unit to move calculation along.
+                    // if invisible frame get next frame and keep trying.
                     VP8_HEADER oz;
                     memcpy(&oz, comp_buff, 3);
 
@@ -8843,7 +8848,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
             }
         }
 
-        //Over All PSNR Calc
+        // Over All PSNR Calc
         double samples = 3.0 / 2 * current_raw_frame * raw_yv12.y_width *
             raw_yv12.y_height;
         double avg_psnr = summed_psnr / current_raw_frame;
@@ -8854,7 +8859,7 @@ double vpxt_post_proc_psnr(const char *input_file1,
 
         double total_ssim = 100 * pow(summed_quality / summed_weights, 8.0);
 
-        ////////Printing////////
+        //////// Printing ////////
         tprintf(print_out, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, "
             "Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
             sum_bytes * 8.0 / current_raw_frame*(raw_rate) / raw_scale / 1000,
@@ -9024,7 +9029,7 @@ double vpxt_data_rate(const char *input_file, int DROuputSel)
         fprintf(stderr, "File    %*.2f kb/s\n", 10, File);
     }
 
-    //fclose(in);
+    // fclose(in);
 
     if (DROuputSel != 2)
     {
@@ -9048,9 +9053,9 @@ int vpxt_check_pbm(const char *input_file,
                    int64_t maxBuffer,
                    int64_t preBuffer)
 {
-    //bitRate    bitrate in kbps
-    //maxBuffer  maxbuffer in ms
-    //preBuffer  prebuffer in ms
+    // bitRate    bitrate in kbps
+    // maxBuffer  maxbuffer in ms
+    // preBuffer  prebuffer in ms
 
     unsigned int            width;
     unsigned int            height;
@@ -9106,23 +9111,23 @@ int vpxt_check_pbm(const char *input_file,
     int frameCount = 0;
     int byteRec = 0;
 
-    //frameCount = ivf_h_raw.length;
+    // frameCount = ivf_h_raw.length;
     int nFrameFail = 0;
 
     bool checkOverrun = false;
     double secondsperframe = ((double)fps_den / (double)fps_num);
-    //-.5 to cancel out rounding
+    // -.5 to cancel out rounding
     int bitsAddedPerFrame = ((bitRate * 1000 * secondsperframe)) - .5;
-    //scale factors cancel (ms * kbps = bits)
+    // scale factors cancel (ms * kbps = bits)
     int bitsInBuffer = preBuffer * bitRate;
-    //scale factors cancel (ms * kbps = bits)
+    // scale factors cancel (ms * kbps = bits)
     int maxBitsInBuffer = maxBuffer * bitRate;
 
     uint64_t timestamp = 0;
     while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
     {
         bitsInBuffer += bitsAddedPerFrame;
-        bitsInBuffer -= buf_sz * 8; //buf_sz in kB
+        bitsInBuffer -= buf_sz * 8; // buf_sz in kB
 
         if (bitsInBuffer < 0.)
         {
@@ -9247,7 +9252,7 @@ int vpxt_check_pbm_threshold(const char *input_file,
 
     bool checkOverrun = false;
     double secondsperframe = ((double)fps_den / (double)fps_num);
-     //-.5 to cancel out rounding
+     // -.5 to cancel out rounding
     int bitsAddedPerFrame = ((bitRate * 1000 * secondsperframe)) - .5;
     int bitsInBuffer = preBuffer * bitRate;
     int maxBitsInBuffer = maxBuffer * bitRate;
@@ -9387,14 +9392,14 @@ int vpxt_faux_decompress(const char *inputChar)
     VP8D_CONFIG oxcf;
     VP8D_PTR optr = vp8dx_create_decompressor(&oxcf);
     vp8dx_remove_decompressor(optr);
-    //vp8dx_Shutdown();
+    // vp8dx_Shutdown();
 #endif
 
     return 1;
 }
-//--------------------------Test Functions--------------------------------------
+// -------------------------Test Functions--------------------------------------
 int initialize_test_directory(int argc,
-                              const char *const *argv,
+                              const char** argv,
                               int test_type,
                               const std::string &working_dir,
                               const char *test_dir,
@@ -9404,13 +9409,13 @@ int initialize_test_directory(int argc,
                               char file_index_output_char[255],
                               const std::string sub_folder_str)
 {
-    //Initilizes cur_test_dir_str, file_index_str, main_test_dir_char, and
-    //file_index_output_char to proper values.
+    // Initilizes cur_test_dir_str, file_index_str, main_test_dir_char, and
+    // file_index_output_char to proper values.
 
     std::string PrefTestOnlyTestMatch;
     char CurTestDirChar[255] = "";
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
     {
         snprintf(CurTestDirChar, 255, "%s", working_dir.c_str());
 
@@ -9436,8 +9441,8 @@ int initialize_test_directory(int argc,
         create_dir_2.insert(0, "md \"");
         vpxt_make_dir_vpx(create_dir_2.c_str());
 
-        ///////////////////Records FileLocations for MultiPlat Test/////////////
-        if (test_type == COMP_ONLY)
+        ///////////////// Records FileLocations for MultiPlat Test /////////////
+        if (test_type == kCompOnly)
         {
             char CurTestDirStr2[255];
             snprintf(CurTestDirStr2, 255, "%s", cur_test_dir_str.c_str());
@@ -9448,10 +9453,10 @@ int initialize_test_directory(int argc,
     }
     else
     {
-        //Use working_dir to get the main folder
-        //Use Index File to get the rest of the string
-        //Put it all together Setting cur_test_dir_str to the location of the files
-        //we want to examine.
+        // Use working_dir to get the main folder
+        // Use Index File to get the rest of the string
+        // Put it all together Setting cur_test_dir_str to the location of the
+        // files we want to examine.
         char buffer[255];
 
         std::string CurTestDirChar = working_dir + slashCharStr();
@@ -9493,7 +9498,7 @@ void record_test_complete(const std::string MainDirString,
                           const char *file_index_output_char,
                           int test_type)
 {
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
     {
         std::fstream FileStream;
         FileStream.open(MainDirString.c_str(), std::fstream::out |
@@ -9663,12 +9668,12 @@ void print_header_info_to_file(const char *FileName)
     fclose(outfile);
 }
 void print_header_full_test(int argc,
-                            const char *const *argv,
+                            const char** argv,
                             std::string working_dir_3)
 {
-    //Full Test Header Output
-    //Formats workingDir3 string to fit in text box
-    //records settings from argv to be written to text file
+    // Full Test Header Output
+    // Formats workingDir3 string to fit in text box
+    // records settings from argv to be written to text file
     std::string PrintWorkingDir3 = working_dir_3;
     std::string PrintInput = "Input:";
     PrintWorkingDir3.insert(0, "Output: ");
@@ -9707,12 +9712,12 @@ void print_header_full_test(int argc,
         "//////////////////////\n\n");
 }
 void print_header_compression_only(int argc,
-                                   const char *const *argv,
+                                   const char** argv,
                                    std::string working_dir_3)
 {
-    //Compression Header
-    //Formats workingDir3 string to fit in text box
-    //records settings from argv to be written to text file
+    // Compression Header
+    // Formats workingDir3 string to fit in text box
+    // records settings from argv to be written to text file
 
     std::string PrintWorkingDir3 = working_dir_3;
     std::string PrintInput = "Input:";
@@ -9752,12 +9757,12 @@ void print_header_compression_only(int argc,
         "//////////////////////\n\n");
 }
 void print_header_test_only(int argc,
-                            const char *const *argv,
+                            const char** argv,
                             std::string working_dir_3)
 {
-    //Test Only Header
-    //Formats workingDir3 string to fit in text box records input
-    //location and output location both are the same
+    // Test Only Header
+    // Formats workingDir3 string to fit in text box records input
+    // location and output location both are the same
 
     std::string PrintWorkingDir3 = working_dir_3;
     std::string PrintWorkingDir4 = working_dir_3;
@@ -9838,23 +9843,23 @@ void vpxt_formated_print(int selector, const char *fmt, ...)
     int charswritten = vsnprintf(buffer, sizeof(buffer) - 1, fmt, ap);
     std::string SummaryStr = buffer;
 
-    //selector == HLPPRT -> Summary
-    //selector == TOLPRT -> Help
-    //selector == FUNPRT -> Function
-    //selector == OTRPRT -> Other non formatted output
-    //selector == RESPRT -> Individual Pass Fail output
+    // selector == HLPPRT -> Summary
+    // selector == TOLPRT -> Help
+    // selector == FUNPRT -> Function
+    // selector == OTRPRT -> Other non formatted output
+    // selector == RESPRT -> Individual Pass Fail output
 
     std::string SummaryStrOutput;
     int EndOfLineLength = 0;
 
-    //add padding for formating
+    // add padding for formating
     if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
         SummaryStrOutput += "         ";
 
-    if (selector == RESPRT) //add padding for formating
+    if (selector == RESPRT) // add padding for formating
         SummaryStrOutput += " * ";
 
-    //determine cut off to keep words whole
+    // determine cut off to keep words whole
     int Cutoff;
 
     if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
@@ -9883,14 +9888,14 @@ void vpxt_formated_print(int selector, const char *fmt, ...)
             Cutoff++;
         }
 
-        //add the properly formated string to the output string
+        // add the properly formated string to the output string
         SummaryStrOutput += SummaryStr.substr(x, Cutoff);
 
-        //add padding for formating
+        // add padding for formating
         if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
             SummaryStrOutput += "\n         ";
 
-        if (selector == RESPRT) //add padding for formating
+        if (selector == RESPRT) // add padding for formating
             SummaryStrOutput += "\n   ";
 
         x = x + Cutoff;
@@ -9942,8 +9947,8 @@ void vpxt_formated_print(int selector, const char *fmt, ...)
 }
 void vpxt_cap_string_print(int selector, const char *fmt, ...)
 {
-    //This function will capitalize the first letter of any word
-    //seperated with either an '_' or a ' ' and print it.
+    // This function will capitalize the first letter of any word
+    // seperated with either an '_' or a ' ' and print it.
 
     char buffer[2048];
     char buffer_cap[2048];
@@ -9961,7 +9966,7 @@ void vpxt_cap_string_print(int selector, const char *fmt, ...)
 
         if (cap_next == 1)
         {
-            //Capitalize current letter
+            // Capitalize current letter
             add_to_buffer_cap = toupper(buffer[parse_int]);
             cap_next = 0;
         }
@@ -9972,7 +9977,7 @@ void vpxt_cap_string_print(int selector, const char *fmt, ...)
 
         if (parse_int == 0)
         {
-            //Capitalize current letter
+            // Capitalize current letter
             add_to_buffer_cap = toupper(buffer[parse_int]);
         }
 
@@ -10010,7 +10015,7 @@ int  vpxt_lower_case_string(std::string &input)
 
     return 0;
 }
-//---------------------------------Enc/Dec--------------------------------------
+// --------------------------------Enc/Dec--------------------------------------
 #ifdef API
 int vpxt_compress(const char *input_file,
                   const char *outputFile2,
@@ -10027,11 +10032,11 @@ int vpxt_compress(const char *input_file,
     if (EncFormat.compare("ivf") == 0)
         write_webm = 0;
 
-    //RunQCheck - Signifies if the quantizers should be check to make sure
-    //theyre working properly during an encode
-    //RunQCheck = 0 = Do not save q values
-    //RunQCheck = 1 = Save q values
-    //RunQCheck = 2 = display q values only
+    // RunQCheck - Signifies if the quantizers should be check to make sure
+    // theyre working properly during an encode
+    // RunQCheck = 0 = Do not save q values
+    // RunQCheck = 1 = Save q values
+    // RunQCheck = 2 = display q values only
     std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
@@ -10042,8 +10047,8 @@ int vpxt_compress(const char *input_file,
         quant_out_file.open(QuantOutStr.c_str());
     }
 
-    /////////////////////////////DELETE ME TEMP MEASURE/////////////////////////
-    if (oxcf.Mode == 3) //Real time Mode
+    /////////////////////////// DELETE ME TEMP MEASURE /////////////////////////
+    if (oxcf.Mode == 3) // Real time Mode
     {
         if (RunQCheck == 1)
             quant_out_file.close();
@@ -10091,40 +10096,40 @@ int vpxt_compress(const char *input_file,
         return -1;
     }
 
-    //////////////////////Update CFG Settings Here////////////////////
+    ////////////////////// Update CFG Settings Here ////////////////////
     // if mode == 4 or 5 arg_passes = 2
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and bitrate Here
+    // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real time Mode
+    if (oxcf.Mode == 0) // Real time Mode
     {
         arg_deadline = 1;
     }
 
-    if (oxcf.Mode == 1) //One Pass Good
+    if (oxcf.Mode == 1) // One Pass Good
     {
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 2) //One Pass Best
+    if (oxcf.Mode == 2) // One Pass Best
     {
         arg_deadline = 0;
     }
 
-    if (oxcf.Mode == 3) //First Pass
+    if (oxcf.Mode == 3) // First Pass
     {
-        //arg_deadline =
+        // arg_deadline =
     }
 
-    if (oxcf.Mode == 4) //Two Pass Good
+    if (oxcf.Mode == 4) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) //Two Pass Best
+    if (oxcf.Mode == 5) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -10138,7 +10143,7 @@ int vpxt_compress(const char *input_file,
         ctrl_args = vp8_args;
     }
 
-    //cfg.g_timebase.den *= 2;
+    // cfg.g_timebase.den *= 2;
     memset(&stats, 0, sizeof(stats));
 
     for (pass = 0; pass < arg_passes; pass++)
@@ -10160,17 +10165,17 @@ int vpxt_compress(const char *input_file,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real time Mode
+        if (oxcf.Mode == 0) // Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
+        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
         {
             tprintf(PRINT_BTH, " GoodQuality\n\n");
         }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
+        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
         {
             tprintf(PRINT_BTH, " BestQuality\n\n");
         }
@@ -10408,7 +10413,7 @@ int vpxt_compress(const char *input_file,
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ///////////Set Encoder Custom Settings/////////////////
+        /////////// Set Encoder Custom Settings /////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD,
             oxcf.encode_breakout);
@@ -10445,13 +10450,13 @@ int vpxt_compress(const char *input_file,
 
         if ((arg_passes == 2 && pass == 1) || arg_passes == 1)
         {
-            /////////////////////////OUTPUT PARAMATERS//////////////////////////
+            //////////////////////// OUTPUT PARAMATERS /////////////////////////
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
             OutputsettingsFile += "parameters_core.txt";
             vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
-            /////////////////////////OUTPUT PARAMATERS API//////////////////////
+            //////////////////////// OUTPUT PARAMATERS API /////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
             OutputsettingsFile += "_parameters_vpx.txt";
@@ -10515,7 +10520,7 @@ int vpxt_compress(const char *input_file,
 
             if (RunQCheck == 2)
             {
-                //Print Quantizers
+                // Print Quantizers
                 int lastQuantizerValue = 0;
                 vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                     &lastQuantizerValue);
@@ -10627,11 +10632,11 @@ int vpxt_compress_no_error_output(const char *input_file,
     if (EncFormat.compare("ivf") == 0)
         write_webm = 0;
 
-    //RunQCheck - Signifies if the quantizers should be check to make sure
-    //theyre working properly during an encode
-    //RunQCheck = 0 = Do not save q values
-    //RunQCheck = 1 = Save q values
-    //RunQCheck = 2 = display q values only
+    // RunQCheck - Signifies if the quantizers should be check to make sure
+    // theyre working properly during an encode
+    // RunQCheck = 0 = Do not save q values
+    // RunQCheck = 1 = Save q values
+    // RunQCheck = 2 = display q values only
     std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
@@ -10642,8 +10647,8 @@ int vpxt_compress_no_error_output(const char *input_file,
         quant_out_file.open(QuantOutStr.c_str());
     }
 
-    /////////////////DELETE ME TEMP MEASURE/////////////////////////////////////
-    if (oxcf.Mode == 3) //Real time Mode
+    ///////////////// DELETE ME TEMP MEASURE ///////////////////////////////////
+    if (oxcf.Mode == 3) // Real time Mode
     {
         if (RunQCheck == 1)
             quant_out_file.close();
@@ -10693,36 +10698,36 @@ int vpxt_compress_no_error_output(const char *input_file,
 
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and bitrate Here
+    // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real time Mode
+    if (oxcf.Mode == 0) // Real time Mode
     {
         arg_deadline = 1;
     }
 
-    if (oxcf.Mode == 1) //One Pass Good
+    if (oxcf.Mode == 1) // One Pass Good
     {
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 2) //One Pass Best
+    if (oxcf.Mode == 2) // One Pass Best
     {
         arg_deadline = 0;
     }
 
-    if (oxcf.Mode == 3) //First Pass
+    if (oxcf.Mode == 3) // First Pass
     {
-        //arg_deadline =
+        // arg_deadline =
     }
 
-    if (oxcf.Mode == 4) //Two Pass Good
+    if (oxcf.Mode == 4) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) //Two Pass Best
+    if (oxcf.Mode == 5) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -10739,7 +10744,7 @@ int vpxt_compress_no_error_output(const char *input_file,
     /*vpx_img_alloc(&raw, arg_use_i420 ? IMG_FMT_I420 : IMG_FMT_YV12,
     cfg.g_w, cfg.g_h, 1);*/
 
-    //cfg.g_timebase.den *= 2;
+    // cfg.g_timebase.den *= 2;
     memset(&stats, 0, sizeof(stats));
 
     for (pass = 0; pass < arg_passes; pass++)
@@ -10762,17 +10767,17 @@ int vpxt_compress_no_error_output(const char *input_file,
             tprintf(PRINT_STD, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real time Mode
+        if (oxcf.Mode == 0) // Real time Mode
         {
             tprintf(PRINT_STD, " RealTime\n\n");
         }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
+        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
         {
             tprintf(PRINT_STD, " GoodQuality\n\n");
         }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
+        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
         {
             tprintf(PRINT_STD, " BestQuality\n\n");
         }
@@ -11011,7 +11016,7 @@ int vpxt_compress_no_error_output(const char *input_file,
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ///////////Set Encoder Custom Settings/////////////////
+        /////////// Set Encoder Custom Settings /////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD,
             oxcf.encode_breakout);
@@ -11048,13 +11053,13 @@ int vpxt_compress_no_error_output(const char *input_file,
 
         if ((arg_passes == 2 && pass == 1) || arg_passes == 1)
         {
-            /////////////////////////OUTPUT PARAMATERS//////////////////////////
+            //////////////////////// OUTPUT PARAMATERS /////////////////////////
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
             OutputsettingsFile += "parameters_core.txt";
             vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
-            ///////////////////////OUTPUT PARAMATERS API////////////////////////
+            ////////////////////// OUTPUT PARAMATERS API ///////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
             OutputsettingsFile += "_parameters_vpx.txt";
@@ -11121,7 +11126,7 @@ int vpxt_compress_no_error_output(const char *input_file,
 
             if (RunQCheck == 2)
             {
-                //Print Quantizers
+                // Print Quantizers
                 int lastQuantizerValue = 0;
                 vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                     &lastQuantizerValue);
@@ -11186,7 +11191,7 @@ int vpxt_compress_no_error_output(const char *input_file,
         * application uses 1/timebase for framerate.
         */
         {
-            //uint64_t temp= (uint64_t)frames_in * 1000000;
+            // uint64_t temp= (uint64_t)frames_in * 1000000;
         }
         vpx_codec_destroy(&encoder);
 
@@ -11233,11 +11238,11 @@ unsigned int vpxt_time_compress(const char *input_file,
     if (EncFormat.compare("ivf") == 0)
         write_webm = 0;
 
-    //RunQCheck - Signifies if the quantizers should be check to make sure
-    //theyre working properly during an encode
-    //RunQCheck = 0 = Do not save q values
-    //RunQCheck = 1 = Save q values
-    //RunQCheck = 2 = display q values only
+    // RunQCheck - Signifies if the quantizers should be check to make sure
+    // theyre working properly during an encode
+    // RunQCheck = 0 = Do not save q values
+    // RunQCheck = 1 = Save q values
+    // RunQCheck = 2 = display q values only
     std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
@@ -11248,8 +11253,8 @@ unsigned int vpxt_time_compress(const char *input_file,
         quant_out_file.open(QuantOutStr.c_str());
     }
 
-    ///////////////////////DELETE ME TEMP MEASURE///////////////////////////////
-    if (oxcf.Mode == 3) //Real time Mode
+    ///////////////////// DELETE ME TEMP MEASURE ///////////////////////////////
+    if (oxcf.Mode == 3) // Real time Mode
     {
         if (RunQCheck == 1)
             quant_out_file.close();
@@ -11298,36 +11303,36 @@ unsigned int vpxt_time_compress(const char *input_file,
 
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and bitrate Here
+    // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real time Mode
+    if (oxcf.Mode == 0) // Real time Mode
     {
         arg_deadline = 1;
     }
 
-    if (oxcf.Mode == 1) //One Pass Good
+    if (oxcf.Mode == 1) // One Pass Good
     {
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 2) //One Pass Best
+    if (oxcf.Mode == 2) // One Pass Best
     {
         arg_deadline = 0;
     }
 
-    if (oxcf.Mode == 3) //First Pass
+    if (oxcf.Mode == 3) // First Pass
     {
-        //arg_deadline =
+        // arg_deadline =
     }
 
-    if (oxcf.Mode == 4) //Two Pass Good
+    if (oxcf.Mode == 4) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) //Two Pass Best
+    if (oxcf.Mode == 5) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -11363,17 +11368,17 @@ unsigned int vpxt_time_compress(const char *input_file,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real time Mode
+        if (oxcf.Mode == 0) // Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
+        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
         {
             tprintf(PRINT_BTH, " GoodQuality\n\n");
         }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
+        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
         {
             tprintf(PRINT_BTH, " BestQuality\n\n");
         }
@@ -11613,7 +11618,7 @@ unsigned int vpxt_time_compress(const char *input_file,
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ///////////Set Encoder Custom Settings/////////////////
+        /////////// Set Encoder Custom Settings /////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD,
             oxcf.encode_breakout);
@@ -11650,13 +11655,13 @@ unsigned int vpxt_time_compress(const char *input_file,
 
         if ((arg_passes == 2 && pass == 1) || arg_passes == 1)
         {
-            ///////////////////////OUTPUT PARAMATERS////////////////////////////
+            ////////////////////// OUTPUT PARAMATERS ///////////////////////////
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
             OutputsettingsFile += "parameters_core.txt";
             vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
-            ///////////////////OUTPUT PARAMATERS API////////////////////////////
+            ////////////////// OUTPUT PARAMATERS API ///////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
             OutputsettingsFile += "_parameters_vpx.txt";
@@ -11725,7 +11730,7 @@ unsigned int vpxt_time_compress(const char *input_file,
 
             if (RunQCheck == 2)
             {
-                //Print Quantizers
+                // Print Quantizers
                 int lastQuantizerValue = 0;
                 vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                     &lastQuantizerValue);
@@ -11863,11 +11868,11 @@ int vpxt_compress_force_key_frame(const char *input_file,
     if (EncFormat.compare("ivf") == 0)
         write_webm = 0;
 
-    //RunQCheck - Signifies if the quantizers should be check to make sure
-    //theyre working properly during an encode
-    //RunQCheck = 0 = Do not save q values
-    //RunQCheck = 1 = Save q values
-    //RunQCheck = 2 = display q values only
+    // RunQCheck - Signifies if the quantizers should be check to make sure
+    // theyre working properly during an encode
+    // RunQCheck = 0 = Do not save q values
+    // RunQCheck = 1 = Save q values
+    // RunQCheck = 2 = display q values only
     std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
@@ -11878,8 +11883,8 @@ int vpxt_compress_force_key_frame(const char *input_file,
         quant_out_file.open(QuantOutStr.c_str());
     }
 
-    /////////////////////DELETE ME TEMP MEASURE/////////////////////////////////
-    if (oxcf.Mode == 3) //Real time Mode
+    ///////////////////// DELETE ME TEMP MEASURE ///////////////////////////////
+    if (oxcf.Mode == 3) // Real time Mode
     {
         if (RunQCheck == 1)
             quant_out_file.close();
@@ -11929,36 +11934,36 @@ int vpxt_compress_force_key_frame(const char *input_file,
 
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and bitrate Here
+    // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real time Mode
+    if (oxcf.Mode == 0) // Real time Mode
     {
         arg_deadline = 1;
     }
 
-    if (oxcf.Mode == 1) //One Pass Good
+    if (oxcf.Mode == 1) // One Pass Good
     {
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 2) //One Pass Best
+    if (oxcf.Mode == 2) // One Pass Best
     {
         arg_deadline = 0;
     }
 
-    if (oxcf.Mode == 3) //First Pass
+    if (oxcf.Mode == 3) // First Pass
     {
-        //arg_deadline =
+        // arg_deadline =
     }
 
-    if (oxcf.Mode == 4) //Two Pass Good
+    if (oxcf.Mode == 4) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) //Two Pass Best
+    if (oxcf.Mode == 5) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -11993,17 +11998,17 @@ int vpxt_compress_force_key_frame(const char *input_file,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real time Mode
+        if (oxcf.Mode == 0) // Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
+        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
         {
             tprintf(PRINT_BTH, " GoodQuality\n\n");
         }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
+        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
         {
             tprintf(PRINT_BTH, " BestQuality\n\n");
         }
@@ -12243,7 +12248,7 @@ int vpxt_compress_force_key_frame(const char *input_file,
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ///////////Set Encoder Custom Settings/////////////////
+        /////////// Set Encoder Custom Settings /////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD,
             oxcf.encode_breakout);
@@ -12279,13 +12284,13 @@ int vpxt_compress_force_key_frame(const char *input_file,
 
         if ((arg_passes == 2 && pass == 1) || arg_passes == 1)
         {
-            //////////////////////OUTPUT PARAMATERS/////////////////////////////
+            ////////////////////// OUTPUT PARAMATERS ///////////////////////////
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
             OutputsettingsFile += "parameters_core.txt";
             vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
-            ///////////////////////OUTPUT PARAMATERS API////////////////////////
+            /////////////////////// OUTPUT PARAMATERS API //////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
             OutputsettingsFile += "_parameters_vpx.txt";
@@ -12363,7 +12368,7 @@ int vpxt_compress_force_key_frame(const char *input_file,
 
             if (RunQCheck == 2)
             {
-                //Print Quantizers
+                // Print Quantizers
                 int lastQuantizerValue = 0;
                 vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                     &lastQuantizerValue);
@@ -12478,11 +12483,11 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
         write_webm = 0;
 
 
-    //RunQCheck - Signifies if the quantizers should be check to make sure
-    //theyre working properly during an encode
-    //RunQCheck = 0 = Do not save q values
-    //RunQCheck = 1 = Save q values
-    //RunQCheck = 2 = display q values only
+    // RunQCheck - Signifies if the quantizers should be check to make sure
+    // theyre working properly during an encode
+    // RunQCheck = 0 = Do not save q values
+    // RunQCheck = 1 = Save q values
+    // RunQCheck = 2 = display q values only
     std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
@@ -12493,8 +12498,8 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
         quant_out_file.open(QuantOutStr.c_str());
     }
 
-    ////////////////////////////DELETE ME TEMP MEASURE//////////////////////////
-    if (oxcf.Mode == 3) //Real time Mode
+    ////////////////////////// DELETE ME TEMP MEASURE //////////////////////////
+    if (oxcf.Mode == 3) // Real time Mode
     {
         if (RunQCheck == 1)
             quant_out_file.close();
@@ -12530,11 +12535,11 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
     stereo_format_t          stereo_fmt = STEREO_FORMAT_MONO;
 
     ebml.last_pts_ms = -1;
-    //outfile = encoded ivf file
-    void *out;//all raw preview frames
-    void *out2;//all raw decoded frames
-    void *out3;//individual raw preview frames
-    void *out4;//individual decoded preview frames
+    // outfile = encoded ivf file
+    void *out; // all raw preview frames
+    void *out2; // all raw decoded frames
+    void *out3; // individual raw preview frames
+    void *out4; // individual decoded preview frames
 
     /* Populate encoder configuration */
     res = vpx_codec_enc_config_default(codec->iface, &cfg, arg_usage);
@@ -12551,36 +12556,36 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
 
-    //Set Mode Pass and bitrate Here
+    // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real time Mode
+    if (oxcf.Mode == 0) // Real time Mode
     {
         arg_deadline = 1;
     }
 
-    if (oxcf.Mode == 1) //One Pass Good
+    if (oxcf.Mode == 1) // One Pass Good
     {
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 2) //One Pass Best
+    if (oxcf.Mode == 2) // One Pass Best
     {
         arg_deadline = 0;
     }
 
-    if (oxcf.Mode == 3) //First Pass
+    if (oxcf.Mode == 3) // First Pass
     {
-        //arg_deadline =
+        // arg_deadline =
     }
 
-    if (oxcf.Mode == 4) //Two Pass Good
+    if (oxcf.Mode == 4) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) //Two Pass Best
+    if (oxcf.Mode == 5) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -12639,17 +12644,17 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real time Mode
+        if (oxcf.Mode == 0) // Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) //One Pass Good
+        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
         {
             tprintf(PRINT_BTH, " GoodQuality\n\n");
         }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) //One Pass Best
+        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
         {
             tprintf(PRINT_BTH, " BestQuality\n\n");
         }
@@ -12913,7 +12918,7 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
         }
 
         vpx_codec_enc_init(&encoder, codec->iface, &cfg, 0);
-        ///////////Set Encoder Custom Settings/////////////////
+        /////////// Set Encoder Custom Settings /////////////////
         vpx_codec_control(&encoder, VP8E_SET_CPUUSED, oxcf.cpu_used);
         vpx_codec_control(&encoder, VP8E_SET_STATIC_THRESHOLD,
             oxcf.encode_breakout);
@@ -12952,13 +12957,13 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
 
         if ((arg_passes == 2 && pass == 1) || arg_passes == 1)
         {
-            /////////////////////////OUTPUT PARAMATERS//////////////////////////
+            //////////////////////// OUTPUT PARAMATERS /////////////////////////
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
             OutputsettingsFile += "parameters_core.txt";
             vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
-            //////////////////OUTPUT PARAMATERS API/////////////////////////////
+            ////////////////// OUTPUT PARAMATERS API ///////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
             OutputsettingsFile += "_parameters_vpx.txt";
@@ -12966,7 +12971,7 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
             ////////////////////////////////////////////////////////////////////
         }
 
-        ///////////////////////////////////INI DECODER//////////////////////////
+        ///////////////////////////////// INI DECODER //////////////////////////
         vpx_codec_ctx_t       decoder;
         vp8_postproc_cfg_t      vp8_pp_cfg = {0};
         vpx_codec_iface_t       *iface = ifaces[0].iface;
@@ -13067,7 +13072,7 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
 
             if (RunQCheck == 2)
             {
-                //Print Quantizers
+                // Print Quantizers
                 int lastQuantizerValue = 0;
                 vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                     &lastQuantizerValue);
@@ -13392,11 +13397,11 @@ unsigned int vpxt_compress_multi_resolution(const char *input_file,
     if (EncFormat.compare("ivf") == 0)
         write_webm = 0;
 
-    //RunQCheck - Signifies if the quantizers should be check to make sure
-    //theyre working properly during an encode
-    //RunQCheck = 0 = Do not save q values
-    //RunQCheck = 1 = Save q values
-    //RunQCheck = 2 = display q values only
+    // RunQCheck - Signifies if the quantizers should be check to make sure
+    // theyre working properly during an encode
+    // RunQCheck = 0 = Do not save q values
+    // RunQCheck = 1 = Save q values
+    // RunQCheck = 2 = display q values only
     std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
@@ -13407,8 +13412,8 @@ unsigned int vpxt_compress_multi_resolution(const char *input_file,
         quant_out_file.open(QuantOutStr.c_str());
     }
 
-    /////////////////////////////DELETE ME TEMP MEASURE/////////////////////////
-    if (oxcf.Mode == 3) //Real time Mode
+    /////////////////////////// DELETE ME TEMP MEASURE /////////////////////////
+    if (oxcf.Mode == 3) // Real time Mode
     {
         if (RunQCheck == 1)
             quant_out_file.close();
@@ -13928,7 +13933,7 @@ unsigned int vpxt_compress_scalable_patterns(const char *input_file,
         return EXIT_FAILURE;
     }
 
-    //These shoudl end up being passed in via cfg or oxcf eventualy.
+    // These shoudl end up being passed in via cfg or oxcf eventualy.
     cfg.ts_target_bitrate[0] = ScaleBitRate0;
     cfg.ts_target_bitrate[1] = ScaleBitRate1;
     cfg.ts_target_bitrate[2] = ScaleBitRate2;
@@ -14396,11 +14401,11 @@ unsigned int vpxt_compress_scalable_patterns(const char *input_file,
     tprintf(PRINT_BTH, "API Temporal Scalability - Compressing Raw %s File to"
         " VP8 %s Files: \n", inputformat.c_str(), outputformat.c_str());
 
-    ////////////////////////////////OUTPUT PARAMATERS///////////////////////////
+    /////////////////////////////// OUTPUT PARAMATERS //////////////////////////
     std::string OutputsettingsFile = outputFile2;
     OutputsettingsFile += "_parameters_core.txt";
     vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
-    //////////////////////////////OUTPUT PARAMATERS API/////////////////////////
+    ///////////////////////////// OUTPUT PARAMATERS API ////////////////////////
     OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
     OutputsettingsFile  += "_parameters_vpx.txt";
     vpxt_output_settings_api(OutputsettingsFile.c_str(),  cfg);
@@ -14628,7 +14633,7 @@ int vpxt_decompress(const char *inputchar,
         generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
                           width, height, 0);
         strncpy(outfile, outputchar, PATH_MAX);
-        //outfile = outputchar;
+        // outfile = outputchar;
         out = out_open(outfile, do_md5);
     }
 
@@ -15213,8 +15218,8 @@ int vpxt_decompress_copy_set(const char *inputchar,
                             }
                             else if (notprinted == 1)
                             {
-                                //tprintf(printVar, "%i Good\n", frame_out);
-                                //notprinted = 0;
+                                // tprintf(printVar, "%i Good\n", frame_out);
+                                // notprinted = 0;
                             }
                         }
 
@@ -15448,24 +15453,24 @@ int vpxt_decompress_partial_drops(const char *inputchar,
     int                     flags = 0, frame_cnt = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
-    //int              n, m, mode;                                            //
+    // int              n, m, mode;                                           //
     unsigned int     seed;                                                    //
     int              thrown = 0, kept = 0;                                    //
     int              thrown_frame = 0, kept_frame = 0;                        //
 ////////////////////////////////////////////////////////////////////////////////
-    //char *nptr;                                                             //
-    //n = strtol("3,5", &nptr, 0);                                            //
-    //mode = (*nptr == '\0' || *nptr == ',') ? 2 : (*nptr == '-') ? 1 : 0;    //
+    // char *nptr;                                                            //
+    // n = strtol("3,5", &nptr, 0);                                           //
+    // mode = (*nptr == '\0' || *nptr == ',') ? 2 : (*nptr == '-') ? 1 : 0;   //
     //                                                                        //
-    //m = strtol(nptr+1, NULL, 0);                                            //
-    //if((!n && !m) || (*nptr != '-' && *nptr != '/' &&                       //
+    // m = strtol(nptr+1, NULL, 0);                                           //
+    // if((!n && !m) || (*nptr != '-' && *nptr != '/' &&                      //
     //    *nptr != '\0' && *nptr != ','))                                     //
     //    die_dec("Couldn't parse pattern %s\n", "3,5");                      //
     //                                                                        //
     seed = (m > 0) ? m : (unsigned int)time(NULL);                            //
     srand(seed);                                                              //
     thrown_frame = 0;                                                         //
-    //printf("Seed: %u\n", seed);                                             //
+    // printf("Seed: %u\n", seed);                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
     input.chunk = 0;
@@ -15549,7 +15554,7 @@ int vpxt_decompress_partial_drops(const char *inputchar,
         generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
                           width, height, 0);
         strncpy(outfile, outputchar, PATH_MAX);
-        //outfile = outputchar;
+        // outfile = outputchar;
         out = out_open(outfile, do_md5);
     }
 
@@ -15998,7 +16003,7 @@ int vpxt_decompress_resize(const char *inputchar,
         return -1;
     }
 
-    /////////////////////Setup yv12_buffer_dest to Resize if nessicary//////////
+    /////////////////// Setup yv12_buffer_dest to Resize if nessicary //////////
     initialize_scaler();
     YV12_BUFFER_CONFIG yv12_buffer_source;
     memset(&yv12_buffer_source, 0, sizeof(yv12_buffer_source));
@@ -16039,10 +16044,10 @@ int vpxt_decompress_resize(const char *inputchar,
 
         if ((img = vpx_codec_get_frame(&decoder, &iter)))
         {
-            //////////////////////Inflate Dec Img if needed/////////////////////
+            ///////////////////// Inflate Dec Img if needed ////////////////////
             image2yuvconfig(img, &yv12_buffer_source);
 
-            //if frame not correct size resize it
+            // if frame not correct size resize it
             if (img->d_w != width || img->d_h != height)
             {
                 resized = 1;
@@ -16279,7 +16284,7 @@ int vpxt_decompress_to_raw(const char *inputchar,
         generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
                           width, height, 0);
         strncpy(outfile, outputchar, PATH_MAX);
-        //outfile = outputchar;
+        // outfile = outputchar;
         out = out_open(outfile, do_md5);
     }
 
@@ -17088,8 +17093,8 @@ unsigned int vpxt_time_decompress(const char *inputchar,
     if (DecFormat.compare("ivf") == 0)
         use_y4m = 2;
 
-    //time Decompress is not supposed to save output that is the only difference
-    //between it and vpxt_decompress_ivf_to_ivf_time_and_output
+    // time Decompress is not supposed to save output that is the only
+    // difference between it and vpxt_decompress_ivf_to_ivf_time_and_output
     vpx_codec_ctx_t         decoder;
     uint64_t                total_cpu_time_used = 0;
     const char             *fn = inputchar;
@@ -17200,7 +17205,7 @@ unsigned int vpxt_time_decompress(const char *inputchar,
         generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
                           width, height, 0);
         strncpy(outfile, outputchar, PATH_MAX);
-        //outfile = outputchar;
+        // outfile = outputchar;
         out = out_open(outfile, do_md5);
     }
 
@@ -17547,7 +17552,7 @@ unsigned int vpxt_decompress_time_and_output(const char *inputchar,
         generate_filename(outfile_pattern, outfile, sizeof(outfile) - 1,
                           width, height, 0);
         strncpy(outfile, outputchar, PATH_MAX);
-        //outfile = outputchar;
+        // outfile = outputchar;
         out = out_open(outfile, do_md5);
     }
 
@@ -18024,7 +18029,7 @@ fail:
     return 0;
 }
 #endif
-//---------------------------------Tools----------------------------------------
+// --------------------------------Tools----------------------------------------
 int vpxt_cut_clip(const char *input_file,
                   const char *output_file,
                   int StartingFrame,
@@ -18096,10 +18101,10 @@ int vpxt_cut_clip(const char *input_file,
         switch (fourcc)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
@@ -18134,7 +18139,7 @@ int vpxt_cut_clip(const char *input_file,
 
     if (file_type == FILE_TYPE_Y4M)
     {
-        //copy and output y4m header
+        // copy and output y4m header
         fpos_t position;
         fgetpos(in, &position);
         rewind(in);
@@ -18320,7 +18325,7 @@ int vpxt_crop_raw_clip(const char *input_file,
                 scale = y4m.fps_d;
             }
 
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
         }
         else
         {
@@ -18336,10 +18341,10 @@ int vpxt_crop_raw_clip(const char *input_file,
         switch (fourcc)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
@@ -18374,7 +18379,7 @@ int vpxt_crop_raw_clip(const char *input_file,
 
     if (file_type == FILE_TYPE_Y4M)
     {
-        //copy and output y4m header
+        // copy and output y4m header
         fpos_t position;
         fgetpos(in, &position);
         rewind(in);
@@ -18589,7 +18594,7 @@ int vpxt_pad_raw_clip(const char *input_file,
                 scale = y4m.fps_d;
             }
 
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
         }
         else
         {
@@ -18605,10 +18610,10 @@ int vpxt_pad_raw_clip(const char *input_file,
         switch (fourcc)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
@@ -18643,7 +18648,7 @@ int vpxt_pad_raw_clip(const char *input_file,
 
     if (file_type == FILE_TYPE_Y4M)
     {
-        //copy and output y4m header
+        // copy and output y4m header
         fpos_t position;
         fgetpos(in, &position);
         rewind(in);
@@ -18920,10 +18925,10 @@ int vpxt_paste_clip(const char *inputFile1,
         switch (fourcc1)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc1);
@@ -18972,7 +18977,7 @@ int vpxt_paste_clip(const char *inputFile1,
                 scale2 = y4m2.fps_d;
             }
 
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
         }
         else
         {
@@ -18988,10 +18993,10 @@ int vpxt_paste_clip(const char *inputFile1,
         switch (fourcc2)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc2);
@@ -19240,10 +19245,10 @@ int vpxt_formatted_to_raw(const std::string input_file,
         switch (fourcc)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
@@ -19399,10 +19404,10 @@ int vpxt_formatted_to_raw_frames(const std::string input_file,
         switch (fourcc)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc);
@@ -19460,7 +19465,7 @@ int vpxt_formatted_to_raw_frames(const std::string input_file,
 
         int CurNumDecPlaces = vpxt_decimal_places(currentVideoFrame);
 
-        //add zeros for increasing frames
+        // add zeros for increasing frames
         while (CurNumDecPlaces < LastFrameDecPlaces)
         {
             FrameFileName += "0";
@@ -19528,7 +19533,7 @@ int vpxt_formatted_to_raw_frames(const std::string input_file,
 
     return(0);
 }
-int vpxt_display_header_info(int argc, const char *const *argv)
+int vpxt_display_header_info(int argc, const char** argv)
 {
     char input_file[256] = "";
     strncpy(input_file, argv[2], 256);
@@ -19551,16 +19556,16 @@ int vpxt_display_header_info(int argc, const char *const *argv)
         }
     }
 
-    unsigned char  signature[4];    //='DKIF';
-    unsigned short version = 0;     // -
-    unsigned short headersize = 0;  // -
-    unsigned int fourcc = 0;        //good
-    unsigned int width = 0;         //good
-    unsigned int height = 0;        //good
-    unsigned int rate = 0;          //good
-    unsigned int scale = 0;         //good
-    unsigned int length = 0;        //other measure
-    unsigned char unused[4];        // -
+    unsigned char  signature[4];    // ='DKIF';
+    unsigned short version = 0;     //  -
+    unsigned short headersize = 0;  //  -
+    unsigned int fourcc = 0;        // good
+    unsigned int width = 0;         // good
+    unsigned int height = 0;        // good
+    unsigned int rate = 0;          // good
+    unsigned int scale = 0;         // good
+    unsigned int length = 0;        // other measure
+    unsigned char unused[4];        //  -
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -19740,7 +19745,7 @@ int vpxt_display_header_info(int argc, const char *const *argv)
 
     return 0;
 }
-int vpxt_compare_header_info(int argc, const char *const *argv)
+int vpxt_compare_header_info(int argc, const char** argv)
 {
     const char *inputFile1 = argv[2];
     const char *inputFile2 = argv[3];
@@ -19774,27 +19779,27 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
 
     int returnval = -1;
 
-    unsigned char  signature_1[4];      //='DKIF';
-    unsigned short version_1 = 0;       // -
-    unsigned short headersize_1 = 0;    // -
-    unsigned int fourcc_1 = 0;          //good
-    unsigned int width_1 = 0;           //good
-    unsigned int height_1 = 0;          //good
-    unsigned int rate_1 = 0;            //good
-    unsigned int scale_1 = 0;           //good
-    unsigned int length_1 = 0;          //other measure
-    unsigned char unused_1[4];          // -
+    unsigned char  signature_1[4];      // ='DKIF';
+    unsigned short version_1 = 0;       //  -
+    unsigned short headersize_1 = 0;    //  -
+    unsigned int fourcc_1 = 0;          // good
+    unsigned int width_1 = 0;           // good
+    unsigned int height_1 = 0;          // good
+    unsigned int rate_1 = 0;            // good
+    unsigned int scale_1 = 0;           // good
+    unsigned int length_1 = 0;          // other measure
+    unsigned char unused_1[4];          //  -
 
-    unsigned char  signature_2[4];      //='DKIF';
-    unsigned short version_2 = 0;       // -
-    unsigned short headersize_2 = 0;    // -
-    unsigned int fourcc_2 = 0;          //good
-    unsigned int width_2 = 0;           //good
-    unsigned int height_2 = 0;          //good
-    unsigned int rate_2 = 0;            //good
-    unsigned int scale_2 = 0;           //good
-    unsigned int length_2 = 0;          //other measure
-    unsigned char unused_2[4];          // -
+    unsigned char  signature_2[4];      // ='DKIF';
+    unsigned short version_2 = 0;       //  -
+    unsigned short headersize_2 = 0;    //  -
+    unsigned int fourcc_2 = 0;          // good
+    unsigned int width_2 = 0;           // good
+    unsigned int height_2 = 0;          // good
+    unsigned int rate_2 = 0;            // good
+    unsigned int scale_2 = 0;           // good
+    unsigned int length_2 = 0;          // other measure
+    unsigned char unused_2[4];          //  -
 
     signature_1[0] = ' ';
     signature_1[1] = ' ';
@@ -20149,12 +20154,12 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
 }
 int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
 {
-    ////Returns:
-    //-1 if files are identical
-    //-2 if file 2 ends before File 1
-    //-3 if file 1 ends before File 2
-    //and >= 0 where the number the function returns is the frame that they
-    //differ first on.
+    // Returns:
+    // -1 if files are identical
+    // -2 if file 2 ends before File 1
+    // -3 if file 1 ends before File 2
+    // and >= 0 where the number the function returns is the frame that they
+    // differ first on.
 
     int returnval = -1;
 
@@ -20220,7 +20225,7 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
                 scale_1 = y4m_1.fps_d;
             }
 
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
         }
         else
         {
@@ -20236,10 +20241,10 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
         switch (fourcc_1)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc_1);
@@ -20275,7 +20280,7 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
                 scale_2 = y4m_2.fps_d;
             }
 
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
         }
         else
         {
@@ -20291,10 +20296,10 @@ int vpxt_compare_dec(const char *inputFile1, const char *inputFile2)
         switch (fourcc_2)
         {
         case 0x32315659:
-            //arg_use_i420 = 0;
+            // arg_use_i420 = 0;
             break;
         case 0x30323449:
-            //arg_use_i420 = 1;
+            // arg_use_i420 = 1;
             break;
         default:
             fprintf(stderr, "Unsupported fourcc (%08x) in IVF\n", fourcc_2);
@@ -20523,34 +20528,34 @@ int vpxt_compare_enc(const char *inputFile1,
                      const char *inputFile2,
                      int fullcheck)
 {
-    ////Returns:
-    //-1 if files are identical
-    //-2 if file 2 ends before File 1
-    //-3 if file 1 ends before File 2
-    //and >= 0 where the number the function returns is the frame that they
-    //differ first on.
+    // Returns:
+    // -1 if files are identical
+    // -2 if file 2 ends before File 1
+    // -3 if file 1 ends before File 2
+    // and >= 0 where the number the function returns is the frame that they
+    // differ first on.
 
     int returnval = -1;
 
-    unsigned char  signature_1[4];      //='DKIF';
-    unsigned short version_1 = 0;       // -
-    unsigned short headersize_1 = 0;    // -
-    unsigned int fourcc_1 = 0;          //good
-    unsigned int width_1 = 0;           //good
-    unsigned int height_1 = 0;          //good
-    unsigned int rate_1 = 0;            //good
-    unsigned int scale_1 = 0;           //good
-    unsigned int length_1 = 0;          //other measure
+    unsigned char  signature_1[4];      // ='DKIF';
+    unsigned short version_1 = 0;       //  -
+    unsigned short headersize_1 = 0;    //  -
+    unsigned int fourcc_1 = 0;          // good
+    unsigned int width_1 = 0;           // good
+    unsigned int height_1 = 0;          // good
+    unsigned int rate_1 = 0;            // good
+    unsigned int scale_1 = 0;           // good
+    unsigned int length_1 = 0;          // other measure
 
-    unsigned char  signature_2[4];      //='DKIF';
-    unsigned short version_2 = 0;       // -
-    unsigned short headersize_2 = 0;    // -
-    unsigned int fourcc_2 = 0;          //good
-    unsigned int width_2 = 0;           //good
-    unsigned int height_2 = 0;          //good
-    unsigned int rate_2 = 0;            //good
-    unsigned int scale_2 = 0;           //good
-    unsigned int length_2 = 0;          //other measure
+    unsigned char  signature_2[4];      // ='DKIF';
+    unsigned short version_2 = 0;       //  -
+    unsigned short headersize_2 = 0;    //  -
+    unsigned int fourcc_2 = 0;          // good
+    unsigned int width_2 = 0;           // good
+    unsigned int height_2 = 0;          // good
+    unsigned int rate_2 = 0;            // good
+    unsigned int scale_2 = 0;           // good
+    unsigned int length_2 = 0;          // other measure
 
     signature_1[0] = ' ';
     signature_1[1] = ' ';
@@ -20772,7 +20777,7 @@ int vpxt_compare_enc(const char *inputFile1,
                 char intchar[56];
                 vpxt_itoa_custom(currentVideoFrame, intchar, 10);
 
-                //write different frames out
+                // write different frames out
                 std::string first_file_frame;
                 vpxt_remove_file_extension(inputFile1, first_file_frame);
                 first_file_frame += "Frame";
@@ -21073,7 +21078,7 @@ int vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
         {
             if (img = vpx_codec_get_frame(&decoder, &iter))
             {
-                if (img->d_w != width || img->d_h != height) //CheckFrameSize
+                if (img->d_w != width || img->d_h != height) // CheckFrameSize
                 {
                     if (PrintSwitch == 0)
                     {
@@ -21155,15 +21160,15 @@ int vpxt_display_visible_frames(const char *input_file, int Selector)
         }
     }
 
-    unsigned char  signature[4];    //='DKIF';
-    unsigned short version = 0;     // -
-    unsigned short headersize = 0;  // -
-    unsigned int fourcc = 0;        //good
-    unsigned int width = 0;         //good
-    unsigned int height = 0;        //good
-    unsigned int rate = 0;          //good
-    unsigned int scale = 0;         //good
-    unsigned int length = 0;        //other measure
+    unsigned char  signature[4];    // ='DKIF';
+    unsigned short version = 0;     //  -
+    unsigned short headersize = 0;  //  -
+    unsigned int fourcc = 0;        // good
+    unsigned int width = 0;         // good
+    unsigned int height = 0;        // good
+    unsigned int rate = 0;          // good
+    unsigned int scale = 0;         // good
+    unsigned int length = 0;        // other measure
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -21267,7 +21272,7 @@ int vpxt_display_visible_frames(const char *input_file, int Selector)
         if (frame_avail)
             break;
 
-        //check to see if visible frame
+        // check to see if visible frame
         VP8_HEADER oz;
 
 #if defined(_PPC)
@@ -21343,15 +21348,15 @@ int vpxt_display_alt_ref_frames(const char *input_file, int Selector)
         }
     }
 
-    unsigned char  signature[4];    //='DKIF';
-    unsigned short version = 0;     // -
-    unsigned short headersize = 0;  // -
-    unsigned int fourcc = 0;        //good
-    unsigned int width = 0;         //good
-    unsigned int height = 0;        //good
-    unsigned int rate = 0;          //good
-    unsigned int scale = 0;         //good
-    unsigned int length = 0;        //other measure
+    unsigned char  signature[4];    // ='DKIF';
+    unsigned short version = 0;     //  -
+    unsigned short headersize = 0;  //  -
+    unsigned int fourcc = 0;        // good
+    unsigned int width = 0;         // good
+    unsigned int height = 0;        // good
+    unsigned int rate = 0;          // good
+    unsigned int scale = 0;         // good
+    unsigned int length = 0;        // other measure
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -21455,7 +21460,7 @@ int vpxt_display_alt_ref_frames(const char *input_file, int Selector)
         if (frame_avail)
             break;
 
-        //check to see if visible frame
+        // check to see if visible frame
         VP8_HEADER oz;
 
 #if defined(_PPC)
@@ -21528,15 +21533,15 @@ int vpxt_display_key_frames(const char *input_file, int Selector)
         }
     }
 
-    unsigned char  signature[4];    //='DKIF';
-    unsigned short version = 0;     // -
-    unsigned short headersize = 0;  // -
-    unsigned int fourcc = 0;        //good
-    unsigned int width = 0;         //good
-    unsigned int height = 0;        //good
-    unsigned int rate = 0;          //good
-    unsigned int scale = 0;         //good
-    unsigned int length = 0;        //other measure
+    unsigned char  signature[4];    // ='DKIF';
+    unsigned short version = 0;     //  -
+    unsigned short headersize = 0;  //  -
+    unsigned int fourcc = 0;        // good
+    unsigned int width = 0;         // good
+    unsigned int height = 0;        // good
+    unsigned int rate = 0;          // good
+    unsigned int scale = 0;         // good
+    unsigned int length = 0;        // other measure
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -21637,7 +21642,7 @@ int vpxt_display_key_frames(const char *input_file, int Selector)
         if (frame_avail)
             break;
 
-        //check to see if visible frame
+        // check to see if visible frame
         VP8_HEADER oz;
 
 #if defined(_PPC)
@@ -21724,10 +21729,10 @@ int vpxt_lag_in_frames_check(const char *QuantInChar)
 }
 int vpxt_dfwm_check(const char *InputFile, int printselect)
 {
-    //return 0 = pass
-    //return 1 = fail
-    //return -1 = error
-    //return -3 = threshold never reached
+    // return 0 = pass
+    // return 1 = fail
+    // return -1 = error
+    // return -3 = threshold never reached
 
     std::string CheckPBMThreshStr;
     vpxt_remove_file_extension(InputFile, CheckPBMThreshStr);
@@ -21782,11 +21787,11 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
     int curkeyframe = 0;
     int garbage = 0;
     int CheckPBMStatus = -1;
-    //if threshold never hit this is 0 if it is hit somewhere it is 1
+    // if threshold never hit this is 0 if it is hit somewhere it is 1
     int ThresholdTrigger = 0;
 
 
-    KeyFramesFile >> curkeyframe;//get past trivial 0 case
+    KeyFramesFile >> curkeyframe; // get past trivial 0 case
 
     while (curkeyframe < firstResizedFrame)
     {
@@ -21794,7 +21799,7 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
 
         int curThreshFrame = 0;
         CheckPBMFile.seekg(std::ios::beg);
-        //get threshold status for frame just prior to keyframe
+        // get threshold status for frame just prior to keyframe
         while (!CheckPBMFile.eof() && curThreshFrame < curkeyframe)
         {
             CheckPBMFile >> garbage;
@@ -21807,8 +21812,8 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
 
             curThreshFrame++;
         }
-        //if keyframe is also first resized frame then the threshold status foR
-        //the frame prior to it shoudl be 1 if not it fails
+        // if keyframe is also first resized frame then the threshold status for
+        // the frame prior to it shoudl be 1 if not it fails
         if (curkeyframe == firstResizedFrame)
         {
             if (CheckPBMStatus == 1)
@@ -21834,8 +21839,8 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
         }
         else
         {
-            //if key frame isnt first resized frame then the threshold status
-            //for the frame prior to it should be 0 if not it fails
+            // if key frame isnt first resized frame then the threshold status
+            // for the frame prior to it should be 0 if not it fails
             if (CheckPBMStatus == 0)
             {
                 if (printselect == 1)
@@ -21917,7 +21922,7 @@ double vpxt_print_frame_statistics(const char *input_file1,
         out_file = fopen(output_file, "wb");
 
     force_uvswap = 0;
-    ////////////////////////Initilize Raw File////////////////////////
+    //////////////////////// Initilize Raw File ////////////////////////
     FILE *raw_file = strcmp(input_file1, "-") ?
         fopen(input_file1, "rb") : set_binary_mode(stdin);
 
@@ -21991,8 +21996,8 @@ double vpxt_print_frame_statistics(const char *input_file1,
     if(file_type != FILE_TYPE_Y4M)
         vpx_img_alloc(&raw_img, IMG_FMT_I420, raw_width, raw_height, 1);
 
-    //Burn Frames untill Raw frame offset reached - currently disabled by
-    //override of raw_offset
+    // Burn Frames untill Raw frame offset reached - currently disabled by
+    // override of raw_offset
     if (raw_offset > 0)
     {
         for (int i = 0; i < raw_offset; i++)
@@ -22000,13 +22005,13 @@ double vpxt_print_frame_statistics(const char *input_file1,
         }
     }
 
-    //I420 hex-0x30323449 dec-808596553
-    //YV12 hex-0x32315659 dec-842094169
-    //if YV12 Do not swap Frames
+    // I420 hex-0x30323449 dec-808596553
+    // YV12 hex-0x32315659 dec-842094169
+    // if YV12 Do not swap Frames
     if (fourcc == 842094169)
         force_uvswap = 1;
 
-    ////////////////////////Initilize Compressed File////////////////////////
+    //////////////////////// Initilize Compressed File ////////////////////////
     /* Open file */
     FILE *comp_file = strcmp(input_file2, "-") ?
         fopen(input_file2, "rb") : set_binary_mode(stdin);
@@ -22057,14 +22062,14 @@ double vpxt_print_frame_statistics(const char *input_file1,
             return EXIT_FAILURE;
         }
 
-        //Burn Frames untill Compressed frame offset reached - currently
-        //disabled by override of comp_offset
+        // Burn Frames untill Compressed frame offset reached - currently
+        // disabled by override of comp_offset
         if (comp_offset > 0)
         {
         }
 
         ////////////////////////////////////////////////////////////////////////
-        ////////Printing////////
+        //////// Printing ////////
         if (print_embl)
             tprintf(print_out, "\n\n                        "
                 "---------Computing PSNR---------");
@@ -22101,7 +22106,7 @@ double vpxt_print_frame_statistics(const char *input_file1,
             return EXIT_FAILURE;
         }
 
-        ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
+        /////////// Setup Temp YV12 Buffer to Resize if nessicary //////////////
         initialize_scaler();
 
         YV12_BUFFER_CONFIG temp_yv12;
@@ -22161,8 +22166,8 @@ double vpxt_print_frame_statistics(const char *input_file1,
             vpx_codec_iter_t  iter = NULL;
             vpx_image_t    *img;
 
-            //make sure the timestamps sync otherwise process
-            //last shown compressed frame
+            // make sure the timestamps sync otherwise process
+            // last shown compressed frame
             while(raw_timestamp <= comp_timestamp || !comp_frame_available)
             {
                 if(comp_timestamp == raw_timestamp)
@@ -22181,7 +22186,7 @@ double vpxt_print_frame_statistics(const char *input_file1,
                     {
                         ++decoded_frames;
 
-                        //if frame not correct size flag as resized
+                        // if frame not correct size flag as resized
                         if (img->d_w != raw_width || img->d_h != raw_height)
                             resized_frame = 1;
                     }
@@ -22189,11 +22194,11 @@ double vpxt_print_frame_statistics(const char *input_file1,
                 else
                     dropped_frame = 1;
 
-                //keep getting frames from raw file
+                // keep getting frames from raw file
                 if(img || dropped_frame || !comp_frame_available)
                 {
-                    //////////////////Get YV12 Data For Raw File////////////////
-                    //if end of uncompressed file break out
+                    ////////////////// Get YV12 Data For Raw File //////////////
+                    // if end of uncompressed file break out
                     if(!read_frame_enc(raw_file, &raw_img, file_type, &y4m,
                         &detect))
                         break;
@@ -22212,10 +22217,10 @@ double vpxt_print_frame_statistics(const char *input_file1,
                 }
                 else
                 {
-                    //if time stamps do not match find out why if droped
-                    //frame use last frame keep trying subtract one unit
-                    //to move along.  if invisible frame get next frame
-                    //and keep going.
+                    // if time stamps do not match find out why if droped
+                    // frame use last frame keep trying subtract one unit
+                    // to move along.  if invisible frame get next frame
+                    // and keep going.
                     if (oz.show_frame){
                         current_raw_frame = current_raw_frame - 1;
 
@@ -22237,7 +22242,7 @@ double vpxt_print_frame_statistics(const char *input_file1,
                     }
                 }
 
-                ////////Printing////////
+                //////// Printing ////////
                 if(output_file)
                 {
                     fprintf(out_file, "F:%5d", current_raw_frame);
@@ -22288,7 +22293,7 @@ double vpxt_print_frame_statistics(const char *input_file1,
             }
         }
 
-        ////////Printing////////
+        //////// Printing ////////
         if (print_embl)
             tprintf(print_out, "\n                        "
                 "--------------------------------\n");
@@ -22320,7 +22325,7 @@ double vpxt_print_frame_statistics(const char *input_file1,
 int vpxt_eval_frame_stats_temp_scale(const char *input_file, int pattern)
 {
     int i;
-    int dropped_count = pattern;//for first frame
+    int dropped_count = pattern; // for first frame
     int dropped_current = 0;
     int line_count = 0;
     char buffer[256];
@@ -22334,7 +22339,7 @@ int vpxt_eval_frame_stats_temp_scale(const char *input_file, int pattern)
         infile.getline(buffer, 256);
         line_count ++;
 
-        //evaluate line look for 'D'
+        // evaluate line look for 'D'
         while(buffer[i] && i < 256)
         {
             if(buffer[i] == 'D'){
@@ -22344,12 +22349,12 @@ int vpxt_eval_frame_stats_temp_scale(const char *input_file, int pattern)
             }
             i++;
         }
-        //if 'D' found
+        // if 'D' found
         if(!dropped_current && buffer[0]){
-            //if the correct number of frames not droped return fail
+            // if the correct number of frames not droped return fail
             if(dropped_count != pattern)
                 return 0;
-            else//otherwise reset and keep going
+            else // otherwise reset and keep going
                 dropped_count = 0;
         }
 
@@ -22411,7 +22416,7 @@ int vpxt_check_min_quantizer(const char *input_file, int MinQuantizer)
 
     tprintf(PRINT_BTH, "     All quantizers >= min for all frames - Passed");
     infile.close();
-    return -1;//result > -1 -> fail | result = -1 pass
+    return -1; // result > -1 -> fail | result = -1 pass
 }
 int vpxt_check_max_quantizer(const char *input_file, int MaxQuantizer)
 {
@@ -22466,7 +22471,7 @@ int vpxt_check_max_quantizer(const char *input_file, int MaxQuantizer)
 
     tprintf(PRINT_BTH, " All quantizers <= max for all frames");
     infile.close();
-    return -1;//result > -1 -> fail | result = -1 pass
+    return -1; // result > -1 -> fail | result = -1 pass
 }
 int vpxt_check_fixed_quantizer(const char *input_file, int FixedQuantizer)
 {
@@ -22519,7 +22524,7 @@ int vpxt_check_fixed_quantizer(const char *input_file, int FixedQuantizer)
 
     tprintf(PRINT_BTH, " fixed for all frames");
 
-    return -1;//result > -1 -> fail | result = -1 pass
+    return -1; // result > -1 -> fail | result = -1 pass
 }
 int vpxt_time_return(const char *infile, int FileType)
 {
@@ -22590,7 +22595,7 @@ int vpxt_check_force_key_frames(const char *KeyFrameoutputfile,
     if (!infile.good())
     {
         tprintf(PRINT_BTH, "\nKey Frame File Not Present\n");
-        //fclose(fp);
+        // fclose(fp);
         return -1;
     }
 
@@ -22676,9 +22681,9 @@ int vpxt_check_mem_state(const std::string FileName, std::string &bufferString)
 }
 int vpxt_print_compare_ivf_results(int lng_rc, int printErr)
 {
-    //return 1 for files identical
-    //retrun -1 for files not identical
-    //return 0 on error
+    // return 1 for files identical
+    // retrun -1 for files not identical
+    // return 0 on error
 
     if (lng_rc >= 0)
     {
@@ -22708,8 +22713,8 @@ int vpxt_print_compare_ivf_results(int lng_rc, int printErr)
 }
 double vpxt_get_psnr(const char *compFileName)
 {
-    //Takes in a compression full path and looks for the psnr file
-    //accociated with it.
+    // Takes in a compression full path and looks for the psnr file
+    // accociated with it.
 
     std::string TimeTextFileStr;
     vpxt_remove_file_extension(compFileName, TimeTextFileStr);

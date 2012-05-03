@@ -32,7 +32,8 @@ double VP8_CalcPSNR_Tester(YV12_BUFFER_CONFIG *source, YV12_BUFFER_CONFIG *dest,
     Total = 0.0;
     GrandTotal = 0.0;
 
-    // Loop throught the Y plane raw and reconstruction data summing (square differences)
+    // Loop throught the Y plane raw and reconstruction data summing
+    // (square differences)
     for (i = 0; i < source->y_height; i++)
     {
 

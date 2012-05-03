@@ -6,9 +6,9 @@
 int create_working_folder(int argc, const char *argv[], char *WorkingDirChar);
 std::string date_string();
 void vpxt_on_error_output();
-void write_32bit_quick_test(const std::string working_dir);
-void write_64bit_quick_test(const std::string working_dir);
-int print_quick_test_files(const std::string working_dir);
+void write_32bit_quick_test(const std::string& working_dir);
+void write_64bit_quick_test(const std::string& working_dir);
+int print_quick_test_files(const std::string& working_dir);
 int  vpxt_test_help(const char *InputChar, int printSummary);
 int  vpxt_tool_help(const char *InputChar, int printSummary);
 void format_summary(const char *InputFileNameCharAr);

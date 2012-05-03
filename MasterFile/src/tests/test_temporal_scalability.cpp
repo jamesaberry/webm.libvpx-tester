@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_temporal_scalability(int argc,
-                              const char *const *argv,
+                              const char** argv,
                               const std::string &working_dir,
                               const std::string sub_folder_str,
                               int test_type,
@@ -15,7 +15,7 @@ int test_temporal_scalability(int argc,
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    //layer_mode is rate_num as used in vp8_scalable_patterns.exe
+    // layer_mode is rate_num as used in vp8_scalable_patterns.exe
     int layer_mode = atoi(argv[3]);
     int temp_scale_br_0 = atoi(argv[4]);
     int temp_scale_br_1 = atoi(argv[5]);
@@ -26,7 +26,7 @@ int test_temporal_scalability(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -35,7 +35,7 @@ int test_temporal_scalability(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
             cur_test_dir_str, file_index_str, main_test_dir_char,
             file_index_output_char, sub_folder_str) == 11)
-                return TEST_ERRFM;
+                return kTestErrFileMismatch;
 
     int number_of_encodes = 0;
     std::string temp_scale_out_base = cur_test_dir_str;
@@ -90,12 +90,12 @@ int test_temporal_scalability(int argc,
         enc_vec.push_back(enc_str);
     }
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str;
     text_file_str += slashCharStr();
     text_file_str += test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -112,13 +112,13 @@ int test_temporal_scalability(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -128,7 +128,7 @@ int test_temporal_scalability(int argc,
     unsigned int scale_compress_time = 0;
     unsigned int enc_compress_time = 0;
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -139,7 +139,7 @@ int test_temporal_scalability(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -147,11 +147,11 @@ int test_temporal_scalability(int argc,
 
     /////////////////////////////////////////////////////////
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips
-    //compresion of files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips
+    // compresion of files)
+    if (test_type == kTestOnly)
     {
-        //This test requires no preperation before a Test Only Run
+        // This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -166,15 +166,15 @@ int test_temporal_scalability(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
     }
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     std::vector<double> enc_psnr;
@@ -214,7 +214,7 @@ int test_temporal_scalability(int argc,
     int j = 0;
     int delete_files_num = 0;
 
-    //encode standard compressions and do psnrs
+    // encode standard compressions and do psnrs
     for(str_it = enc_vec.begin(); str_it < enc_vec.end(); ++str_it)
     {
         unsigned int cpu_tick = 0;
@@ -227,7 +227,7 @@ int test_temporal_scalability(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         enc_psnr.push_back(vpxt_psnr(input.c_str(), (*str_it).c_str(), 0,
@@ -236,12 +236,12 @@ int test_temporal_scalability(int argc,
         ++j;
     }
 
-    //run psnrs for temp scale compressions
+    // run psnrs for temp scale compressions
     for(str_it = temp_scale_vec.begin(); str_it < temp_scale_vec.end();++str_it)
         temp_scale_psnr.push_back(vpxt_psnr(input.c_str(), (*str_it).c_str(), 0,
         PRINT_BTH, 1, NULL));
 
-    //gather frame statistics for temp scale compressions
+    // gather frame statistics for temp scale compressions
     str_it2 = temp_scale_vec.begin();
     for(str_it = temp_scale_fs_vec.begin(); str_it<temp_scale_fs_vec.end();
         ++str_it){
@@ -251,7 +251,7 @@ int test_temporal_scalability(int argc,
         ++str_it2;
     }
 
-    //evaluate frame satistics
+    // evaluate frame satistics
     std::vector<int>::iterator eval_drop_it = eval_drop_vec.begin();
     for(str_it = temp_scale_fs_vec.begin(); str_it < temp_scale_fs_vec.end();
         ++str_it){
@@ -265,7 +265,7 @@ int test_temporal_scalability(int argc,
 
     int i = 0;
 
-    //temp scale file name only vector
+    // temp scale file name only vector
     std::vector<std::string> temp_scale_fn_vec;
     for(str_it = temp_scale_vec.begin();str_it < temp_scale_vec.end();++str_it){
         char file_name_char[256];
@@ -273,7 +273,7 @@ int test_temporal_scalability(int argc,
         temp_scale_fn_vec.push_back(file_name_char);
     }
 
-    //encode comp file name only vector
+    // encode comp file name only vector
     std::vector<std::string> enc_fn_vec;
     for(str_it = enc_vec.begin(); str_it < enc_vec.end(); ++str_it){
         char file_name_char[256];
@@ -283,11 +283,11 @@ int test_temporal_scalability(int argc,
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    //make sure that decemation occurs correctly
-    //make sure speed is comperable to normal encode
-    //make sure psnr values increase as # decimation dec
-    //make sure psnr values obtain min quality assurence
-    //make sure psnr values compared to standard encodes are with in range
+    // make sure that decemation occurs correctly
+    // make sure speed is comperable to normal encode
+    // make sure psnr values increase as # decimation dec
+    // make sure psnr values obtain min quality assurence
+    // make sure psnr values compared to standard encodes are with in range
 
     int fail = 0;
     int increase_fail = 0;
@@ -295,7 +295,7 @@ int test_temporal_scalability(int argc,
     std::vector<double>::iterator double_it;
     std::vector<double>::iterator double_it2;
 
-    //psnr min threashold check
+    // psnr min threashold check
     str_it = temp_scale_fn_vec.begin();
     for(double_it = temp_scale_psnr.begin(); double_it < temp_scale_psnr.end();
         ++double_it){
@@ -311,7 +311,7 @@ int test_temporal_scalability(int argc,
             tprintf(PRINT_BTH, "\n");
         }
 
-        //increase psnr check
+        // increase psnr check
         if(double_it < temp_scale_psnr.end()-1)
             if(*double_it > *(double_it+1))
                 increase_fail = 1;
@@ -332,7 +332,7 @@ int test_temporal_scalability(int argc,
         fail = 1;
     }
 
-    //evaluate temp scale psnrs vs normal encode psnrs
+    // evaluate temp scale psnrs vs normal encode psnrs
     double_it2 = enc_psnr.begin();
     str_it = temp_scale_fn_vec.begin();
     str_it2 = enc_fn_vec.begin();
@@ -343,7 +343,7 @@ int test_temporal_scalability(int argc,
     {
         double range = 1.0;
 
-        //adjust target bitrate range
+        // adjust target bitrate range
         if(comp_num == temp_scale_psnr_size - 1)
             range = 0.10;
         if(comp_num == temp_scale_psnr_size - 2)
@@ -378,7 +378,7 @@ int test_temporal_scalability(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
-    //frame decimation check
+    // frame decimation check
     for(double_it = temp_scale_fs_results.begin(); double_it <
         temp_scale_fs_results.end(); ++double_it){
         if(!*double_it)
@@ -408,8 +408,8 @@ int test_temporal_scalability(int argc,
         fail = 1;
     }
 
-    //if scale compress time is less than or within 20% of normal compression
-    //pass otherwise fail.
+    // if scale compress time is less than or within 20% of normal compression
+    // pass otherwise fail.
     if(scale_compress_time < enc_compress_time)
     {
         vpxt_formated_print(RESPRT, "Scaled compression time: %i is less than "
@@ -439,7 +439,7 @@ int test_temporal_scalability(int argc,
 
     tprintf(PRINT_BTH, "\n");
 
-    //delete encoded files if flagged
+    // delete encoded files if flagged
     if (delete_ivf){
         for(str_it = temp_scale_vec.begin(); str_it < temp_scale_vec.end();
             ++str_it)
@@ -454,7 +454,7 @@ int test_temporal_scalability(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -462,11 +462,11 @@ int test_temporal_scalability(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
 
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

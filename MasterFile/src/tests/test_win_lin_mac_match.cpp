@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_win_lin_mac_match(int argc,
-                           const char *const *argv,
+                           const char** argv,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
@@ -44,7 +44,7 @@ int test_win_lin_mac_match(int argc,
     vpxt_make_dir(base_folder);
     int test_mode = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -53,7 +53,7 @@ int test_win_lin_mac_match(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string file_to_enc;
     std::string file_to_dec;
@@ -108,10 +108,10 @@ int test_win_lin_mac_match(int argc,
 
 #endif
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -128,24 +128,24 @@ int test_win_lin_mac_match(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
 
     bitrate = opt.target_bandwidth;
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
     {
 
     }
@@ -159,7 +159,7 @@ int test_win_lin_mac_match(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         tprintf(PRINT_STD, "\n");
@@ -171,18 +171,18 @@ int test_win_lin_mac_match(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
     }
 
-    //Create Compression only stop test short.
-    if (test_type == COMP_ONLY)
+    // Create Compression only stop test short.
+    if (test_type == kCompOnly)
     {
-        //Compression only run
+        // Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     if (test_mode == 0)
@@ -195,7 +195,7 @@ int test_win_lin_mac_match(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
     int enc_fail = 0;
@@ -410,7 +410,7 @@ int test_win_lin_mac_match(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
     else
     {
@@ -418,10 +418,10 @@ int test_win_lin_mac_match(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

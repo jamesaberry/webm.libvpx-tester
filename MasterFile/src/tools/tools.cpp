@@ -95,7 +95,7 @@ int IVFParseandDelete(const char *dir_name)
     std::string input_str = dir_name;
     char get_first_file_char[255];
     snprintf(get_first_file_char, 255, "%s", input_str.c_str());
-    //strcpy(get_first_file_char,input_str.c_str());
+    // strcpy(get_first_file_char,input_str.c_str());
 
     std::string double_dot = "..";
     std::string single_dot = ".";
@@ -316,7 +316,7 @@ int txt_parse_and_copy(const char *dir_name,
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -384,7 +384,7 @@ int txt_parse_and_copy(const char *dir_name,
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -452,7 +452,7 @@ int txt_parse_and_copy(const char *dir_name,
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -518,7 +518,7 @@ int txt_parse_and_copy(const char *dir_name,
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -565,7 +565,7 @@ int txt_parse_and_copy(const char *dir_name,
 
                     if (extention.compare(".txt") == 0)
                     {
-                        //if extention matches txt
+                        // if extention matches txt
                         std::string file_name_part_2 =
                             output_str.substr(base_input_str_length + 1,
                             output_str.length() - base_input_str_length - 1);
@@ -597,7 +597,7 @@ int txt_parse_and_copy(const char *dir_name,
 }
 
 
-int tool_combine_indv_frames(int argc, const char *const *argv)
+int tool_combine_indv_frames(int argc, const char** argv)
 {
     if (argc != 8)
         return vpxt_tool_help(argv[1], 0);
@@ -619,7 +619,7 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
         zero_check[0] = argv[6][x];
         zero_check[1] = '\0';
 
-        //std::cout << "\n" << argv[6][x] << "\n";
+        // std::cout << "\n" << argv[6][x] << "\n";
         if (atoi(zero_check) == 0)
             static_zero_count++;
         else
@@ -627,7 +627,7 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
         x++;
     }
 
-    //find out how many dec places due to increasing frames
+    // find out how many dec places due to increasing frames
     std::string cur_indv_frame_file_name;
     int input_dec_places = vpxt_decimal_places(last_frame);
     int current_frame = first_frame;
@@ -644,12 +644,12 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
 
     while (current_frame <= last_frame)
     {
-        //printf("%i ",current_frame);
+        // printf("%i ",current_frame);
         cur_indv_frame_file_name = input_dir + slashCharStr() + name_base;
 
         int added_static_zeros = 0;
 
-        while (added_static_zeros < static_zero_count) //add static zeros
+        while (added_static_zeros < static_zero_count) // add static zeros
         {
             cur_indv_frame_file_name += "0";
             added_static_zeros++;
@@ -657,7 +657,7 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
 
         int cur_num_dec_places = vpxt_decimal_places(current_frame);
 
-        //add zeros for increasing frames
+        // add zeros for increasing frames
         while (cur_num_dec_places < input_dec_places)
         {
             cur_indv_frame_file_name += "0";
@@ -698,7 +698,7 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
     fclose(out);
     return 0;
 }
-int tool_compare_enc(int argc, const char *const *argv)
+int tool_compare_enc(int argc, const char** argv)
 {
     if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
@@ -734,7 +734,7 @@ int tool_compare_enc(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_compare_dec(int argc, const char *const *argv)
+int tool_compare_dec(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -763,7 +763,7 @@ int tool_compare_dec(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_compare_header_info(int argc, const char *const *argv)
+int tool_compare_header_info(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -772,7 +772,7 @@ int tool_compare_header_info(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_display_header_info(int argc, const char *const *argv)
+int tool_display_header_info(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -781,7 +781,7 @@ int tool_display_header_info(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_enc(int argc, const char *const *argv, std::string working_dir)
+int tool_vpxt_enc(int argc, const char** argv, std::string working_dir)
 {
     char *comp_out_str = "Allow DF";
 
@@ -807,12 +807,12 @@ int tool_vpxt_enc(int argc, const char *const *argv, std::string working_dir)
 
     int compress_int = opt.allow_df;
 
-    ////////////Track Mem Usage//////////
-    //std::string mem_leak_check_txt_2_str = output + "_MemOut.txt";
-    //char MemLeakCheckTXT2[255];
-    //snprintf(MemLeakCheckTXT2, 255, "%s", mem_leak_check_txt_2_str.c_str());
-    //on2_MemoryTrackerSetLogType(0, MemLeakCheckTXT2);
-    //std::cout << "\nMemory Tracking to file: " << MemLeakCheckTXT2 << "\n";
+    //////////// Track Mem Usage //////////
+    // std::string mem_leak_check_txt_2_str = output + "_MemOut.txt";
+    // char MemLeakCheckTXT2[255];
+    // snprintf(MemLeakCheckTXT2, 255, "%s", mem_leak_check_txt_2_str.c_str());
+    // on2_MemoryTrackerSetLogType(0, MemLeakCheckTXT2);
+    // std::cout << "\nMemory Tracking to file: " << MemLeakCheckTXT2 << "\n";
     /////////////////////////////////////
 
     opt.Mode = mode;
@@ -828,12 +828,12 @@ int tool_vpxt_enc(int argc, const char *const *argv, std::string working_dir)
             opt, comp_out_str, compress_int, 0, CPUTick, enc_format);
     }
 
-    ////////////Track Mem Usage//////////
-    //on2_MemoryTrackerDump();
+    //////////// Track Mem Usage //////////
+    // on2_MemoryTrackerDump();
     /////////////////////////////////////
     return 0;
 }
-int tool_vpxt_multi_res_enc(int argc, const char *const *argv)
+int tool_vpxt_multi_res_enc(int argc, const char** argv)
 {
     char *comp_out_str = "Allow DF";
 
@@ -865,7 +865,7 @@ int tool_vpxt_multi_res_enc(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_temp_scale_enc(int argc, const char *const *argv)
+int tool_vpxt_temp_scale_enc(int argc, const char** argv)
 {
     char *comp_out_str = "Allow DF";
 
@@ -896,7 +896,7 @@ int tool_vpxt_temp_scale_enc(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_multi_res_enc(int argc, const char *const *argv)
+int tool_multi_res_enc(int argc, const char** argv)
 {
     int dummy_argc = argc - 1;
 
@@ -914,7 +914,7 @@ int tool_multi_res_enc(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vp8_scalable_patterns(int argc, const char *const *argv)
+int tool_vp8_scalable_patterns(int argc, const char** argv)
 {
     int dummy_argc = argc - 1;
 
@@ -932,7 +932,7 @@ int tool_vp8_scalable_patterns(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv)
+int tool_convert_par_file_to_vpxenc(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -944,7 +944,7 @@ int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_create_rand_par_file(int argc, const char *const *argv)
+int tool_create_rand_par_file(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -958,7 +958,7 @@ int tool_create_rand_par_file(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_crop_raw_clip(int argc, const char *const *argv)
+int tool_crop_raw_clip(int argc, const char** argv)
 {
     if (argc < 8)
         return vpxt_tool_help(argv[1], 0);
@@ -977,7 +977,7 @@ int tool_crop_raw_clip(int argc, const char *const *argv)
     tprintf(PRINT_STD, "\n");
     return 0;
 }
-int tool_pad_raw_clip(int argc, const char *const *argv)
+int tool_pad_raw_clip(int argc, const char** argv)
 {
     if (argc < 6)
         return vpxt_tool_help(argv[1], 0);
@@ -991,7 +991,7 @@ int tool_pad_raw_clip(int argc, const char *const *argv)
         new_frame_height, file_is_ivf, 0);
     return 0;
 }
-int tool_copy_all_txt_files(int argc, const char *const *argv)
+int tool_copy_all_txt_files(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1047,7 +1047,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -1119,7 +1119,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -1189,7 +1189,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -1263,7 +1263,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 
                 if (extention.compare(".txt") == 0)
                 {
-                    //if extention matches txt
+                    // if extention matches txt
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
@@ -1311,7 +1311,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 
                     if (extention.compare(".txt") == 0)
                     {
-                        //if extention matches txt
+                        // if extention matches txt
                         std::string file_name_part_2 =
                             output_str.substr(base_input_str_length + 1,
                             output_str.length() - base_input_str_length - 1);
@@ -1342,7 +1342,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 #endif
     return 0;
 }
-int tool_cut_ivf(int argc, const char *const *argv)
+int tool_cut_ivf(int argc, const char** argv)
 {
     if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
@@ -1357,7 +1357,7 @@ int tool_cut_ivf(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_dec(int argc, const char *const *argv)
+int tool_vpxt_dec(int argc, const char** argv)
 {
     if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
@@ -1371,7 +1371,7 @@ int tool_vpxt_dec(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_dec_part_drop(int argc, const char *const *argv)
+int tool_vpxt_dec_part_drop(int argc, const char** argv)
 {
     if (argc < 8)
         return vpxt_tool_help(argv[1], 0);
@@ -1388,7 +1388,7 @@ int tool_vpxt_dec_part_drop(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_dec_resize(int argc, const char *const *argv)
+int tool_vpxt_dec_resize(int argc, const char** argv)
 {
     if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
@@ -1402,7 +1402,7 @@ int tool_vpxt_dec_resize(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_dec_to_raw(int argc, const char *const *argv)
+int tool_vpxt_dec_to_raw(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1414,7 +1414,7 @@ int tool_vpxt_dec_to_raw(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_write_ivf_file_header(int argc, const char *const *argv)
+int tool_vpxt_write_ivf_file_header(int argc, const char** argv)
 {
     if (argc < 7)
         return vpxt_tool_help(argv[1], 0);
@@ -1444,7 +1444,7 @@ int tool_vpxt_write_ivf_file_header(int argc, const char *const *argv)
     fclose(out_file);
     return 0;
 }
-int tool_vpxt_write_ivf_frame_header(int argc, const char *const *argv)
+int tool_vpxt_write_ivf_frame_header(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1466,7 +1466,7 @@ int tool_vpxt_write_ivf_frame_header(int argc, const char *const *argv)
     return 0;
 
 }
-int tool_vpxt_write_frame_data(int argc, const char *const *argv)
+int tool_vpxt_write_frame_data(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1489,7 +1489,7 @@ int tool_vpxt_write_frame_data(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_disp_alt_ref_frames(int argc, const char *const *argv)
+int tool_disp_alt_ref_frames(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1499,7 +1499,7 @@ int tool_disp_alt_ref_frames(int argc, const char *const *argv)
         alt_ref_frames);
     return 0;
 }
-int tool_disp_droped_frames(int argc, const char *const *argv)
+int tool_disp_droped_frames(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1510,7 +1510,7 @@ int tool_disp_droped_frames(int argc, const char *const *argv)
         dropped_frames);
     return 0;
 }
-int tool_disp_frame_data(int argc, const char *const *argv)
+int tool_disp_frame_data(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -1518,7 +1518,7 @@ int tool_disp_frame_data(int argc, const char *const *argv)
     vpxt_display_alt_ref_frames(argv[2], 0);
     return 0;
 }
-int tool_disp_key_frames(int argc, const char *const *argv)
+int tool_disp_key_frames(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -1528,7 +1528,7 @@ int tool_disp_key_frames(int argc, const char *const *argv)
     return 0;
 }
 
-int tool_disp_resized_frames(int argc, const char *const *argv)
+int tool_disp_resized_frames(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1537,7 +1537,7 @@ int tool_disp_resized_frames(int argc, const char *const *argv)
     tprintf(PRINT_STD, "\nResized Frames Found: %i\n", resized_frames);
     return 0;
 }
-int tool_disp_visible_frames(int argc, const char *const *argv)
+int tool_disp_visible_frames(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1547,7 +1547,7 @@ int tool_disp_visible_frames(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_format_summary(int argc, const char *const *argv)
+int tool_format_summary(int argc, const char** argv)
 {
     if (argc < 3)
     {
@@ -1563,7 +1563,7 @@ int tool_format_summary(int argc, const char *const *argv)
     return 0;
 }
 
-int tool_vpxt_check_pbm_run(int argc, const char *const *argv)
+int tool_vpxt_check_pbm_run(int argc, const char** argv)
 {
     if (argc < 6)
         return vpxt_tool_help(argv[1], 0);
@@ -1584,7 +1584,7 @@ int tool_vpxt_check_pbm_run(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_data_rate(int argc, const char *const *argv)
+int tool_vpxt_data_rate(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -1593,7 +1593,7 @@ int tool_vpxt_data_rate(int argc, const char *const *argv)
 
     return 1;
 }
-int tool_vpxt_psnr_run(int argc, const char *const *argv)
+int tool_vpxt_psnr_run(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1611,7 +1611,7 @@ int tool_vpxt_psnr_run(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_vpxt_psnr_run_dec(int argc, const char *const *argv)
+int tool_vpxt_psnr_run_dec(int argc, const char** argv)
 {
     if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
@@ -1644,7 +1644,7 @@ int tool_vpxt_psnr_run_dec(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_formatted_to_raw(int argc, const char *const *argv)
+int tool_formatted_to_raw(int argc, const char** argv)
 {
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
@@ -1652,7 +1652,7 @@ int tool_formatted_to_raw(int argc, const char *const *argv)
     vpxt_formatted_to_raw(argv[2], argv[3]);
     return 0;
 }
-int tool_formatted_to_raw_frames(int argc, const char *const *argv)
+int tool_formatted_to_raw_frames(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -1662,7 +1662,7 @@ int tool_formatted_to_raw_frames(int argc, const char *const *argv)
     return 0;
 }
 
-int tool_paste_clip(int argc, const char *const *argv)
+int tool_paste_clip(int argc, const char** argv)
 {
     if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
@@ -1678,30 +1678,30 @@ int tool_paste_clip(int argc, const char *const *argv)
     return 0;
 }
 
-int tool_play_comp_ivf(int argc, const char *const *argv)
+int tool_play_comp_ivf(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
 
 #if defined(__APPLE__)
     {
-        //printf("\nError - Not Yet Implemented for Mac.\n");
-        //return 0;
+        // printf("\nError - Not Yet Implemented for Mac.\n");
+        // return 0;
     }
 #endif
 #if defined(_PPC)
     {
-        //printf("\nError - Not Yet Implemented for Mac.\n");
-        //return 0;
+        // printf("\nError - Not Yet Implemented for Mac.\n");
+        // return 0;
     }
 #endif
 #if defined(linux)
     {
-        //if(!vpxt_file_exists_check("/usr/bin/mplayer"))
-        //{
+        // if(!vpxt_file_exists_check("/usr/bin/mplayer"))
+        // {
         // tprintf(PRINT_STD, "\nError - c:\\bin\\tmnplay.exe not found.\n");
         //  return 0;
-        //}
+        // }
     }
 #endif
 #if defined(_WIN32)
@@ -1718,7 +1718,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
     std::string output = argv[2];
     output += "_DEC.ivf.raw";
 
-    /////////////////////Read In Data From IVF File/////////////////////
+    ///////////////////// Read In Data From IVF File /////////////////////
     FILE *in = fopen(input.c_str(), "rb");
 
     if (in == NULL)
@@ -1824,7 +1824,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
     return 0;
 
 }
-int tool_play_dec_ivf(int argc, const char *const *argv)
+int tool_play_dec_ivf(int argc, const char** argv)
 {
     if (argc < 3)
         return vpxt_tool_help(argv[1], 0);
@@ -1833,21 +1833,21 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
     {
         if (!vpxt_file_exists_check("/usr/bin/mplayer"))
         {
-            //printf("\nError - /usr/bin/mplayer not found.\n");
-            //return 0;
+            // printf("\nError - /usr/bin/mplayer not found.\n");
+            // return 0;
         }
     }
 #endif
 #if defined(__APPLE__)
     {
-        //printf("\nError - Not Yet Implemented for Mac\n");
-        //return 0;
+        // printf("\nError - Not Yet Implemented for Mac\n");
+        // return 0;
     }
 #endif
 #if defined(_PPC)
     {
-        //printf("\nError - Not Yet Implemented for Mac\n");
-        //return 0;
+        // printf("\nError - Not Yet Implemented for Mac\n");
+        // return 0;
     }
 #endif
 #if defined(_WIN32)
@@ -1864,7 +1864,7 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
     std::string output = argv[2];
     output += ".raw";
 
-    /////////////////////Read In Data From IVF File/////////////////////
+    ///////////////////// Read In Data From IVF File /////////////////////
     FILE *in = fopen(input.c_str(), "rb");
 
     if (!in)
@@ -2019,7 +2019,7 @@ int tool_print_cpu_info()
 
     return 0;
 }
-int tool_random_stress_test(int argc, const char *const *argv)
+int tool_random_stress_test(int argc, const char** argv)
 {
     if (argc < 6)
     {
@@ -2109,7 +2109,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
     int arg_parse = 6;
     int input_done = 0;
 
-    //parse command line if done is found skip manual input
+    // parse command line if done is found skip manual input
     while(arg_parse < argc)
     {
         int test_num = vpxt_identify_test(argv[arg_parse]);
@@ -2208,7 +2208,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             rand_scale_tb_1 = (rand_scale_tb_5 * 20) / 100;
         }
 
-        if (valid_test_numbers[rand_test_num] == AlWDFNUM)
+        if (valid_test_numbers[rand_test_num] == kTestAllowDropFrames)
         {
             out_file << "test_allow_drop_frames@";
             out_file << rand_source_file.c_str();
@@ -2225,7 +2225,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == ALWLGNUM)
+        if (valid_test_numbers[rand_test_num] == kTestAllowLag)
         {
             out_file << "test_allow_lag@";
             out_file << rand_source_file.c_str();
@@ -2242,7 +2242,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == ALWSRNUM)
+        if (valid_test_numbers[rand_test_num] == kTestAllowSpatialResampling)
         {
             out_file << "test_allow_spatial_resampling@";
             out_file << rand_source_file.c_str();
@@ -2259,7 +2259,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == ARNRTNUM)
+        if (valid_test_numbers[rand_test_num] == kTestArnr)
         {
             out_file << "test_arnr@";
             out_file << rand_source_file.c_str();
@@ -2276,7 +2276,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == AUTKFNUM)
+        if (valid_test_numbers[rand_test_num] == kTestAutoKeyFrame)
         {
             out_file << "test_auto_key_frame@";
             out_file << rand_source_file.c_str();
@@ -2295,7 +2295,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == BUFLVNUM)
+        if (valid_test_numbers[rand_test_num] == kTestBufferLevel)
         {
             out_file << "test_buffer_level@";
             out_file << rand_source_file.c_str();
@@ -2312,7 +2312,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == CPUDENUM)
+        if (valid_test_numbers[rand_test_num] == kTestChangeCpuDec)
         {
             out_file << "test_change_cpu_dec@";
             out_file << rand_source_file.c_str();
@@ -2331,7 +2331,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == CPUENNUM)
+        if (valid_test_numbers[rand_test_num] == kTestChangeCpuEnc)
         {
             out_file << "test_change_cpu_enc@";
             out_file << rand_source_file.c_str();
@@ -2350,7 +2350,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == CONQUNUM)
+        if (valid_test_numbers[rand_test_num] == kTestConstrainedQuality)
         {
             out_file << "test_constrained_quality@";
             out_file << rand_source_file.c_str();
@@ -2369,7 +2369,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == COPSRNUM)
+        if (valid_test_numbers[rand_test_num] == kTestCopySetReference)
         {
             out_file << "test_copy_set_reference@";
             out_file << rand_source_file.c_str();
@@ -2388,7 +2388,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == DTARTNUM)
+        if (valid_test_numbers[rand_test_num] == kTestDataRate)
         {
             out_file << "test_data_rate@";
             out_file << rand_source_file.c_str();
@@ -2405,7 +2405,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == DBMRLNUM)
+        if (valid_test_numbers[rand_test_num] == kTestDebugMatchesRelease)
         {
             out_file << "test_debug_matches_release@";
             out_file << rand_source_file.c_str();
@@ -2426,7 +2426,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == DFWMWNUM)
+        if (valid_test_numbers[rand_test_num] == kTestDropFrameWaterMark)
         {
             out_file << "test_drop_frame_watermark@";
             out_file << rand_source_file.c_str();
@@ -2443,7 +2443,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == ENCBONUM)
+        if (valid_test_numbers[rand_test_num] == kTestEncoderBreakout)
         {
             out_file << "test_encoder_break_out@";
             out_file << rand_source_file.c_str();
@@ -2460,7 +2460,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == ERRCONUM)
+        if (valid_test_numbers[rand_test_num] == kTestErrorConcealment)
         {
             out_file << "test_error_concealment@";
             out_file << rand_source_file.c_str();
@@ -2477,7 +2477,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == ERRMWNUM)
+        if (valid_test_numbers[rand_test_num] == kTestErrorResolution)
         {
             out_file << "test_error_resolution@";
             out_file << rand_source_file.c_str();
@@ -2494,7 +2494,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == EXTFINUM)
+        if (valid_test_numbers[rand_test_num] == kTestExtraFile)
         {
             out_file << "test_extra_file@";
             out_file << rand_source_file.c_str();
@@ -2507,7 +2507,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == FIXDQNUM)
+        if (valid_test_numbers[rand_test_num] == kTestFixedQuantizer)
         {
             out_file << "test_fixed_quantizer@";
             out_file << rand_source_file.c_str();
@@ -2528,7 +2528,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == FKEFRNUM)
+        if (valid_test_numbers[rand_test_num] == kTestForcedKeyFrame)
         {
             out_file << "test_force_key_frame@";
             out_file << rand_source_file.c_str();
@@ -2547,7 +2547,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == FRSZTNUM)
+        if (valid_test_numbers[rand_test_num] == kTestFrameSize)
         {
             int RandWidth = opt.Width - (opt.Width % 16) - ((rand() %
                 (opt.Width / 16)) * 16);
@@ -2572,7 +2572,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == GQVBQNUM)
+        if (valid_test_numbers[rand_test_num] == kTestGoodVsBest)
         {
             out_file << "test_good_vs_best@";
             out_file << rand_source_file.c_str();
@@ -2587,7 +2587,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == LGIFRNUM)
+        if (valid_test_numbers[rand_test_num] == kTestLagInFrames)
         {
             out_file << "test_lag_in_frames@";
             out_file << rand_source_file.c_str();
@@ -2608,7 +2608,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == MAXQUNUM)
+        if (valid_test_numbers[rand_test_num] == kTestMaxQuantizer)
         {
             out_file << "test_max_quantizer@";
             out_file << rand_source_file.c_str();
@@ -2625,7 +2625,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == MEML1NUM)
+        if (valid_test_numbers[rand_test_num] == kTestMemLeak)
         {
             out_file << "test_mem_leak@";
             out_file << rand_source_file.c_str();
@@ -2644,7 +2644,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == MEML2NUM)
+        if (valid_test_numbers[rand_test_num] == kTestMemLeak2)
         {
             out_file << "test_mem_leak2@";
             out_file << VP8vNewest_PlugIn_DLib_DMode.c_str();
@@ -2653,7 +2653,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == MINQUNUM)
+        if (valid_test_numbers[rand_test_num] == kTestMinQuantizer)
         {
             out_file << "test_min_quantizer@";
             out_file << rand_source_file.c_str();
@@ -2670,7 +2670,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == MULRENUM)
+        if (valid_test_numbers[rand_test_num] == kTestMultiResolutionEncode)
         {
             out_file << "test_multiple_resolution_encode@";
             out_file << rand_source_file.c_str();
@@ -2686,7 +2686,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
         }
 
 
-        if (valid_test_numbers[rand_test_num] == MULTDNUM)
+        if (valid_test_numbers[rand_test_num] == kTestMultiThreadedDec)
         {
             out_file << "test_multithreaded_dec@";
             out_file << rand_source_file.c_str();
@@ -2705,7 +2705,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == MULTENUM)
+        if (valid_test_numbers[rand_test_num] == kTestMultiThreadedEnc)
         {
             out_file << "test_multithreaded_enc@";
             out_file << rand_source_file.c_str();
@@ -2724,7 +2724,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == NVOECPTK)
+        if (valid_test_numbers[rand_test_num] == kTestNewVsOldEncCpuTick)
         {
             out_file << "test_new_vs_old_enc_cpu_tick@";
             out_file << rand_source_file.c_str();
@@ -2745,7 +2745,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == NVOPSNUM)
+        if (valid_test_numbers[rand_test_num] == kTestNewVsOldPsnr)
         {
             out_file << "test_new_vs_old_psnr@";
             out_file << rand_source_file.c_str();
@@ -2766,7 +2766,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == NVOTSNUM)
+        if (valid_test_numbers[rand_test_num] == kTestNewVsOldTempScale)
         {
             out_file << "test_new_vs_old_psnr@";
             out_file << rand_source_file.c_str();
@@ -2787,7 +2787,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == NOISENUM)
+        if (valid_test_numbers[rand_test_num] == kTestNoiseSensitivity)
         {
             out_file << "test_noise_sensitivity@";
             out_file << rand_source_file.c_str();
@@ -2804,7 +2804,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == OV2PSNUM)
+        if (valid_test_numbers[rand_test_num] == kTestOnePassVsTwoPass)
         {
             out_file << "test_one_pass_vs_two_pass@";
             out_file << rand_source_file.c_str();
@@ -2819,7 +2819,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == PLYALNUM)
+        if (valid_test_numbers[rand_test_num] == kTestPlayAlternate)
         {
             out_file << "test_play_alternate@";
             out_file << rand_source_file.c_str();
@@ -2836,7 +2836,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == POSTPNUM)
+        if (valid_test_numbers[rand_test_num] == kTestPostProcessor)
         {
             out_file << "test_post_processor@";
             out_file << rand_source_file.c_str();
@@ -2853,7 +2853,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == PSTMFNUM)
+        if (valid_test_numbers[rand_test_num] == kTestPostProcessorMfqe)
         {
             out_file << "test_post_processor@";
             out_file << rand_source_file.c_str();
@@ -2874,7 +2874,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == RECBFNUM)
+        if (valid_test_numbers[rand_test_num] == kTestReconstructBuffer)
         {
             out_file << "test_reconstruct_buffer@";
             out_file << rand_source_file.c_str();
@@ -2891,7 +2891,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == RSDWMNUM)
+        if (valid_test_numbers[rand_test_num] == kTestResampleDownWatermark)
         {
             out_file << "test_resample_down_watermark@";
             out_file << rand_source_file.c_str();
@@ -2908,7 +2908,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == SPEEDNUM)
+        if (valid_test_numbers[rand_test_num] == kTestSpeed)
         {
             out_file << "test_speed@";
             out_file << rand_source_file.c_str();
@@ -2927,7 +2927,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == TMPSCNUM)
+        if (valid_test_numbers[rand_test_num] == kTestTemporalScalability)
         {
             out_file << "test_temporal_scalability@";
             out_file << rand_source_file.c_str();
@@ -2950,18 +2950,18 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == TVECTNUM)
+        if (valid_test_numbers[rand_test_num] == kTestTestVector)
         {
             out_file << "test_test_vector@";
             out_file << test_vector_folder.c_str();
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == TTVSFNUM)
+        if (valid_test_numbers[rand_test_num] == kTestThirtytwoVsSixtyfour)
         {
         }
 
-        if (valid_test_numbers[rand_test_num] == TV2BTNUM)
+        if (valid_test_numbers[rand_test_num] == kTestTwoPassVsTwoPassBest)
         {
             out_file << "test_two_pass_vs_two_pass_best@";
             out_file << rand_source_file.c_str();
@@ -2976,7 +2976,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == UNDSHNUM)
+        if (valid_test_numbers[rand_test_num] == kTestUndershoot)
         {
             out_file << "test_undershoot@";
             out_file << rand_source_file.c_str();
@@ -2993,7 +2993,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == VERSINUM)
+        if (valid_test_numbers[rand_test_num] == kTestVersion)
         {
             out_file << "test_version@";
             out_file << rand_source_file.c_str();
@@ -3010,7 +3010,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == VPXMINUM)
+        if (valid_test_numbers[rand_test_num] == kTestVpxMatchesInt)
         {
             out_file << "test_vpx_matches_int@";
             out_file << rand_source_file.c_str();
@@ -3031,7 +3031,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
             out_file << "\n";
         }
 
-        if (valid_test_numbers[rand_test_num] == WMLMMNUM)
+        if (valid_test_numbers[rand_test_num] == kTestWinLinMacMatch)
         {
         }
 
@@ -3041,7 +3041,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
     out_file.close();
     return 0;
 }
-int tool_raw_to_formatted(int argc, const char *const *argv)
+int tool_raw_to_formatted(int argc, const char** argv)
 {
     if (argc < 9)
         return vpxt_tool_help(argv[1], 0);
@@ -3193,7 +3193,7 @@ int tool_raw_to_formatted(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_run_ivfdec(int argc, const char *const *argv)
+int tool_run_ivfdec(int argc, const char** argv)
 {
     int dummy_argc = argc - 1;
 
@@ -3212,7 +3212,7 @@ int tool_run_ivfdec(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_run_ivfenc(int argc, const char *const *argv)
+int tool_run_ivfenc(int argc, const char** argv)
 {
     int dummy_argc = argc - 1;
 
@@ -3231,7 +3231,7 @@ int tool_run_ivfenc(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_run_thresh(int argc, const char *const *argv)
+int tool_run_thresh(int argc, const char** argv)
 {
     if (argc < 8)
     {

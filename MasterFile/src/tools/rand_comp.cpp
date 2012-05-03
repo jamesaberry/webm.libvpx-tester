@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int tool_rand_comp(int argc,
-                   const char *const *argv,
+                   const char** argv,
                    const std::string &working_dir,
                    const std::string sub_folder_str,
                    int test_type)
@@ -22,7 +22,7 @@ int tool_rand_comp(int argc,
     std::string input = argv[2];
     std::string enc_format = argv[3];
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     char WorkingDir2[255] = "";
     char WorkingDir3[255] = "";
     char *test_dir = "RandComp";
@@ -58,7 +58,7 @@ int tool_rand_comp(int argc,
     std::string InputFileNameStr = input_file_name;
 
     if (InputFileNameStr.substr(InputFileNameStr.length() - 4, 4).compare(".ivf"
-        ) == 0) //if file extension is present remove it
+        ) == 0) // if file extension is present remove it
         WorkingDir4 += InputFileNameStr.substr(0,
         InputFileNameStr.length() - 4);
     else
@@ -75,7 +75,7 @@ int tool_rand_comp(int argc,
     snprintf(RandComp, 255, "%s", WorkingDir4.c_str());
     snprintf(RandCompParOut, 255, "%s", WorkingDir5.c_str());
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = WorkingDirString = slashCharStr() + test_dir +
         ".txt";
 
@@ -114,7 +114,7 @@ int tool_rand_comp(int argc,
     if (Mode == 0)
     {
         opt.Mode = MODE_REALTIME;
-        //vpxt_output_settings(RandCompParOut,opt);
+        // vpxt_output_settings(RandCompParOut,opt);
         int speed = opt.multi_threaded;
         int bitrate = opt.target_bandwidth;
 

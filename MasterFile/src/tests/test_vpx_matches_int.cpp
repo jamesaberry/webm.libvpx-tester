@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_vpx_matches_int(int argc,
-                         const char *const *argv,
+                         const char** argv,
                          const std::string &working_dir,
                          const std::string sub_folder_str,
                          int test_type,
@@ -24,7 +24,7 @@ int test_vpx_matches_int(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -33,7 +33,7 @@ int test_vpx_matches_int(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string internal_comp = cur_test_dir_str + slashCharStr() + test_dir +
         "_internal_compression";
@@ -62,10 +62,10 @@ int test_vpx_matches_int(int argc,
     vpxdec_cmd_str.insert(0, "./");
 #endif
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -82,13 +82,13 @@ int test_vpx_matches_int(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -96,7 +96,7 @@ int test_vpx_matches_int(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -107,14 +107,14 @@ int test_vpx_matches_int(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
         bitrate = opt.target_bandwidth;
     }
 
-    /////////////////Make Sure Exe File Exists///////////////
+    ///////////////// Make Sure Exe File Exists ///////////////
     if (!vpxt_file_exists_check(vpxencPath.c_str()))
     {
         tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
@@ -122,10 +122,10 @@ int test_vpx_matches_int(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
-    /////////////////Make Sure Exe File Exists///////////////
+    ///////////////// Make Sure Exe File Exists ///////////////
     if (!vpxt_file_exists_check(vpxdecPath.c_str()))
     {
         tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
@@ -133,10 +133,10 @@ int test_vpx_matches_int(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
-    /////////////////Make Sure ivf File Exists///////////////
+    ///////////////// Make Sure ivf File Exists ///////////////
     if (!vpxt_file_exists_check(input.c_str()))
     {
         tprintf(PRINT_BTH, "\nInput encode file %s does not exist\n",
@@ -144,18 +144,18 @@ int test_vpx_matches_int(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
     /////////////////////////////////////////////////////////
 
     opt.target_bandwidth = bitrate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
-    //files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    // files)
+    if (test_type == kTestOnly)
     {
-        //This test requires no preperation before a Test Only Run
+        // This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -168,10 +168,10 @@ int test_vpx_matches_int(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
-        //Get internal parameter file strings
+        // Get internal parameter file strings
         std::string internal_comp_par_1;
         int extLength = vpxt_remove_file_extension(internal_comp.c_str(),
             internal_comp_par_1);
@@ -181,7 +181,7 @@ int test_vpx_matches_int(int argc,
             15 + extLength);
         internal_comp_par_2 += "_parameters_vpx.txt";
 
-        //convert internal parameters to vpxenc
+        // convert internal parameters to vpxenc
         char vpxenc_parameters[1024];
         vpxt_convert_par_file_to_vpxenc(internal_comp_par_1.c_str(),
             internal_comp_par_2.c_str(), vpxenc_parameters, 1024);
@@ -193,7 +193,7 @@ int test_vpx_matches_int(int argc,
         if(vpxt_file_is_yv12(input.c_str()))
             vpxenc_cmd_str += " --yv12";
 
-        //run vpxenc comp
+        // run vpxenc comp
         tprintf(PRINT_ERR, "\nAttempting to run: %s\n\n",
             vpxenc_cmd_str.c_str());
 
@@ -215,11 +215,11 @@ int test_vpx_matches_int(int argc,
             1);
     }
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
@@ -273,7 +273,7 @@ int test_vpx_matches_int(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -285,11 +285,11 @@ int test_vpx_matches_int(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 
 }

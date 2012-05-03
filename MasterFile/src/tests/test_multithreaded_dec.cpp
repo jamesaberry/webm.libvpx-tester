@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_multithreaded_dec(int argc,
-                           const char *const *argv,
+                           const char** argv,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
@@ -28,7 +28,7 @@ int test_multithreaded_dec(int argc,
     if (mode != 0 && mode != 1)
         return vpxt_test_help(argv[1], 0);
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -37,7 +37,7 @@ int test_multithreaded_dec(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string multitread_comp_file = cur_test_dir_str + slashCharStr() +
         test_dir + "_compression";
@@ -51,10 +51,10 @@ int test_multithreaded_dec(int argc,
         slashCharStr() + test_dir + "_dec_thread_" + argv[5];
     vpxt_enc_format_append(multithreaded_dec_n, dec_format);
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -71,13 +71,13 @@ int test_multithreaded_dec(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -87,13 +87,13 @@ int test_multithreaded_dec(int argc,
         tprintf(PRINT_STD, "\nMultiple Cores not used Test aborted: %i\n",
             core_count);
         fclose(fp);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -103,7 +103,7 @@ int test_multithreaded_dec(int argc,
 
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char, test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -115,9 +115,9 @@ int test_multithreaded_dec(int argc,
     opt.target_bandwidth = bitrate;
     opt.end_usage = 0;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
-    //files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    // files)
+    if (test_type == kTestOnly)
     {
         time_0_dec = vpxt_time_return(multithreaded_dec_0.c_str(),
             0);
@@ -144,7 +144,7 @@ int test_multithreaded_dec(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
         }
 
@@ -165,7 +165,7 @@ int test_multithreaded_dec(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
         }
     }
@@ -182,13 +182,13 @@ int test_multithreaded_dec(int argc,
         core_count);
     tprintf(PRINT_BTH, "\nDec time in ms: %i\n", time_n_dec);
 
-    //Create Compression only stop test short.
-    if (test_type == COMP_ONLY)
+    // Create Compression only stop test short.
+    if (test_type == kCompOnly)
     {
-        //Compression only run
+        // Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Decompression Files: ");
@@ -250,7 +250,7 @@ int test_multithreaded_dec(int argc,
         fail = 1;
     }
 
-    //compare decodes
+    // compare decodes
     if (compare_dec == 1)
     {
         vpxt_formated_print(RESPRT, "%s identical to %s - Passed",
@@ -266,7 +266,7 @@ int test_multithreaded_dec(int argc,
     }
 
 
-    //final evaluate
+    // final evaluate
     if (fail == 1)
     {
         tprintf(PRINT_BTH, "\nFailed\n");
@@ -278,7 +278,7 @@ int test_multithreaded_dec(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     if (fail == 0)
@@ -292,7 +292,7 @@ int test_multithreaded_dec(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
 
     if (fail == 3)
@@ -306,10 +306,10 @@ int test_multithreaded_dec(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_noise_sensitivity(int argc,
-                           const char *const *argv,
+                           const char** argv,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
@@ -21,7 +21,7 @@ int test_noise_sensitivity(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -30,7 +30,7 @@ int test_noise_sensitivity(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     int max_noise = 1;
     int temp_denoise = 1;
@@ -56,10 +56,10 @@ int test_noise_sensitivity(int argc,
         noise_sense_vec.push_back(noise_sense);
     }
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -76,13 +76,13 @@ int test_noise_sensitivity(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -90,7 +90,7 @@ int test_noise_sensitivity(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -101,7 +101,7 @@ int test_noise_sensitivity(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -116,15 +116,15 @@ int test_noise_sensitivity(int argc,
     long file_size[7];
     double noise_psnr[7];
 
-    //print if temp denoise or not
+    // print if temp denoise or not
     if(temp_denoise)
         printf("\n\n Not using Temporal Denoising\n");
     else
         printf("\n\n Using Temporal Denoising\n");
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
-    //files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    // files)
+    if (test_type == kTestOnly)
     {
         while (noise != max_noise + 1)
         {
@@ -152,7 +152,7 @@ int test_noise_sensitivity(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
 
             if (test_type != 2)
@@ -171,18 +171,18 @@ int test_noise_sensitivity(int argc,
 
     }
 
-    //Create Compression only stop test short.
-    if (test_type == COMP_ONLY)
+    // Create Compression only stop test short.
+    if (test_type == kCompOnly)
     {
-        //Compression only run
+        // Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
-    //checks 0v1
-    //or
-    //checks 0v1 | 1v2 | 2v3 | 3v4 | 4v5 | 5v6
+    // checks 0v1
+    // or
+    // checks 0v1 | 1v2 | 2v3 | 3v4 | 4v5 | 5v6
     int n = 0;
     int fail = 0;
 
@@ -232,7 +232,7 @@ int test_noise_sensitivity(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -240,10 +240,10 @@ int test_noise_sensitivity(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

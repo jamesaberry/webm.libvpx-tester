@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_new_vs_old_enc_cpu_tick(int argc,
-                                 const char *const *argv,
+                                 const char** argv,
                                  const std::string &working_dir,
                                  const std::string sub_folder_str,
                                  int test_type,
@@ -24,7 +24,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     unsigned int cpu_tick_new = 0;
     unsigned int cpu_tick_old = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -33,7 +33,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string exe_dir_str;
     vpxt_folder_name(argv[0], &exe_dir_str);
@@ -92,12 +92,12 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     }
 #endif
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str;
     text_file_str += slashCharStr();
     text_file_str += test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -114,13 +114,13 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -128,7 +128,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -139,7 +139,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -160,19 +160,19 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     snprintf(test_log_output, 255, "%s%s", exe_dir_str.c_str(),
         "test_new_vs_old_enc_cpu_tick-log-sync.txt");
 
-    //check to see if git-log.txt and new-vs-old-time-log exist.
-    //If so use new method else use old.
+    // check to see if git-log.txt and new-vs-old-time-log exist.
+    // If so use new method else use old.
     if (vpxt_file_exists_check(git_log_input) &&
         vpxt_file_exists_check(test_log_input))
     {
-        //Make New Compression get time.
+        // Make New Compression get time.
         opt.target_bandwidth = bitrate;
         opt.auto_key = 1;
         opt.cpu_used = -4;
 
-        //Run Test only (Runs Test, Sets up test to be run, or skips compresion
-        //of files)
-        if (test_type == TEST_ONLY)
+        // Run Test only (Runs Test, Sets up test to be run, or skips compresion
+        // of files)
+        if (test_type == kTestOnly)
         {
             cpu_tick_new = vpxt_cpu_tick_return(new_enc_file.c_str(), 0);
             cpu_tick_old = vpxt_cpu_tick_return(old_enc_file.c_str(), 0);
@@ -192,7 +192,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
         }
 
@@ -206,7 +206,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
         int arg_parse = 1;
         std::string command_line_input_str;
 
-        //assemble command line input string
+        // assemble command line input string
         while (arg_parse < argc){
             if (arg_parse != 1)
                 command_line_input_str += " ";
@@ -228,7 +228,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         std::vector<double> raw_data_list;
@@ -254,7 +254,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         tprintf(PRINT_BTH, "\n\n\nResults:\n\n");
@@ -291,7 +291,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     else
     {
 
-        /////////////////Make Sure Exe File Exists///////////////
+        ///////////////// Make Sure Exe File Exists ///////////////
         if (!vpxt_file_exists_check(old_exe_full_path))
         {
             tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
@@ -300,7 +300,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         /////////////////////////////////////////////////////////
@@ -309,9 +309,9 @@ int test_new_vs_old_enc_cpu_tick(int argc,
         opt.auto_key = 1;
         opt.cpu_used = -4;
 
-        //Run Test only (Runs Test, Sets up test to be run, or skips compresion
-        //of files)
-        if (test_type == TEST_ONLY)
+        // Run Test only (Runs Test, Sets up test to be run, or skips compresion
+        // of files)
+        if (test_type == kTestOnly)
         {
             cpu_tick_new = vpxt_cpu_tick_return(new_enc_file.c_str(), 0);
             cpu_tick_old = vpxt_cpu_tick_return(old_enc_file.c_str(), 0);
@@ -331,7 +331,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
 
             vpxt_output_compatable_settings(par_file.c_str(), opt,par_file_num);
@@ -376,13 +376,13 @@ int test_new_vs_old_enc_cpu_tick(int argc,
         }
     }
 
-    //Create Compression only stop test short.
-    if (test_type == COMP_ONLY)
+    // Create Compression only stop test short.
+    if (test_type == kCompOnly)
     {
-        //Compression only run
+        // Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     if (delete_ivf)
@@ -394,7 +394,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
     if (!failed)
@@ -403,7 +403,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -411,10 +411,10 @@ int test_new_vs_old_enc_cpu_tick(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

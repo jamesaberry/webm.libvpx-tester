@@ -1,12 +1,12 @@
 #include "vpxt_test_declarations.h"
 
-//See vp8.h vp8_postproc_cfg description for valid ranges.
+// See vp8.h vp8_postproc_cfg description for valid ranges.
 #define max_deblock_level 16
 #define max_noise_level 16
 #define test_post_processor_psnr_ar_size 2 + max_deblock_level + max_noise_level
 
 int test_post_processor(int argc,
-                        const char *const *argv,
+                        const char** argv,
                         const std::string &working_dir,
                         const std::string sub_folder_str,
                         int test_type,
@@ -26,7 +26,7 @@ int test_post_processor(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -35,16 +35,16 @@ int test_post_processor(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string post_proc_encode = cur_test_dir_str + slashCharStr() + test_dir
         + "_compression";
     vpxt_enc_format_append(post_proc_encode, enc_format);
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -61,13 +61,13 @@ int test_post_processor(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s\n", test_dir);
@@ -75,7 +75,7 @@ int test_post_processor(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -86,7 +86,7 @@ int test_post_processor(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -96,11 +96,11 @@ int test_post_processor(int argc,
     /////////////////////////////////////////////////////////
     opt.target_bandwidth = bitrate;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
-    //files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    // files)
+    if (test_type == kTestOnly)
     {
-        //This test requires no preperation before a Test Only Run
+        // This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -112,17 +112,17 @@ int test_post_processor(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
     }
 
-    //Create Compression only stop test short.
-    if (test_type == COMP_ONLY)
+    // Create Compression only stop test short.
+    if (test_type == kCompOnly)
     {
-        //Compression only run
+        // Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     int n = 0;
@@ -130,7 +130,7 @@ int test_post_processor(int argc,
 
     double psnr_arr[test_post_processor_psnr_ar_size];
 
-    //No Filtering PSNR calculation
+    // No Filtering PSNR calculation
     int deblock_level = 0;
     int noise_level = 0;
     int flags = VP8_NOFILTERING;
@@ -144,7 +144,7 @@ int test_post_processor(int argc,
 
     ++n;
 
-    //Deblock PSNR calculation
+    // Deblock PSNR calculation
     flags = VP8_DEBLOCK;
 
     tprintf(PRINT_BTH, "\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level "
@@ -156,7 +156,7 @@ int test_post_processor(int argc,
 
     ++n;
 
-    //Demackroblock PSNR calculation
+    // Demackroblock PSNR calculation
     flags = VP8_DEMACROBLOCK;
 
     while (deblock_level < max_deblock_level && n <
@@ -172,7 +172,7 @@ int test_post_processor(int argc,
         ++n;
     }
 
-    //Add noise PSNR calculation
+    // Add noise PSNR calculation
     deblock_level = 0;
     noise_level = 0;
     flags = VP8_ADDNOISE;
@@ -342,7 +342,7 @@ int test_post_processor(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_PASSED;
+            return kTestPassed;
         }
         else
         {
@@ -351,7 +351,7 @@ int test_post_processor(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_MINPA;
+            return kTestMinPassed;
         }
     }
     else
@@ -360,10 +360,10 @@ int test_post_processor(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

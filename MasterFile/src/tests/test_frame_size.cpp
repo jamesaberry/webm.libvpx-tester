@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_frame_size(int argc,
-                    const char *const *argv,
+                    const char** argv,
                     const std::string &working_dir,
                     const std::string sub_folder_str,
                     int test_type,
@@ -24,9 +24,8 @@ int test_frame_size(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
-    std::string cur_test_dir_str; // <- All Options need to set a value for
-    //this
+    //////////// Formatting Test Specific directory ////////////
+    std::string cur_test_dir_str; // <- All Options need to set a value for this
     std::string file_index_str;
     char main_test_dir_char[255] = "";
     char file_index_output_char[255] = "";
@@ -34,7 +33,7 @@ int test_frame_size(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     char input_file_name[256] = "";
     vpxt_file_name(input.c_str(), input_file_name, 1);
@@ -48,14 +47,14 @@ int test_frame_size(int argc,
     std::string raw_ext;
     vpxt_get_file_extension(input.c_str(), raw_ext);
 
-    //height
+    // height
     int counter = 0;
     int file_num = 1;
 
     while (counter < 16)
     {
-        vpxt_itoa_custom(starting_width, new_width, 10); //width
-        vpxt_itoa_custom(starting_height - (counter), new_height, 10); //height
+        vpxt_itoa_custom(starting_width, new_width, 10); // width
+        vpxt_itoa_custom(starting_height - (counter), new_height, 10); // height
 
         raw_crop[file_num] = frame_size_base + "_";
         raw_crop[file_num] += new_width;
@@ -67,13 +66,13 @@ int test_frame_size(int argc,
         file_num++;
     }
 
-    //width
+    // width
     counter = 1;
 
     while (counter < 16)
     {
-        vpxt_itoa_custom(starting_width - (counter), new_width, 10); //width
-        vpxt_itoa_custom(starting_height, new_height, 10); //height
+        vpxt_itoa_custom(starting_width - (counter), new_width, 10); // width
+        vpxt_itoa_custom(starting_height, new_height, 10); // height
 
         raw_crop[file_num] = frame_size_base + "_";
         raw_crop[file_num] += new_width;
@@ -85,13 +84,13 @@ int test_frame_size(int argc,
         file_num++;
     }
 
-    //width and height
+    // width and height
     counter = 1;
 
     while (counter < 16)
     {
-        vpxt_itoa_custom(starting_width - (counter), new_width, 10); //width
-        vpxt_itoa_custom(starting_height - (counter), new_height, 10); //height
+        vpxt_itoa_custom(starting_width - (counter), new_width, 10); // width
+        vpxt_itoa_custom(starting_height - (counter), new_height, 10); // height
 
         raw_crop[file_num] = frame_size_base + "_";
         raw_crop[file_num] += new_width;
@@ -103,7 +102,7 @@ int test_frame_size(int argc,
         file_num++;
     }
 
-    //encoded file names
+    // encoded file names
     file_num = 1;
     std::string enc_crop[47];
 
@@ -119,7 +118,7 @@ int test_frame_size(int argc,
 
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -137,16 +136,16 @@ int test_frame_size(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
-    //Make sure starting width and height are mults of 16
+    // Make sure starting width and height are mults of 16
     if ((starting_width % 16 != 0) && (starting_height % 16 != 0))
     {
         tprintf(PRINT_BTH, "\nError: Starting width and height are not "
@@ -154,7 +153,7 @@ int test_frame_size(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     if (starting_height % 16 != 0)
@@ -164,7 +163,7 @@ int test_frame_size(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     if (starting_width % 16 != 0)
@@ -174,7 +173,7 @@ int test_frame_size(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -182,7 +181,7 @@ int test_frame_size(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -193,7 +192,7 @@ int test_frame_size(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -206,11 +205,11 @@ int test_frame_size(int argc,
     double psnr_arr[46];
     int raw_crop_num = 1;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
-    //files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    // files)
+    if (test_type == kTestOnly)
     {
-        //Get Prexisting psnr values
+        // Get Prexisting psnr values
         while (raw_crop_num < 47)
         {
             psnr_arr[raw_crop_num-1] = vpxt_get_psnr(
@@ -220,20 +219,19 @@ int test_frame_size(int argc,
     }
     else
     {
-
-        //Create Raw Crops
+        // Create Raw Crops
         int x = 0;
         opt.Mode = mode;
 
         while (x < 16)
         {
-            //Crop
+            // Crop
             tprintf(PRINT_BTH, "\nCroping to %i %i", starting_width,
                 starting_height - x);
             vpxt_crop_raw_clip(input.c_str(), raw_crop[raw_crop_num].c_str(), 0,
                 0, starting_width, starting_height - x, 1, 1);
 
-            //Comp
+            // Comp
             char file_name_char[256];
             char file_name_char_2[256];
             snprintf(file_name_char, 256, raw_crop[raw_crop_num].c_str());
@@ -248,10 +246,10 @@ int test_frame_size(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
 
-            //PSNR
+            // PSNR
             psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
                 enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
 
@@ -264,8 +262,8 @@ int test_frame_size(int argc,
             out_file_psnr << psnr_arr[raw_crop_num-1];
             out_file_psnr.close();
 
-            //Delete(file deletions are done here due to the number of files
-            //that need to be generated)
+            // Delete(file deletions are done here due to the number of files
+            // that need to be generated)
             if (delete_ivf)
             {
                 vpxt_delete_files(1, raw_crop[raw_crop_num].c_str());
@@ -280,13 +278,13 @@ int test_frame_size(int argc,
 
         while (x < 16)
         {
-            //Crop
+            // Crop
             tprintf(PRINT_BTH, "\nCroping to %i %i", starting_width - x,
                 starting_height);
             vpxt_crop_raw_clip(input.c_str(), raw_crop[raw_crop_num].c_str(), 0,
                 0, starting_width - x, starting_height, 1, 1);
 
-            //Comp
+            // Comp
             char file_name_char[256];
             char file_name_char_2[256];
             snprintf(file_name_char, 256, enc_crop[raw_crop_num].c_str());
@@ -301,10 +299,10 @@ int test_frame_size(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
 
-            //PSNR
+            // PSNR
             psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
                 enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
 
@@ -317,7 +315,7 @@ int test_frame_size(int argc,
             out_file_psnr << psnr_arr[raw_crop_num-1];
             out_file_psnr.close();
 
-            //Delete
+            // Delete
             if (delete_ivf)
             {
                 vpxt_delete_files(1, raw_crop[raw_crop_num].c_str());
@@ -332,13 +330,13 @@ int test_frame_size(int argc,
 
         while (x < 16)
         {
-            //Crop
+            // Crop
             tprintf(PRINT_BTH, "\nCroping to %i %i", starting_width - x,
                 starting_height - x);
             vpxt_crop_raw_clip(input.c_str(), raw_crop[raw_crop_num].c_str(), 0,
                 0, starting_width - x, starting_height - x, 1, 1);
 
-            //Comp
+            // Comp
             char file_name_char[256];
             char file_name_char_2[256];
             snprintf(file_name_char, 256, raw_crop[raw_crop_num].c_str());
@@ -353,10 +351,10 @@ int test_frame_size(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
 
-            //PSNR
+            // PSNR
             psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
                 enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
 
@@ -369,7 +367,7 @@ int test_frame_size(int argc,
             out_file_psnr << psnr_arr[raw_crop_num-1];
             out_file_psnr.close();
 
-            //Delete
+            // Delete
             if (delete_ivf)
             {
                 vpxt_delete_files(1, raw_crop[raw_crop_num].c_str());
@@ -381,11 +379,11 @@ int test_frame_size(int argc,
         }
     }
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     int percent_fail = 0;
@@ -488,7 +486,7 @@ int test_frame_size(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -496,10 +494,10 @@ int test_frame_size(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

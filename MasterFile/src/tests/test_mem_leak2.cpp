@@ -1,13 +1,13 @@
 #include "vpxt_test_declarations.h"
 
 int test_mem_leak2(int argc,
-                   const char *const *argv,
+                   const char** argv,
                    const std::string &working_dir,
                    const std::string sub_folder_str,
                    int test_type,
                    int delete_ivf)
 {
-    //Needs Debug.exe
+    // Needs Debug.exe
     char *test_dir = "test_mem_leak2";
     int input_ver = vpxt_check_arg_input(argv[1], argc);
 
@@ -23,7 +23,7 @@ int test_mem_leak2(int argc,
     int mode = 1;
     int bitrate = 128;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -32,7 +32,7 @@ int test_mem_leak2(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string exe_char_mem_leak_str;
     vpxt_folder_name(argv[0], &exe_char_mem_leak_str);
@@ -50,29 +50,29 @@ int test_mem_leak2(int argc,
     std::string mem_leak_check_dec_cmd_str;
 
 #if defined(_WIN32)
-    //Faux Compress
+    // Faux Compress
     mem_leak_check_enc_cmd_str = "\"\"" + exe_char_mem_leak_str + mem_leak_exe +
         "\" fauxcompress \"" + mem_leak_check_txt_1_str + "\"\"";
 
-    //Faux Decompress
+    // Faux Decompress
     mem_leak_check_dec_cmd_str = "\"\"" + exe_char_mem_leak_str + mem_leak_exe +
         "\" fauxdecompress \"" + mem_leak_check_txt_2_str + "\" \"" +
         dec_in_file + "\"\"";
 #else
-    //Faux Compress
+    // Faux Compress
     mem_leak_check_enc_cmd_str = "\'" + exe_char_mem_leak_str + mem_leak_exe +
         "\' fauxcompress \'" + mem_leak_check_txt_1_str + "\'";
 
-    //Faux Decompress
+    // Faux Decompress
     mem_leak_check_dec_cmd_str = "\'" + exe_char_mem_leak_str + mem_leak_exe +
         "\' fauxdecompress \'" + mem_leak_check_txt_2_str + "\' \'" +
         dec_in_file + "\'";
 #endif
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -89,13 +89,13 @@ int test_mem_leak2(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -103,7 +103,7 @@ int test_mem_leak2(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -114,42 +114,42 @@ int test_mem_leak2(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
         bitrate = opt.target_bandwidth;
     }
 
-    /////////////////Make Sure Exe File Exists///////////////
+    ///////////////// Make Sure Exe File Exists ///////////////
     if (!vpxt_file_exists_check(argv[2]))
     {
         tprintf(PRINT_BTH, "\nInput executable %s does not exist\n", argv[2]);
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
-    /////////////////Make Sure ivf File Exists///////////////
+    ///////////////// Make Sure ivf File Exists ///////////////
     if (!vpxt_file_exists_check(argv[3]))
     {
         tprintf(PRINT_BTH, "\nInput decode file %s does not exist\n", argv[3]);
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
     /////////////////////////////////////////////////////////
 
     opt.target_bandwidth = bitrate ;
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
-    //files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    // files)
+    if (test_type == kTestOnly)
     {
-        //This test requires no preperation before a Test Only Run
+        // This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -163,19 +163,19 @@ int test_mem_leak2(int argc,
 
         fprintf(stderr, " ");
 
-        //opt.Mode = MODE_GOODQUALITY;
-        //vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
+        // opt.Mode = MODE_GOODQUALITY;
+        // vpxt_output_settings(MemLeakCheckParFileStr.c_str(), opt);
         vpxt_run_exe(mem_leak_check_enc_cmd_str.c_str());
         vpxt_run_exe(mem_leak_check_dec_cmd_str.c_str());
     }
 
-    //Create Compression only stop test short.
-    if (test_type == COMP_ONLY)
+    // Create Compression only stop test short.
+    if (test_type == kCompOnly)
     {
-        //Compression only run
+        // Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     int fail = 0;
@@ -267,7 +267,7 @@ int test_mem_leak2(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -275,11 +275,11 @@ int test_mem_leak2(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_FAILED;
+    return kTestFailed;
 
 }

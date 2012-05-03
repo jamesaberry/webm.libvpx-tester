@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_new_vs_old_temp_scale(int argc,
-                               const char *const *argv,
+                               const char** argv,
                                const std::string &working_dir,
                                const std::string sub_folder_str,
                                int test_type,
@@ -25,7 +25,7 @@ int test_new_vs_old_temp_scale(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -34,7 +34,7 @@ int test_new_vs_old_temp_scale(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     unsigned int number_of_encodes = 0;
     std::string temp_scale_out_base = cur_test_dir_str;
@@ -62,7 +62,7 @@ int test_new_vs_old_temp_scale(int argc,
     if(layer_mode == 6)
         number_of_encodes = 5;
 
-    //file names for new
+    // file names for new
     for(unsigned int i = 0; i < number_of_encodes; ++i){
         char i_char[8];
         vpxt_itoa_custom(i, i_char, 10);
@@ -76,7 +76,7 @@ int test_new_vs_old_temp_scale(int argc,
         new_vs_old_temp_scale_new_fn_vec.push_back(temp_scale_str);
     }
 
-    //file names for old
+    // file names for old
     for(unsigned int i = 0; i < number_of_encodes; ++i){
         char i_char[8];
         vpxt_itoa_custom(i, i_char, 10);
@@ -97,7 +97,7 @@ int test_new_vs_old_temp_scale(int argc,
     char old_exe_full_path[256];
     snprintf(old_exe_full_path, 255, "%s%s", exe_dir_str.c_str(), argv[9]);
 
-    ///////////Set up old exe command line//////////////////
+    /////////// Set up old exe command line //////////////////
     std::string old_enc_file = cur_test_dir_str;
     old_enc_file += slashCharStr();
     old_enc_file += test_dir;
@@ -165,12 +165,12 @@ int test_new_vs_old_temp_scale(int argc,
     command_line_str += quote;
 #endif
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str;
     text_file_str += slashCharStr();
     text_file_str += test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -187,13 +187,13 @@ int test_new_vs_old_temp_scale(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -201,7 +201,7 @@ int test_new_vs_old_temp_scale(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -212,7 +212,7 @@ int test_new_vs_old_temp_scale(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -237,8 +237,8 @@ int test_new_vs_old_temp_scale(int argc,
     snprintf(test_log_output, 255, "%s%s", exe_dir_str.c_str(),
         "test_new_vs_old_temp_scale-log-sync.txt");
 
-    //check to see if git-log.txt and test_new_vs_old_temp_scale-log exist.
-    //If so use new method else use old if cant find either abort.
+    // check to see if git-log.txt and test_new_vs_old_temp_scale-log exist.
+    // If so use new method else use old if cant find either abort.
     if (vpxt_file_exists_check(git_log_input) &&
         vpxt_file_exists_check(test_log_input))
         use_log = 1;
@@ -250,10 +250,10 @@ int test_new_vs_old_temp_scale(int argc,
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char,
             test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
-    //if means to preform test found create new compressions
+    // if means to preform test found create new compressions
     opt.Mode = 0;
     new_scale_compress_time = vpxt_compress_scalable_patterns(
         input.c_str(), temp_scale_out_base.c_str(), speed, opt, "VP8",
@@ -265,24 +265,24 @@ int test_new_vs_old_temp_scale(int argc,
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char,
             test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
-    //run psnrs for new temp scale compressions
+    // run psnrs for new temp scale compressions
     for(str_it = new_vs_old_temp_scale_new_fn_vec.begin(); str_it <
         new_vs_old_temp_scale_new_fn_vec.end(); ++str_it)
         new_vs_old_temp_scale_psnr_new.push_back(vpxt_psnr(input.c_str(),
         (*str_it).c_str(), 0, PRINT_BTH, 1, NULL));
-    //run data rates for new temp scale compressions
+    // run data rates for new temp scale compressions
     for(str_it = new_vs_old_temp_scale_new_fn_vec.begin(); str_it <
         new_vs_old_temp_scale_new_fn_vec.end(); ++str_it)
         new_vs_old_temp_scale_data_rate_new.push_back(vpxt_data_rate(
         (*str_it).c_str(), 1));
 
-    //if log files found
+    // if log files found
     if(use_log)
     {
-        //assemble psnr/data rate results string
+        // assemble psnr/data rate results string
         std::string psnr_data_rate_result_str;
         double_it2 = new_vs_old_temp_scale_data_rate_new.begin();
         for(double_it = new_vs_old_temp_scale_psnr_new.begin(); double_it <
@@ -309,7 +309,7 @@ int test_new_vs_old_temp_scale(int argc,
         int arg_parse = 1;
         std::string command_line_input_str;
 
-        //assemble command line input string
+        // assemble command line input string
         while (arg_parse < argc){
             if (arg_parse != 1)
                 command_line_input_str += " ";
@@ -317,14 +317,14 @@ int test_new_vs_old_temp_scale(int argc,
             ++arg_parse;
         }
 
-        //make sure first char is not a space
+        // make sure first char is not a space
         if (command_line_input_str.substr(0, 1).compare(" ") == 0)
             command_line_input_str.erase(command_line_input_str.begin(),
             command_line_input_str.begin() + 1);
 
-        //make sure that only one log instance of current input settings exist
-        //if no log instances of current input settings exist create one new
-        //instance and move on.
+        // make sure that only one log instance of current input settings exist
+        // if no log instances of current input settings exist create one new
+        // instance and move on.
         if (vpxt_init_new_vs_old_log(test_log_input, command_line_input_str)
             != 1)
         {
@@ -333,11 +333,11 @@ int test_new_vs_old_temp_scale(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
-        //sync/update the new git (libvpx-git-log.txt) log vs the new_vs_old git
-        //log (test_new_vs_old_temp_scale-log)
+        // sync/update the new git (libvpx-git-log.txt) log vs the new_vs_old
+        // git log (test_new_vs_old_temp_scale-log)
         int sync_fail = vpxt_sync_new_vs_old_log(test_log_input, git_log_input,
             test_log_output, psnr_data_rate_result_str.c_str(),
             command_line_input_str, "test_new_vs_old_temp_scale");
@@ -360,19 +360,19 @@ int test_new_vs_old_temp_scale(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
-        //sort through raw data
-        //make sure we have correct number of new and old data points
+        // sort through raw data
+        // make sure we have correct number of new and old data points
         if (raw_data_list.size() < (number_of_encodes * 4) + 1)
         {
-            //if we dont have old data handle indeterminate here.
+            // if we dont have old data handle indeterminate here.
             tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
             for(double_it = raw_data_list.begin();
                 double_it < raw_data_list.end(); ++double_it)
-            {   //skip over data rate values
+            {   // skip over data rate values
                 if(n % 2 == 0)
                     vpxt_formated_print(RESPRT, "New PSNR: %i %.4f - Old PSNR: "
                     "Not found - Indeterminate\n", n/2, *double_it);
@@ -382,29 +382,29 @@ int test_new_vs_old_temp_scale(int argc,
             indeterminate = 1;
         }
         else
-        {   //parse through data and get psnr information
+        {   // parse through data and get psnr information
             for(double_it = raw_data_list.begin() + (number_of_encodes * 2) + 1;
                 double_it < raw_data_list.begin() + (number_of_encodes * 4) + 1;
                 ++double_it)
             {
-                //skip over data rate values
+                // skip over data rate values
                 if(n % 2 == 0)
                     new_vs_old_temp_scale_psnr_old.push_back(*double_it);
                 ++n;
             }
 
-            //get old time
+            // get old time
             old_scale_compress_time = raw_data_list[(number_of_encodes * 4) +1];
         }
 
-        //update test_new_vs_old_temp_scale-log.txt
+        // update test_new_vs_old_temp_scale-log.txt
         vpxt_delete_files_quiet(1, test_log_input);
         vpxt_copy_file(test_log_output, test_log_input);
         vpxt_delete_files_quiet(1, test_log_output);
     }
     else
     {
-        //if old executable found
+        // if old executable found
         vpxt_output_compatable_settings(par_file.c_str(), opt, 2);
 
         fclose(fp);
@@ -421,27 +421,27 @@ int test_new_vs_old_temp_scale(int argc,
 
         vpxt_run_exe(command_line_str);
 
-        //run psnrs for new temp scale compressions
+        // run psnrs for new temp scale compressions
         for(str_it = new_vs_old_temp_scale_old_fn_vec.begin(); str_it <
             new_vs_old_temp_scale_old_fn_vec.end(); ++str_it)
             new_vs_old_temp_scale_psnr_old.push_back(vpxt_psnr(input.c_str(),
             (*str_it).c_str(), 0, PRINT_BTH, 1, NULL));
-        //run data rates for new temp scale compressions
+        // run data rates for new temp scale compressions
         for(str_it = new_vs_old_temp_scale_old_fn_vec.begin(); str_it <
             new_vs_old_temp_scale_old_fn_vec.end(); ++str_it)
             new_vs_old_temp_scale_data_rate_old.push_back(vpxt_data_rate(
             (*str_it).c_str(), 1));
 
-        //get old time
+        // get old time
         old_scale_compress_time = vpxt_cpu_tick_return(old_enc_file.c_str(), 0);
     }
 
-    //indeterminate special case is handled above.
+    // indeterminate special case is handled above.
     if(!indeterminate)
     {
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-        //evaluate new vs old psnrs
+        // evaluate new vs old psnrs
         n = 1;
         double_it2 = new_vs_old_temp_scale_psnr_old.begin();
         for(double_it = new_vs_old_temp_scale_psnr_new.begin(); double_it <
@@ -460,7 +460,7 @@ int test_new_vs_old_temp_scale(int argc,
             ++n;
         }
 
-        //evaluate new vs old times
+        // evaluate new vs old times
         if(new_scale_compress_time <= old_scale_compress_time)
             vpxt_formated_print(RESPRT, "New time: %i <= Old "
             "time: %i - Passed\n", new_scale_compress_time,
@@ -475,7 +475,7 @@ int test_new_vs_old_temp_scale(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
-    //delete encode files if flagged
+    // delete encode files if flagged
     if (delete_ivf){
         for(str_it = new_vs_old_temp_scale_new_fn_vec.begin(); str_it <
             new_vs_old_temp_scale_new_fn_vec.end(); ++str_it)
@@ -491,7 +491,7 @@ int test_new_vs_old_temp_scale(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
     if (!failed)
@@ -500,7 +500,7 @@ int test_new_vs_old_temp_scale(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -508,10 +508,10 @@ int test_new_vs_old_temp_scale(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

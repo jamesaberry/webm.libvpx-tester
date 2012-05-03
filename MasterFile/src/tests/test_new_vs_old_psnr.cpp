@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_new_vs_old_psnr(int argc,
-                         const char *const *argv,
+                         const char** argv,
                          const std::string &working_dir,
                          const std::string sub_folder_str,
                          int test_type,
@@ -22,7 +22,7 @@ int test_new_vs_old_psnr(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -31,7 +31,7 @@ int test_new_vs_old_psnr(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string exe_dir_str;
     vpxt_folder_name(argv[0], &exe_dir_str);
@@ -101,12 +101,12 @@ int test_new_vs_old_psnr(int argc,
     }
 #endif
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str;
     text_file_str += slashCharStr();
     text_file_str += test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -123,13 +123,13 @@ int test_new_vs_old_psnr(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -137,7 +137,7 @@ int test_new_vs_old_psnr(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -148,7 +148,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -169,14 +169,14 @@ int test_new_vs_old_psnr(int argc,
     snprintf(test_log_output, 255, "%s%s", exe_dir_str.c_str(),
         "test_new_vs_old_psnr-log-sync.txt");
 
-    //check to see if git-log.txt and new-vs-old-psnr-log exist.
-    //If so use new method else use old.
+    // check to see if git-log.txt and new-vs-old-psnr-log exist.
+    // If so use new method else use old.
     if (vpxt_file_exists_check(git_log_input) &&
         vpxt_file_exists_check(test_log_input))
     {
-        if (test_type == TEST_ONLY)
+        if (test_type == kTestOnly)
         {
-            //no prep required
+            // no prep required
         }
         else
         {
@@ -188,11 +188,11 @@ int test_new_vs_old_psnr(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
         }
 
-        //run psnr for new compression
+        // run psnr for new compression
         double new_psnr = vpxt_psnr(input.c_str(), new_enc_file.c_str(), 0,
             PRINT_BTH, 1, NULL);
 
@@ -203,7 +203,7 @@ int test_new_vs_old_psnr(int argc,
         char new_data_rate_char[256];
         snprintf(new_data_rate_char, 256, "%g", new_data_rate);
 
-        //assemble psnr/data rate results string
+        // assemble psnr/data rate results string
         std::string psnr_data_rate_result_str;
         psnr_data_rate_result_str += new_psnr_char;
         psnr_data_rate_result_str += " psnr ";
@@ -213,7 +213,7 @@ int test_new_vs_old_psnr(int argc,
         int arg_parse = 1;
         std::string command_line_input_str;
 
-        //assemble command line input string
+        // assemble command line input string
         while (arg_parse < argc){
             if (arg_parse != 1)
                 command_line_input_str += " ";
@@ -221,14 +221,14 @@ int test_new_vs_old_psnr(int argc,
             ++arg_parse;
         }
 
-        //make sure first char is not a space
+        // make sure first char is not a space
         if (command_line_input_str.substr(0, 1).compare(" ") == 0)
             command_line_input_str.erase(command_line_input_str.begin(),
             command_line_input_str.begin() + 1);
 
-        //make sure that only one log instance of current input settings exist
-        //if no log instances of current input settings exist create one new
-        //instance and move on.
+        // make sure that only one log instance of current input settings exist
+        // if no log instances of current input settings exist create one new
+        // instance and move on.
         if (vpxt_init_new_vs_old_log(test_log_input, command_line_input_str)
             != 1)
         {
@@ -237,13 +237,13 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         std::vector<double> raw_data_list;
 
-        //sync/update the new git (libvpx-git-log.txt) log vs the new_vs_old git
-        //log (test_new_vs_old_temp_scale-log)
+        // sync/update the new git (libvpx-git-log.txt) log vs the new_vs_old
+        // git log (test_new_vs_old_temp_scale-log)
         int sync_fail = vpxt_sync_new_vs_old_log(test_log_input,
             git_log_input, test_log_output, psnr_data_rate_result_str.c_str(),
             command_line_input_str, "test_new_vs_old_psnr");
@@ -264,7 +264,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
@@ -293,7 +293,7 @@ int test_new_vs_old_psnr(int argc,
     }
     else
     {
-        /////////////////Make Sure Exe File Exists///////////////
+        ///////////////// Make Sure Exe File Exists ///////////////
         if (!vpxt_file_exists_check(old_exe_full_path))
         {
             tprintf(PRINT_BTH, "\nInput executable %s does not exist\n",
@@ -302,7 +302,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         /////////////////////////////////////////////////////////
@@ -311,11 +311,11 @@ int test_new_vs_old_psnr(int argc,
         opt.target_bandwidth = bitrate;
         opt.auto_key = 1;
 
-        //Run Test only (Runs Test, Sets up test to be run, or skips compresion
-        //of files)
-        if (test_type == TEST_ONLY)
+        // Run Test only (Runs Test, Sets up test to be run, or skips compresion
+        // of files)
+        if (test_type == kTestOnly)
         {
-            //This test requires no preperation before a Test Only Run
+            // This test requires no preperation before a Test Only Run
         }
         else
         {
@@ -329,7 +329,7 @@ int test_new_vs_old_psnr(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return TEST_INDT;
+                    return kTestIndeterminate;
                 }
 
                 vpxt_output_compatable_settings(par_file.c_str(), opt,
@@ -362,7 +362,7 @@ int test_new_vs_old_psnr(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return TEST_INDT;
+                    return kTestIndeterminate;
                 }
 
                 vpxt_output_compatable_settings(par_file.c_str(), opt,
@@ -393,7 +393,7 @@ int test_new_vs_old_psnr(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return TEST_INDT;
+                    return kTestIndeterminate;
                 }
 
                 vpxt_output_compatable_settings(par_file.c_str(), opt,
@@ -407,9 +407,9 @@ int test_new_vs_old_psnr(int argc,
 
             if (mode == 4)
             {
-                //The old encoding method for two pass required for the encoder
-                //to be called twice once to run the first pass then again for
-                //the second
+                // The old encoding method for two pass required for the encoder
+                // to be called twice once to run the first pass then again for
+                // the second
                 if (par_file_num == 1)
                 {
                     opt.Mode = MODE_SECONDPASS;
@@ -421,7 +421,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return TEST_INDT;
+                        return kTestIndeterminate;
                     }
 
                     opt.Mode = MODE_FIRSTPASS;
@@ -439,9 +439,9 @@ int test_new_vs_old_psnr(int argc,
                     }
 
                     fprintf(stderr, " ");
-                    //this needs to be run to make this test compatable with old
-                    //versions of vp8 that required the first pass to be called
-                    //diffrently
+                    // this needs to be run to make this test compatable with
+                    // old versions of vp8 that required the first pass to be
+                    // called diffrently
                     vpxt_run_exe(fpf_comand_line_str);
 
                     opt.Mode = MODE_SECONDPASS;
@@ -472,7 +472,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return TEST_INDT;
+                        return kTestIndeterminate;
                     }
 
                     opt.Mode = MODE_SECONDPASS;
@@ -497,9 +497,9 @@ int test_new_vs_old_psnr(int argc,
 
             if (mode == 5)
             {
-                //The old encoding method for two pass required for the encoder
-                //to be called twice once to run the first pass then again for
-                //the second
+                // The old encoding method for two pass required for the encoder
+                // to be called twice once to run the first pass then again for
+                // the second
                 if (par_file_num == 1)
                 {
                     opt.Mode = MODE_SECONDPASS_BEST;
@@ -511,7 +511,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return TEST_INDT;
+                        return kTestIndeterminate;
                     }
 
                     opt.Mode = 3;
@@ -530,9 +530,9 @@ int test_new_vs_old_psnr(int argc,
 
                     fprintf(stderr, " ");
 
-                    //this needs to be run to make this test compatable with old
-                    //versions of vp8 that required the first pass to be called
-                    //diffrently
+                    // this needs to be run to make this test compatable with
+                    // old versions of vp8 that required the first pass to be
+                    // called diffrently
                     vpxt_run_exe(fpf_comand_line_str);
 
                     opt.Mode = MODE_SECONDPASS_BEST;
@@ -563,7 +563,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return TEST_INDT;
+                        return kTestIndeterminate;
                     }
 
                     opt.Mode = MODE_SECONDPASS_BEST;
@@ -587,14 +587,14 @@ int test_new_vs_old_psnr(int argc,
             }
         }
 
-        //Create Compression only stop test short.
-        if (test_type == COMP_ONLY)
+        // Create Compression only stop test short.
+        if (test_type == kCompOnly)
         {
-            //Compression only run
+            // Compression only run
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_COMPM;
+            return kTestEncCreated;
         }
 
         if (vpxt_file_size(old_enc_file.c_str(), 0) == 0)
@@ -604,7 +604,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_FAILED;
+            return kTestFailed;
         }
 
         psnr_ar[0] = vpxt_psnr(input.c_str(), new_enc_file.c_str(), 0,PRINT_BTH,
@@ -637,7 +637,7 @@ int test_new_vs_old_psnr(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_INDT;
+        return kTestIndeterminate;
     }
 
     if (!failed)
@@ -646,7 +646,7 @@ int test_new_vs_old_psnr(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -654,10 +654,10 @@ int test_new_vs_old_psnr(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

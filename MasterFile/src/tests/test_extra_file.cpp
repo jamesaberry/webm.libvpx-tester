@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_extra_file(int argc,
-                    const char *const *argv,
+                    const char** argv,
                     const std::string &working_dir,
                     const std::string sub_folder_str,
                     int test_type,
@@ -17,7 +17,7 @@ int test_extra_file(int argc,
     std::string input = argv[2];
     std::string enc_format = argv[3];
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
     std::string file_index_str;
     char main_test_dir_char[255] = "";
@@ -26,16 +26,16 @@ int test_extra_file(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
-    ////////compression directory////////
+    //////// Compression Directory ////////
     std::string compression_dir = cur_test_dir_str + slashCharStr();
     std::string compression_dir_all_files = compression_dir;
 #if defined(_WIN32)
     compression_dir_all_files += "*";
 #endif
 
-    ////////tester directory////////
+    //////// Tester Directory ////////
     std::string base_dir;
     vpxt_folder_name(argv[0], &base_dir);
     std::string tester_dir_all_files = base_dir;
@@ -43,7 +43,7 @@ int test_extra_file(int argc,
     tester_dir_all_files += "*";
 #endif
 
-    ////////current directory////////
+    //////// Current Directory ////////
     std::string current_dir;
     vpxt_get_cur_dir(current_dir);
     std::string current_dir_all_files = current_dir + slashCharStr();
@@ -57,14 +57,14 @@ int test_extra_file(int argc,
         test_dir + "_compression";
     vpxt_enc_format_append(extra_file_check_str, enc_format);
 
-    //This is to record state for compression only run
+    // This is to record state for compression only run
     std::string extra_file_check_results_str = cur_test_dir_str + slashCharStr()
         + test_dir + "_result.txt";
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -81,22 +81,22 @@ int test_extra_file(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
     tprintf(PRINT_BTH, "\n\n---------------------------Checking for OPSNR Files"
         "----------------------------\n\n");
 
-    //////////////////////////Delete opsnr.stt//////////////////////////////////
+    ///////////////////////// Delete opsnr.stt /////////////////////////////////
 
-    //check Current directory
+    // check Current directory
     std::string current_dir_opsnr = current_dir + slashCharStr();
 
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ",
@@ -114,7 +114,7 @@ int test_extra_file(int argc,
         tprintf(PRINT_BTH, "opsnr.stt File found and deleted. \n");
     }
 
-    //check Tester Dirctory
+    // check Tester Dirctory
     std::string tester_dir_opsnr = base_dir;
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ",
         tester_dir_opsnr.c_str());
@@ -131,7 +131,7 @@ int test_extra_file(int argc,
         tprintf(PRINT_BTH, "opsnr.stt File found and deleted. \n");
     }
 
-    //check Compression directory
+    // check Compression directory
     std::string comp_dir_opsnr = compression_dir;
     tprintf(PRINT_BTH, "Checking: %s For opsnr.stt - ", comp_dir_opsnr.c_str());
     comp_dir_opsnr += "opsnr.stt";
@@ -154,7 +154,7 @@ int test_extra_file(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -165,7 +165,7 @@ int test_extra_file(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -176,15 +176,15 @@ int test_extra_file(int argc,
     int bitrate = opt.target_bandwidth;
     int fail = 0;
 
-    //Record all files in the executable directory
+    // Record all files in the executable directory
     std::vector<std::string> ignore_tester_dir;
     vpxt_add_dir_files_to_ignore(ignore_tester_dir, tester_dir_all_files);
 
-    //Record all files in the current directory.
+    // Record all files in the current directory.
     std::vector<std::string> ignore_current_dir;
     vpxt_add_dir_files_to_ignore(ignore_current_dir, current_dir_all_files);
 
-    //There are no files in comp dir but we need to ignore compression files
+    // There are no files in comp dir but we need to ignore compression files
     std::vector<std::string> ignore_compression_dir;
     ignore_compression_dir.push_back(".");
     ignore_compression_dir.push_back("..");
@@ -196,7 +196,7 @@ int test_extra_file(int argc,
     ignore_compression_dir.push_back(
         "test_extra_file_compression_parameters_vpx.txt");
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
     {
         tprintf(PRINT_BTH, "\nExtraFileCheck Test Run Previously Retreiveing "
             "Result\n");
@@ -207,7 +207,7 @@ int test_extra_file(int argc,
         {
             tprintf(PRINT_BTH, "File: %s not opened",
                 extra_file_check_results_str.c_str());
-            return TEST_FAILED;
+            return kTestFailed;
         }
 
         infile >> fail;
@@ -220,7 +220,7 @@ int test_extra_file(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_FAILED;
+            return kTestFailed;
         }
 
         if (fail == 0)
@@ -230,7 +230,7 @@ int test_extra_file(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_PASSED;
+            return kTestPassed;
         }
     }
     else
@@ -244,7 +244,7 @@ int test_extra_file(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
     }
 
@@ -270,7 +270,7 @@ int test_extra_file(int argc,
         "-----------------------\n");
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
     {
         std::ofstream outfile(extra_file_check_results_str.c_str());
 
@@ -288,7 +288,7 @@ int test_extra_file(int argc,
         outfile.close();
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     if (tester_dir_fail == 0)
@@ -357,7 +357,7 @@ int test_extra_file(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     if (fail == 0)
@@ -369,11 +369,11 @@ int test_extra_file(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 
 }

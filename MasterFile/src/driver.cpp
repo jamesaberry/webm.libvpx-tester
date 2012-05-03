@@ -20,9 +20,9 @@
 #include <sys/types.h>
 #endif
 
-int create_working_folder(int argc, const char *argv[], char *working_dir_char)
+int create_working_folder(int argc, const char** argv, char *working_dir_char)
 {
-    ///////////////////////////////////Create Working folder////////////////////
+    ///////////////////////////////// Create Working folder ////////////////////
 
     // Get Date and time info and convert it to a string removing colons in time
     time_t raw_time;
@@ -35,33 +35,19 @@ int create_working_folder(int argc, const char *argv[], char *working_dir_char)
     char date_and_time_char_arr[255];
     int w = 0;
 
-    while (date_and_time.c_str()[w] != '\n')
-    {
-        if (date_and_time.c_str()[w] == ':' || date_and_time.c_str()[w] == ' ')
-        {
-            date_and_time_char_arr[w] = '_';
-        }
-        else
-        {
-            date_and_time_char_arr[w] = date_and_time.c_str()[w];
-        }
-
-        w = w + 1;
-    }
-
-    date_and_time_char_arr[w] = '\0';
-    std::string date_and_time3 = date_and_time_char_arr;
+    replace_substring( ":", "_", &date_and_time);
+    replace_substring( " ", "_", &date_and_time);
+    date_and_time.erase(date_and_time.length() - 1, date_and_time.length());
 
     std::string folder;
     vpxt_folder_name(argv[0], &folder);
 
     // add Date and time
-    int number = 0;
-
-    folder += date_and_time3;
+    folder += date_and_time;
     std::string folder_check = folder;
 
     // Make sure folder doesnt already exist
+    int number = 0;
     while (vpxt_folder_exist_check(folder_check))
     {
         number = number + 1;
@@ -71,7 +57,8 @@ int create_working_folder(int argc, const char *argv[], char *working_dir_char)
         folder_check = folder + "_" + num_char;
     }
 
-    if (number != 0) // append sub number to end of folder name
+    // append sub number to end of folder name
+    if (number != 0)
     {
         char num_char[255];
         vpxt_itoa_custom(number + 1, num_char, 10);
@@ -80,11 +67,12 @@ int create_working_folder(int argc, const char *argv[], char *working_dir_char)
         folder += num_char;
     }
 
-    folder += "\"\0";
+    folder += "\"";
     snprintf(working_dir_char, 255, "%s", folder.c_str());
 
     return 0;
 }
+
 std::string date_string()
 {
     time_t raw_time;
@@ -93,7 +81,7 @@ std::string date_string()
     time_info = localtime(&raw_time);
     char *date_and_time = asctime(time_info);
 
-    //remove colons in time string
+    // remove colons in time string
     char date_and_time_char_arr[255];
     int w = 0;
 
@@ -112,6 +100,7 @@ std::string date_string()
 
     return date_and_time_char_arr;
 }
+
 void vpxt_on_error_output()
 {
     tprintf(PRINT_STD, "\n");
@@ -225,7 +214,8 @@ void vpxt_on_error_output()
 
     return;
 }
-int  show_hidden_cmds()
+
+int show_hidden_cmds()
 {
     tprintf(PRINT_STD, "\n\n"
         "    Hidden Commands \n"
@@ -253,7 +243,8 @@ int  show_hidden_cmds()
     return 0;
 
 }
-void write_32bit_quick_test(const std::string working_dir)
+
+void write_32bit_quick_test(const std::string& working_dir)
 {
     std::string text_file_str;
     vpxt_folder_name(working_dir.c_str(), &text_file_str);
@@ -773,7 +764,8 @@ void write_32bit_quick_test(const std::string working_dir)
         text_file_str.c_str());
     fclose(fp);
 }
-void write_64bit_quick_test(const std::string working_dir)
+
+void write_64bit_quick_test(const std::string& working_dir)
 {
     std::string text_file_str;
     vpxt_folder_name(working_dir.c_str(), &text_file_str);
@@ -1293,16 +1285,18 @@ void write_64bit_quick_test(const std::string working_dir)
         text_file_str.c_str());
     fclose(fp);
 }
-int  print_quick_test_files(const std::string working_dir)
+
+int print_quick_test_files(const std::string& working_dir)
 {
-    //32BitQuickRun
+    // 32BitQuickRun
     write_32bit_quick_test(working_dir);
-    //64BitQuickRun
+    // 64BitQuickRun
     write_64bit_quick_test(working_dir);
 
     return 0;
 }
-int  vpxt_test_help(const char *input_char, int printSummary)
+
+int vpxt_test_help(const char *input_char, int printSummary)
 {
     std::string input_str = input_char;
     int selector = vpxt_identify_test(input_char);
@@ -1319,7 +1313,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     get_test_name(selector, input_str);
 
-    if (selector == RTFFINUM)
+    if (selector == kTestMultiRun)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1353,7 +1347,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
         return 0;
     }
 
-    if (selector == AlWDFNUM)
+    if (selector == kTestAllowDropFrames)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1375,7 +1369,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             " frames than Allow Drop Frames off, the test passes.");
     }
 
-    if (selector == ALWLGNUM)
+    if (selector == kTestAllowLag)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1399,7 +1393,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "identical to Allow Lag off, the test passes.");
     }
 
-    if (selector == ALWSRNUM)
+    if (selector == kTestAllowSpatialResampling)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1424,7 +1418,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "greater than 15, the test passes.");
     }
 
-    if (selector == ARNRTNUM)
+    if (selector == kTestArnr)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1453,7 +1447,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "Alternate Reference Frames off compression, the test passes.");
     }
 
-    if (selector == AUTKFNUM)
+    if (selector == kTestAutoKeyFrame)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1477,7 +1471,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == BUFLVNUM)
+    if (selector == kTestBufferLevel)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1498,7 +1492,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == CPUDENUM)
+    if (selector == kTestChangeCpuDec)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1523,7 +1517,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == CPUENNUM)
+    if (selector == kTestChangeCpuEnc)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1545,7 +1539,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "and compression times are not, the test passes.");
     }
 
-    if (selector == CONQUNUM)
+    if (selector == kTestConstrainedQuality)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1568,7 +1562,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "user input Constrained Quality, the test passes.");
     }
 
-    if (selector == COPSRNUM)
+    if (selector == kTestCopySetReference)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1593,7 +1587,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "are identical the test passes.");
     }
 
-    if (selector == DTARTNUM)
+    if (selector == kTestDataRate)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1614,7 +1608,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == DBMRLNUM)
+    if (selector == kTestDebugMatchesRelease)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1641,7 +1635,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == DFWMWNUM)
+    if (selector == kTestDropFrameWaterMark)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1663,7 +1657,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == ENCBONUM)
+    if (selector == kTestEncoderBreakout)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1690,7 +1684,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             " dB difference the test fails.");
     }
 
-    if (selector == ERRCONUM)
+    if (selector == kTestErrorConcealment)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1712,7 +1706,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == ERRMWNUM)
+    if (selector == kTestErrorResolution)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1734,7 +1728,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == EXTFINUM)
+    if (selector == kTestExtraFile)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1757,7 +1751,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "are found, the test passes.");
     }
 
-    if (selector == FIXDQNUM)
+    if (selector == kTestFixedQuantizer)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1783,7 +1777,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "passes.");
     }
 
-    if (selector == FKEFRNUM)
+    if (selector == kTestForcedKeyFrame)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1807,7 +1801,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == FRSZTNUM)
+    if (selector == kTestFrameSize)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1834,7 +1828,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "passes.");
     }
 
-    if (selector == GQVBQNUM)
+    if (selector == kTestGoodVsBest)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1864,7 +1858,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "under the good quality curve, the test passes.");
     }
 
-    if (selector == LGIFRNUM)
+    if (selector == kTestLagInFrames)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1893,7 +1887,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "the test passes.");
     }
 
-    if (selector == MAXQUNUM)
+    if (selector == kTestMaxQuantizer)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1920,7 +1914,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == MEML1NUM)
+    if (selector == kTestMemLeak)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1942,7 +1936,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "test passes.");
     }
 
-    if (selector == MEML2NUM)
+    if (selector == kTestMemLeak2)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1962,7 +1956,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             " If there are no leaks, the test passes.");
     }
 
-    if (selector == MINQUNUM)
+    if (selector == kTestMinQuantizer)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -1985,7 +1979,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "is above the corresponding Min Quantizer, the test passes.");
     }
 
-    if (selector == MULRENUM)
+    if (selector == kTestMultiResolutionEncode)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2009,7 +2003,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "the test passes.");
     }
 
-    if (selector == MULTDNUM)
+    if (selector == kTestMultiThreadedDec)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2039,7 +2033,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "identical, the test passes.");
     }
 
-    if (selector == MULTENUM)
+    if (selector == kTestMultiThreadedEnc)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2067,7 +2061,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "passes.");
     }
 
-    if (selector == NVOECPTK)
+    if (selector == kTestNewVsOldEncCpuTick)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2094,7 +2088,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "passes.");
     }
 
-    if (selector == NVOPSNUM)
+    if (selector == kTestNewVsOldPsnr)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2119,7 +2113,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "passes.");
     }
 
-    if (selector == NVOTSNUM)
+    if (selector == kTestNewVsOldTempScale)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2151,7 +2145,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "passes.");
     }
 
-    if (selector == NOISENUM)
+    if (selector == kTestNoiseSensitivity)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2173,7 +2167,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "Sensitivity 6, the test passes.");
     }
 
-    if (selector == OV2PSNUM)
+    if (selector == kTestOnePassVsTwoPass)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2205,7 +2199,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             " curve, the test passes.");
     }
 
-    if (selector == PLYALNUM)
+    if (selector == kTestPlayAlternate)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2230,7 +2224,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "and the files are not identical, the test passes.");
     }
 
-    if (selector == POSTPNUM)
+    if (selector == kTestPostProcessor)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2253,7 +2247,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "passes.");
     }
 
-    if (selector == PSTMFNUM)
+    if (selector == kTestPostProcessorMfqe)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2276,7 +2270,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "than the no post processing psnr, the test passes.");
     }
 
-    if (selector == RECBFNUM)
+    if (selector == kTestReconstructBuffer)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2300,7 +2294,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "the content of all decoded frames, the test passes.");
     }
 
-    if (selector == RSDWMNUM)
+    if (selector == kTestResampleDownWatermark)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2326,7 +2320,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "compressions, the test passes.");
     }
 
-    if (selector == SPEEDNUM)
+    if (selector == kTestSpeed)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2356,7 +2350,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "previous, the test passes.");
     }
 
-    if (selector == TMPSCNUM)
+    if (selector == kTestTemporalScalability)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2368,11 +2362,11 @@ int  vpxt_test_help(const char *input_char, int printSummary)
         tprintf(PRINT_STD, "\n"
             "    <Input File>\n"
             "    <Layer Mode 0-6>\n"
-            "    <bitrate 0 (Modes 0-8)>\n"
-            "    <bitrate 1 (Modes 0-8)>\n"
-            "    <bitrate 2 (Modes 2-6&8, else 0)>\n"
-            "    <bitrate 3 (Mode 6, else 0)>\n"
-            "    <bitrate 4 (Mode 6, else 0)>\n"
+            "    <Bitrate 0 (Modes 0-8)>\n"
+            "    <Bitrate 1 (Modes 0-8)>\n"
+            "    <Bitrate 2 (Modes 2-6&8, else 0)>\n"
+            "    <Bitrate 3 (Mode 6, else 0)>\n"
+            "    <Bitrate 4 (Mode 6, else 0)>\n"
             "    <Encode Format - webm/ivf>\n");
 
         if (printSummary)
@@ -2387,7 +2381,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     }
 
-    if (selector == TVECTNUM)
+    if (selector == kTestTestVector)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2408,7 +2402,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "the test passes.");
     }
 
-    if (selector == TTVSFNUM)
+    if (selector == kTestThirtytwoVsSixtyfour)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2438,7 +2432,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "identical, the test passes.");
     }
 
-    if (selector == TV2BTNUM)
+    if (selector == kTestTwoPassVsTwoPassBest)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2470,7 +2464,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             " curve, the test passes.");
     }
 
-    if (selector == UNDSHNUM)
+    if (selector == kTestUndershoot)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2492,7 +2486,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             " size, the test passes.");
     }
 
-    if (selector == VERSINUM)
+    if (selector == kTestVersion)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2516,7 +2510,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             " the test passes.");
     }
 
-    if (selector == VPXMINUM)
+    if (selector == kTestVpxMatchesInt)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2544,7 +2538,7 @@ int  vpxt_test_help(const char *input_char, int printSummary)
             "decoded and encoded files are identical the test passes.");
     }
 
-    if (selector == WMLMMNUM)
+    if (selector == kTestWinLinMacMatch)
     {
         if (printSummary)
             tprintf(PRINT_STD, "\nUse:\n\n%2i", selector);
@@ -2583,10 +2577,10 @@ int  vpxt_test_help(const char *input_char, int printSummary)
 
     return 0;
 }
-int  vpxt_tool_help(const char *input_char, int printSummary)
+int vpxt_tool_help(const char *input_char, int printSummary)
 {
-    //return 1 if string found return 0 if string not found if string not
-    //found TestHelp will be run through.
+    // return 1 if string found return 0 if string not found if string not
+    // found TestHelp will be run through.
     std::string input_str = input_char;
     vpxt_lower_case_string(input_str);
 
@@ -2686,11 +2680,11 @@ int  vpxt_tool_help(const char *input_char, int printSummary)
             "    <Input File>\n"
             "    <Output Base>\n"
             "    <Layer Mode 0-6>\n"
-            "    <bitrate 0 (Modes 0-6)>\n"
-            "    <bitrate 1 (Modes 0-6)>\n"
-            "    <bitrate 2 (Modes 2-6, else 0)>\n"
-            "    <bitrate 3 (Mode 6, else 0)>\n"
-            "    <bitrate 4 (Mode 6, else 0)>\n"
+            "    <Bitrate 0 (Modes 0-6)>\n"
+            "    <Bitrate 1 (Modes 0-6)>\n"
+            "    <Bitrate 2 (Modes 2-6, else 0)>\n"
+            "    <Bitrate 3 (Mode 6, else 0)>\n"
+            "    <Bitrate 4 (Mode 6, else 0)>\n"
             "    <Encode Format - webm/ivf>\n");
 
         if (printSummary)
@@ -3379,7 +3373,7 @@ int  vpxt_tool_help(const char *input_char, int printSummary)
         return 1;
     }
 
-    /////////////////////////////////Hidden Commands////////////////////////////////
+    /////////////////////////// Hidden Commands ////////////////////////////////
 
     if (input_str.compare("copyalltxtfiles") == 0)
     {
@@ -3442,7 +3436,7 @@ int  vpxt_tool_help(const char *input_char, int printSummary)
         tprintf(PRINT_STD,
             "\n  Write IVF Frame Header\n\n"
             "     <Output File>\n"
-            "     <time Stamp>\n"
+            "     <Time Stamp>\n"
             "     <Frame Size>\n");
 
         if (printSummary)
@@ -3467,18 +3461,19 @@ int  vpxt_tool_help(const char *input_char, int printSummary)
 
     return 0;
 }
-void format_summary(const char *input_file_name_char)
+
+void format_summary(const char *ptr_input_file_name)
 {
     tprintf(PRINT_STD, "\n Formating Summary file.\n");
 
-    std::string input_file_name = input_file_name_char;
+    std::string input_file_name = ptr_input_file_name;
 
     std::string sum_by_test_output;
     vpxt_remove_file_extension(input_file_name.c_str(), sum_by_test_output);
     sum_by_test_output += "expanded.txt";
 
     std::string tests_run;
-    vpxt_folder_name(input_file_name_char, &tests_run);
+    vpxt_folder_name(ptr_input_file_name, &tests_run);
     tests_run += "tests_run.txt";
 
     FILE *fp;
@@ -3497,155 +3492,155 @@ void format_summary(const char *input_file_name_char)
     int test_track = 1;
     int result_track = 0;
 
-    //loop through all existing tests alphabeticaly
+    // loop through all existing tests alphabeticaly
     while (test_track <= MAXTENUM)
     {
         result_track = 0;
 
         bool print_test_header_1 = 1;
 
-        //This iterates through all possible tests run using the test tracker
-        //names to specify which was run the number is only to drive
-        //The iteration through and does not represent test number
-        if (test_track == AlWDFNUM)
+        // This iterates through all possible tests run using the test tracker
+        // names to specify which was run the number is only to drive
+        // The iteration through and does not represent test number
+        if (test_track == kTestAllowDropFrames)
             test_track_name = "Test_Allow_Drop_Frames";
 
-        if (test_track == ALWLGNUM)
+        if (test_track == kTestAllowLag)
             test_track_name = "Test_Allow_Lag";
 
-        if (test_track == ALWSRNUM)
+        if (test_track == kTestAllowSpatialResampling)
             test_track_name = "Test_Allow_Spatial_Resampling";
 
-        if (test_track == ARNRTNUM)
+        if (test_track == kTestArnr)
             test_track_name = "Test_Arnr";
 
-        if (test_track == AUTKFNUM)
+        if (test_track == kTestAutoKeyFrame)
             test_track_name = "Test_Auto_Key_Frame";
 
-        if (test_track == BUFLVNUM)
+        if (test_track == kTestBufferLevel)
             test_track_name = "Test_Buffer_Level";
 
-        if (test_track == CPUDENUM)
+        if (test_track == kTestChangeCpuDec)
             test_track_name = "Test_Change_Cpu_Dec";
 
-        if (test_track == CPUENNUM)
+        if (test_track == kTestChangeCpuEnc)
             test_track_name = "Test_Change_Cpu_Enc";
 
-        if (test_track == CONQUNUM)
+        if (test_track == kTestConstrainedQuality)
             test_track_name = "Test_Constrained_Quality";
 
-        if (test_track == COPSRNUM)
+        if (test_track == kTestCopySetReference)
             test_track_name = "Test_Copy_Set_Reference";
 
-        if (test_track == DTARTNUM)
+        if (test_track == kTestDataRate)
             test_track_name = "Test_Data_Rate";
 
-        if (test_track == DBMRLNUM)
+        if (test_track == kTestDebugMatchesRelease)
             test_track_name = "Test_Debug_Matches_Release";
 
-        if (test_track == DFWMWNUM)
+        if (test_track == kTestDropFrameWaterMark)
             test_track_name = "Test_Drop_Frame_Watermark";
 
-        if (test_track == ENCBONUM)
+        if (test_track == kTestEncoderBreakout)
             test_track_name = "Test_Encoder_Break_Out";
 
-        if (test_track == ERRCONUM)
+        if (test_track == kTestErrorConcealment)
             test_track_name = "Test_Error_Concealment";
 
-        if (test_track == ERRMWNUM)
+        if (test_track == kTestErrorResolution)
             test_track_name = "Test_Error_Resolution";
 
-        if (test_track == EXTFINUM)
+        if (test_track == kTestExtraFile)
             test_track_name = "Test_Extra_File";
 
-        if (test_track == FIXDQNUM)
+        if (test_track == kTestFixedQuantizer)
             test_track_name = "Test_Fixed_Quantizer";
 
-        if (test_track == FKEFRNUM)
+        if (test_track == kTestForcedKeyFrame)
             test_track_name = "Test_Force_Key_frame";
 
-        if (test_track == FRSZTNUM)
+        if (test_track == kTestFrameSize)
             test_track_name = "Test_Frame_Size";
 
-        if (test_track == GQVBQNUM)
+        if (test_track == kTestGoodVsBest)
             test_track_name = "Test_Good_Vs_Best";
 
-        if (test_track == LGIFRNUM)
+        if (test_track == kTestLagInFrames)
             test_track_name = "Test_Lag_In_Frames";
 
-        if (test_track == MAXQUNUM)
+        if (test_track == kTestMaxQuantizer)
             test_track_name = "Test_Max_Quantizer";
 
-        if (test_track == MEML1NUM)
+        if (test_track == kTestMemLeak)
             test_track_name = "Test_Mem_Leak";
 
-        if (test_track == MEML2NUM)
+        if (test_track == kTestMemLeak2)
             test_track_name = "Test_Mem_Leak2";
 
-        if (test_track == MINQUNUM)
+        if (test_track == kTestMinQuantizer)
             test_track_name = "Test_Min_Quantizer";
 
-        if (test_track == MULRENUM)
+        if (test_track == kTestMultiResolutionEncode)
             test_track_name = "Test_Multiple_Resolution_Encode";
 
-        if (test_track == MULTDNUM)
+        if (test_track == kTestMultiThreadedDec)
             test_track_name = "Test_Multithreaded_Dec";
 
-        if (test_track == MULTENUM)
+        if (test_track == kTestMultiThreadedEnc)
             test_track_name = "Test_Multithreaded_Enc";
 
-        if (test_track == NVOPSNUM)
+        if (test_track == kTestNewVsOldPsnr)
             test_track_name = "Test_New_Vs_Old_Psnr";
 
-        if (test_track == NVOTSNUM)
+        if (test_track == kTestNewVsOldTempScale)
             test_track_name = "Test_New_Vs_Old_Temp_Scale";
 
-        if (test_track == NVOECPTK)
+        if (test_track == kTestNewVsOldEncCpuTick)
             test_track_name = "Test_New_Vs_Old_Enc_Cpu_Tick";
 
-        if (test_track == NOISENUM)
+        if (test_track == kTestNoiseSensitivity)
             test_track_name = "Test_Noise_Sensitivity";
 
-        if (test_track == OV2PSNUM)
+        if (test_track == kTestOnePassVsTwoPass)
             test_track_name = "Test_One_Pass_Vs_Two_Pass";
 
-        if (test_track == PLYALNUM)
+        if (test_track == kTestPlayAlternate)
             test_track_name = "Test_Play_Alternate";
 
-        if (test_track == POSTPNUM)
+        if (test_track == kTestPostProcessor)
             test_track_name = "Test_Post_Processor";
 
-        if (test_track == RECBFNUM)
+        if (test_track == kTestReconstructBuffer)
             test_track_name = "Test_Reconstruct_Buffer";
 
-        if (test_track == RSDWMNUM)
+        if (test_track == kTestResampleDownWatermark)
             test_track_name = "Test_Resample_Down_Watermark";
 
-        if (test_track == SPEEDNUM)
+        if (test_track == kTestSpeed)
             test_track_name = "Test_Speed";
 
-        if (test_track == TMPSCNUM)
+        if (test_track == kTestTemporalScalability)
             test_track_name = "Test_Test_Vector";
 
-        if (test_track == TVECTNUM)
+        if (test_track == kTestTestVector)
             test_track_name = "Test_Temporal_Scalability";
 
-        if (test_track == TTVSFNUM)
+        if (test_track == kTestThirtytwoVsSixtyfour)
             test_track_name = "Test_Thirtytwo_Vs_Sixtyfour";
 
-        if (test_track == TV2BTNUM)
+        if (test_track == kTestTwoPassVsTwoPassBest)
             test_track_name = "Test_Two_Pass_Vs_Two_Pass_Best";
 
-        if (test_track == UNDSHNUM)
+        if (test_track == kTestUndershoot)
             test_track_name = "Test_Undershoot";
 
-        if (test_track == VERSINUM)
+        if (test_track == kTestVersion)
             test_track_name = "Test_Version";
 
-        if (test_track == VERSINUM)
+        if (test_track == kTestVersion)
             test_track_name = "Test_Vpx_Matches_Int";
 
-        if (test_track == WMLMMNUM)
+        if (test_track == kTestWinLinMacMatch)
             test_track_name = "Test_Win_Lin_Mac_Match";
 
         int track_passed = 0;
@@ -3659,40 +3654,40 @@ void format_summary(const char *input_file_name_char)
         int track_test_not_supported = 0;
         int track_min_pass = 0;
 
-        //loop though all possible results
+        // loop though all possible results
         while (result_track < 13)
         {
-            if (result_track == TEST_PASSED)
+            if (result_track == kTestPassed)
                 test_track_result = "Passed";
 
-            if (result_track == TEST_FAILED)
+            if (result_track == kTestFailed)
                 test_track_result = "Failed";
 
-            if (result_track == TEST_INDT)
+            if (result_track == kTestIndeterminate)
                 test_track_result = "Indeterminate";
 
-            if (result_track == TEST_COMBO)
+            if (result_track == kTestComboLog)
                 test_track_result = "SeeComboRunLog";
 
-            if (result_track == TEST_PSNRL)
+            if (result_track == kTestPsnrLog)
                 test_track_result = "SeePSNRLog";
 
-            if (result_track == TEST_RANDT)
+            if (result_track == kTestRandomComplete)
                 test_track_result = "RandomTestCompleted";
 
-            if (result_track == TEST_ERROR)
+            if (result_track == kTestError)
                 test_track_result = "";
 
-            if (result_track == TEST_MINPA)
+            if (result_track == kTestMinPassed)
                 test_track_result = "track_min_pass";
 
-            if (result_track == TEST_COMPM)
+            if (result_track == kTestEncCreated)
                 test_track_result = "CompressionMade";
 
-            if (result_track == TEST_ERRFM)
+            if (result_track == kTestErrFileMismatch)
                 test_track_result = "ErrorFileMismatch";
 
-            if (result_track == TEST_TSTNS)
+            if (result_track == kTestNotSupported)
                 test_track_result = "TestNotSupported";
 
             std::fstream format_summary_by_test_file;
@@ -3707,10 +3702,10 @@ void format_summary(const char *input_file_name_char)
             int p = 0;
             bool print_test_header_2 = 1;
 
-            //read in and throw away header
+            // read in and throw away header
             while (p < 11)
             {
-                //format_summary_by_test_file.getline(buffer, 1024);
+                // format_summary_by_test_file.getline(buffer, 1024);
                 getline(format_summary_by_test_file, line_buf);
                 p = p + 1;
             }
@@ -3737,7 +3732,7 @@ void format_summary(const char *input_file_name_char)
                     std::string test_result_string = line_buf.substr(62, n -
                         62);
 
-                    //check to see if names and states match up
+                    // check to see if names and states match up
                     if (test_read_string.compare(test_track_name) == 0 &&
                         test_result_string.compare(test_track_result) == 0)
                     {
@@ -3772,7 +3767,7 @@ void format_summary(const char *input_file_name_char)
 
                         if (print_test_header_1)
                         {
-                            //print test header
+                            // print test header
                             int left_line_size = 75 - (test_read_string.size() /
                                 2);
                             int counter = 0;
@@ -3810,8 +3805,8 @@ void format_summary(const char *input_file_name_char)
 
                         fprintf(stderr, "%s ", line_buf.c_str());
 
-                        ////Get the correct Test Input settings and output//////
-                        ////them to summary.////////////////////////////////////
+                        //// Get the correct Test Input settings and output ////
+                        //// them to summary ///////////////////////////////////
                         std::fstream tests_run_file;
                         tests_run_file.open(tests_run.c_str(),
                             std::fstream::in);
@@ -4001,14 +3996,15 @@ void format_summary(const char *input_file_name_char)
     fclose(fp);
     return;
 }
-int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
+
+int vpxt_run_multi(int argc, const char** argv, std::string working_dir)
 {
     if (argc < 4)
         return vpxt_test_help(argv[1], 0);
 
     int valid_input = 0;
 
-    if (atoi(argv[2]) != RESU_TEST && atoi(argv[2]) != TEST_ONLY)
+    if (atoi(argv[2]) != kResumeTest && atoi(argv[2]) != kTestOnly)
     {
         valid_input = vpxt_run_multiple_tests_input_check(argv[3], 0);
 
@@ -4031,7 +4027,7 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
         }
     }
 
-    //check to see if we should run a lean multi run
+    // check to see if we should run a lean multi run
     int delete_ivf_files = 0;
 
     if (argc > 4)
@@ -4048,7 +4044,7 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
 
     std::string summary_file = working_dir;
 
-    if (atoi(argv[2]) == FULL_TEST)
+    if (atoi(argv[2]) == kFullTest)
     {
         char summary_file_char[255] = "";
         summary_file.erase(summary_file.end() - 1);
@@ -4058,7 +4054,7 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
         return 0;
     }
 
-    if (atoi(argv[2]) == TEST_ONLY)
+    if (atoi(argv[2]) == kTestOnly)
     {
         char summary_file_char[255] = "";
         summary_file.erase(summary_file.end() - 1);
@@ -4068,7 +4064,7 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
         return 0;
     }
 
-    if (atoi(argv[2]) == RESU_TEST)
+    if (atoi(argv[2]) == kResumeTest)
     {
         std::string sum_comp_and_test;
         std::string sum_comp;
@@ -4081,29 +4077,29 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
         // Mode 3
         sum_test = argv[3] + slashCharStr() + "compression_test_results.txt";
 
-        int test_running = NO_TEST;
+        int test_running = kNoTest;
 
-        //if sum comp and test file exists then full test
+        // if sum comp and test file exists then full test
         std::fstream sum_comp_and_testFile;
         sum_comp_and_testFile.open(sum_comp_and_test.c_str());
 
         if (sum_comp_and_testFile)
-            test_running = FULL_TEST;
+            test_running = kFullTest;
 
-        //if sum test file exists then test only
+        // if sum test file exists then test only
         std::fstream sum_testFile;
         sum_testFile.open(sum_test.c_str());
 
         if (sum_testFile)
-            test_running = TEST_ONLY;
+            test_running = kTestOnly;
 
-        //if sum comp file exits and not test only then comp only
+        // if sum comp file exits and not test only then comp only
         std::fstream sum_compFile;
         sum_compFile.open(sum_comp.c_str());
 
         if (sum_compFile)
-            if (test_running != TEST_ONLY)
-                test_running = COMP_ONLY;
+            if (test_running != kTestOnly)
+                test_running = kCompOnly;
 
         sum_comp_and_testFile.close();
         sum_testFile.close();
@@ -4111,14 +4107,14 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
 
         summary_file = argv[3];
 
-        if (test_running == FULL_TEST)
+        if (test_running == kFullTest)
         {
             summary_file += slashCharStr() + "test_results.txt";
             format_summary(summary_file.c_str());
             return 0;
         }
 
-        if (test_running == TEST_ONLY)
+        if (test_running == kTestOnly)
         {
             summary_file += slashCharStr() + "compression_test_results.txt";
             format_summary(summary_file.c_str());
@@ -4127,7 +4123,8 @@ int  vpxt_run_multi(int argc, const char *argv[], std::string working_dir)
 
     return 0;
 }
-int  main(int argc, const char *argv[])
+
+int main(int argc, const char** argv)
 {
     if (argc < 2)
     {
@@ -4157,7 +4154,7 @@ int  main(int argc, const char *argv[])
         }
     }
 
-    ///////////////////////////Help/////////////////////////////////////////////
+    /////////////////////////// Help ///////////////////////////////////////////
 
     if (input_1_str.compare("help") == 0)
     {
@@ -4180,59 +4177,59 @@ int  main(int argc, const char *argv[])
     }
 
     ////////////////////Public Commands/////////////////////////
-    //vpxenc clone
+    // vpxenc clone
     if (input_1_str.compare("vpxenc") == 0)
         return tool_run_ivfenc(argc, argv);
 
-    //vpxdec clone
+    // vpxdec clone
     if (input_1_str.compare("vpxdec") == 0)
         return tool_run_ivfdec(argc, argv);
 
-    //Compresses an IVF Raw File to an IVF Compressed file
+    // Compresses an IVF Raw File to an IVF Compressed file
     if (input_1_str.compare("vpxtenc") == 0)
         return tool_vpxt_enc(argc, argv, working_dir);
 
-    //Decompresses an IVF Compressed file to an IVF Raw File
+    // Decompresses an IVF Compressed file to an IVF Raw File
     if (input_1_str.compare("vpxtdec") == 0)
         return tool_vpxt_dec(argc, argv);
 
-    //Vp8 Scalable Patterns clone
+    // Vp8 Scalable Patterns clone
     if (input_1_str.compare("vpxtempscaleenc") == 0)
         return tool_vp8_scalable_patterns(argc, argv);
 
-    //vpxt Multi Resolution Encode
+    // vpxt Multi Resolution Encode
     if (input_1_str.compare("vpxttempscaleenc") == 0)
         return tool_vpxt_temp_scale_enc(argc, argv);
 
-    //Multi Resolution Encode
+    // Multi Resolution Encode
     if (input_1_str.compare("vpxmultiresenc") == 0)
         return tool_multi_res_enc(argc, argv);
 
-    //vpxt Multi Resolution Encode
+    // vpxt Multi Resolution Encode
     if (input_1_str.compare("vpxtmultiresenc") == 0)
         return tool_vpxt_multi_res_enc(argc, argv);
 
-    //Decompresses an IVF Compressed file to an IVF Raw File WITH RESIZE
+    // Decompresses an IVF Compressed file to an IVF Raw File WITH RESIZE
     if (input_1_str.compare("vpxtdecresz") == 0)
         return tool_vpxt_dec_resize(argc, argv);
 
-    //Decompresses an IVF Compressed file to an IVF Raw File ERROR CONCEALMENT
+    // Decompresses an IVF Compressed file to an IVF Raw File ERROR CONCEALMENT
     if (input_1_str.compare("vpxtdecpard") == 0)
         return tool_vpxt_dec_part_drop(argc, argv);
 
-    //Decodes IVF File to Raw File
+    // Decodes IVF File to Raw File
     if (input_1_str.compare("vpxtdec2raw") == 0)
         return tool_vpxt_dec_to_raw(argc, argv);
 
-    //Computes Data Rate for an input IVF File
+    // Computes Data Rate for an input IVF File
     if (input_1_str.compare("vpxtdatarate") == 0)
         return tool_vpxt_data_rate(argc, argv);
 
-    //Computes PSNR for two input files
+    // Computes PSNR for two input files
     if (input_1_str.compare("vpxtpsnr") == 0)
         return tool_vpxt_psnr_run(argc, argv);
 
-    //Computes Decoded PSNR for two input files
+    // Computes Decoded PSNR for two input files
     if (input_1_str.compare("vpxtpsnrdec") == 0)
         return tool_vpxt_psnr_run_dec(argc, argv);
 
@@ -4240,160 +4237,160 @@ int  main(int argc, const char *argv[])
     if (input_1_str.compare("vpxtcheckpbm") == 0)
         return tool_vpxt_check_pbm_run(argc, argv);
 
-    //Converts an IVF File to a Raw File
+    // Converts an IVF File to a Raw File
     if (input_1_str.compare("raw2formatted") == 0)
         return tool_raw_to_formatted(argc, argv);
 
-    //Converts an ivf file to a raw file
+    // Converts an ivf file to a raw file
     if (input_1_str.compare("formatted2raw") == 0)
         return tool_formatted_to_raw(argc, argv);
 
-    //Converts an ivf file to a raw file
+    // Converts an ivf file to a raw file
     if (input_1_str.compare("formatted2rawframes") == 0)
         return tool_formatted_to_raw_frames(argc, argv);
 
-    //Compares two ivf files
+    // Compares two ivf files
     if (input_1_str.compare("compareenc") == 0)
         return tool_compare_enc(argc, argv);
 
-    //Compares the Headers of two ivf files
+    // Compares the Headers of two ivf files
     if (input_1_str.compare("compareheader") == 0)
         return tool_compare_header_info(argc, argv);
 
-    //Displays the header contents of an ivf file
+    // Displays the header contents of an ivf file
     if (input_1_str.compare("displayheader") == 0)
         return tool_display_header_info(argc, argv);
 
-    //Displays which frames are key frames for an input compressed ivf file
+    // Displays which frames are key frames for an input compressed ivf file
     if (input_1_str.compare("dispkeyframes") == 0)
         return tool_disp_key_frames(argc, argv);
 
-    //Compresses an IVF Raw File to an IVF Compressed file
+    // Compresses an IVF Raw File to an IVF Compressed file
     if (input_1_str.compare("dispresizedframes") == 0)
         return tool_disp_resized_frames(argc, argv);
 
-    //Compresses an IVF Raw File to an IVF Compressed file
+    // Compresses an IVF Raw File to an IVF Compressed file
     if (input_1_str.compare("dispvisibleframes") == 0)
         return tool_disp_visible_frames(argc, argv);
 
-    //Compresses an IVF Raw File to an IVF Compressed file
+    // Compresses an IVF Raw File to an IVF Compressed file
     if (input_1_str.compare("dispaltrefframes") == 0)
         return tool_disp_alt_ref_frames(argc, argv);
 
-    //Modifies an ivf file croping part of the clip
+    // Modifies an ivf file croping part of the clip
     if (input_1_str.compare("croprawclip") == 0)
         return tool_crop_raw_clip(argc, argv);
 
-    //Modifies an ivf file by padding it
+    // Modifies an ivf file by padding it
     if (input_1_str.compare("padrawclip") == 0)
         return tool_pad_raw_clip(argc, argv);
 
-    //Modifies an ivf file cutting out a portion of the clip and saving it
+    // Modifies an ivf file cutting out a portion of the clip and saving it
     if (input_1_str.compare("cutclip") == 0)
         return tool_cut_ivf(argc, argv);
 
-    //Modifies an ivf file by pasting a clip into it
+    // Modifies an ivf file by pasting a clip into it
     if (input_1_str.compare("pasteclip") == 0)
         return tool_paste_clip(argc, argv);
 
     // Plays a Decoded ivf file (Converts the file to a Raw file and uses
-    //tmnplay.exe to play the file)
+    // tmnplay.exe to play the file)
     if (input_1_str.compare("playdecivf") == 0)
         return tool_play_dec_ivf(argc, argv);
 
-    //Plays a compressed ivf file (Decodes the file to an ivf then converts
-    //that ivf to a raw then used tnmplay.exe to play that file.)
+    // Plays a compressed ivf file (Decodes the file to an ivf then converts
+    // that ivf to a raw then used tnmplay.exe to play that file.)
     if (input_1_str.compare("playcompivf") == 0)
         return tool_play_comp_ivf(argc, argv);
 
-    //Creates sample text files that include quick test and other templates
+    // Creates sample text files that include quick test and other templates
     if (input_1_str.compare("createsampletextfiles") == 0)
         return print_quick_test_files(working_dir);
 
-    //Prints the internal version number - make sure all libs built in same
-    //multithreadedmode - properties  C++ CodeGen RuntimeLibrary
+    // Prints the internal version number - make sure all libs built in same
+    // multithreadedmode - properties  C++ CodeGen RuntimeLibrary
     if (input_1_str.compare("printversion") == 0)
         return print_version();
 
-    //converts Tester Parameter file to a vpxenc ParFile
+    // converts Tester Parameter file to a vpxenc ParFile
     if (input_1_str.compare("vpxencpar") == 0)
         return tool_convert_par_file_to_vpxenc(argc, argv);
 
-    //creates a random valid parameter file
+    // creates a random valid parameter file
     if (input_1_str.compare("randparfile") == 0)
         return tool_create_rand_par_file(argc, argv);
 
-    //runs a compression using random configuration
+    // runs a compression using random configuration
     if (input_1_str.compare("randcompress") == 0)
         return tool_rand_comp(argc, argv, working_dir, sub_folder_str, 1);
 
-    //creates a set of psnr to data rate data points 
+    // creates a set of psnr to data rate data points
     if (input_1_str.compare("graphpsnr") == 0)
         return tool_graph_psnr(argc, argv, working_dir, sub_folder_str, 1);
 
-    ////////////////////Hidden Commands/////////////////////////
-    //Shows Hidden Commands
+    //////////////////// Hidden Commands /////////////////////////
+    // Shows Hidden Commands
     if (input_1_str.compare("showhidden") == 0)
         return show_hidden_cmds();
 
-    //runs threshold check (this needs to be looked at)
+    // runs threshold check (this needs to be looked at)
     if (input_1_str.compare("thresh") == 0)
         return tool_run_thresh(argc, argv);
 
-    //Displays which frames are key frames for an input compressed ivf file
+    // Displays which frames are key frames for an input compressed ivf file
     if (input_1_str.compare("dispframedata") == 0)
         return tool_disp_frame_data(argc, argv);
 
-    //displays dropped frames
+    // displays dropped frames
     if (input_1_str.compare("dispdropedframes") == 0)
         return tool_disp_droped_frames(argc, argv);
 
-    //gets the number of frames a file has
+    // gets the number of frames a file has
     if (input_1_str.compare("getframecount") == 0)
         return vpxt_get_number_of_frames(argv[2]);
 
-    //Checks to make sure a Multi Run Input file has the correct format
+    // Checks to make sure a Multi Run Input file has the correct format
     if (input_1_str.compare("testfileinputcheck") == 0)
         return vpxt_run_multiple_tests_input_check(argv[2], 1);
 
-    //creates a set of random tests
+    // creates a set of random tests
     if (input_1_str.compare("randomstresstest") == 0)
         return tool_random_stress_test(argc, argv);
 
-    //Formats a test results output file by test and result
+    // Formats a test results output file by test and result
     if (input_1_str.compare("formatsummary") == 0)
         return tool_format_summary(argc, argv);
 
-    //Solves Quadradic
+    // Solves Quadradic
     if (input_1_str.compare("quad") == 0)
         return tool_solve_quad();
 
-    //Compares two dec ivf files
+    // Compares two dec ivf files
     if (input_1_str.compare("comparedec") == 0)
         return tool_compare_dec(argc, argv);
 
-    //print which instruction sets are available on machine
+    // print which instruction sets are available on machine
     if (input_1_str.compare("printcpuinfo") == 0)
         return tool_print_cpu_info();
 
-    //Copies all text files in a directory to a new directory preserving file
-    //structure
+    // Copies all text files in a directory to a new directory preserving file
+    // structure
     if (input_1_str.compare("copyalltxtfiles") == 0)
         return tool_copy_all_txt_files(argc, argv);
 
-    //combines as set of frames to a raw file
+    // combines as set of frames to a raw file
     if (input_1_str.compare("combineindvframes") == 0)
         return tool_combine_indv_frames(argc, argv);
 
-    //write ivf file header data to a file
+    // write ivf file header data to a file
     if (input_1_str.compare("writeivffileheader") == 0)
         return tool_vpxt_write_ivf_file_header(argc, argv);
 
-    //write ivf frame header data to a file
+    // write ivf frame header data to a file
     if (input_1_str.compare("writeivfframeheader") == 0)
         return tool_vpxt_write_ivf_frame_header(argc, argv);
 
-    //write frame data to a file
+    // write frame data to a file
     if (input_1_str.compare("writeframedata") == 0)
         return tool_vpxt_write_frame_data(argc, argv);
 
@@ -4406,197 +4403,197 @@ int  main(int argc, const char *argv[])
         return 0;
     }
 
-    if (selector == RTFFINUM)
+    if (selector == kTestMultiRun)
         return vpxt_run_multi(argc, argv, working_dir);
 
-    if (selector == AlWDFNUM)
+    if (selector == kTestAllowDropFrames)
         return test_allow_drop_frames(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == ALWLGNUM)
+    if (selector == kTestAllowLag)
         return test_allow_lag(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == ALWSRNUM)
+    if (selector == kTestAllowSpatialResampling)
         return test_allow_spatial_resampling(argc, argv, working_dir,
         sub_folder_str, 1 , KEEP_IVF);
 
-    if (selector == ARNRTNUM)
+    if (selector == kTestArnr)
         return test_arnr(argc, argv, working_dir, sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == AUTKFNUM)
+    if (selector == kTestAutoKeyFrame)
         return test_auto_key_frame(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == BUFLVNUM)
+    if (selector == kTestBufferLevel)
         return test_buffer_level(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == CPUDENUM)
+    if (selector == kTestChangeCpuDec)
         return test_change_cpu_dec(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == CPUENNUM)
+    if (selector == kTestChangeCpuEnc)
         return test_change_cpu_enc(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == CONQUNUM)
+    if (selector == kTestConstrainedQuality)
         return test_constrained_quality(argc, argv, working_dir, sub_folder_str
         , 1, KEEP_IVF);
 
-    if (selector == COPSRNUM)
+    if (selector == kTestCopySetReference)
         return test_copy_set_reference(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == DFWMWNUM)
+    if (selector == kTestDropFrameWaterMark)
         return test_drop_frame_watermark(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == DTARTNUM)
+    if (selector == kTestDataRate)
         return test_data_rate(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == DBMRLNUM)
+    if (selector == kTestDebugMatchesRelease)
         return test_debug_matches_release(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == ENCBONUM)
+    if (selector == kTestEncoderBreakout)
         return test_encoder_break_out(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == ERRCONUM)
+    if (selector == kTestErrorConcealment)
         return test_error_concealment(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == ERRMWNUM)
+    if (selector == kTestErrorResolution)
         return test_error_resolution(argc, argv, working_dir, sub_folder_str, 1
         , KEEP_IVF);
 
-    if (selector == EXTFINUM)
+    if (selector == kTestExtraFile)
         return test_extra_file(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == FIXDQNUM)
+    if (selector == kTestFixedQuantizer)
         return test_fixed_quantizer(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == FKEFRNUM)
+    if (selector == kTestForcedKeyFrame)
         return test_force_key_frame(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == FRSZTNUM)
+    if (selector == kTestFrameSize)
         return test_frame_size(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == GQVBQNUM)
+    if (selector == kTestGoodVsBest)
         return test_good_vs_best(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == LGIFRNUM)
+    if (selector == kTestLagInFrames)
         return test_lag_in_frames(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == MAXQUNUM)
+    if (selector == kTestMaxQuantizer)
         return test_max_quantizer(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == MEML1NUM)
+    if (selector == kTestMemLeak)
         return test_mem_leak(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == MEML2NUM)
+    if (selector == kTestMemLeak2)
         return test_mem_leak2(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == MINQUNUM)
+    if (selector == kTestMinQuantizer)
         return test_min_quantizer(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == MULRENUM)
+    if (selector == kTestMultiResolutionEncode)
         return test_multiple_resolution_encode(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == MULTDNUM)
+    if (selector == kTestMultiThreadedDec)
         return test_multithreaded_dec(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == MULTENUM)
+    if (selector == kTestMultiThreadedEnc)
         return test_multithreaded_enc(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == NVOPSNUM)
+    if (selector == kTestNewVsOldPsnr)
         return test_new_vs_old_psnr(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == NVOTSNUM)
+    if (selector == kTestNewVsOldTempScale)
         return test_new_vs_old_temp_scale(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == NVOECPTK)
+    if (selector == kTestNewVsOldEncCpuTick)
         return test_new_vs_old_enc_cpu_tick(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == NOISENUM)
+    if (selector == kTestNoiseSensitivity)
         return test_noise_sensitivity(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == OV2PSNUM)
+    if (selector == kTestOnePassVsTwoPass)
         return test_one_pass_vs_two_pass(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == PLYALNUM)
+    if (selector == kTestPlayAlternate)
         return test_play_alternate(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == POSTPNUM)
+    if (selector == kTestPostProcessor)
         return test_post_processor(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == PSTMFNUM)
+    if (selector == kTestPostProcessorMfqe)
         return test_post_processor_mfqe(argc, argv, working_dir, sub_folder_str
         , 1, KEEP_IVF);
 
-    if (selector == RECBFNUM)
+    if (selector == kTestReconstructBuffer)
         return test_reconstruct_buffer(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 
-    if (selector == RSDWMNUM)
+    if (selector == kTestResampleDownWatermark)
         return test_resample_down_watermark(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == SPEEDNUM)
+    if (selector == kTestSpeed)
         return test_speed(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == TMPSCNUM)
+    if (selector == kTestTemporalScalability)
         return test_temporal_scalability(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == TVECTNUM)
+    if (selector == kTestTestVector)
         return test_test_vector(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == TTVSFNUM)
+    if (selector == kTestThirtytwoVsSixtyfour)
         return test_thirtytwo_vs_sixtyfour(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == TV2BTNUM)
+    if (selector == kTestTwoPassVsTwoPassBest)
         return test_two_pass_vs_two_pass_best(argc, argv, working_dir,
         sub_folder_str, 1, KEEP_IVF);
 
-    if (selector == UNDSHNUM)
+    if (selector == kTestUndershoot)
         return test_undershoot(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == VERSINUM)
+    if (selector == kTestVersion)
         return test_version(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == VPXMINUM)
+    if (selector == kTestVpxMatchesInt)
         return test_vpx_matches_int(argc, argv, working_dir, sub_folder_str, 1,
         KEEP_IVF);
 
-    if (selector == WMLMMNUM)
+    if (selector == kTestWinLinMacMatch)
         return test_win_lin_mac_match(argc, argv, working_dir, sub_folder_str,
         1, KEEP_IVF);
 

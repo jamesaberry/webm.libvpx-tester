@@ -3,7 +3,7 @@
 #define max_test_vector 102
 
 int test_test_vector(int argc,
-                     const char *const *argv,
+                     const char** argv,
                      const std::string &working_dir,
                      const std::string sub_folder_str,
                      int test_type,
@@ -21,7 +21,7 @@ int test_test_vector(int argc,
 
     int cur_test_vector = 1;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
 
     std::string cur_test_dir_str;
     std::string file_index_str;
@@ -31,7 +31,7 @@ int test_test_vector(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string test_vector_folder = input;
     std::string test_vector_out_folder = cur_test_dir_str.c_str();
@@ -274,7 +274,7 @@ int test_test_vector(int argc,
 
     std::string md5_key_str_arr[101];
 
-    //New Test Vectors 2.0.0 MD5 Checksums
+    // New Test Vectors 2.0.0 MD5 Checksums
     /*vp80-00-comprehensive-001.raw*/
     md5_key_str_arr[0].assign("fad126074e1bd5363d43b9d1cadddb71");
     /*vp80-00-comprehensive-002.raw*/
@@ -482,10 +482,10 @@ int test_test_vector(int argc,
     // if = 1 will delete decompressed tesetvectors if 0 will not
     int del_tv = 0;
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -503,20 +503,20 @@ int test_test_vector(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
     {
-        //This test requires no preperation before a Test Only Run
+        // This test requires no preperation before a Test Only Run
     }
     else
     {
@@ -533,7 +533,7 @@ int test_test_vector(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return TEST_INDT;
+                return kTestIndeterminate;
             }
 
             cur_test_vector++;
@@ -542,14 +542,14 @@ int test_test_vector(int argc,
 
     std::vector<int> fail_vector;
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
-    //Compute MD5 CheckSums
+    // Compute MD5 CheckSums
     cur_test_vector = 1;
 
     while (cur_test_vector < max_test_vector)
@@ -653,7 +653,7 @@ int test_test_vector(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
     else
     {
@@ -705,10 +705,10 @@ int test_test_vector(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

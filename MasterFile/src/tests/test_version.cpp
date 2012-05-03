@@ -1,7 +1,7 @@
 #include "vpxt_test_declarations.h"
 
 int test_version(int argc,
-                 const char *const *argv,
+                 const char** argv,
                  const std::string &working_dir,
                  const std::string sub_folder_str,
                  int test_type,
@@ -22,7 +22,7 @@ int test_version(int argc,
 
     int speed = 0;
 
-    ////////////Formatting Test Specific directory////////////
+    //////////// Formatting Test Specific directory ////////////
 
     std::string cur_test_dir_str;
     std::string file_index_str;
@@ -32,7 +32,7 @@ int test_version(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
-        return TEST_ERRFM;
+        return kTestErrFileMismatch;
 
     std::string version_0 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_0";
@@ -66,10 +66,10 @@ int test_version(int argc,
         "_decompression_3";
     vpxt_dec_format_append(version_3_dec, dec_format);
 
-    /////////////OutPutfile////////////
+    ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == FULL_TEST)
+    if (test_type == kCompOnly || test_type == kFullTest)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -86,13 +86,13 @@ int test_version(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == FULL_TEST)
+    if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (test_type == COMP_ONLY)
+    if (test_type == kCompOnly)
         print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (test_type == TEST_ONLY)
+    if (test_type == kTestOnly)
         print_header_test_only(argc, argv, cur_test_dir_str);
 
     vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
@@ -100,7 +100,7 @@ int test_version(int argc,
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    ///////////////////Use Custom Settings///////////////////
+    /////////////////// Use Custom Settings ///////////////////
     if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
@@ -111,7 +111,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -125,9 +125,9 @@ int test_version(int argc,
     double psnr_arr[4];
     unsigned int dec_cpu_tick[4];
 
-    //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
-    //files)
-    if (test_type == TEST_ONLY)
+    // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
+    // files)
+    if (test_type == kTestOnly)
     {
         dec_cpu_tick[0] = vpxt_cpu_tick_return(version_0_dec.c_str(), 1);
         dec_cpu_tick[1] = vpxt_cpu_tick_return(version_1_dec.c_str(), 1);
@@ -146,7 +146,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt.Version = 1;
@@ -157,7 +157,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt.Version = 2;
@@ -168,7 +168,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         opt.Version = 3;
@@ -179,7 +179,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         tprintf(PRINT_STD, "\n\n");
@@ -191,7 +191,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         tprintf(PRINT_STD, "\n");
@@ -203,7 +203,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         tprintf(PRINT_STD, "\n");
@@ -215,7 +215,7 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
         tprintf(PRINT_STD, "\n");
@@ -227,17 +227,17 @@ int test_version(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return TEST_INDT;
+            return kTestIndeterminate;
         }
 
     }
 
-    //Create Compression only stop test short.
-    if (test_type == COMP_ONLY)
+    // Create Compression only stop test short.
+    if (test_type == kCompOnly)
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_COMPM;
+        return kTestEncCreated;
     }
 
     psnr_arr[0] = vpxt_psnr(input.c_str(), version_0.c_str(), 0, PRINT_BTH, 1,
@@ -260,8 +260,8 @@ int test_version(int argc,
         int t = i + 1;
         while (t < 4)
         {
-            //i should always have Higher PSNR than t
-            //i should always have a higher dec_cpu_tick as well.
+            // i should always have Higher PSNR than t
+            // i should always have a higher dec_cpu_tick as well.
             if (psnr_arr[i] < psnr_arr[t])
             {
                 if (dec_cpu_tick[i] < dec_cpu_tick[t])
@@ -369,7 +369,7 @@ int test_version(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_MINPA;
+        return kTestMinPassed;
     }
 
     if (fail == 1)
@@ -383,7 +383,7 @@ int test_version(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_FAILED;
+        return kTestFailed;
     }
     else
     {
@@ -396,10 +396,10 @@ int test_version(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return TEST_PASSED;
+        return kTestPassed;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return TEST_ERROR;
+    return kTestError;
 }

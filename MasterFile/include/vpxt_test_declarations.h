@@ -44,6 +44,21 @@ extern "C"
     extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
 }
 
-#define TEST_ONLY 3
+#define NO_TEST   0
+#define FULL_TEST 1
 #define COMP_ONLY 2
-#define TEST_AND_COMP 1
+#define TEST_ONLY 3
+#define RESU_TEST 4
+
+#define TEST_FAILED  0 // failed
+#define TEST_PASSED  1 // passed
+#define TEST_INDT    2 // indeterminate
+#define TEST_COMBO   3 // see combo run log
+#define TEST_PSNRL   4 // see psnr log
+#define TEST_RANDT   5 // random test completed
+#define TEST_ERROR   6 // test error
+#define TEST_MINPA   8 // min passed
+#define TEST_COMPM  10 // compression made
+#define TEST_ERRFM  11 // error file mismatch
+#define TEST_TSTNS  12 // test not supported
+

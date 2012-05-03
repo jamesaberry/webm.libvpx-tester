@@ -25,7 +25,7 @@ extern int tool_array_coverage(int argc,
                                const std::string &working_dir,
                                std::string files_ar[]);
 
-int create_working_folder(int argc, const char *argv[], char *WorkingDirChar)
+int create_working_folder(int argc, const char *argv[], char *working_dir_char)
 {
     ///////////////////////////////////Create Working Folder////////////////////
 
@@ -86,7 +86,7 @@ int create_working_folder(int argc, const char *argv[], char *WorkingDirChar)
     }
 
     Folder += "\"\0";
-    snprintf(WorkingDirChar, 255, "%s", Folder.c_str());
+    snprintf(working_dir_char, 255, "%s", Folder.c_str());
 
     return 0;
 }
@@ -3728,7 +3728,7 @@ void format_summary(const char *InputFileNameCharAr)
 
                 if (LineBuffer.length() > 60)
                 {
-                    int n = 5;
+                    unsigned int n = 5;
 
                     while (n < 39 && LineBuffer[n] != ' ')
                         n = n + 1;
@@ -3848,7 +3848,7 @@ void format_summary(const char *InputFileNameCharAr)
                             if (TestNumberCur == TestRunNumInt)
                             {
                                 TestsRunString[0] = ' ';
-                                int t = 0;
+                                unsigned int t = 0;
 
                                 while (t < TestsRunString.length())
                                 {
@@ -4224,9 +4224,9 @@ int  main(int argc, const char *argv[])
     }
 
     std::string EmptyAr[1];
-    char WorkingDirChar[256]  = "";
-    create_working_folder(argc, argv, WorkingDirChar);
-    std::string working_dir = WorkingDirChar;
+    char working_dir_char[256]  = "";
+    create_working_folder(argc, argv, working_dir_char);
+    std::string working_dir = working_dir_char;
     std::string TestInputString(argv[1]);
     std::string TestInputString2;
 
@@ -4569,8 +4569,8 @@ int  main(int argc, const char *argv[])
         return test_allow_lag(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == ALWSRNUM)
-        return test_allow_spatial_resampling(argc, argv, working_dir, EmptyAr, 1,
-        KEEP_IVF);
+        return test_allow_spatial_resampling(argc, argv, working_dir, EmptyAr, 1
+        , KEEP_IVF);
 
     if (selector == ARNRTNUM)
         return test_arnr(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
@@ -4639,10 +4639,10 @@ int  main(int argc, const char *argv[])
         return test_good_vs_best(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == LGIFRNUM)
-        return test_lag_in_frames(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_lag_in_frames(argc, argv, working_dir, EmptyAr, 1,KEEP_IVF);
 
     if (selector == MAXQUNUM)
-        return test_max_quantizer(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_max_quantizer(argc, argv, working_dir, EmptyAr, 1,KEEP_IVF);
 
     if (selector == MEML1NUM)
         return test_mem_leak(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
@@ -4651,7 +4651,7 @@ int  main(int argc, const char *argv[])
         return test_mem_leak2(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
 
     if (selector == MINQUNUM)
-        return test_min_quantizer(argc, argv, working_dir, EmptyAr, 1, KEEP_IVF);
+        return test_min_quantizer(argc, argv, working_dir, EmptyAr, 1,KEEP_IVF);
 
     if (selector == MULRENUM)
         return test_multiple_resolution_encode(argc, argv, working_dir, EmptyAr,

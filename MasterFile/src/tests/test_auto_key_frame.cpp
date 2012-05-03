@@ -31,7 +31,7 @@ int test_auto_key_frame(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, files_ar) == 11)
-        return 11;
+        return TEST_ERRFM;
 
     std::string auto_key_frame_works_enc_1 = cur_test_dir_str + slashCharStr() +
         test_dir + "_compression_1";
@@ -50,7 +50,7 @@ int test_auto_key_frame(int argc,
     /////////////OutPutfile////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -67,7 +67,7 @@ int test_auto_key_frame(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
+    if (test_type == FULL_TEST)
         print_header_full_test(argc, argv, main_test_dir_char);
 
     if (test_type == COMP_ONLY)
@@ -92,7 +92,7 @@ int test_auto_key_frame(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -122,7 +122,7 @@ int test_auto_key_frame(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         if (vpxt_compress(input.c_str(), auto_key_frame_works_enc_2.c_str(),
@@ -132,7 +132,7 @@ int test_auto_key_frame(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
     }
 
@@ -141,7 +141,7 @@ int test_auto_key_frame(int argc,
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 10;
+        return TEST_COMPM;
     }
 
     vpxt_display_key_frames(auto_key_frame_works_enc_1.c_str(), 1);
@@ -156,7 +156,7 @@ int test_auto_key_frame(int argc,
             key_frame_txt_out_1.c_str());
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     if (!key_frame_2_infile.good())
@@ -165,7 +165,7 @@ int test_auto_key_frame(int argc,
             key_frame_txt_out_2.c_str());
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     int fail = 0;
@@ -207,7 +207,7 @@ int test_auto_key_frame(int argc,
     {
         tprintf(PRINT_BTH, "\nKey Frame File Not Present - Failed");
         fclose(fp);
-        return 0;
+        return TEST_FAILED;
     }
 
     int selector = 0;
@@ -289,7 +289,7 @@ int test_auto_key_frame(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 1;
+        return TEST_PASSED;
     }
     else
     {
@@ -306,10 +306,10 @@ int test_auto_key_frame(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return 6;
+    return TEST_ERROR;
 }

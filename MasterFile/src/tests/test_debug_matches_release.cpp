@@ -31,7 +31,7 @@ int test_debug_matches_release(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, files_ar) == 11)
-        return 11;
+        return TEST_ERRFM;
 
     std::string exe_debug_release_str;
     vpxt_folder_name(argv[0], &exe_debug_release_str);
@@ -109,7 +109,7 @@ int test_debug_matches_release(int argc,
     /////////////OutPutfile////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -125,7 +125,7 @@ int test_debug_matches_release(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
+    if (test_type == FULL_TEST)
         print_header_full_test(argc, argv, main_test_dir_char);
 
     if (test_type == COMP_ONLY)
@@ -160,7 +160,7 @@ int test_debug_matches_release(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -174,7 +174,7 @@ int test_debug_matches_release(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 2;
+        return TEST_INDT;
     }
 
     /////////////////Make Sure Exe File Exists///////////////
@@ -184,7 +184,7 @@ int test_debug_matches_release(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 2;
+        return TEST_INDT;
     }
 
     /////////////////Make Sure ivf File Exists///////////////
@@ -194,7 +194,7 @@ int test_debug_matches_release(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 2;
+        return TEST_INDT;
     }
 
     /////////////////////////////////////////////////////////
@@ -235,7 +235,7 @@ int test_debug_matches_release(int argc,
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 10;
+        return TEST_COMPM;
     }
 
     tprintf(PRINT_BTH, "\n\nComparing Compression Files: ");
@@ -287,7 +287,7 @@ int test_debug_matches_release(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 1;
+        return TEST_PASSED;
     }
     else
     {
@@ -300,10 +300,10 @@ int test_debug_matches_release(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return 6;
+    return TEST_ERROR;
 }

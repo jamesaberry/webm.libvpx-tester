@@ -92,16 +92,17 @@ int vpxt_gcd(int a, int b);
 int vpxt_abs_int(int input);
 float vpxt_abs_float(float input);
 double vpxt_abs_double(double input);
-int vpxt_solve_quadratic(float X1,
-                         float X2,
-                         float X3,
-                         float Y1,
-                         float Y2,
-                         float Y3,
-                         float &A,
-                         float &B,
-                         float &C);
-float vpxt_area_under_quadratic(float A, float B, float C, float X1, float X2);
+int vpxt_solve_quadratic(double X1,
+                         double X2,
+                         double X3,
+                         double Y1,
+                         double Y2,
+                         double Y3,
+                         double &A,
+                         double &B,
+                         double &C);
+double vpxt_area_under_quadratic(double A, double B, double C, double X1,
+								 double X2);
 char *vpxt_itoa_custom(int value, char *result, int base);
 //---------------------------Cross Plat-----------------------------------------
 void vpxt_delete_files(int argcount, ...);
@@ -159,13 +160,13 @@ double vpxt_psnr_resize_frames(const char *inputFile1,
 double vpxt_data_rate(const char *inputFile, int DROuputSel);
 int vpxt_check_pbm(const char *inputFile,
                    int bitRate,
-                   int maxBuffer,
-                   int preBuffer);
+                   int64_t maxBuffer,
+                   int64_t preBuffer);
 int vpxt_check_pbm_threshold(const char *inputFile,
                              double bitRate,
-                             int maxBuffer,
-                             int preBuffer,
-                             int optimalbuffer,
+                             int64_t maxBuffer,
+                             int64_t preBuffer,
+                             int64_t optimalbuffer,
                              int Threshold);
 int vpxt_faux_compress();
 int vpxt_faux_decompress(const char *inputChar);
@@ -355,11 +356,11 @@ int vpxt_compare_header_info(int argc, const char *const *argv);
 int vpxt_compare_dec(const char *inputFile1, const char *inputFile2);
 int vpxt_compare_enc(const char *inputFile1,
                      const char *inputFile2, int fullcheck);
-double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch);
-double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch);
-double vpxt_display_visible_frames(const char *inputFile, int Selector);
-double vpxt_display_alt_ref_frames(const char *inputFile, int Selector);
-double vpxt_display_key_frames(const char *inputFile, int Selector);
+int vpxt_display_droped_frames(const char *inputchar, int PrintSwitch);
+int vpxt_display_resized_frames(const char *inputchar, int PrintSwitch);
+int vpxt_display_visible_frames(const char *inputFile, int Selector);
+int vpxt_display_alt_ref_frames(const char *inputFile, int Selector);
+int vpxt_display_key_frames(const char *inputFile, int Selector);
 int vpxt_lag_in_frames_check(const char *QuantInChar);
 int vpxt_dfwm_check(const char *InputFile, int printselect);
 double vpxt_print_frame_statistics(const char *input_file1,

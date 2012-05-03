@@ -8337,7 +8337,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
     VP8vNewest_PlugIn_DLib_DMode = "VP8vNewest_PlugIn_DLib_DMode_64Bit.exe";
 #endif
 
-    int i = 0;
+    unsigned int i = 0;
 
     while (i < FileNamesVector.size())
     {
@@ -9547,7 +9547,7 @@ int tool_side_by_side_text(int argc, const char *const *argv)
     std::string InputCharFormatStr;
     std::string InputCharStr1;
     std::string InputCharStr2;
-    int MaxLength = 0;
+    unsigned int MaxLength = 0;
 
     std::string InputStr1 = argv[2];
     std::string InputStr2 = argv[3];

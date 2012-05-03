@@ -38,7 +38,7 @@ int test_speed(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, files_ar) == 11)
-        return 11;
+        return TEST_ERRFM;
 
     std::string speed_test_good_quality_base = cur_test_dir_str + slashCharStr()
         + test_dir + "_compression_cpu_used_";
@@ -79,7 +79,7 @@ int test_speed(int argc,
     /////////////OutPutfile////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -96,7 +96,7 @@ int test_speed(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
+    if (test_type == FULL_TEST)
         print_header_full_test(argc, argv, main_test_dir_char);
 
     if (test_type == COMP_ONLY)
@@ -120,7 +120,7 @@ int test_speed(int argc,
 
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char, test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -137,11 +137,9 @@ int test_speed(int argc,
 
     unsigned int good_quality_total_cpu_tick[7];
     unsigned int real_time_total_cpu_tick[17];
-    unsigned int real_time_total_cpu_tick_pos[18];
 
     double good_quality_psnr_arr[7];
     double real_time_psnr_arr[17];
-    double real_time_psnr_arr_pos[18];
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
@@ -223,7 +221,7 @@ int test_speed(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return 2;
+                    return TEST_INDT;
                 }
 
                 if (test_type != 2 && test_type != 3)
@@ -264,7 +262,7 @@ int test_speed(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return 2;
+                    return TEST_INDT;
                 }
 
                 if (test_type != 2 && test_type != 3)
@@ -286,7 +284,7 @@ int test_speed(int argc,
         //Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 10;
+        return TEST_COMPM;
     }
 
     tprintf(PRINT_BTH, "\n");
@@ -315,8 +313,8 @@ int test_speed(int argc,
                 fail_1 = 1;
             }
 
-            float psnr_percent;
-            psnr_percent = vpxt_abs_float(good_quality_psnr_arr[counter] -
+            double psnr_percent;
+            psnr_percent = vpxt_abs_double(good_quality_psnr_arr[counter] -
                 good_quality_psnr_arr[counter-1]) /
                 good_quality_psnr_arr[counter-1];
 
@@ -362,7 +360,7 @@ int test_speed(int argc,
                     real_time_total_cpu_tick[counter-1]);
                 fail_1++;
 
-                float time_percent = (real_time_total_cpu_tick[counter] -
+                double time_percent = (real_time_total_cpu_tick[counter] -
                     real_time_total_cpu_tick[counter-1]);
 
                 if (time_percent < 0)
@@ -372,8 +370,8 @@ int test_speed(int argc,
                     fail_3++;
             }
 
-            float psnr_percent;
-            psnr_percent = vpxt_abs_float(real_time_psnr_arr[counter] -
+            double psnr_percent;
+            psnr_percent = vpxt_abs_double(real_time_psnr_arr[counter] -
                 real_time_psnr_arr[counter-1]) / real_time_psnr_arr[counter-1];
 
             if (psnr_percent < 0.1)
@@ -507,7 +505,7 @@ int test_speed(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     if (pass == 1)
@@ -527,7 +525,7 @@ int test_speed(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 1;
+        return TEST_PASSED;
     }
     else
     {
@@ -546,10 +544,10 @@ int test_speed(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 8;
+        return TEST_MINPA;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return 6;
+    return TEST_ERROR;
 }

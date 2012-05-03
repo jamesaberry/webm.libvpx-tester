@@ -29,7 +29,7 @@ int test_good_vs_best(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, files_ar) == 11)
-        return 11;
+        return TEST_ERRFM;
 
     std::string good_out_file_1 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_good_1";
@@ -58,7 +58,7 @@ int test_good_vs_best(int argc,
     /////////////OutPutfile////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -76,7 +76,7 @@ int test_good_vs_best(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
+    if (test_type == FULL_TEST)
         print_header_full_test(argc, argv, main_test_dir_char);
 
     if (test_type == COMP_ONLY)
@@ -100,7 +100,7 @@ int test_good_vs_best(int argc,
 
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char, test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -130,7 +130,7 @@ int test_good_vs_best(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_2;
@@ -141,7 +141,7 @@ int test_good_vs_best(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_3;
@@ -152,7 +152,7 @@ int test_good_vs_best(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_1;
@@ -164,7 +164,7 @@ int test_good_vs_best(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_2;
@@ -175,7 +175,7 @@ int test_good_vs_best(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_3;
@@ -186,7 +186,7 @@ int test_good_vs_best(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
     }
 
@@ -195,17 +195,17 @@ int test_good_vs_best(int argc,
     {
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 10;
+        return TEST_COMPM;
     }
 
     tprintf(PRINT_BTH, "\n");
 
-    float good_size_1 = vpxt_data_rate(good_out_file_1.c_str(), 1);
-    float best_size_1 = vpxt_data_rate(best_out_file_1.c_str(), 1);
-    float good_size_2 = vpxt_data_rate(good_out_file_2.c_str(), 1);
-    float best_size_2 = vpxt_data_rate(best_out_file_2.c_str(), 1);
-    float good_size_3 = vpxt_data_rate(good_out_file_3.c_str(), 1);
-    float best_size_3 = vpxt_data_rate(best_out_file_3.c_str(), 1);
+    double good_size_1 = vpxt_data_rate(good_out_file_1.c_str(), 1);
+    double best_size_1 = vpxt_data_rate(best_out_file_1.c_str(), 1);
+    double good_size_2 = vpxt_data_rate(good_out_file_2.c_str(), 1);
+    double best_size_2 = vpxt_data_rate(best_out_file_2.c_str(), 1);
+    double good_size_3 = vpxt_data_rate(good_out_file_3.c_str(), 1);
+    double best_size_3 = vpxt_data_rate(best_out_file_3.c_str(), 1);
 
     double psnr_good_1 = vpxt_psnr(input.c_str(), good_out_file_1.c_str(), 1,
         PRINT_BTH, 1, NULL);
@@ -221,8 +221,8 @@ int test_good_vs_best(int argc,
         PRINT_BTH, 1, NULL);
 
     //data rates not always in order so find smallest observed data rate
-    float good_size_min = good_size_1;
-    float best_size_min = best_size_1;
+    double good_size_min = good_size_1;
+    double best_size_min = best_size_1;
 
     if(good_size_2 < good_size_min)
         good_size_min = good_size_2;
@@ -237,8 +237,8 @@ int test_good_vs_best(int argc,
         best_size_min = best_size_3;
 
     //data rates not always in order so find largest observed data rate
-    float good_size_max = good_size_3;
-    float best_size_max = best_size_3;
+    double good_size_max = good_size_3;
+    double best_size_max = best_size_3;
 
     if(good_size_2 > good_size_max)
         good_size_max = good_size_2;
@@ -252,16 +252,16 @@ int test_good_vs_best(int argc,
     if(best_size_1 > best_size_max)
         best_size_max = best_size_1;
 
-    float good_a = 0;
-    float good_b = 0;
-    float good_c = 0;
+    double good_a = 0;
+    double good_b = 0;
+    double good_c = 0;
 
-    float best_a = 0;
-    float best_b = 0;
-    float best_c = 0;
+    double best_a = 0;
+    double best_b = 0;
+    double best_c = 0;
 
-    float min_common = 0;
-    float max_common = 0;
+    double min_common = 0;
+    double max_common = 0;
 
     //take area over same range we have decent data for.
     if (good_size_min > best_size_min)
@@ -276,12 +276,12 @@ int test_good_vs_best(int argc,
 
     vpxt_solve_quadratic(good_size_1, good_size_2, good_size_3, psnr_good_1,
         psnr_good_2, psnr_good_3, good_a, good_b, good_c);
-    float good_area = vpxt_area_under_quadratic(good_a, good_b, good_c,
+    double good_area = vpxt_area_under_quadratic(good_a, good_b, good_c,
         min_common, max_common);
 
     vpxt_solve_quadratic(best_size_1, best_size_2, best_size_3, psnr_best_1,
         psnr_best_2, psnr_best_3, best_a, best_b, best_c);
-    float best_area = vpxt_area_under_quadratic(best_a, best_b, best_c,
+    double best_area = vpxt_area_under_quadratic(best_a, best_b, best_c,
         min_common, max_common);
 
     tprintf(PRINT_BTH, "\n\n"
@@ -358,7 +358,7 @@ int test_good_vs_best(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 1;
+        return TEST_PASSED;
     }
     else
     {
@@ -372,10 +372,10 @@ int test_good_vs_best(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return 6;
+    return TEST_ERROR;
 }

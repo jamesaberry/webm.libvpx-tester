@@ -29,7 +29,7 @@ int test_one_pass_vs_two_pass(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, files_ar) == 11)
-        return 11;
+        return TEST_ERRFM;
 
     std::string one_pass_out_1 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_one_pass_1";
@@ -58,7 +58,7 @@ int test_one_pass_vs_two_pass(int argc,
     /////////////OutPutfile////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -75,7 +75,7 @@ int test_one_pass_vs_two_pass(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
+    if (test_type == FULL_TEST)
         print_header_full_test(argc, argv, main_test_dir_char);
 
     if (test_type == COMP_ONLY)
@@ -100,7 +100,7 @@ int test_one_pass_vs_two_pass(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -131,7 +131,7 @@ int test_one_pass_vs_two_pass(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_2;
@@ -142,7 +142,7 @@ int test_one_pass_vs_two_pass(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_3;
@@ -153,7 +153,7 @@ int test_one_pass_vs_two_pass(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.Mode = 2;
@@ -165,7 +165,7 @@ int test_one_pass_vs_two_pass(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_2;
@@ -176,7 +176,7 @@ int test_one_pass_vs_two_pass(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt.target_bandwidth = bitrate_3;
@@ -187,7 +187,7 @@ int test_one_pass_vs_two_pass(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
     }
 
@@ -197,17 +197,17 @@ int test_one_pass_vs_two_pass(int argc,
         //Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 10;
+        return TEST_COMPM;
     }
 
     tprintf(PRINT_STD, "\n");
 
-    float size_two_pass_1 = vpxt_data_rate(two_pass_out_1.c_str(), 1);
-    float size_one_pass_1 = vpxt_data_rate(one_pass_out_1.c_str(), 1);
-    float size_two_pass_2 = vpxt_data_rate(two_pass_out_2.c_str(), 1);
-    float size_one_pass_2 = vpxt_data_rate(one_pass_out_2.c_str(), 1);
-    float size_two_pass_3 = vpxt_data_rate(two_pass_out_3.c_str(), 1);
-    float size_one_pass_3 = vpxt_data_rate(one_pass_out_3.c_str(), 1);
+    double size_two_pass_1 = vpxt_data_rate(two_pass_out_1.c_str(), 1);
+    double size_one_pass_1 = vpxt_data_rate(one_pass_out_1.c_str(), 1);
+    double size_two_pass_2 = vpxt_data_rate(two_pass_out_2.c_str(), 1);
+    double size_one_pass_2 = vpxt_data_rate(one_pass_out_2.c_str(), 1);
+    double size_two_pass_3 = vpxt_data_rate(two_pass_out_3.c_str(), 1);
+    double size_one_pass_3 = vpxt_data_rate(one_pass_out_3.c_str(), 1);
 
     double psnr_two_pass_1 = vpxt_psnr(input.c_str(), two_pass_out_1.c_str(), 1,
         PRINT_BTH, 1, NULL);
@@ -225,8 +225,8 @@ int test_one_pass_vs_two_pass(int argc,
     int pass = 0;
 
     //data rates not always in order so find smallest observed data rate
-    float size_two_pass_min = size_two_pass_1;
-    float size_one_pass_min = size_one_pass_1;
+    double size_two_pass_min = size_two_pass_1;
+    double size_one_pass_min = size_one_pass_1;
 
     if(size_two_pass_2 < size_two_pass_min)
         size_two_pass_min = size_two_pass_2;
@@ -241,8 +241,8 @@ int test_one_pass_vs_two_pass(int argc,
         size_one_pass_min = size_one_pass_3;
 
     //data rates not always in order so find largest observed data rate
-    float size_two_pass_max = size_two_pass_3;
-    float size_one_pass_max = size_one_pass_3;
+    double size_two_pass_max = size_two_pass_3;
+    double size_one_pass_max = size_one_pass_3;
 
     if(size_two_pass_2 > size_two_pass_max)
         size_two_pass_max = size_two_pass_2;
@@ -256,16 +256,16 @@ int test_one_pass_vs_two_pass(int argc,
     if(size_one_pass_1 > size_one_pass_max)
         size_one_pass_max = size_one_pass_1;
 
-    float two_pass_a = 0;
-    float two_pass_b = 0;
-    float two_pass_c = 0;
+    double two_pass_a = 0;
+    double two_pass_b = 0;
+    double two_pass_c = 0;
 
-    float one_pass_a = 0;
-    float one_pass_b = 0;
-    float one_pass_c = 0;
+    double one_pass_a = 0;
+    double one_pass_b = 0;
+    double one_pass_c = 0;
 
-    float min_common = 0;
-    float max_common = 0;
+    double min_common = 0;
+    double max_common = 0;
 
     //take area over same range we have decent data for.
     if (size_two_pass_min > size_one_pass_min)
@@ -281,13 +281,13 @@ int test_one_pass_vs_two_pass(int argc,
     vpxt_solve_quadratic(size_two_pass_1, size_two_pass_2, size_two_pass_3,
         psnr_two_pass_1, psnr_two_pass_2, psnr_two_pass_3, two_pass_a,
         two_pass_b, two_pass_c);
-    float two_pass_area = vpxt_area_under_quadratic(two_pass_a, two_pass_b,
+    double two_pass_area = vpxt_area_under_quadratic(two_pass_a, two_pass_b,
         two_pass_c, min_common, max_common);
 
     vpxt_solve_quadratic(size_one_pass_1, size_one_pass_2, size_one_pass_3,
         psnr_one_pass_1, psnr_one_pass_2, psnr_one_pass_3, one_pass_a,
         one_pass_b, one_pass_c);
-    float one_pass_area = vpxt_area_under_quadratic(one_pass_a, one_pass_b,
+    double one_pass_area = vpxt_area_under_quadratic(one_pass_a, one_pass_b,
         one_pass_c, min_common, max_common);
 
     tprintf(PRINT_BTH, "\n\n"
@@ -362,7 +362,7 @@ int test_one_pass_vs_two_pass(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 1;
+        return TEST_PASSED;
     }
     else
     {
@@ -376,10 +376,10 @@ int test_one_pass_vs_two_pass(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return 6;
+    return TEST_ERROR;
 }

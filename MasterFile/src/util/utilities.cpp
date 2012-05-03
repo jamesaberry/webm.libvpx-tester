@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "vpxt_test_definitions.h"
+#include "vpxt_test_declarations.h"
 #include "vpxt_utilities.h"
 #include "vpxt_driver.h"
 #include "yv12config.h"
@@ -2405,7 +2406,6 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
     else
     {
         IVF_HEADER ivfhRaw;
-        IVF_FRAME_HEADER ivf_fhRaw;
         InitIVFHeader(&ivfhRaw);
         fread(&ivfhRaw, 1, sizeof(ivfhRaw), GetWHinfile);
         vpxt_format_ivf_header_read(&ivfhRaw);
@@ -2519,8 +2519,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
     opt.token_partitions = rand() % 4;        //valid Range: 0 to 3
     opt.error_resilient_mode = rand() % 101;  //valid Range: 0 to 100
 
-    float TBUpperBoundFloat = ((w * h) / (320 * 240) * 2048);
-    int TBUpperBound = TBUpperBoundFloat;
+    int TBUpperBound = ((w * h) / (320 * 240) * 2048);
 
     if (TBUpperBound == 0)
         TBUpperBound = 1;
@@ -2658,7 +2657,6 @@ VP8_CONFIG vpxt_input_settings(const char *inputFile)
     // Reads an input file and sets VP8_CONFIG accordingly
     std::ifstream infile2(inputFile);
 
-    char firstPFile[256];
     std::string Garbage;
 
     VP8_CONFIG opt;
@@ -3493,7 +3491,6 @@ void vpxt_folder_name(const char *input, std::string *output_str)
     int slashcount = 0;
     int slashcount2 = 0;
     const char *Dir = input;
-    char output[1024];
 
     while (Dir[parser] != '\0')
     {
@@ -3704,7 +3701,6 @@ int  vpxt_get_multi_res_width_height(const char *inputFile,
     unsigned int rate = 0;          //good
     unsigned int scale = 0;         //good
     unsigned int length = 0;        //other measure
-    unsigned char unused[4];        // -
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -4141,13 +4137,13 @@ std::string vpxt_extract_date_time(const std::string InputStr)
     return FileNameStr;
 }
 int vpxt_timestamp_compare(const std::string TimeStampNow,
-                           const std::string TimeStampPrevious)
+                           const std::string prev_time_stamp)
 {
     int i = 0;
 
     while (i < 24)
     {
-        if (TimeStampNow[i] != TimeStampPrevious[i])
+        if (TimeStampNow[i] != prev_time_stamp[i])
             return 0;
 
         i++;
@@ -4457,7 +4453,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
         if (Buffer0CharAscii == 37 || Buffer0CharAscii == '\0' ||
             Buffer0CharAscii == '\r')
         {
-            //linesskippedtracker++;
+            //lines_skipped_cnt++;
         }
         else
         {
@@ -4476,7 +4472,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
         return -1;
     }
 
-    int linesskippedtracker = 0;
+    int lines_skipped_cnt = 0;
 
     char buffer[1024];
     char buffer2[1024];
@@ -4510,7 +4506,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
         return 0;
     }
 
-    int NumberOfTestsRun = 1;
+    int number_of_tests_run = 1;
     ///////////////////////////////////////
     int trackthis1 = 0;
     int trackthis2 = 0;
@@ -4534,7 +4530,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
         if (Buffer0CharAscii == 37 || Buffer0CharAscii == '\0' ||
             Buffer0CharAscii == '\r')
         {
-            linesskippedtracker++;
+            lines_skipped_cnt++;
         }
         else
         {
@@ -4584,7 +4580,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                 if (selector >= 0 && selector < MAXTENUM)
                 {
-                    NumberOfTestsRun++;
+                    number_of_tests_run++;
                 }
 
                 if (selector == 0)
@@ -5757,7 +5753,7 @@ double vpxt_get_new_vs_old_val(std::string fileline,
                                std::vector<double> &ValueList,
                                int &values_per_line)
 {
-    int last_num_pos = 0;
+    unsigned int last_num_pos = 0;
     int last_space_pos = 0;
     int is_number = 1;
     double number = 0.0;
@@ -5917,7 +5913,7 @@ int  vpxt_eval_new_vs_old_log(const char *logfile,
                 }
             }
 
-            correctCommit == 0;
+            correctCommit = 0;
             correctTest = 0;
         }
 
@@ -6473,9 +6469,7 @@ int vpxt_abs_int(int input)
 float vpxt_abs_float(float input)
 {
     if (input < 0.0)
-    {
         input = input * -1.0;
-    }
 
     return input;
 }
@@ -6488,15 +6482,15 @@ double vpxt_abs_double(double input)
 
     return input;
 }
-int vpxt_solve_quadratic(float X1,
-                         float X2,
-                         float X3,
-                         float Y1,
-                         float Y2,
-                         float Y3,
-                         float &A,
-                         float &B,
-                         float &C)
+int vpxt_solve_quadratic(double X1,
+                         double X2,
+                         double X3,
+                         double Y1,
+                         double Y2,
+                         double Y3,
+                         double &A,
+                         double &B,
+                         double &C)
 {
     A = ((Y2 - Y1) * (X1 - X3) + (Y3 - Y1) * (X2 - X1)) / ((X1 - X3) *
         ((X2 * X2) - (X1 * X1)) + (X2 - X1) * ((X3 * X3) - (X1 * X1)));
@@ -6505,11 +6499,11 @@ int vpxt_solve_quadratic(float X1,
 
     return 0;
 }
-float vpxt_area_under_quadratic(float A, float B, float C, float X1, float X2)
+double vpxt_area_under_quadratic(double A, double B, double C, double X1, double X2)
 {
-    float Area1 = ((A * X1 * X1 * X1) / 3) + ((B * X1 * X1) / 2) + C * X1;
-    float Area2 = ((A * X2 * X2 * X2) / 3) + ((B * X2 * X2) / 2) + C * X2;
-    float TotalArea = Area2 - Area1;
+    double Area1 = ((A * X1 * X1 * X1) / 3) + ((B * X1 * X1) / 2) + C * X1;
+    double Area2 = ((A * X2 * X2 * X2) / 3) + ((B * X2 * X2) / 2) + C * X2;
+    double TotalArea = Area2 - Area1;
     return TotalArea;
 }
 char *vpxt_itoa_custom(int value, char *result, int base)
@@ -6754,8 +6748,6 @@ unsigned int vpxt_get_cpu_tick()
     FILETIME KernelTime;
     FILETIME UserTime;
 
-    LPSYSTEMTIME SystemTime;
-
     GetProcessTimes(GetCurrentProcess(), &CreationTime, &ExitTime, &KernelTime, &UserTime);
 
     //UserTime is meaured in groupings of 100 nano seconds, so 10^-9 * 100
@@ -6967,7 +6959,7 @@ int vpxt_find_non_ignored_files_in_dir(std::vector<std::string> IgnoredFiles,
     {
         FileName = FileData.cFileName;
 
-        int CurVecPos = 0;
+        unsigned int CurVecPos = 0;
         int IgnoreFile = 0;
 
         while (CurVecPos < IgnoredFiles.size())
@@ -8984,9 +8976,9 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
 
     tprintf(PRINT_STD, "\n");
 
-    long nBytes = 0;
-    long nBytesMin = 999999;
-    long nBytesMax = 0;
+    size_t nBytes = 0;
+    size_t nBytesMin = 999999;
+    size_t nBytesMax = 0;
 
     uint64_t timestamp = 0;
     while (!skim_frame_dec(&input, &buf, &buf_sz, &buf_alloc_sz, &timestamp))
@@ -9060,8 +9052,8 @@ double vpxt_data_rate(const char *inputFile, int DROuputSel)
 
 int vpxt_check_pbm(const char *inputFile,
                    int bitRate,
-                   int maxBuffer,
-                   int preBuffer)
+                   int64_t maxBuffer,
+                   int64_t preBuffer)
 {
     //bitRate    bitrate in kbps
     //maxBuffer  maxbuffer in ms
@@ -9184,9 +9176,9 @@ int vpxt_check_pbm(const char *inputFile,
 }
 int vpxt_check_pbm_threshold(const char *inputFile,
                              double bitRate,
-                             int maxBuffer,
-                             int preBuffer,
-                             int optimalbuffer,
+                             int64_t maxBuffer,
+                             int64_t preBuffer,
+                             int64_t optimalbuffer,
                              int Threshold)
 {
     std::string ResizeInStr;
@@ -9425,7 +9417,7 @@ int initialize_test_directory(int argc,
     std::string PrefTestOnlyTestMatch;
     char CurTestDirChar[255] = "";
 
-    if (test_type == 2 || test_type == 1)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
     {
         snprintf(CurTestDirChar, 255, "%s", working_dir.c_str());
 
@@ -9452,7 +9444,7 @@ int initialize_test_directory(int argc,
         vpxt_make_dir_vpx(CreateDir2.c_str());
 
         ///////////////////Records FileLocations for MultiPlat Test/////////////
-        if (test_type == 2)
+        if (test_type == COMP_ONLY)
         {
             char CurTestDirStr2[255];
             snprintf(CurTestDirStr2, 255, "%s", cur_test_dir_str.c_str());
@@ -9508,7 +9500,7 @@ void record_test_complete(const std::string MainDirString,
                           const char *file_index_output_char,
                           int test_type)
 {
-    if (test_type == 2)
+    if (test_type == COMP_ONLY)
     {
         std::fstream FileStream;
         FileStream.open(MainDirString.c_str(), std::fstream::out |
@@ -9592,7 +9584,7 @@ void print_header_info()
 #endif
 
     std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
+    unsigned int x = 0;
 
     while (x < 40 - (CodecNameStr.length() / 2))
     {
@@ -9653,7 +9645,7 @@ void print_header_info_to_file(const char *FileName)
 #endif
 
     std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
+    unsigned int x = 0;
 
     while (x < 40 - (CodecNameStr.length() / 2))
     {
@@ -9679,16 +9671,16 @@ void print_header_info_to_file(const char *FileName)
 }
 void print_header_full_test(int argc,
                             const char *const *argv,
-                            std::string WorkingDir3)
+                            std::string working_dir_3)
 {
     //Full Test Header Output
     //Formats workingDir3 string to fit in text box
     //records settings from argv to be written to text file
-    std::string PrintWorkingDir3 = WorkingDir3;
+    std::string PrintWorkingDir3 = working_dir_3;
     std::string PrintInput = "Input:";
     PrintWorkingDir3.insert(0, "Output: ");
 
-    int y = 0;
+    unsigned int y = 0;
 
     while (y < argc)
     {
@@ -9723,13 +9715,13 @@ void print_header_full_test(int argc,
 }
 void print_header_compression_only(int argc,
                                    const char *const *argv,
-                                   std::string WorkingDir3)
+                                   std::string working_dir_3)
 {
     //Compression Header
     //Formats workingDir3 string to fit in text box
     //records settings from argv to be written to text file
 
-    std::string PrintWorkingDir3 = WorkingDir3;
+    std::string PrintWorkingDir3 = working_dir_3;
     std::string PrintInput = "Input:";
     PrintWorkingDir3.insert(0, "Output: ");
 
@@ -9768,14 +9760,14 @@ void print_header_compression_only(int argc,
 }
 void print_header_test_only(int argc,
                             const char *const *argv,
-                            std::string WorkingDir3)
+                            std::string working_dir_3)
 {
     //Test Only Header
     //Formats workingDir3 string to fit in text box records input
     //location and output location both are the same
 
-    std::string PrintWorkingDir3 = WorkingDir3;
-    std::string PrintWorkingDir4 = WorkingDir3;
+    std::string PrintWorkingDir3 = working_dir_3;
+    std::string PrintWorkingDir4 = working_dir_3;
     std::string PrintInput = "Input:";
     PrintWorkingDir3.insert(0, "Output: ");
     PrintWorkingDir4.insert(0, "Input: ");
@@ -9816,8 +9808,8 @@ void print_header_test_only(int argc,
 void check_time_stamp(int SelectorArInt,
                       std::string *SelectorAr,
                       std::string *SelectorAr2,
-                      std::string TimeStampPrevious,
-                      int &identicalFileVar,
+                      std::string prev_time_stamp,
+                      int &identical_file_cnt,
                       std::string *TimeStampAr2)
 {
     char identicalFileBuffer[3] = "";
@@ -9825,10 +9817,10 @@ void check_time_stamp(int SelectorArInt,
     if (SelectorArInt != 0 &&
         SelectorAr[SelectorArInt].compare(SelectorAr[SelectorArInt-1]) == 0)
     {
-        if (vpxt_timestamp_compare(TimeStampAr2[0], TimeStampPrevious))
+        if (vpxt_timestamp_compare(TimeStampAr2[0], prev_time_stamp))
         {
-            identicalFileVar++;
-            vpxt_itoa_custom(identicalFileVar, identicalFileBuffer, 10);
+            identical_file_cnt++;
+            vpxt_itoa_custom(identical_file_cnt, identicalFileBuffer, 10);
             TimeStampAr2[0].erase(TimeStampAr2[0].end() - 1);
             TimeStampAr2[0] += "_";
             TimeStampAr2[0] += identicalFileBuffer;
@@ -9836,12 +9828,12 @@ void check_time_stamp(int SelectorArInt,
         }
         else
         {
-            identicalFileVar = 1;
+            identical_file_cnt = 1;
         }
     }
     else
     {
-        identicalFileVar = 1;
+        identical_file_cnt = 1;
     }
 }
 void vpxt_formated_print(int selector, const char *fmt, ...)
@@ -9881,7 +9873,7 @@ void vpxt_formated_print(int selector, const char *fmt, ...)
     if (selector == RESPRT)
         Cutoff = 70;
 
-    int x = 0;
+    unsigned int x = 0;
 
     while (x + Cutoff < SummaryStr.length())
     {
@@ -10015,7 +10007,7 @@ void vpxt_cap_string_print(int selector, const char *fmt, ...)
 }
 int  vpxt_lower_case_string(std::string &input)
 {
-    int pos = 0;
+    unsigned int pos = 0;
 
     while (pos < input.length())
     {
@@ -12237,7 +12229,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
         if(oxcf.cq_level < oxcf.best_allowed_q)
         {
             int new_cq_level = oxcf.best_allowed_q +
-                0.2*(oxcf.worst_allowed_q-oxcf.best_allowed_q);
+                0.2 * (oxcf.worst_allowed_q - oxcf.best_allowed_q);
 
             tprintf(PRINT_BTH, "cq_level: %i less than min q: %i - changing to:"
                                " %i\n", oxcf.cq_level, oxcf.best_allowed_q,
@@ -12526,7 +12518,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
     vpx_codec_ctx_t          encoder;
     const char              *in_fn = inputFile, *out_fn =outputFile2Str.c_str();
     const char              *stats_fn = NULL;
-    FILE                    *infile, *outfile, *outfile3;
+    FILE                    *infile, *outfile;
     vpx_codec_enc_cfg_t      cfg;
     vpx_codec_err_t          res;
     int                      pass, one_pass_only = 0;
@@ -12617,7 +12609,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
     std::string CreateDir3b = out_fn4STRb;
     CreateDir3b.insert(0, "mkdir \"");
     CreateDir3b += "\"";
-	system(CreateDir3b.c_str());
+    system(CreateDir3b.c_str());
 
     std::string out_fn3STRb;
     vpxt_remove_file_extension(out_fn, out_fn3STRb);
@@ -13158,7 +13150,6 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
                             out4 = out_open(out_fn4STR.c_str(), 0);
 
                         unsigned int y;
-                        char out_fn[128+24];
                         uint8_t *bufPreview;
                         uint8_t *bufDecode;
 
@@ -13261,7 +13252,6 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
                     if (imgPreview && !OutputRaw)
                     {
                         unsigned int y;
-                        char out_fn[128+24];
                         uint8_t *buf;
 
                         buf = imgPreview->planes[PLANE_Y];
@@ -13292,7 +13282,6 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
                     if (imgDecode && !OutputRaw)
                     {
                         unsigned int y;
-                        char out_fn[128+24];
                         uint8_t *buf;
 
                         buf = imgDecode->planes[PLANE_Y];
@@ -13451,8 +13440,6 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
     vpx_codec_err_t      res[NUM_ENCODERS];
 
     int                  i;
-    long                 width;
-    long                 height;
     int                  frame_avail;
     int                  got_data;
     int                  flags = 0;
@@ -14550,8 +14537,6 @@ int vpxt_decompress(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -14874,8 +14859,6 @@ int vpxt_decompress_copy_set(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -15451,8 +15434,6 @@ int vpxt_decompress_partial_drops(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -15478,7 +15459,6 @@ int vpxt_decompress_partial_drops(const char *inputchar,
     unsigned int     seed;                                                    //
     int              thrown = 0, kept = 0;                                    //
     int              thrown_frame = 0, kept_frame = 0;                        //
-    unsigned char    frame[256*1024];                                         //
 ////////////////////////////////////////////////////////////////////////////////
     //char *nptr;                                                             //
     //n = strtol("3,5", &nptr, 0);                                            //
@@ -15867,8 +15847,6 @@ int vpxt_decompress_resize(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -16210,8 +16188,6 @@ int vpxt_decompress_to_raw(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -16513,8 +16489,6 @@ int vpxt_decompress_to_raw_no_error_output(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -16824,8 +16798,6 @@ int vpxt_decompress_no_output(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -17126,7 +17098,7 @@ unsigned int vpxt_time_decompress(const char *inputchar,
     //time Decompress is not supposed to save output that is the only difference
     //between it and vpxt_decompress_ivf_to_ivf_time_and_output
     vpx_codec_ctx_t         decoder;
-    unsigned int            total_cpu_time_used = 0;
+    uint64_t                total_cpu_time_used = 0;
     const char             *fn = inputchar;
     int                     i;
     uint8_t                *buf = NULL;
@@ -17138,8 +17110,6 @@ unsigned int vpxt_time_decompress(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -17474,7 +17444,7 @@ unsigned int vpxt_decompress_time_and_output(const char *inputchar,
         use_y4m = 2;
 
     vpx_codec_ctx_t         decoder;
-    unsigned int            total_cpu_time_used = 0;
+    uint64_t                total_cpu_time_used = 0;
     const char             *fn = inputchar;
     int                     i;
     uint8_t                *buf = NULL;
@@ -17486,8 +17456,6 @@ unsigned int vpxt_decompress_time_and_output(const char *inputchar,
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -17814,8 +17782,6 @@ int vpxt_dec_compute_md5(const char *inputchar, const char *outputchar)
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
     char                    outfile[PATH_MAX];
     int                     single_file;
@@ -18184,7 +18150,6 @@ int vpxt_cut_clip(const char *inputFile,
         fread(buffer, 1, 128, in);
 
         std::string bufferStr = buffer;
-        size_t HeaderEnd;
         std::string bufferStr2 = bufferStr.substr(0, bufferStr.find("FRAME"));
         char buffer2[128];
         strncpy(buffer2, bufferStr2.c_str(), 128);
@@ -19105,7 +19070,6 @@ int vpxt_paste_clip(const char *inputFile1,
         fread(buffer, 1, 128, in1);
 
         std::string bufferStr = buffer;
-        size_t HeaderEnd;
         std::string bufferStr2 = bufferStr.substr(0, bufferStr.find("FRAME"));
         char buffer2[128];
         strncpy(buffer2, bufferStr2.c_str(), 128);
@@ -19688,7 +19652,7 @@ int vpxt_display_header_info(int argc, const char *const *argv)
 
     uint8_t               *buf = NULL;
     size_t               buf_sz = 0, buf_alloc_sz = 0;
-    int currentVideoFrame = 0;
+    unsigned int currentVideoFrame = 0;
     int frame_avail = 0;
     uint64_t timestamp = 0;
 
@@ -20584,7 +20548,6 @@ int vpxt_compare_enc(const char *inputFile1,
     unsigned int rate_1 = 0;            //good
     unsigned int scale_1 = 0;           //good
     unsigned int length_1 = 0;          //other measure
-    unsigned char unused_1[4];          // -
 
     unsigned char  signature_2[4];      //='DKIF';
     unsigned short version_2 = 0;       // -
@@ -20595,7 +20558,6 @@ int vpxt_compare_enc(const char *inputFile1,
     unsigned int rate_2 = 0;            //good
     unsigned int scale_2 = 0;           //good
     unsigned int length_2 = 0;          //other measure
-    unsigned char unused_2[4];          // -
 
     signature_1[0] = ' ';
     signature_1[1] = ' ';
@@ -20880,7 +20842,7 @@ int vpxt_compare_enc(const char *inputFile1,
 
     return returnval;
 }
-double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
+int vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
 {
     int dropedframecount = 0;
 
@@ -20942,7 +20904,7 @@ double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
     fpos_t position;
     fgetpos(in, &position);
 
-    int priorTimeStamp = 0;
+    __int64 priorTimeStamp = 0;
 
     while (currentVideoFrame < frameCount)
     {
@@ -20973,7 +20935,7 @@ double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
 
     return dropedframecount;
 }
-double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
+int vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
 {
     std::string ResizeInStr;
     vpxt_remove_file_extension(inputchar, ResizeInStr);
@@ -20999,11 +20961,7 @@ double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
     vpx_codec_iface_t      *iface = NULL;
     unsigned int            fourcc;
     unsigned long           dx_time = 0;
-    struct arg              arg;
-    char                  **argv, **argi, **argj;
     const char             *outfile_pattern = 0;
-    char                    outfile[PATH_MAX];
-    int                     single_file;
     unsigned int            width;
     unsigned int            height;
     unsigned int            fps_den;
@@ -21180,7 +21138,7 @@ fail:
 
     return resizedIMGCount;
 }
-double vpxt_display_visible_frames(const char *inputFile, int Selector)
+int vpxt_display_visible_frames(const char *inputFile, int Selector)
 {
     // 0 = just display
     // 1 = write to file
@@ -21213,7 +21171,6 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
     unsigned int rate = 0;          //good
     unsigned int scale = 0;         //good
     unsigned int length = 0;        //other measure
-    unsigned char unused[4];        // -
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -21365,9 +21322,8 @@ fail:
         outfile.close();
 
     return VisableCount;
-
 }
-double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
+int vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
 {
     // 0 = just display
     // 1 = write to file
@@ -21403,7 +21359,6 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
     unsigned int rate = 0;          //good
     unsigned int scale = 0;         //good
     unsigned int length = 0;        //other measure
-    unsigned char unused[4];        // -
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -21555,9 +21510,8 @@ fail:
         outfile.close();
 
     return AltRefCount;
-
 }
-double vpxt_display_key_frames(const char *inputFile, int Selector)
+int vpxt_display_key_frames(const char *inputFile, int Selector)
 {
     int keyframecount = 0;
 
@@ -21590,7 +21544,6 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
     unsigned int rate = 0;          //good
     unsigned int scale = 0;         //good
     unsigned int length = 0;        //other measure
-    unsigned char unused[4];        // -
 
     signature[0] = ' ';
     signature[1] = ' ';
@@ -21952,8 +21905,6 @@ double vpxt_print_frame_statistics(const char *input_file1,
     int                      raw_offset = 0;
     int                      comp_offset = 0;
     unsigned int             maximumFrameCount = 0;
-    YV12_BUFFER_CONFIG       raw_yv12;
-    YV12_BUFFER_CONFIG       comp_yv12;
     vpx_image_t              raw_img;
     unsigned int             frameCount = 0;
     unsigned int             file_type = FILE_TYPE_RAW;

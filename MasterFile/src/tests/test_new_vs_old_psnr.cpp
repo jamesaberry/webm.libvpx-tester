@@ -31,7 +31,7 @@ int test_new_vs_old_psnr(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, files_ar) == 11)
-        return 11;
+        return TEST_ERRFM;
 
     std::string exe_dir_str;
     vpxt_folder_name(argv[0], &exe_dir_str);
@@ -106,7 +106,7 @@ int test_new_vs_old_psnr(int argc,
     text_file_str += slashCharStr();
     text_file_str += test_dir;
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -123,7 +123,7 @@ int test_new_vs_old_psnr(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
+    if (test_type == FULL_TEST)
         print_header_full_test(argc, argv, main_test_dir_char);
 
     if (test_type == COMP_ONLY)
@@ -148,7 +148,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -188,7 +188,7 @@ int test_new_vs_old_psnr(int argc,
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
                     test_type);
-                return 2;
+                return TEST_INDT;
             }
         }
 
@@ -237,7 +237,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         std::vector<double> raw_data_list;
@@ -264,7 +264,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
@@ -302,7 +302,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         /////////////////////////////////////////////////////////
@@ -329,7 +329,7 @@ int test_new_vs_old_psnr(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return 2;
+                    return TEST_INDT;
                 }
 
                 vpxt_output_compatable_settings(par_file.c_str(), opt,
@@ -362,7 +362,7 @@ int test_new_vs_old_psnr(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return 2;
+                    return TEST_INDT;
                 }
 
                 vpxt_output_compatable_settings(par_file.c_str(), opt,
@@ -393,7 +393,7 @@ int test_new_vs_old_psnr(int argc,
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
                         test_type);
-                    return 2;
+                    return TEST_INDT;
                 }
 
                 vpxt_output_compatable_settings(par_file.c_str(), opt,
@@ -421,7 +421,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return 2;
+                        return TEST_INDT;
                     }
 
                     opt.Mode = MODE_FIRSTPASS;
@@ -472,7 +472,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return 2;
+                        return TEST_INDT;
                     }
 
                     opt.Mode = MODE_SECONDPASS;
@@ -511,7 +511,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return 2;
+                        return TEST_INDT;
                     }
 
                     opt.Mode = 3;
@@ -563,7 +563,7 @@ int test_new_vs_old_psnr(int argc,
                         fclose(fp);
                         record_test_complete(file_index_str,
                             file_index_output_char, test_type);
-                        return 2;
+                        return TEST_INDT;
                     }
 
                     opt.Mode = MODE_SECONDPASS_BEST;
@@ -594,7 +594,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 10;
+            return TEST_COMPM;
         }
 
         if (vpxt_file_size(old_enc_file.c_str(), 0) == 0)
@@ -604,7 +604,7 @@ int test_new_vs_old_psnr(int argc,
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
                 test_type);
-            return 0;
+            return TEST_FAILED;
         }
 
         psnr_ar[0] = vpxt_psnr(input.c_str(), new_enc_file.c_str(), 0,PRINT_BTH,
@@ -637,7 +637,7 @@ int test_new_vs_old_psnr(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 2;
+        return TEST_INDT;
     }
 
     if (!failed)
@@ -646,7 +646,7 @@ int test_new_vs_old_psnr(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 1;
+        return TEST_PASSED;
     }
     else
     {
@@ -654,10 +654,10 @@ int test_new_vs_old_psnr(int argc,
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return 0;
+        return TEST_FAILED;
     }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return 6;
+    return TEST_ERROR;
 }

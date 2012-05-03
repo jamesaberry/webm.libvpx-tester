@@ -9,11 +9,11 @@ int test_change_cpu_dec(int argc,
 {
 #if defined(ARM)
     printf("\nTEST NOT SUPPORTED FOR ARM.\n");
-    return 0;
+    return TEST_FAILED;
 #endif
 #if defined(_PPC)
     printf("\nTEST NOT SUPPORTED FOR PPC.\n");
-    return 0;
+    return TEST_FAILED;
 #else
     char *comp_out_str = "Version";
     char *test_dir = "test_change_cpu_dec";
@@ -49,7 +49,7 @@ int test_change_cpu_dec(int argc,
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, files_ar) == 11)
-        return 11;
+        return TEST_ERRFM;
 
     std::string cpu_dec_only_enc = cur_test_dir_str + slashCharStr() + test_dir
         + "_compression";
@@ -76,7 +76,7 @@ int test_change_cpu_dec(int argc,
     /////////////OutPutfile////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+    if (test_type == COMP_ONLY || test_type == FULL_TEST)
         text_file_str += ".txt";
     else
         text_file_str += "_TestOnly.txt";
@@ -93,7 +93,7 @@ int test_change_cpu_dec(int argc,
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (test_type == TEST_AND_COMP)
+    if (test_type == FULL_TEST)
         print_header_full_test(argc, argv, main_test_dir_char);
 
     if (test_type == COMP_ONLY)
@@ -117,7 +117,7 @@ int test_change_cpu_dec(int argc,
 
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char, test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
@@ -166,7 +166,7 @@ int test_change_cpu_dec(int argc,
 
         total_ms = vpxt_time_return(decompression_vector[0].c_str(), 1);
 
-        int current_dec_file = 0;
+        unsigned int current_dec_file = 0;
 
         while (current_dec_file < decompression_vector.size())
         {
@@ -232,7 +232,7 @@ int test_change_cpu_dec(int argc,
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char, test_type);
-            return 2;
+            return TEST_INDT;
         }
 
         putenv("VPX_SIMD_CAPS=0");
@@ -253,7 +253,7 @@ int test_change_cpu_dec(int argc,
             std::string simd_caps_str = "VPX_SIMD_CAPS=";
             simd_caps_str += simd_caps_orig_char;
             putenv((char*)simd_caps_str.c_str());
-            return 2;
+            return TEST_INDT;
         }
 
         tprintf(PRINT_BTH, "\n");
@@ -344,7 +344,7 @@ int test_change_cpu_dec(int argc,
                     std::string simd_caps_str = "VPX_SIMD_CAPS=" +
                         *simd_caps_orig_char;
                     putenv((char*)simd_caps_str.c_str());
-                    return 2;
+                    return TEST_INDT;
                 }
 
                 int count_old = (counter - 1);
@@ -414,7 +414,7 @@ int test_change_cpu_dec(int argc,
         std::string simd_caps_str = "VPX_SIMD_CAPS=";
         simd_caps_str += simd_caps_orig_char;
         putenv((char*)simd_caps_str.c_str());
-        return 10;
+        return TEST_COMPM;
     }
 
     int over_all_fail = 0;
@@ -469,7 +469,7 @@ int test_change_cpu_dec(int argc,
         std::string simd_caps_str = "VPX_SIMD_CAPS=";
         simd_caps_str += simd_caps_orig_char;
         putenv((char*)simd_caps_str.c_str());
-        return 2;
+        return TEST_INDT;
     }
 
     if (over_all_fail == 0)
@@ -487,7 +487,7 @@ int test_change_cpu_dec(int argc,
         std::string simd_caps_str = "VPX_SIMD_CAPS=";
         simd_caps_str += simd_caps_orig_char;
         putenv((char*)simd_caps_str.c_str());
-        return 1;
+        return TEST_PASSED;
     }
     else
     {
@@ -504,7 +504,7 @@ int test_change_cpu_dec(int argc,
         std::string simd_caps_str = "VPX_SIMD_CAPS=";
         simd_caps_str += simd_caps_orig_char;
         putenv((char*)simd_caps_str.c_str());
-        return 0;
+        return TEST_FAILED;
     }
 
     fclose(fp);
@@ -512,6 +512,6 @@ int test_change_cpu_dec(int argc,
     std::string simd_caps_str = "VPX_SIMD_CAPS=";
     simd_caps_str += simd_caps_orig_char;
     putenv((char*)simd_caps_str.c_str());
-    return 6;
+    return TEST_ERROR;
 #endif
 }

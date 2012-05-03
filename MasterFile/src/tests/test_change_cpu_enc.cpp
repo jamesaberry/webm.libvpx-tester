@@ -5,7 +5,8 @@ int test_change_cpu_enc(int argc,
                         const std::string &working_dir,
                         const std::string sub_folder_str,
                         int test_type,
-                        int delete_ivf)
+                        int delete_ivf,
+                        int artifact_detection)
 {
 #if defined(ARM)
     printf("\nTEST NOT SUPPORTED FOR ARM.\n");
@@ -408,8 +409,7 @@ int test_change_cpu_enc(int argc,
         return kTestEncCreated;
     }
 
-    int over_all_fail = 0;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (fail != 1)
@@ -422,7 +422,7 @@ int test_change_cpu_enc(int argc,
     {
         vpxt_formated_print(RESPRT, "All Files are not identical - Failed");
         tprintf(PRINT_BTH, "\n");
-        over_all_fail = 1;
+        test_state = kTestFailed;
     }
 
     if (modes_run == 7)
@@ -436,7 +436,8 @@ int test_change_cpu_enc(int argc,
         vpxt_formated_print(RESPRT, "Not all instruction sets run - MinPassed");
         tprintf(PRINT_BTH, "\n");
 
-        if (over_all_fail != 1) over_all_fail = 2;
+        if (test_state != kTestFailed)
+            test_state = kTestMinPassed;
     }
 
     if (cpu_tick_1 == cpu_tick_2)
@@ -444,7 +445,7 @@ int test_change_cpu_enc(int argc,
         vpxt_formated_print(RESPRT, "cpu_tick_1: %u == cpu_tick_2: %u - "
             "MinPassed" , cpu_tick_1, cpu_tick_2);
         tprintf(PRINT_BTH, "\n");
-        over_all_fail = 2;
+        test_state = kTestMinPassed;
     }
 
     if (cpu_tick_1 != cpu_tick_2)
@@ -454,60 +455,25 @@ int test_change_cpu_enc(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (over_all_fail == 2)
-    {
+    if (test_state == kTestMinPassed)
         tprintf(PRINT_BTH, "\nMinPassed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        std::string simd_caps_str = "VPX_SIMD_CAPS=";
-        simd_caps_str += simd_caps_orig_char;
-        putenv((char*)simd_caps_str.c_str());
-        return kTestIndeterminate;
-    }
-
-    if (over_all_fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(8, change_cpu_dec_0_enc.c_str(),
-            change_cpu_enc_none.c_str(), change_cpu_enc_mmx.c_str(),
-            change_cpu_enc_sse.c_str(), change_cpu_enc_sse2.c_str(),
-            change_cpu_enc_sse3.c_str(), change_cpu_enc_ssse3.c_str(),
-            change_cpu_enc_sse4_1.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        std::string simd_caps_str = "VPX_SIMD_CAPS=";
-        simd_caps_str += simd_caps_orig_char;
-        putenv((char*)simd_caps_str.c_str());
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(8, change_cpu_dec_0_enc.c_str(),
-            change_cpu_enc_none.c_str(), change_cpu_enc_mmx.c_str(),
-            change_cpu_enc_sse.c_str(), change_cpu_enc_sse2.c_str(),
-            change_cpu_enc_sse3.c_str(), change_cpu_enc_ssse3.c_str(),
-            change_cpu_enc_sse4_1.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        std::string simd_caps_str = "VPX_SIMD_CAPS=";
-        simd_caps_str += *simd_caps_orig_char;
-        putenv((char*)simd_caps_str.c_str());
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(8, change_cpu_dec_0_enc.c_str(),
+        change_cpu_enc_none.c_str(), change_cpu_enc_mmx.c_str(),
+        change_cpu_enc_sse.c_str(), change_cpu_enc_sse2.c_str(),
+        change_cpu_enc_sse3.c_str(), change_cpu_enc_ssse3.c_str(),
+        change_cpu_enc_sse4_1.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
     std::string simd_caps_str = "VPX_SIMD_CAPS=";
     simd_caps_str += simd_caps_orig_char;
     putenv((char*)simd_caps_str.c_str());
-    return kTestError;
+    return test_state;
 #endif
 }

@@ -5,7 +5,8 @@ int test_temporal_scalability(int argc,
                               const std::string &working_dir,
                               const std::string sub_folder_str,
                               int test_type,
-                              int delete_ivf)
+                              int delete_ivf,
+                              int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_temporal_scalability";
@@ -42,6 +43,9 @@ int test_temporal_scalability(int argc,
     temp_scale_out_base += slashCharStr();
     temp_scale_out_base += test_dir;
     temp_scale_out_base += "_compression";
+
+    std::vector<int> enc_vec_art_det;
+    std::vector<int>::iterator int_it;
 
     std::vector<std::string> enc_vec;
     std::vector<std::string> temp_scale_vec;
@@ -88,6 +92,8 @@ int test_temporal_scalability(int argc,
         temp_scale_vec.push_back(temp_scale_str);
         temp_scale_fs_vec.push_back(temp_scale_fs_str);
         enc_vec.push_back(enc_str);
+
+        enc_vec_art_det.push_back(artifact_detection);
     }
 
     ///////////// OutPutfile ////////////
@@ -185,15 +191,15 @@ int test_temporal_scalability(int argc,
     int temp_bitrate_arr[5] =  {temp_scale_br_0, temp_scale_br_1,
         temp_scale_br_2, temp_scale_br_3, temp_scale_br_4};
 
-    if(layer_mode == 0 || layer_mode == 7){
+    if(layer_mode == kRealTime || layer_mode == 7){
         eval_drop_vec.push_back(1);
         eval_drop_vec.push_back(0);
     }
-    else if(layer_mode == 1){
+    else if(layer_mode == kOnePassGoodQuality){
         eval_drop_vec.push_back(2);
         eval_drop_vec.push_back(0);
     }
-    else if(layer_mode == 2){
+    else if(layer_mode == kOnePassBestQuality){
         eval_drop_vec.push_back(5);
         eval_drop_vec.push_back(2);
         eval_drop_vec.push_back(0);
@@ -215,6 +221,7 @@ int test_temporal_scalability(int argc,
     int delete_files_num = 0;
 
     // encode standard compressions and do psnrs
+    int_it = enc_vec_art_det.begin();
     for(str_it = enc_vec.begin(); str_it < enc_vec.end(); ++str_it)
     {
         unsigned int cpu_tick = 0;
@@ -231,15 +238,20 @@ int test_temporal_scalability(int argc,
         }
 
         enc_psnr.push_back(vpxt_psnr(input.c_str(), (*str_it).c_str(), 0,
-            PRINT_BTH, 1, NULL));
+            PRINT_BTH, 1, 0, 0, 0, NULL, (*int_it)));
 
         ++j;
+        ++int_it;
     }
 
     // run psnrs for temp scale compressions
+    int_it = enc_vec_art_det.begin();
     for(str_it = temp_scale_vec.begin(); str_it < temp_scale_vec.end();++str_it)
+    {
         temp_scale_psnr.push_back(vpxt_psnr(input.c_str(), (*str_it).c_str(), 0,
-        PRINT_BTH, 1, NULL));
+        PRINT_BTH, 1, 0, 0, 0, NULL, (*int_it)));
+        ++int_it;
+    }
 
     // gather frame statistics for temp scale compressions
     str_it2 = temp_scale_vec.begin();
@@ -281,6 +293,7 @@ int test_temporal_scalability(int argc,
         enc_fn_vec.push_back(file_name_char);
     }
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     // make sure that decemation occurs correctly
@@ -289,7 +302,6 @@ int test_temporal_scalability(int argc,
     // make sure psnr values obtain min quality assurence
     // make sure psnr values compared to standard encodes are with in range
 
-    int fail = 0;
     int increase_fail = 0;
     int drop_frame_fail = 0;
     std::vector<double>::iterator double_it;
@@ -303,7 +315,7 @@ int test_temporal_scalability(int argc,
             vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 15.0 - Failed",
                 (*str_it).c_str(), *double_it);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
         else{
             vpxt_formated_print(RESPRT, "%s PSNR: %.2f >= 15.0 - Passed",
@@ -329,7 +341,7 @@ int test_temporal_scalability(int argc,
         vpxt_formated_print(RESPRT,
             "Not all PSNRs increase correctly - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     // evaluate temp scale psnrs vs normal encode psnrs
@@ -367,7 +379,7 @@ int test_temporal_scalability(int argc,
             vpxt_formated_print(RESPRT, "%s PSNR: %.2f is not within at least "
                 "%.0f%% of %s PSNR: %.2f - Failed", (*str_it).c_str(),
                 *double_it, range*100, (*str_it2).c_str(), *double_it2);
-            fail = 1;
+            test_state = kTestFailed;
         }
 
         ++comp_num;
@@ -405,7 +417,7 @@ int test_temporal_scalability(int argc,
             ++str_it;
         }
 
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     // if scale compress time is less than or within 20% of normal compression
@@ -431,7 +443,7 @@ int test_temporal_scalability(int argc,
             vpxt_formated_print(RESPRT, "Scaled compression time: %i is not "
                 "within 20%% of standard encode compression time: %i. - Failed",
                 scale_compress_time, enc_compress_time);
-            fail = 1;
+            test_state = kTestFailed;
         }
 
         tprintf(PRINT_BTH, "\n");
@@ -439,7 +451,26 @@ int test_temporal_scalability(int argc,
 
     tprintf(PRINT_BTH, "\n");
 
-    // delete encoded files if flagged
+    // handle possible artifact
+    for(int_it = enc_vec_art_det.begin(); int_it < enc_vec_art_det.end();
+        ++int_it)
+    {
+        if((*int_it) == kPossibleArtifactFound)
+        {
+            tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+            fclose(fp);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
+            return kTestPossibleArtifact;
+        }
+    }
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
+
     if (delete_ivf){
         for(str_it = temp_scale_vec.begin(); str_it < temp_scale_vec.end();
             ++str_it)
@@ -448,25 +479,7 @@ int test_temporal_scalability(int argc,
             vpxt_delete_files(1, (*str_it).c_str());
     }
 
-    if (fail == 0)
-    {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
     fclose(fp);
-
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

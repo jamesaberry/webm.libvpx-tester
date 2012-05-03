@@ -5,7 +5,8 @@ int test_extra_file(int argc,
                     const std::string &working_dir,
                     const std::string sub_folder_str,
                     int test_type,
-                    int delete_ivf)
+                    int delete_ivf,
+                    int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_extra_file";
@@ -174,7 +175,7 @@ int test_extra_file(int argc,
     /////////////////////////////////////////////////////////
     int compress_int = opt.allow_df;
     int bitrate = opt.target_bandwidth;
-    int fail = 0;
+    int test_state = kTestPassed;
 
     // Record all files in the executable directory
     std::vector<std::string> ignore_tester_dir;
@@ -210,28 +211,18 @@ int test_extra_file(int argc,
             return kTestFailed;
         }
 
-        infile >> fail;
+        infile >> test_state;
         infile.close();
 
-        if (fail == 1)
-        {
+        if (test_state == kTestFailed)
             tprintf(PRINT_BTH, "\n\nExtra files found - Test Failed\n");
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
-            return kTestFailed;
-        }
-
-        if (fail == 0)
-        {
+        if (test_state == kTestPassed)
             tprintf(PRINT_BTH, "\n\n No extra files found - Test Passed\n");
 
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
-            return kTestPassed;
-        }
+        fclose(fp);
+        record_test_complete(file_index_str, file_index_output_char,
+            test_type);
+        return test_state;
     }
     else
     {
@@ -307,7 +298,7 @@ int test_extra_file(int argc,
             vecpos++;
         }
 
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (cur_dir_fail == 0)
@@ -326,7 +317,7 @@ int test_extra_file(int argc,
             vecpos++;
         }
 
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (comp_dir_fail == 0)
@@ -345,35 +336,19 @@ int test_extra_file(int argc,
             vecpos++;
         }
 
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 1)
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(1, extra_file_check_str.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(1, extra_file_check_str.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(1, extra_file_check_str.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 
 }

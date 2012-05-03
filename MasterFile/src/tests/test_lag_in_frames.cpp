@@ -5,7 +5,8 @@ int test_lag_in_frames(int argc,
                        const std::string &working_dir,
                        const std::string sub_folder_str,
                        int test_type,
-                       int delete_ivf)
+                       int delete_ivf,
+                       int artifact_detection)
 {
     char *comp_out_str = "Lag In Frames";
     char *test_dir = "test_lag_in_frames";
@@ -36,6 +37,10 @@ int test_lag_in_frames(int argc,
         return kTestErrFileMismatch;
 
     char lag_in_frames_buff[255];
+
+    int lag_in_frames_0_art_det = artifact_detection;
+    int lag_in_frames_1_art_det = artifact_detection;
+    int lag_in_frames_2_art_det = artifact_detection;
 
     std::string lag_in_frames_0 = cur_test_dir_str + slashCharStr() +
         "test_lag_in_frames_compression_0";
@@ -178,11 +183,14 @@ int test_lag_in_frames(int argc,
     }
 
     double lag_in_frames_0_psnr = vpxt_psnr(input.c_str(),
-        lag_in_frames_0.c_str(), 0, PRINT_BTH, 1, NULL);
+        lag_in_frames_0.c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+        lag_in_frames_0_art_det);
     double lag_in_frames_1_psnr = vpxt_psnr(input.c_str(),
-        lag_in_frames_1.c_str(), 0, PRINT_BTH, 1, NULL);
+        lag_in_frames_1.c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+        lag_in_frames_1_art_det);
     double lag_in_frames_2_psnr = vpxt_psnr(input.c_str(),
-        lag_in_frames_2.c_str(), 0, PRINT_BTH, 1, NULL);
+        lag_in_frames_2.c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+        lag_in_frames_2_art_det);
 
     double ten_per_0 = lag_in_frames_0_psnr / 10;
     double ten_per_1 = lag_in_frames_1_psnr / 10;
@@ -208,8 +216,6 @@ int test_lag_in_frames(int argc,
     quant_in_2_str += "quantizers.txt";
     int lag_in_frames_found_2 =vpxt_lag_in_frames_check(quant_in_2_str.c_str());
 
-    int fail = 0;
-
     char lag_in_frame_0_file_name[255] = "";
     char lag_in_frame_1_file_name[255] = "";
     char lag_in_frame_2_file_name[255] = "";
@@ -218,6 +224,7 @@ int test_lag_in_frames(int argc,
     vpxt_file_name(lag_in_frames_1.c_str(), lag_in_frame_1_file_name, 0);
     vpxt_file_name(lag_in_frames_2.c_str(), lag_in_frame_2_file_name, 0);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (lag_in_frames_found_0 == 0)
@@ -264,7 +271,7 @@ int test_lag_in_frames(int argc,
         vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
             lag_in_frame_0_file_name, lag_in_frame_1_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -278,7 +285,7 @@ int test_lag_in_frames(int argc,
         vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
             lag_in_frame_1_file_name, lag_in_frame_2_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -305,7 +312,7 @@ int test_lag_in_frames(int argc,
                 lag_in_frame_1_file_name, (lag_in_frames_0_psnr + ten_per_0),
                 lag_in_frames_1_psnr);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
         else
         {
@@ -314,7 +321,7 @@ int test_lag_in_frames(int argc,
                 lag_in_frame_1_file_name, lag_in_frames_1_psnr,
                 (lag_in_frames_0_psnr - ten_per_0));
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -336,7 +343,7 @@ int test_lag_in_frames(int argc,
                 lag_in_frame_2_file_name, (lag_in_frames_1_psnr + ten_per_1),
                 lag_in_frames_2_psnr);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
         else
         {
@@ -345,36 +352,32 @@ int test_lag_in_frames(int argc,
                 lag_in_frame_2_file_name, lag_in_frames_2_psnr,
                 (lag_in_frames_1_psnr - ten_per_1));
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
-    if (fail == 0)
+    // handle possible artifact
+    if(lag_in_frames_0_art_det == kPossibleArtifactFound ||
+        lag_in_frames_1_art_det == kPossibleArtifactFound ||
+        lag_in_frames_2_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(3, lag_in_frames_0.c_str(),
-            lag_in_frames_1.c_str(), lag_in_frames_2.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(3, lag_in_frames_0.c_str(),
-            lag_in_frames_1.c_str(), lag_in_frames_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(3, lag_in_frames_0.c_str(), lag_in_frames_1.c_str(),
+        lag_in_frames_2.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

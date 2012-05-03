@@ -6,7 +6,7 @@ int tool_graph_psnr(int argc,
                     const std::string sub_folder_str,
                     int test_type)
 {
-    if (argc < 6 || argc > 8)
+    if (argc < 7 || argc > 9)
     {
         tprintf(PRINT_STD, "\n"
                 "  GraphPSNR\n\n"
@@ -16,6 +16,7 @@ int tool_graph_psnr(int argc,
                 "    <Bit Rate Step>\n"
                 "    <Encode Format - webm/ivf>\n"
                 "    <Decode Format - y4m/ivf>\n"
+                "    <Artifact Detection - 0/1>\n"
                 "     <Optional - Par Input>\n"
 
                 "\n");
@@ -93,6 +94,7 @@ int tool_graph_psnr(int argc,
     std::string enc_format = argv[6];
     std::string dec_format = argv[7];
     std::string ParFile = argv[8];
+    int artifact_detection = atoi(argv[9]);
 
     int speed = 0;
 
@@ -180,7 +182,7 @@ int tool_graph_psnr(int argc,
 
         double ssimnumber = 0;
         psnr_arr[x] = vpxt_psnr(input.c_str(), outputChar, 0, PRINT_BTH, 1,
-            &ssimnumber);
+            0, 0, 0, &ssimnumber, artifact_detection);
         SSIMArr[x] = ssimnumber;
         DataRateArr[x] = vpxt_data_rate(outputChar, 1);
         x++;

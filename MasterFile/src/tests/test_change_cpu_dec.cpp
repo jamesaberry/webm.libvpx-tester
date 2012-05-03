@@ -5,7 +5,8 @@ int test_change_cpu_dec(int argc,
                         const std::string &working_dir,
                         const std::string sub_folder_str,
                         int test_type,
-                        int delete_ivf)
+                        int delete_ivf,
+                        int artifact_detection)
 {
 #if defined(ARM)
     printf("\nTEST NOT SUPPORTED FOR ARM.\n");
@@ -417,7 +418,7 @@ int test_change_cpu_dec(int argc,
         return kTestEncCreated;
     }
 
-    int over_all_fail = 0;
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\nResults:\n\n");
 
     if (fail == 0)
@@ -430,7 +431,7 @@ int test_change_cpu_dec(int argc,
     {
         vpxt_formated_print(RESPRT, "All Files not Identical - Failed");
         tprintf(PRINT_BTH, "\n");
-        over_all_fail = 1;
+        test_state = kTestFailed;
     }
 
     if (modes_run == 7)
@@ -444,7 +445,8 @@ int test_change_cpu_dec(int argc,
         vpxt_formated_print(RESPRT, "Not all instruction sets run - MinPassed");
         tprintf(PRINT_BTH, "\n");
 
-        if (over_all_fail != 1) over_all_fail = 2;
+        if (test_state != kTestFailed)
+            test_state = kTestMinPassed;
     }
 
     if (total_ms != total_ms_2)
@@ -458,60 +460,28 @@ int test_change_cpu_dec(int argc,
         vpxt_formated_print(RESPRT, "CPU changes are not effecting the runtime "
             "- MinPassed");
         tprintf(PRINT_BTH, "\n");
-        over_all_fail = 2;
+        test_state = kTestMinPassed;
     }
 
-    if (over_all_fail == 2)
-    {
-        tprintf(PRINT_BTH, "\nMinPassed\n");
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        std::string simd_caps_str = "VPX_SIMD_CAPS=";
-        simd_caps_str += simd_caps_orig_char;
-        putenv((char*)simd_caps_str.c_str());
-        return kTestIndeterminate;
-    }
-
-    if (over_all_fail == 0)
-    {
+    if (test_state == kTestMinPassed)
+        tprintf(PRINT_BTH, "\nMinPass\n");
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(8, cpu_dec_only_enc.c_str(),
-            cpu_dec_only_dec_none.c_str(), cpu_dec_only_dec_mmx.c_str(), cpu_dec_only_dec_sse.c_str(),
-            cpu_dec_only_dec_sse2.c_str(), cpu_dec_only_dec_sse3.c_str(), cpu_dec_only_dec_ssse3.c_str(),
-            cpu_dec_only_dec_sse4_1.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        std::string simd_caps_str = "VPX_SIMD_CAPS=";
-        simd_caps_str += simd_caps_orig_char;
-        putenv((char*)simd_caps_str.c_str());
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(8, cpu_dec_only_enc.c_str(),
-            cpu_dec_only_dec_none.c_str(), cpu_dec_only_dec_mmx.c_str(), cpu_dec_only_dec_sse.c_str(),
-            cpu_dec_only_dec_sse2.c_str(), cpu_dec_only_dec_sse3.c_str(), cpu_dec_only_dec_ssse3.c_str(),
-            cpu_dec_only_dec_sse4_1.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        std::string simd_caps_str = "VPX_SIMD_CAPS=";
-        simd_caps_str += simd_caps_orig_char;
-        putenv((char*)simd_caps_str.c_str());
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(8, cpu_dec_only_enc.c_str(),
+        cpu_dec_only_dec_none.c_str(), cpu_dec_only_dec_mmx.c_str(),
+        cpu_dec_only_dec_sse.c_str(), cpu_dec_only_dec_sse2.c_str(),
+        cpu_dec_only_dec_sse3.c_str(), cpu_dec_only_dec_ssse3.c_str(),
+        cpu_dec_only_dec_sse4_1.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
     std::string simd_caps_str = "VPX_SIMD_CAPS=";
     simd_caps_str += simd_caps_orig_char;
     putenv((char*)simd_caps_str.c_str());
-    return kTestError;
+    return test_state;
 #endif
 }

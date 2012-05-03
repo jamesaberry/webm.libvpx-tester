@@ -5,7 +5,8 @@ int test_mem_leak(int argc,
                   const std::string &working_dir,
                   const std::string sub_folder_str,
                   int test_type,
-                  int delete_ivf)
+                  int delete_ivf,
+                  int artifact_detection)
 {
     // Needs Debug.exe
     char *test_dir = "test_mem_leak";
@@ -197,8 +198,7 @@ int test_mem_leak(int argc,
         return kTestEncCreated;
     }
 
-    int fail = 0;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     std::string enc_mem_results;
@@ -208,7 +208,7 @@ int test_mem_leak(int argc,
     {
         vpxt_formated_print(RESPRT, "%s not found - Failed",
             enc_mem_leak_check_txt_str.c_str());
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -223,7 +223,7 @@ int test_mem_leak(int argc,
             vpxt_formated_print(RESPRT, "Compression Memory Currently "
                 "Allocated != 0 - %s - Failed", enc_mem_results.c_str());
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -231,7 +231,7 @@ int test_mem_leak(int argc,
     {
         vpxt_formated_print(RESPRT, "%s not found - Failed",
             enc_mem_leak_check_txt_str.c_str());
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -246,36 +246,20 @@ int test_mem_leak(int argc,
             vpxt_formated_print(RESPRT, "Decompression Memory Currently "
                 "Allocated != 0 - %s - Failed", dec_mem_results.c_str());
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, mem_leak_check_dec_str.c_str(),
-            mem_leak_check_enc_str.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, mem_leak_check_dec_str.c_str(),
-            mem_leak_check_enc_str.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, mem_leak_check_dec_str.c_str(),
+        mem_leak_check_enc_str.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestFailed;
+    return test_state;
 }

@@ -5,7 +5,8 @@ int test_multithreaded_enc(int argc,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
-                           int delete_ivf)
+                           int delete_ivf,
+                           int artifact_detection)
 {
     char *comp_out_str = "Multithreaded";
     char *test_dir = "test_multithreaded_enc";
@@ -120,7 +121,7 @@ int test_multithreaded_enc(int argc,
     }
     else
     {
-        if (mode == 0)
+        if (mode == kRealTime)
         {
             opt.Mode = MODE_REALTIME;
             opt.multi_threaded = core_count;
@@ -154,7 +155,7 @@ int test_multithreaded_enc(int argc,
             }
         }
 
-        if (mode == 1)
+        if (mode == kOnePassGoodQuality)
         {
             opt.Mode = MODE_GOODQUALITY;
             opt.multi_threaded = core_count;
@@ -203,6 +204,7 @@ int test_multithreaded_enc(int argc,
     vpxt_file_name(multithreaded_on_comp.c_str(), time_1_file_name, 0);
     vpxt_file_name(multithreaded_off_comp.c_str(), time_2_file_name, 0);
 
+    int test_state = kTestFailed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (time_1 == 0 || time_2 == 0)
@@ -214,68 +216,42 @@ int test_multithreaded_enc(int argc,
         if (time_2 == 0)
             vpxt_formated_print(RESPRT, "%s time: %u = 0 - Failed",
             time_2_file_name, time_2);
-
-        tprintf(PRINT_BTH, "\n\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, multithreaded_on_comp.c_str(),
-            multithreaded_off_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-
     }
 
-    if (time_1 < time_2)
+    if (time_1 < time_2 && !(time_1 == 0 || time_2 == 0))
     {
         vpxt_formated_print(RESPRT, "%s time: %u < %s time2: %u - Passed",
             time_1_file_name, time_1, time_2_file_name, time_2);
 
-        tprintf(PRINT_BTH, "\n\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, multithreaded_on_comp.c_str(),
-            multithreaded_off_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        test_state = kTestPassed;
     }
 
-    if (time_1 == time_2)
+    if (time_1 == time_2 && !(time_1 == 0 || time_2 == 0))
     {
         vpxt_formated_print(RESPRT, "%s time: %u == %s time: %u - Indeterminate"
             , time_1_file_name, time_1, time_2_file_name, time_2);
 
-        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, multithreaded_on_comp.c_str(),
-            multithreaded_off_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
+        test_state = kTestIndeterminate;
     }
 
-    if (time_1 > time_2)
+    if (time_1 > time_2 && !(time_1 == 0 || time_2 == 0))
     {
         vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed",
             time_1_file_name, time_1, time_2_file_name, time_2);
-
-        tprintf(PRINT_BTH, "\n\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, multithreaded_on_comp.c_str(),
-            multithreaded_off_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
     }
+
+    if(test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\n\nPassed\n");
+    if(test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\n\nFailed\n");
+    if(test_state == kTestIndeterminate)
+        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
+
+    if (delete_ivf)
+        vpxt_delete_files(2, multithreaded_on_comp.c_str(),
+        multithreaded_off_comp.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

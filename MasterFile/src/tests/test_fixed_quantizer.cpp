@@ -5,7 +5,8 @@ int test_fixed_quantizer(int argc,
                          const std::string &working_dir,
                          const std::string sub_folder_str,
                          int test_type,
-                         int delete_ivf)
+                         int delete_ivf,
+                         int artifact_detection)
 {
     char *comp_out_str = "Fixed Quantizer";
     char *test_dir = "test_fixed_quantizer";
@@ -154,8 +155,6 @@ int test_fixed_quantizer(int argc,
 
     tprintf(PRINT_BTH, "\n");
 
-    int fail = 0;
-
     tprintf(PRINT_BTH, "\n");
     int fixed_q_check_val_1 = vpxt_check_fixed_quantizer(fixed_q_1_enc.c_str(),
         fixed_q_1);
@@ -176,6 +175,7 @@ int test_fixed_quantizer(int argc,
     vpxt_file_name(fixed_q_1_enc.c_str(), fixed_q_1_file_name, 0);
     vpxt_file_name(fixed_q_2_enc.c_str(), fixed_q_2_file_name, 0);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (fixed_q_check_val_1 != -1)
@@ -183,7 +183,7 @@ int test_fixed_quantizer(int argc,
         vpxt_formated_print(RESPRT, "Quantizer not fixed for %s for frame %i -"
             " Failed", fixed_q_1_file_name, fixed_q_check_val_1);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -197,7 +197,7 @@ int test_fixed_quantizer(int argc,
         vpxt_formated_print(RESPRT, "Quantizer not fixed for %s for frame %i - "
             "Failed", fixed_q_2_file_name, fixed_q_check_val_2);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -208,14 +208,13 @@ int test_fixed_quantizer(int argc,
     // make sure that lower fixed q has higher datarate
     if (fixed_q_1 < fixed_q_2)
     {
-
         if (fixed_q_size_1 <= fixed_q_size_2)
         {
             vpxt_formated_print(RESPRT, "%s file size: %i >= %s file size: %i "
                 "- Failed", fixed_q_2_file_name, fixed_q_size_2,
                 fixed_q_1_file_name, fixed_q_size_1);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
         else
         {
@@ -233,7 +232,7 @@ int test_fixed_quantizer(int argc,
                 "- Failed", fixed_q_1_file_name, fixed_q_size_1,
                 fixed_q_2_file_name, fixed_q_size_2);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
         else
         {
@@ -244,30 +243,15 @@ int test_fixed_quantizer(int argc,
         }
     }
 
-    if (fail == 1)
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, fixed_q_1_enc.c_str(), fixed_q_2_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-    else
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, fixed_q_1_enc.c_str(), fixed_q_2_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, fixed_q_1_enc.c_str(), fixed_q_2_enc.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

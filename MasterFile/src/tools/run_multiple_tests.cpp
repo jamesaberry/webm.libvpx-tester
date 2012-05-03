@@ -6,7 +6,8 @@ int run_multiple_tests(int argc,
                        const char** argv,
                        std::string working_dir,
                        int number_of_tests,
-                       int delete_ivf_files)
+                       int delete_ivf_files,
+                       int artifact_detection)
 {
     if (argc < 4)
         return vpxt_test_help(argv[1], 0);
@@ -67,7 +68,7 @@ int run_multiple_tests(int argc,
     char *test_dir = "Summary";
 
     int (*vpxt_test_funct_ptr[MAXTENUM+1])(int, const char** argv,
-        const std::string &, const std::string, int, int) = {NULL};
+        const std::string &, const std::string, int, int, int) = {NULL};
     vpxt_test_funct_ptr[kTestAllowDropFrames] = &test_allow_drop_frames;
     vpxt_test_funct_ptr[kTestAllowLag] = &test_allow_lag;
     vpxt_test_funct_ptr[kTestAllowSpatialResampling] = &test_allow_spatial_resampling;
@@ -757,7 +758,8 @@ int run_multiple_tests(int argc,
 
                 pass_fail_arr[pass_fail_int] = vpxt_test_funct_ptr[selector]
                 (dummy_arg_var, (const char **)dummy_argv, TestDir,
-                    time_stamp_arr_2[0], test_type, delete_ivf_files);
+                    time_stamp_arr_2[0], test_type, delete_ivf_files,
+                    artifact_detection);
 
                 if (record_run_times == 1){
                     run_time_2 = vpxt_get_time();
@@ -971,6 +973,15 @@ int run_multiple_tests(int argc,
                 {
                     tprintf(PRINT_ERR, "TestNotSupported\n");
                     fprintf(fp_html, "TestNotSupported\n");
+                }
+                if (pass_fail_arr[selector_arr_int] == kTestPossibleArtifact)
+                {
+                    tprintf(PRINT_ERR, "PossibleArtifact\n");
+
+                    html_status.append(".txt\" color=\"yellow\">");
+                    html_status.append("PossibleArtifact");
+                    html_status.append("</a>");
+                    fprintf(fp_html, "%s \n", html_status.c_str());
                 }
 
                 fclose(fp);
@@ -1490,6 +1501,12 @@ int run_multiple_tests(int argc,
                         tprintf(PRINT_BTH, "TestNotSupported\n");
                         fprintf(fp_html, "TestNotSupported\n");
                     }
+
+                    if (pass_fail_arr[y] == kTestPossibleArtifact)
+                    {
+                        tprintf(PRINT_BTH, "PossibleArtifact\n");
+                        fprintf(fp_html, "PossibleArtifact\n");
+                    }
                 }
                 y++;
             }
@@ -1706,6 +1723,16 @@ int run_multiple_tests(int argc,
             {
                 tprintf(PRINT_BTH, "TestNotSupported\n");
                 fprintf(fp_html, "TestNotSupported\n");
+            }
+
+            if (pass_fail_arr[y] == kTestPossibleArtifact)
+            {
+                tprintf(PRINT_BTH, "PossibleArtifact\n");
+
+                html_status.append(".txt\" color=\"yellow\">");
+                html_status.append("PossibleArtifact");
+                html_status.append("</a>");
+                fprintf(fp_html, "%s \n", html_status.c_str());
             }
 
             y++;

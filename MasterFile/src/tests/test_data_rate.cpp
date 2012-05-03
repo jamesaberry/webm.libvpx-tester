@@ -5,7 +5,8 @@ int test_data_rate(int argc,
                    const std::string &working_dir,
                    const std::string sub_folder_str,
                    int test_type,
-                   int delete_ivf)
+                   int delete_ivf,
+                   int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_data_rate";
@@ -135,6 +136,7 @@ int test_data_rate(int argc,
     double data_rate_prox = vpxt_abs_double(100 - vpxt_abs_double(
         ((file_data_rate * 100) / bitrate)));
 
+    int test_state = kTestFailed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (data_rate_prox < target_data_rate_percent)
@@ -155,14 +157,7 @@ int test_data_rate(int argc,
             tprintf(PRINT_BTH, "\n");
         }
 
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(1, target_bitrate_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        test_state = kTestPassed;
     }
     else
     {
@@ -180,18 +175,17 @@ int test_data_rate(int argc,
                 file_data_rate, data_rate_prox, target_data_rate_percent, bitrate);
             tprintf(PRINT_BTH, "\n");
         }
+    }
 
+    if(test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if(test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(1, target_bitrate_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(1, target_bitrate_enc.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

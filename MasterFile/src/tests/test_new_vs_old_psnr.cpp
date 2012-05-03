@@ -5,7 +5,8 @@ int test_new_vs_old_psnr(int argc,
                          const std::string &working_dir,
                          const std::string sub_folder_str,
                          int test_type,
-                         int delete_ivf)
+                         int delete_ivf,
+                         int artifact_detection)
 {
     char *test_dir = "test_new_vs_old_psnr";
     int input_ver = vpxt_check_arg_input(argv[1], argc);
@@ -45,6 +46,8 @@ int test_new_vs_old_psnr(int argc,
 #else
     exe_str.insert(0, "\'");
 #endif
+
+    int new_enc_file_art_det = artifact_detection;
 
     //////////////////////////////////////////////
     std::string new_enc_file = cur_test_dir_str;
@@ -156,7 +159,7 @@ int test_new_vs_old_psnr(int argc,
     }
 
     int indeterminate = 0;
-    int failed = 0;
+    int test_state = kTestPassed;
 
     char git_log_input[256];
     char test_log_input[256];
@@ -194,7 +197,7 @@ int test_new_vs_old_psnr(int argc,
 
         // run psnr for new compression
         double new_psnr = vpxt_psnr(input.c_str(), new_enc_file.c_str(), 0,
-            PRINT_BTH, 1, NULL);
+            PRINT_BTH, 1, 0, 0, 0, NULL, new_enc_file_art_det);
 
         double new_data_rate = vpxt_data_rate(new_enc_file.c_str(), 1);
 
@@ -283,7 +286,7 @@ int test_new_vs_old_psnr(int argc,
             else{
                 vpxt_formated_print(RESPRT, "New PSNR: %.4f <  Old "
                     "PSNR: %.4f - Failed", raw_data_list[0],raw_data_list[2]);
-                failed = 1;
+                test_state = kTestFailed;
             }
         }
 
@@ -319,7 +322,7 @@ int test_new_vs_old_psnr(int argc,
         }
         else
         {
-            if (mode == 0)
+            if (mode == kRealTime)
             {
                 opt.Mode = MODE_REALTIME;
 
@@ -352,7 +355,7 @@ int test_new_vs_old_psnr(int argc,
                 vpxt_run_exe(comand_line_str);
             }
 
-            if (mode == 1)
+            if (mode == kOnePassGoodQuality)
             {
                 opt.Mode = MODE_GOODQUALITY;
 
@@ -383,7 +386,7 @@ int test_new_vs_old_psnr(int argc,
                 vpxt_run_exe(comand_line_str);
             }
 
-            if (mode == 2)
+            if (mode == kOnePassBestQuality)
             {
                 opt.Mode = MODE_BESTQUALITY;
 
@@ -405,7 +408,7 @@ int test_new_vs_old_psnr(int argc,
             {
             }
 
-            if (mode == 4)
+            if (mode == kTwoPassGoodQuality)
             {
                 // The old encoding method for two pass required for the encoder
                 // to be called twice once to run the first pass then again for
@@ -495,7 +498,7 @@ int test_new_vs_old_psnr(int argc,
                 }
             }
 
-            if (mode == 5)
+            if (mode == kTwoPassBestQuality)
             {
                 // The old encoding method for two pass required for the encoder
                 // to be called twice once to run the first pass then again for
@@ -608,7 +611,7 @@ int test_new_vs_old_psnr(int argc,
         }
 
         psnr_ar[0] = vpxt_psnr(input.c_str(), new_enc_file.c_str(), 0,PRINT_BTH,
-            1, NULL);
+            1, 0, 0, 0, NULL, new_enc_file_art_det);
         psnr_ar[1] = vpxt_get_psnr(old_enc_file.c_str());
 
         tprintf(PRINT_BTH, "\nNew DataRate");
@@ -624,40 +627,34 @@ int test_new_vs_old_psnr(int argc,
         else{
             vpxt_formated_print(RESPRT, "New PSNR: %.4f <  Old "
                 "PSNR: %.4f - Failed", psnr_ar[0], psnr_ar[1]);
-            failed = 1;
+            test_state = kTestFailed;
         }
     }
+
+    if (indeterminate == 1)
+        test_state = kTestIndeterminate;
+
+    // handle possible artifact
+    if(new_enc_file_art_det == kPossibleArtifactFound)
+    {
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+        fclose(fp);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
+        return kTestPossibleArtifact;
+    }
+
+    if (test_state == kTestIndeterminate)
+        tprintf(PRINT_BTH, "Indeterminate\n");
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "Passed\n");
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "Failed\n");
 
     if (delete_ivf)
             vpxt_delete_files(2, new_enc_file.c_str(), old_enc_file.c_str());
 
-    if (indeterminate == 1)
-    {
-        tprintf(PRINT_BTH, "Indeterminate\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
-    }
-
-    if (!failed)
-    {
-        tprintf(PRINT_BTH, "Passed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
-        tprintf(PRINT_BTH, "Failed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

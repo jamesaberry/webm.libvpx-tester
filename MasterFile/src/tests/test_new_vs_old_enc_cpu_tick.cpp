@@ -5,7 +5,8 @@ int test_new_vs_old_enc_cpu_tick(int argc,
                                  const std::string &working_dir,
                                  const std::string sub_folder_str,
                                  int test_type,
-                                 int delete_ivf)
+                                 int delete_ivf,
+                                 int artifact_detection)
 {
     char *test_dir = "test_new_vs_old_enc_cpu_tick";
     int input_ver = vpxt_check_arg_input(argv[1], argc);
@@ -147,7 +148,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     }
 
     int indeterminate = 0;
-    int failed = 0;
+    int test_state = kTestPassed;
 
     char git_log_input[256];
     char test_log_input[256];
@@ -280,7 +281,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
             else{
                 vpxt_formated_print(RESPRT, "New: %.0f is slower than Old: %.0f"
                 " - Failed",raw_data_list[0], raw_data_list[1]);
-                failed = 1;
+                test_state = kTestFailed;
             }
         }
 
@@ -372,7 +373,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
             vpxt_formated_print(RESPRT, "Old: %u is Faster than New: %u -"
                 " Failed",cpu_tick_old, cpu_tick_new);
 
-            failed = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -385,36 +386,20 @@ int test_new_vs_old_enc_cpu_tick(int argc,
         return kTestEncCreated;
     }
 
-    if (delete_ivf)
-            vpxt_delete_files(2, new_enc_file.c_str(), old_enc_file.c_str());
-
     if (indeterminate)
-    {
+        test_state = kTestIndeterminate;
+
+    if (test_state == kTestIndeterminate)
         tprintf(PRINT_BTH, "Indeterminate\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
-    }
-
-    if (!failed)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "Passed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "Failed\n");
 
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, new_enc_file.c_str(), old_enc_file.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

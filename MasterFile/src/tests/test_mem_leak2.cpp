@@ -5,7 +5,8 @@ int test_mem_leak2(int argc,
                    const std::string &working_dir,
                    const std::string sub_folder_str,
                    int test_type,
-                   int delete_ivf)
+                   int delete_ivf,
+                   int artifact_detection)
 {
     // Needs Debug.exe
     char *test_dir = "test_mem_leak2";
@@ -178,8 +179,7 @@ int test_mem_leak2(int argc,
         return kTestEncCreated;
     }
 
-    int fail = 0;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     FILE *infile = fopen(mem_leak_check_txt_1_str.c_str(), "rb");
@@ -192,7 +192,7 @@ int test_mem_leak2(int argc,
         vpxt_formated_print(RESPRT, "File not found: %s - Failed",
             MemLeakCheckTXTFileName);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -216,7 +216,7 @@ int test_mem_leak2(int argc,
             vpxt_formated_print(RESPRT, "Encode Memory Currently Allocated != "
                 "0 - %s - Failed", buffer_str.c_str());
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -230,7 +230,7 @@ int test_mem_leak2(int argc,
         vpxt_formated_print(RESPRT, "File not found: %s - Failed",
             MemLeakCheckTXTFileName);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -254,32 +254,20 @@ int test_mem_leak2(int argc,
             vpxt_formated_print(RESPRT, "Decode Memory Currently Allocated != "
                 "0 - %s - Failed", buffer_str_2.c_str());
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
     if (infile != NULL)fclose(infile);
     if (infile_2 != NULL)fclose(infile_2);
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestFailed;
+    return test_state;
 
 }

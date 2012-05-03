@@ -5,7 +5,8 @@ int test_reconstruct_buffer(int argc,
                             const std::string &working_dir,
                             const std::string sub_folder_str,
                             int test_type,
-                            int delete_ivf)
+                            int delete_ivf,
+                            int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_reconstruct_buffer";
@@ -123,9 +124,8 @@ int test_reconstruct_buffer(int argc,
         return kTestEncCreated;
     }
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-    int fail = 0;
 
     std::ifstream recon_out_file;
     std::string recon_out_str;
@@ -148,43 +148,28 @@ int test_reconstruct_buffer(int argc,
             vpxt_formated_print(RESPRT, "frame: %i Buffer: %c - Preview not "
                 "identical to Decoded - Failed", frame, buffer_letter);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
     recon_out_file.close();
 
-    if (fail == 0)
+    if (test_state == kTestPassed)
     {
         vpxt_formated_print(RESPRT, "All preview frames are identical to "
             "decoded frames - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(1, recon_buffer_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(1, recon_buffer_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(1, recon_buffer_comp.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

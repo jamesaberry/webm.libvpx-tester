@@ -1595,17 +1595,22 @@ int tool_vpxt_data_rate(int argc, const char** argv)
 }
 int tool_vpxt_psnr_run(int argc, const char** argv)
 {
-    if (argc < 4)
+    if (argc < 5)
         return vpxt_tool_help(argv[1], 0);
 
     double run_ssim = 1;
     std::string raw = argv[2];
     std::string comp = argv[3];
+    int artifact_detection = kDontRunArtifactDetection;
+    if(atoi(argv[5]))
+        artifact_detection = kRunArtifactDetection;
 
     if (atoi(argv[4]) == 1)
-        vpxt_psnr(raw.c_str(), comp.c_str(), 0, PRINT_STD, 0, &run_ssim);
+        vpxt_psnr(raw.c_str(), comp.c_str(), 0, PRINT_STD, 0, 0, 0, 0,
+        &run_ssim, artifact_detection);
     else
-        vpxt_psnr(raw.c_str(), comp.c_str(), 0, PRINT_STD, 0, NULL);
+        vpxt_psnr(raw.c_str(), comp.c_str(), 0, PRINT_STD, 0, 0, 0, 0, NULL,
+        artifact_detection);
 
     tprintf(PRINT_STD, "\n");
 

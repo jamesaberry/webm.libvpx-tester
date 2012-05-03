@@ -5,7 +5,8 @@ int test_force_key_frame(int argc,
                          const std::string &working_dir,
                          const std::string sub_folder_str,
                          int test_type,
-                         int delete_ivf)
+                         int delete_ivf,
+                         int artifact_detection)
 {
     char *comp_out_str = "Key Frame Frequency";
     char *test_dir = "test_force_key_frame";
@@ -128,40 +129,31 @@ int test_force_key_frame(int argc,
 
     vpxt_display_key_frames(ForceKeyFrame.c_str(), 1);
 
-    int fail = vpxt_check_force_key_frames(KeyFrameoutputfile.c_str(),
+    int f_key_frames = vpxt_check_force_key_frames(KeyFrameoutputfile.c_str(),
         ForceKeyFrameInt, ForceKeyFrame.c_str());
 
-    if (fail == 1)
-    {
-        tprintf(PRINT_BTH, "\nFailed\n");
+    int test_state = kTestFailed;
 
-        if (delete_ivf)
-            vpxt_delete_files(2, ForceKeyFrame.c_str(),
-            KeyFrameoutputfile.c_str());
+    if(f_key_frames == 0)
+        test_state = kTestPassed;
 
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-    else
+    if(test_state == kTestPassed)
     {
         vpxt_formated_print(RESPRT, "Key Frames occur only when Force Key "
             "Frame dictates: %i - Passed", ForceKeyFrameInt);
         tprintf(PRINT_BTH, "\n");
+    }
 
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, ForceKeyFrame.c_str(),
-            KeyFrameoutputfile.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, ForceKeyFrame.c_str(), KeyFrameoutputfile.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 
 }

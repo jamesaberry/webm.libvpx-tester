@@ -10,7 +10,8 @@ int test_post_processor(int argc,
                         const std::string &working_dir,
                         const std::string sub_folder_str,
                         int test_type,
-                        int delete_ivf)
+                        int delete_ivf,
+                        int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_post_processor";
@@ -36,6 +37,9 @@ int test_post_processor(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int post_proc_encode_art_det = artifact_detection;
+    int post_proc_decode_art_det = kDontRunArtifactDetection;
 
     std::string post_proc_encode = cur_test_dir_str + slashCharStr() + test_dir
         + "_compression";
@@ -138,9 +142,8 @@ int test_post_processor(int argc,
     tprintf(PRINT_BTH, "\nCaculating PSNR: NOFILTERING DeblockLevel %i "
         "noise_level %i \n", deblock_level, noise_level);
 
-    psnr_arr[n] = vpxt_post_proc_psnr(input.c_str(),
-        post_proc_encode.c_str(), 0, PRINT_BTH, 1, deblock_level, 0, flags,
-        &ssim);
+    psnr_arr[n] = vpxt_psnr(input.c_str(), post_proc_encode.c_str(), 0,
+        PRINT_BTH, 1, deblock_level, 0, flags, &ssim, post_proc_encode_art_det);
 
     ++n;
 
@@ -150,9 +153,9 @@ int test_post_processor(int argc,
     tprintf(PRINT_BTH, "\nCaculating PSNR: DEBLOCK DeblockLevel %i noise_level "
         "%i \n", deblock_level, noise_level);
 
-    psnr_arr[n] = vpxt_post_proc_psnr(input.c_str(),
-        post_proc_encode.c_str(), 0, PRINT_BTH, 1, deblock_level, noise_level,
-        flags, &ssim);
+    psnr_arr[n] = vpxt_psnr(input.c_str(), post_proc_encode.c_str(), 0,
+        PRINT_BTH, 1, deblock_level, noise_level, flags, &ssim,
+        post_proc_decode_art_det);
 
     ++n;
 
@@ -164,9 +167,9 @@ int test_post_processor(int argc,
         tprintf(PRINT_BTH, "\nCaculating PSNR: DEMACROBLOCK DeblockLevel %i "
             "noise_level %i \n", deblock_level, noise_level);
 
-        psnr_arr[n] = vpxt_post_proc_psnr(input.c_str(),
-            post_proc_encode.c_str(), 0, PRINT_BTH, 1, deblock_level, 0,
-            flags, &ssim);
+        psnr_arr[n] = vpxt_psnr(input.c_str(), post_proc_encode.c_str(), 0,
+            PRINT_BTH, 1, deblock_level, 0, flags, &ssim,
+            post_proc_decode_art_det);
 
         ++deblock_level;
         ++n;
@@ -182,9 +185,9 @@ int test_post_processor(int argc,
         tprintf(PRINT_BTH, "\nCaculating PSNR: ADDNOISE DeblockLevel %i "
             "noise_level %i \n", deblock_level, noise_level);
 
-            psnr_arr[n] = vpxt_post_proc_psnr(input.c_str(),
-            post_proc_encode.c_str(), 0, PRINT_BTH, 1, deblock_level,
-            noise_level, flags, &ssim);
+            psnr_arr[n] = vpxt_psnr(input.c_str(), post_proc_encode.c_str(), 0,
+                PRINT_BTH, 1, deblock_level, noise_level, flags, &ssim,
+                post_proc_decode_art_det);
 
         ++noise_level;
         ++n;
@@ -192,7 +195,7 @@ int test_post_processor(int argc,
 
     tprintf(PRINT_BTH, "\n\n\nResults:\n\n");
 
-    int test_fail = 0;
+    int test_state = kTestPassed;
     int ten_percent = 0;
     n = 0;
 
@@ -208,7 +211,7 @@ int test_post_processor(int argc,
             "%4.2f - Failed", psnr_arr[1], psnr_arr[0]);
         tprintf(PRINT_BTH, "\n");
 
-        test_fail = 1;
+        test_state = kTestFailed;
     }
 
     tprintf(PRINT_BTH, "\n");
@@ -230,7 +233,7 @@ int test_post_processor(int argc,
                 psnr_arr[0]);
             tprintf(PRINT_BTH, "\n");
 
-            test_fail = 1;
+            test_state = kTestFailed;
         }
 
         ++n;;
@@ -254,7 +257,7 @@ int test_post_processor(int argc,
                 psnr_arr[0]);
             tprintf(PRINT_BTH, "\n");
 
-            test_fail = 1;
+            test_state = kTestFailed;
         }
 
         ++n;;
@@ -330,40 +333,30 @@ int test_post_processor(int argc,
         ++n;;
     }
 
-    if (delete_ivf)
-        vpxt_delete_files(1, post_proc_encode.c_str());
+    if (ten_percent != 0)
+        test_state = kTestMinPassed;
 
-    if (test_fail == 0)
+    // handle possible artifact
+    if(post_proc_encode_art_det == kPossibleArtifactFound)
     {
-        if (ten_percent == 0)
-        {
-            tprintf(PRINT_BTH, "\nPassed\n");
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
-            return kTestPassed;
-        }
-        else
-        {
-            tprintf(PRINT_BTH, "\nMin Passed\n");
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
-            return kTestMinPassed;
-        }
-    }
-    else
-    {
-        tprintf(PRINT_BTH, "\nFailed\n");
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
+        return kTestPossibleArtifact;
     }
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestMinPassed)
+        tprintf(PRINT_BTH, "\nMin Passed\n");
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
+
+    if (delete_ivf)
+        vpxt_delete_files(1, post_proc_encode.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

@@ -5,7 +5,8 @@ int test_error_resolution(int argc,
                           const std::string &working_dir,
                           const std::string sub_folder_str,
                           int test_type,
-                          int delete_ivf)
+                          int delete_ivf,
+                          int artifact_detection)
 {
     char *comp_out_str = "Error Resilient Mode";
     char *test_dir = "test_error_resolution";
@@ -122,12 +123,13 @@ int test_error_resolution(int argc,
     double psnr_off;
 
     psnr_on = vpxt_psnr(input.c_str(), error_on_enc.c_str(), 0, PRINT_BTH, 1,
-        NULL);
+        0, 0, 0, NULL, artifact_detection);
     psnr_off = vpxt_psnr(input.c_str(), error_off_enc.c_str(), 0, PRINT_BTH, 1,
-        NULL);
+        0, 0, 0, NULL, artifact_detection);
 
     double psnr_perc = 100 * vpxt_abs_double((psnr_on - psnr_off) / psnr_off);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (psnr_perc < 10.00)
@@ -135,35 +137,25 @@ int test_error_resolution(int argc,
         vpxt_formated_print(RESPRT, "ErrorRes on PSNR is within 10%% of Error "
             "Res off PSNR: %.2f%% - Passed", psnr_perc);
         tprintf(PRINT_BTH, "\n");
-
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, error_on_enc.c_str(),
-            error_off_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
     }
     else
     {
         vpxt_formated_print(RESPRT, "ErrorRes on PSNR is not within 10%% of "
             "Error Res off PSNR: %.2f%% - Failed", psnr_perc);
         tprintf(PRINT_BTH, "\n");
+        test_state = kTestFailed;
+    }
 
+    if(test_state ==kTestPassed )
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if(test_state ==kTestFailed )
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, error_on_enc.c_str(),
-            error_off_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, error_on_enc.c_str(),
+        error_off_enc.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

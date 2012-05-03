@@ -2826,7 +2826,8 @@ int vpxt_tool_help(const char *input_char, int printSummary)
             "\n  VPXT PSNR\n\n"
             "     <Source File>\n"
             "     <Compressed File>\n"
-            "     <Run SSIM - 0|1>\n");
+            "     <Run SSIM - 0|1>\n"
+            "     <Artifact Detection - 0|1>\n");
 
         if (printSummary)
             vpxt_formated_print(TOLPRT, "This tool will compute an encoded IVF "
@@ -4029,18 +4030,25 @@ int vpxt_run_multi(int argc, const char** argv, std::string working_dir)
 
     // check to see if we should run a lean multi run
     int delete_ivf_files = 0;
+    int artifact_detection = kDontRunArtifactDetection;
 
-    if (argc > 4)
+    int n = 4;
+    while (n < argc)
     {
-        std::string lean_check = argv[4];
-        vpxt_lower_case_string(lean_check);
+        std::string option_check = argv[n];
+        vpxt_lower_case_string(option_check);
 
-        if (lean_check.compare("lean") == 0)
+        if (option_check.compare("lean") == 0)
             delete_ivf_files = 1;
+
+        if (option_check.compare("artifact_detect") == 0)
+            artifact_detection = kRunArtifactDetection;
+
+        ++n;
     }
 
     run_multiple_tests(argc, argv, working_dir.c_str(), valid_input,
-        delete_ivf_files);
+        delete_ivf_files, artifact_detection);
 
     std::string summary_file = working_dir;
 
@@ -4408,194 +4416,195 @@ int main(int argc, const char** argv)
 
     if (selector == kTestAllowDropFrames)
         return test_allow_drop_frames(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestAllowLag)
         return test_allow_lag(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestAllowSpatialResampling)
         return test_allow_spatial_resampling(argc, argv, working_dir,
-        sub_folder_str, 1 , KEEP_IVF);
+        sub_folder_str, 1 , KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestArnr)
-        return test_arnr(argc, argv, working_dir, sub_folder_str, 1, KEEP_IVF);
+        return test_arnr(argc, argv, working_dir, sub_folder_str, 1, KEEP_IVF,
+        NO_ART_DET);
 
     if (selector == kTestAutoKeyFrame)
         return test_auto_key_frame(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestBufferLevel)
         return test_buffer_level(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestChangeCpuDec)
         return test_change_cpu_dec(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestChangeCpuEnc)
         return test_change_cpu_enc(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestConstrainedQuality)
         return test_constrained_quality(argc, argv, working_dir, sub_folder_str
-        , 1, KEEP_IVF);
+        , 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestCopySetReference)
         return test_copy_set_reference(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestDropFrameWaterMark)
         return test_drop_frame_watermark(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestDataRate)
         return test_data_rate(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestDebugMatchesRelease)
         return test_debug_matches_release(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestEncoderBreakout)
         return test_encoder_break_out(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestErrorConcealment)
         return test_error_concealment(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestErrorResolution)
         return test_error_resolution(argc, argv, working_dir, sub_folder_str, 1
-        , KEEP_IVF);
+        , KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestExtraFile)
         return test_extra_file(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestFixedQuantizer)
         return test_fixed_quantizer(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestForcedKeyFrame)
         return test_force_key_frame(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestFrameSize)
         return test_frame_size(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestGoodVsBest)
         return test_good_vs_best(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestLagInFrames)
         return test_lag_in_frames(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestMaxQuantizer)
         return test_max_quantizer(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestMemLeak)
         return test_mem_leak(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestMemLeak2)
         return test_mem_leak2(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestMinQuantizer)
         return test_min_quantizer(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestMultiResolutionEncode)
         return test_multiple_resolution_encode(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestMultiThreadedDec)
         return test_multithreaded_dec(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestMultiThreadedEnc)
         return test_multithreaded_enc(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestNewVsOldPsnr)
         return test_new_vs_old_psnr(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestNewVsOldTempScale)
         return test_new_vs_old_temp_scale(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestNewVsOldEncCpuTick)
         return test_new_vs_old_enc_cpu_tick(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestNoiseSensitivity)
         return test_noise_sensitivity(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestOnePassVsTwoPass)
         return test_one_pass_vs_two_pass(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestPlayAlternate)
         return test_play_alternate(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestPostProcessor)
         return test_post_processor(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestPostProcessorMfqe)
         return test_post_processor_mfqe(argc, argv, working_dir, sub_folder_str
-        , 1, KEEP_IVF);
+        , 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestReconstructBuffer)
         return test_reconstruct_buffer(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestResampleDownWatermark)
         return test_resample_down_watermark(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestSpeed)
         return test_speed(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestTemporalScalability)
         return test_temporal_scalability(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestTestVector)
         return test_test_vector(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestThirtytwoVsSixtyfour)
         return test_thirtytwo_vs_sixtyfour(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestTwoPassVsTwoPassBest)
         return test_two_pass_vs_two_pass_best(argc, argv, working_dir,
-        sub_folder_str, 1, KEEP_IVF);
+        sub_folder_str, 1, KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestUndershoot)
         return test_undershoot(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestVersion)
         return test_version(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestVpxMatchesInt)
         return test_vpx_matches_int(argc, argv, working_dir, sub_folder_str, 1,
-        KEEP_IVF);
+        KEEP_IVF, NO_ART_DET);
 
     if (selector == kTestWinLinMacMatch)
         return test_win_lin_mac_match(argc, argv, working_dir, sub_folder_str,
-        1, KEEP_IVF);
+        1, KEEP_IVF, NO_ART_DET);
 
     vpxt_on_error_output();
     return 0;

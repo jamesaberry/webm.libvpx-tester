@@ -5,7 +5,8 @@ int test_multiple_resolution_encode(int argc,
                                     const std::string &working_dir,
                                     const std::string sub_folder_str,
                                     int test_type,
-                                    int delete_ivf)
+                                    int delete_ivf,
+                                    int artifact_detection)
 {
     char *comp_out_str = "Allow Spatial Resampling";
     char *test_dir = "test_multiple_resolution_encode";
@@ -58,6 +59,10 @@ int test_multiple_resolution_encode(int argc,
     vpxt_itoa_custom(height_3, height_3_char, 10);
 
     std::string multi_res_enc = cur_test_dir_str + slashCharStr() + test_dir;
+
+    int multi_res_enc_1_art_det = artifact_detection;
+    int multi_res_enc_2_art_det = artifact_detection;
+    int multi_res_enc_3_art_det = artifact_detection;
 
     std::string multi_res_enc_1 = multi_res_enc + "-" + width_1_char + "x" +
         height_1_char;
@@ -153,11 +158,11 @@ int test_multiple_resolution_encode(int argc,
     }
 
     double psnr_1 = vpxt_psnr(input.c_str(), multi_res_enc_1.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, multi_res_enc_1_art_det);
     double psnr_2 = vpxt_psnr(input.c_str(), multi_res_enc_2.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, multi_res_enc_2_art_det);
     double psnr_3 = vpxt_psnr(input.c_str(), multi_res_enc_3.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, multi_res_enc_3_art_det);
 
     char multi_res_enc_1_file_name[256];
     char multi_res_enc_2_file_name[256];
@@ -167,7 +172,7 @@ int test_multiple_resolution_encode(int argc,
     vpxt_file_name(multi_res_enc_2.c_str(), multi_res_enc_2_file_name, 0);
     vpxt_file_name(multi_res_enc_3.c_str(), multi_res_enc_3_file_name, 0);
 
-    int fail = 0;
+    int test_state = kTestPassed;
 
     if (psnr_1 > 25.0)
     {
@@ -180,7 +185,7 @@ int test_multiple_resolution_encode(int argc,
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
             multi_res_enc_1_file_name, psnr_1);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     if (psnr_2 > 25.0)
     {
@@ -193,7 +198,7 @@ int test_multiple_resolution_encode(int argc,
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
             multi_res_enc_2_file_name, psnr_2);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     if (psnr_3 > 25.0)
     {
@@ -206,7 +211,7 @@ int test_multiple_resolution_encode(int argc,
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
             multi_res_enc_3_file_name, psnr_3);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (psnr_1 >= psnr_2 && psnr_2 >= psnr_3)
@@ -243,35 +248,31 @@ int test_multiple_resolution_encode(int argc,
             tprintf(PRINT_BTH, "\n");
         }
         
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
+    // handle possible artifact
+    if(multi_res_enc_1_art_det == kPossibleArtifactFound ||
+        multi_res_enc_2_art_det == kPossibleArtifactFound ||
+        multi_res_enc_3_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(3, multi_res_enc_1.c_str(),
-            multi_res_enc_2.c_str(), multi_res_enc_3.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(3, multi_res_enc_1.c_str(),
-            multi_res_enc_2.c_str(), multi_res_enc_3.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(3, multi_res_enc_1.c_str(), multi_res_enc_2.c_str(),
+        multi_res_enc_3.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

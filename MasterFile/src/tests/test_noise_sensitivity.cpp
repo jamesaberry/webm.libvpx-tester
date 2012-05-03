@@ -5,7 +5,8 @@ int test_noise_sensitivity(int argc,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
-                           int delete_ivf)
+                           int delete_ivf,
+                           int artifact_detection)
 {
     char *comp_out_str = "Noise Sensitivity";
     char *test_dir = "test_noise_sensitivity";
@@ -32,6 +33,7 @@ int test_noise_sensitivity(int argc,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
 
+    int noise_sense_art_det[7];
     int max_noise = 1;
     int temp_denoise = 1;
     std::vector<std::string> noise_sense_vec;
@@ -54,6 +56,8 @@ int test_noise_sensitivity(int argc,
         noise_sense += i_char;
         vpxt_enc_format_append(noise_sense, enc_format);
         noise_sense_vec.push_back(noise_sense);
+
+        noise_sense_art_det[i] = artifact_detection;
     }
 
     ///////////// OutPutfile ////////////
@@ -130,7 +134,8 @@ int test_noise_sensitivity(int argc,
         {
             tprintf(PRINT_BTH, "\n");
             noise_psnr[noise] = vpxt_psnr(input.c_str(),
-                noise_sense_vec[noise].c_str(), 0, PRINT_BTH, 1, NULL);
+                noise_sense_vec[noise].c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+                noise_sense_art_det[noise]);
             tprintf(PRINT_BTH, "\n");
             file_size[noise] = vpxt_file_size(noise_sense_vec[noise].c_str(),
                 1);
@@ -159,7 +164,8 @@ int test_noise_sensitivity(int argc,
             {
                 tprintf(PRINT_BTH, "\n");
                 noise_psnr[noise] = vpxt_psnr(input.c_str(),
-                    noise_sense_vec[noise].c_str(), 0, PRINT_BTH, 1, NULL);
+                    noise_sense_vec[noise].c_str(), 0, PRINT_BTH, 1, 0, 0, 0,
+                    NULL, noise_sense_art_det[noise]);
                 tprintf(PRINT_BTH, "\n");
                 file_size[noise] = vpxt_file_size(
                     noise_sense_vec[noise].c_str(), 1);
@@ -168,7 +174,6 @@ int test_noise_sensitivity(int argc,
 
             noise++;
         }
-
     }
 
     // Create Compression only stop test short.
@@ -184,8 +189,7 @@ int test_noise_sensitivity(int argc,
     // or
     // checks 0v1 | 1v2 | 2v3 | 3v4 | 4v5 | 5v6
     int n = 0;
-    int fail = 0;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     while (n < max_noise)
@@ -195,8 +199,7 @@ int test_noise_sensitivity(int argc,
             vpxt_formated_print(RESPRT, "Noise %i PSNR %.4f == Noise %i PSNR "
                 "%.4f - Failed", n, noise_psnr[n], n + 1, noise_psnr[n+1]);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
-
+            test_state = kTestFailed;
         }
         else
         {
@@ -213,7 +216,7 @@ int test_noise_sensitivity(int argc,
         vpxt_formated_print(RESPRT, "Noise 0 PSNR: %.4f <= Noise %i PSNR: "
             "%.4f - Failed", noise_psnr[0], max_noise, noise_psnr[max_noise]);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -222,28 +225,29 @@ int test_noise_sensitivity(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
+    // handle possible artifact
+    for(n = 0; n < max_noise; n++){
+        if(noise_sense_art_det[n] == kPossibleArtifactFound)
+        {
+            tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+            fclose(fp);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
+            return kTestPossibleArtifact;
+        }
+    }
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
+
     if (delete_ivf)
         for(n = 0; n < max_noise; n++)
             vpxt_delete_files(1, noise_sense_vec[n].c_str());
 
-    if (fail == 0)
-    {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

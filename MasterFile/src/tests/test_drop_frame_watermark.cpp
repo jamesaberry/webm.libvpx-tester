@@ -5,7 +5,8 @@ int test_drop_frame_watermark(int argc,
                               const std::string &working_dir,
                               const std::string sub_folder_str,
                               int test_type,
-                              int delete_ivf)
+                              int delete_ivf,
+                              int artifact_detection)
 {
     char *comp_out_str = "Drop Frames Watermark";
     char *test_dir = "test_drop_frame_watermark";
@@ -186,7 +187,7 @@ int test_drop_frame_watermark(int argc,
     i = 0;
     n = 100;
     int equal_count = 0;
-    int pass = 1;
+    int test_state = kTestPassed;
 
     tprintf(PRINT_STD, "\n\n");
     fprintf(stderr, "\n\n");
@@ -227,7 +228,7 @@ int test_drop_frame_watermark(int argc,
 
         if (dfwm_arr[i+1] < dfwm_arr[i])
         {
-            pass = 0;
+            test_state = kTestFailed;
 
             vpxt_formated_print(RESPRT, "DFWM%4i: %4i < DFWM%4i: %4i - "
                 "Failed", n - 20, dfwm_arr[i+1], n, dfwm_arr[i]);
@@ -239,53 +240,26 @@ int test_drop_frame_watermark(int argc,
         n = n - 20;
     }
 
-    if (pass == 0)
+    if (test_state != kTestFailed && equal_count == 5)
     {
+        tprintf(PRINT_BTH, "\n\nUnknown: Drop-Frames-Watermark has no "
+            "effect, try different parameters \n");
+        test_state = kTestIndeterminate;
+    }
+
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
+    if (test_state == kTestIndeterminate)
+        tprintf(PRINT_BTH, "\nIndterminate\n");
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(6, dfwm_out_file_0.c_str(), dfwm_out_file_20.c_str(),
-            dfwm_out_file_40.c_str(), dfwm_out_file_60.c_str(), dfwm_out_file_80.c_str(),
-            dfwm_out_file_100.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-    else
-    {
-        if (equal_count == 5)
-        {
-            tprintf(PRINT_BTH, "\n\nUnknown: Drop-Frames-Watermark has no "
-                "effect, try different parameters \n");
-
-            if (delete_ivf)
-                vpxt_delete_files(6, dfwm_out_file_0.c_str(),
-                dfwm_out_file_20.c_str(), dfwm_out_file_40.c_str(),
-                dfwm_out_file_60.c_str(), dfwm_out_file_80.c_str(),
-                dfwm_out_file_100.c_str());
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
-            return kTestIndeterminate;
-        }
-        else
-        {
-            tprintf(PRINT_BTH, "\nPassed\n");
-
-            if (delete_ivf)
-                vpxt_delete_files(6, dfwm_out_file_0.c_str(),
-                dfwm_out_file_20.c_str(), dfwm_out_file_40.c_str(),
-                dfwm_out_file_60.c_str(), dfwm_out_file_80.c_str(),
-                dfwm_out_file_100.c_str());
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
-            return kTestPassed;
-        }
-    }
+    if (delete_ivf)
+        vpxt_delete_files(6, dfwm_out_file_0.c_str(), dfwm_out_file_20.c_str(),
+        dfwm_out_file_40.c_str(), dfwm_out_file_60.c_str(),
+        dfwm_out_file_80.c_str(), dfwm_out_file_100.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

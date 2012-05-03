@@ -5,7 +5,8 @@ int test_error_concealment(int argc,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
-                           int delete_ivf)
+                           int delete_ivf,
+                           int artifact_detection)
 {
     char *comp_out_str = "Error Resilient Mode";
     char *test_dir = "test_error_concealment";
@@ -125,15 +126,14 @@ int test_error_concealment(int argc,
     double psnr_drops;
 
     psnr_clean = vpxt_psnr(input.c_str(), error_con_enc.c_str(), 0, PRINT_BTH, 1
-        , NULL);
+        , 0, 0, 0, NULL, artifact_detection);
     psnr_drops = vpxt_psnr_dec(input.c_str(), error_con_dec.c_str(), 0,
         PRINT_BTH, 1, NULL, 0, 0);
 
     double psnr_perc = 100 * vpxt_abs_double((psnr_clean - psnr_drops) /
         psnr_drops);
 
-    int passed = 1;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (psnr_perc < 50.00)
@@ -149,7 +149,7 @@ int test_error_concealment(int argc,
             "50%% of Partial Drop PSNR: %.2f - %.2f%% - Failed", psnr_clean,
             psnr_drops, psnr_perc);
         tprintf(PRINT_BTH, "\n");
-        passed = 0;
+        test_state = kTestFailed;
     }
 
     if (psnr_drops > 20.00)
@@ -163,35 +163,19 @@ int test_error_concealment(int argc,
         vpxt_formated_print(RESPRT, "Partial Drop PSNR is not greater than "
             "20.00: %.2f - Failed", psnr_drops);
         tprintf(PRINT_BTH, "\n");
-        passed = 0;
+        test_state = kTestFailed;
     }
 
-    if (passed == 1)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(3, error_con_enc.c_str(), error_con_dec.c_str(),
-            error_con_enc_wpfd.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(3, error_con_enc.c_str(), error_con_dec.c_str(),
-            error_con_enc_wpfd.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(3, error_con_enc.c_str(), error_con_dec.c_str(),
+        error_con_enc_wpfd.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

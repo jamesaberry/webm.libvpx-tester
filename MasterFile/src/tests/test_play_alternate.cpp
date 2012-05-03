@@ -5,7 +5,8 @@ int test_play_alternate(int argc,
                         const std::string &working_dir,
                         const std::string sub_folder_str,
                         int test_type,
-                        int delete_ivf)
+                        int delete_ivf,
+                        int artifact_detection)
 {
     char *comp_out_str = "Play Alternate";
     char *test_dir = "test_play_alternate";
@@ -151,7 +152,7 @@ int test_play_alternate(int argc,
         play_alternate_1.c_str(),
         0);
 
-    int fail = 0;
+    int test_state = kTestPassed;
 
     int play_alternate_on_alt_ref_count =
         vpxt_display_alt_ref_frames(play_alternate_2.c_str(), 1);
@@ -180,7 +181,7 @@ int test_play_alternate(int argc,
         vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
             "for %s - Failed", play_alternate_on_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (play_alternate_off_alt_ref_count > 0)
@@ -188,7 +189,7 @@ int test_play_alternate(int argc,
         vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - "
             "Failed", play_alternate_off_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -212,7 +213,7 @@ int test_play_alternate(int argc,
             visible_frame_on_count, play_alternate_off_file_name,
             visible_frame_off_count);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (lng_rc >= 0)
@@ -225,35 +226,19 @@ int test_play_alternate(int argc,
     {
         vpxt_formated_print(RESPRT, "Files are identical - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, play_alternate_1.c_str(),
-            play_alternate_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, play_alternate_1.c_str(),
-            play_alternate_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, play_alternate_1.c_str(),
+        play_alternate_2.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

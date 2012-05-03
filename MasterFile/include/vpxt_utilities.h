@@ -6,15 +6,31 @@
 #ifndef UTILITIES_H_GUARD
 #define UTILITIES_H_GUARD
 
-#define PRINT_STD 1
-#define PRINT_ERR 2
-#define PRINT_BTH 3
+#define PRINT_NONE 0
+#define PRINT_STD  1
+#define PRINT_ERR  2
+#define PRINT_BTH  3
 
 #define HLPPRT 1
 #define TOLPRT 2
 #define FUNPRT 3
 #define OTRPRT 4
 #define RESPRT 5
+
+enum PotentialArtifact{
+    kDontRunArtifactDetection = 0,
+    kRunArtifactDetection = 1,
+    kNoArtifactFound = 2,
+    kPossibleArtifactFound = 3
+};
+
+enum CompModes{
+    kRealTime = 0,
+    kOnePassGoodQuality = 1,
+    kOnePassBestQuality = 2,
+    kTwoPassGoodQuality = 4,
+    kTwoPassBestQuality = 5
+};
 
 void tprintf(int PrintSelection, const char *fmt, ...);
 std::string slashCharStr();
@@ -94,15 +110,8 @@ int vpxt_gcd(int a, int b);
 int vpxt_abs_int(int input);
 float vpxt_abs_float(float input);
 double vpxt_abs_double(double input);
-int vpxt_solve_quadratic(double X1,
-                         double X2,
-                         double X3,
-                         double Y1,
-                         double Y2,
-                         double Y3,
-                         double &A,
-                         double &B,
-                         double &C);
+int vpxt_solve_quadratic(double X1, double X2, double X3, double Y1, double Y2,
+                         double Y3, double &A, double &B, double &C);
 double vpxt_area_under_quadratic(double A, double B, double C, double X1,
                                  double X2);
 char *vpxt_itoa_custom(int value, char *result, int base);
@@ -133,7 +142,11 @@ double vpxt_psnr(const char *inputFile1,
                  int forceUVswap,
                  int frameStats,
                  int printvar,
-                 double *SsimOut);
+                 int deblock_level,
+                 int noise_level,
+                 int flags,
+                 double *SsimOut,
+                 int& potential_artifact);
 double vpxt_psnr_dec(const char *inputFile1,
                      const char *inputFile2,
                      int forceUVswap,
@@ -142,23 +155,6 @@ double vpxt_psnr_dec(const char *inputFile1,
                      double *SsimOut,
                      int width,
                      int height);
-double vpxt_post_proc_psnr(const char *inputFile1,
-                           const char *inputFile2,
-                           int forceUVswap,
-                           int frameStats,
-                           int printvar,
-                           int deblock_level,
-                           int noise_level,
-                           int flags,
-                           double *SsimOut);
-double vpxt_psnr_resize_frames(const char *inputFile1,
-                               const char *inputFile2,
-                               int forceUVswap,
-                               int frameStats,
-                               int printvar,
-                               double *SsimOut,
-                               int resizeHeight,
-                               int resizeWidth);
 double vpxt_data_rate(const char *inputFile, int DROuputSel);
 int vpxt_check_pbm(const char *inputFile,
                    int bitRate,

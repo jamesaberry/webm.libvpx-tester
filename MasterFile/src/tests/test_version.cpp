@@ -5,7 +5,8 @@ int test_version(int argc,
                  const std::string &working_dir,
                  const std::string sub_folder_str,
                  int test_type,
-                 int delete_ivf)
+                 int delete_ivf,
+                 int artifact_detection)
 {
     char *comp_out_str = "Version";
     char *test_dir = "test_version";
@@ -33,6 +34,11 @@ int test_version(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int version_0_art_det = artifact_detection;
+    int version_1_art_det = artifact_detection;
+    int version_2_art_det = artifact_detection;
+    int version_3_art_det = artifact_detection;
 
     std::string version_0 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_0";
@@ -241,13 +247,13 @@ int test_version(int argc,
     }
 
     psnr_arr[0] = vpxt_psnr(input.c_str(), version_0.c_str(), 0, PRINT_BTH, 1,
-        NULL);
+        0, 0, 0, NULL, version_0_art_det);
     psnr_arr[1] = vpxt_psnr(input.c_str(), version_1.c_str(), 0, PRINT_BTH, 1,
-        NULL);
+        0, 0, 0, NULL, version_1_art_det);
     psnr_arr[2] = vpxt_psnr(input.c_str(), version_2.c_str(), 0, PRINT_BTH, 1,
-        NULL);
+        0, 0, 0, NULL, version_2_art_det);
     psnr_arr[3] = vpxt_psnr(input.c_str(), version_3.c_str(), 0, PRINT_BTH, 1,
-        NULL);
+        0, 0, 0, NULL, version_3_art_det);
 
     tprintf(PRINT_BTH, "\n");
 
@@ -309,7 +315,7 @@ int test_version(int argc,
         i++;
     }
 
-    int fail = 0;
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (psnr_fail == 0)
@@ -324,7 +330,7 @@ int test_version(int argc,
         vpxt_formated_print(RESPRT, "All but one PSNR Decreases as version "
             "numbers increase - Min Passed");
         tprintf(PRINT_BTH, "\n");
-        fail = 2;
+        test_state = kTestMinPassed;
     }
 
     if (psnr_fail >= 2)
@@ -332,7 +338,7 @@ int test_version(int argc,
         vpxt_formated_print(RESPRT, "Not all PSNRs decrease as version numbers "
             "increase - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (time_fail == 0)
@@ -347,7 +353,7 @@ int test_version(int argc,
         vpxt_formated_print(RESPRT, "All but one Decode ticks decrease as "
             "version numbers increase - Min Passed");
         tprintf(PRINT_BTH, "\n");
-        fail = 2;
+        test_state = kTestMinPassed;
     }
 
     if (time_fail >= 2)
@@ -355,51 +361,35 @@ int test_version(int argc,
         vpxt_formated_print(RESPRT, "Not all Decode ticks increase as "
             "version numbers increase - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 2)
+    // handle possible artifact
+    if(version_0_art_det == kPossibleArtifactFound ||
+        version_1_art_det == kPossibleArtifactFound ||
+        version_2_art_det == kPossibleArtifactFound ||
+        version_3_art_det == kPossibleArtifactFound)
     {
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+        fclose(fp);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
+        return kTestPossibleArtifact;
+    }
+
+    if (test_state == kTestMinPassed)
         tprintf(PRINT_BTH, "\nMin Passed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(8, version_0.c_str(), version_1.c_str(),
-            version_2.c_str(), version_3.c_str(), version_0_dec.c_str(),
-            version_1_dec.c_str(), version_2_dec.c_str(),version_3_dec.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestMinPassed;
-    }
-
-    if (fail == 1)
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(8, version_0.c_str(), version_1.c_str(),
-            version_2.c_str(), version_3.c_str(), version_0_dec.c_str(),
-            version_1_dec.c_str(), version_2_dec.c_str(),version_3_dec.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-    else
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(8, version_0.c_str(), version_1.c_str(),
-            version_2.c_str(), version_3.c_str(), version_0_dec.c_str(),
-            version_1_dec.c_str(), version_2_dec.c_str(),version_3_dec.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(8, version_0.c_str(), version_1.c_str(),
+        version_2.c_str(), version_3.c_str(), version_0_dec.c_str(),
+        version_1_dec.c_str(), version_2_dec.c_str(),version_3_dec.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

@@ -5,7 +5,8 @@ int test_constrained_quality(int argc,
                              const std::string &working_dir,
                              const std::string sub_folder_str,
                              int test_type,
-                             int delete_ivf)
+                             int delete_ivf,
+                             int artifact_detection)
 {
     char *comp_out_str = "Constrained Quality";
     char *test_dir = "test_constrained_quality";
@@ -34,6 +35,9 @@ int test_constrained_quality(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int constrained_q_on_enc_art_det = artifact_detection;
+    int constrained_q_off_enc_art_det = artifact_detection;
 
     std::string constrained_q_on_enc = cur_test_dir_str + slashCharStr() +
         test_dir + "_compression_1";
@@ -148,10 +152,11 @@ int test_constrained_quality(int argc,
     }
 
     double constrained_q_on_psnr = vpxt_psnr(input.c_str(),
-        constrained_q_on_enc.c_str(),
-        0, PRINT_BTH, 1, NULL);
+        constrained_q_on_enc.c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+        constrained_q_on_enc_art_det);
     double constrained_q_off_psnr = vpxt_psnr(input.c_str(),
-        constrained_q_off_enc.c_str(), 0, PRINT_BTH, 1, NULL);
+        constrained_q_off_enc.c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+        constrained_q_off_enc_art_det);
 
     double constrained_q_on_data_rate = vpxt_data_rate(
         constrained_q_on_enc.c_str(), 1);
@@ -172,9 +177,8 @@ int test_constrained_quality(int argc,
     tprintf(PRINT_BTH, "\nConstrained Q on  time: %i microseconds\n", time_2);
     tprintf(PRINT_BTH, "Constrained Q off time: %i microseconds\n", time_1);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-    int fail = 0;
 
     if (pow(10.0, (constrained_q_on_psnr / 10.0)) / constrained_q_on_data_rate >
         pow(10.0, (constrained_q_off_psnr / 10.0)) /constrained_q_off_data_rate)
@@ -194,7 +198,7 @@ int test_constrained_quality(int argc,
             constrained_q_on_data_rate, pow(10.0, (constrained_q_off_psnr /
             10.0)) / constrained_q_off_data_rate);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (constrained_q_on_psnr > 25.0)
@@ -209,36 +213,30 @@ int test_constrained_quality(int argc,
         vpxt_formated_print(RESPRT, "Constrained quality PSNR: %f <= 25 - "
             "Failed", constrained_q_on_psnr);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
+    // handle possible artifact
+    if(constrained_q_on_enc_art_det == kPossibleArtifactFound ||
+        constrained_q_off_enc_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, constrained_q_on_enc.c_str(),
-            constrained_q_off_enc.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, constrained_q_on_enc.c_str(),
-            constrained_q_off_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, constrained_q_on_enc.c_str(),
+        constrained_q_off_enc.c_str());
 
     fclose(fp);
-
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

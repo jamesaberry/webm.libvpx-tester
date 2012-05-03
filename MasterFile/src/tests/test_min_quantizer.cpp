@@ -5,7 +5,8 @@ int test_min_quantizer(int argc,
                        const std::string &working_dir,
                        const std::string sub_folder_str,
                        int test_type,
-                       int delete_ivf)
+                       int delete_ivf,
+                       int artifact_detection)
 {
     char *comp_out_str = "Min Quantizer";
     char *test_dir = "test_min_quantizer";
@@ -31,6 +32,9 @@ int test_min_quantizer(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int min_10_quant_out_file_art_det = artifact_detection;
+    int min_60_quant_out_file_art_det = artifact_detection;
 
     std::string min_10_quant_out_file = cur_test_dir_str + slashCharStr() +
         test_dir + "_compression_10";
@@ -148,9 +152,9 @@ int test_min_quantizer(int argc,
     }
 
     psnr_arr[0] = vpxt_psnr(input.c_str(), min_10_quant_out_file.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, min_10_quant_out_file_art_det);
     psnr_arr[1] = vpxt_psnr(input.c_str(), min_60_quant_out_file.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, min_60_quant_out_file_art_det);
 
     tprintf(PRINT_BTH, "\n");
     int min_10_q = vpxt_check_min_quantizer(min_10_quant_out_file.c_str(), 10);
@@ -164,8 +168,7 @@ int test_min_quantizer(int argc,
     vpxt_file_name(min_10_quant_out_file.c_str(), min_10_file_name, 0);
     vpxt_file_name(min_60_quant_out_file.c_str(), min_60_file_name, 0);
 
-    int fail = 0;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (min_10_q != -1)
@@ -173,7 +176,7 @@ int test_min_quantizer(int argc,
         vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed",
             min_10_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -187,7 +190,7 @@ int test_min_quantizer(int argc,
         vpxt_formated_print(RESPRT, "Not all %s quantizers above MinQ - Failed",
             min_60_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -201,7 +204,7 @@ int test_min_quantizer(int argc,
         vpxt_formated_print(RESPRT, "MinQ 10 PSNR: %2.2f <= MinQ 60 PSNR: "
             "%2.2f - Failed", psnr_arr[0], psnr_arr[1]);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     else
     {
@@ -210,32 +213,27 @@ int test_min_quantizer(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (fail == 1)
+    // handle possible artifact
+    if(min_10_quant_out_file_art_det == kPossibleArtifactFound ||
+        min_60_quant_out_file_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, min_10_quant_out_file.c_str(),
-            min_60_quant_out_file.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, min_10_quant_out_file.c_str(),
-            min_60_quant_out_file.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, min_10_quant_out_file.c_str(),
+        min_60_quant_out_file.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

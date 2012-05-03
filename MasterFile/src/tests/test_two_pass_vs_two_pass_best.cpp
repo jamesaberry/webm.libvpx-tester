@@ -5,7 +5,8 @@ int test_two_pass_vs_two_pass_best(int argc,
                                    const std::string &working_dir,
                                    const std::string sub_folder_str,
                                    int test_type,
-                                   int delete_ivf)
+                                   int delete_ivf,
+                                   int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_two_pass_vs_two_pass_best";
@@ -31,6 +32,13 @@ int test_two_pass_vs_two_pass_best(int argc,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
 
+    int two_pass_out_1_art_det = artifact_detection;
+    int two_pass_out_2_art_det = artifact_detection;
+    int two_pass_out_3_art_det = artifact_detection;
+    int two_pass_best_out_1_art_det = artifact_detection;
+    int two_pass_best_out_2_art_det = artifact_detection;
+    int two_pass_best_out_3_art_det = artifact_detection;
+
     std::string two_pass_out_1 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_two_pass_1";
     vpxt_enc_format_append(two_pass_out_1, enc_format);
@@ -43,17 +51,17 @@ int test_two_pass_vs_two_pass_best(int argc,
         "_compression_two_pass_3";
     vpxt_enc_format_append(two_pass_out_3, enc_format);
 
-    std::string TwoPassBestOutFile1 = cur_test_dir_str + slashCharStr() + test_dir +
-        "_compression_two_pass_best_1";
-    vpxt_enc_format_append(TwoPassBestOutFile1, enc_format);
+    std::string two_pass_best_out_1 = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_two_pass_best_1";
+    vpxt_enc_format_append(two_pass_best_out_1, enc_format);
 
-    std::string TwoPassBestOutFile2 = cur_test_dir_str + slashCharStr() + test_dir +
-        "_compression_two_pass_best_2";
-    vpxt_enc_format_append(TwoPassBestOutFile2, enc_format);
+    std::string two_pass_best_out_2 = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_two_pass_best_2";
+    vpxt_enc_format_append(two_pass_best_out_2, enc_format);
 
-    std::string TwoPassBestOutFile3 = cur_test_dir_str + slashCharStr() + test_dir +
-        "_compression_two_pass_best_3";
-    vpxt_enc_format_append(TwoPassBestOutFile3, enc_format);
+    std::string two_pass_best_out_3 = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_two_pass_best_3";
+    vpxt_enc_format_append(two_pass_best_out_3, enc_format);
 
     ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
@@ -98,7 +106,8 @@ int test_two_pass_vs_two_pass_best(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
 
@@ -127,7 +136,8 @@ int test_two_pass_vs_two_pass_best(int argc,
             bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
 
@@ -137,7 +147,8 @@ int test_two_pass_vs_two_pass_best(int argc,
             bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
 
@@ -147,38 +158,42 @@ int test_two_pass_vs_two_pass_best(int argc,
             bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
 
         opt.Mode = MODE_SECONDPASS_BEST;
         opt.target_bandwidth = bitrate_1;
 
-        if (vpxt_compress(input.c_str(), TwoPassBestOutFile1.c_str(), speed,
+        if (vpxt_compress(input.c_str(), two_pass_best_out_1.c_str(), speed,
             bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
 
         opt.target_bandwidth = bitrate_2;
 
-        if (vpxt_compress(input.c_str(), TwoPassBestOutFile2.c_str(), speed,
+        if (vpxt_compress(input.c_str(), two_pass_best_out_2.c_str(), speed,
             bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
 
         opt.target_bandwidth = bitrate_3;
 
-        if (vpxt_compress(input.c_str(), TwoPassBestOutFile3.c_str(), speed,
+        if (vpxt_compress(input.c_str(), two_pass_best_out_3.c_str(), speed,
             bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
     }
@@ -195,24 +210,24 @@ int test_two_pass_vs_two_pass_best(int argc,
     tprintf(PRINT_STD, "\n");
 
     double good_size_1 = vpxt_data_rate(two_pass_out_1.c_str(), 1);
-    double best_size_1 = vpxt_data_rate(TwoPassBestOutFile1.c_str(), 1);
+    double best_size_1 = vpxt_data_rate(two_pass_best_out_1.c_str(), 1);
     double good_size_2 = vpxt_data_rate(two_pass_out_2.c_str(), 1);
-    double best_size_2 = vpxt_data_rate(TwoPassBestOutFile2.c_str(), 1);
+    double best_size_2 = vpxt_data_rate(two_pass_best_out_2.c_str(), 1);
     double good_size_3 = vpxt_data_rate(two_pass_out_3.c_str(), 1);
-    double best_size_3 = vpxt_data_rate(TwoPassBestOutFile3.c_str(), 1);
+    double best_size_3 = vpxt_data_rate(two_pass_best_out_3.c_str(), 1);
 
     double psnr_good_1 = vpxt_psnr(input.c_str(), two_pass_out_1.c_str(), 1,
-        PRINT_BTH, 1, NULL);
-    double psnr_best_1 = vpxt_psnr(input.c_str(), TwoPassBestOutFile1.c_str(),
-        1, PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_out_1_art_det);
+    double psnr_best_1 = vpxt_psnr(input.c_str(), two_pass_best_out_1.c_str(),
+        1, PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_best_out_1_art_det);
     double psnr_good_2 = vpxt_psnr(input.c_str(), two_pass_out_2.c_str(), 1,
-        PRINT_BTH, 1, NULL);
-    double psnr_best_2 = vpxt_psnr(input.c_str(), TwoPassBestOutFile2.c_str(),
-        1, PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_out_2_art_det);
+    double psnr_best_2 = vpxt_psnr(input.c_str(), two_pass_best_out_2.c_str(),
+        1, PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_best_out_2_art_det);
     double psnr_good_3 = vpxt_psnr(input.c_str(), two_pass_out_3.c_str(), 1,
-        PRINT_BTH, 1, NULL);
-    double psnr_best_3 = vpxt_psnr(input.c_str(), TwoPassBestOutFile3.c_str(),
-        1, PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_out_3_art_det);
+    double psnr_best_3 = vpxt_psnr(input.c_str(), two_pass_best_out_3.c_str(),
+        1, PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_best_out_3_art_det);
 
     // data rates not always in order so find smallest observed data rate
     double good_size_min = good_size_1;
@@ -311,8 +326,7 @@ int test_two_pass_vs_two_pass_best(int argc,
     tprintf(PRINT_BTH, "Two Pass Best area under curve for interval %.2f - "
         "%.2f = %.2f\n", min_common, max_common, best_area);
 
-    int Pass = 0;
-
+    int test_state = kTestFailed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (good_area == best_area)
@@ -329,7 +343,7 @@ int test_two_pass_vs_two_pass_best(int argc,
             "Two Pass area under curve: %.2f - Passed", best_area,
             good_area);
         tprintf(PRINT_BTH, "\n");
-        Pass = 1;
+        test_state = kTestPassed;
     }
 
     if (best_area < good_area)
@@ -340,36 +354,32 @@ int test_two_pass_vs_two_pass_best(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (Pass == 1)
+    // handle possible artifact
+    if(two_pass_out_1_art_det == kPossibleArtifactFound ||
+        two_pass_out_2_art_det == kPossibleArtifactFound ||
+        two_pass_out_3_art_det == kPossibleArtifactFound ||
+        two_pass_best_out_1_art_det == kPossibleArtifactFound ||
+        two_pass_best_out_2_art_det == kPossibleArtifactFound ||
+        two_pass_best_out_3_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(6, two_pass_out_1.c_str(),
-            two_pass_out_2.c_str(), two_pass_out_3.c_str(),
-            TwoPassBestOutFile1.c_str(), TwoPassBestOutFile2.c_str(),
-            TwoPassBestOutFile3.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(6, two_pass_out_1.c_str(),
-            two_pass_out_2.c_str(), two_pass_out_3.c_str(),
-            TwoPassBestOutFile1.c_str(), TwoPassBestOutFile2.c_str(),
-            TwoPassBestOutFile3.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(6, two_pass_out_1.c_str(), two_pass_out_2.c_str(),
+        two_pass_out_3.c_str(), two_pass_best_out_1.c_str(),
+        two_pass_best_out_2.c_str(), two_pass_best_out_3.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

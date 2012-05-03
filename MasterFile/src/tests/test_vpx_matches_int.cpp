@@ -5,7 +5,8 @@ int test_vpx_matches_int(int argc,
                          const std::string &working_dir,
                          const std::string sub_folder_str,
                          int test_type,
-                         int delete_ivf)
+                         int delete_ivf,
+                         int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_vpx_matches_int";
@@ -231,8 +232,7 @@ int test_vpx_matches_int(int argc,
     int lngRCDec = vpxt_compare_dec(vpxdec_dec.c_str(), internal_dec.c_str());
     int DecMatch = vpxt_print_compare_ivf_results(lngRCDec, 0);
 
-    int fail = 0;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (EncMatch == 1)
@@ -246,7 +246,7 @@ int test_vpx_matches_int(int argc,
         vpxt_formated_print(RESPRT, "Internal Compression not identical to "
             "Vpxenc Compression - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (DecMatch == 1)
@@ -260,36 +260,20 @@ int test_vpx_matches_int(int argc,
         vpxt_formated_print(RESPRT, "Internal Decompression not identical to "
             "Vpxenc Decompression - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(4, internal_comp.c_str(), vpxenc_comp.c_str(),
-            vpxdec_dec.c_str(), internal_dec.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(4, internal_comp.c_str(), vpxenc_comp.c_str(),
-            vpxdec_dec.c_str(), internal_dec.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(4, internal_comp.c_str(), vpxenc_comp.c_str(),
+        vpxdec_dec.c_str(), internal_dec.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 
 }

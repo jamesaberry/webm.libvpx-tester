@@ -5,7 +5,8 @@ int test_debug_matches_release(int argc,
                                const std::string &working_dir,
                                const std::string sub_folder_str,
                                int test_type,
-                               int delete_ivf)
+                               int delete_ivf,
+                               int artifact_detection)
 {
     // Needs Debug.exe and Release.exe
     char *test_dir = "test_debug_matches_release";
@@ -248,8 +249,7 @@ int test_debug_matches_release(int argc,
         debug_output_dec.c_str());
     int dec_match = vpxt_print_compare_ivf_results(lng_rc_dec, 0);
 
-    int fail = 0;
-
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (enc_match == 1)
@@ -261,7 +261,7 @@ int test_debug_matches_release(int argc,
     {
         vpxt_formated_print(RESPRT, "Debug Compression not identical to "
             "Release Compression - Failed");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (dec_match == 1)
@@ -273,37 +273,20 @@ int test_debug_matches_release(int argc,
     {
         vpxt_formated_print(RESPRT, "Debug Decmpression not identical to "
             "Release Decompression - Failed");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(4, debug_output_enc.c_str(),
-            release_output_enc.c_str(), debug_output_dec.c_str(),
-            release_output_dec.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(4, debug_output_enc.c_str(),
-            release_output_enc.c_str(), debug_output_dec.c_str(),
-            release_output_dec.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(4, debug_output_enc.c_str(),
+        release_output_enc.c_str(), debug_output_dec.c_str(),
+        release_output_dec.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

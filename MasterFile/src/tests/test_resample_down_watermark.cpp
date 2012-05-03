@@ -5,7 +5,8 @@ int test_resample_down_watermark(int argc,
                                  const std::string &working_dir,
                                  const std::string sub_folder_str,
                                  int test_type,
-                                 int delete_ivf)
+                                 int delete_ivf,
+                                 int artifact_detection)
 {
     char *comp_out_str = "Resample Down Watermark";
     char *test_dir = "test_resample_down_watermark";
@@ -195,7 +196,7 @@ int test_resample_down_watermark(int argc,
         rdwm_check_90 = -2;
 
     // 1 = failed // 2 = indt // 3 = track resize for 10 // track resize for 90
-    int fail = 0;
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (disp_resized_frames_20 > 0 && disp_resized_frames_90 > 0)
@@ -210,8 +211,7 @@ int test_resample_down_watermark(int argc,
         vpxt_formated_print(RESPRT, "DWMS 10 returned no resized frames; DWMS "
             "90 returned resized frames - Indeterminate");
         tprintf(PRINT_BTH, "\n");
-        fail = 4;
-        // indt
+        test_state = kTestMinPassed;
     }
 
     if (disp_resized_frames_20 > 0 && disp_resized_frames_90 == 0)
@@ -219,8 +219,7 @@ int test_resample_down_watermark(int argc,
         vpxt_formated_print(RESPRT, "DWMS 90 returned no resized frames; DWMS "
             "10 returned resized frames - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
-        // fail
+        test_state = kTestFailed;
     }
 
     if (disp_resized_frames_20 == 0 && disp_resized_frames_90 == 0)
@@ -228,7 +227,7 @@ int test_resample_down_watermark(int argc,
         vpxt_formated_print(RESPRT, "Both DWMS 10 and 90 returned  no resized "
             "frames - Indeterminate");
         tprintf(PRINT_BTH, "\n");
-        fail = 2;
+        test_state = kTestIndeterminate;
     }
 
     if (rdwm_check_20 == 0)
@@ -243,7 +242,7 @@ int test_resample_down_watermark(int argc,
         vpxt_formated_print(RESPRT, "DWMS 10 does not resize first frame at "
             "correct buffer location - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (rdwm_check_20 == -3)
@@ -251,17 +250,16 @@ int test_resample_down_watermark(int argc,
         vpxt_formated_print(RESPRT, "DWMS 10 buffer threshold never reached - "
             "Indeterminate");
         tprintf(PRINT_BTH, "\n");
-        fail = 2;
+        test_state = kTestIndeterminate;
     }
 
     if (rdwm_check_90 == 0)
     {
-        if (fail == 4)
+        if (test_state == kTestMinPassed)
         {
             vpxt_formated_print(RESPRT, "DWMS 90 resizes first frame at "
                 "correct buffer location - Passed");
             tprintf(PRINT_BTH, "\n");
-            fail = 3;
         }
         else
         {
@@ -276,7 +274,7 @@ int test_resample_down_watermark(int argc,
         vpxt_formated_print(RESPRT, "DWMS 90 does not resize first frame at "
             "correct buffer location - Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 2;
+        test_state = kTestFailed;
     }
 
     if (rdwm_check_90 == -3)
@@ -284,61 +282,23 @@ int test_resample_down_watermark(int argc,
         vpxt_formated_print(RESPRT, "DWMS 90 buffer threshold never reached - "
             "Indeterminate");
         tprintf(PRINT_BTH, "\n");
-        fail = 2;
+        test_state = kTestIndeterminate;
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, down_water_sample_90_comp.c_str(),
-            down_water_sample_20_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-
-    if (fail == 3)
-    {
+    if (test_state == kTestMinPassed)
         tprintf(PRINT_BTH, "\nMin Passed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, down_water_sample_90_comp.c_str(),
-            down_water_sample_20_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestMinPassed;
-    }
-
-    if (fail == 2)
-    {
+    if (test_state == kTestIndeterminate)
         tprintf(PRINT_BTH, "\nIndeterminate\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, down_water_sample_90_comp.c_str(),
-            down_water_sample_20_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, down_water_sample_90_comp.c_str(),
-            down_water_sample_20_comp.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, down_water_sample_90_comp.c_str(),
+        down_water_sample_20_comp.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

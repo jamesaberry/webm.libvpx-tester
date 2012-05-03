@@ -5,7 +5,8 @@ int test_encoder_break_out(int argc,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
-                           int delete_ivf)
+                           int delete_ivf,
+                           int artifact_detection)
 {
     char *comp_out_str = "Encoder Break Out";
     char *test_dir = "test_encoder_break_out";
@@ -33,6 +34,11 @@ int test_encoder_break_out(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int enc_break_out_0_art_det = artifact_detection;
+    int enc_break_out_100_art_det = artifact_detection;
+    int enc_break_out_500_art_det = artifact_detection;
+    int enc_break_out_1000_art_det = artifact_detection;
 
     std::string enc_break_out_0 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_0";
@@ -248,13 +254,13 @@ int test_encoder_break_out(int argc,
     tprintf(PRINT_BTH, "\n");
 
     double psnr_0 = vpxt_psnr(input.c_str(), enc_break_out_0.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, enc_break_out_0_art_det);
     double psnr_100 = vpxt_psnr(input.c_str(), enc_break_out_100.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, enc_break_out_100_art_det);
     double psnr_500 = vpxt_psnr(input.c_str(), enc_break_out_500.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, enc_break_out_500_art_det);
     double psnr_1000 = vpxt_psnr(input.c_str(), enc_break_out_1000.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, enc_break_out_1000_art_det);
 
     double dB1 = vpxt_abs_double(psnr_0 - psnr_100);
     double dB2 = vpxt_abs_double(psnr_100 - psnr_500);
@@ -277,16 +283,16 @@ int test_encoder_break_out(int argc,
     tprintf(PRINT_BTH, "Raw Files Size psnr_1000: %i \n",
         enc_break_out_1000_dec_file_size);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    int pass = 1;
     int indt_count = 0;
 
     if (source_file_size != enc_break_out_0_dec_file_size)
     {
         vpxt_formated_print(RESPRT,"enc_break_out_0 was not properly decoded.");
         tprintf(PRINT_BTH, "\n");
-        pass = 0;
+        test_state = kTestFailed;
     }
     else
     {
@@ -299,7 +305,7 @@ int test_encoder_break_out(int argc,
         vpxt_formated_print(RESPRT,
             "enc_break_out_100 was not properly decoded.");
         tprintf(PRINT_BTH, "\n");
-        pass = 0;
+        test_state = kTestFailed;
     }
     else
     {
@@ -312,7 +318,7 @@ int test_encoder_break_out(int argc,
         vpxt_formated_print(RESPRT,
             "enc_break_out_500 was not properly decoded.");
         tprintf(PRINT_BTH, "\n");
-        pass = 0;
+        test_state = kTestFailed;
     }
     else
     {
@@ -325,7 +331,7 @@ int test_encoder_break_out(int argc,
         vpxt_formated_print(RESPRT, "enc_break_out_1000 was not properly "
             "decoded.");
         tprintf(PRINT_BTH, "\n");
-        pass = 0;
+        test_state = kTestFailed;
     }
     else
     {
@@ -345,7 +351,7 @@ int test_encoder_break_out(int argc,
         vpxt_formated_print(RESPRT, "Encoder Breakout 0 PSNR and 100 PSNR not "
             "within 5 dB - Failed");
         tprintf(PRINT_BTH, "\n");
-        pass = 0;
+        test_state = kTestFailed;
     }
 
     if (dB1 > 2 && dB1 < 5)
@@ -368,7 +374,7 @@ int test_encoder_break_out(int argc,
         vpxt_formated_print(RESPRT, "Encoder Breakout 100 PSNR and 500 PSNR "
             "not within 5 dB - Failed");
         tprintf(PRINT_BTH, "\n");
-        pass = 0;
+        test_state = kTestFailed;
     }
 
     if (dB2 > 2 && dB2 < 5)
@@ -391,7 +397,7 @@ int test_encoder_break_out(int argc,
         vpxt_formated_print(RESPRT, "Encoder Breakout 500 PSNR and 1000 PSNR "
             "not within 5 dB - Failed");
         tprintf(PRINT_BTH, "\n");
-        pass = 0;
+        test_state = kTestFailed;
     }
 
     if (dB3 > 2 && dB3 < 5)
@@ -402,60 +408,37 @@ int test_encoder_break_out(int argc,
         indt_count++;
     }
 
-    if (pass == 1)
+    if (indt_count != 0)
+        test_state = kTestIndeterminate;
+
+    // handle possible artifact
+    if(enc_break_out_0_art_det == kPossibleArtifactFound ||
+        enc_break_out_100_art_det == kPossibleArtifactFound ||
+        enc_break_out_500_art_det == kPossibleArtifactFound ||
+        enc_break_out_1000_art_det == kPossibleArtifactFound)
     {
-        if (indt_count == 0)
-        {
-            tprintf(PRINT_BTH, "\nPassed\n");
-
-            if (delete_ivf)
-                vpxt_delete_files(8, enc_break_out_0.c_str(),
-                enc_break_out_100.c_str(), enc_break_out_500.c_str(),
-                enc_break_out_1000.c_str(), enc_break_out_0_dec.c_str(),
-                enc_break_out_100_dec.c_str(), enc_break_out_500_dec.c_str(),
-                enc_break_out_1000_dec.c_str());
-
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
-            return kTestPassed;
-        }
-        else
-        {
-            tprintf(PRINT_BTH, "\nIndeterminate\n");
-
-            if (delete_ivf)
-                vpxt_delete_files(8, enc_break_out_0.c_str(),
-                enc_break_out_100.c_str(), enc_break_out_500.c_str(),
-                enc_break_out_1000.c_str(), enc_break_out_0_dec.c_str(),
-                enc_break_out_100_dec.c_str(), enc_break_out_500_dec.c_str(),
-                enc_break_out_1000_dec.c_str());
-
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char,
-                test_type);
-            return kTestIndeterminate;
-        }
-    }
-    else
-    {
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(8, enc_break_out_0.c_str(),
-            enc_break_out_100.c_str(), enc_break_out_500.c_str(),
-            enc_break_out_1000.c_str(), enc_break_out_0_dec.c_str(),
-            enc_break_out_100_dec.c_str(), enc_break_out_500_dec.c_str(),
-            enc_break_out_1000_dec.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
+        return kTestPossibleArtifact;
     }
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestIndeterminate)
+        tprintf(PRINT_BTH, "\nIndeterminate\n");
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
+
+    if (delete_ivf)
+        vpxt_delete_files(8, enc_break_out_0.c_str(),
+        enc_break_out_100.c_str(), enc_break_out_500.c_str(),
+        enc_break_out_1000.c_str(), enc_break_out_0_dec.c_str(),
+        enc_break_out_100_dec.c_str(), enc_break_out_500_dec.c_str(),
+        enc_break_out_1000_dec.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

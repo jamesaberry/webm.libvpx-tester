@@ -5,7 +5,8 @@ int test_win_lin_mac_match(int argc,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
-                           int delete_ivf)
+                           int delete_ivf,
+                           int artifact_detection)
 {
     char *comp_out_str = "WinLinMacMatch";
     char *test_dir = "test_win_lin_mac_match";
@@ -185,7 +186,7 @@ int test_win_lin_mac_match(int argc,
         return kTestEncCreated;
     }
 
-    if (test_mode == 0)
+    if (test_mode == kRealTime)
     {
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
@@ -373,8 +374,8 @@ int test_win_lin_mac_match(int argc,
         dec_fail++;
     }
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
-    int fail = 0;
 
     if (enc_fail == 0)
     {
@@ -387,7 +388,7 @@ int test_win_lin_mac_match(int argc,
         vpxt_formated_print(RESPRT, "Not all encoded files are identical - "
             "Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (dec_fail == 0)
@@ -401,27 +402,15 @@ int test_win_lin_mac_match(int argc,
         vpxt_formated_print(RESPRT, "Not all decoded files are identical - "
             "Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 1)
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-    else
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

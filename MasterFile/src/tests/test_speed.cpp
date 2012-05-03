@@ -1,11 +1,15 @@
 #include "vpxt_test_declarations.h"
 
+#define max_real_time_value 16
+#define max_good_quality_value 6
+
 int test_speed(int argc,
                const char** argv,
                const std::string &working_dir,
                const std::string sub_folder_str,
                int test_type,
-               int delete_ivf)
+               int delete_ivf,
+               int artifact_detection)
 {
     char *comp_out_str = "Cpu Used";
     char *test_dir = "test_speed";
@@ -35,43 +39,48 @@ int test_speed(int argc,
     char main_test_dir_char[255] = "";
     char file_index_output_char[255] = "";
 
+    int speed_test_real_time_art_det[max_real_time_value] = {0};
+    int speed_test_good_quality_art_det[max_good_quality_value] = {0};
+
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
 
-    std::string speed_test_good_quality_base = cur_test_dir_str + slashCharStr()
+    std::string speed_test_base = cur_test_dir_str + slashCharStr()
         + test_dir + "_compression_cpu_used_";
 
-    std::string speed_test_real_time_base = cur_test_dir_str + slashCharStr() +
-        test_dir + "_compression_cpu_used_";
+    std::string speed_test_real_time_str_arr[max_real_time_value];
+    std::string speed_test_good_quality_str_arr[max_good_quality_value];
 
     int speed_counter = 0;
-    std::string speed_test_real_time_str_arr[34];
-
-    while (speed_counter < 33)
+    int counter = 0;
+    while (speed_counter < max_good_quality_value)
     {
-        if (speed_counter < 17)
-        {
-            char counter_char[4];
-            vpxt_itoa_custom(speed_counter, counter_char, 10);
+        char counter_char[4];
+        vpxt_itoa_custom(speed_counter, counter_char, 10);
 
-            speed_test_real_time_str_arr[speed_counter] =
-                speed_test_real_time_base + counter_char;
-            vpxt_enc_format_append(speed_test_real_time_str_arr[speed_counter],
-                enc_format);
-        }
-        else
-        {
-            int counter = speed_counter - 16;
-            char counter_char[4];
-            vpxt_itoa_custom(counter, counter_char, 10);
+        speed_test_good_quality_str_arr[speed_counter] = speed_test_base +
+            counter_char;
+        vpxt_enc_format_append(speed_test_good_quality_str_arr[speed_counter],
+            enc_format);
 
-            speed_test_real_time_str_arr[speed_counter] =
-                speed_test_real_time_base + "-" + counter_char;
-            vpxt_enc_format_append(speed_test_real_time_str_arr[speed_counter],
-                enc_format);
-        }
+        speed_test_good_quality_art_det[speed_counter] = artifact_detection;
+
+        speed_counter++;
+    }
+    speed_counter = 0;
+    while (speed_counter < max_real_time_value)
+    {
+        char counter_char[4];
+        vpxt_itoa_custom(speed_counter + 1, counter_char, 10);
+
+        speed_test_real_time_str_arr[speed_counter] = speed_test_base + "-" +
+            counter_char;
+        vpxt_enc_format_append(speed_test_real_time_str_arr[speed_counter],
+            enc_format);
+
+        speed_test_real_time_art_det[speed_counter] = artifact_detection;
 
         speed_counter++;
     }
@@ -119,7 +128,8 @@ int test_speed(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return kTestIndeterminate;
         }
 
@@ -135,86 +145,68 @@ int test_speed(int argc,
 
     tprintf(PRINT_BTH, "\nLagInFrames: %i\n", lag_in_frames_input);
 
-    unsigned int good_quality_total_cpu_tick[7];
-    unsigned int real_time_total_cpu_tick[17];
+    unsigned int good_quality_total_cpu_tick[max_good_quality_value];
+    unsigned int real_time_total_cpu_tick[max_real_time_value];
 
-    double good_quality_psnr_arr[7];
-    double real_time_psnr_arr[17];
+    double good_quality_psnr_arr[max_good_quality_value];
+    double real_time_psnr_arr[max_real_time_value];
 
     // Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     // files)
     if (test_type == kTestOnly)
     {
-        int counter = 0;
+        speed_counter = 0; // array counter same as speed counter
 
-        if (mode == 1)
+        if (mode == kOnePassGoodQuality)
         {
-            while (counter < 6)
+            while (speed_counter < max_good_quality_value)
             {
-                char counter_char[4];
-                vpxt_itoa_custom(counter, counter_char, 10);
+                good_quality_total_cpu_tick[speed_counter] =
+                    vpxt_cpu_tick_return(
+                    speed_test_good_quality_str_arr[speed_counter].c_str(),0);
+                good_quality_psnr_arr[speed_counter] =
+                    vpxt_psnr(input.c_str(),
+                    speed_test_good_quality_str_arr[speed_counter].c_str() , 1,
+                    PRINT_BTH, 1, 0, 0, 0, NULL,
+                    speed_test_good_quality_art_det[speed_counter]);
 
-                std::string speed_test_good_quality_str =
-                    speed_test_good_quality_base + counter_char;
-                vpxt_enc_format_append(speed_test_good_quality_str, enc_format);
-
-                good_quality_total_cpu_tick[counter] =
-                    vpxt_cpu_tick_return(speed_test_good_quality_str.c_str(),0);
-                good_quality_psnr_arr[counter] =
-                    vpxt_psnr(input.c_str(), speed_test_good_quality_str.c_str()
-                    , 1, PRINT_BTH, 1, NULL);
-                counter++;
+                speed_counter++;
             }
         }
 
-        if (mode == 0)
+        if (mode == kRealTime)
         {
-            counter = -1;
-            int counter_2 = 0;
+            counter = 0; // array counter
 
-            while (counter > -17)
+            while (counter > -1 * max_real_time_value)
             {
-                char counter_char[4];
-                vpxt_itoa_custom(counter, counter_char, 10);
+                real_time_total_cpu_tick[counter] =
+                    vpxt_cpu_tick_return(
+                    speed_test_real_time_str_arr[counter].c_str(), 0);
+                real_time_psnr_arr[counter] =
+                    vpxt_psnr(input.c_str(),
+                    speed_test_real_time_str_arr[counter].c_str(),1, PRINT_BTH,
+                    1, 0, 0, 0, NULL, speed_test_real_time_art_det[counter]);
 
-                std::string speed_test_real_time_str = speed_test_real_time_base
-                    + counter_char;
-                vpxt_enc_format_append(speed_test_real_time_str, enc_format);
-
-                real_time_total_cpu_tick[counter_2] =
-                    vpxt_cpu_tick_return(speed_test_real_time_str.c_str(), 0);
-                real_time_psnr_arr[counter_2] =
-                    vpxt_psnr(input.c_str(), speed_test_real_time_str.c_str(),1,
-                    PRINT_BTH, 1, NULL);
-
-                counter--;
-                counter_2++;
+                counter++;
             }
         }
     }
     else
     {
+        speed_counter = 0; // array counter same as speed counter
 
-        int counter = 0;
-
-        if (mode == 1)
+        if (mode == kOnePassGoodQuality)
         {
-            while (counter < 6)
+            while (speed_counter < max_good_quality_value)
             {
-                char counter_char[4];
-                vpxt_itoa_custom(counter, counter_char, 10);
-
-                std::string speed_test_good_quality_str =
-                    speed_test_good_quality_base + counter_char;
-                vpxt_enc_format_append(speed_test_good_quality_str, enc_format);
-
-                opt.cpu_used = counter;
+                opt.cpu_used = speed_counter;
                 compress_int = opt.cpu_used;
                 opt.Mode = MODE_GOODQUALITY;
                 unsigned int time = vpxt_time_compress(input.c_str(),
-                    speed_test_good_quality_str.c_str(), speed, bitrate, opt,
-                    comp_out_str, compress_int, 0,
-                    good_quality_total_cpu_tick[counter], enc_format);
+                    speed_test_good_quality_str_arr[speed_counter].c_str(),
+                    speed, bitrate, opt, comp_out_str, compress_int, 0,
+                    good_quality_total_cpu_tick[speed_counter], enc_format);
 
                 if (time == -1)
                 {
@@ -226,36 +218,31 @@ int test_speed(int argc,
 
                 if (test_type != 2 && test_type != 3)
                 {
-                    good_quality_psnr_arr[counter] = vpxt_psnr(input.c_str(),
-                        speed_test_good_quality_str.c_str(), 1, PRINT_BTH, 1,
-                        NULL);
+                    good_quality_psnr_arr[speed_counter] = vpxt_psnr(
+                        input.c_str(),
+                        speed_test_good_quality_str_arr[speed_counter].c_str(),
+                        1, PRINT_BTH, 1, 0, 0, 0, NULL,
+                        speed_test_good_quality_art_det[speed_counter]);
                 }
 
-                counter++;
+                speed_counter++;
             }
         }
 
-        if (mode == 0)
+        if (mode == kRealTime)
         {
-            counter = -1;
-            int counter_2 = 0;
+            speed_counter = -1; // speed setting counter
+            counter = 0;        // array counter
 
-            while (counter > -17)
+            while (speed_counter >= -1 * max_real_time_value)
             {
-                char counter_char[4];
-                vpxt_itoa_custom(counter, counter_char, 10);
-
-                std::string speed_test_real_time_str = speed_test_real_time_base
-                    + counter_char;
-                vpxt_enc_format_append(speed_test_real_time_str, enc_format);
-
-                opt.cpu_used = counter;
+                opt.cpu_used = speed_counter;
                 compress_int = opt.cpu_used;
                 opt.Mode = MODE_REALTIME;
                 unsigned int time = vpxt_time_compress(input.c_str(),
-                    speed_test_real_time_str.c_str(), speed, bitrate, opt,
-                    comp_out_str, compress_int, 0,
-                    real_time_total_cpu_tick[counter_2], enc_format);
+                    speed_test_real_time_str_arr[counter].c_str(), speed,
+                    bitrate, opt, comp_out_str, compress_int, 0,
+                    real_time_total_cpu_tick[counter], enc_format);
 
                 if (time == -1)
                 {
@@ -267,13 +254,14 @@ int test_speed(int argc,
 
                 if (test_type != 2 && test_type != 3)
                 {
-                    real_time_psnr_arr[counter_2] = vpxt_psnr(input.c_str(),
-                        speed_test_real_time_str.c_str(), 1, PRINT_BTH, 1,
-                        NULL);
+                    real_time_psnr_arr[counter] = vpxt_psnr(input.c_str(),
+                        speed_test_real_time_str_arr[counter].c_str(), 1,
+                        PRINT_BTH, 1, 0, 0, 0, NULL,
+                        speed_test_real_time_art_det[counter]);
                 }
 
-                counter--;
-                counter_2++;
+                speed_counter--;
+                counter++;
             }
         }
     }
@@ -281,123 +269,120 @@ int test_speed(int argc,
     // Create Compression only stop test short.
     if (test_type == kCompOnly)
     {
-        // Compression only run
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
         return kTestEncCreated;
     }
 
     tprintf(PRINT_BTH, "\n");
+    speed_counter = 1;
+    int test_state = kTestPassed;
 
-    int counter = 1;
-    int pass = 1;
-
-    if (mode == 1)
+    if (mode == kOnePassGoodQuality)
     {
-        while (counter < 6)
+        while (speed_counter < max_good_quality_value)
         {
-            if (good_quality_total_cpu_tick[counter] <
-                good_quality_total_cpu_tick[counter-1])
+            if (good_quality_total_cpu_tick[speed_counter] <
+                good_quality_total_cpu_tick[speed_counter-1])
             {
                 tprintf(PRINT_BTH, "      CpuUsed %*i Encode Tick: %i < CpuUsed"
-                    " %*i Encode Tick: %i\n", 2, counter,
-                    good_quality_total_cpu_tick[counter], 2, counter - 1,
-                    good_quality_total_cpu_tick[counter-1]);
+                    " %*i Encode Tick: %i\n", 2, speed_counter,
+                    good_quality_total_cpu_tick[speed_counter], 2, speed_counter
+                    - 1, good_quality_total_cpu_tick[speed_counter-1]);
             }
             else
             {
                 tprintf(PRINT_BTH, "Fail: CpuUsed %*i Encode Tick: %i > "
-                    "CpuUsed %*i Encode Tick: %i\n", 2, counter,
-                    good_quality_total_cpu_tick[counter], 2, counter - 1,
-                    good_quality_total_cpu_tick[counter-1]);
+                    "CpuUsed %*i Encode Tick: %i\n", 2, speed_counter,
+                    good_quality_total_cpu_tick[speed_counter], 2, speed_counter
+                    - 1, good_quality_total_cpu_tick[speed_counter-1]);
                 fail_1 = 1;
             }
 
             double psnr_percent;
-            psnr_percent = vpxt_abs_double(good_quality_psnr_arr[counter] -
-                good_quality_psnr_arr[counter-1]) /
-                good_quality_psnr_arr[counter-1];
+            psnr_percent = vpxt_abs_double(good_quality_psnr_arr[speed_counter]
+            - good_quality_psnr_arr[speed_counter-1]) /
+                good_quality_psnr_arr[speed_counter-1];
 
             if (psnr_percent < 0.1)
             {
                 tprintf(PRINT_BTH, "      CpuUsed %*i PSNR: %4.2f within 10%% "
-                    "of CpuUsed %*i PSNR: %4.2f\n", 2, counter,
-                    good_quality_psnr_arr[counter], 2, counter - 1,
-                    good_quality_psnr_arr[counter-1]);
+                    "of CpuUsed %*i PSNR: %4.2f\n", 2, speed_counter,
+                    good_quality_psnr_arr[speed_counter], 2, speed_counter - 1,
+                    good_quality_psnr_arr[speed_counter-1]);
             }
             else
             {
                 tprintf(PRINT_BTH, "Fail: CpuUsed %*i PSNR: %4.2f not within "
-                    "10%% of CpuUsed %*i PSNR: %4.2f\n", 2, counter,
-                    good_quality_psnr_arr[counter], 2, counter - 1,
-                    good_quality_psnr_arr[counter-1]);
+                    "10%% of CpuUsed %*i PSNR: %4.2f\n", 2, speed_counter,
+                    good_quality_psnr_arr[speed_counter], 2, speed_counter - 1,
+                    good_quality_psnr_arr[speed_counter-1]);
                 fail_2 = 1;
             }
 
-            counter++;
+            speed_counter++;
         }
     }
 
-    if (mode == 0)
+    if (mode == kRealTime)
     {
-        counter = 1;
-
-        while (counter < 16)
+        while (speed_counter < max_real_time_value)
         {
-            if (real_time_total_cpu_tick[counter] <
-                real_time_total_cpu_tick[counter-1])
+            if (real_time_total_cpu_tick[speed_counter] <
+                real_time_total_cpu_tick[speed_counter-1])
             {
                 tprintf(PRINT_BTH, "      CpuUsed -%*i Encode Tick: %i < "
-                    "CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1,
-                    real_time_total_cpu_tick[counter], 2, counter,
-                    real_time_total_cpu_tick[counter-1]);
+                    "CpuUsed -%*i Encode Tick: %i\n", 2, speed_counter + 1,
+                    real_time_total_cpu_tick[speed_counter], 2, speed_counter,
+                    real_time_total_cpu_tick[speed_counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "fail_1: CpuUsed -%*i Encode Tick: %i > "
-                    "CpuUsed -%*i Encode Tick: %i\n", 2, counter + 1,
-                    real_time_total_cpu_tick[counter], 2, counter,
-                    real_time_total_cpu_tick[counter-1]);
+                tprintf(PRINT_BTH, "FAIL: CpuUsed -%*i Encode Tick: %i > "
+                    "CpuUsed -%*i Encode Tick: %i\n", 2, speed_counter + 1,
+                    real_time_total_cpu_tick[speed_counter], 2, speed_counter,
+                    real_time_total_cpu_tick[speed_counter-1]);
                 fail_1++;
 
-                double time_percent = (real_time_total_cpu_tick[counter] -
-                    real_time_total_cpu_tick[counter-1]);
+                double time_percent = (real_time_total_cpu_tick[speed_counter] -
+                    real_time_total_cpu_tick[speed_counter-1]);
 
                 if (time_percent < 0)
                     time_percent = time_percent * (-1);
 
-                if (time_percent > (real_time_total_cpu_tick[counter-1] / 10))
+                if (time_percent > (real_time_total_cpu_tick[speed_counter-1] /
+                    10))
                     fail_3++;
             }
 
             double psnr_percent;
-            psnr_percent = vpxt_abs_double(real_time_psnr_arr[counter] -
-                real_time_psnr_arr[counter-1]) / real_time_psnr_arr[counter-1];
+            psnr_percent = vpxt_abs_double(real_time_psnr_arr[speed_counter] -
+                real_time_psnr_arr[speed_counter-1]) /
+                real_time_psnr_arr[speed_counter-1];
 
             if (psnr_percent < 0.1)
             {
                 tprintf(PRINT_BTH, "      CpuUsed -%*i PSNR: %4.2f within 10%% "
-                    "of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1,
-                    real_time_psnr_arr[counter], 2, counter,
-                    real_time_psnr_arr[counter-1]);
+                    "of CpuUsed -%*i PSNR: %4.2f\n", 2, speed_counter + 1,
+                    real_time_psnr_arr[speed_counter], 2, speed_counter,
+                    real_time_psnr_arr[speed_counter-1]);
             }
             else
             {
-                tprintf(PRINT_BTH, "fail_1: CpuUsed -%*i PSNR: %4.2f not within "
-                    "10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, counter + 1,
-                    real_time_psnr_arr[counter], 2, counter,
-                    real_time_psnr_arr[counter-1]);
+                tprintf(PRINT_BTH, "FAIL: CpuUsed -%*i PSNR: %4.2f not within "
+                    "10%% of CpuUsed -%*i PSNR: %4.2f\n", 2, speed_counter + 1,
+                    real_time_psnr_arr[speed_counter], 2, speed_counter,
+                    real_time_psnr_arr[speed_counter-1]);
                 fail_2++;
             }
 
-            counter++;
+            speed_counter++;
         }
 
         tprintf(PRINT_BTH, "\n\n");
     }
 
-
-    if (mode == 0)
+    if (mode == kRealTime)
     {
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
@@ -413,7 +398,7 @@ int test_speed(int argc,
             vpxt_formated_print(RESPRT, "Enough encode ticks decrease as "
                 "CpuUsed increases - Min Passed");
             tprintf(PRINT_BTH, "\n");
-            pass = 2;
+            test_state = kTestMinPassed;
         }
 
         if (fail_1 >= 4)
@@ -421,7 +406,7 @@ int test_speed(int argc,
             vpxt_formated_print(RESPRT, "Not enough encode ticks decrease as "
                 "CpuUsed increases - Failed");
             tprintf(PRINT_BTH, "\n");
-            pass = 0;
+            test_state = kTestFailed;
         }
 
         if (fail_2 == 0)
@@ -435,7 +420,7 @@ int test_speed(int argc,
             vpxt_formated_print(RESPRT, "Enough PSNRs are within 10%% - "
                 "Min Passed");
             tprintf(PRINT_BTH, "\n");
-            pass = 2;
+            test_state = kTestMinPassed;
         }
 
         if (fail_2 >= 2)
@@ -443,7 +428,7 @@ int test_speed(int argc,
             vpxt_formated_print(RESPRT, "Not enough PSNRs are within 10%% - "
                 "Failed");
             tprintf(PRINT_BTH, "\n");
-            pass = 0;
+            test_state = kTestFailed;
         }
 
         if (fail_3 != 0)
@@ -451,11 +436,11 @@ int test_speed(int argc,
             vpxt_formated_print(RESPRT, "Not all Encode speeds are within 10%% "
                 "- Failed");
             tprintf(PRINT_BTH, "\n");
-            pass = 0;
+            test_state = kTestFailed;
         }
     }
 
-    if (mode == 1)
+    if (mode == kOnePassGoodQuality)
     {
         tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
@@ -464,7 +449,7 @@ int test_speed(int argc,
             vpxt_formated_print(RESPRT, "Not all encode ticks decrease as "
                 "CpuUsed increases - Failed");
             tprintf(PRINT_BTH, "\n");
-            pass = 0;
+            test_state = kTestFailed;
         }
         else
         {
@@ -484,70 +469,64 @@ int test_speed(int argc,
             vpxt_formated_print(RESPRT, "Not all PSNR values are within 10%% "
                 "of eachother - Failed");
             tprintf(PRINT_BTH, "\n");
-            pass = 0;
+            test_state = kTestFailed;
         }
     }
 
-    if (pass == 0)
+    counter = 0;
+    // handle possible artifact
+    if(mode == kRealTime)
     {
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
+        while(counter < max_real_time_value)
         {
-            int z = 0;
-
-            while (z < 33)
+            if(speed_test_good_quality_art_det[counter] ==
+                kPossibleArtifactFound)
             {
-                vpxt_delete_files(1, speed_test_real_time_str_arr[z].c_str());
-                z++;
+                tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+                fclose(fp);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
+                return kTestPossibleArtifact;
             }
+            ++counter;
         }
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
-    if (pass == 1)
-    {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-        {
-            int z = 0;
-
-            while (z < 33)
-            {
-                vpxt_delete_files(1, speed_test_real_time_str_arr[z].c_str());
-                z++;
-            }
-        }
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
     }
     else
     {
+        while(counter < max_good_quality_value)
+        {
+            if(speed_test_real_time_art_det[counter] == kPossibleArtifactFound)
+            {
+                tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+                fclose(fp);
+                record_test_complete(file_index_str, file_index_output_char,
+                    test_type);
+                return kTestPossibleArtifact;
+            }
+            ++counter;
+        }
+    }
+
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestMinPassed)
         tprintf(PRINT_BTH, "\nMin Passed\n");
 
-        if (delete_ivf)
-        {
-            int z = 0;
-
-            while (z < 33)
-            {
-                vpxt_delete_files(1, speed_test_real_time_str_arr[z].c_str());
-                z++;
-            }
-        }
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestMinPassed;
-    }
+    if (delete_ivf)
+        if(mode == kRealTime)
+            for (counter = 0; counter < max_real_time_value; ++counter)
+                vpxt_delete_files(1,
+                speed_test_real_time_str_arr[counter].c_str());
+        else
+            for (counter = 0; counter < max_good_quality_value; ++counter)
+                vpxt_delete_files(1,
+                speed_test_good_quality_str_arr[counter].c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

@@ -5,7 +5,8 @@ int test_one_pass_vs_two_pass(int argc,
                               const std::string &working_dir,
                               const std::string sub_folder_str,
                               int test_type,
-                              int delete_ivf)
+                              int delete_ivf,
+                              int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_one_pass_vs_two_pass";
@@ -30,6 +31,13 @@ int test_one_pass_vs_two_pass(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int one_pass_out_1_art_det = artifact_detection;
+    int one_pass_out_2_art_det = artifact_detection;
+    int one_pass_out_3_art_det = artifact_detection;
+    int two_pass_out_1_art_det = artifact_detection;
+    int two_pass_out_2_art_det = artifact_detection;
+    int two_pass_out_3_art_det = artifact_detection;
 
     std::string one_pass_out_1 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_one_pass_1";
@@ -210,19 +218,19 @@ int test_one_pass_vs_two_pass(int argc,
     double size_one_pass_3 = vpxt_data_rate(one_pass_out_3.c_str(), 1);
 
     double psnr_two_pass_1 = vpxt_psnr(input.c_str(), two_pass_out_1.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_out_1_art_det);
     double psnr_two_pass_2 = vpxt_psnr(input.c_str(), two_pass_out_2.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_out_2_art_det);
     double psnr_two_pass_3 = vpxt_psnr(input.c_str(), two_pass_out_3.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, two_pass_out_3_art_det);
     double psnr_one_pass_1 = vpxt_psnr(input.c_str(), one_pass_out_1.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, one_pass_out_1_art_det);
     double psnr_one_pass_2 = vpxt_psnr(input.c_str(), one_pass_out_2.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, one_pass_out_2_art_det);
     double psnr_one_pass_3 = vpxt_psnr(input.c_str(), one_pass_out_3.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, one_pass_out_3_art_det);
 
-    int pass = 0;
+    int test_state = kTestFailed;
 
     // data rates not always in order so find smallest observed data rate
     double size_two_pass_min = size_two_pass_1;
@@ -339,7 +347,7 @@ int test_one_pass_vs_two_pass(int argc,
             "Pass area under curve: %.2f - Passed", two_pass_area,
             one_pass_area);
         tprintf(PRINT_BTH, "\n");
-        pass = 1;
+        test_state = kTestPassed;
     }
 
     if (one_pass_area > two_pass_area)
@@ -350,36 +358,32 @@ int test_one_pass_vs_two_pass(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (pass == 1)
+    // handle possible artifact
+    if(two_pass_out_1_art_det == kPossibleArtifactFound ||
+        two_pass_out_1_art_det == kPossibleArtifactFound ||
+        two_pass_out_1_art_det == kPossibleArtifactFound ||
+        one_pass_out_1_art_det == kPossibleArtifactFound ||
+        one_pass_out_1_art_det == kPossibleArtifactFound ||
+        one_pass_out_1_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(6, one_pass_out_1.c_str(),
-            one_pass_out_2.c_str(), one_pass_out_3.c_str(),
-            two_pass_out_1.c_str(), two_pass_out_2.c_str(),
-            two_pass_out_3.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(6, one_pass_out_1.c_str(),
-            one_pass_out_2.c_str(), one_pass_out_3.c_str(),
-            two_pass_out_1.c_str(), two_pass_out_2.c_str(),
-            two_pass_out_3.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(6, one_pass_out_1.c_str(), one_pass_out_2.c_str(),
+        one_pass_out_3.c_str(), two_pass_out_1.c_str(), two_pass_out_2.c_str(),
+        two_pass_out_3.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

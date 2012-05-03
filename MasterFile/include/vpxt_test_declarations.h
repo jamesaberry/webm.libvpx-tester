@@ -53,15 +53,16 @@ enum TestTypes {
 };
 
 enum TestResultTypes {
-    kTestFailed = 0,           // failed
-    kTestPassed = 1,           // passed
+    kTestFailed = 0,            // failed
+    kTestPassed = 1,            // passed
     kTestIndeterminate = 2,     // indeterminate
-    kTestComboLog = 3,         // see combo run log
-    kTestPsnrLog = 4,          // see psnr log
-    kTestRandomComplete = 5,   // random test completed
-    kTestError = 6,            // test error
-    kTestMinPassed = 8,        // min passed
-    kTestEncCreated = 10,      // compression made
-    kTestErrFileMismatch = 11, // error file mismatch
-    kTestNotSupported = 12     // test not supported
+    kTestComboLog = 3,          // see combo run log
+    kTestPsnrLog = 4,           // see psnr log
+    kTestRandomComplete = 5,    // random test completed
+    kTestError = 6,             // test error
+    kTestMinPassed = 8,         // min passed
+    kTestEncCreated = 10,       // compression made
+    kTestErrFileMismatch = 11,  // error file mismatch
+    kTestNotSupported = 12,     // test not supported
+    kTestPossibleArtifact = 13  // possible artifact
 };

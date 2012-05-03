@@ -5,7 +5,8 @@ int test_auto_key_frame(int argc,
                         const std::string &working_dir,
                         const std::string sub_folder_str,
                         int test_type,
-                        int delete_ivf)
+                        int delete_ivf,
+                        int artifact_detection)
 {
     char *comp_out_str = "Auto Key Frame";
     char *test_dir = "test_auto_key_frame";
@@ -168,7 +169,11 @@ int test_auto_key_frame(int argc,
         return kTestFailed;
     }
 
-    int fail = 0;
+    int key_frame_pos_state = kTestPassed;
+    int key_frame_state = kTestPassed;
+    int test_state = kTestPassed;
+    tprintf(PRINT_BTH, "\n\nResults:\n\n");
+
     int x;
     int y;
 
@@ -178,14 +183,14 @@ int test_auto_key_frame(int argc,
         key_frame_2_infile >> y;
 
         if (x != y)
-            fail = 1;
+            key_frame_pos_state = kTestFailed;
     }
 
     if (!key_frame_1_infile.eof())
-        fail = 1;
+        key_frame_pos_state = kTestFailed;
 
     if (!key_frame_2_infile.eof())
-        fail = 1;
+        key_frame_pos_state = kTestFailed;
 
     key_frame_1_infile.close();
     key_frame_2_infile.close();
@@ -197,10 +202,8 @@ int test_auto_key_frame(int argc,
     vpxt_file_name(auto_key_frame_works_enc_2.c_str(),
         auto_key_frame_works_2_file_name, 0);
 
-    tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
     ////////////////////////////////////////////////////////////////////////////
-    int fail_2 = 0;
+
     std::ifstream infile(key_frame_txt_out_1.c_str());
 
     if (!infile.good())
@@ -242,7 +245,7 @@ int test_auto_key_frame(int argc,
                 "frequently as Auto Key Frame dictates: %i No key frames "
                 "between %i and %i - Failed", auto_key_frame, x2, y2);
             tprintf(PRINT_BTH, "\n");
-            fail_2 = 1;
+            key_frame_state = kTestFailed;
         }
     }
 
@@ -263,33 +266,23 @@ int test_auto_key_frame(int argc,
             "%i and %i - Failed", auto_key_frame, max_key_frame,
             number_of_frames - 1);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        key_frame_pos_state = kTestFailed;
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    if (fail_2 == 0)
+    if (key_frame_state == kTestPassed)
     {
         vpxt_formated_print(RESPRT, "Key Frames occur at least as frequently as"
             " Auto Key Frame dictates: %i - Passed", auto_key_frame);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (fail == 0)
+    if (key_frame_pos_state == kTestPassed)
     {
         vpxt_formated_print(RESPRT, "Key Frames occur at the same locations "
             "for %s and %s - Passed", auto_key_frame_works_1_file_name,
             auto_key_frame_works_2_file_name);
         tprintf(PRINT_BTH, "\n");
-
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, auto_key_frame_works_enc_1.c_str(),
-            auto_key_frame_works_enc_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
     }
     else
     {
@@ -297,19 +290,19 @@ int test_auto_key_frame(int argc,
             "locations for %s and %s - Failed", auto_key_frame_works_1_file_name
             , auto_key_frame_works_2_file_name);
         tprintf(PRINT_BTH, "\n");
-
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, auto_key_frame_works_enc_1.c_str(),
-            auto_key_frame_works_enc_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
     }
+
+    if(key_frame_pos_state == kTestPassed && key_frame_state == kTestPassed)
+        test_state = kTestPassed;
+    else
+        test_state = kTestFailed;
+
+    if(test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if(test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

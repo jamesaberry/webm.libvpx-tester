@@ -5,7 +5,8 @@ int test_post_processor_mfqe(int argc,
                             const std::string &working_dir,
                             const std::string sub_folder_str,
                             int test_type,
-                            int delete_ivf)
+                            int delete_ivf,
+                            int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_post_processor_mfqe";
@@ -33,6 +34,9 @@ int test_post_processor_mfqe(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int post_proc_encode_no_mfqe_art_det = artifact_detection;
+    int post_proc_encode_mfqe_art_det = artifact_detection;
 
     std::string post_proc_encode = cur_test_dir_str + slashCharStr() + test_dir
         + "_compression";
@@ -133,17 +137,17 @@ int test_post_processor_mfqe(int argc,
     int noise_level = 0;
     int flags = VP8_NOFILTERING;
     psnr_arr_no_filter = vpxt_psnr(input.c_str(), post_proc_encode.c_str(), 0,
-        PRINT_BTH, 1, &ssim);
+        PRINT_BTH, 1, 0, 0, 0, &ssim, post_proc_encode_no_mfqe_art_det);
 
     // MFQE PSNR calculation
     flags = VP8_MFQE;
-    psnr_arr_mfqe_filter = vpxt_post_proc_psnr(input.c_str(),
-        post_proc_encode.c_str(), 0, PRINT_BTH, 1, deblock_level, 0, flags,
-        &ssim);
+    psnr_arr_mfqe_filter = vpxt_psnr(input.c_str(), post_proc_encode.c_str(), 0,
+        PRINT_BTH, 1, deblock_level, 0, flags, &ssim,
+        post_proc_encode_mfqe_art_det);
 
     tprintf(PRINT_BTH, "\n\n\nResults:\n\n");
 
-    int fail = 0;
+    int test_state = kTestPassed;
 
     if (psnr_arr_mfqe_filter > psnr_arr_no_filter)
     {
@@ -158,30 +162,29 @@ int test_post_processor_mfqe(int argc,
             ,psnr_arr_mfqe_filter, psnr_arr_no_filter);
         tprintf(PRINT_BTH, "\n");
 
-        fail = 1;
+        test_state = kTestFailed;
     }
+
+    // handle possible artifact
+    if(post_proc_encode_no_mfqe_art_det == kPossibleArtifactFound ||
+        post_proc_encode_mfqe_art_det == kPossibleArtifactFound)
+    {
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+        fclose(fp);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
+        return kTestPossibleArtifact;
+    }
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "\nFailed\n");
 
     if (delete_ivf)
         vpxt_delete_files(1, post_proc_encode.c_str());
 
-    if (!fail)
-    {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
-        tprintf(PRINT_BTH, "\nFailed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

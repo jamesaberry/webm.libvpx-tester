@@ -7,7 +7,8 @@ int test_test_vector(int argc,
                      const std::string &working_dir,
                      const std::string sub_folder_str,
                      int test_type,
-                     int delete_ivf)
+                     int delete_ivf,
+                     int artifact_detection)
 {
     char *comp_out_str = "Test Vector Check";
     char *test_dir = "test_test_vector";
@@ -554,9 +555,9 @@ int test_test_vector(int argc,
 
     while (cur_test_vector < max_test_vector)
     {
-        tprintf(PRINT_STD, "\n\nComputing MD5 for test_vector_str_arr %i",
+        tprintf(PRINT_STD, "\n\nComputing MD5 for Test Vector %i",
             cur_test_vector);
-        tprintf(PRINT_ERR, "\n\nComputing MD5 for test_vector_str_arr %i\n",
+        tprintf(PRINT_ERR, "\n\nComputing MD5 for Test Vector %i\n",
             cur_test_vector);
         vpxt_dec_compute_md5(test_vector_str_arr[cur_test_vector].c_str(),
             test_vector_txt[cur_test_vector].c_str());
@@ -584,7 +585,7 @@ int test_test_vector(int argc,
     }
 
     int x = 0;
-    int fail = 0;
+    int test_state = kTestPassed;
 
     cur_test_vector = 1;
 
@@ -624,7 +625,7 @@ int test_test_vector(int argc,
                     md5_key_str_arr[x].c_str());
 
             fail_vector.push_back(x + 1);
-            fail = 1;
+            test_state = kTestFailed;
         }
 
         cur_test_vector++;
@@ -633,27 +634,10 @@ int test_test_vector(int argc,
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (!fail)
+    if (test_state == kTestPassed)
     {
         vpxt_formated_print(RESPRT, "All decoded test vector MD5 checksum's "
             "match expected checksum's - Passed");
-
-        tprintf(PRINT_BTH, "\n\nPassed\n");
-
-        if (delete_ivf)
-        {
-            int z = 1;
-
-            while (z < max_test_vector)
-            {
-                vpxt_delete_files(1, test_vector_raw_str_arr[z].c_str());
-                z++;
-            }
-        }
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
     }
     else
     {
@@ -690,25 +674,18 @@ int test_test_vector(int argc,
 
         fail_str += " - Failed";
         vpxt_formated_print(RESPRT, fail_str.c_str());
+    }
 
+    if(test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\n\nPassed\n");
+    if(test_state == kTestFailed)
         tprintf(PRINT_BTH, "\n\nFailed\n");
 
-        if (delete_ivf)
-        {
-            int z = 1;
-            while (z < max_test_vector)
-            {
-                vpxt_delete_files(1, test_vector_raw_str_arr[z].c_str());
-                z++;
-            }
-        }
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        for (int z = 1; z < max_test_vector; ++z)
+            vpxt_delete_files(1, test_vector_raw_str_arr[z].c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

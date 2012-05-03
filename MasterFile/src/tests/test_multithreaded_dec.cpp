@@ -5,7 +5,8 @@ int test_multithreaded_dec(int argc,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
-                           int delete_ivf)
+                           int delete_ivf,
+                           int artifact_detection)
 {
     char *comp_out_str = "TokenPart";
     char *test_dir = "test_multithreaded_dec";
@@ -126,7 +127,7 @@ int test_multithreaded_dec(int argc,
     }
     else
     {
-        if (mode == 0)
+        if (mode == kRealTime)
         {
             if (core_count < 4)
                 opt.token_partitions = core_count;
@@ -148,7 +149,7 @@ int test_multithreaded_dec(int argc,
             }
         }
 
-        if (mode == 1)
+        if (mode == kOnePassGoodQuality)
         {
             if (core_count < 4)
                 opt.token_partitions = core_count;
@@ -203,7 +204,7 @@ int test_multithreaded_dec(int argc,
     vpxt_file_name(multithreaded_dec_0.c_str(), time_0_dec_file_name, 0);
     vpxt_file_name(multithreaded_dec_n.c_str(), time_n_dec_file_name, 0);
 
-    int fail = 0;
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (time_0_dec == 0 || time_n_dec == 0)
@@ -221,7 +222,7 @@ int test_multithreaded_dec(int argc,
                 time_n_dec_file_name, time_n_dec);
         }
 
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (time_n_dec < time_0_dec)
@@ -238,8 +239,8 @@ int test_multithreaded_dec(int argc,
             time_n_dec);
         tprintf(PRINT_BTH, "\n");
 
-        if (fail != 1)
-            fail = 2;
+        if (test_state != kTestFailed)
+            test_state = kTestIndeterminate;
     }
 
     if (time_n_dec > time_0_dec)
@@ -247,7 +248,7 @@ int test_multithreaded_dec(int argc,
         vpxt_formated_print(RESPRT, "%s time: %u > %s time: %u - Failed",
             time_n_dec_file_name, time_n_dec, time_0_dec_file_name, time_0_dec);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     // compare decodes
@@ -262,54 +263,21 @@ int test_multithreaded_dec(int argc,
         vpxt_formated_print(RESPRT, "%s not identical to %s - Failed",
             time_0_dec_file_name, time_n_dec_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-
-    // final evaluate
-    if (fail == 1)
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(3, multitread_comp_file.c_str(),
-            multithreaded_dec_0.c_str(),
-            multithreaded_dec_n.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(3, multitread_comp_file.c_str(),
-            multithreaded_dec_0.c_str(),
-            multithreaded_dec_n.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-
-    if (fail == 3)
-    {
+    if (test_state == kTestIndeterminate)
         tprintf(PRINT_BTH, "\nIndeterminate\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(3, multitread_comp_file.c_str(),
-            multithreaded_dec_0.c_str(),
-            multithreaded_dec_n.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(3, multitread_comp_file.c_str(),
+        multithreaded_dec_0.c_str(), multithreaded_dec_n.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

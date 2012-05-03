@@ -169,7 +169,9 @@ int supportingFileRunPSNR(char *inputFile, char *outputFile)
     double totalPsnr;
     std::cout << "\n\n";
     double ssimDummyVar = 0;
-    totalPsnr = vpxt_psnr(inputFile, outputFile, 0, PRINT_BTH, 1, NULL);
+    int potential_artifact = kDontRunArtifactDetection;
+    totalPsnr = vpxt_psnr(inputFile, outputFile, 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+        potential_artifact);
 
     std::string TextFilechar1 = "";
     vpxt_remove_file_extension(outputFile, TextFilechar1);

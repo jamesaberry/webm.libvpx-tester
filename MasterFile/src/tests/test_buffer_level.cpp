@@ -5,7 +5,8 @@ int test_buffer_level(int argc,
                       const std::string &working_dir,
                       const std::string sub_folder_str,
                       int test_type,
-                      int delete_ivf)
+                      int delete_ivf,
+                      int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_buffer_level";
@@ -136,39 +137,31 @@ int test_buffer_level(int argc,
     int check_pbm_result = vpxt_check_pbm(buffer_lvl_works_enc.c_str(), bitrate,
         maximum_buffer_lvl, starting_buffer_lvl);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (check_pbm_result == -11)
     {
         vpxt_formated_print(RESPRT, "No buffer under run detected - Passed");
         tprintf(PRINT_BTH, "\n");
-
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(1, buffer_lvl_works_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
     }
     else
     {
         vpxt_formated_print(RESPRT, "Buffer under run at frame: %i - Failed",
             check_pbm_result);
         tprintf(PRINT_BTH, "\n");
+        test_state = kTestFailed;
+    }
 
+    if(test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if(test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(1, buffer_lvl_works_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(1, buffer_lvl_works_enc.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

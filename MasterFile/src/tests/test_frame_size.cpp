@@ -5,7 +5,8 @@ int test_frame_size(int argc,
                     const std::string &working_dir,
                     const std::string sub_folder_str,
                     int test_type,
-                    int delete_ivf)
+                    int delete_ivf,
+                    int artifact_detection)
 {
     char *comp_out_str = "Frame Size";
     char *test_dir = "test_frame_size";
@@ -50,7 +51,6 @@ int test_frame_size(int argc,
     // height
     int counter = 0;
     int file_num = 1;
-
     while (counter < 16)
     {
         vpxt_itoa_custom(starting_width, new_width, 10); // width
@@ -62,13 +62,12 @@ int test_frame_size(int argc,
         raw_crop[file_num] += new_height;
         raw_crop[file_num] +=  "_raw" + raw_ext;
 
-        counter++;
-        file_num++;
+        ++counter;
+        ++file_num;
     }
 
     // width
     counter = 1;
-
     while (counter < 16)
     {
         vpxt_itoa_custom(starting_width - (counter), new_width, 10); // width
@@ -80,13 +79,12 @@ int test_frame_size(int argc,
         raw_crop[file_num] += new_height;
         raw_crop[file_num] += "_raw" + raw_ext;
 
-        counter++;
-        file_num++;
+        ++counter;
+        ++file_num;
     }
 
     // width and height
     counter = 1;
-
     while (counter < 16)
     {
         vpxt_itoa_custom(starting_width - (counter), new_width, 10); // width
@@ -98,14 +96,22 @@ int test_frame_size(int argc,
         raw_crop[file_num] += new_height;
         raw_crop[file_num] += "_raw" + raw_ext;
 
-        counter++;
-        file_num++;
+        ++counter;
+        ++file_num;
+    }
+
+    // initilize artifact detection
+    int enc_crop_art_det[47];
+    file_num = 1;
+    while(file_num < 47)
+    {
+        enc_crop_art_det[file_num] = artifact_detection;
+        ++file_num;
     }
 
     // encoded file names
     file_num = 1;
     std::string enc_crop[47];
-
     while (file_num < 47)
     {
         enc_crop[file_num] = raw_crop[file_num];
@@ -113,7 +119,7 @@ int test_frame_size(int argc,
             enc_crop[file_num].end());
         enc_crop[file_num] += "enc";
         vpxt_enc_format_append(enc_crop[file_num], enc_format);
-        file_num++;
+        ++file_num;
     }
 
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
@@ -214,7 +220,7 @@ int test_frame_size(int argc,
         {
             psnr_arr[raw_crop_num-1] = vpxt_get_psnr(
                 enc_crop[raw_crop_num].c_str());
-            raw_crop_num++;
+            ++raw_crop_num;
         }
     }
     else
@@ -251,7 +257,8 @@ int test_frame_size(int argc,
 
             // PSNR
             psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
-                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
+                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+                enc_crop_art_det[raw_crop_num]);
 
             std::string psnr_out_file;
             vpxt_remove_file_extension(enc_crop[raw_crop_num].c_str(),
@@ -270,8 +277,8 @@ int test_frame_size(int argc,
                 vpxt_delete_files(1, enc_crop[raw_crop_num].c_str());
             }
 
-            x++;
-            raw_crop_num++;
+            ++x;
+            ++raw_crop_num;
         }
 
         x = 1;
@@ -304,7 +311,8 @@ int test_frame_size(int argc,
 
             // PSNR
             psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
-                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
+                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+                enc_crop_art_det[raw_crop_num]);
 
             std::string psnr_out_file;
             vpxt_remove_file_extension(enc_crop[raw_crop_num].c_str(),
@@ -322,8 +330,8 @@ int test_frame_size(int argc,
                 vpxt_delete_files(1, enc_crop[raw_crop_num].c_str());
             }
 
-            x++;
-            raw_crop_num++;
+            ++x;
+            ++raw_crop_num;
         }
 
         x = 1;
@@ -356,7 +364,8 @@ int test_frame_size(int argc,
 
             // PSNR
             psnr_arr[raw_crop_num-1] = vpxt_psnr(raw_crop[raw_crop_num].c_str(),
-                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, NULL);
+                enc_crop[raw_crop_num].c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL,
+                enc_crop_art_det[raw_crop_num]);
 
             std::string psnr_out_file;
             vpxt_remove_file_extension(enc_crop[raw_crop_num].c_str(),
@@ -374,8 +383,8 @@ int test_frame_size(int argc,
                 vpxt_delete_files(1, enc_crop[raw_crop_num].c_str());
             }
 
-            x++;
-            raw_crop_num++;
+            ++x;
+            ++raw_crop_num;
         }
     }
 
@@ -418,7 +427,7 @@ int test_frame_size(int argc,
             percent_fail = 1;
         }
 
-        raw_crop_num++;
+        ++raw_crop_num;
     }
 
     tprintf(PRINT_BTH, "\n\n");
@@ -444,14 +453,11 @@ int test_frame_size(int argc,
             min_psnr_fail = 1;
         }
 
-        raw_crop_num++;
+        ++raw_crop_num;
     }
 
-
-    tprintf(PRINT_STD, "\n");
-    tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-    int fail = 0;
+    int test_state = kTestPassed;
+    tprintf(PRINT_BTH, "\n\n\nResults:\n\n");
 
     if (percent_fail == 0)
     {
@@ -464,7 +470,7 @@ int test_frame_size(int argc,
         vpxt_formated_print(RESPRT, "Not all PSNRs are within 5%% of %.2f - "
             "Failed", psnr_arr[0]);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (min_psnr_fail == 0)
@@ -477,27 +483,32 @@ int test_frame_size(int argc,
         vpxt_formated_print(RESPRT, "Not all PSNRs are greater than 25.0 - "
             "Failed");
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
+    // handle possible artifact
+    file_num = 1;
+    while(file_num < 47)
     {
+        if(enc_crop_art_det[file_num] == kPossibleArtifactFound)
+        {
+            tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+            fclose(fp);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
+            return kTestPossibleArtifact;
+        }
+
+        ++file_num;
+    }
+
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

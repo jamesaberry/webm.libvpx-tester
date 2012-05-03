@@ -5,7 +5,8 @@ int test_undershoot(int argc,
                     const std::string &working_dir,
                     const std::string sub_folder_str,
                     int test_type,
-                    int delete_ivf)
+                    int delete_ivf,
+                    int artifact_detection)
 {
     char *comp_out_str = "Undershoot";
     char *test_dir = "test_undershoot";
@@ -144,6 +145,7 @@ int test_undershoot(int argc,
     long under_shoot_100_file_sz = vpxt_file_size(under_shoot_100.c_str(), 1);
     tprintf(PRINT_BTH, "\n");
 
+    int test_state = kTestFailed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (under_shoot_10_file_sz < under_shoot_100_file_sz)
@@ -151,49 +153,33 @@ int test_undershoot(int argc,
         vpxt_formated_print(RESPRT, "File size 1:%i < File size 2:%i - Passed",
             under_shoot_10_file_sz , under_shoot_100_file_sz);
 
-        tprintf(PRINT_BTH, "\n\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, under_shoot_10.c_str(),
-            under_shoot_100.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        test_state = kTestPassed;
     }
 
     if (under_shoot_10_file_sz == under_shoot_100_file_sz)
     {
         vpxt_formated_print(RESPRT, "No effect try different file - "
             "Indeterminate");
-
-        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, under_shoot_10.c_str(),
-            under_shoot_100.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
+        test_state = kTestIndeterminate;
     }
     else
     {
         vpxt_formated_print(RESPRT, "File size 1:%i > File size 2:%i - Failed",
             under_shoot_10_file_sz , under_shoot_100_file_sz);
+    }
 
+    if(test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\n\nPassed\n");
+    if(test_state == kTestFailed)
         tprintf(PRINT_BTH, "\n\nFailed\n");
+    if(test_state == kTestIndeterminate)
+        tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
-        if (delete_ivf)
+    if (delete_ivf)
             vpxt_delete_files(2, under_shoot_10.c_str(),
             under_shoot_100.c_str());
 
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

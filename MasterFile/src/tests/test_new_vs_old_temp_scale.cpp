@@ -5,7 +5,8 @@ int test_new_vs_old_temp_scale(int argc,
                                const std::string &working_dir,
                                const std::string sub_folder_str,
                                int test_type,
-                               int delete_ivf)
+                               int delete_ivf,
+                               int artifact_detection)
 {
     char *test_dir = "test_new_vs_old_temp_scale";
     int input_ver = vpxt_check_arg_input(argv[1], argc);
@@ -42,6 +43,9 @@ int test_new_vs_old_temp_scale(int argc,
     temp_scale_out_base += test_dir;
     temp_scale_out_base += "_new_comp";
 
+    std::vector<int>::iterator int_it;
+    std::vector<int> new_vs_old_temp_scale_new_fn_art_det_vec;
+
     std::vector<std::string> new_vs_old_temp_scale_new_fn_vec;
     std::vector<std::string> new_vs_old_temp_scale_old_fn_vec;
     std::vector<std::string>::iterator str_it;
@@ -74,6 +78,8 @@ int test_new_vs_old_temp_scale(int argc,
         temp_scale_str += i_char;
         vpxt_enc_format_append(temp_scale_str, enc_format);
         new_vs_old_temp_scale_new_fn_vec.push_back(temp_scale_str);
+
+        new_vs_old_temp_scale_new_fn_art_det_vec.push_back(artifact_detection);
     }
 
     // file names for old
@@ -220,7 +226,7 @@ int test_new_vs_old_temp_scale(int argc,
 
     int n = 0;
     int use_log = 0;
-    int failed = 0;
+    int test_state = kTestPassed;
     int indeterminate = 0;
 
     unsigned int new_scale_compress_time = 0;
@@ -269,10 +275,14 @@ int test_new_vs_old_temp_scale(int argc,
     }
 
     // run psnrs for new temp scale compressions
+    int_it = new_vs_old_temp_scale_new_fn_art_det_vec.begin();
     for(str_it = new_vs_old_temp_scale_new_fn_vec.begin(); str_it <
         new_vs_old_temp_scale_new_fn_vec.end(); ++str_it)
+    {
         new_vs_old_temp_scale_psnr_new.push_back(vpxt_psnr(input.c_str(),
-        (*str_it).c_str(), 0, PRINT_BTH, 1, NULL));
+        (*str_it).c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL, (*int_it)));
+        ++int_it;
+    }
     // run data rates for new temp scale compressions
     for(str_it = new_vs_old_temp_scale_new_fn_vec.begin(); str_it <
         new_vs_old_temp_scale_new_fn_vec.end(); ++str_it)
@@ -422,10 +432,14 @@ int test_new_vs_old_temp_scale(int argc,
         vpxt_run_exe(command_line_str);
 
         // run psnrs for new temp scale compressions
+        int_it = new_vs_old_temp_scale_new_fn_art_det_vec.begin();
         for(str_it = new_vs_old_temp_scale_old_fn_vec.begin(); str_it <
             new_vs_old_temp_scale_old_fn_vec.end(); ++str_it)
+        {
             new_vs_old_temp_scale_psnr_old.push_back(vpxt_psnr(input.c_str(),
-            (*str_it).c_str(), 0, PRINT_BTH, 1, NULL));
+            (*str_it).c_str(), 0, PRINT_BTH, 1, 0, 0, 0, NULL, (*int_it)));
+            ++int_it;
+        }
         // run data rates for new temp scale compressions
         for(str_it = new_vs_old_temp_scale_old_fn_vec.begin(); str_it <
             new_vs_old_temp_scale_old_fn_vec.end(); ++str_it)
@@ -453,7 +467,7 @@ int test_new_vs_old_temp_scale(int argc,
             else{
                 vpxt_formated_print(RESPRT, "New PSNR: %i %.4f <  Old "
                     "PSNR: %i %.4f - Failed\n", n, *double_it, n, *double_it2);
-                failed = 1;
+                test_state = kTestFailed;
             }
 
             ++double_it2;
@@ -469,13 +483,35 @@ int test_new_vs_old_temp_scale(int argc,
             vpxt_formated_print(RESPRT, "New time: %i > Old "
                 "time: %i - Failed\n", new_scale_compress_time,
                 old_scale_compress_time);
-            failed = 1;
+            test_state = kTestFailed;
         }
 
         tprintf(PRINT_BTH, "\n");
     }
 
-    // delete encode files if flagged
+    if (indeterminate)
+        test_state = kTestIndeterminate;
+
+    // handle possible artifact
+    for(int_it = new_vs_old_temp_scale_new_fn_art_det_vec.begin(); int_it <
+        new_vs_old_temp_scale_new_fn_art_det_vec.end(); ++int_it)
+        if((*int_it) == kPossibleArtifactFound)
+        {
+            tprintf(PRINT_BTH, "\nPossible Artifact\n");
+
+            fclose(fp);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
+            return kTestPossibleArtifact;
+        }
+
+    if (test_state == kTestIndeterminate)
+        tprintf(PRINT_BTH, "Indeterminate\n");
+    if (test_state == kTestIndeterminate)
+        tprintf(PRINT_BTH, "Passed\n");
+    if (test_state == kTestFailed)
+        tprintf(PRINT_BTH, "Failed\n");
+
     if (delete_ivf){
         for(str_it = new_vs_old_temp_scale_new_fn_vec.begin(); str_it <
             new_vs_old_temp_scale_new_fn_vec.end(); ++str_it)
@@ -485,33 +521,7 @@ int test_new_vs_old_temp_scale(int argc,
             vpxt_delete_files(1, (*str_it).c_str());
     }
 
-    if (indeterminate)
-    {
-        tprintf(PRINT_BTH, "Indeterminate\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
-    }
-
-    if (!failed)
-    {
-        tprintf(PRINT_BTH, "Passed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
-        tprintf(PRINT_BTH, "Failed\n");
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
-
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

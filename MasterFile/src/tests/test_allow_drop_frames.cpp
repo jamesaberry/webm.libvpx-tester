@@ -5,7 +5,8 @@ int test_allow_drop_frames(int argc,
                            const std::string &working_dir,
                            const std::string sub_folder_str,
                            int test_type,
-                           int delete_ivf)
+                           int delete_ivf,
+                           int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_allow_drop_frames";
@@ -140,9 +141,8 @@ int test_allow_drop_frames(int argc,
     int allow_df_off_frames = vpxt_display_visible_frames(
         allow_df_off_enc.c_str(), 1);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-    int fail = 0;
 
     if (allow_df_on_frames < allow_df_off_frames)
     {
@@ -156,7 +156,7 @@ int test_allow_drop_frames(int argc,
         vpxt_formated_print(RESPRT, "DF on frames = %i == DF off frames = %i "
             "No effect - Failed", allow_df_on_frames, allow_df_off_frames);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (allow_df_on_frames > allow_df_off_frames)
@@ -164,36 +164,18 @@ int test_allow_drop_frames(int argc,
         vpxt_formated_print(RESPRT, "DF on frames = %i > DF off frames = %i - "
             "Failed", allow_df_on_frames, allow_df_off_frames);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, allow_df_on_enc.c_str(),
-            allow_df_off_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, allow_df_on_enc.c_str(),
-            allow_df_off_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, allow_df_on_enc.c_str(), allow_df_off_enc.c_str());
 
     fclose(fp);
-
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

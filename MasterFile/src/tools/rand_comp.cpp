@@ -111,7 +111,7 @@ int tool_rand_comp(int argc,
     VP8_CONFIG opt = vpxt_random_parameters(opt, input.c_str(), 1);
     int Mode = opt.Mode;
 
-    if (Mode == 0)
+    if (Mode == kRealTime)
     {
         opt.Mode = MODE_REALTIME;
         // vpxt_output_settings(RandCompParOut,opt);
@@ -127,7 +127,7 @@ int tool_rand_comp(int argc,
         }
     }
 
-    if (Mode == 1)
+    if (Mode == kOnePassGoodQuality)
     {
         opt.Mode = MODE_GOODQUALITY;
         int speed = opt.multi_threaded;
@@ -142,7 +142,7 @@ int tool_rand_comp(int argc,
         }
     }
 
-    if (Mode == 2)
+    if (Mode == kOnePassBestQuality)
     {
         opt.Mode = MODE_BESTQUALITY;
         int speed = opt.multi_threaded;
@@ -161,7 +161,7 @@ int tool_rand_comp(int argc,
     {
     }
 
-    if (Mode == 4)
+    if (Mode == kTwoPassGoodQuality)
     {
         int speed = opt.multi_threaded;
         int bitrate = opt.target_bandwidth;

@@ -163,13 +163,15 @@ extern double VP8_CalcSSIM_Tester(YV12_BUFFER_CONFIG *source,
                                   YV12_BUFFER_CONFIG *dest,
                                   int lumamask,
                                   double *weight);
-extern double VP8_CalcPSNR_Tester(YV12_BUFFER_CONFIG *source,
+extern double vp8_calcpsnr_tester(YV12_BUFFER_CONFIG *source,
                                   YV12_BUFFER_CONFIG *dest,
                                   double *YPsnr,
-                                  double *UPsnr,
-                                  double *VPsnr,
-                                  double *SqError);
-extern double VP8_Mse2Psnr_Tester(double Samples, double Peak, double Mse);
+                                  double *upsnr,
+                                  double *vpsnr,
+                                  double *sq_error,
+                                  int print_out,
+                                  int& possible_artifact);
+extern double vp8_mse_2_psnr_tester(double Samples, double Peak, double Mse);
 
 extern "C"
 {
@@ -180,14 +182,9 @@ extern "C"
     extern int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf);
     extern vpx_codec_iface_t vpx_enc_vp8_algo;
     extern void vp8_yv12_scale_or_center(YV12_BUFFER_CONFIG *src_yuv_config,
-        YV12_BUFFER_CONFIG *dst_yuv_config,
-        int expanded_frame_width,
-        int expanded_frame_height,
-        int scaling_mode,
-        int HScale,
-        int HRatio,
-        int VScale,
-        int VRatio);
+        YV12_BUFFER_CONFIG *dst_yuv_config, int expanded_frame_width,
+        int expanded_frame_height, int scaling_mode, int HScale, int HRatio,
+        int VScale, int VRatio);
 #ifndef vp8_yv12_copy_frame
     extern void vp8_yv12_copy_frame(YV12_BUFFER_CONFIG *src_ybc,
         YV12_BUFFER_CONFIG *dst_ybc);
@@ -2212,7 +2209,7 @@ void vpxt_determinate_parameters(VP8_CONFIG &opt)
     opt.multi_threaded = 0;    // Multithread not currently det.      2011-07-27
     // Make sure valid cpu_used settings are used                     2011-07-27
     // (negative cpu_used should be deterministic for realtime)
-    if (opt.Mode == 0)
+    if (opt.Mode == kRealTime)
         if (opt.cpu_used > 0)
             opt.cpu_used = opt.cpu_used * -1;
         else if (opt.cpu_used == 0)
@@ -2435,7 +2432,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
 
     opt.Mode = rand() % 5;                   // valid Range: (0 to 4)
 
-    if (opt.Mode == 0)
+    if (opt.Mode == kRealTime)
         opt.noise_sensitivity = 0;           // valid Range:
     else                                     // if Real time Mode 0 to 0
 #if CONFIG_TEMPORAL_DENOISING                // if Not Real time and Temp De 0-1
@@ -2444,7 +2441,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
         opt.noise_sensitivity = rand() % 7;
 #endif
 
-    if (opt.Mode == 0)
+    if (opt.Mode == kRealTime)
         opt.lag_in_frames = 0;                // valid Range:
     else                                      // if Not Real time Mode 0 to 25
         opt.lag_in_frames = rand() % 26;      // if Real time Mode 0 to 0
@@ -2454,7 +2451,7 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
     else                                      // if Not Real time Mode 0 to 1
         opt.allow_lag = 0;                    // if Real time Mode 0
 
-    if (opt.Mode == 0)
+    if (opt.Mode == kRealTime)
     {
         opt.cpu_used = rand() % 13 + 4;       // valid Range:
 
@@ -3103,15 +3100,15 @@ int vpxt_convert_par_file_to_vpxenc(const char *input_core,
     //--fpf=<arg>                     // First pass statistics file name
     //--limit=<arg>                   // Stop encoding after n input frames
     //--deadline=<arg>                // Deadline per frame (usec)
-    if (opt.Mode == 2 || opt.Mode == 5)
+    if (opt.Mode == kOnePassBestQuality || opt.Mode == kTwoPassBestQuality)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--best ");                   // Use Best Quality Deadline
 
-    if (opt.Mode == 1 || opt.Mode == 4)
+    if (opt.Mode == kOnePassGoodQuality || opt.Mode == kTwoPassGoodQuality)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--good ");                   // Use Good Quality Deadline
 
-    if (opt.Mode == 0)
+    if (opt.Mode == kRealTime)
         endofstr += snprintf(vpxenc_parameters + endofstr, vpxenc_parameters_sz,
         "--rt ");                     // Use Realtime Quality Deadline
 
@@ -7142,7 +7139,11 @@ double vpxt_psnr(const char *input_file1,
                  int force_uvswap,
                  int print_out,
                  int print_embl,
-                 double *ssim_out)
+                 int deblock_level,
+                 int noise_level,
+                 int flags,
+                 double *ssim_out,
+                 int& potential_artifact)
 {
     double summed_quality = 0;
     double summed_weights = 0;
@@ -7153,6 +7154,8 @@ double vpxt_psnr(const char *input_file1,
     double sum_sq_error = 0;
     double sum_bytes = 0;
     double sum_bytes2 = 0;
+
+    int run_potential_artifact = potential_artifact;
 
     unsigned int             decoded_frames = 0;
     int                      raw_offset = 0;
@@ -7324,16 +7327,21 @@ double vpxt_psnr(const char *input_file1,
         ////////////////////////////////////////////////////////////////////////
         //////// Printing ////////
         if (print_embl)
-            tprintf(print_out, "\n\n                        "
+            if(run_potential_artifact)
+                tprintf(print_out, "\n\n                        "
+                "---------Computing PSNR---------\n"
+                "                             With Artifact Detection");
+            else
+                tprintf(print_out, "\n\n                        "
                 "---------Computing PSNR---------");
+        else
+            if(run_potential_artifact)
+                tprintf(print_out, "\nArtifact Detection On");
+
 
         tprintf(print_out, "\n\nComparing %s to %s:\n                        \n"
             , input_file1, input_file2);
         ////////////////////////
-        int deblock_level2 = 0;
-        int noise_level2 = 0;
-        int flags2 = 0;
-        int currentFrame2 = 0;
 
         vpx_codec_ctx_t       decoder;
         vpx_codec_iface_t       *iface = NULL;
@@ -7344,22 +7352,44 @@ double vpxt_psnr(const char *input_file1,
 
         vp8_postproc_cfg_t ppcfg = {0};
 
-        ppcfg.deblocking_level = deblock_level2;
-        ppcfg.noise_level = noise_level2;
-        ppcfg.post_proc_flag = flags2;
+        ppcfg.deblocking_level = deblock_level;
+        ppcfg.noise_level = noise_level;
+        ppcfg.post_proc_flag = flags;
 
-        if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, 0))
+        if(!deblock_level && !noise_level && !flags)
         {
-            tprintf(print_out, "Failed to initialize decoder: %s\n",
-                vpx_codec_error(&decoder));
+            if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg, 0))
+            {
+                tprintf(print_out, "Failed to initialize decoder: %s\n",
+                    vpx_codec_error(&decoder));
 
-            fclose(raw_file);
-            fclose(comp_file);
-            vpx_img_free(&raw_img);
-            return EXIT_FAILURE;
+                fclose(raw_file);
+                fclose(comp_file);
+                vpx_img_free(&raw_img);
+                return EXIT_FAILURE;
+            }
+        }
+        else
+        {
+            if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg,
+                VPX_CODEC_USE_POSTPROC))
+            {
+                tprintf(print_out, "Failed to initialize decoder: %s\n",
+                    vpx_codec_error(&decoder));
+                fclose(raw_file);
+                fclose(comp_file);
+                vpx_img_free(&raw_img);
+                return EXIT_FAILURE;
+            }
+
+            if (vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg) != 0)
+            {
+                tprintf(print_out, "Failed to update decoder post processor "
+                    "settings\n");
+            }
         }
 
-        ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
+        /////////// Setup Temp YV12 Buffer to Resize if nessicary //////////////
         initialize_scaler();
 
         YV12_BUFFER_CONFIG temp_yv12;
@@ -7435,7 +7465,7 @@ double vpxt_psnr(const char *input_file1,
                             &temp_yv12, comp_yv12.y_width, comp_yv12.y_height,
                             VP8BORDERINPIXELS);
 
-                        vp8_yv12_copy_frame(&comp_yv12, &temp_yv12);
+                        vp8_yv12_copy_frame_c(&comp_yv12, &temp_yv12);
 
                         int resize_frame_width = 0;
                         int resize_frame_height = 0;
@@ -7604,7 +7634,7 @@ double vpxt_psnr(const char *input_file1,
                                 vpxt_yv12_alloc_frame_buffer(&temp_yv12,
                                     resize_frame_width, resize_frame_height,
                                     VP8BORDERINPIXELS);
-                                vp8_yv12_copy_frame(&temp_yv12b, &temp_yv12);
+                                vp8_yv12_copy_frame_c(&temp_yv12b, &temp_yv12);
                             }
 
                             comp_yv12 = temp_yv12;
@@ -7651,12 +7681,22 @@ double vpxt_psnr(const char *input_file1,
                         summed_weights += weight;
                     }
 
+                    int pa;
                     double ypsnr = 0.0;
                     double upsnr = 0.0;
                     double vpsnr = 0.0;
                     double sq_error = 0.0;
-                    double this_psnr = VP8_CalcPSNR_Tester(&raw_yv12,
-                        &comp_yv12, &ypsnr, &upsnr, &vpsnr, &sq_error);
+
+                    // if no drop frame and no resized frame and not dont run
+                    if((!dropped_frame && !resized_frame) && potential_artifact
+                        != kDontRunArtifactDetection)
+                        pa = kRunArtifactDetection;
+                    else
+                        pa = kDontRunArtifactDetection;
+
+                    double this_psnr = vp8_calcpsnr_tester(&raw_yv12,
+                        &comp_yv12, &ypsnr, &upsnr, &vpsnr, &sq_error,
+                        PRINT_NONE, pa);
 
                     summed_ypsnr += ypsnr;
                     summed_upsnr += upsnr;
@@ -7680,6 +7720,12 @@ double vpxt_psnr(const char *input_file1,
 
                     if(resized_frame)
                         tprintf(print_out, " R");
+
+                    if(pa == kPossibleArtifactFound &&
+                        !dropped_frame && !resized_frame){
+                        tprintf(print_out, " PA");
+                        potential_artifact = kPossibleArtifactFound;
+                    }
 
                     tprintf(print_out, "\n");
                     ////////////////////////
@@ -7720,7 +7766,7 @@ double vpxt_psnr(const char *input_file1,
         double samples = 3.0 / 2 * current_raw_frame * raw_yv12.y_width *
             raw_yv12.y_height;
         double avg_psnr = summed_psnr / current_raw_frame;
-        double total_psnr = VP8_Mse2Psnr_Tester(samples, 255.0, sum_sq_error);
+        double total_psnr = vp8_mse_2_psnr_tester(samples, 255.0, sum_sq_error);
 
         if (summed_weights < 1.0)
             summed_weights = 1.0;
@@ -8138,17 +8184,19 @@ double vpxt_psnr_dec(const char *inputFile1,
             }
 
             double YPsnr;
-            double UPsnr;
-            double VPsnr;
-            double SqError;
-            double thisPsnr = VP8_CalcPSNR_Tester(&Raw_YV12, &compraw_YV12,
-                &YPsnr, &UPsnr, &VPsnr, &SqError);
+            double upsnr;
+            double vpsnr;
+            double sq_error;
+            int pa = kDontRunArtifactDetection;
+
+            double thisPsnr = vp8_calcpsnr_tester(&Raw_YV12, &compraw_YV12,
+                &YPsnr, &upsnr, &vpsnr, &sq_error, PRINT_NONE, pa);
 
             summedYPsnr += YPsnr;
-            summedUPsnr += UPsnr;
-            summedVPsnr += VPsnr;
+            summedUPsnr += upsnr;
+            summedVPsnr += vpsnr;
             summedPsnr += thisPsnr;
-            sumSqError += SqError;
+            sumSqError += sq_error;
             ////////////////////////////////////////////////////////////////////
 
             //////// Printing ////////
@@ -8166,7 +8214,7 @@ double vpxt_psnr_dec(const char *inputFile1,
                     tprintf(PRINT_BTH, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
                         "Y:%5.2f, U:%5.2f, V:%5.2f\n", currentVideo1Frame,
                         bytes1 * 8.0, bytes2 * 8.0, thisPsnr, 1.0 * YPsnr,
-                        1.0 * UPsnr, 1.0 * VPsnr);
+                        1.0 * upsnr, 1.0 * vpsnr);
                 }
 
                 if (frameStats == 2)
@@ -8178,7 +8226,7 @@ double vpxt_psnr_dec(const char *inputFile1,
                     fprintf(stderr, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
                         "Y:%5.2f, U:%5.2f, V:%5.2f\n",currentVideo1Frame,
                         bytes1 * 8.0,bytes2 * 8.0, thisPsnr, 1.0 * YPsnr,
-                            1.0 * UPsnr, 1.0 * VPsnr);
+                            1.0 * upsnr, 1.0 * vpsnr);
                 }
 
                 if (frameStats == 3)
@@ -8186,7 +8234,7 @@ double vpxt_psnr_dec(const char *inputFile1,
                     tprintf(PRINT_STD, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
                         "Y:%5.2f, U:%5.2f, V:%5.2f\n", currentVideo1Frame,
                         bytes1 * 8.0, bytes2 * 8.0, thisPsnr, 1.0 * YPsnr,
-                        1.0 * UPsnr, 1.0 * VPsnr);
+                        1.0 * upsnr, 1.0 * vpsnr);
                 }
             }
             ////////////////////////
@@ -8201,7 +8249,7 @@ double vpxt_psnr_dec(const char *inputFile1,
     double samples = 3.0 / 2 * currentVideo1Frame * Raw_YV12.y_width *
         Raw_YV12.y_height;
     double avgPsnr = summedPsnr / currentVideo1Frame;
-    double totalPsnr = VP8_Mse2Psnr_Tester(samples, 255.0, sumSqError);
+    double totalPsnr = vp8_mse_2_psnr_tester(samples, 255.0, sumSqError);
 
     if (summedWeights < 1.0)
         summedWeights = 1.0;
@@ -8257,650 +8305,6 @@ double vpxt_psnr_dec(const char *inputFile1,
     vpx_img_free(&compraw_img);
 
     return totalPsnr;
-}
-double vpxt_post_proc_psnr(const char *input_file1,
-                           const char *input_file2,
-                           int force_uvswap,
-                           int print_out,
-                           int print_embl,
-                           int deblock_level,
-                           int noise_level,
-                           int flags,
-                           double *ssim_out)
-{
-    double summed_quality = 0;
-    double summed_weights = 0;
-    double summed_psnr = 0;
-    double summed_ypsnr = 0;
-    double summed_upsnr = 0;
-    double summed_vpsnr = 0;
-    double sum_sq_error = 0;
-    double sum_bytes = 0;
-    double sum_bytes2 = 0;
-
-    unsigned int             decoded_frames = 0;
-    int                      raw_offset = 0;
-    int                      comp_offset = 0;
-    unsigned int             maximumFrameCount = 0;
-    YV12_BUFFER_CONFIG       raw_yv12;
-    YV12_BUFFER_CONFIG       comp_yv12;
-    vpx_image_t              raw_img;
-    unsigned int             frameCount = 0;
-    unsigned int             file_type = FILE_TYPE_RAW;
-    unsigned int             fourcc    = 808596553;
-    struct                   detect_buffer detect;
-    unsigned int             raw_width = 0;
-    unsigned int             raw_height = 0;
-    unsigned int             raw_rate = 0;
-    unsigned int             raw_scale = 0;
-    y4m_input                y4m;
-    int                      arg_have_framerate = 0;
-    struct vpx_rational      arg_framerate = {30, 1};
-    int                      arg_use_i420 = 1;
-
-    force_uvswap = 0;
-    //////////////////////// Initilize Raw File ////////////////////////
-    FILE *raw_file = strcmp(input_file1, "-") ?
-        fopen(input_file1, "rb") : set_binary_mode(stdin);
-
-    if (!raw_file)
-    {
-        tprintf(print_out, "Failed to open input file: %s", input_file1);
-        return -1;
-    }
-
-    detect.buf_read = fread(detect.buf, 1, 4, raw_file);
-    detect.position = 0;
-
-    if (detect.buf_read == 4 && file_is_y4m(raw_file, &y4m, detect.buf))
-    {
-        if (y4m_input_open(&y4m, raw_file, detect.buf, 4) >= 0)
-        {
-            file_type = FILE_TYPE_Y4M;
-            raw_width = y4m.pic_w;
-            raw_height = y4m.pic_h;
-            raw_rate = y4m.fps_n;
-            raw_scale = y4m.fps_d;
-
-            /* Use the frame rate from the file only if none was specified
-            * on the command-line.
-            */
-            if (!arg_have_framerate)
-            {
-                arg_framerate.num = y4m.fps_n;
-                arg_framerate.den = y4m.fps_d;
-            }
-
-            arg_use_i420 = 0;
-        }
-        else
-        {
-            tprintf(print_out, "Unsupported Y4M stream.\n");
-            return EXIT_FAILURE;
-        }
-    }
-    else if (detect.buf_read == 4 &&
-        file_is_ivf(raw_file, &fourcc, &raw_width, &raw_height, &detect,
-        &raw_scale, &raw_rate))
-    {
-        switch (fourcc)
-        {
-        case 0x32315659:
-            arg_use_i420 = 0;
-            break;
-        case 0x30323449:
-            arg_use_i420 = 1;
-            break;
-        default:
-            tprintf(print_out, "Unsupported fourcc (%08x) in IVF\n", fourcc);
-            return EXIT_FAILURE;
-        }
-
-        file_type = FILE_TYPE_IVF;
-    }
-    else
-    {
-        file_type = FILE_TYPE_RAW;
-    }
-
-    if (!raw_width || !raw_height)
-    {
-        tprintf(print_out, "Specify stream dimensions with --width (-w) "
-            " and --height (-h).\n");
-        return EXIT_FAILURE;
-    }
-
-    if(file_type != FILE_TYPE_Y4M)
-        vpx_img_alloc(&raw_img, IMG_FMT_I420, raw_width, raw_height, 1);
-
-    // Burn Frames untill Raw frame offset reached - currently disabled by
-    // override of raw_offset
-    if (raw_offset > 0)
-    {
-        for (int i = 0; i < raw_offset; i++)
-        {
-        }
-    }
-
-    // I420 hex-0x30323449 dec-808596553
-    // YV12 hex-0x32315659 dec-842094169
-    // if YV12 Do not swap Frames
-    if (fourcc == 842094169)
-        force_uvswap = 1;
-
-    //////////////////////// Initilize Compressed File ////////////////////////
-    /* Open file */
-    FILE *comp_file = strcmp(input_file2, "-") ?
-        fopen(input_file2, "rb") : set_binary_mode(stdin);
-
-    if (!comp_file)
-    {
-        tprintf(print_out, "Failed to open input file: %s", input_file2);
-        return -1;
-    }
-
-    unsigned int            comp_fourcc;
-    unsigned int            comp_width;
-    unsigned int            comp_height;
-    unsigned int            comp_scale;
-    unsigned int            comp_rate;
-    struct input_ctx        input;
-
-    input.chunk = 0;
-    input.chunks = 0;
-    input.infile = NULL;
-    input.kind = RAW_FILE;
-    input.nestegg_ctx = 0;
-    input.pkt = 0;
-    input.video_track = 0;
-
-    input.infile = comp_file;
-
-    if (file_is_ivf_dec(comp_file, &comp_fourcc, &comp_width, &comp_height,
-        &comp_scale, &comp_rate))
-        input.kind = IVF_FILE;
-    else if (file_is_webm(&input, &comp_fourcc, &comp_width, &comp_height,
-        &comp_scale, &comp_rate))
-        input.kind = WEBM_FILE;
-    else if (file_is_raw(comp_file, &comp_fourcc, &comp_width, &comp_height,
-        &comp_scale, &comp_rate))
-        input.kind = RAW_FILE;
-    else
-    {
-        tprintf(print_out, "Unrecognized input file type.\n");
-        return EXIT_FAILURE;
-    }
-
-    if (input.kind == WEBM_FILE)
-        if (webm_guess_framerate(&input, &comp_scale, &comp_rate))
-        {
-            tprintf(print_out, "Failed to guess framerate -- error parsing "
-                "webm file?\n");
-            return EXIT_FAILURE;
-        }
-
-        if((raw_rate/raw_scale)%(comp_rate/comp_scale) != 0){
-            tprintf(PRINT_BTH, "\nError: Raw File fps not multiple of Comp File"
-                " fps\n");
-            return 1;
-        }
-
-        // Burn Frames untill Compressed frame offset reached - currently
-        // disabled by override of comp_offset
-        if (comp_offset > 0)
-        {
-        }
-
-        ////////////////////////////////////////////////////////////////////////
-        //////// Printing ////////
-        if (print_embl)
-            tprintf(print_out, "\n\n                        "
-            "---------Computing PSNR---------");
-
-        tprintf(print_out, "\n\nComparing %s to %s:\n                        "
-            "\n", input_file1, input_file2);
-        ////////////////////////
-        vp8_postproc_cfg_t ppcfg = {0};
-
-        ppcfg.deblocking_level = deblock_level;
-        ppcfg.noise_level = noise_level;
-        ppcfg.post_proc_flag = flags;
-
-        vpx_codec_ctx_t       decoder;
-        vpx_codec_iface_t       *iface = NULL;
-        const struct codec_item  *codec = codecs;
-        vpx_codec_iface_t  *ivf_iface = ifaces[0].iface;
-        vpx_codec_dec_cfg_t     cfg = {0};
-        iface = ivf_iface;
-
-        if (vpx_codec_dec_init(&decoder, ifaces[0].iface, &cfg,
-            VPX_CODEC_USE_POSTPROC))
-        {
-            tprintf(print_out, "Failed to initialize decoder: %s\n",
-                vpx_codec_error(&decoder));
-            fclose(raw_file);
-            fclose(comp_file);
-            vpx_img_free(&raw_img);
-            return EXIT_FAILURE;
-        }
-
-        if (vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg) != 0)
-        {
-             tprintf(print_out, "Failed to update decoder post processor "
-                 "settings\n");
-        }
-
-        ///////////Setup Temp YV12 Buffer to Resize if nessicary////////////////
-        initialize_scaler();
-
-        YV12_BUFFER_CONFIG temp_yv12;
-        YV12_BUFFER_CONFIG temp_yv12b;
-
-        memset(&temp_yv12, 0, sizeof(temp_yv12));
-        memset(&temp_yv12b, 0, sizeof(temp_yv12b));
-        ////////////////////////////////////////////////////////////////////////
-
-        vpx_codec_control(&decoder, VP8_SET_POSTPROC, &ppcfg);
-
-        uint8_t *comp_buff = NULL;
-        size_t buf_sz = 0, buf_alloc_sz = 0;
-        int current_raw_frame = 0;
-        int comp_frame_available = 1;
-
-        uint64_t raw_timestamp = 0;
-        uint64_t comp_timestamp = 0;
-
-        while (comp_frame_available)
-        {
-            buf_sz = 0;
-
-            if(read_frame_dec(&input, &comp_buff, &buf_sz, &buf_alloc_sz,
-                &comp_timestamp))
-                comp_frame_available = 0;
-
-            unsigned long lpdwFlags = 0;
-            unsigned long lpckid = 0;
-            long bytes1;
-            long bytes2;
-            int resized_frame = 0;
-            int dropped_frame = 0;
-            int non_visible_frame = 0;
-
-            if (input.kind == WEBM_FILE){
-                raw_timestamp = current_raw_frame * 1000 * raw_scale / raw_rate;
-                raw_timestamp = raw_timestamp * 1000000;
-            }
-            else
-                raw_timestamp = current_raw_frame;
-
-            bytes2 = buf_sz;
-            sum_bytes2 += bytes2;
-
-            vpx_codec_iter_t  iter = NULL;
-            vpx_image_t    *img;
-
-            // make sure the timestamps sync otherwise process
-            // last shown compressed frame vs current raw frame
-            // for psnr calculations, turn off artifact detection
-            while(raw_timestamp <= comp_timestamp || !comp_frame_available)
-            {
-                if(comp_timestamp == raw_timestamp)
-                {
-                    dropped_frame = 0;
-
-                    if (vpx_codec_decode(&decoder,
-                        (uint8_t *) comp_buff, buf_sz, NULL, 0))
-                    {
-                        const char *detail = vpx_codec_error_detail(&decoder);
-                        tprintf(print_out, "Failed to decode frame: %s\n",
-                            vpx_codec_error(&decoder));
-                    }
-
-                    if (img = vpx_codec_get_frame(&decoder, &iter))
-                    {
-                        ++decoded_frames;
-
-                        image2yuvconfig(img, &comp_yv12);
-
-                        int TempBuffState = vpxt_yv12_alloc_frame_buffer(
-                            &temp_yv12, comp_yv12.y_width, comp_yv12.y_height,
-                            VP8BORDERINPIXELS);
-
-                        vp8_yv12_copy_frame(&comp_yv12, &temp_yv12);
-
-                        int resize_frame_width = 0;
-                        int resize_frame_height = 0;
-
-                        // if frame not correct size resize it for psnr
-                        if (img->d_w != raw_width || img->d_h != raw_height)
-                        {
-                            if (TempBuffState < 0)
-                            {
-                                tprintf(print_out, "Could not allocate yv12 "
-                                    "buffer for %i x %i\n", raw_width,
-                                    raw_height);
-
-                                fclose(raw_file);
-                                fclose(comp_file);
-                                vpx_img_free(&raw_img);
-
-                                if (input.nestegg_ctx)
-                                    nestegg_destroy(input.nestegg_ctx);
-
-                                if (input.kind != WEBM_FILE)
-                                    free(comp_buff);
-
-                                return 0;
-                            }
-
-                            int gcd_width = vpxt_gcd(img->d_w, raw_width);
-                            int gcd_height = vpxt_gcd(img->d_h, raw_height);
-
-                            // Possible Scales
-                            /* 4-5 Scale in Width direction */
-                            /* 3-4 Scale in Width direction */
-                            /* 2-3 Scale in Width direction */
-                            /* 3-5 Scale in Width direction */
-                            /* 1-2 Scale in Width direction */
-                            /* no scale in Width direction */
-
-                            int resize_width = 0;
-                            int resize_height = 0;
-                            int width_scale = 0;
-                            int height_scale = 0;
-                            int width_ratio = 0;
-                            int height_ratio = 0;
-
-                            if((img->d_w / gcd_width) == 1){
-                                if((raw_width / gcd_width) % 2 == 0){
-                                    width_scale = 2;
-                                    width_ratio = 1;
-                                    resize_width = (raw_width / gcd_width) / 2;
-                                }
-                            }
-                            else if((img->d_w / gcd_width) == 2){
-                                if((raw_width / gcd_width) % 3 == 0){
-                                    width_scale = 3;
-                                    width_ratio = 2;
-                                    resize_width = (raw_width / gcd_width) / 3;
-                                }
-                            }
-                            else if((img->d_w / gcd_width) == 3){
-                                if((raw_width / gcd_width) % 4 == 0){
-                                    width_scale = 4;
-                                    width_ratio = 3;
-                                    resize_width = (raw_width / gcd_width) / 4;
-                                }
-                                else if((raw_width / gcd_width) % 5 == 0){
-                                    width_scale = 5;
-                                    width_ratio = 3;
-                                    resize_width = (raw_width / gcd_width) / 5;
-                                }
-                            }
-                            else if((img->d_w / gcd_width) == 4){
-                                if((raw_width / gcd_width) % 5 == 0){
-                                    width_scale = 5;
-                                    width_ratio = 4;
-                                    resize_width = (raw_width / gcd_width) / 5;
-                                }
-                            }
-                            else{
-                                tprintf(print_out, "No scale match found for "
-                                    "width \n");
-                                return 0;
-                            }
-
-                            if((img->d_h / gcd_height) == 1){
-                                if((raw_height / gcd_height) % 2 == 0){
-                                    height_scale = 2;
-                                    height_ratio = 1;
-                                    resize_height = (raw_height / gcd_height)/2;
-                                }
-                            }
-                            else if((img->d_h / gcd_height) == 2){
-                                if((raw_height / gcd_height) % 3 == 0){
-                                    height_scale = 3;
-                                    height_ratio = 2;
-                                    resize_height = (raw_height / gcd_height)/3;
-                                }
-                            }
-                            else if((img->d_h / gcd_height) == 3){
-                                if((raw_height / gcd_height) % 4 == 0){
-                                    height_scale = 4;
-                                    height_ratio = 3;
-                                    resize_height = (raw_height / gcd_height)/4;
-                                }
-                                else if((raw_height / gcd_height) % 5 == 0){
-                                    height_scale = 5;
-                                    height_ratio = 3;
-                                    resize_height = (raw_height / gcd_height)/5;
-                                }
-                            }
-                            else if((img->d_h / gcd_height) == 4){
-                                if((raw_height / gcd_height) % 5 == 0){
-                                    height_scale = 5;
-                                    height_ratio = 4;
-                                    resize_height = (raw_height / gcd_height)/5;
-                                }
-                            }
-                            else{
-                                tprintf(print_out, "No scale match found for "
-                                    "height \n");
-                                return 0;
-                            }
-
-                            // resize YV12 untill it is scaled properly.
-                            while(resize_width || resize_height){
-
-                                resized_frame = 1;
-
-                                if(resize_width)
-                                    resize_frame_width = raw_width -
-                                    (raw_width / (width_scale/width_ratio))*
-                                    (resize_width-1);
-                                else
-                                    resize_frame_width = img->d_w;
-
-                                if(resize_height)
-                                    resize_frame_height = raw_height -
-                                    (raw_height / (height_scale/height_ratio))*
-                                    (resize_height-1);
-                                else
-                                    resize_frame_height = img->d_h;
-
-                                vpxt_yv12_alloc_frame_buffer(&temp_yv12b,
-                                    resize_frame_width, resize_frame_height,
-                                    VP8BORDERINPIXELS);
-
-                                // if resize width or height is done but still
-                                // need to resize the other set finished to 1:1
-                                if(!resize_width){
-                                    width_scale = 1;
-                                    width_ratio = 1;
-                                }
-                                if(!resize_height){
-                                    height_scale = 1;
-                                    height_ratio = 1;
-                                }
-
-                                vp8_yv12_scale_or_center(&temp_yv12,
-                                    &temp_yv12b, resize_frame_width,
-                                    resize_frame_height, 0, width_scale,
-                                    width_ratio, height_scale, height_ratio);
-
-                                if(resize_width)
-                                    resize_width--;
-                                if(resize_height)
-                                    resize_height--;
-
-                                vpxt_yv12_alloc_frame_buffer(&temp_yv12,
-                                    resize_frame_width, resize_frame_height,
-                                    VP8BORDERINPIXELS);
-                                vp8_yv12_copy_frame(&temp_yv12b, &temp_yv12);
-                            }
-
-                            comp_yv12 = temp_yv12;
-                        }
-                    }
-                }
-                else
-                    dropped_frame = 1;
-
-                // run psnr if img returned(skip non visibile frames), dropped
-                // frame detected or if end of comp input file detected.
-                if(img || dropped_frame || !comp_frame_available)
-                {
-                    ///////////////// Get YV12 Data For Raw File ///////////////
-                    // if end of uncompressed file break out
-                    if(!read_frame_enc(raw_file, &raw_img, file_type, &y4m,
-                        &detect))
-                        break;
-
-                    image2yuvconfig(&raw_img, &raw_yv12);
-                    if (force_uvswap == 1){
-                        unsigned char *temp = raw_yv12.u_buffer;
-                        raw_yv12.u_buffer = raw_yv12.v_buffer;
-                        raw_yv12.v_buffer = temp;
-                    }
-                    bytes1 = (raw_width * raw_height * 3) / 2;
-                    sum_bytes += bytes1;
-                    current_raw_frame = current_raw_frame + 1;
-                    if (input.kind == WEBM_FILE){
-                        raw_timestamp = current_raw_frame * 1000 *
-                            raw_scale / raw_rate;
-                        raw_timestamp = raw_timestamp * 1000000;
-                    }
-                    else
-                        raw_timestamp = current_raw_frame;
-
-                    ///////////////////////// Preform PSNR Calc ////////////////
-                    if (ssim_out)
-                    {
-                        double weight;
-                        double this_ssim = VP8_CalcSSIM_Tester(&raw_yv12,
-                            &comp_yv12, 1, &weight);
-                        summed_quality += this_ssim * weight ;
-                        summed_weights += weight;
-                    }
-
-                    double ypsnr = 0.0;
-                    double upsnr = 0.0;
-                    double vpsnr = 0.0;
-                    double sq_error = 0.0;
-                    double this_psnr = VP8_CalcPSNR_Tester(&raw_yv12,
-                        &comp_yv12, &ypsnr, &upsnr, &vpsnr, &sq_error);
-
-                    summed_ypsnr += ypsnr;
-                    summed_upsnr += upsnr;
-                    summed_vpsnr += vpsnr;
-                    summed_psnr += this_psnr;
-                    sum_sq_error += sq_error;
-                    ////////////////////////////////////////////////////////////
-
-                    //////// Printing ////////
-                    tprintf(print_out, "F:%5d, 1:%6.0f 2:%6.0f, Avg :%5.2f, "
-                        "Y:%5.2f, U:%5.2f, V:%5.2f",
-                        current_raw_frame,
-                        bytes1 * 8.0,
-                        bytes2 * 8.0,
-                        this_psnr, 1.0 * ypsnr ,
-                        1.0 * upsnr ,
-                        1.0 * vpsnr);
-
-                    if(dropped_frame)
-                        tprintf(print_out, " D");
-
-                    if(resized_frame)
-                        tprintf(print_out, " R");
-
-                    tprintf(print_out, "\n");
-                    ////////////////////////
-                }
-                else
-                {
-                    // if time stamps do not match find out why if droped
-                    // frame process psnr on last frame keep trying
-                    // subtract one unit to move calculation along.
-                    // if invisible frame get next frame and keep trying.
-                    VP8_HEADER oz;
-                    memcpy(&oz, comp_buff, 3);
-
-                    if (oz.show_frame){
-                        current_raw_frame = current_raw_frame - 1;
-
-                        if (input.kind == WEBM_FILE){
-                            raw_timestamp = current_raw_frame * 1000 *
-                                raw_scale / raw_rate;
-                            raw_timestamp = raw_timestamp * 1000000;
-                        }
-                        else
-                            raw_timestamp = current_raw_frame;
-                    }
-                    else{
-                        if(read_frame_dec(&input, &comp_buff, &buf_sz,
-                            &buf_alloc_sz, &comp_timestamp))
-                                comp_frame_available = 0;
-
-                        raw_timestamp = comp_timestamp;
-                        non_visible_frame = 1;
-                    }
-                }
-            }
-        }
-
-        // Over All PSNR Calc
-        double samples = 3.0 / 2 * current_raw_frame * raw_yv12.y_width *
-            raw_yv12.y_height;
-        double avg_psnr = summed_psnr / current_raw_frame;
-        double total_psnr = VP8_Mse2Psnr_Tester(samples, 255.0, sum_sq_error);
-
-        if (summed_weights < 1.0)
-            summed_weights = 1.0;
-
-        double total_ssim = 100 * pow(summed_quality / summed_weights, 8.0);
-
-        //////// Printing ////////
-        tprintf(print_out, "\nDr1:%8.2f Dr2:%8.2f, Avg: %5.2f, Avg Y: %5.2f, "
-            "Avg U: %5.2f, Avg V: %5.2f, Ov PSNR: %8.2f, ",
-            sum_bytes * 8.0 / current_raw_frame*(raw_rate) / raw_scale / 1000,
-            sum_bytes2 * 8.0 /current_raw_frame*(comp_rate) / comp_scale / 1000,
-            avg_psnr,
-            1.0 * summed_ypsnr / current_raw_frame,
-            1.0 * summed_upsnr / current_raw_frame,
-            1.0 * summed_vpsnr / current_raw_frame,
-            total_psnr);
-
-        tprintf(print_out, ssim_out ? "SSIM: %8.2f\n" : "SSIM: Not run.",
-            total_ssim);
-
-        if (print_embl)
-            tprintf(print_out, "\n                        "
-            "--------------------------------\n");
-        ////////////////////////
-
-        if (ssim_out)
-            *ssim_out = total_ssim;
-
-        fclose(raw_file);
-        fclose(comp_file);
-        vp8_yv12_de_alloc_frame_buffer(&temp_yv12);
-        vp8_yv12_de_alloc_frame_buffer(&temp_yv12b);
-
-        if(file_type != FILE_TYPE_Y4M)
-            vpx_img_free(&raw_img);
-
-        if(file_type == FILE_TYPE_Y4M)
-            y4m_input_close(&y4m);
-
-        vpx_codec_destroy(&decoder);
-
-        if (input.nestegg_ctx)
-            nestegg_destroy(input.nestegg_ctx);
-
-        if (input.kind != WEBM_FILE)
-            free(comp_buff);
-
-        return total_psnr;
 }
 double vpxt_data_rate(const char *input_file, int DROuputSel)
 {
@@ -10097,39 +9501,28 @@ int vpxt_compress(const char *input_file,
     }
 
     ////////////////////// Update CFG Settings Here ////////////////////
-    // if mode == 4 or 5 arg_passes = 2
+    // if mode == kTwoPassGoodQuality or 5 arg_passes = 2
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
     // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) // Real time Mode
-    {
+    if (oxcf.Mode == kRealTime) // Real time Mode
         arg_deadline = 1;
-    }
 
-    if (oxcf.Mode == 1) // One Pass Good
-    {
+    if (oxcf.Mode == kOnePassGoodQuality) // One Pass Good
         arg_deadline = 1000000;
-    }
 
-    if (oxcf.Mode == 2) // One Pass Best
-    {
+    if (oxcf.Mode == kOnePassBestQuality) // One Pass Best
         arg_deadline = 0;
-    }
 
-    if (oxcf.Mode == 3) // First Pass
-    {
-        // arg_deadline =
-    }
-
-    if (oxcf.Mode == 4) // Two Pass Good
+    if (oxcf.Mode == kTwoPassGoodQuality) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) // Two Pass Best
+    if (oxcf.Mode == kTwoPassBestQuality) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -10156,29 +9549,21 @@ int vpxt_compress(const char *input_file,
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nFirst Pass - ");
-        }
 
         if (pass == 1 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nSecond Pass - ");
-        }
 
-        if (oxcf.Mode == 0) // Real time Mode
-        {
+        if (oxcf.Mode == kRealTime) // Real time Mode
             tprintf(PRINT_BTH, " RealTime\n\n");
-        }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
-        {
+        if (oxcf.Mode == kOnePassGoodQuality ||
+            oxcf.Mode == kTwoPassGoodQuality) // One Pass Good
             tprintf(PRINT_BTH, " GoodQuality\n\n");
-        }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
-        {
+        if (oxcf.Mode == kOnePassBestQuality ||
+            oxcf.Mode == kTwoPassBestQuality) // One Pass Best
             tprintf(PRINT_BTH, " BestQuality\n\n");
-        }
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -10701,33 +10086,22 @@ int vpxt_compress_no_error_output(const char *input_file,
     // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) // Real time Mode
-    {
+    if (oxcf.Mode == kRealTime) // Real time Mode
         arg_deadline = 1;
-    }
 
-    if (oxcf.Mode == 1) // One Pass Good
-    {
+    if (oxcf.Mode == kOnePassGoodQuality) // One Pass Good
         arg_deadline = 1000000;
-    }
 
-    if (oxcf.Mode == 2) // One Pass Best
-    {
+    if (oxcf.Mode == kOnePassBestQuality) // One Pass Best
         arg_deadline = 0;
-    }
 
-    if (oxcf.Mode == 3) // First Pass
-    {
-        // arg_deadline =
-    }
-
-    if (oxcf.Mode == 4) // Two Pass Good
+    if (oxcf.Mode == kTwoPassGoodQuality) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) // Two Pass Best
+    if (oxcf.Mode == kTwoPassBestQuality) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -10757,30 +10131,21 @@ int vpxt_compress_no_error_output(const char *input_file,
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
-        {
             tprintf(PRINT_STD, "\nFirst Pass - ");
-        }
 
         if (pass == 1 && arg_passes == 2)
-        {
-
             tprintf(PRINT_STD, "\nSecond Pass - ");
-        }
 
-        if (oxcf.Mode == 0) // Real time Mode
-        {
+        if (oxcf.Mode == kRealTime) // Real time Mode
             tprintf(PRINT_STD, " RealTime\n\n");
-        }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
-        {
+        if (oxcf.Mode == kOnePassGoodQuality ||
+            oxcf.Mode == kTwoPassGoodQuality) // One Pass Good
             tprintf(PRINT_STD, " GoodQuality\n\n");
-        }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
-        {
+        if (oxcf.Mode == kOnePassBestQuality ||
+            oxcf.Mode == kTwoPassBestQuality) // One Pass Best
             tprintf(PRINT_STD, " BestQuality\n\n");
-        }
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -11306,33 +10671,22 @@ unsigned int vpxt_time_compress(const char *input_file,
     // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) // Real time Mode
-    {
+    if (oxcf.Mode == kRealTime) // Real time Mode
         arg_deadline = 1;
-    }
 
-    if (oxcf.Mode == 1) // One Pass Good
-    {
+    if (oxcf.Mode == kOnePassGoodQuality) // One Pass Good
         arg_deadline = 1000000;
-    }
 
-    if (oxcf.Mode == 2) // One Pass Best
-    {
+    if (oxcf.Mode == kOnePassBestQuality) // One Pass Best
         arg_deadline = 0;
-    }
 
-    if (oxcf.Mode == 3) // First Pass
-    {
-        // arg_deadline =
-    }
-
-    if (oxcf.Mode == 4) // Two Pass Good
+    if (oxcf.Mode == kTwoPassGoodQuality) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) // Two Pass Best
+    if (oxcf.Mode == kTwoPassBestQuality) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -11359,29 +10713,21 @@ unsigned int vpxt_time_compress(const char *input_file,
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nFirst Pass - ");
-        }
 
         if (pass == 1 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nSecond Pass - ");
-        }
 
-        if (oxcf.Mode == 0) // Real time Mode
-        {
+        if (oxcf.Mode == kRealTime) // Real time Mode
             tprintf(PRINT_BTH, " RealTime\n\n");
-        }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
-        {
+        if (oxcf.Mode == kOnePassGoodQuality ||
+            oxcf.Mode == kTwoPassGoodQuality) // One Pass Good
             tprintf(PRINT_BTH, " GoodQuality\n\n");
-        }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
-        {
+        if (oxcf.Mode == kOnePassBestQuality ||
+            oxcf.Mode == kTwoPassBestQuality) // One Pass Best
             tprintf(PRINT_BTH, " BestQuality\n\n");
-        }
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -11937,33 +11283,22 @@ int vpxt_compress_force_key_frame(const char *input_file,
     // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) // Real time Mode
-    {
+    if (oxcf.Mode == kRealTime) // Real time Mode
         arg_deadline = 1;
-    }
 
-    if (oxcf.Mode == 1) // One Pass Good
-    {
+    if (oxcf.Mode == kOnePassGoodQuality) // One Pass Good
         arg_deadline = 1000000;
-    }
 
-    if (oxcf.Mode == 2) // One Pass Best
-    {
+    if (oxcf.Mode == kOnePassBestQuality) // One Pass Best
         arg_deadline = 0;
-    }
 
-    if (oxcf.Mode == 3) // First Pass
-    {
-        // arg_deadline =
-    }
-
-    if (oxcf.Mode == 4) // Two Pass Good
+    if (oxcf.Mode == kTwoPassGoodQuality) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) // Two Pass Best
+    if (oxcf.Mode == kTwoPassBestQuality) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -11989,29 +11324,19 @@ int vpxt_compress_force_key_frame(const char *input_file,
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nFirst Pass - ");
-        }
 
         if (pass == 1 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nSecond Pass - ");
-        }
 
-        if (oxcf.Mode == 0) // Real time Mode
-        {
+        if (oxcf.Mode == kRealTime) // Real time Mode
             tprintf(PRINT_BTH, " RealTime\n\n");
-        }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
-        {
+        if (oxcf.Mode == kOnePassGoodQuality || oxcf.Mode == kTwoPassGoodQuality) // One Pass Good
             tprintf(PRINT_BTH, " GoodQuality\n\n");
-        }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
-        {
+        if (oxcf.Mode == kOnePassBestQuality || oxcf.Mode == kTwoPassBestQuality) // One Pass Best
             tprintf(PRINT_BTH, " BestQuality\n\n");
-        }
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;
@@ -12559,33 +11884,22 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
     // Set Mode Pass and bitrate Here
     cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) // Real time Mode
-    {
+    if (oxcf.Mode == kRealTime) // Real time Mode
         arg_deadline = 1;
-    }
 
-    if (oxcf.Mode == 1) // One Pass Good
-    {
+    if (oxcf.Mode == kOnePassGoodQuality) // One Pass Good
         arg_deadline = 1000000;
-    }
 
-    if (oxcf.Mode == 2) // One Pass Best
-    {
+    if (oxcf.Mode == kOnePassBestQuality) // One Pass Best
         arg_deadline = 0;
-    }
 
-    if (oxcf.Mode == 3) // First Pass
-    {
-        // arg_deadline =
-    }
-
-    if (oxcf.Mode == 4) // Two Pass Good
+    if (oxcf.Mode == kTwoPassGoodQuality) // Two Pass Good
     {
         arg_passes = 2;
         arg_deadline = 1000000;
     }
 
-    if (oxcf.Mode == 5) // Two Pass Best
+    if (oxcf.Mode == kTwoPassBestQuality) // Two Pass Best
     {
         arg_passes = 2;
         arg_deadline = 0;
@@ -12635,29 +11949,21 @@ int vpxt_compress_recon_buffer_check(const char *input_file,
         int CharCount = 0;
 
         if (pass == 0 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nFirst Pass - ");
-        }
 
         if (pass == 1 && arg_passes == 2)
-        {
             tprintf(PRINT_BTH, "\nSecond Pass - ");
-        }
 
-        if (oxcf.Mode == 0) // Real time Mode
-        {
+        if (oxcf.Mode == kRealTime) // Real time Mode
             tprintf(PRINT_BTH, " RealTime\n\n");
-        }
 
-        if (oxcf.Mode == 1 || oxcf.Mode == 4) // One Pass Good
-        {
+        if (oxcf.Mode == kOnePassGoodQuality ||
+            oxcf.Mode == kTwoPassGoodQuality) // One Pass Good
             tprintf(PRINT_BTH, " GoodQuality\n\n");
-        }
 
-        if (oxcf.Mode == 2 || oxcf.Mode == 5) // One Pass Best
-        {
+        if (oxcf.Mode == kOnePassBestQuality ||
+            oxcf.Mode == kTwoPassBestQuality) // One Pass Best
             tprintf(PRINT_BTH, " BestQuality\n\n");
-        }
 
         int frames_in = 0, frames_out = 0;
         unsigned long nbytes = 0;

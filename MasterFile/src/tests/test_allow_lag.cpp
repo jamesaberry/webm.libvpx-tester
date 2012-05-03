@@ -5,7 +5,8 @@ int test_allow_lag(int argc,
                    const std::string &working_dir,
                    const std::string sub_folder_str,
                    int test_type,
-                   int delete_ivf)
+                   int delete_ivf,
+                   int artifact_detection)
 {
     char *comp_out_str = "Allow Lag";
     char *test_dir = "test_allow_lag";
@@ -160,9 +161,8 @@ int test_allow_lag(int argc,
     int lng_rc = vpxt_compare_enc(allow_lag_off_enc.c_str(),
         allow_lag_on_enc.c_str(), 0);
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-    int fail = 0;
 
     if (lag_in_frames_found == opt.lag_in_frames)
     {
@@ -177,7 +177,7 @@ int test_allow_lag(int argc,
             "detected in compression for %s - Failed", opt.lag_in_frames,
             allow_lag_on_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (allow_lag_on_alt_ref_count > 0)
@@ -191,7 +191,7 @@ int test_allow_lag(int argc,
         vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
             "for %s - Failed", allow_lag_on_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (visible_frame_on_count == visible_frame_off_count)
@@ -209,7 +209,7 @@ int test_allow_lag(int argc,
             visible_frame_on_count, allow_lag_off_file_name,
             visible_frame_off_count);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (lng_rc >= 0)
@@ -224,35 +224,19 @@ int test_allow_lag(int argc,
         vpxt_formated_print(RESPRT, "%s is identical to %s - Failed",
             allow_lag_on_file_name, allow_lag_off_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
-    if (fail == 0)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(2, allow_lag_on_enc.c_str(),
-            allow_lag_off_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(2, allow_lag_on_enc.c_str(),
-            allow_lag_off_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(2, allow_lag_on_enc.c_str(),
+        allow_lag_off_enc.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

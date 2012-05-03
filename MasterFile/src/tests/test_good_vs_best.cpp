@@ -5,7 +5,8 @@ int test_good_vs_best(int argc,
                       const std::string &working_dir,
                       const std::string sub_folder_str,
                       int test_type,
-                      int delete_ivf)
+                      int delete_ivf,
+                      int artifact_detection)
 {
     char *comp_out_str = "Allow Drop Frames";
     char *test_dir = "test_good_vs_best";
@@ -30,6 +31,13 @@ int test_good_vs_best(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int good_out_file_1_art_det = artifact_detection;
+    int good_out_file_2_art_det = artifact_detection;
+    int good_out_file_3_art_det = artifact_detection;
+    int best_out_file_1_art_det = artifact_detection;
+    int best_out_file_2_art_det = artifact_detection;
+    int best_out_file_3_art_det = artifact_detection;
 
     std::string good_out_file_1 = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_good_1";
@@ -208,17 +216,17 @@ int test_good_vs_best(int argc,
     double best_size_3 = vpxt_data_rate(best_out_file_3.c_str(), 1);
 
     double psnr_good_1 = vpxt_psnr(input.c_str(), good_out_file_1.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, good_out_file_1_art_det);
     double psnr_best_1 = vpxt_psnr(input.c_str(), best_out_file_1.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, best_out_file_1_art_det);
     double psnr_good_2 = vpxt_psnr(input.c_str(), good_out_file_2.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, good_out_file_2_art_det);
     double psnr_best_2 = vpxt_psnr(input.c_str(), best_out_file_2.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, best_out_file_2_art_det);
     double psnr_good_3 = vpxt_psnr(input.c_str(), good_out_file_3.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, good_out_file_3_art_det);
     double psnr_best_3 = vpxt_psnr(input.c_str(), best_out_file_3.c_str(), 1,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, best_out_file_3_art_det);
 
     // data rates not always in order so find smallest observed data rate
     double good_size_min = good_size_1;
@@ -317,8 +325,7 @@ int test_good_vs_best(int argc,
     tprintf(PRINT_BTH, "Best Quality area under curve for interval %.2f - %.2f "
         "= %.2f\n", min_common, max_common, best_area);
 
-    int pass = 0;
-
+    int test_state = kTestFailed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     if (good_area == best_area)
@@ -335,7 +342,7 @@ int test_good_vs_best(int argc,
             "Good Quality area under curve: %.2f - Passed", best_area,
             good_area);
         tprintf(PRINT_BTH, "\n");
-        pass = 1;
+        test_state = kTestPassed;
     }
 
     if (best_area < good_area)
@@ -346,36 +353,32 @@ int test_good_vs_best(int argc,
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (pass == 1)
+    // handle possible artifact
+    if(good_out_file_1_art_det == kPossibleArtifactFound ||
+        good_out_file_2_art_det == kPossibleArtifactFound ||
+        good_out_file_3_art_det == kPossibleArtifactFound ||
+        best_out_file_1_art_det == kPossibleArtifactFound ||
+        best_out_file_2_art_det == kPossibleArtifactFound ||
+        best_out_file_3_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(6, good_out_file_2.c_str(),
-            good_out_file_3.c_str(), good_out_file_1.c_str(),
-            best_out_file_1.c_str(), best_out_file_2.c_str(),
-            best_out_file_3.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(6, good_out_file_2.c_str(),
-            good_out_file_3.c_str(),
-            good_out_file_1.c_str(), best_out_file_1.c_str(),
-            best_out_file_2.c_str(), best_out_file_3.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(6, good_out_file_2.c_str(), good_out_file_3.c_str(),
+        good_out_file_1.c_str(), best_out_file_1.c_str(),
+        best_out_file_2.c_str(), best_out_file_3.c_str());
 
     fclose(fp);
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

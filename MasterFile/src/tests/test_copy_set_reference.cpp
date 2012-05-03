@@ -5,7 +5,8 @@ int test_copy_set_reference(int argc,
                             const std::string &working_dir,
                             const std::string sub_folder_str,
                             int test_type,
-                            int delete_ivf)
+                            int delete_ivf,
+                            int artifact_detection)
 {
     char *comp_out_str = "Error Resilient";
     char *test_dir = "test_copy_set_reference";
@@ -22,7 +23,7 @@ int test_copy_set_reference(int argc,
     std::string dec_format = argv[7];
 
     int speed = 0;
-    int pass = 0;
+    int test_state = kTestFailed;
 
     //////////// Formatting Test Specific directory ////////////
     std::string cur_test_dir_str;
@@ -123,7 +124,7 @@ int test_copy_set_reference(int argc,
             return kTestIndeterminate;
         }
 
-        pass = vpxt_decompress_copy_set(copy_set_enc.c_str(),
+        test_state = vpxt_decompress_copy_set(copy_set_enc.c_str(),
             copy_set_dec.c_str(), copy_set_dec_2.c_str(), dec_format, 1,
             first_copy_frame, PRINT_BTH);
     }
@@ -137,67 +138,39 @@ int test_copy_set_reference(int argc,
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (pass == 0)
+    if (test_state == kTestFailed)
     {
         vpxt_formated_print(RESPRT, "Not all cloned decompression frames "
             "identical to non cloned decompression frames - Failed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (pass == 1)
+    if (test_state == kTestPassed)
     {
         vpxt_formated_print(RESPRT, "All cloned decompression frames identical "
             "to non cloned decompression frames - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (pass == 2)
+    if (test_state == kTestIndeterminate)
     {
         vpxt_formated_print(RESPRT, "First clone frame not reached - "
             "Indeterminate");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (pass == 1)
-    {
+    if (test_state == kTestPassed)
         tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(3, copy_set_enc.c_str(), copy_set_dec.c_str(),
-            copy_set_dec_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
-    }
-
-    if (pass == 2)
-    {
+    if (test_state == kTestIndeterminate)
         tprintf(PRINT_BTH, "\nIndeterminate\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(3, copy_set_enc.c_str(), copy_set_dec.c_str(),
-            copy_set_dec_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestIndeterminate;
-    }
-    else
-    {
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(3, copy_set_enc.c_str(), copy_set_dec.c_str(),
-            copy_set_dec_2.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(3, copy_set_enc.c_str(), copy_set_dec.c_str(),
+        copy_set_dec_2.c_str());
 
     fclose(fp);
-
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

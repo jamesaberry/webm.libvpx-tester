@@ -5,7 +5,8 @@ int test_arnr(int argc,
               const std::string &working_dir,
               const std::string sub_folder_str,
               int test_type,
-              int delete_ivf)
+              int delete_ivf,
+              int artifact_detection)
 {
     char *comp_out_str = "Arnr Type";
     char *test_dir = "test_arnr";
@@ -35,6 +36,11 @@ int test_arnr(int argc,
         cur_test_dir_str, file_index_str, main_test_dir_char,
         file_index_output_char, sub_folder_str) == 11)
         return kTestErrFileMismatch;
+
+    int arnr_0_enc_art_det = artifact_detection;
+    int arnr_1_enc_art_det = artifact_detection;
+    int arnr_2_enc_art_det = artifact_detection;
+    int arnr_3_enc_art_det = artifact_detection;
 
     std::string arnr_0_enc = cur_test_dir_str + slashCharStr() + test_dir +
         "_compression_1_altref_0";
@@ -191,13 +197,13 @@ int test_arnr(int argc,
     }
 
     double arnr_enc_0_psnr = vpxt_psnr(input.c_str(), arnr_0_enc.c_str(),
-        0, PRINT_BTH, 1, NULL);
+        0, PRINT_BTH, 1, 0, 0, 0, NULL, arnr_0_enc_art_det);
     double arnr_enc_1_psnr = vpxt_psnr(input.c_str(), arnr_1_enc.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, arnr_1_enc_art_det);
     double arnr_enc_2_psnr = vpxt_psnr(input.c_str(), arnr_2_enc.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, arnr_2_enc_art_det);
     double arnr_enc_3_psnr = vpxt_psnr(input.c_str(), arnr_3_enc.c_str(), 0,
-        PRINT_BTH, 1, NULL);
+        PRINT_BTH, 1, 0, 0, 0, NULL, arnr_3_enc_art_det);
 
     double arnr_enc_0_data_rate = vpxt_data_rate(arnr_0_enc.c_str(), 1);
     double arnr_enc_1_data_rate = vpxt_data_rate(arnr_1_enc.c_str(), 1);
@@ -242,9 +248,8 @@ int test_arnr(int argc,
     else
         tprintf(PRINT_BTH, "\n Files are identical\n");
 
+    int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
-
-    int fail = 0;
 
     if (compare_1 >= 0)
     {
@@ -257,7 +262,7 @@ int test_arnr(int argc,
         vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
             arnr_enc_0_file_name, arnr_enc_1_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (compare_2 >= 0)
@@ -271,7 +276,7 @@ int test_arnr(int argc,
         vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
             arnr_enc_1_file_name, arnr_enc_2_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
 
     if (compare_3 >= 0)
@@ -285,7 +290,7 @@ int test_arnr(int argc,
         vpxt_formated_print(RESPRT, "%s identical to %s - Failed",
             arnr_enc_2_file_name, arnr_enc_3_file_name);
         tprintf(PRINT_BTH, "\n");
-        fail = 1;
+        test_state = kTestFailed;
     }
     // if greater than - pass
     if (arnr_enc_1_psnr > arnr_enc_0_psnr)
@@ -310,7 +315,7 @@ int test_arnr(int argc,
                 "Alt Ref 0 PSNR: %.2f - Failed", arnr_enc_1_psnr,
                 arnr_enc_0_psnr);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -336,7 +341,7 @@ int test_arnr(int argc,
                 "Alt Ref 0 PSNR: %.2f - Failed", arnr_enc_2_psnr,
                 arnr_enc_0_psnr);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -362,7 +367,7 @@ int test_arnr(int argc,
                 "Alt Ref 0 PSNR: %.2f - Failed", arnr_enc_3_psnr,
                 arnr_enc_0_psnr);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -388,7 +393,7 @@ int test_arnr(int argc,
                 "of Alt Ref 0 Data Rate: %.2f - Failed", arnr_enc_1_data_rate,
                 arnr_enc_0_data_rate);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -414,7 +419,7 @@ int test_arnr(int argc,
                 "of Alt Ref 0 Data Rate: %.2f - Failed", arnr_enc_2_data_rate,
                 arnr_enc_0_data_rate);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
@@ -440,37 +445,32 @@ int test_arnr(int argc,
                 "of Alt Ref 0 Data Rate: %.2f - Failed", arnr_enc_3_data_rate,
                 arnr_enc_0_data_rate);
             tprintf(PRINT_BTH, "\n");
-            fail = 1;
+            test_state = kTestFailed;
         }
     }
 
-    if (fail == 0)
+    // handle possible artifact
+    if(arnr_0_enc_art_det == kPossibleArtifactFound || arnr_1_enc_art_det ==
+        kPossibleArtifactFound || arnr_2_enc_art_det == kPossibleArtifactFound
+        || arnr_3_enc_art_det == kPossibleArtifactFound)
     {
-        tprintf(PRINT_BTH, "\nPassed\n");
-
-        if (delete_ivf)
-            vpxt_delete_files(4, arnr_0_enc.c_str(), arnr_1_enc.c_str(),
-            arnr_2_enc.c_str(), arnr_3_enc.c_str());
+        tprintf(PRINT_BTH, "\nPossible Artifact\n");
 
         fclose(fp);
         record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestPassed;
+        return kTestPossibleArtifact;
     }
-    else
-    {
+
+    if (test_state == kTestPassed)
+        tprintf(PRINT_BTH, "\nPassed\n");
+    if (test_state == kTestFailed)
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (delete_ivf)
-            vpxt_delete_files(4, arnr_0_enc.c_str(), arnr_1_enc.c_str(),
-            arnr_2_enc.c_str(), arnr_3_enc.c_str());
-
-        fclose(fp);
-        record_test_complete(file_index_str, file_index_output_char, test_type);
-        return kTestFailed;
-    }
+    if (delete_ivf)
+        vpxt_delete_files(4, arnr_0_enc.c_str(), arnr_1_enc.c_str(),
+        arnr_2_enc.c_str(), arnr_3_enc.c_str());
 
     fclose(fp);
-
     record_test_complete(file_index_str, file_index_output_char, test_type);
-    return kTestError;
+    return test_state;
 }

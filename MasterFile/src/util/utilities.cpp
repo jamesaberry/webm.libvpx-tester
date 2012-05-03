@@ -180,7 +180,7 @@ extern "C"
         int height,
         int border);
     extern int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf);
-    extern vpx_codec_iface_t vpx_enc_vp8_algo;
+    extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
     extern void vp8_yv12_scale_or_center(YV12_BUFFER_CONFIG *src_yuv_config,
         YV12_BUFFER_CONFIG *dst_yuv_config, int expanded_frame_width,
         int expanded_frame_height, int scaling_mode, int HScale, int HRatio,
@@ -8714,7 +8714,7 @@ int vpxt_faux_compress()
 {
 #ifdef API
     vpx_codec_ctx_t        encoder;
-    vpx_codec_iface_t     *iface = &vpx_enc_vp8_algo;
+    vpx_codec_iface_t     *iface = &vpx_codec_vp8_cx_algo;
     vpx_codec_enc_cfg_t    cfg;
     vpx_codec_enc_config_default(iface, &cfg, 0);
     vpx_codec_enc_init(&encoder, iface, &cfg, 0);
@@ -8734,7 +8734,7 @@ int vpxt_faux_decompress(const char *inputChar)
 {
 #ifdef API
 
-    vpx_dec_ctx_t          decoder;
+    vpx_codec_ctx_t        decoder;
     vpx_codec_iface_t     *iface = &vpx_codec_vp8_dx_algo;
     vpx_codec_dec_cfg_t     cfg;
     uint8_t               *buf = NULL;
@@ -13001,7 +13001,7 @@ unsigned int vpxt_compress_multi_resolution(const char *input_file,
     }
 
     /* Initialize multi-encoder */
-    if(vpx_codec_enc_init_multi(&codec[0], codec_test->iface, &cfg[0], s_lvl,
+    if(vpx_codec_enc_init_multi(&codec[0], codec_test->iface, &cfg[0],
         NUM_ENCODERS,(show_psnr ? VPX_CODEC_USE_PSNR : 0), &dsf[0]))
         return 0;
 

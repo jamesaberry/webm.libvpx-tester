@@ -2,124 +2,106 @@
 
 int test_version(int argc,
                  const char *const *argv,
-                 const std::string &WorkingDir,
-                 std::string FilesAr[],
-                 int TestType,
-                 int DeleteIVF)
+                 const std::string &working_dir,
+                 std::string files_ar[],
+                 int test_type,
+                 int delete_ivf)
 {
-    char *CompressString = "Version";
-    char *MyDir = "test_version";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Version";
+    char *test_dir = "test_version";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
-    std::string DecForm = argv[6];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
+    std::string dec_format = argv[6];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
 
-    std::string CurTestDirStr = "";
-    std::string FileIndexStr = "";
-    char MainTestDirChar[255] = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string Version0 = CurTestDirStr;
-    Version0.append(slashCharStr());
-    Version0.append(MyDir);
-    Version0.append("_compression_0");
-    vpxt_enc_format_append(Version0, EncForm);
+    std::string version_0 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_0";
+    vpxt_enc_format_append(version_0, enc_format);
 
-    std::string Version1 = CurTestDirStr;
-    Version1.append(slashCharStr());
-    Version1.append(MyDir);
-    Version1.append("_compression_1");
-    vpxt_enc_format_append(Version1, EncForm);
+    std::string version_1 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_1";
+    vpxt_enc_format_append(version_1, enc_format);
 
-    std::string Version2 = CurTestDirStr;
-    Version2.append(slashCharStr());
-    Version2.append(MyDir);
-    Version2.append("_compression_2");
-    vpxt_enc_format_append(Version2, EncForm);
+    std::string version_2 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_2";
+    vpxt_enc_format_append(version_2, enc_format);
 
-    std::string Version3 = CurTestDirStr;
-    Version3.append(slashCharStr());
-    Version3.append(MyDir);
-    Version3.append("_compression_3");
-    vpxt_enc_format_append(Version3, EncForm);
+    std::string version_3 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_3";
+    vpxt_enc_format_append(version_3, enc_format);
 
-    std::string Version0_Dec = CurTestDirStr;
-    Version0_Dec.append(slashCharStr());
-    Version0_Dec.append(MyDir);
-    Version0_Dec.append("_decompression_0");
-    vpxt_dec_format_append(Version0_Dec, DecForm);
+    std::string version_0_dec = cur_test_dir_str + slashCharStr() + test_dir +
+        "_decompression_0";
+    vpxt_dec_format_append(version_0_dec, dec_format);
 
-    std::string Version1_Dec = CurTestDirStr;
-    Version1_Dec.append(slashCharStr());
-    Version1_Dec.append(MyDir);
-    Version1_Dec.append("_decompression_1");
-    vpxt_dec_format_append(Version1_Dec, DecForm);
+    std::string version_1_dec = cur_test_dir_str + slashCharStr() + test_dir +
+        "_decompression_1";
+    vpxt_dec_format_append(version_1_dec, dec_format);
 
-    std::string Version2_Dec = CurTestDirStr;
-    Version2_Dec.append(slashCharStr());
-    Version2_Dec.append(MyDir);
-    Version2_Dec.append("_decompression_2");
-    vpxt_dec_format_append(Version2_Dec, DecForm);
+    std::string version_2_dec = cur_test_dir_str + slashCharStr() + test_dir +
+        "_decompression_2";
+    vpxt_dec_format_append(version_2_dec, dec_format);
 
-    std::string Version3_Dec = CurTestDirStr;
-    Version3_Dec.append(slashCharStr());
-    Version3_Dec.append(MyDir);
-    Version3_Dec.append("_decompression_3");
-    vpxt_dec_format_append(Version3_Dec, DecForm);
+    std::string version_3_dec = cur_test_dir_str + slashCharStr() + test_dir +
+        "_decompression_3";
+    vpxt_dec_format_append(version_3_dec, dec_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -127,215 +109,217 @@ int test_version(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
-    float PSNRArr[4];
-    unsigned int Deccpu_tick[4];
+    float psnr_arr[4];
+    unsigned int dec_cpu_tick[4];
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
-        Deccpu_tick[0] = vpxt_cpu_tick_return(Version0_Dec.c_str(), 1);
-        Deccpu_tick[1] = vpxt_cpu_tick_return(Version1_Dec.c_str(), 1);
-        Deccpu_tick[2] = vpxt_cpu_tick_return(Version2_Dec.c_str(), 1);
-        Deccpu_tick[3] = vpxt_cpu_tick_return(Version3_Dec.c_str(), 1);
+        dec_cpu_tick[0] = vpxt_cpu_tick_return(version_0_dec.c_str(), 1);
+        dec_cpu_tick[1] = vpxt_cpu_tick_return(version_1_dec.c_str(), 1);
+        dec_cpu_tick[2] = vpxt_cpu_tick_return(version_2_dec.c_str(), 1);
+        dec_cpu_tick[3] = vpxt_cpu_tick_return(version_3_dec.c_str(), 1);
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
         opt.Version = 0;
 
-        if (vpxt_compress(input.c_str(), Version0.c_str(), speed, BitRate, opt,
-            CompressString, 0, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), version_0.c_str(), speed, bitrate, opt,
+            comp_out_str, 0, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt.Version = 1;
 
-        if (vpxt_compress(input.c_str(), Version1.c_str(), speed, BitRate, opt,
-            CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), version_1.c_str(), speed, bitrate, opt,
+            comp_out_str, 1, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt.Version = 2;
 
-        if (vpxt_compress(input.c_str(), Version2.c_str(), speed, BitRate, opt,
-            CompressString, 2, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), version_2.c_str(), speed, bitrate, opt,
+            comp_out_str, 2, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt.Version = 3;
 
-        if (vpxt_compress(input.c_str(), Version3.c_str(), speed, BitRate, opt,
-            CompressString, 3, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), version_3.c_str(), speed, bitrate, opt,
+            comp_out_str, 3, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         tprintf(PRINT_STD, "\n\n");
-        unsigned int Time1 = vpxt_time_decompress(Version0.c_str(),
-            Version0_Dec.c_str(), Deccpu_tick[0], DecForm, 1);
+        unsigned int time_1 = vpxt_time_decompress(version_0.c_str(),
+            version_0_dec.c_str(), dec_cpu_tick[0], dec_format, 1);
 
-        if (Time1 == -1)
+        if (time_1 == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         tprintf(PRINT_STD, "\n");
-        unsigned int Time2 = vpxt_time_decompress(Version1.c_str(),
-            Version1_Dec.c_str(), Deccpu_tick[1], DecForm, 1);
+        unsigned int time_2 = vpxt_time_decompress(version_1.c_str(),
+            version_1_dec.c_str(), dec_cpu_tick[1], dec_format, 1);
 
-        if (Time2 == -1)
+        if (time_2 == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         tprintf(PRINT_STD, "\n");
-        unsigned int Time3 = vpxt_time_decompress(Version2.c_str(),
-            Version2_Dec.c_str(), Deccpu_tick[2], DecForm, 1);
+        unsigned int time_3 = vpxt_time_decompress(version_2.c_str(),
+            version_2_dec.c_str(), dec_cpu_tick[2], dec_format, 1);
 
-        if (Time3 == -1)
+        if (time_3 == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         tprintf(PRINT_STD, "\n");
-        unsigned int Time4 = vpxt_time_decompress(Version3.c_str(),
-            Version3_Dec.c_str(), Deccpu_tick[3], DecForm, 1);
+        unsigned int time_4 = vpxt_time_decompress(version_3.c_str(),
+            version_3_dec.c_str(), dec_cpu_tick[3], dec_format, 1);
 
-        if (Time4 == -1)
+        if (time_4 == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
-    PSNRArr[0] = vpxt_psnr(input.c_str(), Version0.c_str(), 0, PRINT_BTH, 1,
+    psnr_arr[0] = vpxt_psnr(input.c_str(), version_0.c_str(), 0, PRINT_BTH, 1,
         NULL);
-    PSNRArr[1] = vpxt_psnr(input.c_str(), Version1.c_str(), 0, PRINT_BTH, 1,
+    psnr_arr[1] = vpxt_psnr(input.c_str(), version_1.c_str(), 0, PRINT_BTH, 1,
         NULL);
-    PSNRArr[2] = vpxt_psnr(input.c_str(), Version2.c_str(), 0, PRINT_BTH, 1,
+    psnr_arr[2] = vpxt_psnr(input.c_str(), version_2.c_str(), 0, PRINT_BTH, 1,
         NULL);
-    PSNRArr[3] = vpxt_psnr(input.c_str(), Version3.c_str(), 0, PRINT_BTH, 1,
+    psnr_arr[3] = vpxt_psnr(input.c_str(), version_3.c_str(), 0, PRINT_BTH, 1,
         NULL);
 
     tprintf(PRINT_BTH, "\n");
 
-    int PSNRFail = 0;
-    int TIMEFail = 0;
+    int psnr_fail = 0;
+    int time_fail = 0;
     int i = 0;
 
     while (i < 4)
     {
-
         int t = i + 1;
-
         while (t < 4)
         {
             //i should always have Higher PSNR than t
-            //i should always have a higher Deccpu_tick as well.
-            if (PSNRArr[i] < PSNRArr[t])
+            //i should always have a higher dec_cpu_tick as well.
+            if (psnr_arr[i] < psnr_arr[t])
             {
-                if (Deccpu_tick[i] < Deccpu_tick[t])
+                if (dec_cpu_tick[i] < dec_cpu_tick[t])
                 {
                     tprintf(PRINT_BTH, "\nFailed Version %i Decode Tick: %d "
                         ">= Version %i Decode Tick: %d\n"
                             "Failed Version %i PSNR: %f <= Version %i PSNR: "
-                            "%f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i,
-                            PSNRArr[i], t, PSNRArr[t]);
-                    TIMEFail++;
-                    PSNRFail++;
+                            "%f\n", i, dec_cpu_tick[i], t, dec_cpu_tick[t], i,
+                            psnr_arr[i], t, psnr_arr[t]);
+                    time_fail++;
+                    psnr_fail++;
                 }
                 else
                 {
                     tprintf(PRINT_BTH, "\n       Version %i Decode Tick: %d "
                         ">= Version %i Decode Tick: %d\n"
                             "Failed Version %i PSNR: %f <= Version %i PSNR: "
-                            "%f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i,
-                            PSNRArr[i], t, PSNRArr[t]);
-                    PSNRFail++;
+                            "%f\n", i, dec_cpu_tick[i], t, dec_cpu_tick[t], i,
+                            psnr_arr[i], t, psnr_arr[t]);
+                    psnr_fail++;
                 }
             }
             else
             {
-                if (Deccpu_tick[i] < Deccpu_tick[t])
+                if (dec_cpu_tick[i] < dec_cpu_tick[t])
                 {
                     tprintf(PRINT_BTH, "\nFailed Version %i Decode Tick: %d <= "
                         "Version %i Decode Tick: %d\n"
                             "       Version %i PSNR: %f >= Version %i PSNR: "
-                            "%f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i,
-                            PSNRArr[i], t, PSNRArr[t]);
-                    TIMEFail++;
+                            "%f\n", i, dec_cpu_tick[i], t, dec_cpu_tick[t], i,
+                            psnr_arr[i], t, psnr_arr[t]);
+                    time_fail++;
                 }
                 else
                 {
                     tprintf(PRINT_BTH, "\n       Version %i Decode Tick: %d >= "
                         "Version %i Decode Tick: %d\n"
                             "       Version %i PSNR: %f >= Version %i PSNR: "
-                            "%f\n", i, Deccpu_tick[i], t, Deccpu_tick[t], i,
-                            PSNRArr[i], t, PSNRArr[t]);
+                            "%f\n", i, dec_cpu_tick[i], t, dec_cpu_tick[t], i,
+                            psnr_arr[i], t, psnr_arr[t]);
                 }
             }
-
             t++;
         }
-
         i++;
     }
-
-    //Fail tracks PSNR Fails
-    //Fail2 tracks Time Fails
 
     int fail = 0;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (PSNRFail == 0)// && TIMEFail == 0)
+    if (psnr_fail == 0)
     {
         vpxt_formated_print(RESPRT, "All PSNRs decrease as version numbers "
             "increase - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (PSNRFail < 2 && PSNRFail != 0)// && TIMEFail == 0)
+    if (psnr_fail < 2 && psnr_fail != 0)
     {
         vpxt_formated_print(RESPRT, "All but one PSNR Decreases as version "
             "numbers increase - Min Passed");
@@ -343,7 +327,7 @@ int test_version(int argc,
         fail = 2;
     }
 
-    if (PSNRFail >= 2)
+    if (psnr_fail >= 2)
     {
         vpxt_formated_print(RESPRT, "Not all PSNRs decrease as version numbers "
             "increase - Failed");
@@ -351,14 +335,14 @@ int test_version(int argc,
         fail = 1;
     }
 
-    if (TIMEFail == 0)
+    if (time_fail == 0)
     {
         vpxt_formated_print(RESPRT, "All Decode ticks decrease as version "
             "numbers increase - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (TIMEFail < 2 && TIMEFail != 0)
+    if (time_fail < 2 && time_fail != 0)
     {
         vpxt_formated_print(RESPRT, "All but one Decode ticks decrease as "
             "version numbers increase - Min Passed");
@@ -366,7 +350,7 @@ int test_version(int argc,
         fail = 2;
     }
 
-    if (TIMEFail >= 2)
+    if (time_fail >= 2)
     {
         vpxt_formated_print(RESPRT, "Not all Decode ticks increase as "
             "version numbers increase - Failed");
@@ -378,13 +362,13 @@ int test_version(int argc,
     {
         tprintf(PRINT_BTH, "\nMin Passed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, Version0.c_str(), Version1.c_str(),
-            Version2.c_str(), Version3.c_str(), Version0_Dec.c_str(),
-            Version1_Dec.c_str(), Version2_Dec.c_str(), Version3_Dec.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, version_0.c_str(), version_1.c_str(),
+            version_2.c_str(), version_3.c_str(), version_0_dec.c_str(),
+            version_1_dec.c_str(), version_2_dec.c_str(),version_3_dec.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 8;
     }
 
@@ -392,30 +376,30 @@ int test_version(int argc,
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, Version0.c_str(), Version1.c_str(),
-            Version2.c_str(), Version3.c_str(), Version0_Dec.c_str(),
-            Version1_Dec.c_str(), Version2_Dec.c_str(), Version3_Dec.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, version_0.c_str(), version_1.c_str(),
+            version_2.c_str(), version_3.c_str(), version_0_dec.c_str(),
+            version_1_dec.c_str(), version_2_dec.c_str(),version_3_dec.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
     else
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, Version0.c_str(), Version1.c_str(),
-            Version2.c_str(), Version3.c_str(), Version0_Dec.c_str(),
-            Version1_Dec.c_str(), Version2_Dec.c_str(), Version3_Dec.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, version_0.c_str(), version_1.c_str(),
+            version_2.c_str(), version_3.c_str(), version_0_dec.c_str(),
+            version_1_dec.c_str(), version_2_dec.c_str(),version_3_dec.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

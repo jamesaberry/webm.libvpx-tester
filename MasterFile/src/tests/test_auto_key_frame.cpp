@@ -2,97 +2,87 @@
 
 int test_auto_key_frame(int argc,
                         const char *const *argv,
-                        const std::string &WorkingDir,
-                        std::string FilesAr[],
-                        int TestType,
-                        int DeleteIVF)
+                        const std::string &working_dir,
+                        std::string files_ar[],
+                        int test_type,
+                        int delete_ivf)
 {
-    char *CompressString = "Auto Key Frame";
-    char *MyDir = "test_auto_key_frame";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Auto Key Frame";
+    char *test_dir = "test_auto_key_frame";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int AutoKeyFramingInt = atoi(argv[5]);
-    std::string EncForm = argv[6];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    int auto_key_frame = atoi(argv[5]);
+    std::string enc_format = argv[6];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string AutoKeyFramingWorks1 = CurTestDirStr;
-    AutoKeyFramingWorks1.append(slashCharStr());
-    AutoKeyFramingWorks1.append(MyDir);
-    AutoKeyFramingWorks1.append("_compression_1");
-    vpxt_enc_format_append(AutoKeyFramingWorks1, EncForm);
+    std::string auto_key_frame_works_enc_1 = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_1";
+    vpxt_enc_format_append(auto_key_frame_works_enc_1, enc_format);
 
-    std::string AutoKeyFramingWorks2 = CurTestDirStr;
-    AutoKeyFramingWorks2.append(slashCharStr());
-    AutoKeyFramingWorks2.append(MyDir);
-    AutoKeyFramingWorks2.append("_compression_2");
-    vpxt_enc_format_append(AutoKeyFramingWorks2, EncForm);
+    std::string auto_key_frame_works_enc_2 = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_2";
+    vpxt_enc_format_append(auto_key_frame_works_enc_2, enc_format);
 
-    std::string KeyFrameTxtOut1 = CurTestDirStr;
-    KeyFrameTxtOut1.append(slashCharStr());
-    KeyFrameTxtOut1.append(MyDir);
-    KeyFrameTxtOut1.append("_compression_1_key_frames.txt");
+    std::string key_frame_txt_out_1 = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_1_key_frames.txt";
 
-    std::string KeyFrameTxtOut2 = CurTestDirStr;
-    KeyFrameTxtOut2.append(slashCharStr());
-    KeyFrameTxtOut2.append(MyDir);
-    KeyFrameTxtOut2.append("_compression_2_key_frames.txt");
+    std::string key_frame_txt_out_2 = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_2_key_frames.txt";
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -100,76 +90,81 @@ int test_auto_key_frame(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.auto_key = 1;
-    opt.key_freq = AutoKeyFramingInt;
+    opt.key_freq = auto_key_frame;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
-        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks1.c_str(), speed,
-            BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), auto_key_frame_works_enc_1.c_str(),
+            speed, bitrate, opt, comp_out_str, auto_key_frame, 0, enc_format)
+            == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        if (vpxt_compress(input.c_str(), AutoKeyFramingWorks2.c_str(), speed,
-            BitRate, opt, CompressString, AutoKeyFramingInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), auto_key_frame_works_enc_2.c_str(),
+            speed, bitrate, opt, comp_out_str, auto_key_frame, 0, enc_format)
+            == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
-    vpxt_display_key_frames(AutoKeyFramingWorks1.c_str(), 1);
-    vpxt_display_key_frames(AutoKeyFramingWorks2.c_str(), 1);
+    vpxt_display_key_frames(auto_key_frame_works_enc_1.c_str(), 1);
+    vpxt_display_key_frames(auto_key_frame_works_enc_2.c_str(), 1);
 
-    std::ifstream inFileIndexOutputChar(KeyFrameTxtOut1.c_str());
-    std::ifstream infile2(KeyFrameTxtOut2.c_str());
+    std::ifstream key_frame_1_infile(key_frame_txt_out_1.c_str());
+    std::ifstream key_frame_2_infile(key_frame_txt_out_2.c_str());
 
-    if (!inFileIndexOutputChar.good())
+    if (!key_frame_1_infile.good())
     {
         tprintf(PRINT_BTH, "\nKey Frame File 1 Not Found: %s\n",
-            KeyFrameTxtOut1.c_str());
+            key_frame_txt_out_1.c_str());
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
-    if (!infile2.good())
+    if (!key_frame_2_infile.good())
     {
         tprintf(PRINT_BTH, "\nKey Frame File 2 Not Found: %s\n",
-            KeyFrameTxtOut2.c_str());
+            key_frame_txt_out_2.c_str());
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
@@ -177,43 +172,36 @@ int test_auto_key_frame(int argc,
     int x;
     int y;
 
-    while (!inFileIndexOutputChar.eof() && !infile2.eof())
+    while (!key_frame_1_infile.eof() && !key_frame_2_infile.eof())
     {
-        inFileIndexOutputChar >> x;
-        infile2 >> y;
+        key_frame_1_infile >> x;
+        key_frame_2_infile >> y;
 
         if (x != y)
-        {
             fail = 1;
-        }
-
     }
 
-    if (!inFileIndexOutputChar.eof())
-    {
+    if (!key_frame_1_infile.eof())
         fail = 1;
-    }
 
-    if (!infile2.eof())
-    {
+    if (!key_frame_2_infile.eof())
         fail = 1;
-    }
 
-    inFileIndexOutputChar.close();
-    infile2.close();
+    key_frame_1_infile.close();
+    key_frame_2_infile.close();
 
-    char AutoKeyFramingWorks1FileName[255];
-    vpxt_file_name(AutoKeyFramingWorks1.c_str(), AutoKeyFramingWorks1FileName,
-        0);
-    char AutoKeyFramingWorks2FileName[255];
-    vpxt_file_name(AutoKeyFramingWorks2.c_str(), AutoKeyFramingWorks2FileName,
-        0);
+    char auto_key_frame_works_1_file_name[255];
+    vpxt_file_name(auto_key_frame_works_enc_1.c_str(),
+        auto_key_frame_works_1_file_name, 0);
+    char auto_key_frame_works_2_file_name[255];
+    vpxt_file_name(auto_key_frame_works_enc_2.c_str(),
+        auto_key_frame_works_2_file_name, 0);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     ////////////////////////////////////////////////////////////////////////////
-    int fail2 = 0;
-    std::ifstream infile(KeyFrameTxtOut1.c_str());
+    int fail_2 = 0;
+    std::ifstream infile(key_frame_txt_out_1.c_str());
 
     if (!infile.good())
     {
@@ -222,109 +210,106 @@ int test_auto_key_frame(int argc,
         return 0;
     }
 
-    int selector2 = 0;
-    int doOnce2 = 0;
+    int selector = 0;
+    int do_once = 0;
     int x2;
     int y2;
 
     while (!infile.eof())
     {
-        if (selector2 == 1)
+        if (selector == 1)
         {
             infile >> x2;
-            selector2 = 2;
+            selector = 2;
         }
         else
         {
             infile >> y2;
-            selector2 = 1;
+            selector = 1;
         }
 
-        if (doOnce2 == 0)
+        if (do_once == 0)
         {
             x2 = 0;
             infile >> y2;
-            doOnce2 = 1;
-            selector2 = 1;
+            do_once = 1;
+            selector = 1;
         }
 
-        if (vpxt_abs_int(y2 - x2) > AutoKeyFramingInt)
+        if (vpxt_abs_int(y2 - x2) > auto_key_frame)
         {
             vpxt_formated_print(RESPRT, "Key Frames do not occur at least as "
                 "frequently as Auto Key Frame dictates: %i No key frames "
-                "between %i and %i - Failed", AutoKeyFramingInt, x2, y2);
+                "between %i and %i - Failed", auto_key_frame, x2, y2);
             tprintf(PRINT_BTH, "\n");
-            fail2 = 1;
+            fail_2 = 1;
         }
     }
 
-    int maxKeyFrame = 0;
+    int max_key_frame = 0;
 
     if (x2 > y2)
-    {
-        maxKeyFrame = x2;
-    }
+        max_key_frame = x2;
     else
-    {
-        maxKeyFrame = y2;
-    }
+        max_key_frame = y2;
 
-    int NumberofFrames =vpxt_get_number_of_frames(AutoKeyFramingWorks1.c_str());
+    int number_of_frames = vpxt_get_number_of_frames(
+        auto_key_frame_works_enc_1.c_str());
 
-    if (NumberofFrames - 1 >= (maxKeyFrame + AutoKeyFramingInt))
+    if (number_of_frames - 1 >= (max_key_frame + auto_key_frame))
     {
         vpxt_formated_print(RESPRT, "Key Frames do not occur at least as "
             "frequently as Auto Key Frame dictates: %i No key frames between "
-            "%i and %i - Failed", AutoKeyFramingInt, maxKeyFrame,
-            NumberofFrames - 1);
+            "%i and %i - Failed", auto_key_frame, max_key_frame,
+            number_of_frames - 1);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    if (fail2 == 0)
+    if (fail_2 == 0)
     {
         vpxt_formated_print(RESPRT, "Key Frames occur at least as frequently as"
-            " Auto Key Frame dictates: %i - Passed", AutoKeyFramingInt);
+            " Auto Key Frame dictates: %i - Passed", auto_key_frame);
         tprintf(PRINT_BTH, "\n");
     }
 
     if (fail == 0)
     {
         vpxt_formated_print(RESPRT, "Key Frames occur at the same locations "
-            "for %s and %s - Passed", AutoKeyFramingWorks1FileName,
-            AutoKeyFramingWorks2FileName);
+            "for %s and %s - Passed", auto_key_frame_works_1_file_name,
+            auto_key_frame_works_2_file_name);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, AutoKeyFramingWorks1.c_str(),
-            AutoKeyFramingWorks2.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, auto_key_frame_works_enc_1.c_str(),
+            auto_key_frame_works_enc_2.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "Key Frames do not occur at the same "
-            "locations for %s and %s - Failed", AutoKeyFramingWorks1FileName,
-            AutoKeyFramingWorks2FileName);
+            "locations for %s and %s - Failed", auto_key_frame_works_1_file_name
+            , auto_key_frame_works_2_file_name);
         tprintf(PRINT_BTH, "\n");
 
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, AutoKeyFramingWorks1.c_str(),
-            AutoKeyFramingWorks2.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, auto_key_frame_works_enc_1.c_str(),
+            auto_key_frame_works_enc_2.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

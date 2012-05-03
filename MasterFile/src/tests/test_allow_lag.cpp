@@ -2,86 +2,80 @@
 
 int test_allow_lag(int argc,
                    const char *const *argv,
-                   const std::string &WorkingDir,
-                   std::string FilesAr[],
-                   int TestType,
-                   int DeleteIVF)
+                   const std::string &working_dir,
+                   std::string files_ar[],
+                   int test_type,
+                   int delete_ivf)
 {
-    char *CompressString = "Allow Lag";
-    char *MyDir = "test_allow_lag";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Allow Lag";
+    char *test_dir = "test_allow_lag";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    std::string FileIndexStr = "";
-    char MainTestDirChar[255] = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string AllowLagon = CurTestDirStr;
-    AllowLagon.append(slashCharStr());
-    AllowLagon.append(MyDir);
-    AllowLagon.append("_compression_1");
-    vpxt_enc_format_append(AllowLagon, EncForm);
+    std::string allow_lag_on_enc = cur_test_dir_str + slashCharStr() + test_dir
+        + "_compression_1";
+    vpxt_enc_format_append(allow_lag_on_enc, enc_format);
 
-    std::string AllowLagoff = CurTestDirStr;
-    AllowLagoff.append(slashCharStr());
-    AllowLagoff.append(MyDir);
-    AllowLagoff.append("_compression_0");
-    vpxt_enc_format_append(AllowLagoff, EncForm);
+    std::string allow_lag_off_enc = cur_test_dir_str + slashCharStr() + test_dir
+        + "_compression_0";
+    vpxt_enc_format_append(allow_lag_off_enc, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -89,143 +83,146 @@ int test_allow_lag(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.lag_in_frames = 10;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
         opt.allow_lag = 0;
 
-        if (vpxt_compress(input.c_str(), AllowLagoff.c_str(), speed, BitRate,
-            opt, CompressString, 0, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), allow_lag_off_enc.c_str(), speed,
+            bitrate, opt, comp_out_str, 0, 1, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt.allow_lag = 1;
 
-        if (vpxt_compress(input.c_str(), AllowLagon.c_str(), speed, BitRate,
-            opt, CompressString, 1, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), allow_lag_on_enc.c_str(), speed,
+            bitrate, opt, comp_out_str, 1, 1, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char,
+            test_type);
         return 10;
     }
 
     ////////////Make Sure That Frames are lagged////////////
-    std::string QuantInStr;;
-    vpxt_remove_file_extension(AllowLagon.c_str(), QuantInStr);
-    //std::string QuantInStr = AllowLagon;
-    //QuantInStr.erase(QuantInStr.length() - 4, 4);
-    QuantInStr.append("quantizers.txt");
-    char QuantInChar[255] = "";
-    snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
+    std::string quant_in_str;
+    vpxt_remove_file_extension(allow_lag_on_enc.c_str(), quant_in_str);
+    quant_in_str += "quantizers.txt";
 
-    int LagInFramesFound = vpxt_lag_in_frames_check(QuantInChar);
-    int AllowLagONAltRefCount = vpxt_display_alt_ref_frames(AllowLagon.c_str(),
-        1);
-    int AllowLagOFFAltRefCount = vpxt_display_alt_ref_frames(AllowLagoff.c_str()
-        , 1);
-    int VisibleFrameONCount = vpxt_display_visible_frames(AllowLagon.c_str(),
-        1);
-    int VisibleFrameOFFCount = vpxt_display_visible_frames(AllowLagoff.c_str(),
-        1);
+    int lag_in_frames_found = vpxt_lag_in_frames_check(quant_in_str.c_str());
+    int allow_lag_on_alt_ref_count = vpxt_display_alt_ref_frames(
+        allow_lag_on_enc.c_str(), 1);
+    int allow_lag_off_alt_ref_count = vpxt_display_alt_ref_frames(
+        allow_lag_off_enc.c_str() , 1);
+    int visible_frame_on_count = vpxt_display_visible_frames(
+        allow_lag_on_enc.c_str(), 1);
+    int visible_frame_off_count = vpxt_display_visible_frames(
+        allow_lag_off_enc.c_str(), 1);
 
-    char AllowLagonFilename[255];
-    vpxt_file_name(AllowLagon.c_str(), AllowLagonFilename, 0);
-    char AllowLagoffFilename[255];
-    vpxt_file_name(AllowLagoff.c_str(), AllowLagoffFilename, 0);
+    char allow_lag_on_file_name[255];
+    vpxt_file_name(allow_lag_on_enc.c_str(), allow_lag_on_file_name, 0);
+    char allow_lag_off_file_name[255];
+    vpxt_file_name(allow_lag_off_enc.c_str(), allow_lag_off_file_name, 0);
 
-    int lngRC = vpxt_compare_enc(AllowLagoff.c_str(), AllowLagon.c_str(), 0);
+    int lng_rc = vpxt_compare_enc(allow_lag_off_enc.c_str(),
+        allow_lag_on_enc.c_str(), 0);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
     int fail = 0;
 
-    if (LagInFramesFound == opt.lag_in_frames)
+    if (lag_in_frames_found == opt.lag_in_frames)
     {
         vpxt_formated_print(RESPRT, "Correct number of LagInFrames (%i) "
             "detected in compression for %s - Passed", opt.lag_in_frames,
-            AllowLagonFilename);
+            allow_lag_on_file_name);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Correct number of LagInFrames (%i) not "
             "detected in compression for %s - Failed", opt.lag_in_frames,
-            AllowLagonFilename);
+            allow_lag_on_file_name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (AllowLagONAltRefCount > 0)
+    if (allow_lag_on_alt_ref_count > 0)
     {
         vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s "
-            "- Passed", AllowLagonFilename);
+            "- Passed", allow_lag_on_file_name);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
-            "for %s - Failed", AllowLagonFilename);
+            "for %s - Failed", allow_lag_on_file_name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (VisibleFrameONCount == VisibleFrameOFFCount)
+    if (visible_frame_on_count == visible_frame_off_count)
     {
         vpxt_formated_print(RESPRT, "Visible Frames for %s = %i == Visible "
-            "Frames for %s = %i - Passed", AllowLagonFilename,
-            VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
+            "Frames for %s = %i - Passed", allow_lag_on_file_name,
+            visible_frame_on_count, allow_lag_off_file_name,
+            visible_frame_off_count);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Visible Frames for %s = %i != Visible "
-            "Frames for %s = %i - Failed", AllowLagonFilename,
-            VisibleFrameONCount, AllowLagoffFilename, VisibleFrameOFFCount);
+            "Frames for %s = %i - Failed", allow_lag_on_file_name,
+            visible_frame_on_count, allow_lag_off_file_name,
+            visible_frame_off_count);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (lngRC >= 0)
+    if (lng_rc >= 0)
     {
         vpxt_formated_print(RESPRT, "%s is not identical to %s - Passed",
-            AllowLagonFilename, AllowLagoffFilename);
+            allow_lag_on_file_name, allow_lag_off_file_name);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (lngRC == -1)
+    if (lng_rc == -1)
     {
         vpxt_formated_print(RESPRT, "%s is identical to %s - Failed",
-            AllowLagonFilename, AllowLagoffFilename);
+            allow_lag_on_file_name, allow_lag_off_file_name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
@@ -234,26 +231,28 @@ int test_allow_lag(int argc,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, AllowLagon.c_str(), AllowLagoff.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, allow_lag_on_enc.c_str(),
+            allow_lag_off_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, AllowLagon.c_str(), AllowLagoff.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, allow_lag_on_enc.c_str(),
+            allow_lag_off_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

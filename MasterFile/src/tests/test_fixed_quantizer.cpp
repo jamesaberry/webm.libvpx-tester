@@ -2,90 +2,82 @@
 
 int test_fixed_quantizer(int argc,
                          const char *const *argv,
-                         const std::string &WorkingDir,
-                         std::string FilesAr[],
-                         int TestType,
-                         int DeleteIVF)
+                         const std::string &working_dir,
+                         std::string files_ar[],
+                         int test_type,
+                         int delete_ivf)
 {
-    char *CompressString = "Fixed Quantizer";
-    char *MyDir = "test_fixed_quantizer";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Fixed Quantizer";
+    char *test_dir = "test_fixed_quantizer";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int FixedQ1Int = atoi(argv[5]);
-    int FixedQ2Int = atoi(argv[6]);
-    std::string EncForm = argv[7];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    int fixed_q_1 = atoi(argv[5]);
+    int fixed_q_2 = atoi(argv[6]);
+    std::string enc_format = argv[7];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string FixedQ1 = CurTestDirStr;
-    FixedQ1.append(slashCharStr());
-    FixedQ1.append(MyDir);
-    FixedQ1.append("_compression_");
-    FixedQ1.append(argv[5]);
-    vpxt_enc_format_append(FixedQ1, EncForm);
+    std::string fixed_q_1_enc = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_" + argv[5];
+    vpxt_enc_format_append(fixed_q_1_enc, enc_format);
 
-    std::string FixedQ2 = CurTestDirStr;
-    FixedQ2.append(slashCharStr());
-    FixedQ2.append(MyDir);
-    FixedQ2.append("_compression_");
-    FixedQ2.append(argv[6]);
-    vpxt_enc_format_append(FixedQ2, EncForm);
+    std::string fixed_q_2_enc = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_" + argv[6];
+    vpxt_enc_format_append(fixed_q_2_enc, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -93,27 +85,26 @@ int test_fixed_quantizer(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.fixed_q = 1;
-    int FixedQCheck1 = FixedQ1Int;
-    int FixedQCheck2 = FixedQ2Int;
 
-    if (FixedQ1Int < 0 || FixedQ1Int > 63 || FixedQ2Int < 0 || FixedQ2Int > 63)
+    if (fixed_q_1 < 0 || fixed_q_1 > 63 || fixed_q_2 < 0 || fixed_q_2 > 63)
     {
         tprintf(PRINT_BTH, "\n\nInvaild Qunatizer Range, Vaild range = 0-63 - "
             "Indeterminate\n");
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 8;
     }
 
@@ -121,41 +112,43 @@ int test_fixed_quantizer(int argc,
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
-        opt.fixed_q = FixedQ1Int;
+        opt.fixed_q = fixed_q_1;
 
-        if (vpxt_compress(input.c_str(), FixedQ1.c_str(), speed, BitRate, opt,
-            CompressString, FixedQ1Int, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), fixed_q_1_enc.c_str(), speed, bitrate,
+            opt, comp_out_str, fixed_q_1, 1, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.fixed_q = FixedQ2Int;
+        opt.fixed_q = fixed_q_2;
 
-        if (vpxt_compress(input.c_str(), FixedQ2.c_str(), speed, BitRate, opt,
-            CompressString, FixedQ2Int, 1, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), fixed_q_2_enc.c_str(), speed, bitrate,
+            opt, comp_out_str, fixed_q_2, 1, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
@@ -164,89 +157,89 @@ int test_fixed_quantizer(int argc,
     int fail = 0;
 
     tprintf(PRINT_BTH, "\n");
-    int FixedQCheckVal1 = vpxt_check_fixed_quantizer(FixedQ1.c_str(),
-        FixedQ1Int);
+    int fixed_q_check_val_1 = vpxt_check_fixed_quantizer(fixed_q_1_enc.c_str(),
+        fixed_q_1);
     tprintf(PRINT_BTH, "\n");
-    int FixedQCheckVal2 = vpxt_check_fixed_quantizer(FixedQ2.c_str(),
-        FixedQ2Int);
-    tprintf(PRINT_BTH, "\n");
-
-    tprintf(PRINT_BTH, "\n");
-    int FixedQSize1 = vpxt_file_size(FixedQ1.c_str(), 1);
-    tprintf(PRINT_BTH, "\n");
-    int FixedQSize2 = vpxt_file_size(FixedQ2.c_str(), 1);
+    int fixed_q_check_val_2 = vpxt_check_fixed_quantizer(fixed_q_2_enc.c_str(),
+        fixed_q_2);
     tprintf(PRINT_BTH, "\n");
 
-    char FixedQ1FileName[255] = "";
-    char FixedQ2FileName[255] = "";
+    tprintf(PRINT_BTH, "\n");
+    int fixed_q_size_1 = vpxt_file_size(fixed_q_1_enc.c_str(), 1);
+    tprintf(PRINT_BTH, "\n");
+    int fixed_q_size_2 = vpxt_file_size(fixed_q_2_enc.c_str(), 1);
+    tprintf(PRINT_BTH, "\n");
 
-    vpxt_file_name(FixedQ1.c_str(), FixedQ1FileName, 0);
-    vpxt_file_name(FixedQ2.c_str(), FixedQ2FileName, 0);
+    char fixed_q_1_file_name[255] = "";
+    char fixed_q_2_file_name[255] = "";
+
+    vpxt_file_name(fixed_q_1_enc.c_str(), fixed_q_1_file_name, 0);
+    vpxt_file_name(fixed_q_2_enc.c_str(), fixed_q_2_file_name, 0);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (FixedQCheckVal1 != -1)
+    if (fixed_q_check_val_1 != -1)
     {
         vpxt_formated_print(RESPRT, "Quantizer not fixed for %s for frame %i -"
-            " Failed", FixedQ1FileName, FixedQCheckVal1);
+            " Failed", fixed_q_1_file_name, fixed_q_check_val_1);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "Quantizer fixed at %i for all frames for "
-            "%s - Passed", FixedQ1Int, FixedQ1FileName);
+            "%s - Passed", fixed_q_1, fixed_q_1_file_name);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (FixedQCheckVal2 != -1)
+    if (fixed_q_check_val_2 != -1)
     {
         vpxt_formated_print(RESPRT, "Quantizer not fixed for %s for frame %i - "
-            "Failed", FixedQ2FileName, FixedQCheckVal2);
+            "Failed", fixed_q_2_file_name, fixed_q_check_val_2);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "Quantizer fixed at %i for all frames for "
-            "%s - Passed", FixedQ2Int, FixedQ2FileName);
+            "%s - Passed", fixed_q_2, fixed_q_2_file_name);
         tprintf(PRINT_BTH, "\n");
     }
     //make sure that lower fixed q has higher datarate
-    if (FixedQ1Int < FixedQ2Int)
+    if (fixed_q_1 < fixed_q_2)
     {
 
-        if (FixedQSize1 <= FixedQSize2)
+        if (fixed_q_size_1 <= fixed_q_size_2)
         {
             vpxt_formated_print(RESPRT, "%s file size: %i >= %s file size: %i "
-                "- Failed", FixedQ2FileName, FixedQSize2, FixedQ1FileName,
-                FixedQSize1);
+                "- Failed", fixed_q_2_file_name, fixed_q_size_2,
+                fixed_q_1_file_name, fixed_q_size_1);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "%s file size: %i > %s file size: %i "
-                "- Passed", FixedQ1FileName, FixedQSize1, FixedQ2FileName,
-                FixedQSize2);
+                "- Passed", fixed_q_1_file_name, fixed_q_size_1,
+                fixed_q_2_file_name, fixed_q_size_2);
             tprintf(PRINT_BTH, "\n");
         }
     }
     else
     {
-        if (FixedQSize2 <= FixedQSize1)
+        if (fixed_q_size_2 <= fixed_q_size_1)
         {
             vpxt_formated_print(RESPRT, "%s file size: %i >= %s file size: %i "
-                "- Failed", FixedQ1FileName, FixedQSize1, FixedQ2FileName,
-                FixedQSize2);
+                "- Failed", fixed_q_1_file_name, fixed_q_size_1,
+                fixed_q_2_file_name, fixed_q_size_2);
             tprintf(PRINT_BTH, "\n");
             fail = 1;
         }
         else
         {
             vpxt_formated_print(RESPRT, "%s file size: %i > %s file size: %i "
-                "- Failed", FixedQ2FileName, FixedQSize2, FixedQ1FileName,
-                FixedQSize1);
+                "- Failed", fixed_q_2_file_name, fixed_q_size_2,
+                fixed_q_1_file_name, fixed_q_size_1);
             tprintf(PRINT_BTH, "\n");
         }
     }
@@ -255,26 +248,26 @@ int test_fixed_quantizer(int argc,
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, FixedQ1.c_str(), FixedQ2.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, fixed_q_1_enc.c_str(), fixed_q_2_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
     else
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, FixedQ1.c_str(), FixedQ2.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, fixed_q_1_enc.c_str(), fixed_q_2_enc.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

@@ -2437,29 +2437,29 @@ VP8_CONFIG vpxt_random_parameters(VP8_CONFIG &opt,
 
     if (opt.Mode == 0)
         opt.noise_sensitivity = 0;           //valid Range:
-    else                                     //if Real Time Mode 0 to 0
-#if CONFIG_TEMPORAL_DENOISING                //if Not Real Time and Temp De 0-1
-        opt.noise_sensitivity = rand() % 2;  //if Not Real Time not Temp De 0-6
+    else                                     //if Real time Mode 0 to 0
+#if CONFIG_TEMPORAL_DENOISING                //if Not Real time and Temp De 0-1
+        opt.noise_sensitivity = rand() % 2;  //if Not Real time not Temp De 0-6
 #else
         opt.noise_sensitivity = rand() % 7;
 #endif
 
     if (opt.Mode == 0)
         opt.lag_in_frames = 0;                //valid Range:
-    else                                      //if Not Real Time Mode 0 to 25
-        opt.lag_in_frames = rand() % 26;      //if Real Time Mode 0 to 0
+    else                                      //if Not Real time Mode 0 to 25
+        opt.lag_in_frames = rand() % 26;      //if Real time Mode 0 to 0
 
     if (opt.lag_in_frames > 0)
         opt.allow_lag = 1;                    //valid Range:
-    else                                      //if Not Real Time Mode 0 to 1
-        opt.allow_lag = 0;                    //if Real Time Mode 0
+    else                                      //if Not Real time Mode 0 to 1
+        opt.allow_lag = 0;                    //if Real time Mode 0
 
     if (opt.Mode == 0)
     {
         opt.cpu_used = rand() % 13 + 4;       //valid Range:
 
-        if (rand() % 2)                       //if Not Real Time Mode -16 to 16
-            opt.cpu_used = opt.cpu_used * -1; //if Real Time Mode -16 to -4 or
+        if (rand() % 2)                       //if Not Real time Mode -16 to 16
+            opt.cpu_used = opt.cpu_used * -1; //if Real time Mode -16 to -4 or
                                               //4 to 16
     }
     else
@@ -2871,7 +2871,7 @@ int vpxt_output_compatable_settings(const char *outputFile,
     if (ParVersionNum == 1)
     {
         std::string DummyFPFFile = outputFile;
-        DummyFPFFile.append(".fpf");
+        DummyFPFFile += ".fpf";
         outfile << "Test" << " FirstPassFile\n";
     }
 
@@ -3789,16 +3789,16 @@ int  vpxt_get_multi_res_width_height(const char *inputFile,
     }
 
     int i;
-    int StartingWidth[NUM_ENCODERS];
-    int StartingHeight[NUM_ENCODERS];
+    int starting_width[NUM_ENCODERS];
+    int starting_height[NUM_ENCODERS];
 
     width = cfg.g_w;
     height = cfg.g_h;
 
     for (i=0; i < NUM_ENCODERS; i++)
     {
-        StartingWidth[i] = width;
-        StartingHeight[i] = height;
+        starting_width[i] = width;
+        starting_height[i] = height;
     }
 
     vpx_rational_t dsf[NUM_ENCODERS] = {{2, 1}, {2, 1}, {1, 1}};
@@ -3810,25 +3810,25 @@ int  vpxt_get_multi_res_width_height(const char *inputFile,
         * down_sampling_factor.
         */
         {
-            unsigned int iw = StartingWidth[i-1]*dsf[i-1].den + dsf[i-1].num
+            unsigned int iw = starting_width[i-1]*dsf[i-1].den + dsf[i-1].num
                 - 1;
-            unsigned int ih = StartingHeight[i-1]*dsf[i-1].den + dsf[i-1].num
+            unsigned int ih = starting_height[i-1]*dsf[i-1].den + dsf[i-1].num
                 - 1;
-            StartingWidth[i] = iw/dsf[i-1].num;
-            StartingHeight[i] = ih/dsf[i-1].num;
+            starting_width[i] = iw/dsf[i-1].num;
+            starting_height[i] = ih/dsf[i-1].num;
         }
 
-        if((StartingWidth[i])%2)StartingWidth[i]++;
-        if((StartingHeight[i])%2)StartingHeight[i]++;
+        if((starting_width[i])%2)starting_width[i]++;
+        if((starting_height[i])%2)starting_height[i]++;
     }
 
     for (i=0; i< FileNumber; i++)
     {
-        //printf("width[%i]: %i\n", i, StartingWidth[i]);
-        //printf("height[%i]: %i\n", i, StartingHeight[i]);
+        //printf("width[%i]: %i\n", i, starting_width[i]);
+        //printf("height[%i]: %i\n", i, starting_height[i]);
 
-        width = StartingWidth[i];
-        height = StartingHeight[i];
+        width = starting_width[i];
+        height = starting_height[i];
     }
 
     //printf("width[%i]: %i\n", FileNumber, width);
@@ -4029,7 +4029,7 @@ int vpxt_remove_file_extension(const char *In, std::string &Out)
     if (lastDot > 0)
         Out.erase(lastDot, parser - lastDot);
 
-    Out.append("_");
+    Out += "_";
 
     //printf("\nOutput: %s\n",Out.c_str());
 
@@ -4064,9 +4064,9 @@ int vpxt_enc_format_append(std::string &InputString, std::string EncFormat)
     vpxt_lower_case_string(EncFormat);
 
     if (EncFormat.compare("ivf") == 0)
-        InputString.append(".ivf");
+        InputString += ".ivf";
     else
-        InputString.append(".webm");
+        InputString += ".webm";
 
     return 0;
 }
@@ -4075,9 +4075,9 @@ int vpxt_dec_format_append(std::string &InputString, std::string DecFormat)
     vpxt_lower_case_string(DecFormat);
 
     if (DecFormat.compare("ivf") == 0)
-        InputString.append(".ivf");
+        InputString += ".ivf";
     else
-        InputString.append(".y4m");
+        InputString += ".y4m";
 
     return 0;
 }
@@ -4596,7 +4596,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "AllowDropFrames";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4611,7 +4611,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "AllowLagTest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4626,7 +4626,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "AllowSpatialResampling";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4641,7 +4641,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "Arnr";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4656,7 +4656,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "AutoKeyFramingWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4671,7 +4671,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "BufferLevelWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4686,7 +4686,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "CPUDecOnlyWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4701,7 +4701,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "ChangeCPUWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4716,7 +4716,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "ConstrainQuality";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4731,7 +4731,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "CopySetReference";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4746,7 +4746,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "DropFramesWaterMarkWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4761,7 +4761,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "DataRateTest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4776,7 +4776,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "DebugMatchesRelease";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4792,7 +4792,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "EncoderBreakOut";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4807,7 +4807,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "ErrorConcealment";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4822,7 +4822,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "ErrorResilientModeWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4837,7 +4837,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "ExtraFileCheck";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4852,7 +4852,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "FixedQ";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4867,7 +4867,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "ForceKeyFameWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4882,7 +4882,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "FrameSizeTest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4897,7 +4897,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "GoodQualityVsBestQuality";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4911,7 +4911,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "LagInFramesTest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4926,7 +4926,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "MaxQuantizerTest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4941,7 +4941,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "MemLeakCheck";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4957,7 +4957,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "MemLeakCheck2";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4972,7 +4972,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "MinQuantizerTest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -4987,7 +4987,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "MultipleResolutionEncode";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5002,7 +5002,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "MultiThreadedTestDec";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5017,7 +5017,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "MultiThreadedTestEnc";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5032,7 +5032,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "NewVsOldPSNR";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5047,7 +5047,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "NewVsOldTempScale";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5062,7 +5062,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "NewVsOldRealTimeSpeed";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5077,7 +5077,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "NoiseSensititivityWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5092,7 +5092,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "OnePassVsTwoPass";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5107,7 +5107,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "PlayAlternate";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5122,7 +5122,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "PostProcessorWorks";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5137,7 +5137,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "PostProcessorWorksMFQE";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5152,7 +5152,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "RECBFNUMfer";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5167,7 +5167,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "ResampleDownWaterMark";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5182,7 +5182,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "SpeedTest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5197,7 +5197,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "TemporalScalability";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5213,7 +5213,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "TestVectorCheck";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5229,7 +5229,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
 
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "32BitVs64Bit";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5244,7 +5244,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "TwoPassVsTwoPassBest";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5259,7 +5259,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "UnderShoot";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5274,7 +5274,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "Version";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5289,7 +5289,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "VpxencMatchesIntComp";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5304,7 +5304,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                 {
                     if (!vpxt_check_arg_input(DummyArgv[1], DummyArgvVar))
                     {
-                        SelectorAr[SelectorArInt].append(buffer);
+                        SelectorAr[SelectorArInt] += buffer;
                         SelectorAr2[SelectorArInt] = "WinLinMacMatch";
                         PassFail[PassFailInt] = trackthis1;
                     }
@@ -5343,7 +5343,7 @@ int vpxt_run_multiple_tests_input_check(const char *input, int MoreInfo)
                     selector != ALWSRNUM && selector != VPXMINUM &&
                     selector != MULRENUM)
                 {
-                    SelectorAr[SelectorArInt].append(buffer);
+                    SelectorAr[SelectorArInt] += buffer;
                     SelectorAr2[SelectorArInt] = "Test Not Found";
                     PassFail[PassFailInt] = trackthis1;
                 }
@@ -6768,9 +6768,9 @@ unsigned int vpxt_get_cpu_tick()
 }
 unsigned int vpxt_get_time()
 {
-    unsigned int Time = 0;
-    Time = vpxt_get_high_res_timer_tick();
-    return Time;
+    unsigned int time = 0;
+    time = vpxt_get_high_res_timer_tick();
+    return time;
 }
 int vpxt_get_cur_dir(std::string &CurrentDir)
 {
@@ -6796,20 +6796,20 @@ int vpxt_make_dir(std::string CreateDir)
 #if defined(_WIN32)
     /////////////////////////////////////
     CreateDir.insert(0, "mkdir \"");
-    CreateDir.append("\"");
+    CreateDir += "\"";
     system(CreateDir.c_str());
     /////////////////////////////////////
 #elif defined(linux)
     CreateDir.insert(0, "mkdir -p \"");
-    CreateDir.append("\"");
+    CreateDir += "\"";
     system(CreateDir.c_str());
 #elif defined(__APPLE__)
     CreateDir.insert(0, "mkdir -p \"");
-    CreateDir.append("\"");
+    CreateDir += "\"";
     system(CreateDir.c_str());
 #elif defined(_PPC)
     CreateDir.insert(0, "mkdir -p \"");
-    CreateDir.append("\"");
+    CreateDir += "\"";
     system(CreateDir.c_str());
 #endif
     return 0;
@@ -6820,23 +6820,23 @@ int vpxt_make_dir_vpx(std::string CreateDir2)
     /////////////////////////////////////
     CreateDir2.erase(0, 4);
     CreateDir2.insert(0, "mkdir \"");
-    CreateDir2.append("\"");
+    CreateDir2 += "\"";
     system(CreateDir2.c_str());
     /////////////////////////////////////
 #elif defined(linux)
     CreateDir2.erase(0, 4);
     CreateDir2.insert(0, "mkdir -p \"");
-    CreateDir2.append("\"");
+    CreateDir2 += "\"";
     system(CreateDir2.c_str());
 #elif defined(__APPLE__)
     CreateDir2.erase(0, 4);
     CreateDir2.insert(0, "mkdir -p \"");
-    CreateDir2.append("\"");
+    CreateDir2 += "\"";
     system(CreateDir2.c_str());
 #elif defined(_PPC)
     CreateDir2.erase(0, 4);
     CreateDir2.insert(0, "mkdir -p \"");
-    CreateDir2.append("\"");
+    CreateDir2 += "\"";
     system(CreateDir2.c_str());
 #endif
 
@@ -6865,9 +6865,8 @@ int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector,
                            std::string Directory)
 {
 #if defined(_WIN32)
-    std::string RawDirectory = Directory;
-    RawDirectory.append("\\");
-    Directory.append("\\*");
+    std::string RawDirectory = Directory + "\\";
+    Directory += "\\*";
     WIN32_FIND_DATA FileData;
     HANDLE hFind;
     std::string FileName;
@@ -6875,9 +6874,8 @@ int vpxt_list_files_in_dir(std::vector<std::string> &FileNameVector,
 
     while (FileName.compare(FileData.cFileName) != 0)
     {
-        std::string FullFileName = RawDirectory;
         FileName = FileData.cFileName;
-        FullFileName.append(FileName);
+        std::string FullFileName = RawDirectory + FileName;
         FileNameVector.push_back(FullFileName);
         FindNextFile(hFind, &FileData);
     }
@@ -9193,7 +9191,7 @@ int vpxt_check_pbm_threshold(const char *inputFile,
 {
     std::string ResizeInStr;
     vpxt_remove_file_extension(inputFile, ResizeInStr);
-    ResizeInStr.append("CheckPBMThresh.txt");
+    ResizeInStr += "CheckPBMThresh.txt";
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", ResizeInStr.c_str());
 
@@ -9412,75 +9410,70 @@ int vpxt_faux_decompress(const char *inputChar)
 //--------------------------Test Functions--------------------------------------
 int initialize_test_directory(int argc,
                               const char *const *argv,
-                              int TestType,
-                              const std::string &WorkingDir,
-                              const char *MyDir,
-                              std::string &CurTestDirStr,
-                              std::string &FileIndexStr,
-                              char MainTestDirChar[255],
-                              char FileIndexOutputChar[255],
-                              std::string FilesAr[])
+                              int test_type,
+                              const std::string &working_dir,
+                              const char *test_dir,
+                              std::string &cur_test_dir_str,
+                              std::string &file_index_str,
+                              char main_test_dir_char[255],
+                              char file_index_output_char[255],
+                              std::string files_ar[])
 {
-    //Initilizes CurTestDirStr, FileIndexStr, MainTestDirChar, and
-    //FileIndexOutputChar to proper values.
+    //Initilizes cur_test_dir_str, file_index_str, main_test_dir_char, and
+    //file_index_output_char to proper values.
 
-    std::string PrefTestOnlyTestMatch = "";
+    std::string PrefTestOnlyTestMatch;
     char CurTestDirChar[255] = "";
 
-    if (TestType == 2 || TestType == 1)
+    if (test_type == 2 || test_type == 1)
     {
-        snprintf(CurTestDirChar, 255, "%s", WorkingDir.c_str());
+        snprintf(CurTestDirChar, 255, "%s", working_dir.c_str());
 
         int v = 0;
 
         while (CurTestDirChar[v] != '\"')
         {
-            MainTestDirChar[v] = CurTestDirChar[v];
+            main_test_dir_char[v] = CurTestDirChar[v];
             v++;
         }
 
-        MainTestDirChar[v] = slashChar();
-        MainTestDirChar[v+1] = '\0';
-        CurTestDirStr = MainTestDirChar;
+        main_test_dir_char[v] = slashChar();
+        main_test_dir_char[v+1] = '\0';
         ////////////////////////////////////////////////////////////////////////
-        FileIndexStr = MainTestDirChar;
-        FileIndexStr.append("FileIndex.txt");
+        file_index_str = main_test_dir_char;
+        file_index_str += "FileIndex.txt";
         ////////////////////////////////////////////////////////////////////////
-        CurTestDirStr.append(MyDir);
-        CurTestDirStr.append(slashCharStr());
-        CurTestDirStr.append(FilesAr[0]);
-        CurTestDirStr.erase(CurTestDirStr.length() - 1, 1);
+        cur_test_dir_str = main_test_dir_char;
+        cur_test_dir_str += test_dir + slashCharStr() + files_ar[0];
+        cur_test_dir_str.erase(cur_test_dir_str.length() - 1, 1);
 
-        std::string CreateDir2 = CurTestDirStr;
+        std::string CreateDir2 = cur_test_dir_str;
         CreateDir2.insert(0, "md \"");
         vpxt_make_dir_vpx(CreateDir2.c_str());
 
         ///////////////////Records FileLocations for MultiPlat Test/////////////
-        if (TestType == 2)
+        if (test_type == 2)
         {
             char CurTestDirStr2[255];
-            snprintf(CurTestDirStr2, 255, "%s", CurTestDirStr.c_str());
-            vpxt_subfolder_name(CurTestDirStr2, FileIndexOutputChar);
+            snprintf(CurTestDirStr2, 255, "%s", cur_test_dir_str.c_str());
+            vpxt_subfolder_name(CurTestDirStr2, file_index_output_char);
         }
 
         ////////////////////////////////////////////////////////////////////////
     }
     else
     {
-        //Use WorkingDir to get the main folder
+        //Use working_dir to get the main folder
         //Use Index File to get the rest of the string
-        //Put it all together Setting CurTestDirStr to the location of the files
+        //Put it all together Setting cur_test_dir_str to the location of the files
         //we want to examine.
         char buffer[255];
 
-        std::string CurTestDirChar = WorkingDir;
-
-        CurTestDirChar.append(slashCharStr());
-        FileIndexStr = CurTestDirChar;
-        FileIndexStr.append("FileIndex.txt");
+        std::string CurTestDirChar = working_dir + slashCharStr();
+        file_index_str = CurTestDirChar + "FileIndex.txt";
 
         std::fstream FileStream;
-        FileStream.open(FileIndexStr.c_str(), std::fstream::in |
+        FileStream.open(file_index_str.c_str(), std::fstream::in |
             std::fstream::out | std::fstream::app);
 
         int n = 0;
@@ -9497,25 +9490,25 @@ int initialize_test_directory(int argc,
         vpxt_test_name(buffer, PrefTestOnlyTestMatchChar);
         PrefTestOnlyTestMatch = PrefTestOnlyTestMatchChar;
 
-        if (PrefTestOnlyTestMatch.compare(MyDir) != 0)
+        if (PrefTestOnlyTestMatch.compare(test_dir) != 0)
         {
             tprintf(PRINT_STD, "Error: File mismatch ");
-            tprintf(PRINT_STD, "PrefTestOnlyTestMatch: %s MyDir: %s",
-                PrefTestOnlyTestMatch.c_str(), MyDir);
+            tprintf(PRINT_STD, "PrefTestOnlyTestMatch: %s test_dir: %s",
+                PrefTestOnlyTestMatch.c_str(), test_dir);
             return 11;
         }
 
-        CurTestDirChar.append(buffer);
-        CurTestDirStr = CurTestDirChar;
+        CurTestDirChar += buffer;
+        cur_test_dir_str = CurTestDirChar;
     }
 
     return 0;
 }
 void record_test_complete(const std::string MainDirString,
-                          const char *FileIndexOutputChar,
-                          int TestType)
+                          const char *file_index_output_char,
+                          int test_type)
 {
-    if (TestType == 2)
+    if (test_type == 2)
     {
         std::fstream FileStream;
         FileStream.open(MainDirString.c_str(), std::fstream::out |
@@ -9528,7 +9521,7 @@ void record_test_complete(const std::string MainDirString,
             return;
         }
 
-        FileStream << FileIndexOutputChar << "\n";
+        FileStream << file_index_output_char << "\n";
         FileStream.close();
     }
 
@@ -9566,10 +9559,11 @@ int print_version()
 }
 void print_header_info()
 {
-    std::string TestMachineInfo = "                 Test Machine is Running: "
-        "Unknown Platform\n\n";
+    std::string TestMachineInfo;
     std::string arch = "Unknown";
     std::string comp = "Unknown";
+    std::string plat = "Unknown";
+
 #if ARCH_X86
     arch = "32 bit";
 #else if ARCH_X86_64
@@ -9584,139 +9578,40 @@ void print_header_info()
 #endif
 
 #if defined(_WIN32)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
-
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" Windows");
-    Platform.append(" ");
-    Platform.append(comp.c_str());
-
-    x = 0;
-
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
-
+    plat = " Windows ";
 #endif
 #if defined(linux)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
-
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" Linux");
-    Platform.append(" ");
-    Platform.append(comp.c_str());
-
-    x = 0;
-
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
+    plat = " Linux ";
 #endif
 #if defined(__APPLE__)
 #if defined(_PPC)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
-
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" PowerPC");
-    Platform.append(" ");
-    Platform.append(comp.c_str());
-    x = 0;
-
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
+    plat = " PowerPC";
 #else
-    TestMachineInfo = "";
+    plat = " Intel Mac ";
+#endif
+#endif
+
     std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
     int x = 0;
 
     while (x < 40 - (CodecNameStr.length() / 2))
     {
-        TestMachineInfo.append(" ");
+        TestMachineInfo += " ";
         x++;
     }
 
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" Intel Mac");
-    Platform.append(" ");
-    Platform.append(comp.c_str());
+    TestMachineInfo += CodecNameStr + "\n";
+    std::string Platform = "Test Machine is Running: " + arch + plat + comp;
 
     x = 0;
 
     while (x < 40 - (Platform.length() / 2))
     {
-        TestMachineInfo.append(" ");
+        TestMachineInfo += " ";
         x++;
     }
 
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
-#endif
-
-
-
-
-
-
-#endif
+    TestMachineInfo += Platform + "\n\n";
 
     tprintf(PRINT_BTH, "%s", TestMachineInfo.c_str());
 }
@@ -9725,144 +9620,61 @@ void print_header_info_to_file(const char *FileName)
     FILE *outfile;
     outfile = fopen(FileName, "a");
 
-    std::string TestMachineInfo = "                 Test Machine is Running: "
-        "Unknown Platform\n\n";
+ std::string TestMachineInfo;
     std::string arch = "Unknown";
+    std::string comp = "Unknown";
+    std::string plat = "Unknown";
+
 #if ARCH_X86
     arch = "32 bit";
 #else if ARCH_X86_64
     arch = "64 bit";
 #endif
+#if defined(COMP_GCC)
+    comp = "GCC";
+#elif defined(COMP_ICC)
+    comp = "ICC";
+#elif defined(COMP_VS)
+    comp = "VS";
+#endif
 
 #if defined(_WIN32)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
-
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" Windows");
-
-    x = 0;
-
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
-
+    plat = " Windows ";
 #endif
 #if defined(linux)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
-
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" Linux");
-
-    x = 0;
-
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
+    plat = " Linux ";
 #endif
 #if defined(__APPLE__)
 #if defined(_PPC)
-    TestMachineInfo = "";
-    std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
-    int x = 0;
-
-    while (x < 40 - (CodecNameStr.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" PowerPC");
-    x = 0;
-
-    while (x < 40 - (Platform.length() / 2))
-    {
-        TestMachineInfo.append(" ");
-        x++;
-    }
-
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
+    plat = " PowerPC";
 #else
-    TestMachineInfo = "";
+    plat = " Intel Mac ";
+#endif
+#endif
+
     std::string CodecNameStr = vpx_codec_iface_name(&vpx_codec_vp8_cx_algo);
     int x = 0;
 
     while (x < 40 - (CodecNameStr.length() / 2))
     {
-        TestMachineInfo.append(" ");
+        TestMachineInfo += " ";
         x++;
     }
 
-    TestMachineInfo.append(vpx_codec_iface_name(&vpx_codec_vp8_cx_algo));
-
-    TestMachineInfo.append("\n");
-    std::string Platform = "";
-    Platform.append("Test Machine is Running: ");
-    Platform.append(arch.c_str());
-    Platform.append(" Intel Mac");
+    TestMachineInfo += CodecNameStr + "\n";
+    std::string Platform = "Test Machine is Running: " + arch + plat + comp;
 
     x = 0;
 
     while (x < 40 - (Platform.length() / 2))
     {
-        TestMachineInfo.append(" ");
+        TestMachineInfo += " ";
         x++;
     }
 
-    TestMachineInfo.append(Platform.c_str());
-    TestMachineInfo.append("\n\n");
-#endif
-
-
-
-
-
-
-#endif
+    TestMachineInfo += Platform + "\n\n";
 
     fprintf(outfile, "%s", TestMachineInfo.c_str());
-
     fclose(outfile);
 }
 void print_header_full_test(int argc,
@@ -9880,8 +9692,8 @@ void print_header_full_test(int argc,
 
     while (y < argc)
     {
-        PrintInput.append(" ");
-        PrintInput.append(argv[y]);
+        PrintInput += " ";
+        PrintInput += argv[y];
         y++;
     }
 
@@ -9925,8 +9737,8 @@ void print_header_compression_only(int argc,
 
     while (y < argc)
     {
-        PrintInput.append(" ");
-        PrintInput.append(argv[y]);
+        PrintInput += " ";
+        PrintInput += argv[y];
         y++;
     }
 
@@ -9972,8 +9784,8 @@ void print_header_test_only(int argc,
 
     while (y < argc)
     {
-        PrintInput.append(" ");
-        PrintInput.append(argv[y]);
+        PrintInput += " ";
+        PrintInput += argv[y];
         y++;
     }
 
@@ -10018,9 +9830,9 @@ void check_time_stamp(int SelectorArInt,
             identicalFileVar++;
             vpxt_itoa_custom(identicalFileVar, identicalFileBuffer, 10);
             TimeStampAr2[0].erase(TimeStampAr2[0].end() - 1);
-            TimeStampAr2[0].append("_");
-            TimeStampAr2[0].append(identicalFileBuffer);
-            TimeStampAr2[0].append("\"");
+            TimeStampAr2[0] += "_";
+            TimeStampAr2[0] += identicalFileBuffer;
+            TimeStampAr2[0] += "\"";
         }
         else
         {
@@ -10052,44 +9864,30 @@ void vpxt_formated_print(int selector, const char *fmt, ...)
 
     //add padding for formating
     if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
-    {
-        SummaryStrOutput.append("         ");
-    }
+        SummaryStrOutput += "         ";
 
     if (selector == RESPRT) //add padding for formating
-    {
-        SummaryStrOutput.append(" * ");
-    }
+        SummaryStrOutput += " * ";
 
     //determine cut off to keep words whole
     int Cutoff;
 
     if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
-    {
         Cutoff = 66;
-    }
 
     if (selector == OTRPRT)
-    {
         Cutoff = 79;
-    }
 
     if (selector == RESPRT)
-    {
         Cutoff = 70;
-    }
 
     int x = 0;
 
     while (x + Cutoff < SummaryStr.length())
     {
-
-
         if (SummaryStr.substr(x + Cutoff + 1, 1).compare(" ") == 0 ||
             SummaryStr.substr(x + Cutoff, 1).compare(" ") == 0)
-        {
             Cutoff++;
-        }
         else
         {
             while (SummaryStr.substr(x + Cutoff, 1).compare(" ") != 0)
@@ -10101,44 +9899,31 @@ void vpxt_formated_print(int selector, const char *fmt, ...)
         }
 
         //add the properly formated string to the output string
-        SummaryStrOutput.append(SummaryStr.substr(x, Cutoff));
+        SummaryStrOutput += SummaryStr.substr(x, Cutoff);
 
         //add padding for formating
         if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
-        {
-            SummaryStrOutput.append("\n         ");
-        }
+            SummaryStrOutput += "\n         ";
 
         if (selector == RESPRT) //add padding for formating
-        {
-            SummaryStrOutput.append("\n   ");
-        }
+            SummaryStrOutput += "\n   ";
 
         x = x + Cutoff;
 
         while (SummaryStr.substr(x, 1).compare(" ") == 0)
-        {
             x++;
-        }
 
         if (selector == HLPPRT || selector == TOLPRT || selector == FUNPRT)
-        {
             Cutoff = 66;
-        }
 
         if (selector == OTRPRT)
-        {
             Cutoff = 79;
-        }
 
         if (selector == RESPRT)
-        {
             Cutoff = 70;
-        }
-
     }
 
-    SummaryStrOutput.append(SummaryStr.substr(x, SummaryStr.length() - x));
+    SummaryStrOutput += SummaryStr.substr(x, SummaryStr.length() - x);
 
     if (selector == HLPPRT)
     {
@@ -10244,10 +10029,10 @@ int  vpxt_lower_case_string(std::string &input)
 #ifdef API
 int vpxt_compress(const char *inputFile,
                   const char *outputFile2,
-                  int speed, int BitRate,
+                  int speed, int bitrate,
                   VP8_CONFIG &oxcf,
-                  const char *CompressString,
-                  int CompressInt,
+                  const char *comp_out_str,
+                  int compress_int,
                   int RunQCheck,
                   std::string EncFormat)
 {
@@ -10262,26 +10047,21 @@ int vpxt_compress(const char *inputFile,
     //RunQCheck = 0 = Do not save q values
     //RunQCheck = 1 = Save q values
     //RunQCheck = 2 = display q values only
-    std::ofstream QuantOutFile;
+    std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
     {
-        //std::string QuantOutStr = outputFile2;
-        //QuantOutStr.erase(QuantOutStr.length() - 4, 4);
         std::string QuantOutStr;
         vpxt_remove_file_extension(outputFile2, QuantOutStr);
-        QuantOutStr.append("quantizers.txt");
-        char QuantOutChar[255];
-        snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
-
-        QuantOutFile.open(QuantOutChar);
+        QuantOutStr += "quantizers.txt";
+        quant_out_file.open(QuantOutStr.c_str());
     }
 
     /////////////////////////////DELETE ME TEMP MEASURE/////////////////////////
-    if (oxcf.Mode == 3) //Real Time Mode
+    if (oxcf.Mode == 3) //Real time Mode
     {
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return 0;
     }
@@ -10321,7 +10101,7 @@ int vpxt_compress(const char *inputFile,
             vpx_codec_err_to_string(res));
 
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return -1;
     }
@@ -10330,10 +10110,10 @@ int vpxt_compress(const char *inputFile,
     // if mode == 4 or 5 arg_passes = 2
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and BitRate Here
-    cfg.rc_target_bitrate = BitRate;
+    //Set Mode Pass and bitrate Here
+    cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real Time Mode
+    if (oxcf.Mode == 0) //Real time Mode
     {
         arg_deadline = 1;
     }
@@ -10380,8 +10160,8 @@ int vpxt_compress(const char *inputFile,
     {
         tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
             " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
-            oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString,
-            CompressInt);
+            oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str,
+            compress_int);
 
         int CharCount = 0;
 
@@ -10395,7 +10175,7 @@ int vpxt_compress(const char *inputFile,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real Time Mode
+        if (oxcf.Mode == 0) //Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
@@ -10422,7 +10202,7 @@ int vpxt_compress(const char *inputFile,
             tprintf(PRINT_BTH, "Failed to open input file: %s", in_fn);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -10532,7 +10312,7 @@ int vpxt_compress(const char *inputFile,
             fclose(infile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -10544,7 +10324,7 @@ int vpxt_compress(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -10558,7 +10338,7 @@ int vpxt_compress(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -10572,7 +10352,7 @@ int vpxt_compress(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -10670,7 +10450,7 @@ int vpxt_compress(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -10684,19 +10464,13 @@ int vpxt_compress(const char *inputFile,
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
-            OutputsettingsFile.append("parameters_core.txt");
-            char OutputsettingsFileChar[255];
-            snprintf(OutputsettingsFileChar, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings(OutputsettingsFileChar,  oxcf);
+            OutputsettingsFile += "parameters_core.txt";
+            vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
             /////////////////////////OUTPUT PARAMATERS API//////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
-            OutputsettingsFile.append("_parameters_vpx.txt");
-            char OutputsettingsFileChar2[255];
-            snprintf(OutputsettingsFileChar2, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings_api(OutputsettingsFileChar2,  cfg);
+            OutputsettingsFile += "_parameters_vpx.txt";
+            vpxt_output_settings_api(OutputsettingsFile.c_str(),  cfg);
             ////////////////////////////////////////////////////////////////////
         }
 
@@ -10749,7 +10523,7 @@ int vpxt_compress(const char *inputFile,
                     int lastQuantizerValue = 0;
                     vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                         &lastQuantizerValue);
-                    QuantOutFile << frames_out << " " << lastQuantizerValue
+                    quant_out_file << frames_out << " " << lastQuantizerValue
                         << "\n";
                 }
             }
@@ -10849,16 +10623,16 @@ int vpxt_compress(const char *inputFile,
     free(ebml.cue_list);
 
     if (RunQCheck == 1)
-        QuantOutFile.close();
+        quant_out_file.close();
 
     return 0;
 }
 int vpxt_compress_no_error_output(const char *inputFile,
                                   const char *outputFile2,
-                                  int speed, int BitRate,
+                                  int speed, int bitrate,
                                   VP8_CONFIG &oxcf,
-                                  const char *CompressString,
-                                  int CompressInt,
+                                  const char *comp_out_str,
+                                  int compress_int,
                                   int RunQCheck,
                                   std::string EncFormat)
 {
@@ -10873,23 +10647,21 @@ int vpxt_compress_no_error_output(const char *inputFile,
     //RunQCheck = 0 = Do not save q values
     //RunQCheck = 1 = Save q values
     //RunQCheck = 2 = display q values only
-    std::ofstream QuantOutFile;
+    std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
     {
         std::string QuantOutStr;
         vpxt_remove_file_extension(outputFile2, QuantOutStr);
-        QuantOutStr.append("quantizers.txt");
-        char QuantOutChar[255];
-        snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
-        QuantOutFile.open(QuantOutChar);
+        QuantOutStr += "quantizers.txt";
+        quant_out_file.open(QuantOutStr.c_str());
     }
 
     /////////////////DELETE ME TEMP MEASURE/////////////////////////////////////
-    if (oxcf.Mode == 3) //Real Time Mode
+    if (oxcf.Mode == 3) //Real time Mode
     {
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return 0;
     }
@@ -10929,17 +10701,17 @@ int vpxt_compress_no_error_output(const char *inputFile,
             vpx_codec_err_to_string(res));
 
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return -1;
     }
 
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and BitRate Here
-    cfg.rc_target_bitrate = BitRate;
+    //Set Mode Pass and bitrate Here
+    cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real Time Mode
+    if (oxcf.Mode == 0) //Real time Mode
     {
         arg_deadline = 1;
     }
@@ -10989,8 +10761,8 @@ int vpxt_compress_no_error_output(const char *inputFile,
     {
         tprintf(PRINT_STD, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
             " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
-            oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString,
-            CompressInt);
+            oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str,
+            compress_int);
 
         int CharCount = 0;
 
@@ -11005,7 +10777,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
             tprintf(PRINT_STD, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real Time Mode
+        if (oxcf.Mode == 0) //Real time Mode
         {
             tprintf(PRINT_STD, " RealTime\n\n");
         }
@@ -11032,7 +10804,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
             tprintf(PRINT_BTH, "Failed to open input file: %s", in_fn);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -11143,7 +10915,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
             fclose(infile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -11155,7 +10927,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -11169,7 +10941,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -11183,7 +10955,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -11281,7 +11053,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -11295,19 +11067,13 @@ int vpxt_compress_no_error_output(const char *inputFile,
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
-            OutputsettingsFile.append("parameters_core.txt");
-            char OutputsettingsFileChar[255];
-            snprintf(OutputsettingsFileChar, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings(OutputsettingsFileChar,  oxcf);
+            OutputsettingsFile += "parameters_core.txt";
+            vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
             ///////////////////////OUTPUT PARAMATERS API////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
-            OutputsettingsFile.append("_parameters_vpx.txt");
-            char OutputsettingsFileChar2[255];
-            snprintf(OutputsettingsFileChar2, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings_api(OutputsettingsFileChar2,  cfg);
+            OutputsettingsFile += "_parameters_vpx.txt";
+            vpxt_output_settings_api(OutputsettingsFile.c_str(),  cfg);
             ////////////////////////////////////////////////////////////////////
         }
 
@@ -11363,7 +11129,7 @@ int vpxt_compress_no_error_output(const char *inputFile,
                     int lastQuantizerValue = 0;
                     vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                         &lastQuantizerValue);
-                    QuantOutFile << frames_out << " " << lastQuantizerValue
+                    quant_out_file << frames_out << " " << lastQuantizerValue
                         << "\n";
                 }
             }
@@ -11462,16 +11228,16 @@ int vpxt_compress_no_error_output(const char *inputFile,
     free(ebml.cue_list);
 
     if (RunQCheck == 1)
-        QuantOutFile.close();
+        quant_out_file.close();
 
     return 0;
 }
 unsigned int vpxt_time_compress(const char *inputFile,
                                 const char *outputFile2,
-                                int speed, int BitRate,
+                                int speed, int bitrate,
                                 VP8_CONFIG &oxcf,
-                                const char *CompressString,
-                                int CompressInt,
+                                const char *comp_out_str,
+                                int compress_int,
                                 int RunQCheck,
                                 unsigned int &CPUTick,
                                 std::string EncFormat)
@@ -11487,27 +11253,23 @@ unsigned int vpxt_time_compress(const char *inputFile,
     //RunQCheck = 0 = Do not save q values
     //RunQCheck = 1 = Save q values
     //RunQCheck = 2 = display q values only
-    std::ofstream QuantOutFile;
+    std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
     {
         std::string QuantOutStr = outputFile2;
         QuantOutStr.erase(QuantOutStr.length() - 4, 4);
-        QuantOutStr.append("_quantizers.txt");
-        char QuantOutChar[255];
-        snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
-
-        QuantOutFile.open(QuantOutChar);
+        QuantOutStr += "_quantizers.txt";
+        quant_out_file.open(QuantOutStr.c_str());
     }
 
     ///////////////////////DELETE ME TEMP MEASURE///////////////////////////////
-    if (oxcf.Mode == 3) //Real Time Mode
+    if (oxcf.Mode == 3) //Real time Mode
     {
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return 0;
-
     }
     ////////////////////////////////////////////////////////////////////////////
     unsigned int             file_type, fourcc;
@@ -11544,17 +11306,17 @@ unsigned int vpxt_time_compress(const char *inputFile,
             vpx_codec_err_to_string(res));
 
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return -1;
     }
 
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and BitRate Here
-    cfg.rc_target_bitrate = BitRate;
+    //Set Mode Pass and bitrate Here
+    cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real Time Mode
+    if (oxcf.Mode == 0) //Real time Mode
     {
         arg_deadline = 1;
     }
@@ -11601,8 +11363,8 @@ unsigned int vpxt_time_compress(const char *inputFile,
     {
         tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
             " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
-            oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString,
-            CompressInt);
+            oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str,
+            compress_int);
 
         int CharCount = 0;
 
@@ -11616,7 +11378,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real Time Mode
+        if (oxcf.Mode == 0) //Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
@@ -11643,7 +11405,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
             tprintf(PRINT_STD, "Failed to open input file");
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -11754,7 +11516,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
             fclose(infile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -11766,7 +11528,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
 
@@ -11781,7 +11543,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -11795,7 +11557,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -11893,7 +11655,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -11907,20 +11669,13 @@ unsigned int vpxt_time_compress(const char *inputFile,
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
-            OutputsettingsFile.append("parameters_core.txt");
-            char OutputsettingsFileChar[255];
-            snprintf(OutputsettingsFileChar, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings(OutputsettingsFileChar,  oxcf);
+            OutputsettingsFile += "parameters_core.txt";
+            vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
             ///////////////////OUTPUT PARAMATERS API////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
-            OutputsettingsFile.append("_parameters_vpx.txt");
-            char OutputsettingsFileChar2[255];
-
-            snprintf(OutputsettingsFileChar2, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings_api(OutputsettingsFileChar2,  cfg);
+            OutputsettingsFile += "_parameters_vpx.txt";
+            vpxt_output_settings_api(OutputsettingsFile.c_str(),  cfg);
             ////////////////////////////////////////////////////////////////////
         }
 
@@ -11978,7 +11733,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
                     int lastQuantizerValue = 0;
                     vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                         &lastQuantizerValue);
-                    QuantOutFile << frames_out << " " << lastQuantizerValue
+                    quant_out_file << frames_out << " " << lastQuantizerValue
                         << "\n";
                 }
             }
@@ -12078,7 +11833,7 @@ unsigned int vpxt_time_compress(const char *inputFile,
     vpx_img_free(&raw);
     free(ebml.cue_list);
 
-    tprintf(PRINT_BTH, "\n File completed: Time in Microseconds: %u, Fps: %d \n",
+    tprintf(PRINT_BTH, "\n File completed: time in Microseconds: %u, Fps: %d \n",
             cx_time, 1000 * framesoutrec / (cx_time / 1000));
     tprintf(PRINT_BTH, " Total CPU Ticks: %u\n", total_cpu_time_used);
 
@@ -12088,13 +11843,13 @@ unsigned int vpxt_time_compress(const char *inputFile,
     vpxt_remove_file_extension(outputFile2, FullNameMs);
     vpxt_remove_file_extension(outputFile2, FullNameCpu);
 
-    FullNameMs.append("compression_time.txt");
+    FullNameMs += "compression_time.txt";
 
     std::ofstream FullNameMsFile(FullNameMs.c_str());
     FullNameMsFile << cx_time;
     FullNameMsFile.close();
 
-    FullNameCpu.append("compression_cpu_tick.txt");
+    FullNameCpu += "compression_cpu_tick.txt";
 
     std::ofstream FullNameCpuFile(FullNameCpu.c_str());
     FullNameCpuFile << total_cpu_time_used;
@@ -12103,16 +11858,16 @@ unsigned int vpxt_time_compress(const char *inputFile,
     CPUTick = total_cpu_time_used;
 
     if (RunQCheck == 1)
-        QuantOutFile.close();
+        quant_out_file.close();
 
     return cx_time;
 }
 int vpxt_compress_force_key_frame(const char *inputFile,
                                   const char *outputFile2,
-                                  int speed, int BitRate,
+                                  int speed, int bitrate,
                                   VP8_CONFIG &oxcf,
-                                  const char *CompressString,
-                                  int CompressInt,
+                                  const char *comp_out_str,
+                                  int compress_int,
                                   int RunQCheck,
                                   int forceKeyFrame,
                                   std::string EncFormat)
@@ -12128,24 +11883,21 @@ int vpxt_compress_force_key_frame(const char *inputFile,
     //RunQCheck = 0 = Do not save q values
     //RunQCheck = 1 = Save q values
     //RunQCheck = 2 = display q values only
-    std::ofstream QuantOutFile;
+    std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
     {
         std::string QuantOutStr = outputFile2;
         QuantOutStr.erase(QuantOutStr.length() - 4, 4);
-        QuantOutStr.append("_quantizers.txt");
-        char QuantOutChar[255];
-        snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
-
-        QuantOutFile.open(QuantOutChar);
+        QuantOutStr += "_quantizers.txt";
+        quant_out_file.open(QuantOutStr.c_str());
     }
 
     /////////////////////DELETE ME TEMP MEASURE/////////////////////////////////
-    if (oxcf.Mode == 3) //Real Time Mode
+    if (oxcf.Mode == 3) //Real time Mode
     {
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return 0;
     }
@@ -12185,17 +11937,17 @@ int vpxt_compress_force_key_frame(const char *inputFile,
             vpx_codec_err_to_string(res));
 
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return -1;
     }
 
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
-    //Set Mode Pass and BitRate Here
-    cfg.rc_target_bitrate = BitRate;
+    //Set Mode Pass and bitrate Here
+    cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real Time Mode
+    if (oxcf.Mode == 0) //Real time Mode
     {
         arg_deadline = 1;
     }
@@ -12241,8 +11993,8 @@ int vpxt_compress_force_key_frame(const char *inputFile,
     {
         tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
             " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
-            oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString,
-            CompressInt);
+            oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str,
+            compress_int);
 
         int CharCount = 0;
 
@@ -12256,7 +12008,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real Time Mode
+        if (oxcf.Mode == 0) //Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
@@ -12283,7 +12035,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
             tprintf(PRINT_BTH, "Failed to open input file: %s", in_fn);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -12395,7 +12147,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
             fclose(infile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -12407,7 +12159,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -12421,7 +12173,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -12435,7 +12187,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
                 fclose(outfile);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -12532,7 +12284,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -12546,19 +12298,13 @@ int vpxt_compress_force_key_frame(const char *inputFile,
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
-            OutputsettingsFile.append("parameters_core.txt");
-            char OutputsettingsFileChar[255];
-            snprintf(OutputsettingsFileChar, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings(OutputsettingsFileChar,  oxcf);
+            OutputsettingsFile += "parameters_core.txt";
+            vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
             ///////////////////////OUTPUT PARAMATERS API////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
-            OutputsettingsFile.append("_parameters_vpx.txt");
-            char OutputsettingsFileChar2[255];
-            snprintf(OutputsettingsFileChar2, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings_api(OutputsettingsFileChar2,  cfg);
+            OutputsettingsFile += "_parameters_vpx.txt";
+            vpxt_output_settings_api(OutputsettingsFile.c_str(),  cfg);
             ////////////////////////////////////////////////////////////////////
         }
 
@@ -12625,7 +12371,7 @@ int vpxt_compress_force_key_frame(const char *inputFile,
                     int lastQuantizerValue = 0;
                     vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                         &lastQuantizerValue);
-                    QuantOutFile << frames_out << " " << lastQuantizerValue
+                    quant_out_file << frames_out << " " << lastQuantizerValue
                         << "\n";
                 }
             }
@@ -12725,16 +12471,16 @@ int vpxt_compress_force_key_frame(const char *inputFile,
     free(ebml.cue_list);
 
     if (RunQCheck == 1)
-        QuantOutFile.close();
+        quant_out_file.close();
 
     return 0;
 }
 int vpxt_compress_recon_buffer_check(const char *inputFile,
                                      const char *outputFile2,
-                                     int speed, int BitRate,
+                                     int speed, int bitrate,
                                      VP8_CONFIG &oxcf,
-                                     const char *CompressString,
-                                     int CompressInt,
+                                     const char *comp_out_str,
+                                     int compress_int,
                                      int RunQCheck,
                                      int OutputRaw,
                                      std::string EncFormat)
@@ -12752,24 +12498,21 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
     //RunQCheck = 0 = Do not save q values
     //RunQCheck = 1 = Save q values
     //RunQCheck = 2 = display q values only
-    std::ofstream QuantOutFile;
+    std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
     {
         std::string QuantOutStr;
         vpxt_remove_file_extension(outputFile2, QuantOutStr);
-        QuantOutStr.append("_quantizers.txt");
-        char QuantOutChar[255];
-        snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
-
-        QuantOutFile.open(QuantOutChar);
+        QuantOutStr += "_quantizers.txt";
+        quant_out_file.open(QuantOutStr.c_str());
     }
 
     ////////////////////////////DELETE ME TEMP MEASURE//////////////////////////
-    if (oxcf.Mode == 3) //Real Time Mode
+    if (oxcf.Mode == 3) //Real time Mode
     {
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return 0;
     }
@@ -12815,7 +12558,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
             vpx_codec_err_to_string(res));
 
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return -1;
     }
@@ -12823,10 +12566,10 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
     vpxt_core_config_to_api_config(oxcf, &cfg);
 
 
-    //Set Mode Pass and BitRate Here
-    cfg.rc_target_bitrate = BitRate;
+    //Set Mode Pass and bitrate Here
+    cfg.rc_target_bitrate = bitrate;
 
-    if (oxcf.Mode == 0) //Real Time Mode
+    if (oxcf.Mode == 0) //Real time Mode
     {
         arg_deadline = 1;
     }
@@ -12869,40 +12612,35 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
 
     std::string out_fn4STRb;
     vpxt_remove_file_extension(out_fn, out_fn4STRb);
-    out_fn4STRb.append("DecodeFrame");
-    out_fn4STRb.append(slashCharStr().c_str());
+    out_fn4STRb += "DecodeFrame" + slashCharStr();
 
     std::string CreateDir3b = out_fn4STRb;
     CreateDir3b.insert(0, "mkdir \"");
-    CreateDir3b.append("\"");
-    system(CreateDir3b.c_str());
+    CreateDir3b += "\"";
+	system(CreateDir3b.c_str());
 
     std::string out_fn3STRb;
     vpxt_remove_file_extension(out_fn, out_fn3STRb);
-    out_fn3STRb.append("PreviewFrame");
-    out_fn3STRb.append(slashCharStr().c_str());
+    out_fn3STRb += "PreviewFrame" + slashCharStr();
 
     std::string CreateDir2b = out_fn3STRb;
     CreateDir2b.insert(0, "mkdir \"");
-    CreateDir2b.append("\"");
+    CreateDir2b += "\"";
     system(CreateDir2b.c_str());
 
 
-    std::ofstream ReconOutFile;
-    std::string ReconOutStr;
-    vpxt_remove_file_extension(outputFile2, ReconOutStr);
-    ReconOutStr.append("ReconFrameState.txt");
-    char ReconOutChar[255];
-    snprintf(ReconOutChar, 255, "%s", ReconOutStr.c_str());
-
-    ReconOutFile.open(ReconOutChar);
+    std::ofstream recon_out_file;
+    std::string recon_out_str;
+    vpxt_remove_file_extension(outputFile2, recon_out_str);
+    recon_out_str += "ReconFrameState.txt";
+    recon_out_file.open(recon_out_str.c_str());
 
     for (pass = 0; pass < arg_passes; pass++)
     {
         tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
             " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
-            oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString,
-            CompressInt);
+            oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str,
+            compress_int);
 
         int CharCount = 0;
 
@@ -12916,7 +12654,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
             tprintf(PRINT_BTH, "\nSecond Pass - ");
         }
 
-        if (oxcf.Mode == 0) //Real Time Mode
+        if (oxcf.Mode == 0) //Real time Mode
         {
             tprintf(PRINT_BTH, " RealTime\n\n");
         }
@@ -12941,10 +12679,10 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
         if (!infile)
         {
             tprintf(PRINT_BTH, "Failed to open input file: %s", in_fn);
-            ReconOutFile.close();
+            recon_out_file.close();
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -13051,13 +12789,13 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
             set_binary_mode(stdout);
 
         std::string out_fn2STR = out_fn;
-        out_fn2STR.append("_Preview.raw");
+        out_fn2STR += "_Preview.raw";
 
         if (!OutputRaw)
             out = out_open(out_fn2STR.c_str(), 0);
 
         std::string out_fn3STR = out_fn;
-        out_fn3STR.append("_Decode.raw");
+        out_fn3STR += "_Decode.raw";
 
         if (!OutputRaw)
             out2 = out_open(out_fn3STR.c_str(), 0);
@@ -13067,13 +12805,13 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
         if (!outfile)
         {
             tprintf(PRINT_BTH, "Failed to open output file: %s", out_fn);
-            ReconOutFile.close();
+            recon_out_file.close();
             fclose(infile);
             out_close(out, out_fn2STR.c_str(), 0);
             out_close(out2, out_fn2STR.c_str(), 0);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -13085,7 +12823,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
             fclose(outfile);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -13095,14 +12833,14 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
             if (!stats_open_file(&stats, stats_fn, pass))
             {
                 tprintf(PRINT_STD, "Failed to open statistics store\n");
-                ReconOutFile.close();
+                recon_out_file.close();
                 fclose(infile);
                 fclose(outfile);
                 out_close(out, out_fn2STR.c_str(), 0);
                 out_close(out2, out_fn2STR.c_str(), 0);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -13112,14 +12850,14 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
             if (!stats_open_mem(&stats, pass))
             {
                 tprintf(PRINT_STD, "Failed to open statistics store\n");
-                ReconOutFile.close();
+                recon_out_file.close();
                 fclose(infile);
                 fclose(outfile);
                 out_close(out, out_fn2STR.c_str(), 0);
                 out_close(out2, out_fn2STR.c_str(), 0);
 
                 if (RunQCheck == 1)
-                    QuantOutFile.close();
+                    quant_out_file.close();
 
                 return -1;
             }
@@ -13214,12 +12952,12 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
         {
             fclose(infile);
             fclose(outfile);
-            ReconOutFile.close();
+            recon_out_file.close();
             out_close(out, out_fn2STR.c_str(), 0);
             out_close(out2, out_fn2STR.c_str(), 0);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -13233,18 +12971,13 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
             std::string OutputsettingsFile;
             int extLength = vpxt_remove_file_extension(outputFile2,
                 OutputsettingsFile);
-            OutputsettingsFile.append("parameters_core.txt");
-            char OutputsettingsFileChar[255];
-            snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
-            vpxt_output_settings(OutputsettingsFileChar,  oxcf);
+            OutputsettingsFile += "parameters_core.txt";
+            vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
             //////////////////OUTPUT PARAMATERS API/////////////////////////////
             OutputsettingsFile.erase(OutputsettingsFile.length() -
                 (15 + extLength), 15 + extLength);
-            OutputsettingsFile.append("_parameters_vpx.txt");
-            char OutputsettingsFileChar2[255];
-            snprintf(OutputsettingsFileChar2, 255, "%s",
-                OutputsettingsFile.c_str());
-            vpxt_output_settings_api(OutputsettingsFileChar2,  cfg);
+            OutputsettingsFile += "_parameters_vpx.txt";
+            vpxt_output_settings_api(OutputsettingsFile.c_str(),  cfg);
             ////////////////////////////////////////////////////////////////////
         }
 
@@ -13260,14 +12993,14 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
         {
             tprintf(PRINT_STD, "Failed to initialize decoder: %s\n",
                 vpx_codec_error(&decoder));
-            ReconOutFile.close();
+            recon_out_file.close();
             fclose(infile);
             fclose(outfile);
             out_close(out, out_fn2STR.c_str(), 0);
             out_close(out2, out_fn2STR.c_str(), 0);
 
             if (RunQCheck == 1)
-                QuantOutFile.close();
+                quant_out_file.close();
 
             return -1;
         }
@@ -13277,7 +13010,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
         {
             fprintf(stderr, "Failed to configure postproc: %s\n",
                 vpx_codec_error(&decoder));
-            ReconOutFile.close();
+            recon_out_file.close();
             fclose(infile);
             fclose(outfile);
             out_close(out, out_fn2STR.c_str(), 0);
@@ -13285,7 +13018,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
 
             if (RunQCheck == 1)
             {
-                QuantOutFile.close();
+                quant_out_file.close();
             }
 
             return -1;
@@ -13342,7 +13075,7 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
                     int lastQuantizerValue = 0;
                     vpx_codec_control(&encoder, VP8E_GET_LAST_QUANTIZER_64,
                         &lastQuantizerValue);
-                    QuantOutFile << frames_out << " " << lastQuantizerValue
+                    quant_out_file << frames_out << " " << lastQuantizerValue
                         << "\n";
                 }
             }
@@ -13402,26 +13135,24 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
                     {
                         std::string out_fn3STR;
                         vpxt_remove_file_extension(out_fn, out_fn3STR);
-                        out_fn3STR.append("PreviewFrame");
-                        out_fn3STR.append(slashCharStr().c_str());
+                        out_fn3STR += "PreviewFrame" + slashCharStr();
 
                         char intchar[56];
                         vpxt_itoa_custom(frames_out, intchar, 10);
-                        out_fn3STR.append(intchar);
-                        out_fn3STR.append(".raw");
+                        out_fn3STR += intchar;
+                        out_fn3STR += ".raw";
 
                         if (!OutputRaw)
                             out3 = out_open(out_fn3STR.c_str(), 0);
 
                         std::string out_fn4STR;
                         vpxt_remove_file_extension(out_fn, out_fn4STR);
-                        out_fn4STR.append("DecodeFrame");
-                        out_fn4STR.append(slashCharStr().c_str());
+                        out_fn4STR += "DecodeFrame" + slashCharStr();
 
                         char intchar2[56];
                         vpxt_itoa_custom(frames_out, intchar2, 10);
-                        out_fn4STR.append(intchar2);
-                        out_fn4STR.append(".raw");
+                        out_fn4STR += intchar2;
+                        out_fn4STR += ".raw";
 
                         if (!OutputRaw)
                             out4 = out_open(out_fn4STR.c_str(), 0);
@@ -13495,29 +13226,29 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
 
                         if (MemCheckY != 0)
                         {
-                            ReconOutFile << frames_out << " Y " << 0 << "\n";
+                            recon_out_file << frames_out << " Y " << 0 << "\n";
                         }
                         else
                         {
-                            ReconOutFile << frames_out << " Y " << 1 << "\n";
+                            recon_out_file << frames_out << " Y " << 1 << "\n";
                         }
 
                         if (MemCheckU != 0)
                         {
-                            ReconOutFile << frames_out << " U " << 0 << "\n";
+                            recon_out_file << frames_out << " U " << 0 << "\n";
                         }
                         else
                         {
-                            ReconOutFile << frames_out << " U " << 1 << "\n";
+                            recon_out_file << frames_out << " U " << 1 << "\n";
                         }
 
                         if (MemCheckV != 0)
                         {
-                            ReconOutFile << frames_out << " V " << 0 << "\n";
+                            recon_out_file << frames_out << " V " << 0 << "\n";
                         }
                         else
                         {
-                            ReconOutFile << frames_out << " V " << 1 << "\n";
+                            recon_out_file << frames_out << " V " << 1 << "\n";
                         }
 
                         if (!OutputRaw)
@@ -13655,19 +13386,19 @@ int vpxt_compress_recon_buffer_check(const char *inputFile,
     vpx_img_free(&raw);
     free(ebml.cue_list);
 
-    ReconOutFile.close();
+    recon_out_file.close();
 
     if (RunQCheck == 1)
-        QuantOutFile.close();
+        quant_out_file.close();
 
     return 0;
 }
 unsigned int vpxt_compress_multi_resolution(const char *inputFile,
                                             const char *outputFile2,
-                                            int speed, int BitRate,
+                                            int speed, int bitrate,
                                             VP8_CONFIG &oxcf,
-                                            const char *CompressString,
-                                            int CompressInt,
+                                            const char *comp_out_str,
+                                            int compress_int,
                                             int RunQCheck,
                                             std::string EncFormat)
 {
@@ -13684,24 +13415,21 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
     //RunQCheck = 0 = Do not save q values
     //RunQCheck = 1 = Save q values
     //RunQCheck = 2 = display q values only
-    std::ofstream QuantOutFile;
+    std::ofstream quant_out_file;
 
     if (RunQCheck == 1)
     {
         std::string QuantOutStr;
         vpxt_remove_file_extension(outputFile2, QuantOutStr);
-        QuantOutStr.append("quantizers.txt");
-        char QuantOutChar[255];
-        snprintf(QuantOutChar, 255, "%s", QuantOutStr.c_str());
-
-        QuantOutFile.open(QuantOutChar);
+        QuantOutStr += "quantizers.txt";
+        quant_out_file.open(QuantOutStr.c_str());
     }
 
     /////////////////////////////DELETE ME TEMP MEASURE/////////////////////////
-    if (oxcf.Mode == 3) //Real Time Mode
+    if (oxcf.Mode == 3) //Real time Mode
     {
         if (RunQCheck == 1)
-            QuantOutFile.close();
+            quant_out_file.close();
 
         return 0;
     }
@@ -13930,15 +13658,15 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
         vpxt_itoa_custom(cfg[i].g_h, HeightChar, 10);
 
         std::string out_str = outputFile2;
-        out_str.append("-");
-        out_str.append(WidthChar);
-        out_str.append("x");
-        out_str.append(HeightChar);
+        out_str += "-";
+        out_str += WidthChar;
+        out_str += "x";
+        out_str += HeightChar;
 
         if(write_webm == 0)
-            out_str.append(".ivf");
+            out_str += ".ivf";
         else if(write_webm == 1)
-            out_str.append(".webm");
+            out_str += ".webm";
 
         outfile_name[i] = out_str.c_str();
 
@@ -14017,8 +13745,8 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
 
     tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
         " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
-        oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString,
-        CompressInt);
+        oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str,
+        compress_int);
     tprintf(PRINT_BTH, "API Multi Resolution - Compressing Raw %s File to VP8"
         " %s Files: \n", inputformat.c_str(), outputformat.c_str());
 
@@ -14147,7 +13875,7 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
         free(ebml[i].cue_list);
     }
 
-    tprintf(PRINT_BTH, "\n File completed: Time in Microseconds: %u, Fps: %d "
+    tprintf(PRINT_BTH, "\n File completed: time in Microseconds: %u, Fps: %d "
         "\n", total_cpu_time_used,
         1000 * frame_cnt / (total_cpu_time_used / 1000));
     tprintf(PRINT_BTH, " Total CPU Ticks: %u\n", cx_time);
@@ -14158,8 +13886,8 @@ unsigned int vpxt_compress_multi_resolution(const char *inputFile,
 unsigned int vpxt_compress_scalable_patterns(const char *inputFile,
                                              const char *outputFile2,
                                              int speed, VP8_CONFIG &oxcf,
-                                             const char *CompressString,
-                                             int CompressInt,
+                                             const char *comp_out_str,
+                                             int compress_int,
                                              int RunQCheck,
                                              std::string EncFormat,
                                              int layering_mode,
@@ -14684,22 +14412,18 @@ unsigned int vpxt_compress_scalable_patterns(const char *inputFile,
     vpxt_api_config_to_core_config(cfg, oxcf);
     tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
         " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
-        oxcf.worst_allowed_q, oxcf.best_allowed_q, CompressString, CompressInt);
+        oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str, compress_int);
     tprintf(PRINT_BTH, "API Temporal Scalability - Compressing Raw %s File to"
         " VP8 %s Files: \n", inputformat.c_str(), outputformat.c_str());
 
     ////////////////////////////////OUTPUT PARAMATERS///////////////////////////
     std::string OutputsettingsFile = outputFile2;
-    OutputsettingsFile.append("_parameters_core.txt");
-    char OutputsettingsFileChar[255];
-    snprintf(OutputsettingsFileChar, 255, "%s", OutputsettingsFile.c_str());
-    vpxt_output_settings(OutputsettingsFileChar,  oxcf);
+    OutputsettingsFile += "_parameters_core.txt";
+    vpxt_output_settings(OutputsettingsFile.c_str(),  oxcf);
     //////////////////////////////OUTPUT PARAMATERS API/////////////////////////
     OutputsettingsFile.erase(OutputsettingsFile.length() - 20, 20);
-    OutputsettingsFile.append("_parameters_vpx.txt");
-    char OutputsettingsFileChar2[255];
-    snprintf(OutputsettingsFileChar2, 255, "%s", OutputsettingsFile.c_str());
-    vpxt_output_settings_api(OutputsettingsFileChar2,  cfg);
+    OutputsettingsFile  += "_parameters_vpx.txt";
+    vpxt_output_settings_api(OutputsettingsFile.c_str(),  cfg);
     ////////////////////////////////////////////////////////////////////////////
 
     frame_avail = 1;
@@ -14797,7 +14521,7 @@ unsigned int vpxt_compress_scalable_patterns(const char *inputFile,
         free(ebml[i].cue_list);
     }
 
-    tprintf(PRINT_BTH,"\n File completed: Time in Microseconds: %u, Fps: %d \n",
+    tprintf(PRINT_BTH,"\n File completed: time in Microseconds: %u, Fps: %d \n",
             total_cpu_time_used,
             1000 * frame_cnt / (total_cpu_time_used / 1000));
     tprintf(PRINT_BTH, " Total CPU Ticks: %u\n", cx_time);
@@ -15601,7 +15325,7 @@ int vpxt_decompress_copy_set(const char *inputchar,
                 uint8_t *buf;
 
                 std::string out_fnSTR = out_fn;
-                out_fnSTR.append("2");
+                out_fnSTR += "2";
 
                 if (!single_file)
                 {
@@ -15707,7 +15431,7 @@ int vpxt_decompress_partial_drops(const char *inputchar,
 {
     std::string ParDropEncStr;
     vpxt_remove_file_extension(inputchar, ParDropEncStr);
-    ParDropEncStr.append("with_part_frame_drops.ivf");
+    ParDropEncStr += "with_part_frame_drops.ivf";
     int                     use_y4m = 1;
     vpxt_lower_case_string(DecFormat);
 
@@ -17399,7 +17123,7 @@ unsigned int vpxt_time_decompress(const char *inputchar,
     if (DecFormat.compare("ivf") == 0)
         use_y4m = 2;
 
-    //Time Decompress is not supposed to save output that is the only difference
+    //time Decompress is not supposed to save output that is the only difference
     //between it and vpxt_decompress_ivf_to_ivf_time_and_output
     vpx_codec_ctx_t         decoder;
     unsigned int            total_cpu_time_used = 0;
@@ -17721,13 +17445,13 @@ fail:
     vpxt_remove_file_extension(outputchar, FullNameMs);
     vpxt_remove_file_extension(outputchar, FullNameCpu);
 
-    FullNameMs.append("decompression_time.txt");
+    FullNameMs += "decompression_time.txt";
 
     std::ofstream FullNameMsFile(FullNameMs.c_str());
     FullNameMsFile << dx_time;
     FullNameMsFile.close();
 
-    FullNameCpu.append("decompression_cpu_tick.txt");
+    FullNameCpu += "decompression_cpu_tick.txt";
 
     std::ofstream FullNameCpuFile(FullNameCpu.c_str());
     FullNameCpuFile << total_cpu_time_used;
@@ -18060,13 +17784,13 @@ fail:
     vpxt_remove_file_extension(outputchar, FullNameMs);
     vpxt_remove_file_extension(outputchar, FullNameCpu);
 
-    FullNameMs.append("decompression_time.txt");
+    FullNameMs += "decompression_time.txt";
 
     std::ofstream FullNameMsFile(FullNameMs.c_str());
     FullNameMsFile << dx_time;
     FullNameMsFile.close();
 
-    FullNameCpu.append("decompression_cpu_tick.txt");
+    FullNameCpu += "decompression_cpu_tick.txt";
 
     std::ofstream FullNameCpuFile(FullNameCpu.c_str());
     FullNameCpuFile << total_cpu_time_used;
@@ -18718,14 +18442,9 @@ int vpxt_crop_raw_clip(const char *inputFile,
         HeightLocEnd = bufferStr.find(" ", HeightLoc + 1);
         FrameLoc = bufferStr.find("FRAME");
 
-        std::string bufferStr2 = bufferStr.substr(0, WidthLoc);
-        bufferStr2.append("W");
-        bufferStr2.append(widthChar);
-        bufferStr2.append(" ");
-        bufferStr2.append("H");
-        bufferStr2.append(heightChar);
-        bufferStr2.append(bufferStr.substr(HeightLocEnd, FrameLoc -
-            HeightLocEnd));
+        std::string bufferStr2 = bufferStr.substr(0, WidthLoc) + "W" + widthChar
+            + " H" + heightChar + bufferStr.substr(HeightLocEnd, FrameLoc -
+            HeightLocEnd);
 
         char buffer2[128];
         strncpy(buffer2, bufferStr2.c_str(), 128);
@@ -18992,20 +18711,14 @@ int vpxt_pad_raw_clip(const char *inputFile,
         HeightLocEnd = bufferStr.find(" ", HeightLoc + 1);
         FrameLoc = bufferStr.find("FRAME");
 
-        std::string bufferStr2 = bufferStr.substr(0, WidthLoc);
-        bufferStr2.append("W");
-        bufferStr2.append(widthChar);
-        bufferStr2.append(" ");
-        bufferStr2.append("H");
-        bufferStr2.append(heightChar);
-        bufferStr2.append(bufferStr.substr(HeightLocEnd, FrameLoc -
-            HeightLocEnd));
+        std::string bufferStr2 = bufferStr.substr(0, WidthLoc) + "W" + widthChar
+            + " H" + heightChar + bufferStr.substr(HeightLocEnd, FrameLoc -
+            HeightLocEnd);
 
         char buffer2[128];
         strncpy(buffer2, bufferStr2.c_str(), 128);
         out_put(out, (unsigned char *)buffer2, strlen(buffer2), 0);
         fsetpos(in, &position);
-
     }
 
     if (file_type == FILE_TYPE_IVF)
@@ -19210,8 +18923,8 @@ int vpxt_paste_clip(const char *inputFile1,
     unsigned long nbytes1 = 0;
     struct detect_buffer detect1;
 
-    unsigned int width1;
-    unsigned int height1;
+    unsigned int width_1;
+    unsigned int height_1;
     unsigned int rate1;
     unsigned int scale1;
 
@@ -19223,8 +18936,8 @@ int vpxt_paste_clip(const char *inputFile1,
         if (y4m_input_open(&y4m1, in1, detect1.buf, 4) >= 0)
         {
             file_type1 = FILE_TYPE_Y4M;
-            width1 = y4m1.pic_w;
-            height1 = y4m1.pic_h;
+            width_1 = y4m1.pic_w;
+            height_1 = y4m1.pic_h;
 
             /* Use the frame rate from the file only if none was specified
             * on the command-line.
@@ -19241,8 +18954,8 @@ int vpxt_paste_clip(const char *inputFile1,
             return EXIT_FAILURE;
         }
     }
-    else if (detect1.buf_read == 4 && file_is_ivf(in1, &fourcc1, &width1,
-        &height1, &detect1, &scale1, &rate1))
+    else if (detect1.buf_read == 4 && file_is_ivf(in1, &fourcc1, &width_1,
+        &height_1, &detect1, &scale1, &rate1))
     {
         file_type1 = FILE_TYPE_IVF;
 
@@ -19264,7 +18977,7 @@ int vpxt_paste_clip(const char *inputFile1,
         file_type1 = FILE_TYPE_RAW;
     }
 
-    if (!width1 || !height1)
+    if (!width_1 || !height_1)
     {
         fprintf(stderr, "Specify stream dimensions with --width (-w) "
                 " and --height (-h).\n");
@@ -19276,8 +18989,8 @@ int vpxt_paste_clip(const char *inputFile1,
     unsigned long nbytes2 = 0;
     struct detect_buffer detect2;
 
-    unsigned int width2;
-    unsigned int height2;
+    unsigned int width_2;
+    unsigned int height_2;
     unsigned int rate2;
     unsigned int scale2;
 
@@ -19289,8 +19002,8 @@ int vpxt_paste_clip(const char *inputFile1,
         if (y4m_input_open(&y4m2, in2, detect2.buf, 4) >= 0)
         {
             file_type2 = FILE_TYPE_Y4M;
-            width2 = y4m2.pic_w;
-            height2 = y4m2.pic_h;
+            width_2 = y4m2.pic_w;
+            height_2 = y4m2.pic_h;
 
             /* Use the frame rate from the file only if none was specified
             * on the command-line.
@@ -19309,8 +19022,8 @@ int vpxt_paste_clip(const char *inputFile1,
             return EXIT_FAILURE;
         }
     }
-    else if (detect2.buf_read == 4 && file_is_ivf(in2, &fourcc2, &width2,
-        &height2, &detect2, &scale2, &rate2))
+    else if (detect2.buf_read == 4 && file_is_ivf(in2, &fourcc2, &width_2,
+        &height_2, &detect2, &scale2, &rate2))
     {
         file_type2 = FILE_TYPE_IVF;
 
@@ -19332,22 +19045,22 @@ int vpxt_paste_clip(const char *inputFile1,
         file_type2 = FILE_TYPE_RAW;
     }
 
-    if (!width2 || !height2)
+    if (!width_2 || !height_2)
     {
         fprintf(stderr, "Specify stream dimensions with --width (-w) "
                 " and --height (-h).\n");
         return EXIT_FAILURE;
     }
 
-    if (width1 != width2)
+    if (width_1 != width_2)
     {
-        printf("width1 %i != width2 %i\n", width1, width2);
+        printf("width_1 %i != width_2 %i\n", width_1, width_2);
         return 0;
     }
 
-    if (height1 != height2)
+    if (height_1 != height_2)
     {
-        printf("height1 %i != height2 %i\n", height1, height2);
+        printf("height_1 %i != height_2 %i\n", height_1, height_2);
         return 0;
     }
 
@@ -19410,7 +19123,7 @@ int vpxt_paste_clip(const char *inputFile1,
     }
 
     vpx_image_t raw;
-    vpx_img_alloc(&raw, VPX_IMG_FMT_I420, width1, height1, 1);
+    vpx_img_alloc(&raw, VPX_IMG_FMT_I420, width_1, height_1, 1);
     int frame_avail1 = 1;
     int frame_avail2 = 1;
     int framesWritten = 0;
@@ -19449,7 +19162,7 @@ int vpxt_paste_clip(const char *inputFile1,
 
         if (file_type1 == FILE_TYPE_IVF)
         {
-            ivf_write_frame_header(out, 0, width1 * height1 * 3 / 2);
+            ivf_write_frame_header(out, 0, width_1 * height_1 * 3 / 2);
         }
 
         unsigned int y;
@@ -19782,23 +19495,23 @@ int vpxt_formatted_to_raw_frames(const std::string inputFile,
         std::string FrameFileName;
         vpxt_remove_file_extension(outputFile.c_str(), FrameFileName);
         FrameFileName.erase(FrameFileName.length() - 1, 1);
-        FrameFileName.append("-");
-        FrameFileName.append(widthchar);
-        FrameFileName.append("x");
-        FrameFileName.append(heightchar);
-        FrameFileName.append("-Frame-");
+        FrameFileName += "-";
+        FrameFileName += widthchar;
+        FrameFileName += "x";
+        FrameFileName += heightchar;
+        FrameFileName += "-Frame-";
 
         int CurNumDecPlaces = vpxt_decimal_places(currentVideoFrame);
 
         //add zeros for increasing frames
         while (CurNumDecPlaces < LastFrameDecPlaces)
         {
-            FrameFileName.append("0");
+            FrameFileName += "0";
             CurNumDecPlaces++;
         }
 
-        FrameFileName.append(currentVideoFrameStr);
-        FrameFileName.append(".raw");
+        FrameFileName += currentVideoFrameStr;
+        FrameFileName += ".raw";
 
         FILE *out = fopen(FrameFileName.c_str(), "wb");
         if (out == NULL)
@@ -20043,7 +19756,7 @@ int vpxt_display_header_info(int argc, const char *const *argv)
     {
         tprintf(PRINT_STD, "FRAME HEADER %i\n"
                 "Frame Size            - %i \n"
-                "Time Stamp            - %llu \n"
+                "time Stamp            - %llu \n"
                 "\n"
 
                 , currentVideoFrame, frameSize[currentVideoFrame],
@@ -20053,7 +19766,7 @@ int vpxt_display_header_info(int argc, const char *const *argv)
         {
             tprintf(PRINT_ERR, "FRAME HEADER %i\n"
                     "Frame Size            - %i \n"
-                    "Time Stamp            - %llu \n"
+                    "time Stamp            - %llu \n"
                     "\n"
 
                     , currentVideoFrame, frameSize[currentVideoFrame],
@@ -20376,7 +20089,7 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
             tprintf(PRINT_STD,
                     "FRAME HEADER1 %-*i\n"
                     "Frame Size            - %-*i\n"
-                    "Time Stamp            - %-*llu\n"
+                    "time Stamp            - %-*llu\n"
                     "\n"
 
                     , 22, currentVideoFrame
@@ -20388,7 +20101,7 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
                 tprintf(PRINT_ERR,
                         "FRAME HEADER1 %-*i\n"
                         "Frame Size            - %-*i\n"
-                        "Time Stamp            - %-*llu\n"
+                        "time Stamp            - %-*llu\n"
                         "\n"
 
                         , 22, currentVideoFrame
@@ -20403,7 +20116,7 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
                     "                                    FRAME HEADER2 %i\n"
                     "                                    Frame Size            "
                     "- %i\n"
-                    "                                    Time Stamp            "
+                    "                                    time Stamp            "
                     "- %llu\n"
                     "\n"
 
@@ -20417,7 +20130,7 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
                         "                                    FRAME HEADER2 %i\n"
                         "                                    Frame Size        "
                         "- %i\n"
-                        "                                    Time Stamp        "
+                        "                                    time Stamp        "
                         "- %llu\n"
                         "\n"
 
@@ -20431,7 +20144,7 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
         {
             tprintf(PRINT_STD, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
                     "Frame Size            - %-*iFrame Size            - %i\n"
-                    "Time Stamp            - %-*lluTime Stamp            - %llu"
+                    "time Stamp            - %-*lluTime Stamp            - %llu"
                     "\n"
                     "\n"
 
@@ -20444,7 +20157,7 @@ int vpxt_compare_header_info(int argc, const char *const *argv)
                 tprintf(PRINT_ERR, "FRAME HEADER1 %-*iFRAME HEADER2 %i\n"
                         "Frame Size            - %-*iFrame Size            - "
                         "%i\n"
-                        "Time Stamp            - %-*lluTime Stamp            - "
+                        "time Stamp            - %-*lluTime Stamp            - "
                         "%llu\n"
                         "\n"
 
@@ -21107,17 +20820,17 @@ int vpxt_compare_enc(const char *inputFile1,
                 //write different frames out
                 std::string first_file_frame;
                 vpxt_remove_file_extension(inputFile1, first_file_frame);
-                first_file_frame.append("Frame");
-                first_file_frame.append(intchar);
-                first_file_frame.append(".raw");
+                first_file_frame += "Frame";
+                first_file_frame += intchar;
+                first_file_frame += ".raw";
                 FILE *first_file_frame_file = fopen(first_file_frame.c_str(),
                     "w");
 
                 std::string second_file_frame;
                 vpxt_remove_file_extension(inputFile2, second_file_frame);
-                second_file_frame.append("Frame");
-                second_file_frame.append(intchar);
-                second_file_frame.append(".raw");
+                second_file_frame += "Frame";
+                second_file_frame += intchar;
+                second_file_frame += ".raw";
                 FILE *second_file_frame_file = fopen(second_file_frame.c_str(),
                     "w");
 
@@ -21173,10 +20886,7 @@ double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
 
     std::string DropedInStr;
     vpxt_remove_file_extension(inputchar, DropedInStr);
-    DropedInStr.append("aprox_droped_frames.txt");
-    char outputFile[255] = "";
-    snprintf(outputFile, 255, "%s", DropedInStr.c_str());
-
+    DropedInStr += "aprox_droped_frames.txt";
 
     FILE *in = fopen(inputchar, "rb");
     FILE *out;
@@ -21190,7 +20900,7 @@ double vpxt_display_droped_frames(const char *inputchar, int PrintSwitch)
 
     if (PrintSwitch == 1)
     {
-        out = fopen(outputFile, "w");
+        out = fopen(DropedInStr.c_str(), "w");
 
         if (out == NULL)
         {
@@ -21267,15 +20977,13 @@ double vpxt_display_resized_frames(const char *inputchar, int PrintSwitch)
 {
     std::string ResizeInStr;
     vpxt_remove_file_extension(inputchar, ResizeInStr);
-    ResizeInStr.append("resized_frames.txt");
-    char outputFile[255] = "";
-    snprintf(outputFile, 255, "%s", ResizeInStr.c_str());
+    ResizeInStr += "resized_frames.txt";
 
     FILE *out;
 
     if (PrintSwitch == 1)
     {
-        out = fopen(outputFile, "w");
+        out = fopen(ResizeInStr.c_str(), "w");
     }
 
     int                     use_y4m = 1;
@@ -21478,9 +21186,7 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
     // 1 = write to file
     std::string VisInStr;
     vpxt_remove_file_extension(inputFile, VisInStr);
-    VisInStr.append("visible_frames.txt");
-    char outputFile[255] = "";
-    snprintf(outputFile, 255, "%s", VisInStr.c_str());
+    VisInStr += "visible_frames.txt";
 
     int VisableCount = 0;
 
@@ -21488,11 +21194,12 @@ double vpxt_display_visible_frames(const char *inputFile, int Selector)
 
     if (Selector == 1)
     {
-        outfile.open(outputFile);
+        outfile.open(VisInStr.c_str());
 
         if (!outfile.good())
         {
-            tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n", outputFile);
+            tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n",
+                VisInStr.c_str());
             return 0;
         }
     }
@@ -21667,7 +21374,7 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
 
     std::string AltRefInStr;
     vpxt_remove_file_extension(inputFile, AltRefInStr);
-    AltRefInStr.append("alt_ref_frames.txt");
+    AltRefInStr += "alt_ref_frames.txt";
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", AltRefInStr.c_str());
 
@@ -21677,11 +21384,12 @@ double vpxt_display_alt_ref_frames(const char *inputFile, int Selector)
 
     if (Selector == 1)
     {
-        outfile.open(outputFile);
+        outfile.open(AltRefInStr.c_str());
 
         if (!outfile.good())
         {
-            tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n",outputFile);
+            tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n",
+                AltRefInStr.c_str());
             return 0;
         }
     }
@@ -21855,7 +21563,7 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
 
     std::string KeyInStr;
     vpxt_remove_file_extension(inputFile, KeyInStr);
-    KeyInStr.append("key_frames.txt");
+    KeyInStr += "key_frames.txt";
     char outputFile[255] = "";
     snprintf(outputFile, 255, "%s", KeyInStr.c_str());
 
@@ -21863,12 +21571,12 @@ double vpxt_display_key_frames(const char *inputFile, int Selector)
 
     if (Selector == 1)
     {
-        outfile.open(outputFile);
+        outfile.open(KeyInStr.c_str());
 
         if (!outfile.good())
         {
             tprintf(PRINT_BTH, "\nERROR: Could not open output file: %s\n",
-                outputFile);
+                KeyInStr.c_str());
             return 0;
         }
     }
@@ -22077,48 +21785,43 @@ int vpxt_dfwm_check(const char *InputFile, int printselect)
 
     std::string CheckPBMThreshStr;
     vpxt_remove_file_extension(InputFile, CheckPBMThreshStr);
-    CheckPBMThreshStr.append("CheckPBMThresh.txt");
-    char CheckPBMThreshChar[255] = "";
-    snprintf(CheckPBMThreshChar, 255, "%s", CheckPBMThreshStr.c_str());
+    CheckPBMThreshStr += "CheckPBMThresh.txt";
 
     std::string ResizeFramesStr;
     vpxt_remove_file_extension(InputFile, ResizeFramesStr);
-    ResizeFramesStr.append("resized_frames.txt");
-    char ResizeFramesChar[255] = "";
-    snprintf(ResizeFramesChar, 255, "%s", ResizeFramesStr.c_str());
+    ResizeFramesStr += "resized_frames.txt";
 
     std::string KeyFramesStr;
     vpxt_remove_file_extension(InputFile, KeyFramesStr);
-    KeyFramesStr.append("key_frames.txt");
-    char KeyFramesChar[255] = "";
-    snprintf(KeyFramesChar, 255, "%s", KeyFramesStr.c_str());
+    KeyFramesStr += "key_frames.txt";
 
-
-    std::ifstream CheckPBMFile(CheckPBMThreshChar);
+    std::ifstream CheckPBMFile(CheckPBMThreshStr.c_str());
 
     if (!CheckPBMFile.good())
     {
         tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n",
-            CheckPBMThreshChar);
+            CheckPBMThreshStr.c_str());
         CheckPBMFile.close();
         return -1;
     }
 
-    std::ifstream ResizeFramesFile(ResizeFramesChar);
+    std::ifstream ResizeFramesFile(ResizeFramesStr.c_str());
 
     if (!ResizeFramesFile.good())
     {
-        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n", ResizeFramesChar);
+        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n",
+            ResizeFramesStr.c_str());
         ResizeFramesFile.close();
         CheckPBMFile.close();
         return -1;
     }
 
-    std::ifstream KeyFramesFile(KeyFramesChar);
+    std::ifstream KeyFramesFile(KeyFramesStr.c_str());
 
     if (!KeyFramesFile.good())
     {
-        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n", KeyFramesChar);
+        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n",
+            KeyFramesStr.c_str());
         KeyFramesFile.close();
         ResizeFramesFile.close();
         CheckPBMFile.close();
@@ -22720,15 +22423,14 @@ int vpxt_check_min_quantizer(const char *inputFile, int MinQuantizer)
 
     std::string QuantInStr;
     vpxt_remove_file_extension(inputFile, QuantInStr);
-    QuantInStr.append("quantizers.txt");
-    char QuantInChar[255] = "";
-    snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
+    QuantInStr += "quantizers.txt";
 
-    std::ifstream infile(QuantInChar);
+    std::ifstream infile(QuantInStr.c_str());
 
     if (!infile.good())
     {
-        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n", QuantInChar);
+        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n",
+            QuantInStr.c_str());
         return 0;
     }
 
@@ -22776,15 +22478,14 @@ int vpxt_check_max_quantizer(const char *inputFile, int MaxQuantizer)
 
     std::string QuantInStr;
     vpxt_remove_file_extension(inputFile, QuantInStr);
-    QuantInStr.append("quantizers.txt");
-    char QuantInChar[255] = "";
-    snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
+    QuantInStr += "quantizers.txt";
 
-    std::ifstream infile(QuantInChar);
+    std::ifstream infile(QuantInStr.c_str());
 
     if (!infile.good())
     {
-        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n", QuantInChar);
+        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n",
+            QuantInStr.c_str());
         return 0;
     }
 
@@ -22832,15 +22533,14 @@ int vpxt_check_fixed_quantizer(const char *inputFile, int FixedQuantizer)
 
     std::string QuantInStr;
     vpxt_remove_file_extension(inputFile, QuantInStr);
-    QuantInStr.append("quantizers.txt");
-    char QuantInChar[255] = "";
-    snprintf(QuantInChar, 255, "%s", QuantInStr.c_str());
+    QuantInStr += "quantizers.txt";
 
-    std::ifstream infile(QuantInChar);
+    std::ifstream infile(QuantInStr.c_str());
 
     if (!infile.good())
     {
-        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n", QuantInChar);
+        tprintf(PRINT_BTH, "\nError: Cannot open file: %s\n",
+            QuantInStr.c_str());
         return 0;
     }
 
@@ -22881,24 +22581,16 @@ int vpxt_time_return(const char *infile, int FileType)
 {
     int speed;
 
-    //char TextFilechar1[255];
     std::string FullName;
 
     vpxt_remove_file_extension(infile, FullName);
 
-    //char *FullName = "";
 
     if (FileType == 0)
-    {
-        //FullName = strcat(TextFilechar1, "compression_time.txt");
-        FullName.append("compression_time.txt");
-    }
+        FullName += "compression_time.txt";
 
     if (FileType == 1)
-    {
-        //FullName = strcat(TextFilechar1, "decompression_time.txt");
-        FullName.append("decompression_time.txt");
-    }
+        FullName += "decompression_time.txt";
 
     std::ifstream infile2(FullName.c_str());
 
@@ -22917,24 +22609,16 @@ int vpxt_cpu_tick_return(const char *infile, int FileType)
 {
     int speed;
 
-    //char TextFilechar1[255];
     std::string FullName;
 
     vpxt_remove_file_extension(infile, FullName);
 
-    //char *FullName = "";
 
     if (FileType == 0)
-    {
-        //FullName = strcat(TextFilechar1, "compression_cpu_tick.txt");
-        FullName.append("compression_cpu_tick.txt");
-    }
+        FullName += "compression_cpu_tick.txt";
 
     if (FileType == 1)
-    {
-        //FullName = strcat(TextFilechar1, "decompression_cpu_tick.txt");
-        FullName.append("decompression_cpu_tick.txt");
-    }
+        FullName += "decompression_cpu_tick.txt";
 
     std::ifstream infile2(FullName.c_str());
 
@@ -23046,31 +22730,31 @@ int vpxt_check_mem_state(const std::string FileName, std::string &bufferString)
 
     return 0;
 }
-int vpxt_print_compare_ivf_results(int lngRC, int printErr)
+int vpxt_print_compare_ivf_results(int lng_rc, int printErr)
 {
     //return 1 for files identical
     //retrun -1 for files not identical
     //return 0 on error
 
-    if (lngRC >= 0)
+    if (lng_rc >= 0)
     {
-        tprintf(PRINT_BTH, "Files differ at frame: %i\n", lngRC);
+        tprintf(PRINT_BTH, "Files differ at frame: %i\n", lng_rc);
         return -1;
     }
 
-    if (lngRC == -1)
+    if (lng_rc == -1)
     {
         tprintf(PRINT_BTH, "Files are identical\n");
         return 1;
     }
 
-    if (lngRC == -2)
+    if (lng_rc == -2)
     {
         tprintf(PRINT_BTH, "File 2 ends before File 1\n");
         return -1;
     }
 
-    if (lngRC == -3)
+    if (lng_rc == -3)
     {
         tprintf(PRINT_BTH, "File 1 ends before File 2\n");
         return -1;
@@ -23085,7 +22769,7 @@ double vpxt_get_psnr(const char *compFileName)
 
     std::string TimeTextFileStr;
     vpxt_remove_file_extension(compFileName, TimeTextFileStr);
-    TimeTextFileStr.append("psnr.txt");
+    TimeTextFileStr += "psnr.txt";
 
     double inputPSNR;
     std::ifstream infile(TimeTextFileStr.c_str());

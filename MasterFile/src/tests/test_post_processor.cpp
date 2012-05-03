@@ -28,8 +28,8 @@ int test_post_processor(int argc,
 
     ////////////Formatting Test Specific Directory////////////
     std::string cur_test_dir_str;
-    char main_test_dir_char[255] = "";
     std::string file_index_str;
+    char main_test_dir_char[255] = "";
     char file_index_output_char[255] = "";
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
@@ -42,14 +42,12 @@ int test_post_processor(int argc,
     vpxt_enc_format_append(post_proc_encode, enc_format);
 
     /////////////OutPutfile////////////
-    std::string text_file_str = cur_test_dir_str;
-    text_file_str.append(slashCharStr());
-    text_file_str.append(test_dir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
     if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
-        text_file_str.append(".txt");
+        text_file_str += ".txt";
     else
-        text_file_str.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
@@ -264,9 +262,9 @@ int test_post_processor(int argc,
 
     tprintf(PRINT_BTH, "\n");
 
-    float PSNRPercent = vpxt_abs_float(psnr_arr[1] - psnr_arr[0]) / psnr_arr[0];
+    float psnr_percent = vpxt_abs_float(psnr_arr[1] - psnr_arr[0]) / psnr_arr[0];
 
-    if (PSNRPercent < 0.1)
+    if (psnr_percent < 0.1)
     {
         vpxt_formated_print(RESPRT, "DEBLOCK PSNR: %4.2f within 10%% of %4.2f "
             "- Passed", psnr_arr[1], psnr_arr[0]);
@@ -287,9 +285,9 @@ int test_post_processor(int argc,
 
     while (n < max_deblock_level + 2)
     {
-        PSNRPercent = vpxt_abs_float(psnr_arr[n] - psnr_arr[0]) / psnr_arr[0];
+        psnr_percent = vpxt_abs_float(psnr_arr[n] - psnr_arr[0]) / psnr_arr[0];
 
-        if (PSNRPercent < 0.1)
+        if (psnr_percent < 0.1)
         {
             vpxt_formated_print(RESPRT, "DeblockLevel %*i PSNR: %4.2f within "
                 "10%% of %4.2f - Passed", 2, n - 2, psnr_arr[n], psnr_arr[0]);
@@ -311,9 +309,9 @@ int test_post_processor(int argc,
 
     while (n < max_noise_level + max_deblock_level + 2)
     {
-        PSNRPercent = vpxt_abs_float(psnr_arr[n] - psnr_arr[0]) / psnr_arr[0];
+        psnr_percent = vpxt_abs_float(psnr_arr[n] - psnr_arr[0]) / psnr_arr[0];
 
-        if (PSNRPercent < 0.1)
+        if (psnr_percent < 0.1)
         {
             vpxt_formated_print(RESPRT, "noise_level %*i PSNR: %4.2f within "
                 "10%% of %4.2f - Passed", 2, n - 18, psnr_arr[n], psnr_arr[0]);

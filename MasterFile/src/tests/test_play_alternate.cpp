@@ -2,93 +2,87 @@
 
 int test_play_alternate(int argc,
                         const char *const *argv,
-                        const std::string &WorkingDir,
-                        std::string FilesAr[],
-                        int TestType,
-                        int DeleteIVF)
+                        const std::string &working_dir,
+                        std::string files_ar[],
+                        int test_type,
+                        int delete_ivf)
 {
-    char *CompressString = "Play Alternate";
-    char *MyDir = "test_play_alternate";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Play Alternate";
+    char *test_dir = "test_play_alternate";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
-    int PlayAlternate1Val = 0;
-    int PlayAlternate2Val = 1;
+    int play_alternate_1_val = 0;
+    int play_alternate_2_val = 1;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    std::string FileIndexStr = "";
-    char MainTestDirChar[255] = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    char playaltbuff[255];
+    char play_alt_buff[255];
 
-    std::string PlayAlternate1 = CurTestDirStr;
-    PlayAlternate1.append(slashCharStr());
-    PlayAlternate1.append(MyDir);
-    PlayAlternate1.append("_compression_");
-    PlayAlternate1.append(vpxt_itoa_custom(PlayAlternate1Val, playaltbuff, 10));
-    vpxt_enc_format_append(PlayAlternate1, EncForm);
+    vpxt_itoa_custom(play_alternate_1_val, play_alt_buff, 10);
+    std::string play_alternate_1 = cur_test_dir_str + slashCharStr() + test_dir
+        + "_compression_" + play_alt_buff;
+    vpxt_enc_format_append(play_alternate_1, enc_format);
 
-    std::string PlayAlternate2 = CurTestDirStr;
-    PlayAlternate2.append(slashCharStr());
-    PlayAlternate2.append(MyDir);
-    PlayAlternate2.append("_compression_");
-    PlayAlternate2.append(vpxt_itoa_custom(PlayAlternate2Val, playaltbuff, 10));
-    vpxt_enc_format_append(PlayAlternate2, EncForm);
+    vpxt_itoa_custom(play_alternate_2_val, play_alt_buff, 10);
+    std::string play_alternate_2 = cur_test_dir_str + slashCharStr() + test_dir
+        + "_compression_" + play_alt_buff;
+    vpxt_enc_format_append(play_alternate_2, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -96,132 +90,138 @@ int test_play_alternate(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.allow_lag = 1;
     opt.lag_in_frames = 10;
     opt.end_usage = 1;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
-        opt.play_alternate = PlayAlternate1Val;
+        opt.Mode = mode;
+        opt.play_alternate = play_alternate_1_val;
 
-        if (vpxt_compress(input.c_str(), PlayAlternate1.c_str(), speed, BitRate,
-            opt, CompressString, PlayAlternate1Val, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), play_alternate_1.c_str(), speed,
+            bitrate, opt, comp_out_str, play_alternate_1_val, 0, enc_format)
+            == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.play_alternate = PlayAlternate2Val;
+        opt.play_alternate = play_alternate_2_val;
 
-        if (vpxt_compress(input.c_str(), PlayAlternate2.c_str(), speed, BitRate,
-            opt, CompressString, PlayAlternate2Val, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), play_alternate_2.c_str(), speed,
+            bitrate, opt, comp_out_str, play_alternate_2_val, 0, enc_format)
+            == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
-    int lngRC = vpxt_compare_enc(PlayAlternate2.c_str(), PlayAlternate1.c_str(),
+    int lng_rc = vpxt_compare_enc(play_alternate_2.c_str(),
+        play_alternate_1.c_str(),
         0);
 
     int fail = 0;
 
-    int PlayAlternateOnAltRefCount =
-        vpxt_display_alt_ref_frames(PlayAlternate2.c_str(), 1);
-    int PlayAlternateOffAltRefCount =
-        vpxt_display_alt_ref_frames(PlayAlternate1.c_str(), 1);
-    int VisibleFrameONCount =
-        vpxt_display_visible_frames(PlayAlternate2.c_str(), 1);
-    int VisibleFrameOFFCount =
-        vpxt_display_visible_frames(PlayAlternate1.c_str(), 1);
+    int play_alternate_on_alt_ref_count =
+        vpxt_display_alt_ref_frames(play_alternate_2.c_str(), 1);
+    int play_alternate_off_alt_ref_count =
+        vpxt_display_alt_ref_frames(play_alternate_1.c_str(), 1);
+    int visible_frame_on_count =
+        vpxt_display_visible_frames(play_alternate_2.c_str(), 1);
+    int visible_frame_off_count =
+        vpxt_display_visible_frames(play_alternate_1.c_str(), 1);
 
-    char PlayAlternateOnFilename[255];
-    vpxt_file_name(PlayAlternate2.c_str(), PlayAlternateOnFilename, 0);
-    char PlayAlternateOffFilename[255];
-    vpxt_file_name(PlayAlternate1.c_str(), PlayAlternateOffFilename, 0);
+    char play_alternate_on_file_name[255];
+    vpxt_file_name(play_alternate_2.c_str(), play_alternate_on_file_name, 0);
+    char play_alternate_off_file_name[255];
+    vpxt_file_name(play_alternate_1.c_str(), play_alternate_off_file_name, 0);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (PlayAlternateOnAltRefCount > 0)
+    if (play_alternate_on_alt_ref_count > 0)
     {
         vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - "
-            "Passed", PlayAlternateOnFilename);
+            "Passed", play_alternate_on_file_name);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
-            "for %s - Failed", PlayAlternateOnFilename);
+            "for %s - Failed", play_alternate_on_file_name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (PlayAlternateOffAltRefCount > 0)
+    if (play_alternate_off_alt_ref_count > 0)
     {
         vpxt_formated_print(RESPRT, "Alternate reference frames exist for %s - "
-            "Failed", PlayAlternateOffFilename);
+            "Failed", play_alternate_off_file_name);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
     else
     {
         vpxt_formated_print(RESPRT, "Alternate reference frames do not exist "
-            "for %s - Passed", PlayAlternateOffFilename);
+            "for %s - Passed", play_alternate_off_file_name);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (VisibleFrameONCount == VisibleFrameOFFCount)
+    if (visible_frame_on_count == visible_frame_off_count)
     {
         vpxt_formated_print(RESPRT, "Visible Frames for %s = %i == Visible "
-            "Frames for %s = %i - Passed", PlayAlternateOnFilename,
-            VisibleFrameONCount, PlayAlternateOffFilename,
-            VisibleFrameOFFCount);
+            "Frames for %s = %i - Passed", play_alternate_on_file_name,
+            visible_frame_on_count, play_alternate_off_file_name,
+            visible_frame_off_count);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "Visible Frames for %s = %i != Visible "
-            "Frames for %s = %i - Failed", PlayAlternateOnFilename,
-            VisibleFrameONCount, PlayAlternateOffFilename,
-            VisibleFrameOFFCount);
+            "Frames for %s = %i - Failed", play_alternate_on_file_name,
+            visible_frame_on_count, play_alternate_off_file_name,
+            visible_frame_off_count);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (lngRC >= 0)
+    if (lng_rc >= 0)
     {
         vpxt_formated_print(RESPRT, "Files are not identical - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (lngRC == -1)
+    if (lng_rc == -1)
     {
         vpxt_formated_print(RESPRT, "Files are identical - Failed");
         tprintf(PRINT_BTH, "\n");
@@ -232,26 +232,28 @@ int test_play_alternate(int argc,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, PlayAlternate1.c_str(),PlayAlternate2.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, play_alternate_1.c_str(),
+            play_alternate_2.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, PlayAlternate1.c_str(),PlayAlternate2.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, play_alternate_1.c_str(),
+            play_alternate_2.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

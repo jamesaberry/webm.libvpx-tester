@@ -2,86 +2,80 @@
 
 int test_undershoot(int argc,
                     const char *const *argv,
-                    const std::string &WorkingDir,
-                    std::string FilesAr[],
-                    int TestType,
-                    int DeleteIVF)
+                    const std::string &working_dir,
+                    std::string files_ar[],
+                    int test_type,
+                    int delete_ivf)
 {
-    char *CompressString = "Undershoot";
-    char *MyDir = "test_undershoot";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Undershoot";
+    char *test_dir = "test_undershoot";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string UnderShoot10 = CurTestDirStr;
-    UnderShoot10.append(slashCharStr());
-    UnderShoot10.append(MyDir);
-    UnderShoot10.append("_compression_10");
-    vpxt_enc_format_append(UnderShoot10, EncForm);
+    std::string under_shoot_10 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_10";
+    vpxt_enc_format_append(under_shoot_10, enc_format);
 
-    std::string UnderShoot100 = CurTestDirStr;
-    UnderShoot100.append(slashCharStr());
-    UnderShoot100.append(MyDir);
-    UnderShoot100.append("_compression_100");
-    vpxt_enc_format_append(UnderShoot100, EncForm);
+    std::string under_shoot_100 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_100";
+    vpxt_enc_format_append(under_shoot_100, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -89,113 +83,117 @@ int test_undershoot(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-        opt.Mode = Mode;
+        opt.Mode = mode;
 
         opt.under_shoot_pct = 10;
 
-        if (vpxt_compress(input.c_str(), UnderShoot10.c_str(), speed, BitRate,
-            opt, CompressString, 10, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), under_shoot_10.c_str(), speed, bitrate,
+            opt, comp_out_str, 10, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt.under_shoot_pct = 100;
 
-        if (vpxt_compress(input.c_str(), UnderShoot100.c_str(), speed, BitRate,
-            opt, CompressString, 100, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), under_shoot_100.c_str(), speed, bitrate
+            , opt, comp_out_str, 100, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
+    tprintf(PRINT_BTH, "\n\n");
+    long under_shoot_10_file_sz = vpxt_file_size(under_shoot_10.c_str(), 1);
     tprintf(PRINT_BTH, "\n");
-
-    tprintf(PRINT_BTH, "\n");
-    long FileIndexOutputCharbytes = vpxt_file_size(UnderShoot10.c_str(), 1);
-    tprintf(PRINT_BTH, "\n");
-    long File2bytes = vpxt_file_size(UnderShoot100.c_str(), 1);
+    long under_shoot_100_file_sz = vpxt_file_size(under_shoot_100.c_str(), 1);
     tprintf(PRINT_BTH, "\n");
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (FileIndexOutputCharbytes < File2bytes)
+    if (under_shoot_10_file_sz < under_shoot_100_file_sz)
     {
         vpxt_formated_print(RESPRT, "File size 1:%i < File size 2:%i - Passed",
-            FileIndexOutputCharbytes , File2bytes);
+            under_shoot_10_file_sz , under_shoot_100_file_sz);
 
         tprintf(PRINT_BTH, "\n\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, UnderShoot10.c_str(), UnderShoot100.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, under_shoot_10.c_str(),
+            under_shoot_100.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
 
-    if (FileIndexOutputCharbytes == File2bytes)
+    if (under_shoot_10_file_sz == under_shoot_100_file_sz)
     {
         vpxt_formated_print(RESPRT, "No effect try different file - "
             "Indeterminate");
 
         tprintf(PRINT_BTH, "\n\nIndeterminate\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, UnderShoot10.c_str(), UnderShoot100.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, under_shoot_10.c_str(),
+            under_shoot_100.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 2;
     }
     else
     {
         vpxt_formated_print(RESPRT, "File size 1:%i > File size 2:%i - Failed",
-            FileIndexOutputCharbytes , File2bytes);
+            under_shoot_10_file_sz , under_shoot_100_file_sz);
 
         tprintf(PRINT_BTH, "\n\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(2, UnderShoot10.c_str(), UnderShoot100.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(2, under_shoot_10.c_str(),
+            under_shoot_100.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

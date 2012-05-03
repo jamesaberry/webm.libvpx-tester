@@ -2,87 +2,81 @@
 
 int test_force_key_frame(int argc,
                          const char *const *argv,
-                         const std::string &WorkingDir,
-                         std::string FilesAr[],
-                         int TestType,
-                         int DeleteIVF)
+                         const std::string &working_dir,
+                         std::string files_ar[],
+                         int test_type,
+                         int delete_ivf)
 {
-    char *CompressString = "Key Frame Frequency";
-    char *MyDir = "test_force_key_frame";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Key Frame Frequency";
+    char *test_dir = "test_force_key_frame";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
     int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
+    int bitrate = atoi(argv[4]);
     int ForceKeyFrameInt = atoi(argv[5]);
-    std::string EncForm = argv[6];
+    std::string enc_format = argv[6];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string ForceKeyFrame = CurTestDirStr;
-    ForceKeyFrame.append(slashCharStr());
-    ForceKeyFrame.append(MyDir);
-    ForceKeyFrame.append("_compression");
-    vpxt_enc_format_append(ForceKeyFrame, EncForm);
+    std::string ForceKeyFrame = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression";
+    vpxt_enc_format_append(ForceKeyFrame, enc_format);
 
-    std::string KeyFrameoutputfile = CurTestDirStr;
-    KeyFrameoutputfile.append(slashCharStr());
-    KeyFrameoutputfile.append(MyDir);
-    KeyFrameoutputfile.append("_compression_key_frames.txt");
+    std::string KeyFrameoutputfile = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_key_frames.txt";
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -90,22 +84,22 @@ int test_force_key_frame(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.auto_key = 0;//1;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
@@ -115,20 +109,20 @@ int test_force_key_frame(int argc,
         opt.key_freq = 0;//ForceKeyFrameInt;
 
         if (vpxt_compress_force_key_frame(input.c_str(), ForceKeyFrame.c_str(),
-            speed, BitRate, opt, CompressString, ForceKeyFrameInt, 0,
-            ForceKeyFrameInt, EncForm) == -1)
+            speed, bitrate, opt, comp_out_str, ForceKeyFrameInt, 0,
+            ForceKeyFrameInt, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
@@ -141,12 +135,12 @@ int test_force_key_frame(int argc,
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
+        if (delete_ivf)
             vpxt_delete_files(2, ForceKeyFrame.c_str(),
             KeyFrameoutputfile.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
     else
@@ -157,17 +151,17 @@ int test_force_key_frame(int argc,
 
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
+        if (delete_ivf)
             vpxt_delete_files(2, ForceKeyFrame.c_str(),
             KeyFrameoutputfile.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 
 }

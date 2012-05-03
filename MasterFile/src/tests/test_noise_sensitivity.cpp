@@ -22,9 +22,9 @@ int test_noise_sensitivity(int argc,
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string cur_test_dir_str = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
     char main_test_dir_char[255] = "";
-    std::string file_index_str = "";
     char file_index_output_char[255] = "";
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
@@ -57,14 +57,12 @@ int test_noise_sensitivity(int argc,
     }
 
     /////////////OutPutfile////////////
-    std::string text_file_str = cur_test_dir_str;
-    text_file_str.append(slashCharStr());
-    text_file_str.append(test_dir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
     if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
-        text_file_str.append(".txt");
+        text_file_str += ".txt";
     else
-        text_file_str.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
@@ -128,7 +126,7 @@ int test_noise_sensitivity(int argc,
     //files)
     if (test_type == TEST_ONLY)
     {
-        while (noise != max_noise+1)
+        while (noise != max_noise + 1)
         {
             tprintf(PRINT_BTH, "\n");
             noise_psnr[noise] = vpxt_psnr(input.c_str(),
@@ -143,7 +141,7 @@ int test_noise_sensitivity(int argc,
     }
     else
     {
-        while (noise != max_noise+1)
+        while (noise != max_noise + 1)
         {
             opt.Mode = mode;
             opt.noise_sensitivity = noise;

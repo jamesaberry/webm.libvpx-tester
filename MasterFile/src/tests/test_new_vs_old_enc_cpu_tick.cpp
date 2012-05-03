@@ -25,9 +25,9 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     unsigned int cpu_tick_old = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string cur_test_dir_str = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
     char main_test_dir_char[255] = "";
-    std::string file_index_str = "";
     char file_index_output_char[255] = "";
 
     if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
@@ -199,7 +199,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
         char cpu_tick_new_char[256];
         sprintf(cpu_tick_new_char, "%u", cpu_tick_new);
 
-        std::string time_result_str = "";
+        std::string time_result_str;
         time_result_str += cpu_tick_new_char;
         time_result_str += " ms";
 
@@ -352,7 +352,7 @@ int test_new_vs_old_enc_cpu_tick(int argc,
             unsigned int time2 = vpxt_time_return(old_enc_file.c_str(), 0);
             cpu_tick_old = vpxt_cpu_tick_return(old_enc_file.c_str(), 0);
 
-            tprintf(PRINT_BTH, "\n\nFile completed: Time in Microseconds: %u",
+            tprintf(PRINT_BTH, "\n\nFile completed: time in Microseconds: %u",
                 time2);
             tprintf(PRINT_BTH, "\n Total CPU Ticks: %u\n", cpu_tick_old);
         }

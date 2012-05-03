@@ -2,120 +2,111 @@
 
 int test_multiple_resolution_encode(int argc,
                                     const char *const *argv,
-                                    const std::string &WorkingDir,
-                                    std::string FilesAr[],
-                                    int TestType,
-                                    int DeleteIVF)
+                                    const std::string &working_dir,
+                                    std::string files_ar[],
+                                    int test_type,
+                                    int delete_ivf)
 {
-    char *CompressString = "Allow Spatial Resampling";
-    char *MyDir = "test_multiple_resolution_encode";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Allow Spatial Resampling";
+    char *test_dir = "test_multiple_resolution_encode";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int BitRate = atoi(argv[3]);
-    std::string EncForm = argv[4];
+    int bitrate = atoi(argv[3]);
+    std::string enc_format = argv[4];
 
-    unsigned int width1;
-    unsigned int height1;
-    unsigned int width2;
-    unsigned int height2;
-    unsigned int width3;
-    unsigned int height3;
+    unsigned int width_1;
+    unsigned int height_1;
+    unsigned int width_2;
+    unsigned int height_2;
+    unsigned int width_3;
+    unsigned int height_3;
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    std::string FileIndexStr = "";
-    char MainTestDirChar[255] = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string MultResEnc = CurTestDirStr;
-    MultResEnc.append(slashCharStr());
-    MultResEnc.append(MyDir);
-    
-    std::string MultResEnc1 = MultResEnc;
-    vpxt_get_multi_res_width_height(input.c_str(), 1, width1, height1);
-    char Width1Char[10];
-    vpxt_itoa_custom(width1, Width1Char, 10);
-    char Height1Char[10];
-    vpxt_itoa_custom(height1, Height1Char, 10);
-    MultResEnc1.append("-");
-    MultResEnc1.append(Width1Char);
-    MultResEnc1.append("x");
-    MultResEnc1.append(Height1Char);
-    vpxt_enc_format_append(MultResEnc1, EncForm);
-    
-    std::string MultResEnc2 = MultResEnc;
-    vpxt_get_multi_res_width_height(input.c_str(), 2, width2, height2);
-    char Width2Char[10];
-    vpxt_itoa_custom(width2, Width2Char, 10);
-    char Height2Char[10];
-    vpxt_itoa_custom(height2, Height2Char, 10);
-    MultResEnc2.append("-");
-    MultResEnc2.append(Width2Char);
-    MultResEnc2.append("x");
-    MultResEnc2.append(Height2Char);
-    vpxt_enc_format_append(MultResEnc2, EncForm);
+    char width_1_char[10];
+    char width_2_char[10];
+    char width_3_char[10];
 
-    std::string MultResEnc3 = MultResEnc;
-    vpxt_get_multi_res_width_height(input.c_str(), 3, width3, height3);
-    char Width3Char[10];
-    vpxt_itoa_custom(width3, Width3Char, 10);
-    char Height3Char[10];
-    vpxt_itoa_custom(height3, Height3Char, 10);
-    MultResEnc3.append("-");
-    MultResEnc3.append(Width3Char);
-    MultResEnc3.append("x");
-    MultResEnc3.append(Height3Char);
-    vpxt_enc_format_append(MultResEnc3, EncForm);
+    char height_1_char[10];
+    char height_2_char[10];
+    char height_3_char[10];
+
+    vpxt_get_multi_res_width_height(input.c_str(), 1, width_1, height_1);
+    vpxt_get_multi_res_width_height(input.c_str(), 2, width_2, height_2);
+    vpxt_get_multi_res_width_height(input.c_str(), 3, width_3, height_3);
+
+    vpxt_itoa_custom(width_1, width_1_char, 10);
+    vpxt_itoa_custom(height_1, height_1_char, 10);
+    vpxt_itoa_custom(width_2, width_2_char, 10);
+    vpxt_itoa_custom(height_2, height_2_char, 10);
+    vpxt_itoa_custom(width_3, width_3_char, 10);
+    vpxt_itoa_custom(height_3, height_3_char, 10);
+
+    std::string multi_res_enc = cur_test_dir_str + slashCharStr() + test_dir;
+
+    std::string multi_res_enc_1 = multi_res_enc + "-" + width_1_char + "x" +
+        height_1_char;
+    vpxt_enc_format_append(multi_res_enc_1, enc_format);
+
+    std::string multi_res_enc_2 = multi_res_enc + "-" + width_2_char + "x" +
+        height_2_char;
+    vpxt_enc_format_append(multi_res_enc_2, enc_format);
+
+    std::string multi_res_enc_3 = multi_res_enc + "-" + width_3_char + "x" +
+        height_3_char;
+    vpxt_enc_format_append(multi_res_enc_3, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -123,128 +114,132 @@ int test_multiple_resolution_encode(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
-
-        if (vpxt_compress_multi_resolution(input.c_str(), MultResEnc.c_str(),
-            speed, BitRate, opt, CompressString, 1, 0, EncForm) == -1)
+        if (vpxt_compress_multi_resolution(input.c_str(), multi_res_enc.c_str(),
+            speed, bitrate, opt, comp_out_str, 1, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
-    double psnr1 = vpxt_psnr(input.c_str(), MultResEnc1.c_str(), 0, PRINT_BTH,
-        1, NULL);
-    double psnr2 = vpxt_psnr(input.c_str(), MultResEnc2.c_str(), 0, PRINT_BTH,
-        1, NULL);
-    double psnr3 = vpxt_psnr(input.c_str(), MultResEnc3.c_str(), 0, PRINT_BTH,
-        1, NULL);
+    double psnr_1 = vpxt_psnr(input.c_str(), multi_res_enc_1.c_str(), 0,
+        PRINT_BTH, 1, NULL);
+    double psnr_2 = vpxt_psnr(input.c_str(), multi_res_enc_2.c_str(), 0,
+        PRINT_BTH, 1, NULL);
+    double psnr_3 = vpxt_psnr(input.c_str(), multi_res_enc_3.c_str(), 0,
+        PRINT_BTH, 1, NULL);
 
-    char MultResEnc1FN[256];
-    char MultResEnc2FN[256];
-    char MultResEnc3FN[256];
+    char multi_res_enc_1_file_name[256];
+    char multi_res_enc_2_file_name[256];
+    char multi_res_enc_3_file_name[256];
 
-    vpxt_file_name(MultResEnc1.c_str(), MultResEnc1FN, 0);
-    vpxt_file_name(MultResEnc2.c_str(), MultResEnc2FN, 0);
-    vpxt_file_name(MultResEnc3.c_str(), MultResEnc3FN, 0);
+    vpxt_file_name(multi_res_enc_1.c_str(), multi_res_enc_1_file_name, 0);
+    vpxt_file_name(multi_res_enc_2.c_str(), multi_res_enc_2_file_name, 0);
+    vpxt_file_name(multi_res_enc_3.c_str(), multi_res_enc_3_file_name, 0);
 
     int fail = 0;
 
-    if (psnr1 > 25.0)
+    if (psnr_1 > 25.0)
     {
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed",
-            MultResEnc1FN, psnr1);
+            multi_res_enc_1_file_name, psnr_1);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
-            MultResEnc1FN, psnr1);
+            multi_res_enc_1_file_name, psnr_1);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
-    if (psnr2 > 25.0)
+    if (psnr_2 > 25.0)
     {
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed",
-            MultResEnc2FN, psnr2);
+            multi_res_enc_2_file_name, psnr_2);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
-            MultResEnc2FN, psnr2);
+            multi_res_enc_2_file_name, psnr_2);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
-    if (psnr3 > 25.0)
+    if (psnr_3 > 25.0)
     {
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f > 25 - Passed",
-            MultResEnc3FN, psnr3);
+            multi_res_enc_3_file_name, psnr_3);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
         vpxt_formated_print(RESPRT, "%s PSNR: %.2f < 25 - Failed",
-            MultResEnc3FN, psnr3);
+            multi_res_enc_3_file_name, psnr_3);
         tprintf(PRINT_BTH, "\n");
         fail = 1;
     }
 
-    if (psnr1 >= psnr2 && psnr2 >= psnr3)
+    if (psnr_1 >= psnr_2 && psnr_2 >= psnr_3)
     {
         vpxt_formated_print(RESPRT, "%s: %.2f >= %s: %.2f >= %s: %.2f - Passed"
-            , MultResEnc1FN, psnr1, MultResEnc2FN, psnr2, MultResEnc3FN, psnr3);
+            , multi_res_enc_1_file_name, psnr_1, multi_res_enc_2_file_name,
+            psnr_2, multi_res_enc_3_file_name, psnr_3);
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        if(psnr1 < psnr2 &&  psnr2 < psnr3)
+        if(psnr_1 < psnr_2 &&  psnr_2 < psnr_3)
         {
             vpxt_formated_print(RESPRT, "%s: %.2f < %s: %.2f < %s: %.2f - "
-                "Failed", MultResEnc1FN, psnr1, MultResEnc2FN, psnr2,
-                MultResEnc3FN, psnr3);
+                "Failed", multi_res_enc_1_file_name, psnr_1,
+                multi_res_enc_2_file_name, psnr_2, multi_res_enc_3_file_name,
+                psnr_3);
             tprintf(PRINT_BTH, "\n");
         }
-        else if(psnr1 < psnr2)
+        else if(psnr_1 < psnr_2)
         {
             vpxt_formated_print(RESPRT, "%s: %.2f < %s: %.2f >= %s: %.2f - "
-               "Failed", MultResEnc1FN, psnr1, MultResEnc2FN, psnr2,
-               MultResEnc3FN, psnr3);
+               "Failed", multi_res_enc_1_file_name, psnr_1,
+               multi_res_enc_2_file_name, psnr_2, multi_res_enc_3_file_name,
+               psnr_3);
             tprintf(PRINT_BTH, "\n");
         }
-        else if(psnr2 < psnr3)
+        else if(psnr_2 < psnr_3)
         {
             vpxt_formated_print(RESPRT, "%s: %.2f >= %s: %.2f < %s: %.2f - "
-                "Failed", MultResEnc1FN, psnr1, MultResEnc2FN, psnr2,
-                MultResEnc3FN, psnr3);
+                "Failed", multi_res_enc_1_file_name, psnr_1,
+                multi_res_enc_2_file_name, psnr_2, multi_res_enc_3_file_name,
+                psnr_3);
             tprintf(PRINT_BTH, "\n");
         }
         
@@ -255,28 +250,28 @@ int test_multiple_resolution_encode(int argc,
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(3, MultResEnc1.c_str(), MultResEnc2.c_str(),
-            MultResEnc3.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(3, multi_res_enc_1.c_str(),
+            multi_res_enc_2.c_str(), multi_res_enc_3.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(3, MultResEnc1.c_str(), MultResEnc2.c_str(),
-            MultResEnc3.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(3, multi_res_enc_1.c_str(),
+            multi_res_enc_2.c_str(), multi_res_enc_3.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

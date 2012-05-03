@@ -2,109 +2,95 @@
 
 int test_one_pass_vs_two_pass(int argc,
                               const char *const *argv,
-                              const std::string &WorkingDir,
-                              std::string FilesAr[],
-                              int TestType,
-                              int DeleteIVF)
+                              const std::string &working_dir,
+                              std::string files_ar[],
+                              int test_type,
+                              int delete_ivf)
 {
-    char *CompressString = "Allow Drop Frames";
-    char *MyDir = "test_one_pass_vs_two_pass";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Allow Drop Frames";
+    char *test_dir = "test_one_pass_vs_two_pass";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int BitRate = atoi(argv[3]);
-    std::string EncForm = argv[4];
+    int bitrate = atoi(argv[3]);
+    std::string enc_format = argv[4];
 
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string OnePassOutFile1 = CurTestDirStr;
-    OnePassOutFile1.append(slashCharStr());
-    OnePassOutFile1.append(MyDir);
-    OnePassOutFile1.append("_compression_one_pass_1");
-    vpxt_enc_format_append(OnePassOutFile1, EncForm);
+    std::string one_pass_out_1 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_one_pass_1";
+    vpxt_enc_format_append(one_pass_out_1, enc_format);
 
-    std::string OnePassOutFile2 = CurTestDirStr;
-    OnePassOutFile2.append(slashCharStr());
-    OnePassOutFile2.append(MyDir);
-    OnePassOutFile2.append("_compression_one_pass_2");
-    vpxt_enc_format_append(OnePassOutFile2, EncForm);
+    std::string one_pass_out_2 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_one_pass_2";
+    vpxt_enc_format_append(one_pass_out_2, enc_format);
 
-    std::string OnePassOutFile3 = CurTestDirStr;
-    OnePassOutFile3.append(slashCharStr());
-    OnePassOutFile3.append(MyDir);
-    OnePassOutFile3.append("_compression_one_pass_3");
-    vpxt_enc_format_append(OnePassOutFile3, EncForm);
+    std::string one_pass_out_3 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_one_pass_3";
+    vpxt_enc_format_append(one_pass_out_3, enc_format);
 
-    std::string TwoPassOutFile1 = CurTestDirStr;
-    TwoPassOutFile1.append(slashCharStr());
-    TwoPassOutFile1.append(MyDir);
-    TwoPassOutFile1.append("_compression_two_pass_1");
-    vpxt_enc_format_append(TwoPassOutFile1, EncForm);
+    std::string two_pass_out_1 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_two_pass_1";
+    vpxt_enc_format_append(two_pass_out_1, enc_format);
 
-    std::string TwoPassOutFile2 = CurTestDirStr;
-    TwoPassOutFile2.append(slashCharStr());
-    TwoPassOutFile2.append(MyDir);
-    TwoPassOutFile2.append("_compression_two_pass_2");
-    vpxt_enc_format_append(TwoPassOutFile2, EncForm);
+    std::string two_pass_out_2 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_two_pass_2";
+    vpxt_enc_format_append(two_pass_out_2, enc_format);
 
-    std::string TwoPassOutFile3 = CurTestDirStr;
-    TwoPassOutFile3.append(slashCharStr());
-    TwoPassOutFile3.append(MyDir);
-    TwoPassOutFile3.append("_compression_two_pass_3");
-    vpxt_enc_format_append(TwoPassOutFile3, EncForm);
+    std::string two_pass_out_3 = cur_test_dir_str + slashCharStr() + test_dir +
+        "_compression_two_pass_3";
+    vpxt_enc_format_append(two_pass_out_3, enc_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -112,197 +98,197 @@ int test_one_pass_vs_two_pass(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
-    int CompressInt = opt.allow_df;
-
-    int BitRate1 = BitRate - (BitRate * 0.3);
-    int BitRate2 = BitRate;
-    int BitRate3 = BitRate + (BitRate * 0.3);
+    int compress_int = opt.allow_df;
+    int bitrate_1 = bitrate - (bitrate * 0.3);
+    int bitrate_2 = bitrate;
+    int bitrate_3 = bitrate + (bitrate * 0.3);
 
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
         //This test requires no preperation before a Test Only Run
     }
     else
     {
         opt.Mode = 5;
-        opt.target_bandwidth = BitRate1;
+        opt.target_bandwidth = bitrate_1;
 
-        if (vpxt_compress(input.c_str(), TwoPassOutFile1.c_str(), speed,
-            BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), two_pass_out_1.c_str(), speed,
+            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate2;
+        opt.target_bandwidth = bitrate_2;
 
-        if (vpxt_compress(input.c_str(), TwoPassOutFile2.c_str(), speed,
-            BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), two_pass_out_2.c_str(), speed,
+            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate3;
+        opt.target_bandwidth = bitrate_3;
 
-        if (vpxt_compress(input.c_str(), TwoPassOutFile3.c_str(), speed,
-            BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), two_pass_out_3.c_str(), speed,
+            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
         opt.Mode = 2;
-        opt.target_bandwidth = BitRate1;
+        opt.target_bandwidth = bitrate_1;
 
-        if (vpxt_compress(input.c_str(), OnePassOutFile1.c_str(), speed,
-            BitRate1, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), one_pass_out_1.c_str(), speed,
+            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate2;
+        opt.target_bandwidth = bitrate_2;
 
-        if (vpxt_compress(input.c_str(), OnePassOutFile2.c_str(), speed,
-            BitRate2, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), one_pass_out_2.c_str(), speed,
+            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
 
-        opt.target_bandwidth = BitRate3;
+        opt.target_bandwidth = bitrate_3;
 
-        if (vpxt_compress(input.c_str(), OnePassOutFile3.c_str(), speed,
-            BitRate3, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), one_pass_out_3.c_str(), speed,
+            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
             return 2;
         }
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 10;
     }
 
     tprintf(PRINT_STD, "\n");
 
-    float SizeTwoPass1 = vpxt_data_rate(TwoPassOutFile1.c_str(), 1);
-    float SizeOnePass1 = vpxt_data_rate(OnePassOutFile1.c_str(), 1);
-    float SizeTwoPass2 = vpxt_data_rate(TwoPassOutFile2.c_str(), 1);
-    float SizeOnePass2 = vpxt_data_rate(OnePassOutFile2.c_str(), 1);
-    float SizeTwoPass3 = vpxt_data_rate(TwoPassOutFile3.c_str(), 1);
-    float SizeOnePass3 = vpxt_data_rate(OnePassOutFile3.c_str(), 1);
+    float size_two_pass_1 = vpxt_data_rate(two_pass_out_1.c_str(), 1);
+    float size_one_pass_1 = vpxt_data_rate(one_pass_out_1.c_str(), 1);
+    float size_two_pass_2 = vpxt_data_rate(two_pass_out_2.c_str(), 1);
+    float size_one_pass_2 = vpxt_data_rate(one_pass_out_2.c_str(), 1);
+    float size_two_pass_3 = vpxt_data_rate(two_pass_out_3.c_str(), 1);
+    float size_one_pass_3 = vpxt_data_rate(one_pass_out_3.c_str(), 1);
 
-    double PSNRTwoPass1;
-    double PSNRTwoPass2;
-    double PSNRTwoPass3;
-
-    double PSNROnePass1;
-    double PSNROnePass2;
-    double PSNROnePass3;
-
-    PSNRTwoPass1 = vpxt_psnr(input.c_str(), TwoPassOutFile1.c_str(), 1,
+    double psnr_two_pass_1 = vpxt_psnr(input.c_str(), two_pass_out_1.c_str(), 1,
         PRINT_BTH, 1, NULL);
-    PSNRTwoPass2 = vpxt_psnr(input.c_str(), TwoPassOutFile2.c_str(), 1,
+    double psnr_two_pass_2 = vpxt_psnr(input.c_str(), two_pass_out_2.c_str(), 1,
         PRINT_BTH, 1, NULL);
-    PSNRTwoPass3 = vpxt_psnr(input.c_str(), TwoPassOutFile3.c_str(), 1,
+    double psnr_two_pass_3 = vpxt_psnr(input.c_str(), two_pass_out_3.c_str(), 1,
         PRINT_BTH, 1, NULL);
-    PSNROnePass1 = vpxt_psnr(input.c_str(), OnePassOutFile1.c_str(), 1,
+    double psnr_one_pass_1 = vpxt_psnr(input.c_str(), one_pass_out_1.c_str(), 1,
         PRINT_BTH, 1, NULL);
-    PSNROnePass2 = vpxt_psnr(input.c_str(), OnePassOutFile2.c_str(), 1,
+    double psnr_one_pass_2 = vpxt_psnr(input.c_str(), one_pass_out_2.c_str(), 1,
         PRINT_BTH, 1, NULL);
-    PSNROnePass3 = vpxt_psnr(input.c_str(), OnePassOutFile3.c_str(), 1,
+    double psnr_one_pass_3 = vpxt_psnr(input.c_str(), one_pass_out_3.c_str(), 1,
         PRINT_BTH, 1, NULL);
 
-    int Pass = 0;
+    int pass = 0;
 
     //data rates not always in order so find smallest observed data rate
-    float SizeTwoPassMin = SizeTwoPass1;
-    float SizeOnePassMin = SizeOnePass1;
+    float size_two_pass_min = size_two_pass_1;
+    float size_one_pass_min = size_one_pass_1;
 
-    if(SizeTwoPass2 < SizeTwoPassMin)
-        SizeTwoPassMin = SizeTwoPass2;
+    if(size_two_pass_2 < size_two_pass_min)
+        size_two_pass_min = size_two_pass_2;
 
-    if(SizeTwoPass3 < SizeTwoPassMin)
-        SizeTwoPassMin = SizeTwoPass3;
+    if(size_two_pass_3 < size_two_pass_min)
+        size_two_pass_min = size_two_pass_3;
 
-    if(SizeOnePass2 < SizeOnePassMin)
-        SizeOnePassMin = SizeOnePass2;
+    if(size_one_pass_2 < size_one_pass_min)
+        size_one_pass_min = size_one_pass_2;
 
-    if(SizeOnePass3 < SizeOnePassMin)
-        SizeOnePassMin = SizeOnePass3;
+    if(size_one_pass_3 < size_one_pass_min)
+        size_one_pass_min = size_one_pass_3;
 
     //data rates not always in order so find largest observed data rate
-    float SizeTwoPassMax = SizeTwoPass3;
-    float SizeOnePassMax = SizeOnePass3;
+    float size_two_pass_max = size_two_pass_3;
+    float size_one_pass_max = size_one_pass_3;
 
-    if(SizeTwoPass2 > SizeTwoPassMax)
-        SizeTwoPassMax = SizeTwoPass2;
+    if(size_two_pass_2 > size_two_pass_max)
+        size_two_pass_max = size_two_pass_2;
 
-    if(SizeTwoPass1 > SizeTwoPassMax)
-        SizeTwoPassMax = SizeTwoPass1;
+    if(size_two_pass_1 > size_two_pass_max)
+        size_two_pass_max = size_two_pass_1;
 
-    if(SizeOnePass2 > SizeOnePassMax)
-        SizeOnePassMax = SizeOnePass2;
+    if(size_one_pass_2 > size_one_pass_max)
+        size_one_pass_max = size_one_pass_2;
 
-    if(SizeOnePass1 > SizeOnePassMax)
-        SizeOnePassMax = SizeOnePass1;
+    if(size_one_pass_1 > size_one_pass_max)
+        size_one_pass_max = size_one_pass_1;
 
-    float TwoPassA = 0;
-    float TwoPassB = 0;
-    float TwoPassC = 0;
+    float two_pass_a = 0;
+    float two_pass_b = 0;
+    float two_pass_c = 0;
 
-    float OnePassA = 0;
-    float OnePassB = 0;
-    float OnePassC = 0;
+    float one_pass_a = 0;
+    float one_pass_b = 0;
+    float one_pass_c = 0;
 
-    float minCommon = 0;
-    float maxCommon = 0;
+    float min_common = 0;
+    float max_common = 0;
 
     //take area over same range we have decent data for.
-    if (SizeTwoPassMin > SizeOnePassMin)
-        minCommon = SizeTwoPassMin;
+    if (size_two_pass_min > size_one_pass_min)
+        min_common = size_two_pass_min;
     else
-        minCommon = SizeOnePassMin;
+        min_common = size_one_pass_min;
 
-    if (SizeTwoPassMax > SizeOnePassMax)
-        maxCommon = SizeOnePassMax;
+    if (size_two_pass_max > size_one_pass_max)
+        max_common = size_one_pass_max;
     else
-        maxCommon = SizeTwoPassMax;
+        max_common = size_two_pass_max;
 
-    vpxt_solve_quadratic(SizeTwoPass1, SizeTwoPass2, SizeTwoPass3, PSNRTwoPass1,
-        PSNRTwoPass2, PSNRTwoPass3, TwoPassA, TwoPassB, TwoPassC);
-    float TwoPassAreaVal = vpxt_area_under_quadratic(TwoPassA, TwoPassB,
-        TwoPassC, minCommon, maxCommon);
+    vpxt_solve_quadratic(size_two_pass_1, size_two_pass_2, size_two_pass_3,
+        psnr_two_pass_1, psnr_two_pass_2, psnr_two_pass_3, two_pass_a,
+        two_pass_b, two_pass_c);
+    float two_pass_area = vpxt_area_under_quadratic(two_pass_a, two_pass_b,
+        two_pass_c, min_common, max_common);
 
-    vpxt_solve_quadratic(SizeOnePass1, SizeOnePass2, SizeOnePass3, PSNROnePass1,
-        PSNROnePass2, PSNROnePass3, OnePassA, OnePassB, OnePassC);
-    float OnePassAreaVal = vpxt_area_under_quadratic(OnePassA, OnePassB,
-        OnePassC, minCommon, maxCommon);
+    vpxt_solve_quadratic(size_one_pass_1, size_one_pass_2, size_one_pass_3,
+        psnr_one_pass_1, psnr_one_pass_2, psnr_one_pass_3, one_pass_a,
+        one_pass_b, one_pass_c);
+    float one_pass_area = vpxt_area_under_quadratic(one_pass_a, one_pass_b,
+        one_pass_c, min_common, max_common);
 
     tprintf(PRINT_BTH, "\n\n"
             "Data Points:\n"
@@ -320,80 +306,80 @@ int test_one_pass_vs_two_pass(int argc,
             "(%.2f,%2.2f)\n"
             "\n"
             "\n"
-            , SizeTwoPass1, PSNRTwoPass1
-            , SizeTwoPass2, PSNRTwoPass2
-            , SizeTwoPass3, PSNRTwoPass3
-            , SizeOnePass1, PSNROnePass1
-            , SizeOnePass2, PSNROnePass2
-            , SizeOnePass3, PSNROnePass3
+            , size_two_pass_1, psnr_two_pass_1
+            , size_two_pass_2, psnr_two_pass_2
+            , size_two_pass_3, psnr_two_pass_3
+            , size_one_pass_1, psnr_one_pass_1
+            , size_one_pass_2, psnr_one_pass_2
+            , size_one_pass_3, psnr_one_pass_3
            );
 
-    tprintf(PRINT_BTH, "Two Pass Curve: y = %fx^2 + %fx + %f\n", TwoPassA,
-        TwoPassB, TwoPassC);
-    tprintf(PRINT_BTH, "One Pass Curve: y = %fx^2 + %fx + %f\n", OnePassA,
-        OnePassB, OnePassC);
+    tprintf(PRINT_BTH, "Two Pass Curve: y = %fx^2 + %fx + %f\n", two_pass_a,
+        two_pass_b, two_pass_c);
+    tprintf(PRINT_BTH, "One Pass Curve: y = %fx^2 + %fx + %f\n", one_pass_a,
+        one_pass_b, one_pass_c);
     tprintf(PRINT_BTH, "\nGood Quality area under curve for interval %.2f - "
-        "%.2f = %.2f\n", minCommon, maxCommon, TwoPassAreaVal);
+        "%.2f = %.2f\n", min_common, max_common, two_pass_area);
     tprintf(PRINT_BTH, "Best Quality area under curve for interval %.2f - "
-        "%.2f = %.2f\n", minCommon, maxCommon, OnePassAreaVal);
+        "%.2f = %.2f\n", min_common, max_common, one_pass_area);
 
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
-    if (TwoPassAreaVal == OnePassAreaVal)
+    if (two_pass_area == one_pass_area)
     {
         vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f == One "
-            "Pass area under curve: %.2f - Failed", TwoPassAreaVal,
-            OnePassAreaVal);
+            "Pass area under curve: %.2f - Failed", two_pass_area,
+            one_pass_area);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (OnePassAreaVal < TwoPassAreaVal)
+    if (one_pass_area < two_pass_area)
     {
         vpxt_formated_print(RESPRT, "Two Pass area under curve: %.2f > One "
-            "Pass area under curve: %.2f - Passed", TwoPassAreaVal,
-            OnePassAreaVal);
+            "Pass area under curve: %.2f - Passed", two_pass_area,
+            one_pass_area);
         tprintf(PRINT_BTH, "\n");
-        Pass = 1;
+        pass = 1;
     }
 
-    if (OnePassAreaVal > TwoPassAreaVal)
+    if (one_pass_area > two_pass_area)
     {
         vpxt_formated_print(RESPRT, "Two Pass  area under curve: %.2f < One "
-            "Pass area under curve: %.2f - Failed", TwoPassAreaVal,
-            OnePassAreaVal);
+            "Pass area under curve: %.2f - Failed", two_pass_area,
+            one_pass_area);
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (Pass == 1)
+    if (pass == 1)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(6, OnePassOutFile1.c_str(),
-            OnePassOutFile2.c_str(), OnePassOutFile3.c_str(),
-            TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(),
-            TwoPassOutFile3.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(6, one_pass_out_1.c_str(),
+            one_pass_out_2.c_str(), one_pass_out_3.c_str(),
+            two_pass_out_1.c_str(), two_pass_out_2.c_str(),
+            two_pass_out_3.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(6, OnePassOutFile1.c_str(),
-            OnePassOutFile2.c_str(), OnePassOutFile3.c_str(),
-            TwoPassOutFile1.c_str(), TwoPassOutFile2.c_str(),
-            TwoPassOutFile3.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(6, one_pass_out_1.c_str(),
+            one_pass_out_2.c_str(), one_pass_out_3.c_str(),
+            two_pass_out_1.c_str(), two_pass_out_2.c_str(),
+            two_pass_out_3.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+        record_test_complete(file_index_str, file_index_output_char, test_type);
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+    record_test_complete(file_index_str, file_index_output_char, test_type);
     return 6;
 }

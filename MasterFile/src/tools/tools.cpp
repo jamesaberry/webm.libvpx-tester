@@ -141,288 +141,6 @@ int RawDataIVF(const char *input, const char *output)
 
     return 0;
 }
-int DecoderCheck(int argc, const char *const *argv)
-{
-    std::string IVFSourceFile;
-    vpxt_folder_name(argv[0], &IVFSourceFile);
-    IVFSourceFile.append("DecTestMaterial\\");
-
-    std::string DecodeInputStr = IVFSourceFile;
-    DecodeInputStr.append("I420_bondA_FileToDec.ivf");
-
-    ///////////////////////////////////////////////
-    std::string BeforeCompressionDecOutput1 = IVFSourceFile;
-    std::string BeforeCompressionDecOutput2 = IVFSourceFile;
-    std::string BeforeCompressionDecOutput3 = IVFSourceFile;
-
-    BeforeCompressionDecOutput1.append("BeforeCompressionOut");
-    BeforeCompressionDecOutput2.append("BeforeCompressionOut");
-    BeforeCompressionDecOutput3.append("BeforeCompressionOut");
-
-    std::string MakeDirBeforeCompressionDecOutput1 =BeforeCompressionDecOutput1;
-    MakeDirBeforeCompressionDecOutput1.insert(0, "\"");
-    MakeDirBeforeCompressionDecOutput1.insert(0, "md ");
-    MakeDirBeforeCompressionDecOutput1.insert(0, "\"");
-    MakeDirBeforeCompressionDecOutput1.append("\"");
-    vpxt_make_dir_vpx(MakeDirBeforeCompressionDecOutput1);
-
-    BeforeCompressionDecOutput1.append("\\BeforeCompressionDecOutput1.ivf");
-    BeforeCompressionDecOutput2.append("\\BeforeCompressionDecOutput2.ivf");
-    BeforeCompressionDecOutput3.append("\\BeforeCompressionDecOutput3.ivf");
-    ///////////////////////////////////////////////
-    ///////////////////////////////////////////////
-    std::string AfterCompressionDecOutput1 = IVFSourceFile;
-    std::string AfterCompressionDecOutput2 = IVFSourceFile;
-    std::string AfterCompressionDecOutput3 = IVFSourceFile;
-
-    AfterCompressionDecOutput1.append("AfterCompressionOut");
-    AfterCompressionDecOutput2.append("AfterCompressionOut");
-    AfterCompressionDecOutput3.append("AfterCompressionOut");
-
-    std::string MakeDirAfterCompressionDecOutput1 = AfterCompressionDecOutput1;
-    MakeDirAfterCompressionDecOutput1.insert(0, "\"");
-    MakeDirAfterCompressionDecOutput1.insert(0, "md ");
-    MakeDirAfterCompressionDecOutput1.insert(0, "\"");
-    MakeDirAfterCompressionDecOutput1.append("\"");
-    vpxt_make_dir_vpx(MakeDirAfterCompressionDecOutput1);
-
-    AfterCompressionDecOutput1.append("\\AfterCompressionDecOutput1.ivf");
-    AfterCompressionDecOutput2.append("\\AfterCompressionDecOutput2.ivf");
-    AfterCompressionDecOutput3.append("\\AfterCompressionDecOutput3.ivf");
-    ///////////////////////////////////////////////
-    std::string CompressionInputStr = IVFSourceFile;
-    std::string CompressionOutputStr = IVFSourceFile;
-
-    CompressionInputStr.append("src16_FileToCompress.ivf");
-    CompressionOutputStr.append("NewCompressionOut");
-
-    std::string MakeDirCompressionOutputStr = CompressionOutputStr;
-    MakeDirCompressionOutputStr.insert(0, "\"");
-    MakeDirCompressionOutputStr.insert(0, "md ");
-    MakeDirCompressionOutputStr.insert(0, "\"");
-    MakeDirCompressionOutputStr.append("\"");
-    vpxt_make_dir_vpx(MakeDirCompressionOutputStr);
-
-    CompressionOutputStr.append("\\NewCompression.ivf");
-    ///////////////////////////////////////////////
-
-    char BeforeCompressionDecOutput1Char[255];
-    char BeforeCompressionDecOutput2Char[255];
-    char BeforeCompressionDecOutput3Char[255];
-
-    char AfterCompressionDecOutput1Char[255];
-    char AfterCompressionDecOutput2Char[255];
-    char AfterCompressionDecOutput3Char[255];
-
-    char DecodeInput[255];
-
-    char CompressionInput[255];
-    char CompressionOutput[255];
-
-    snprintf(BeforeCompressionDecOutput1Char, 255, "%s",
-        BeforeCompressionDecOutput1.c_str());
-    snprintf(BeforeCompressionDecOutput2Char, 255, "%s",
-        BeforeCompressionDecOutput2.c_str());
-    snprintf(BeforeCompressionDecOutput3Char, 255, "%s",
-        BeforeCompressionDecOutput3.c_str());
-
-    snprintf(AfterCompressionDecOutput1Char, 255, "%s",
-        AfterCompressionDecOutput1.c_str());
-    snprintf(AfterCompressionDecOutput2Char, 255, "%s",
-        AfterCompressionDecOutput2.c_str());
-    snprintf(AfterCompressionDecOutput3Char, 255, "%s",
-        AfterCompressionDecOutput3.c_str());
-
-    snprintf(DecodeInput, 255, "%s", DecodeInputStr.c_str());
-
-    snprintf(CompressionInput, 255, "%s", CompressionInputStr.c_str());
-    snprintf(CompressionOutput, 255, "%s", CompressionOutputStr.c_str());
-
-    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput,
-        BeforeCompressionDecOutput1Char);
-    unsigned int CPUTick1 = 0;
-    vpxt_decompress_time_and_output(DecodeInput,
-        BeforeCompressionDecOutput1Char, CPUTick1, "ivf", 1);
-    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n",
-        DecodeInput, BeforeCompressionDecOutput2Char);
-    unsigned int CPUTick2 = 0;
-    vpxt_decompress_time_and_output(DecodeInput,
-        BeforeCompressionDecOutput2Char, CPUTick2, "ivf", 1);
-    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n",
-        DecodeInput, BeforeCompressionDecOutput3Char);
-    unsigned int CPUTick3 = 0;
-    vpxt_decompress_time_and_output(DecodeInput,
-        BeforeCompressionDecOutput3Char, CPUTick3, "ivf", 1);
-
-    ////////////////////////////////////////////////////////////////////////////
-    int speed = 0;
-    int BitRate = 128;
-
-    int Mode = 1;
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-    opt.target_bandwidth = BitRate;
-
-    if (Mode == 1)
-    {
-        opt.Mode = MODE_GOODQUALITY;
-        tprintf(PRINT_STD, "\n\nCompressing %s to %s\n", CompressionInput,
-            CompressionOutput);
-        vpxt_compress_no_error_output(CompressionInput, CompressionOutput,
-            speed, BitRate, opt, "", 0, 0, "webm");
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-
-
-    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput,
-        AfterCompressionDecOutput1Char);
-    unsigned int CPUTick4 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput1Char,
-        CPUTick4, "ivf", 1);
-    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput,
-        AfterCompressionDecOutput2Char);
-    unsigned int CPUTick5 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput2Char,
-        CPUTick5, "ivf", 1);
-    tprintf(PRINT_STD, "\n\nDecompressing %s to %s\n", DecodeInput,
-        AfterCompressionDecOutput3Char);
-    unsigned int CPUTick6 = 0;
-    vpxt_decompress_time_and_output(DecodeInput, AfterCompressionDecOutput3Char,
-        CPUTick6, "ivf", 1);
-
-    std::cout << "\n\n";
-
-    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char,
-        BeforeCompressionDecOutput2Char, 0) == -1)
-    {
-        std::cout << "\nBefore Compression Files 1 and 2 are identical";
-    }
-    else
-    {
-        std::cout << "\nBefore Compression Files 1 and 2 are not identical: ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(BeforeCompressionDecOutput1Char,
-            BeforeCompressionDecOutput2Char, 0);
-    }
-
-    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char,
-        BeforeCompressionDecOutput3Char, 0) == -1)
-    {
-        std::cout << "\nBefore Compression Files 1 and 3 are identical";
-    }
-    else
-    {
-        std::cout << "\nBefore Compression Files 1 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(BeforeCompressionDecOutput1Char,
-            BeforeCompressionDecOutput3Char, 0);
-    }
-
-    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char,
-        BeforeCompressionDecOutput3Char, 0) == -1)
-    {
-        std::cout << "\nBefore Compression Files 2 and 3 are identical";
-    }
-    else
-    {
-        std::cout << "\nBefore Compression Files 2 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(BeforeCompressionDecOutput2Char,
-            BeforeCompressionDecOutput3Char, 0);
-    }
-
-    //////////////////////////After//////////////////////////
-
-    if (vpxt_compare_enc(AfterCompressionDecOutput1Char,
-        AfterCompressionDecOutput2Char, 0) == -1)
-    {
-        std::cout << "\nAfter Compression Files 1 and 2 are identical";
-    }
-    else
-    {
-        std::cout << "\nAfter Compression Files 1 and 2 are not identical: ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(AfterCompressionDecOutput1Char,
-            AfterCompressionDecOutput2Char, 0);
-    }
-
-    if (vpxt_compare_enc(AfterCompressionDecOutput1Char,
-        AfterCompressionDecOutput3Char, 0) == -1)
-    {
-        std::cout << "\nAfter Compression Files 1 and 3 are identical";
-    }
-    else
-    {
-        std::cout << "\nAfter Compression Files 1 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(AfterCompressionDecOutput1Char,
-            AfterCompressionDecOutput3Char, 0);
-    }
-
-    if (vpxt_compare_enc(AfterCompressionDecOutput2Char,
-        AfterCompressionDecOutput3Char, 0) == -1)
-    {
-        std::cout << "\nAfter Compression Files 2 and 3 are identical ";
-    }
-    else
-    {
-        std::cout << "\nAfter Compression Files 2 and 3 are not identical: ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(AfterCompressionDecOutput2Char,
-            AfterCompressionDecOutput3Char, 0);
-    }
-
-
-    if (vpxt_compare_enc(BeforeCompressionDecOutput1Char,
-        AfterCompressionDecOutput1Char, 0) == -1)
-    {
-        std::cout << "\nBefore Compression File 1 and After Compression File 1 "
-            "are identical ";
-    }
-    else
-    {
-        std::cout << "\nBefore Compression File 1 and After Compression File 1 "
-            "are not identical : ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(BeforeCompressionDecOutput1Char,
-            AfterCompressionDecOutput1Char, 0);
-    }
-
-    if (vpxt_compare_enc(BeforeCompressionDecOutput2Char,
-        AfterCompressionDecOutput2Char, 0) == -1)
-    {
-        std::cout << "\nBefore Compression File 2 and After Compression File 2 "
-            "are identical ";
-    }
-    else
-    {
-        std::cout << "\nBefore Compression File 2 and After Compression File 2 "
-            "are not identical : ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(BeforeCompressionDecOutput2Char,
-            AfterCompressionDecOutput2Char, 0);
-    }
-
-    if (vpxt_compare_enc(BeforeCompressionDecOutput3Char,
-        AfterCompressionDecOutput3Char, 0) == -1)
-    {
-        std::cout << "\nBefore Compression File 3 and After Compression File 3 "
-            "are identical ";
-    }
-    else
-    {
-        std::cout << "\nBefore Compression File 3 and After Compression File 3 "
-            "are not identical : ";
-        std::cout << "Files Differ at Frame: "
-            << vpxt_compare_enc(BeforeCompressionDecOutput3Char,
-            AfterCompressionDecOutput3Char, 0);
-    }
-
-    return 0;
-}
 int IVFParseandDelete(const char *DirName)
 {
 
@@ -460,20 +178,16 @@ int IVFParseandDelete(const char *DirName)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
                 std::string FullPathName = DirName;
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                //strcpy(FullPathChar,FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
-
+                FullPathName += "/";
+                FullPathName += hFindA->d_name;
+                IVFParseandDelete(FullPathName.c_str());
             }
 
             if (hFindA->d_type == isFile)
             {
                 std::string outputString = DirName;
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                outputString += "/";
+                outputString += hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -504,7 +218,7 @@ int IVFParseandDelete(const char *DirName)
 
 #if defined(_WIN32)
     std::string DirNameStr = DirName;
-    DirNameStr.append("\\*");
+    DirNameStr += "\\*";
 
     WIN32_FIND_DATA FindFileData;
     HANDLE hFind;
@@ -526,11 +240,9 @@ int IVFParseandDelete(const char *DirName)
             singledot.compare(FindFileData.cFileName) != 0)
         {
             std::string FullPathName = DirName;
-            FullPathName.append("\\");
-            FullPathName.append(FindFileData.cFileName);
-            char FullPathChar[255];
-            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-            IVFParseandDelete(FullPathChar);
+            FullPathName += "\\";
+            FullPathName += FindFileData.cFileName;
+            IVFParseandDelete(FullPathName.c_str());
         }
         else
         {
@@ -538,8 +250,8 @@ int IVFParseandDelete(const char *DirName)
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string outputString = DirName;
-                outputString.append("\\");
-                outputString.append(FindFileData.cFileName);
+                outputString += "\\";
+                outputString += FindFileData.cFileName;
 
                 std::string FileName = FindFileData.cFileName;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -568,11 +280,9 @@ int IVFParseandDelete(const char *DirName)
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string FullPathName = DirName;
-                FullPathName.append("\\");
-                FullPathName.append(FindFileData.cFileName);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
+                FullPathName += "\\";
+                FullPathName += FindFileData.cFileName;
+                IVFParseandDelete(FullPathName.c_str());
             }
             else
             {
@@ -580,8 +290,8 @@ int IVFParseandDelete(const char *DirName)
                     singledot.compare(FindFileData.cFileName) != 0)
                 {
                     std::string outputString = DirName;
-                    outputString.append("\\");
-                    outputString.append(FindFileData.cFileName);
+                    outputString += "\\";
+                    outputString += FindFileData.cFileName;
 
                     std::string FileName = FindFileData.cFileName;
                     std::string extention = FileName.substr(FileName.length() -
@@ -645,19 +355,17 @@ int TxtParseandCopy(const char *DirName,
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
                 std::string FullPathName = DirName;
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, BaseOutputDir,BaseInputStrLength);
-
+                FullPathName += "/";
+                FullPathName += hFindA->d_name;
+                TxtParseandCopy(FullPathName.c_str(), BaseOutputDir,
+                    BaseInputStrLength);
             }
 
             if (hFindA->d_type == isFile)
             {
                 std::string outputString = DirName;
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                outputString += "/";
+                outputString += hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -670,27 +378,20 @@ int TxtParseandCopy(const char *DirName,
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
                     std::string FileNamePart1 = BaseOutputDir;
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    FileNamePart1 += "/";
+                    FileNamePart1 += FileNamePart2;
+                    std::string CopyCmdString = "cp \"" + outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName =
                         FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
                 }
             }
-
-
         }
     }
 
@@ -725,20 +426,14 @@ int TxtParseandCopy(const char *DirName,
             if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
-                std::string FullPathName = DirName;
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, BaseOutputDir,BaseInputStrLength);
+                std::string FullPathName = DirName + "/" + hFindA->d_name;
+                TxtParseandCopy(FullPathName.c_str(), BaseOutputDir,BaseInputStrLength);
 
             }
 
             if (hFindA->d_type == isFile)
             {
-                std::string outputString = DirName;
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                std::string outputString = DirName + "/" + hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -750,28 +445,20 @@ int TxtParseandCopy(const char *DirName,
                     std::string FileNamePart2 =
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
-                    std::string FileNamePart1 = BaseOutputDir;
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    std::string FileNamePart1 = BaseOutputDir + "/" +
+                        FileNamePart2;
+                    std::string CopyCmdString = "cp \"" + outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName =
                         FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
                 }
             }
-
-
         }
     }
 
@@ -806,20 +493,15 @@ int TxtParseandCopy(const char *DirName,
             if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
-                std::string FullPathName = DirName;
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, BaseOutputDir,BaseInputStrLength);
+                std::string FullPathName = DirName + "/" + hFindA->d_name;
+                TxtParseandCopy(FullPathName.c_str(), BaseOutputDir,
+                    BaseInputStrLength);
 
             }
 
             if (hFindA->d_type == isFile)
             {
-                std::string outputString = DirName;
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                std::string outputString = DirName + "/" hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -831,28 +513,20 @@ int TxtParseandCopy(const char *DirName,
                     std::string FileNamePart2 =
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
-                    std::string FileNamePart1 = BaseOutputDir;
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    std::string FileNamePart1 = BaseOutputDir + "/" +
+                        FileNamePart2;
+                    std::string CopyCmdString = "cp \"" + outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName =
                         FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
                 }
             }
-
-
         }
     }
 
@@ -860,7 +534,7 @@ int TxtParseandCopy(const char *DirName,
 
 #elif defined(_WIN32)
     std::string DirNameStr = DirName;
-    DirNameStr.append("\\*");
+    DirNameStr += "\\*";
 
     WIN32_FIND_DATA FindFileData;
     HANDLE hFind;
@@ -882,11 +556,9 @@ int TxtParseandCopy(const char *DirName,
             singledot.compare(FindFileData.cFileName) != 0)
         {
             std::string FullPathName = DirName;
-            FullPathName.append("\\");
-            FullPathName.append(FindFileData.cFileName);
-            char FullPathChar[255];
-            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-            TxtParseandCopy(FullPathChar, BaseOutputDir, BaseInputStrLength);
+            FullPathName += "\\";
+            FullPathName += FindFileData.cFileName;
+            TxtParseandCopy(FullPathName.c_str(), BaseOutputDir, BaseInputStrLength);
         }
         else
         {
@@ -894,8 +566,8 @@ int TxtParseandCopy(const char *DirName,
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string outputString = DirName;
-                outputString.append("\\");
-                outputString.append(FindFileData.cFileName);
+                outputString += "\\";
+                outputString += FindFileData.cFileName;
 
                 std::string FileName = FindFileData.cFileName;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -908,20 +580,15 @@ int TxtParseandCopy(const char *DirName,
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
                     std::string FileNamePart1 = BaseOutputDir;
-                    FileNamePart1.append("\\");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "copy \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    FileNamePart1 += "\\";
+                    FileNamePart1 += FileNamePart2;
+                    std::string CopyCmdString = "copy \"" + outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName =
                         FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
@@ -936,11 +603,9 @@ int TxtParseandCopy(const char *DirName,
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string FullPathName = DirName;
-                FullPathName.append("\\");
-                FullPathName.append(FindFileData.cFileName);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, BaseOutputDir, BaseInputStrLength);
+                FullPathName += "\\";
+                FullPathName += FindFileData.cFileName;
+                TxtParseandCopy(FullPathName.c_str(), BaseOutputDir, BaseInputStrLength);
             }
             else
             {
@@ -948,8 +613,8 @@ int TxtParseandCopy(const char *DirName,
                     singledot.compare(FindFileData.cFileName) != 0)
                 {
                     std::string outputString = DirName;
-                    outputString.append("\\");
-                    outputString.append(FindFileData.cFileName);
+                    outputString += "\\";
+                    outputString += FindFileData.cFileName;
 
                     std::string FileName = FindFileData.cFileName;
                     std::string extention = FileName.substr(FileName.length() -
@@ -962,20 +627,15 @@ int TxtParseandCopy(const char *DirName,
                             outputString.substr(BaseInputStrLength + 1,
                             outputString.length() - BaseInputStrLength - 1);
                         std::string FileNamePart1 = BaseOutputDir;
-                        FileNamePart1.append("\\");
-                        FileNamePart1.append(FileNamePart2);
-                        std::string CopyCmdString = "copy \"";
-                        CopyCmdString.append(outputString);
-                        CopyCmdString.append("\" \"");
-                        CopyCmdString.append(FileNamePart1);
-                        CopyCmdString.append("\"");
+                        FileNamePart1 += "\\";
+                        FileNamePart1 += FileNamePart2;
+                        std::string CopyCmdString = "copy \"" + outputString +
+                            "\" \"" + FileNamePart1 + "\"";
 
-                        std::string MkDirStr = "mkdir \"";
                         std::string DirName =
                             FileNamePart1.substr(0,
                             FileNamePart1.length() - FileName.length());
-                        MkDirStr.append(DirName);
-                        MkDirStr.append("\"");
+                        std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                         system(MkDirStr.c_str());
                         system(CopyCmdString.c_str());
@@ -2778,6 +2438,7 @@ int tool_array_cov_fail_list_to_full_list(int argc, const char *const *argv)
     FullPossibleRes[1015] =
      "MD5 Checksums Identical for: vp8_kf_default_bmode_counts[8][3][6] - Fail";
     FullPossibleRes[1016] =
+
      "MD5 Checksums Identical for: vp8_kf_default_bmode_counts[9][3][6] - Fail";
     FullPossibleRes[1017] =
      "MD5 Checksums Identical for: vp8_kf_default_bmode_counts[0][4][6] - Fail";
@@ -5873,7 +5534,7 @@ int tool_array_cov_fail_list_to_full_list(int argc, const char *const *argv)
                 vpxt_remove_file_extension(FullPossibleRes[x].c_str(),
                     TempBuffer);
                 TempBuffer.erase(TempBuffer.length() - 1, 1);
-                TempBuffer.append("Pass");
+                TempBuffer += "Pass";
                 std::string OutputStr = TempBuffer.substr(28,
                     TempBuffer.length() - 28);
                 Outfile << OutputStr << "\n";
@@ -5896,8 +5557,8 @@ int tool_array_cov_summary_file(int argc, const char *const *argv)
         tprintf(PRINT_STD, "\n"
                 "  ArrayCovSummaryFile \n\n"
                 "    <Current Summary>\n"
-                "    <TestVector Number>\n"
-                "    <TestVector Summary>\n"
+                "    <test_vector_str_arr Number>\n"
+                "    <test_vector_str_arr Summary>\n"
                 "    <Output File>\n"
                 "\n"
                );
@@ -5948,8 +5609,8 @@ int tool_array_cov_summary_file(int argc, const char *const *argv)
         {
             if (InputCharStr2PassFail.compare("Pass") == 0)
             {
-                Outfile << "TestVector" << argv[3] << InputChar2 << "\n";
-                std::cout << "TestVector" << argv[3] << InputChar2 << "\n";
+                Outfile << "test_vector_str_arr" << argv[3] << InputChar2 << "\n";
+                std::cout << "test_vector_str_arr" << argv[3] << InputChar2 << "\n";
             }
             else
             {
@@ -6004,7 +5665,7 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
     }
 
     //find out how many dec places due to increasing frames
-    std::string CurIndividualFrameFileName = "";
+    std::string CurIndividualFrameFileName;
     int InputDecPlaces = vpxt_decimal_places(LastFrame);
     int CurrentFrame = FirstFrame;
 
@@ -6021,15 +5682,13 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
     while (CurrentFrame <= LastFrame)
     {
         //printf("%i ",CurrentFrame);
-        CurIndividualFrameFileName = inputDir;
-        CurIndividualFrameFileName.append(slashCharStr());
-        CurIndividualFrameFileName.append(namebase);
+        CurIndividualFrameFileName = inputDir + slashCharStr() + namebase;
 
         int AddedStaticZeros = 0;
 
         while (AddedStaticZeros < StaticZeroCount) //add static zeros
         {
-            CurIndividualFrameFileName.append("0");
+            CurIndividualFrameFileName += "0";
             AddedStaticZeros++;
         }
 
@@ -6038,14 +5697,14 @@ int tool_combine_indv_frames(int argc, const char *const *argv)
         //add zeros for increasing frames
         while (CurNumDecPlaces < InputDecPlaces)
         {
-            CurIndividualFrameFileName.append("0");
+            CurIndividualFrameFileName += "0";
             CurNumDecPlaces++;
         }
 
         char CurrentFrameChar[512];
         vpxt_itoa_custom(CurrentFrame, CurrentFrameChar, 10);
-        CurIndividualFrameFileName.append(CurrentFrameChar);
-        CurIndividualFrameFileName.append(extension);
+        CurIndividualFrameFileName += CurrentFrameChar;
+        CurIndividualFrameFileName += extension;
 
 
 
@@ -6177,7 +5836,7 @@ int tool_compare_code_coverage(int argc, const char *const *argv)
     tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated "
         "Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
 
-    std::string currentFile = "";
+    std::string currentFile;
     int x = 1;
 
     while (x <= 30)
@@ -6332,24 +5991,18 @@ int tool_compare_code_coverage(int argc, const char *const *argv)
             currentFile = "\\treecoder.c.gcov.txt";
         }
 
-        std::string CurCC = argv[2];
-        std::string NewCC = argv[3];
-        std::string UpdCC = argv[4];
+        std::string CurCC = argv[2] + currentFile;
+        std::string NewCC = argv[3] + currentFile;
+        std::string UpdCC = argv[4] + currentFile;
         std::string UniqueCC = argv[3];
+        UniqueCC += "\\UniqueActivations\\";
 
-        CurCC.append(currentFile);
-        NewCC.append(currentFile);
-        UpdCC.append(currentFile);
-
-        UniqueCC.append("\\UniqueActivations\\");
-        std::string SysStr = "md \"";
-        SysStr.append(UniqueCC);
-        SysStr.append("\"");
+        std::string SysStr = "md \"" + UniqueCC + "\"";
         system(SysStr.c_str());
 
-        UniqueCC.append(currentFile);
+        UniqueCC += currentFile;
         UniqueCC.erase(UniqueCC.length() - 4, 4);
-        UniqueCC.append("_UniqueActivations.txt");
+        UniqueCC += "_UniqueActivations.txt";
 
         std::ifstream CurCCFile(CurCC.c_str());
         std::ifstream NewCCFile(NewCC.c_str());
@@ -6424,9 +6077,7 @@ int tool_compare_code_coverage(int argc, const char *const *argv)
 
         if (vpxt_file_size(UniqueCCChar, 0) == 0)
         {
-            std::string SysStr2 = "del \"";
-            SysStr2.append(UniqueCC);
-            SysStr2.append("\"");
+            std::string SysStr2 = "del \"" + UniqueCC + "\"";
             system(SysStr2.c_str());
         }
 
@@ -6455,9 +6106,9 @@ int tool_display_header_info(int argc, const char *const *argv)
 }
 int tool_compression_equiv(int argc,
                            const char *const *argv,
-                           std::string WorkingDir)
+                           std::string working_dir)
 {
-    char *CompressString = "Allow DF";
+    char *comp_out_str = "Allow DF";
 
     if (argc < 6 || argc > 7)
     {
@@ -6476,44 +6127,40 @@ int tool_compression_equiv(int argc,
 
     std::string input = argv[2];
     std::string output = argv[3];
-    int BitRate = atoi(argv[4]);
+    int bitrate = atoi(argv[4]);
     int Mode = atoi(argv[5]);
-    std::string EncForm = argv[6];
+    std::string enc_format = argv[6];
 
     int speed = 0;
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
     if (argc == 8)
     {
         opt = vpxt_input_settings(argv[6]);
     }
 
-    std::string output1 = output;
-    std::string output2 = output;
-    std::string output3 = output;
+    std::string output1 = output + "_CompressIVFtoIVF.ivf";
+    std::string output2 = output + "_CompressIVFtoIVFNoErrorOutput.ivf";
+    std::string output3 = output + "_TimeCompressIVFtoIVF.ivf";
 
-    output1.append("_CompressIVFtoIVF.ivf");
-    output2.append("_CompressIVFtoIVFNoErrorOutput.ivf");
-    output3.append("_TimeCompressIVFtoIVF.ivf");
-
-    int CompressInt = opt.allow_df;
+    int compress_int = opt.allow_df;
 
     if (Mode == 0)
     {
         opt.Mode = MODE_REALTIME;
         vpxt_compress((char *)input.c_str(), (char *)output1.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, enc_format);
         vpxt_compress_no_error_output((char *)input.c_str(),
-            (char *)output2.c_str(), speed, BitRate, opt, CompressString,
-            CompressInt, 0, EncForm);
+            (char *)output2.c_str(), speed, bitrate, opt, comp_out_str,
+            compress_int, 0, enc_format);
         unsigned int CPUTick = 0;
         vpxt_time_compress((char *)input.c_str(), (char *)output3.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick,
-            EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, CPUTick,
+            enc_format);
     }
 
     if (Mode == 1)
@@ -6521,14 +6168,14 @@ int tool_compression_equiv(int argc,
         opt.Mode = MODE_GOODQUALITY;
 
         vpxt_compress((char *)input.c_str(), (char *)output1.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, enc_format);
         vpxt_compress_no_error_output((char *)input.c_str(),
-            (char *)output2.c_str(), speed, BitRate, opt, CompressString,
-            CompressInt, 0, EncForm);
+            (char *)output2.c_str(), speed, bitrate, opt, comp_out_str,
+            compress_int, 0, enc_format);
         unsigned int CPUTick = 0;
         vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick,
-            EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, CPUTick,
+            enc_format);
 
     }
 
@@ -6537,14 +6184,14 @@ int tool_compression_equiv(int argc,
         opt.Mode = MODE_BESTQUALITY;
 
         vpxt_compress((char *)input.c_str(), (char *) output1.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, enc_format);
         vpxt_compress_no_error_output((char *)input.c_str(),
-            (char *) output2.c_str(), speed, BitRate, opt, CompressString,
-            CompressInt, 0, EncForm);
+            (char *) output2.c_str(), speed, bitrate, opt, comp_out_str,
+            compress_int, 0, enc_format);
         unsigned int CPUTick = 0;
         vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick,
-            EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, CPUTick,
+            enc_format);
     }
 
     if (Mode == 3)
@@ -6556,36 +6203,36 @@ int tool_compression_equiv(int argc,
     {
         opt.Mode = MODE_SECONDPASS;
         vpxt_compress((char *)input.c_str(), (char *) output1.c_str(), speed,
-            BitRate, opt, CompressString, CompressInt, 0, EncForm);
+            bitrate, opt, comp_out_str, compress_int, 0, enc_format);
 
         opt.Mode = MODE_SECONDPASS;
         vpxt_compress_no_error_output((char *)input.c_str(),
-            (char *) output2.c_str(), speed, BitRate, opt,
-            CompressString, CompressInt, 0, EncForm);
+            (char *) output2.c_str(), speed, bitrate, opt,
+            comp_out_str, compress_int, 0, enc_format);
 
         opt.Mode = MODE_SECONDPASS;
         unsigned int CPUTick = 0;
         vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick,
-            EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, CPUTick,
+            enc_format);
     }
 
     if (Mode == 5)
     {
         opt.Mode = MODE_SECONDPASS_BEST;
         vpxt_compress((char *)input.c_str(), (char *) output1.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, enc_format);
 
         opt.Mode = MODE_SECONDPASS_BEST;
         vpxt_compress_no_error_output((char *)input.c_str(),
-            (char *) output2.c_str(), speed, BitRate, opt, CompressString,
-            CompressInt, 0, EncForm);
+            (char *) output2.c_str(), speed, bitrate, opt, comp_out_str,
+            compress_int, 0, enc_format);
 
         opt.Mode = MODE_SECONDPASS_BEST;
         unsigned int CPUTick = 0;
         vpxt_time_compress((char *)input.c_str(), (char *) output3.c_str(),
-            speed, BitRate, opt, CompressString, CompressInt, 0, CPUTick,
-            EncForm);
+            speed, bitrate, opt, comp_out_str, compress_int, 0, CPUTick,
+            enc_format);
     }
 
     if (vpxt_compare_enc((char *)output1.c_str(), (char *)output2.c_str(), 0)
@@ -6596,12 +6243,12 @@ int tool_compression_equiv(int argc,
         if (vpxt_compare_enc((char *)output2.c_str(), (char *)output3.c_str(),
             0) == -1)
         {
-            std::cout << "Pass - Time Compress and No Error Output match\n\n";
+            std::cout << "Pass - time Compress and No Error Output match\n\n";
             std::cout << "\nAll compressions are equal. - Pass\n\n";
         }
         else
         {
-            std::cout<< "Fail - Time Compress Does not match No Error Output\n";
+            std::cout<< "Fail - time Compress Does not match No Error Output\n";
             return 0;
         }
     }
@@ -6611,16 +6258,11 @@ int tool_compression_equiv(int argc,
         return 0;
     }
 
-    std::string output1DEC = output;
-    std::string output2DEC = output;
-    std::string output3DEC = output;
-    std::string output4DEC = output;
+    std::string output1DEC = output + "_DecompressIVFtoIVF.ivf";
+    std::string output2DEC = output + "_DecompressIVFtoIVFNoOutput.ivf";
+    std::string output3DEC = output + "_TimeDecompressIVFtoIVF.ivf";
+    std::string output4DEC = output + "_DecompressIVFtoIVFTimeAndOutput.ivf";
     std::string output5DEC = output;
-
-    output1DEC.append("_DecompressIVFtoIVF.ivf");
-    output2DEC.append("_DecompressIVFtoIVFNoOutput.ivf");
-    output3DEC.append("_TimeDecompressIVFtoIVF.ivf");
-    output4DEC.append("_DecompressIVFtoIVFTimeAndOutput.ivf");
 
     std::cout << "DecompressIVFtoIVF\n";
     vpxt_decompress((char *)output1.c_str(),
@@ -6652,9 +6294,9 @@ int tool_compression_equiv(int argc,
     return 0;
 }
 
-int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir)
+int tool_vpxt_enc(int argc, const char *const *argv, std::string working_dir)
 {
-    char *CompressString = "Allow DF";
+    char *comp_out_str = "Allow DF";
 
     if (argc < 8 || argc > 9)
         return vpxt_tool_help(argv[1], 0);
@@ -6662,29 +6304,28 @@ int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir)
     int CompressionType = atoi(argv[2]);
     std::string input = argv[3];
     std::string output = argv[4];
-    int BitRate = atoi(argv[5]);
+    int bitrate = atoi(argv[5]);
     int Mode = atoi(argv[6]);
-    std::string EncForm = argv[7];
+    std::string enc_format = argv[7];
 
     int speed = 0;
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
     if (argc == 9)
     {
         opt = vpxt_input_settings(argv[8]);
     }
 
-    int CompressInt = opt.allow_df;
+    int compress_int = opt.allow_df;
 
     ////////////Track Mem Usage//////////
-    //std::string MemLeakCheckTXT2Str = output;
-    //MemLeakCheckTXT2Str.append("_MemOut.txt");
+    //std::string mem_leak_check_txt_2_str = output + "_MemOut.txt";
     //char MemLeakCheckTXT2[255];
-    //snprintf(MemLeakCheckTXT2, 255, "%s", MemLeakCheckTXT2Str.c_str());
+    //snprintf(MemLeakCheckTXT2, 255, "%s", mem_leak_check_txt_2_str.c_str());
     //on2_MemoryTrackerSetLogType(0, MemLeakCheckTXT2);
     //std::cout << "\nMemory Tracking to file: " << MemLeakCheckTXT2 << "\n";
     /////////////////////////////////////
@@ -6693,13 +6334,13 @@ int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir)
 
     if (CompressionType == 1)
         vpxt_compress_no_error_output(input.c_str(), output.c_str(),
-        speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+        speed, bitrate, opt, comp_out_str, compress_int, 0, enc_format);
 
     if (CompressionType == 2)
     {
         unsigned int CPUTick = 0;
-        vpxt_time_compress(input.c_str(), output.c_str(), speed, BitRate,
-            opt, CompressString, CompressInt, 0, CPUTick, EncForm);
+        vpxt_time_compress(input.c_str(), output.c_str(), speed, bitrate,
+            opt, comp_out_str, compress_int, 0, CPUTick, enc_format);
     }
 
     ////////////Track Mem Usage//////////
@@ -6709,15 +6350,15 @@ int tool_vpxt_enc(int argc, const char *const *argv, std::string WorkingDir)
 }
 int tool_vpxt_multi_res_enc(int argc, const char *const *argv)
 {
-    char *CompressString = "Allow DF";
+    char *comp_out_str = "Allow DF";
 
     if (argc < 6)
         return vpxt_tool_help(argv[1], 0);
 
     std::string input = argv[2];
     std::string output = argv[3];
-    int BitRate = atoi(argv[4]);
-    std::string EncForm = argv[5];
+    int bitrate = atoi(argv[4]);
+    std::string enc_format = argv[5];
 
     int Mode = 0;
     int speed = 0;
@@ -6725,32 +6366,32 @@ int tool_vpxt_multi_res_enc(int argc, const char *const *argv)
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
 
     if (argc == 9)
     {
         opt = vpxt_input_settings(argv[8]);
     }
 
-    int CompressInt = opt.allow_df;
+    int compress_int = opt.allow_df;
 
     opt.Mode = Mode;
 
     vpxt_compress_multi_resolution(input.c_str(), output.c_str(),
-        speed, BitRate, opt, CompressString, CompressInt, 0, EncForm);
+        speed, bitrate, opt, comp_out_str, compress_int, 0, enc_format);
 
     return 0;
 }
 int tool_vpxt_temp_scale_enc(int argc, const char *const *argv)
 {
-    char *CompressString = "Allow DF";
+    char *comp_out_str = "Allow DF";
 
     if (argc < 11)
         return vpxt_tool_help(argv[1], 0);
 
     std::string input = argv[2];
     std::string output = argv[3];
-    std::string EncForm = argv[10];
+    std::string enc_format = argv[10];
 
     int Mode = 0;
     int speed = 0;
@@ -6763,12 +6404,12 @@ int tool_vpxt_temp_scale_enc(int argc, const char *const *argv)
         opt = vpxt_input_settings(argv[8]);
     }
 
-    int CompressInt = opt.allow_df;
+    int compress_int = opt.allow_df;
 
     opt.Mode = Mode;
 
     vpxt_compress_scalable_patterns(input.c_str(), output.c_str(), speed,
-        opt, CompressString, CompressInt, 0, EncForm, atoi(argv[4]),
+        opt, comp_out_str, compress_int, 0, enc_format, atoi(argv[4]),
         atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), atoi(argv[8]),
         atoi(argv[9]));
 
@@ -6812,195 +6453,6 @@ int tool_vp8_scalable_patterns(int argc, const char *const *argv)
 
     return 0;
 }
-int tool_comp_matches_ivfenc(int argc, const char *const *argv)
-{
-    const char *CompressString = "Allow DF";
-
-    if (argc < 6 || argc > 7)
-    {
-        tprintf(PRINT_STD,
-                "\n  Compress IVF to IVF \n\n"
-                "    <Input File>\n"
-                "    <outputfile>\n"
-                "    <Bit Rate>\n"
-                "    <Mode>\n"
-                "    <Optional - Parameter File>\n"
-                "\n");
-
-        return 0;
-    }
-
-    std::string input = argv[2];
-    std::string output = argv[3];
-    int BitRate = atoi(argv[4]);
-    int Mode = atoi(argv[5]);
-
-    char FileNameChar[256];
-    vpxt_file_name(input.c_str(), FileNameChar, 0);
-
-    /////////////////////Tester Par File//////////////////
-    std::string OutputsettingsFile;
-    vpxt_remove_file_extension(output.c_str(), OutputsettingsFile);
-    std::string OutputsettingsFile2 = OutputsettingsFile;
-    OutputsettingsFile.append("parameters_core.txt");
-    /////////////////////IVFenc Par File//////////////////
-    OutputsettingsFile2.append("IVFEnc_parameters.txt");
-    /////////////////////Tester IVF Comp//////////////////
-    /////////////////////IVFENC IVF Comp//////////////////
-    std::string IVFEncOutput1STR;
-    vpxt_remove_file_extension(input.c_str(), IVFEncOutput1STR);
-    IVFEncOutput1STR.append("IVFENC.ivf");
-    std::string IVFEncOutput2STR;
-    vpxt_remove_file_extension(input.c_str(), IVFEncOutput2STR);
-    IVFEncOutput2STR.append("IVFENC.yuv");
-    /////////////////////IVF Source to Raw///////////////
-    std::string RawInput;
-    vpxt_remove_file_extension(input.c_str(), RawInput);
-    RawInput.append("Raw.yuv");
-
-    std::string RawInputNameOnly = FileNameChar;
-    RawInputNameOnly.append("_Raw.yuv");
-    //////////////////////////////////////////////////////
-
-
-    char ParameterFileTesterFP[255];    // Full path of tester parm file
-    char ParameterFileIVFEncFP[255];    // Full path of ivfenc parm file
-    char RawInputFP[255];               // Full path of raw ivfenc file
-    char IVFEncOutput1FP[255];          // Full Path of IVFENC ivf Output
-    char IVFEncOutput2FP[255];          // Full Path of IVFENC yuv Output
-    char RawInputNO[255];               // Name only part of raw input file
-    char ParameterFileIVFEncNO[255];    // Name only of IVFENC Par file
-    char IVFEncOutput1NO[255];          // Name only of IVFENC ivf Output
-    char IVFEncOutput2NO[255];          // Name only of IVFENC yuv Output
-
-
-    snprintf(ParameterFileTesterFP, 255, "%s", OutputsettingsFile.c_str());
-    snprintf(ParameterFileIVFEncFP, 255, "%s", OutputsettingsFile2.c_str());
-    snprintf(RawInputNO, 255, "%s", RawInputNameOnly.c_str());
-    snprintf(RawInputFP, 255, "%s", RawInput.c_str());
-    snprintf(IVFEncOutput1FP, 255, "%s", IVFEncOutput1STR.c_str());
-    snprintf(IVFEncOutput2FP, 255, "%s", IVFEncOutput2STR.c_str());
-
-    // name only part of parm file for ivfenc
-    vpxt_file_name(ParameterFileIVFEncFP, ParameterFileIVFEncNO, 0);
-    vpxt_file_name(IVFEncOutput1FP, IVFEncOutput1NO, 0);
-    vpxt_file_name(IVFEncOutput2FP, IVFEncOutput2NO, 0);
-
-    std::cout << "\n\n";
-    std::cout << "ParameterFileTesterFP: " << ParameterFileTesterFP << "\n";
-    std::cout << "ParameterFileIVFEncFP: " << ParameterFileIVFEncFP << "\n";
-    std::cout << "RawInputFP: " << RawInputFP << "\n";
-    std::cout << "IVFEncOutput1FP: " << IVFEncOutput1FP << "\n";
-    std::cout << "IVFEncOutput2FP: " << IVFEncOutput2FP << "\n";
-    std::cout << "RawInputNO: " << RawInputNO << "\n";
-    std::cout << "ParameterFileIVFEncNO: " << ParameterFileIVFEncNO << "\n";
-    std::cout << "IVFEncOutput1NO: " << IVFEncOutput1NO << "\n";
-    std::cout << "IVFEncOutput2NO: " << IVFEncOutput2NO << "\n";
-
-    // name only part of parm file for ivfenc - ParameterFileIVFEncNameOnly
-    // name only part of raw input file for ivfenc - RawInputNameOnlyChar
-
-    int speed = 0;
-
-    VP8_CONFIG opt;
-    vpxt_default_parameters(opt);
-
-    opt.target_bandwidth = BitRate;
-
-    if (argc == 7)
-    {
-        opt = vpxt_input_settings(argv[6]);
-    }
-
-    int CompressInt = opt.allow_df;
-
-    if (Mode == 0)
-    {
-        opt.Mode = MODE_REALTIME;
-        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed,
-            BitRate, opt, CompressString, CompressInt, 0, "webm");
-    }
-
-    if (Mode == 1)
-    {
-        opt.Mode = MODE_GOODQUALITY;
-        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed,
-            BitRate, opt, CompressString, CompressInt, 0, "webm");
-    }
-
-    if (Mode == 2)
-    {
-        opt.Mode = MODE_BESTQUALITY;
-        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed,
-            BitRate, opt, CompressString, CompressInt, 0, "webm");
-    }
-
-    if (Mode == 3)
-    {
-    }
-
-    if (Mode == 4)
-    {
-        opt.Mode = MODE_SECONDPASS;
-        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed,
-            BitRate, opt, CompressString, CompressInt, 0, "webm");
-    }
-
-    if (Mode == 5)
-    {
-        opt.Mode = MODE_SECONDPASS_BEST;
-        vpxt_compress_no_error_output(input.c_str(), output.c_str(), speed,
-            BitRate, opt, CompressString, CompressInt, 0, "webm");
-    }
-
-    //Make IVFENC Parameter file from Tester Parameter File
-    vpxt_convert_par_file_to_ivfenc(ParameterFileTesterFP,
-        ParameterFileIVFEncFP);
-    //Make Raw YUV File from IVF Input
-    vpxt_formatted_to_raw(input.c_str(), RawInputFP);
-
-    int Width = opt.Width;
-    int Height = opt.Height;
-    int FrameRate = opt.timebase.den / opt.timebase.num;
-    char ConversionHolder[256];
-
-    //Make System Exe string for IVFENC to Create Compression
-    std::string Program = "ivfenc ";
-    Program.append(RawInputNO);
-    Program.append(" ");
-    memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpxt_itoa_custom(Width, ConversionHolder, 10));
-    Program.append(" ");
-    memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpxt_itoa_custom(Height, ConversionHolder, 10));
-    Program.append(" ");
-    memset(ConversionHolder, 0, sizeof(ConversionHolder));
-    Program.append(vpxt_itoa_custom(FrameRate, ConversionHolder, 10));
-    Program.append(" ");
-    Program.append(IVFEncOutput1NO);
-    Program.append(" ");
-    Program.append(IVFEncOutput2NO);
-    Program.append(" ");
-    Program.append(ParameterFileIVFEncNO);
-    Program.append(" \" \" ");
-
-    std::cout << "\n" << Program << "\n\n";
-
-    system(Program.c_str());
-
-    int CompResult = vpxt_compare_enc(IVFEncOutput1FP, output.c_str(), 0);
-
-    if (CompResult == -1)
-    {
-        std::cout << "\n\n FILES ARE IDENTICAL - PASSED\n";
-        return 1;
-    }
-
-    std::cout << "\n\n FILES ARE NOT IDENTICAL - FAILED\n";
-
-
-    return 0;
-}
 int tool_convert_par_file_to_ivfenc(int argc, const char *const *argv)
 {
     if (argc < 4)
@@ -7021,11 +6473,11 @@ int tool_convert_par_file_to_vpxenc(int argc, const char *const *argv)
     if (argc < 4)
         return vpxt_tool_help(argv[1], 0);
 
-    char VpxencParameters[1024];
+    char vpxenc_parameters[1024];
 
     tprintf(PRINT_STD, "\n\nequivalent vpxenc settings:\n");
-    vpxt_convert_par_file_to_vpxenc(argv[2], argv[3], VpxencParameters, 1024);
-    tprintf(PRINT_STD, "%s", VpxencParameters);
+    vpxt_convert_par_file_to_vpxenc(argv[2], argv[3], vpxenc_parameters, 1024);
+    tprintf(PRINT_STD, "%s", vpxenc_parameters);
     //vpxt_convert_par_file_to_vpxenc(argv[2], argv[3]);
     tprintf(PRINT_STD, "\n\n");
     return 0;
@@ -7123,20 +6575,16 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
                 std::string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                //strcpy(FullPathChar,FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-
+                FullPathName += "/";
+                FullPathName += hFindA->d_name;
+                TxtParseandCopy(FullPathName.c_str(), argv[3], BaseInputStrLength);
             }
 
             if (hFindA->d_type == isFile)
             {
                 std::string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                outputString += "/";
+                outputString += hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -7149,20 +6597,15 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
                     std::string FileNamePart1 = argv[3];
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    FileNamePart1 += "/";
+                    FileNamePart1 += FileNamePart2;
+                    std::string CopyCmdString = "cp \"" + outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName =
                         FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
@@ -7218,21 +6661,13 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
             if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
-                std::string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                //strcpy(FullPathChar,FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-
+                std::string FullPathName = argv[2] + "/" + hFindA->d_name;
+                TxtParseandCopy(FullPathName.c_str(), argv[3], BaseInputStrLength);
             }
 
             if (hFindA->d_type == isFile)
             {
-                std::string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                std::string outputString = argv[2] + "/" + hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -7244,27 +6679,18 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                     std::string FileNamePart2 =
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
-                    std::string FileNamePart1 = argv[3];
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    std::string FileNamePart1 = argv[3] + "/" + FileNamePart2;
+                    std::string CopyCmdString = "cp \"" = outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName = FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
                 }
             }
-
-
         }
     }
 
@@ -7314,20 +6740,13 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
             if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
-                std::string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
-
+                std::string FullPathName = argv[2] + "/" + hFindA->d_name;
+                TxtParseandCopy(FullPathName.c_str(), argv[3], BaseInputStrLength);
             }
 
             if (hFindA->d_type == isFile)
             {
-                std::string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                std::string outputString = argv[2] + "/" + hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -7339,28 +6758,19 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                     std::string FileNamePart2 =
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
-                    std::string FileNamePart1 = argv[3];
-                    FileNamePart1.append("/");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "cp \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    std::string FileNamePart1 = argv[3] + "/" + FileNamePart2;
+                    std::string CopyCmdString = "cp \"" + outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName =
                         FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
                 }
             }
-
-
         }
     }
 
@@ -7382,7 +6792,7 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
 
     std::string InputStr = argv[2];
     int BaseInputStrLength = InputStr.length();
-    InputStr.append("\\*");
+    InputStr += "\\*";
     char GetFirstFileChar[255];
     snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
 
@@ -7407,11 +6817,9 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
             singledot.compare(FindFileData.cFileName) != 0)
         {
             std::string FullPathName = argv[2];
-            FullPathName.append("\\");
-            FullPathName.append(FindFileData.cFileName);
-            char FullPathChar[255];
-            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-            TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
+            FullPathName += "\\";
+            FullPathName += FindFileData.cFileName;
+            TxtParseandCopy(FullPathName.c_str(), argv[3], BaseInputStrLength);
         }
         else
         {
@@ -7419,8 +6827,8 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string outputString = argv[2];
-                outputString.append("\\");
-                outputString.append(FindFileData.cFileName);
+                outputString += "\\";
+                outputString += FindFileData.cFileName;
 
                 std::string FileName = FindFileData.cFileName;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -7433,20 +6841,15 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                         outputString.substr(BaseInputStrLength + 1,
                         outputString.length() - BaseInputStrLength - 1);
                     std::string FileNamePart1 = argv[3];
-                    FileNamePart1.append("\\");
-                    FileNamePart1.append(FileNamePart2);
-                    std::string CopyCmdString = "copy \"";
-                    CopyCmdString.append(outputString);
-                    CopyCmdString.append("\" \"");
-                    CopyCmdString.append(FileNamePart1);
-                    CopyCmdString.append("\"");
+                    FileNamePart1 += "\\";
+                    FileNamePart1 += FileNamePart2;
+                    std::string CopyCmdString = "copy \"" + outputString +
+                        "\" \"" + FileNamePart1 + "\"";
 
-                    std::string MkDirStr = "mkdir \"";
                     std::string DirName =
                         FileNamePart1.substr(0,
                         FileNamePart1.length() - FileName.length());
-                    MkDirStr.append(DirName);
-                    MkDirStr.append("\"");
+                    std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                     system(MkDirStr.c_str());
                     system(CopyCmdString.c_str());
@@ -7461,11 +6864,10 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string FullPathName = argv[2];
-                FullPathName.append("\\");
-                FullPathName.append(FindFileData.cFileName);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                TxtParseandCopy(FullPathChar, argv[3], BaseInputStrLength);
+                FullPathName += "\\";
+                FullPathName += FindFileData.cFileName;
+                TxtParseandCopy(FullPathName.c_str(), argv[3],
+                    BaseInputStrLength);
             }
             else
             {
@@ -7473,8 +6875,8 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                     singledot.compare(FindFileData.cFileName) != 0)
                 {
                     std::string outputString = argv[2];
-                    outputString.append("\\");
-                    outputString.append(FindFileData.cFileName);
+                    outputString += "\\";
+                    outputString += FindFileData.cFileName;
 
                     std::string FileName = FindFileData.cFileName;
                     std::string extention = FileName.substr(FileName.length() -
@@ -7487,20 +6889,16 @@ int tool_copy_all_txt_files(int argc, const char *const *argv)
                             outputString.substr(BaseInputStrLength + 1,
                             outputString.length() - BaseInputStrLength - 1);
                         std::string FileNamePart1 = argv[3];
-                        FileNamePart1.append("\\");
-                        FileNamePart1.append(FileNamePart2);
-                        std::string CopyCmdString = "copy \"";
-                        CopyCmdString.append(outputString);
-                        CopyCmdString.append("\" \"");
-                        CopyCmdString.append(FileNamePart1);
-                        CopyCmdString.append("\"");
+                        FileNamePart1 += "\\";
+                        FileNamePart1 += FileNamePart2;
+                        std::string CopyCmdString = "copy \"" + outputString +
+                            "\" \"" + FileNamePart1 + "\"";
 
-                        std::string MkDirStr = "mkdir \"";
                         std::string DirName =
                             FileNamePart1.substr(0,
+
                             FileNamePart1.length() - FileName.length());
-                        MkDirStr.append(DirName);
-                        MkDirStr.append("\"");
+                        std::string MkDirStr = "mkdir \"" + DirName + "\"";
 
                         system(MkDirStr.c_str());
                         system(CopyCmdString.c_str());
@@ -7539,9 +6937,9 @@ int tool_vpxt_dec(int argc, const char *const *argv)
 
     std::string inputFile = argv[2];
     std::string outputFile = argv[3];
-    std::string DecForm = argv[4];
+    std::string dec_format = argv[4];
 
-    vpxt_decompress_no_output(inputFile.c_str(), outputFile.c_str(), DecForm,
+    vpxt_decompress_no_output(inputFile.c_str(), outputFile.c_str(), dec_format,
         1);
 
     return 0;
@@ -7553,10 +6951,10 @@ int tool_vpxt_dec_part_drop(int argc, const char *const *argv)
 
     std::string inputFile = argv[2];
     std::string outputFile = argv[3];
-    std::string DecForm = argv[4];
+    std::string dec_format = argv[4];
 
     vpxt_decompress_partial_drops(inputFile.c_str(), outputFile.c_str(),
-        DecForm, 1, atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), PRINT_STD, 1);
+        dec_format, 1, atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), PRINT_STD, 1);
 
     tprintf(PRINT_STD, "\n");
 
@@ -7569,9 +6967,9 @@ int tool_vpxt_dec_resize(int argc, const char *const *argv)
 
     std::string inputFile = argv[2];
     std::string outputFile = argv[3];
-    std::string DecForm = argv[4];
+    std::string dec_format = argv[4];
 
-    vpxt_decompress_resize(inputFile.c_str(), outputFile.c_str(), DecForm, 1);
+    vpxt_decompress_resize(inputFile.c_str(), outputFile.c_str(), dec_format, 1);
 
     return 0;
 }
@@ -7730,20 +7128,17 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
                 std::string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                //strcpy(FullPathChar,FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
+                FullPathName += "/";
+                FullPathName += hFindA->d_name;
+                IVFParseandDelete(FullPathName.c_str());
 
             }
 
             if (hFindA->d_type == isFile)
             {
                 std::string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                outputString += "/";
+                outputString += hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -7831,20 +7226,13 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
             if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
-                std::string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
-
+                std::string FullPathName = argv[2] + "/" + hFindA->d_name;
+                IVFParseandDelete(FullPathName.c_str());
             }
 
             if (hFindA->d_type == isFile)
             {
-                std::string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                std::string outputString = argv[2] + "/" + hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -7932,19 +7320,13 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
             if (hFindA->d_type == isFolder && doubledot.compare(hFindA->d_name)
                 != 0 && singledot.compare(hFindA->d_name) != 0)
             {
-                std::string FullPathName = argv[2];
-                FullPathName.append("/");
-                FullPathName.append(hFindA->d_name);
-                char FullPathChar[256];
-                IVFParseandDelete(FullPathChar);
-
+                std::string FullPathName = argv[2] + "/" + hFindA->d_name;
+                IVFParseandDelete(FullPathName.c_str());
             }
 
             if (hFindA->d_type == isFile)
             {
-                std::string outputString = argv[2];
-                outputString.append("/");
-                outputString.append(hFindA->d_name);
+                std::string outputString = argv[2] + "/" + hFindA->d_name;
 
                 std::string FileName = hFindA->d_name;
                 std::string extention = FileName.substr(FileName.length() - 4,
@@ -8003,7 +7385,7 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
     std::cout << "\n";
 
     std::string InputStr = argv[2];
-    InputStr.append("\\*");
+    InputStr += "\\*";
     char GetFirstFileChar[255];
     snprintf(GetFirstFileChar, 255, "%s", InputStr.c_str());
 
@@ -8028,11 +7410,9 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
             singledot.compare(FindFileData.cFileName) != 0)
         {
             std::string FullPathName = argv[2];
-            FullPathName.append("\\");
-            FullPathName.append(FindFileData.cFileName);
-            char FullPathChar[255];
-            snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-            IVFParseandDelete(FullPathChar);
+            FullPathName += "\\";
+            FullPathName += FindFileData.cFileName;
+            IVFParseandDelete(FullPathName.c_str());
         }
         else
         {
@@ -8040,9 +7420,8 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string outputString = argv[2];
-                outputString.append("\\");
-                outputString.append(FindFileData.cFileName);
-
+                outputString += "\\";
+                outputString += FindFileData.cFileName;
                 std::string FileName = FindFileData.cFileName;
                 std::string extention = FileName.substr(FileName.length() - 4,
                     4);
@@ -8070,11 +7449,9 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
                 singledot.compare(FindFileData.cFileName) != 0)
             {
                 std::string FullPathName = argv[2];
-                FullPathName.append("\\");
-                FullPathName.append(FindFileData.cFileName);
-                char FullPathChar[255];
-                snprintf(FullPathChar, 255, "%s", FullPathName.c_str());
-                IVFParseandDelete(FullPathChar);
+                FullPathName += "\\";
+                FullPathName += FindFileData.cFileName;
+                IVFParseandDelete(FullPathName.c_str());
             }
             else
             {
@@ -8082,8 +7459,8 @@ int tool_delete_all_ivf_files(int argc, const char *const *argv)
                     singledot.compare(FindFileData.cFileName) != 0)
                 {
                     std::string outputString = argv[2];
-                    outputString.append("\\");
-                    outputString.append(FindFileData.cFileName);
+                    outputString += "\\";
+                    outputString += FindFileData.cFileName;
 
                     std::string FileName = FindFileData.cFileName;
                     std::string extention = FileName.substr(FileName.length() -
@@ -8200,7 +7577,7 @@ int tool_format_code_coverage_file(int argc, const char *const *argv)
     tprintf(PRINT_STD, "\nCurrent Directory:\n%s\nNew Directory: \n%s\nUpdated "
         "Directory: \n%s\n\n", argv[2], argv[3] , argv[4]);
 
-    std::string currentFile = "";
+    std::string currentFile;
     int x = 1;
 
     while (x <= 34)
@@ -8375,15 +7752,11 @@ int tool_format_code_coverage_file(int argc, const char *const *argv)
             currentFile = "\\yv12extend.c.gcov.txt";
         }
 
-        std::string CurCC = argv[2];
-        std::string NewCC = argv[3];
-
-        CurCC.append(currentFile);
-        NewCC.append(currentFile);
+        std::string CurCC = argv[2] + currentFile;
+        std::string NewCC = argv[3] + currentFile;
 
         std::ifstream CurCCFile(CurCC.c_str());
         std::ofstream NewCCFile(NewCC.c_str());
-
 
         if (!CurCCFile.good())
         {
@@ -8615,7 +7988,7 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
 
     std::string input = argv[2];
     std::string output = argv[2];
-    output.append("_DEC.ivf.raw");
+    output += "_DEC.ivf.raw";
 
     /////////////////////Read In Data From IVF File/////////////////////
     FILE *in = fopen(input.c_str(), "rb");
@@ -8661,49 +8034,27 @@ int tool_play_comp_ivf(int argc, const char *const *argv)
     std::string Program;
 
 #if defined(_WIN32)
-    Program = "\"c:\\bin\\tmnplay.exe";
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" ");
-    Program.append(WidthChar);
-    Program.append(" ");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(FrameRateChar);
-    Program.append(" \"");
-    Program.append(YUVChar);
-
+    Program = "\"c:\\bin\\tmnplay.exe \"" + output + "\" " +
+        WidthChar + " " + HeightChar + " " + FrameRateChar + " \"" +
+        YUVChar;
 #elif defined(linux)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" -loop 1000");
+    Program += WidthChar;
+    Program += ":h=";
+    Program += HeightChar;
+    Program += "  \"" + output + "\" -loop 1000";
 #elif defined(__APPLE__)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" -loop 1000");
+    Program += WidthChar;
+    Program += ":h=";
+    Program += HeightChar;
+    Program += "  \"" + output + "\" -loop 1000";
 #elif defined(_PPC)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" -loop 1000");
+    Program += WidthChar;
+    Program += ":h=";
+    Program += HeightChar;
+    Program += "  \"" + output + "\" -loop 1000";
 #endif
 
     tprintf(PRINT_STD, "\n\n");
@@ -8783,7 +8134,7 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
 
     std::string input = argv[2];
     std::string output = argv[2];
-    output.append(".raw");
+    output += ".raw";
 
     /////////////////////Read In Data From IVF File/////////////////////
     FILE *in = fopen(input.c_str(), "rb");
@@ -8837,48 +8188,32 @@ int tool_play_dec_ivf(int argc, const char *const *argv)
     std::string Program;
 
 #if defined(_WIN32)
-    Program = "\"c:\\bin\\tmnplay.exe";
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" ");
-    Program.append(WidthChar);
-    Program.append(" ");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(FrameRateChar);
-    Program.append(" \"");
-    Program.append(YUVChar);
+    Program = "\"c:\\bin\\tmnplay.exe \"" + output + "\" ";
+    Program += WidthChar;
+    Program += " ";
+    Program += HeightChar;
+    Program += " ";
+    Program += FrameRateChar;
+    Program += " \"";
+    Program += YUVChar;
 #elif defined(linux)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" -loop 1000");
+    Program += WidthChar;
+    Program += ":h=";
+    Program += HeightChar;
+    Program += "  \"" + output + "\" -loop 1000";
 #elif defined(__APPLE__)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" -loop 1000");
+    Program += WidthChar;
+    Program += ":h=";
+    Program += HeightChar;
+    Program += "  \"" + output + "\" -loop 1000";
 #elif defined(_PPC)
     Program = "mplayer -demuxer rawvideo -rawvideo w=";
-    Program.append(WidthChar);
-    Program.append(":h=");
-    Program.append(HeightChar);
-    Program.append(" ");
-    Program.append(" \"");
-    Program.append(output.c_str());
-    Program.append("\"");
-    Program.append(" -loop 1000");
+    Program += WidthChar;
+    Program += ":h=";
+    Program += HeightChar;
+    Program += "  \"" + output + "\" -loop 1000";
 #endif
 
     tprintf(PRINT_STD, "\n\n");
@@ -8979,14 +8314,11 @@ int tool_random_stress_test(int argc, const char *const *argv)
 
     char OutputTestFileName[255];
     vpxt_file_name(OutputTestFile.c_str(), OutputTestFileName, 1);
-    std::string ParameterFilesFolder = OutputParDir;
-    ParameterFilesFolder.append(slashCharStr().c_str());
-    ParameterFilesFolder.append(OutputTestFileName);
+    std::string ParameterFilesFolder = OutputParDir + slashCharStr() +
+        OutputTestFileName;
     vpxt_make_dir(ParameterFilesFolder);
-    ParameterFilesFolder.append(slashCharStr().c_str());
-    std::string TestVectorFolder = InputIVFDir;
-    TestVectorFolder.append(slashCharStr().c_str());
-    TestVectorFolder.append("TestVectors");
+    ParameterFilesFolder += slashCharStr();
+    std::string test_vector_folder = InputIVFDir + slashCharStr() + "TestVectors";
     std::vector<std::string> FileNamesVector;
     std::vector<std::string> IVFFileNamesVector;
     vpxt_list_files_in_dir(FileNamesVector, InputIVFDir.c_str());
@@ -9096,11 +8428,8 @@ int tool_random_stress_test(int argc, const char *const *argv)
         int RandIVFNum = rand() % IVFFileNamesVector.size();
         char CurrentTestChar[255];
         vpxt_itoa_custom(CurrentTest, CurrentTestChar, 10);
-        std::string RandSettingsFile = ParameterFilesFolder;
-        RandSettingsFile.append(OutputTestFileName);
-        RandSettingsFile.append("_");
-        RandSettingsFile.append(CurrentTestChar);
-        RandSettingsFile.append(".txt");
+        std::string RandSettingsFile = ParameterFilesFolder + OutputTestFileName
+            + "_" + CurrentTestChar + ".txt";
         std::string RandIVFFile = IVFFileNamesVector[RandIVFNum].c_str();
         VP8_CONFIG opt = vpxt_random_parameters(opt, RandIVFFile.c_str(), 2);
         vpxt_output_settings(RandSettingsFile.c_str(), opt);
@@ -9893,7 +9222,7 @@ int tool_random_stress_test(int argc, const char *const *argv)
         if (ValidTestNumbers[RandTestNum] == TVECTNUM)
         {
             outfile << "test_test_vector@";
-            outfile << TestVectorFolder.c_str();
+            outfile << test_vector_folder.c_str();
             outfile << "\n";
         }
 
@@ -10049,8 +9378,6 @@ int tool_raw_to_formatted(int argc, const char *const *argv)
 
     if (file_type == FILE_TYPE_Y4M)
     {
-        std::string bufferStr = "YUV4MPEG2 C420jpeg W";
-
         char widthChar[32];
         char heightChar[32];
         char FrameRateChar[32];
@@ -10058,12 +9385,13 @@ int tool_raw_to_formatted(int argc, const char *const *argv)
         vpxt_itoa_custom(Height, heightChar, 10);
         vpxt_itoa_custom(FrameRate, FrameRateChar, 10);
 
-        bufferStr.append(widthChar);
-        bufferStr.append(" H");
-        bufferStr.append(heightChar);
-        bufferStr.append(" F");
-        bufferStr.append(FrameRateChar);
-        bufferStr.append(":1 Ip.");
+        std::string bufferStr = "YUV4MPEG2 C420jpeg W";
+        bufferStr += widthChar;
+        bufferStr += " H";
+        bufferStr += heightChar;
+        bufferStr += " F";
+        bufferStr += FrameRateChar;
+        bufferStr += ":1 Ip.";
 
         out_put(out2, (unsigned char *)bufferStr.c_str(),
             strlen(bufferStr.c_str()), 0);
@@ -10347,7 +9675,7 @@ int tool_test_vector_index(int argc, const char *const *argv)
     tprintf(PRINT_STD, "\n Searching for %s Line %i Coverage.\n\n", argv[3],
         atoi(argv[4]));
 
-    std::string currentFile = "";
+    std::string currentFile;
     int x = 1;
     int y = 1;
 
@@ -10366,25 +9694,20 @@ int tool_test_vector_index(int argc, const char *const *argv)
 
             if (x == 1 && y == 1)
             {
-                CurCC.append("\\VP8REF");
-                CurCC.append(Charx);
-                CurCC.append("\\");
-                CurCC.append(Chary);
-                CurCC.append("\\summary");
-                CurCC.append("\\");
-                CurCC.append(currentFile);
-                CurCC.append(".c.gcov.txt");
+                CurCC += "\\VP8REF";
+                CurCC += Charx;
+                CurCC += "\\";
+                CurCC += Chary;
+                CurCC += "\\summary\\" + currentFile + ".c.gcov.txt";
             }
             else
             {
-                CurCC.append("\\VP8REF");
-                CurCC.append(Charx);
-                CurCC.append("\\");
-                CurCC.append(Chary);
-                CurCC.append("\\summary");
-                CurCC.append("\\UniqueActivations\\");
-                CurCC.append(currentFile);
-                CurCC.append(".c.gcov_UniqueActivations.txt");
+                CurCC += "\\VP8REF";
+                CurCC += Charx;
+                CurCC += "\\";
+                CurCC += Chary;
+                CurCC += "\\summary\\UniqueActivations\\" + currentFile +
+                    ".c.gcov_UniqueActivations.txt";
             }
 
             std::ifstream CurCCFile(CurCC.c_str());
@@ -10565,7 +9888,7 @@ int tool_win_mem_mon_graph(int argc, const char *const *argv)
                 "\n  Delete IVF Files\n\n"
                 "    <Input File 1>\n"
                 "    <Output File>\n"
-                "    <Time Interval In Seconds>\n"
+                "    <time Interval In Seconds>\n"
                );
         return 0;
     }

@@ -136,7 +136,7 @@ extern "C" TOKENEXTRABITS vp8d_token_extra_bits2[12];
 //} nearB[3];
 /////////////////////////////////////////////////////////////////////////////////
 #endif
-int tool_array_coverage(int argc, const char *const *argv, const std::string &WorkingDir, std::string FilesAr[])
+int tool_array_coverage(int argc, const char *const *argv, const std::string &working_dir, std::string files_ar[])
 {
 
     //DATA COVERED AS OF 05-23-2010
@@ -202,7 +202,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     //vp8_kfYmodeEncodings
     //vp8_UVmodeEncodings
 #if defined(DATA_COV)
-    char *CompressString = "Code Coverage";
+    char *comp_out_str = "Code Coverage";
 
     char *input = argv[2];
 
@@ -239,17 +239,17 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     std::string WorkingDirString; // <- All Options need to set a value for this
     std::string Mode3TestMatch;
     std::string MainDirString;
-    char *MyDir = "CodeCoverage";
+    char *test_dir = "CodeCoverage";
     char WorkingDir2[255];
     char WorkingDir3[255];
     char File1[255];
 
-    int TestType = 1;
+    int test_type = 1;
 
-    if (TestType == 2 || TestType == 1)
+    if (test_type == 2 || test_type == 1)
     {
-        snprintf(WorkingDir2, 255, "%s", WorkingDir.c_str());
-        //strcpy(WorkingDir2,WorkingDir.c_str());
+        snprintf(WorkingDir2, 255, "%s", working_dir.c_str());
+        //strcpy(WorkingDir2,working_dir.c_str());
         int v = 0;
 
         while (WorkingDir2[v] != '\"')
@@ -262,12 +262,9 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         WorkingDir3[v+1] = '\0';
         WorkingDirString = WorkingDir3;
         /////////////////////////////////////////////////////////////////////////////////
-        MainDirString = WorkingDir3;
-        MainDirString.append("FileIndex.txt");
+        MainDirString = WorkingDir3 + "FileIndex.txt" + test_dir + slashCharStr()
+            + files_ar[0];
         /////////////////////////////////////////////////////////////////////////////////
-        WorkingDirString.append(MyDir);
-        WorkingDirString.append(slashCharStr());
-        WorkingDirString.append(FilesAr[0]);
         WorkingDirString.erase(WorkingDirString.length() - 1, 1);
 
         std::string CreateDir2 = WorkingDirString;
@@ -276,7 +273,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         vpxt_make_dir_vpx(CreateDir2.c_str());
 
         ///////////////////////Records FileLocations for MultiPlat Test/////////////////
-        if (TestType == 2)
+        if (test_type == 2)
         {
             char WorkingDirString2[255];
             snprintf(WorkingDirString2, 255, "%s", WorkingDirString.c_str());
@@ -287,16 +284,14 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     }
     else
     {
-        //Use WorkingDir to get the main folder
+        //Use working_dir to get the main folder
         //Use Index File to get the rest of the string
         //Put it all together Setting WorkingDirString to the location of the files we want to examine.
         char buffer[255];
 
-        std::string WorkingDir2 = WorkingDir;
+        std::string WorkingDir2 = working_dir + slashCharStr();
 
-        WorkingDir2.append(slashCharStr());
-        MainDirString = WorkingDir2;
-        MainDirString.append("FileIndex.txt");
+        MainDirString = WorkingDir2 + "FileIndex.txt";
 
         std::fstream FileStream;
         FileStream.open(MainDirString.c_str(), std::fstream::in | std::fstream::out | std::fstream::app);
@@ -315,27 +310,23 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         vpxt_test_name(buffer, Mode3TestMatchChar);
         Mode3TestMatch = Mode3TestMatchChar;
 
-        if (Mode3TestMatch.compare(MyDir) != 0)
+        if (Mode3TestMatch.compare(test_dir) != 0)
         {
             tprintf(PRINT_STD, "ErrorFileMisMatch ");
-            tprintf(PRINT_STD, "Mode3TestMatch: %s MyDir: %s", Mode3TestMatch, MyDir);
+            tprintf(PRINT_STD, "Mode3TestMatch: %s test_dir: %s", Mode3TestMatch, test_dir);
             return 11;
         }
 
-        WorkingDir2.append(buffer);
+        WorkingDir2 += buffer;
         WorkingDirString = WorkingDir2;
     }
 
-    std::string WorkingDir4 = WorkingDirString;
-    std::string WorkingDir5 = WorkingDirString;
-    std::string WorkingDir5b = WorkingDirString;
-
-    WorkingDir4.append(slashCharStr());
-    WorkingDir4.append("CodeCoverageDecCorrectMD5.txt");
-    WorkingDir5.append(slashCharStr());
-    WorkingDir5.append("CodeCoverageDecModifiedMD5.txt");
-    WorkingDir5b.append(slashCharStr());
-    WorkingDir5b.append("CodeCoverageCompression.ivf");
+    std::string WorkingDir4 = WorkingDirString + slashCharStr() +
+        "CodeCoverageDecCorrectMD5.txt";
+    std::string WorkingDir5 = WorkingDirString + slashCharStr() +
+        "CodeCoverageDecModifiedMD5.txt";
+    std::string WorkingDir5b = WorkingDirString + slashCharStr() +
+        "CodeCoverageCompression.ivf";
 
     char CodeCoverageDecCorrect[255];
     char CodeCoverageDecModified[255];
@@ -346,21 +337,19 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     snprintf(CodeCoverageCompression, 255, "%s", WorkingDir5b.c_str());
 
     /////////////OutPutfile////////////
-    std::string TextfileString = WorkingDirString;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = WorkingDirString + slashCharStr() + test_dir;
 
-    if (TestType == 2 || TestType == 1)
-        TextfileString.append(".txt");
+    if (test_type == 2 || test_type == 1)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
-        tprintf(PRINT_STD, "Cannot open out put file: %s\n", TextfileString.c_str());
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n", text_file_str.c_str());
         exit(1);
     }
 
@@ -368,23 +357,23 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
 
     //////////////////////////////////////////////////////////
 
-    if (TestType == 1)
+    if (test_type == 1)
     {
         print_header_full_test(argc, argv, WorkingDir3);
     }
 
-    if (TestType == 2)
+    if (test_type == 2)
     {
         print_header_compression_only(argc, argv, WorkingDir3);
     }
 
-    if (TestType == 3)
+    if (test_type == 3)
     {
         print_header_test_only(argc, argv, WorkingDirString);
     }
 
     int speed = 0;
-    int BitRate = atoi(argv[4]);
+    int bitrate = atoi(argv[4]);
 
     int Mode = atoi(argv[3]);
 
@@ -396,7 +385,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     std::string CompressControl = argv[5];
 
     if (CompressControl.compare("MakeCompression") == 0)
@@ -404,20 +393,20 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         if (Mode == 0)
         {
             opt.Mode = MODE_REALTIME;
-            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, bitrate, opt, comp_out_str, 0, 0, 0, enc_format);
         }
 
         if (Mode == 1)
         {
             opt.Mode = MODE_GOODQUALITY;
-            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, bitrate, opt, comp_out_str, 0, 0, 0, enc_format);
         }
 
         if (Mode == 2)
         {
             opt.Mode = MODE_BESTQUALITY;
 
-            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, bitrate, opt, comp_out_str, 0, 0, 0, enc_format);
         }
 
         if (Mode == 3)
@@ -427,13 +416,13 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         if (Mode == 4)
         {
             opt.Mode = MODE_SECONDPASS;
-            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, bitrate, opt, comp_out_str, 0, 0, 0, enc_format);
         }
 
         if (Mode == 5)
         {
             opt.Mode = MODE_SECONDPASS_BEST;
-            vpxt_time_compress(input, CodeCoverageCompression, speed, BitRate, opt, CompressString, 0, 0, 0, EncForm);
+            vpxt_time_compress(input, CodeCoverageCompression, speed, bitrate, opt, comp_out_str, 0, 0, 0, enc_format);
         }
     }
 
@@ -1624,7 +1613,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecCorrect, DecForm, 1);
+    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecCorrect, dec_format, 1);
     vpxt_dec_compute_md5(CodeCoverageCompression, CodeCoverageDecCorrect);
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -2700,7 +2689,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
 
 
     //////////////////////////////////////////////////////////////////////////////////////
-    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecModified, DecForm, 1);
+    //vpxt_time_decompress(CodeCoverageCompression, CodeCoverageDecModified, dec_format, 1);
     vpxt_dec_compute_md5(CodeCoverageCompression, CodeCoverageDecModified);
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -3696,7 +3685,7 @@ int tool_array_coverage(int argc, const char *const *argv, const std::string &Wo
         std::string rootDir;
         vpxt_folder_name(argv[0], rootDir);
         std::string CoverageSummaryTextFile = rootDir;
-        CoverageSummaryTextFile.append("CoverageSummary.txt");
+        CoverageSummaryTextFile += "CoverageSummary.txt";
 
         char FullName[255];
 

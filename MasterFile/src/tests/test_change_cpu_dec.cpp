@@ -2,10 +2,10 @@
 
 int test_change_cpu_dec(int argc,
                         const char *const *argv,
-                        const std::string &WorkingDir,
-                        std::string FilesAr[],
-                        int TestType,
-                        int DeleteIVF)
+                        const std::string &working_dir,
+                        std::string files_ar[],
+                        int test_type,
+                        int delete_ivf)
 {
 #if defined(ARM)
     printf("\nTEST NOT SUPPORTED FOR ARM.\n");
@@ -15,114 +15,100 @@ int test_change_cpu_dec(int argc,
     printf("\nTEST NOT SUPPORTED FOR PPC.\n");
     return 0;
 #else
-    char *CompressString = "Version";
-    char *MyDir = "test_change_cpu_dec";
-    int inputCheck = vpxt_check_arg_input(argv[1], argc);
+    char *comp_out_str = "Version";
+    char *test_dir = "test_change_cpu_dec";
+    int input_ver = vpxt_check_arg_input(argv[1], argc);
 
-    if (inputCheck < 0)
+    if (input_ver < 0)
         return vpxt_test_help(argv[1], 0);
 
     std::string input = argv[2];
-    int Mode = atoi(argv[3]);
-    int BitRate = atoi(argv[4]);
-    int VersionNum = atoi(argv[5]);
-    std::string EncForm = argv[6];
-    std::string DecForm = argv[7];
+    int mode = atoi(argv[3]);
+    int bitrate = atoi(argv[4]);
+    int version_num = atoi(argv[5]);
+    std::string enc_format = argv[6];
+    std::string dec_format = argv[7];
 
-    int DoOnceSpeedRead = 0;
-    unsigned int totalms = 0;
-    unsigned int totalms2 = 0;
+    unsigned int total_ms = 0;
+    unsigned int total_ms_2 = 0;
 
     int speed = 0;
-    int Fail = 0;
-    int ModesRun = 0;
+    int fail = 0;
+    int modes_run = 0;
 
-    int Simd_Caps = x86_simd_caps();
-    char Simd_Caps_Orig_Char[10];
-    vpxt_itoa_custom(Simd_Caps, Simd_Caps_Orig_Char, 10);
+    int simd_caps = x86_simd_caps();
+    char simd_caps_orig_char[10];
+    vpxt_itoa_custom(simd_caps, simd_caps_orig_char, 10);
 
     ////////////Formatting Test Specific Directory////////////
-    std::string CurTestDirStr = "";
-    char MainTestDirChar[255] = "";
-    std::string FileIndexStr = "";
-    char FileIndexOutputChar[255] = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
+    char main_test_dir_char[255] = "";
+    char file_index_output_char[255] = "";
 
-    if (initialize_test_directory(argc, argv, TestType, WorkingDir, MyDir,
-        CurTestDirStr, FileIndexStr, MainTestDirChar, FileIndexOutputChar,
-        FilesAr) == 11)
+    if (initialize_test_directory(argc, argv, test_type, working_dir, test_dir,
+        cur_test_dir_str, file_index_str, main_test_dir_char,
+        file_index_output_char, files_ar) == 11)
         return 11;
 
-    std::string CPUDecOnlyWorksOutFile = CurTestDirStr;
-    CPUDecOnlyWorksOutFile.append(slashCharStr());
-    CPUDecOnlyWorksOutFile.append(MyDir);
-    CPUDecOnlyWorksOutFile.append("_compression");
-    vpxt_enc_format_append(CPUDecOnlyWorksOutFile, EncForm);
+    std::string cpu_dec_only_enc = cur_test_dir_str + slashCharStr() + test_dir
+        + "_compression";
+    vpxt_enc_format_append(cpu_dec_only_enc, enc_format);
 
-    std::string CPUDecOnlyWorksOut_CPU = CurTestDirStr;
-    CPUDecOnlyWorksOut_CPU.append(slashCharStr());
-    CPUDecOnlyWorksOut_CPU.append(MyDir);
-    CPUDecOnlyWorksOut_CPU.append("_decompression");
+    std::string cpu_dec_only_dec = cur_test_dir_str + slashCharStr() + test_dir
+        + "_decompression";
 
-    std::string OutputStr0 = CPUDecOnlyWorksOut_CPU;
-    OutputStr0.append("_none");
-    vpxt_dec_format_append(OutputStr0, DecForm);
-    std::string OutputStr1 = CPUDecOnlyWorksOut_CPU;
-    OutputStr1.append("_mmx");
-    vpxt_dec_format_append(OutputStr1, DecForm);
-    std::string OutputStr2 = CPUDecOnlyWorksOut_CPU;
-    OutputStr2.append("_sse");
-    vpxt_dec_format_append(OutputStr2, DecForm);
-    std::string OutputStr3 = CPUDecOnlyWorksOut_CPU;
-    OutputStr3.append("_sse2");
-    vpxt_dec_format_append(OutputStr3, DecForm);
-    std::string OutputStr4 = CPUDecOnlyWorksOut_CPU;
-    OutputStr4.append("_sse3");
-    vpxt_dec_format_append(OutputStr4, DecForm);
-    std::string OutputStr5 = CPUDecOnlyWorksOut_CPU;
-    OutputStr5.append("_ssse3");
-    vpxt_dec_format_append(OutputStr5, DecForm);
-    std::string OutputStr6 = CPUDecOnlyWorksOut_CPU;
-    OutputStr6.append("_sse4_1");
-    vpxt_dec_format_append(OutputStr6, DecForm);
+    std::string cpu_dec_only_dec_none = cpu_dec_only_dec + "_none";
+    vpxt_dec_format_append(cpu_dec_only_dec_none, dec_format);
+    std::string cpu_dec_only_dec_mmx = cpu_dec_only_dec + "_mmx";
+    vpxt_dec_format_append(cpu_dec_only_dec_mmx, dec_format);
+    std::string cpu_dec_only_dec_sse = cpu_dec_only_dec + "_sse";
+    vpxt_dec_format_append(cpu_dec_only_dec_sse, dec_format);
+    std::string cpu_dec_only_dec_sse2 = cpu_dec_only_dec + "_sse2";
+    vpxt_dec_format_append(cpu_dec_only_dec_sse2, dec_format);
+    std::string cpu_dec_only_dec_sse3 = cpu_dec_only_dec + "_sse3";
+    vpxt_dec_format_append(cpu_dec_only_dec_sse3, dec_format);
+    std::string cpu_dec_only_dec_ssse3 = cpu_dec_only_dec + "_ssse3";
+    vpxt_dec_format_append(cpu_dec_only_dec_ssse3, dec_format);
+    std::string cpu_dec_only_dec_sse4_1 = cpu_dec_only_dec + "_sse4_1";
+    vpxt_dec_format_append(cpu_dec_only_dec_sse4_1, dec_format);
 
     /////////////OutPutfile////////////
-    std::string TextfileString = CurTestDirStr;
-    TextfileString.append(slashCharStr());
-    TextfileString.append(MyDir);
+    std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
 
-    if (TestType == COMP_ONLY || TestType == TEST_AND_COMP)
-        TextfileString.append(".txt");
+    if (test_type == COMP_ONLY || test_type == TEST_AND_COMP)
+        text_file_str += ".txt";
     else
-        TextfileString.append("_TestOnly.txt");
+        text_file_str += "_TestOnly.txt";
 
     FILE *fp;
 
-    if ((fp = freopen(TextfileString.c_str(), "w", stderr)) == NULL)
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
     {
         tprintf(PRINT_STD, "Cannot open out put file: %s\n",
-            TextfileString.c_str());
+            text_file_str.c_str());
         exit(1);
     }
 
     ////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    if (TestType == TEST_AND_COMP)
-        print_header_full_test(argc, argv, MainTestDirChar);
+    if (test_type == TEST_AND_COMP)
+        print_header_full_test(argc, argv, main_test_dir_char);
 
-    if (TestType == COMP_ONLY)
-        print_header_compression_only(argc, argv, MainTestDirChar);
+    if (test_type == COMP_ONLY)
+        print_header_compression_only(argc, argv, main_test_dir_char);
 
-    if (TestType == TEST_ONLY)
-        print_header_test_only(argc, argv, CurTestDirStr);
+    if (test_type == TEST_ONLY)
+        print_header_test_only(argc, argv, cur_test_dir_str);
 
-    vpxt_cap_string_print(PRINT_BTH, "%s", MyDir);
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     ///////////////////Use Custom Settings///////////////////
-    if (inputCheck == 2)
+    if (input_ver == 2)
     {
         if (!vpxt_file_exists_check(argv[argc-1]))
         {
@@ -130,288 +116,283 @@ int test_change_cpu_dec(int argc,
                 argv[argc-1]);
 
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
 
         opt = vpxt_input_settings(argv[argc-1]);
-        BitRate = opt.target_bandwidth;
+        bitrate = opt.target_bandwidth;
     }
 
     /////////////////////////////////////////////////////////
 
-    opt.target_bandwidth = BitRate;
+    opt.target_bandwidth = bitrate;
     opt.Mode = MODE_GOODQUALITY;
-    opt.Version = VersionNum;
-    int CompressInt = opt.Version;
+    opt.Version = version_num;
+    int compress_int = opt.Version;
     vpxt_determinate_parameters(opt);
 
     int counter = 0;
-    int Mode2 = 0;
+    int mode_2 = 0;
 
     //Run Test only (Runs Test, Sets up test to be run, or skips compresion of
     //files)
-    if (TestType == TEST_ONLY)
+    if (test_type == TEST_ONLY)
     {
-        std::vector<std::string> DecompressonVector;
+        std::vector<std::string> decompression_vector;
 
-        if (vpxt_file_exists_check(OutputStr0))
-            DecompressonVector.push_back(OutputStr0);
+        if (vpxt_file_exists_check(cpu_dec_only_dec_none))
+            decompression_vector.push_back(cpu_dec_only_dec_none);
 
-        if (vpxt_file_exists_check(OutputStr1))
-            DecompressonVector.push_back(OutputStr1);
+        if (vpxt_file_exists_check(cpu_dec_only_dec_mmx))
+            decompression_vector.push_back(cpu_dec_only_dec_mmx);
 
-        if (vpxt_file_exists_check(OutputStr2))
-            DecompressonVector.push_back(OutputStr2);
+        if (vpxt_file_exists_check(cpu_dec_only_dec_sse))
+            decompression_vector.push_back(cpu_dec_only_dec_sse);
 
-        if (vpxt_file_exists_check(OutputStr3))
-            DecompressonVector.push_back(OutputStr3);
+        if (vpxt_file_exists_check(cpu_dec_only_dec_sse2))
+            decompression_vector.push_back(cpu_dec_only_dec_sse2);
 
-        if (vpxt_file_exists_check(OutputStr4))
-            DecompressonVector.push_back(OutputStr4);
+        if (vpxt_file_exists_check(cpu_dec_only_dec_sse3))
+            decompression_vector.push_back(cpu_dec_only_dec_sse3);
 
-        if (vpxt_file_exists_check(OutputStr5))
-            DecompressonVector.push_back(OutputStr5);
+        if (vpxt_file_exists_check(cpu_dec_only_dec_ssse3))
+            decompression_vector.push_back(cpu_dec_only_dec_ssse3);
 
-        if (vpxt_file_exists_check(OutputStr6))
-            DecompressonVector.push_back(OutputStr6);
+        if (vpxt_file_exists_check(cpu_dec_only_dec_sse4_1))
+            decompression_vector.push_back(cpu_dec_only_dec_sse4_1);
 
-        ModesRun = DecompressonVector.size();
+        modes_run = decompression_vector.size();
 
-        totalms = vpxt_time_return(DecompressonVector[0].c_str(), 1);
+        total_ms = vpxt_time_return(decompression_vector[0].c_str(), 1);
 
-        int CurrentDecFile = 0;
+        int current_dec_file = 0;
 
-        while (CurrentDecFile < DecompressonVector.size())
+        while (current_dec_file < decompression_vector.size())
         {
 
-            totalms2 =
-                vpxt_time_return(DecompressonVector[CurrentDecFile].c_str(), 1);
+            total_ms_2 =
+                vpxt_time_return(decompression_vector[current_dec_file].c_str(), 1);
 
-            if (CurrentDecFile >= 1)
+            if (current_dec_file >= 1)
             {
                 tprintf(PRINT_BTH, "\n");
 
-                char CompFileIndexOutputChar[255];
-                char CompFile2[255];
-                vpxt_file_name(DecompressonVector[CurrentDecFile-1].c_str(),
-                    CompFileIndexOutputChar, 0);
-                vpxt_file_name(DecompressonVector[CurrentDecFile].c_str(),
-                    CompFile2, 0);
+                char comp_file_index_output_char[255];
+                char comp_file_2[255];
+                vpxt_file_name(decompression_vector[current_dec_file-1].c_str(),
+                    comp_file_index_output_char, 0);
+                vpxt_file_name(decompression_vector[current_dec_file].c_str(),
+                    comp_file_2, 0);
 
                 tprintf(PRINT_BTH, "\nComparing %s to %s\n",
-                    CompFileIndexOutputChar, CompFile2);
+                    comp_file_index_output_char, comp_file_2);
 
-                int lngRC =
-                  vpxt_compare_enc(DecompressonVector[CurrentDecFile-1].c_str(),
-                  DecompressonVector[CurrentDecFile].c_str(), 0);
+                int lng_rc =
+                  vpxt_compare_enc(decompression_vector[current_dec_file-1].c_str(),
+                  decompression_vector[current_dec_file].c_str(), 0);
 
-                if (lngRC >= 0)
+                if (lng_rc >= 0)
                 {
                     tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: %i",
-                        lngRC);
-                    Fail = 1;
+                        lng_rc);
+                    fail = 1;
                 }
 
-                if (lngRC == -1)
-                {
+                if (lng_rc == -1)
                     tprintf(PRINT_BTH, " * Files are identical");
-                }
 
-                if (lngRC == -2)
+                if (lng_rc == -2)
                 {
                     tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File 1."
                         "\n");
-                    Fail = 1;
+                    fail = 1;
                 }
 
-                if (lngRC == -3)
+                if (lng_rc == -3)
                 {
                     tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File 2."
                         "\n");
-                    Fail = 1;
+                    fail = 1;
                 }
             }
 
-            CurrentDecFile++;
+            current_dec_file++;
         }
 
         tprintf(PRINT_BTH, "\n");
     }
     else
     {
-        std::vector<std::string> DecompressonVector;
-        opt.Mode = Mode;
+        std::vector<std::string> decompression_vector;
+        opt.Mode = mode;
 
-        if (vpxt_compress(input.c_str(), CPUDecOnlyWorksOutFile.c_str(), speed,
-            BitRate, opt, CompressString, CompressInt, 0, EncForm) == -1)
+        if (vpxt_compress(input.c_str(), cpu_dec_only_enc.c_str(), speed,
+            bitrate, opt, comp_out_str, compress_int, 0, enc_format) == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
+            record_test_complete(file_index_str, file_index_output_char, test_type);
             return 2;
         }
 
         putenv("VPX_SIMD_CAPS=0");
 
-        std::string Output2Str = CPUDecOnlyWorksOut_CPU;
-        Output2Str.append("_none");
-        vpxt_dec_format_append(Output2Str, DecForm);
+        std::string output_2_str = cpu_dec_only_dec + "_none";
+        vpxt_dec_format_append(output_2_str, dec_format);
 
         tprintf(PRINT_BTH, "\n\nDetected CPU capability: none");
-        unsigned int CPUTick1 = 0;
-        totalms = vpxt_decompress_time_and_output(CPUDecOnlyWorksOutFile.c_str()
-            , Output2Str.c_str(), CPUTick1, DecForm, 1);
-        DecompressonVector.push_back(Output2Str);
+        unsigned int cpu_tick_1 = 0;
+        total_ms = vpxt_decompress_time_and_output(cpu_dec_only_enc.c_str()
+            , output_2_str.c_str(), cpu_tick_1, dec_format, 1);
+        decompression_vector.push_back(output_2_str);
 
-        if (totalms == -1)
+        if (total_ms == -1)
         {
             fclose(fp);
-            record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-            std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
-            Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-            putenv((char*)Simd_Caps_Str.c_str());
+            record_test_complete(file_index_str, file_index_output_char, test_type);
+            std::string simd_caps_str = "VPX_SIMD_CAPS=";
+            simd_caps_str += simd_caps_orig_char;
+            putenv((char*)simd_caps_str.c_str());
             return 2;
         }
 
         tprintf(PRINT_BTH, "\n");
 
-        int counterMax = 64;
+        int counter_max = 64;
         counter++;
         int i = 1;
 
-        while (counter < counterMax)
+        while (counter < counter_max)
         {
-            int CPUFound = 0;
-            int Has_Check = (counter + 1) / 2;
+            int cpu_found = 0;
+            int has_check = (counter + 1) / 2;
 
-            if ((Simd_Caps & HAS_MMX)    == Has_Check)
-                CPUFound = 1;
+            if ((simd_caps & HAS_MMX)    == has_check)
+                cpu_found = 1;
 
-            if ((Simd_Caps & HAS_SSE)    == Has_Check)
-                CPUFound = 1;
+            if ((simd_caps & HAS_SSE)    == has_check)
+                cpu_found = 1;
 
-            if ((Simd_Caps & HAS_SSE2)   == Has_Check)
-                CPUFound = 1;
+            if ((simd_caps & HAS_SSE2)   == has_check)
+                cpu_found = 1;
 
-            if ((Simd_Caps & HAS_SSE3)   == Has_Check)
-                CPUFound = 1;
+            if ((simd_caps & HAS_SSE3)   == has_check)
+                cpu_found = 1;
 
-            if ((Simd_Caps & HAS_SSSE3)  == Has_Check)
-                CPUFound = 1;
+            if ((simd_caps & HAS_SSSE3)  == has_check)
+                cpu_found = 1;
 
-            if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
-                CPUFound = 1;
+            if ((simd_caps & HAS_SSE4_1) == has_check)
+                cpu_found = 1;
 
-            if (CPUFound == 1)
+            if (cpu_found == 1)
             {
-                std::string CPUStr = "";
+                std::string cpu_str;
                 tprintf(PRINT_BTH, "\nDetected CPU capability: ");
 
-                if ((Simd_Caps & HAS_MMX)    == Has_Check)
-                    CPUStr = "_mmx";
+                if ((simd_caps & HAS_MMX)    == has_check)
+                    cpu_str = "_mmx";
 
-                if ((Simd_Caps & HAS_SSE)    == Has_Check)
-                    CPUStr = "_sse";
+                if ((simd_caps & HAS_SSE)    == has_check)
+                    cpu_str = "_sse";
 
-                if ((Simd_Caps & HAS_SSE2)   == Has_Check)
-                    CPUStr = "_sse2";
+                if ((simd_caps & HAS_SSE2)   == has_check)
+                    cpu_str = "_sse2";
 
-                if ((Simd_Caps & HAS_SSE3)   == Has_Check)
-                    CPUStr = "_sse3";
+                if ((simd_caps & HAS_SSE3)   == has_check)
+                    cpu_str = "_sse3";
 
-                if ((Simd_Caps & HAS_SSSE3)  == Has_Check)
-                    CPUStr = "_ssse3";
+                if ((simd_caps & HAS_SSSE3)  == has_check)
+                    cpu_str = "_ssse3";
 
-                if ((Simd_Caps & HAS_SSE4_1) == Has_Check)
-                    CPUStr = "_sse4_1";
+                if ((simd_caps & HAS_SSE4_1) == has_check)
+                    cpu_str = "_sse4_1";
 
-                tprintf(PRINT_BTH, "%s", CPUStr.c_str());
+                tprintf(PRINT_BTH, "%s", cpu_str.c_str());
 
-                std::string CPUIDSTRING = "VPX_SIMD_CAPS=";
-                char CounterChar[10];
-                vpxt_itoa_custom(counter, CounterChar, 10);
-                CPUIDSTRING.append(CounterChar);
+                std::string cpu_id_str = "VPX_SIMD_CAPS=";
+                char counter_char[10];
+                vpxt_itoa_custom(counter, counter_char, 10);
+                cpu_id_str += counter_char;
 
-                char CPUChar[255];
-                snprintf(CPUChar, 255, CPUIDSTRING.c_str());
-                putenv(CPUChar);
+                char cpu_char[255];
+                snprintf(cpu_char, 255, cpu_id_str.c_str());
+                putenv(cpu_char);
 
                 //////////////////////////////////
-                ///////Compresion and Time ///////
+                ///////Compresion and time ///////
 
-                std::string ChangedCPUDecOutFileStr1 = CPUDecOnlyWorksOut_CPU;
-                std::string ChangedCPUDecOutFileStr2 = CPUDecOnlyWorksOut_CPU;
+                std::string change_cpu_dec_out_file_1 = cpu_dec_only_dec;
+                std::string change_cpu_dec_out_file_2 = cpu_dec_only_dec;
 
                 char count[20];
                 vpxt_itoa_custom(counter, count, 10);
-                ChangedCPUDecOutFileStr1.append(CPUStr.c_str());
-                vpxt_dec_format_append(ChangedCPUDecOutFileStr1, DecForm);
+                change_cpu_dec_out_file_1 += cpu_str.c_str();
+                vpxt_dec_format_append(change_cpu_dec_out_file_1, dec_format);
 
-                unsigned int CPUTick2 = 0;
-                totalms2 =
-                 vpxt_decompress_time_and_output(CPUDecOnlyWorksOutFile.c_str(),
-                 ChangedCPUDecOutFileStr1.c_str(), CPUTick2, DecForm, 1);
-                DecompressonVector.push_back(ChangedCPUDecOutFileStr1);
+                unsigned int cpu_tick_2 = 0;
+                total_ms_2 =
+                 vpxt_decompress_time_and_output(cpu_dec_only_enc.c_str(),
+                 change_cpu_dec_out_file_1.c_str(), cpu_tick_2, dec_format, 1);
+                decompression_vector.push_back(change_cpu_dec_out_file_1);
 
-                if (totalms2 == -1)
+                if (total_ms_2 == -1)
                 {
                     fclose(fp);
-                    record_test_complete(FileIndexStr, FileIndexOutputChar,
-                        TestType);
-                    std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
-                    Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-                    putenv((char*)Simd_Caps_Str.c_str());
+                    record_test_complete(file_index_str, file_index_output_char,
+                        test_type);
+                    std::string simd_caps_str = "VPX_SIMD_CAPS=" +
+                        *simd_caps_orig_char;
+                    putenv((char*)simd_caps_str.c_str());
                     return 2;
                 }
 
-                int countOld = (counter - 1);
-                vpxt_itoa_custom(countOld, count, 10);
-                ChangedCPUDecOutFileStr2.append(CPUStr.c_str());
-                vpxt_dec_format_append(ChangedCPUDecOutFileStr2, DecForm);
+                int count_old = (counter - 1);
+                vpxt_itoa_custom(count_old, count, 10);
+                change_cpu_dec_out_file_2 += cpu_str.c_str();
+                vpxt_dec_format_append(change_cpu_dec_out_file_2, dec_format);
 
-                if (TestType != 2)
+                if (test_type != 2)
                 {
-                    char CompFileIndexOutputChar[255];
-                    char CompFile2[255];
+                    char comp_file_index_output_char[255];
+                    char comp_file_2[255];
                     vpxt_file_name(
-                        DecompressonVector[DecompressonVector.size()-1].c_str(),
-                        CompFileIndexOutputChar, 0);
+                        decompression_vector[decompression_vector.size()-1].c_str(),
+                        comp_file_index_output_char, 0);
                     vpxt_file_name(
-                        DecompressonVector[DecompressonVector.size()-2].c_str(),
-                        CompFile2, 0);
+                        decompression_vector[decompression_vector.size()-2].c_str(),
+                        comp_file_2, 0);
 
                     tprintf(PRINT_BTH, "\nComparing %s to %s\n",
-                        CompFileIndexOutputChar, CompFile2);
+                        comp_file_index_output_char, comp_file_2);
 
-                    int lngRC =
+                    int lng_rc =
                         vpxt_compare_dec(
-                        DecompressonVector[DecompressonVector.size()-1].c_str(),
-                        DecompressonVector[DecompressonVector.size()-2].c_str());
+                        decompression_vector[decompression_vector.size()-1].c_str(),
+                        decompression_vector[decompression_vector.size()-2].c_str());
 
-                    if (lngRC >= 0)
+                    if (lng_rc >= 0)
                     {
                         tprintf(PRINT_BTH, "\n * Fail: Files differ at frame: "
-                            "%i on file number %i", lngRC, i);
-                        Fail = 1;
+                            "%i on file number %i", lng_rc, i);
+                        fail = 1;
                     }
 
-                    if (lngRC == -1)
-                    {
+                    if (lng_rc == -1)
                         tprintf(PRINT_BTH, " * Files are identical");
-                    }
 
-                    if (lngRC == -2)
+                    if (lng_rc == -2)
                     {
                         tprintf(PRINT_BTH, "\n * Fail: File 2 ends before File "
                             "1.\n");
-                        Fail = 1;
+                        fail = 1;
                     }
 
-                    if (lngRC == -3)
+                    if (lng_rc == -3)
                     {
                         tprintf(PRINT_BTH, "\n * Fail: File 1 ends before File "
                             "2.\n");
-                        Fail = 1;
+                        fail = 1;
                     }
                 }
             }
@@ -421,116 +402,116 @@ int test_change_cpu_dec(int argc,
             i++;
         }
 
-        ModesRun = DecompressonVector.size();
+        modes_run = decompression_vector.size();
     }
 
     //Create Compression only stop test short.
-    if (TestType == COMP_ONLY)
+    if (test_type == COMP_ONLY)
     {
         //Compression only run
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-        std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
-        Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv((char*)Simd_Caps_Str.c_str());
+        record_test_complete(file_index_str, file_index_output_char, test_type);
+        std::string simd_caps_str = "VPX_SIMD_CAPS=";
+        simd_caps_str += simd_caps_orig_char;
+        putenv((char*)simd_caps_str.c_str());
         return 10;
     }
 
-    int overallfail = 0;
+    int over_all_fail = 0;
     tprintf(PRINT_BTH, "\nResults:\n\n");
 
-    if (Fail == 0)
+    if (fail == 0)
     {
         vpxt_formated_print(RESPRT, "All Files Identical - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (Fail == 1)
+    if (fail == 1)
     {
         vpxt_formated_print(RESPRT, "All Files not Identical - Failed");
         tprintf(PRINT_BTH, "\n");
-        overallfail = 1;
+        over_all_fail = 1;
     }
 
-    if (ModesRun == 7)
+    if (modes_run == 7)
     {
         vpxt_formated_print(RESPRT, "All instruction sets run - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (ModesRun != 7)
+    if (modes_run != 7)
     {
         vpxt_formated_print(RESPRT, "Not all instruction sets run - MinPassed");
         tprintf(PRINT_BTH, "\n");
 
-        if (overallfail != 1) overallfail = 2;
+        if (over_all_fail != 1) over_all_fail = 2;
     }
 
-    if (totalms != totalms2)
+    if (total_ms != total_ms_2)
     {
         vpxt_formated_print(RESPRT, "Decompress times are not equal - Passed");
         tprintf(PRINT_BTH, "\n");
     }
 
-    if (totalms == totalms2)
+    if (total_ms == total_ms_2)
     {
         vpxt_formated_print(RESPRT, "CPU changes are not effecting the runtime "
             "- MinPassed");
         tprintf(PRINT_BTH, "\n");
-        overallfail = 2;
+        over_all_fail = 2;
     }
 
-    if (overallfail == 2)
+    if (over_all_fail == 2)
     {
         tprintf(PRINT_BTH, "\nMinPassed\n");
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-        std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
-        Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv((char*)Simd_Caps_Str.c_str());
+        record_test_complete(file_index_str, file_index_output_char, test_type);
+        std::string simd_caps_str = "VPX_SIMD_CAPS=";
+        simd_caps_str += simd_caps_orig_char;
+        putenv((char*)simd_caps_str.c_str());
         return 2;
     }
 
-    if (overallfail == 0)
+    if (over_all_fail == 0)
     {
         tprintf(PRINT_BTH, "\nPassed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, CPUDecOnlyWorksOutFile.c_str(),
-            OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(),
-            OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(),
-            OutputStr6.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, cpu_dec_only_enc.c_str(),
+            cpu_dec_only_dec_none.c_str(), cpu_dec_only_dec_mmx.c_str(), cpu_dec_only_dec_sse.c_str(),
+            cpu_dec_only_dec_sse2.c_str(), cpu_dec_only_dec_sse3.c_str(), cpu_dec_only_dec_ssse3.c_str(),
+            cpu_dec_only_dec_sse4_1.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-        std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
-        Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv((char*)Simd_Caps_Str.c_str());
+        record_test_complete(file_index_str, file_index_output_char, test_type);
+        std::string simd_caps_str = "VPX_SIMD_CAPS=";
+        simd_caps_str += simd_caps_orig_char;
+        putenv((char*)simd_caps_str.c_str());
         return 1;
     }
     else
     {
         tprintf(PRINT_BTH, "\nFailed\n");
 
-        if (DeleteIVF)
-            vpxt_delete_files(8, CPUDecOnlyWorksOutFile.c_str(),
-            OutputStr0.c_str(), OutputStr1.c_str(), OutputStr2.c_str(),
-            OutputStr3.c_str(), OutputStr4.c_str(), OutputStr5.c_str(),
-            OutputStr6.c_str());
+        if (delete_ivf)
+            vpxt_delete_files(8, cpu_dec_only_enc.c_str(),
+            cpu_dec_only_dec_none.c_str(), cpu_dec_only_dec_mmx.c_str(), cpu_dec_only_dec_sse.c_str(),
+            cpu_dec_only_dec_sse2.c_str(), cpu_dec_only_dec_sse3.c_str(), cpu_dec_only_dec_ssse3.c_str(),
+            cpu_dec_only_dec_sse4_1.c_str());
 
         fclose(fp);
-        record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-        std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
-        Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-        putenv((char*)Simd_Caps_Str.c_str());
+        record_test_complete(file_index_str, file_index_output_char, test_type);
+        std::string simd_caps_str = "VPX_SIMD_CAPS=";
+        simd_caps_str += simd_caps_orig_char;
+        putenv((char*)simd_caps_str.c_str());
         return 0;
     }
 
     fclose(fp);
-    record_test_complete(FileIndexStr, FileIndexOutputChar, TestType);
-    std::string Simd_Caps_Str = "VPX_SIMD_CAPS=";
-    Simd_Caps_Str.append(Simd_Caps_Orig_Char);
-    putenv((char*)Simd_Caps_Str.c_str());
+    record_test_complete(file_index_str, file_index_output_char, test_type);
+    std::string simd_caps_str = "VPX_SIMD_CAPS=";
+    simd_caps_str += simd_caps_orig_char;
+    putenv((char*)simd_caps_str.c_str());
     return 6;
 #endif
 }

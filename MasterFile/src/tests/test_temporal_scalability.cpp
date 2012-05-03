@@ -27,8 +27,8 @@ int test_temporal_scalability(int argc,
     int speed = 0;
 
     ////////////Formatting Test Specific Directory////////////
-    std::string cur_test_dir_str = "";
-    std::string file_index_str = "";
+    std::string cur_test_dir_str;
+    std::string file_index_str;
     char main_test_dir_char[255] = "";
     char file_index_output_char[255] = "";
 

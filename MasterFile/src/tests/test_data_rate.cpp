@@ -144,7 +144,7 @@ int test_data_rate(int argc,
         if (file_data_rate < bitrate)
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% lower than "
-                "Target, DataRate is within %i%% of: %4.2f - Passed",
+                "Target, DataRate is within %i%% of: %i - Passed",
                 file_data_rate, data_rate_prox, target_data_rate_percent,
                 bitrate);
             tprintf(PRINT_BTH, "\n");
@@ -152,8 +152,9 @@ int test_data_rate(int argc,
         else
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater "
-                "than Target, DataRate is within %i%% of: %4.2f - Passed",
-                file_data_rate, data_rate_prox, target_data_rate_percent, bitrate);
+                "than Target, DataRate is within %i%% of: %i - Passed",
+                file_data_rate, data_rate_prox, target_data_rate_percent,
+                bitrate);
             tprintf(PRINT_BTH, "\n");
         }
 
@@ -164,15 +165,17 @@ int test_data_rate(int argc,
         if (file_data_rate < bitrate)
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% less than "
-                "Target, DataRate not within %i%% of: %4.2f - Failed \n",
-                file_data_rate, data_rate_prox, target_data_rate_percent, bitrate);
+                "Target, DataRate not within %i%% of: %i - Failed \n",
+                file_data_rate, data_rate_prox, target_data_rate_percent,
+                bitrate);
             tprintf(PRINT_BTH, "\n");
         }
         else
         {
             vpxt_formated_print(RESPRT, "DataRate: %4.2f is %4.2f%% greater "
-                "than Target, DataRate not within %i%% of: %4.2f - Failed \n",
-                file_data_rate, data_rate_prox, target_data_rate_percent, bitrate);
+                "than Target, DataRate not within %i%% of: %i - Failed \n",
+                file_data_rate, data_rate_prox, target_data_rate_percent,
+                bitrate);
             tprintf(PRINT_BTH, "\n");
         }
     }

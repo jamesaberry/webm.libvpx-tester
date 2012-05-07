@@ -194,6 +194,8 @@ void print_header_compression_only(int argc,
 void print_header_test_only(int argc,
                             const char** argv,
                             std::string  WorkingDir3);
+void vpxt_open_output_file(int test_type, std::string &text_file_str,
+                           FILE *&fp);
 void check_time_stamp(int SelectorArInt,
                       std::string *SelectorAr,
                       std::string *SelectorAr2,

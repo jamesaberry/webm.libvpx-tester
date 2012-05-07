@@ -9207,6 +9207,23 @@ void print_header_test_only(int argc,
     tprintf(PRINT_BTH, "\n/////////////////////////////////////////////////////"
         "//////////////////////\n\n");
 }
+void vpxt_open_output_file(int test_type, std::string &text_file_str,
+                           FILE*& fp)
+{
+    if (test_type == kCompOnly || test_type == kFullTest)
+        text_file_str += ".txt";
+    else
+        text_file_str += "_TestOnly.txt";
+
+    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
+    {
+        tprintf(PRINT_STD, "Cannot open out put file: %s\n",
+            text_file_str.c_str());
+        exit(1);
+    }
+
+    return;
+}
 void check_time_stamp(int SelectorArInt,
                       std::string *SelectorAr,
                       std::string *SelectorAr2,

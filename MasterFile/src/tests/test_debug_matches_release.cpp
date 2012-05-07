@@ -109,22 +109,9 @@ int test_debug_matches_release(int argc,
 
     ///////////// OutPutfile ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
-
-    if (test_type == kCompOnly || test_type == kFullTest)
-        text_file_str += ".txt";
-    else
-        text_file_str += "_TestOnly.txt";
-
     FILE *fp;
 
-    if ((fp = freopen(text_file_str.c_str(), "w", stderr)) == NULL)
-    {
-        tprintf(PRINT_STD, "Cannot open out put file2.\n");
-        exit(1);
-    }
-
-    ////////////////////////////////
-    //////////////////////////////////////////////////////////
+    vpxt_open_output_file(test_type, text_file_str, fp);
 
     if (test_type == kFullTest)
         print_header_full_test(argc, argv, main_test_dir_char);

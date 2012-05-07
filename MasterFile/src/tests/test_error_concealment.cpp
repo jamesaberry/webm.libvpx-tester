@@ -46,22 +46,13 @@ int test_error_concealment(int argc,
         "_decompression";
     vpxt_dec_format_append(error_con_dec, dec_format);
 
-    ///////////// OutPutfile ////////////
+    ///////////// Open Output File and Print Header ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
     FILE *fp;
 
     vpxt_open_output_file(test_type, text_file_str, fp);
-
-    if (test_type == kFullTest)
-        print_header_full_test(argc, argv, main_test_dir_char);
-
-    if (test_type == kCompOnly)
-        print_header_compression_only(argc, argv, main_test_dir_char);
-
-    if (test_type == kTestOnly)
-        print_header_test_only(argc, argv, cur_test_dir_str);
-
-    vpxt_cap_string_print(PRINT_BTH, "%s\n", test_dir);
+    vpxt_print_header(argc, argv, main_test_dir_char, cur_test_dir_str,
+        test_dir, test_type);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);

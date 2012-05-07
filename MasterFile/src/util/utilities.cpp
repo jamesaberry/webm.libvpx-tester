@@ -9207,6 +9207,23 @@ void print_header_test_only(int argc,
     tprintf(PRINT_BTH, "\n/////////////////////////////////////////////////////"
         "//////////////////////\n\n");
 }
+void vpxt_print_header(int argc, const char** argv, char* main_test_dir_char,
+                       std::string cur_test_dir_str, char *test_dir,
+                       int test_type)
+{
+    if (test_type == kFullTest)
+        print_header_full_test(argc, argv, main_test_dir_char);
+
+    if (test_type == kCompOnly)
+        print_header_compression_only(argc, argv, main_test_dir_char);
+
+    if (test_type == kTestOnly)
+        print_header_test_only(argc, argv, cur_test_dir_str);
+
+    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
+
+    return;
+}
 void vpxt_open_output_file(int test_type, std::string &text_file_str,
                            FILE*& fp)
 {
@@ -9223,6 +9240,30 @@ void vpxt_open_output_file(int test_type, std::string &text_file_str,
     }
 
     return;
+}
+int vpxt_use_custom_settings(const char** argv, int argc, int input_ver,
+                             FILE*& fp, std::string file_index_str,
+                             char* file_index_output_char, int test_type,
+                             VP8_CONFIG& opt, int& bitrate)
+{
+    if (input_ver == 2)
+    {
+        if (!vpxt_file_exists_check(argv[argc-1]))
+        {
+            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
+                argv[argc-1]);
+
+            fclose(fp);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
+            return kTestIndeterminate;
+        }
+
+        opt = vpxt_input_settings(argv[argc-1]);
+        bitrate = opt.target_bandwidth;
+    }
+
+    return 0;
 }
 void check_time_stamp(int SelectorArInt,
                       std::string *SelectorAr,

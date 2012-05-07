@@ -75,7 +75,7 @@ int tool_rand_comp(int argc,
     snprintf(RandComp, 255, "%s", WorkingDir4.c_str());
     snprintf(RandCompParOut, 255, "%s", WorkingDir5.c_str());
 
-    ///////////// OutPutfile ////////////
+    ///////////// Open Output File and Print Header ////////////
     std::string text_file_str = WorkingDirString = slashCharStr() + test_dir +
         ".txt";
 

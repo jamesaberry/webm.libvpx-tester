@@ -194,8 +194,15 @@ void print_header_compression_only(int argc,
 void print_header_test_only(int argc,
                             const char** argv,
                             std::string  WorkingDir3);
+void vpxt_print_header(int argc, const char** argv, char* main_test_dir_char,
+                       std::string cur_test_dir_str, char *test_dir,
+                       int test_type);
 void vpxt_open_output_file(int test_type, std::string &text_file_str,
                            FILE *&fp);
+int vpxt_use_custom_settings(const char** argv, int argc, int input_ver,
+                             FILE*& fp, std::string file_index_str,
+                             char* file_index_output_char, int test_type,
+                             VP8_CONFIG& opt, int& bitrate);
 void check_time_stamp(int SelectorArInt,
                       std::string *SelectorAr,
                       std::string *SelectorAr2,

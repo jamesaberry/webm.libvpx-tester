@@ -51,7 +51,7 @@ int tool_graph_psnr(int argc,
     create_dir_2.insert(0, "md \"");
     vpxt_make_dir_vpx(create_dir_2.c_str());
 
-    ///////////// OutPutfile ////////////
+    ///////////// Open Output File and Print Header ////////////
     std::string text_file_str = WorkingDirString + slashCharStr() + test_dir;
 
     std::string OutPutStr = text_file_str;

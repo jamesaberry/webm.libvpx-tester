@@ -44,44 +44,22 @@ int test_min_quantizer(int argc,
         test_dir + "_compression_60";
     vpxt_enc_format_append(min_60_quant_out_file, enc_format);
 
-    ///////////// OutPutfile ////////////
+    ///////////// Open Output File and Print Header ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
     FILE *fp;
 
     vpxt_open_output_file(test_type, text_file_str, fp);
-
-    if (test_type == kFullTest)
-        print_header_full_test(argc, argv, main_test_dir_char);
-
-    if (test_type == kCompOnly)
-        print_header_compression_only(argc, argv, main_test_dir_char);
-
-    if (test_type == kTestOnly)
-        print_header_test_only(argc, argv, cur_test_dir_str);
-
-    vpxt_cap_string_print(PRINT_BTH, "%s", test_dir);
+    vpxt_print_header(argc, argv, main_test_dir_char, cur_test_dir_str,
+        test_dir, test_type);
 
     VP8_CONFIG opt;
     vpxt_default_parameters(opt);
 
     /////////////////// Use Custom Settings ///////////////////
-    if (input_ver == 2)
-    {
-        if (!vpxt_file_exists_check(argv[argc-1]))
-        {
-            tprintf(PRINT_BTH, "\nInput Settings file %s does not exist\n",
-                argv[argc-1]);
-
-            fclose(fp);
-            record_test_complete(file_index_str, file_index_output_char, test_type);
-            return kTestIndeterminate;
-        }
-
-        opt = vpxt_input_settings(argv[argc-1]);
-        bitrate = opt.target_bandwidth;
-    }
-
-    /////////////////////////////////////////////////////////
+    if(vpxt_use_custom_settings(argv, argc, input_ver, fp, file_index_str,
+        file_index_output_char, test_type, opt, bitrate)
+        == kTestIndeterminate)
+        return kTestIndeterminate;
     double psnr_arr[2];
     opt.target_bandwidth = bitrate;
     opt.worst_allowed_q = 63;

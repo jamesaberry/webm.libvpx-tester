@@ -429,6 +429,10 @@ int test_new_vs_old_temp_scale(int argc,
             if(*double_it >= *double_it2)
                 vpxt_formated_print(RESPRT, "New PSNR: %i %.4f >= Old "
                 "PSNR: %i %.4f - Passed\n", n, *double_it, n, *double_it2);
+            else if(*double_it >= (*double_it2 - (*double_it2 / 100)))
+                vpxt_formated_print(RESPRT, "New PSNR: %i %.4f is with in 1%% "
+                "of Old PSNR: %i %.4f - Passed\n", n, *double_it, n,
+                *double_it2);
             else{
                 vpxt_formated_print(RESPRT, "New PSNR: %i %.4f <  Old "
                     "PSNR: %i %.4f - Failed\n", n, *double_it, n, *double_it2);
@@ -442,6 +446,11 @@ int test_new_vs_old_temp_scale(int argc,
         // evaluate new vs old times
         if(new_scale_compress_time <= old_scale_compress_time)
             vpxt_formated_print(RESPRT, "New time: %i <= Old "
+            "time: %i - Passed\n", new_scale_compress_time,
+            old_scale_compress_time);
+        else if(new_scale_compress_time <= old_scale_compress_time +
+            (old_scale_compress_time / 100))
+            vpxt_formated_print(RESPRT, "New time: %i is with in 1%% of Old "
             "time: %i - Passed\n", new_scale_compress_time,
             old_scale_compress_time);
         else{

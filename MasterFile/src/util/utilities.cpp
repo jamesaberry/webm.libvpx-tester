@@ -190,7 +190,6 @@ extern "C"
         YV12_BUFFER_CONFIG *dst_ybc);
     extern void vp8_scale_machine_specific_config(void);
 #endif
-    extern void *vpx_memalign(size_t align, size_t size);
 }
 
 

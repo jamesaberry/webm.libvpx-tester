@@ -427,6 +427,8 @@ void write_32bit_quick_test(const std::string& working_dir)
         "test_resample_down_watermark", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
         "test_undershoot", slashChar(), slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@0@128@webm@y4m\n",
+        "test_version", slashChar(), slashChar());
     fprintf(fp, "\n");
     fprintf(fp, "%%%%Mode1%%%%\n");
     fprintf(fp, "%s@..%cTestClips%cBBB_1280x720_1500F.ivf@1@128@webm@y4m\n",
@@ -764,7 +766,6 @@ void write_32bit_quick_test(const std::string& working_dir)
         text_file_str.c_str());
     fclose(fp);
 }
-
 void write_64bit_quick_test(const std::string& working_dir)
 {
     std::string text_file_str;
@@ -826,6 +827,8 @@ void write_64bit_quick_test(const std::string& working_dir)
     fprintf(fp, "%s@VP8vNewest_PlugIn_DLib_DMode_64Bit.exe@..%cTestClips%cMemL"
         "eakCheck2_Compression.ivf\n", "test_mem_leak2", slashChar(),
         slashChar());
+    fprintf(fp, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n",
+        "test_multiple_resolution_encode", slashChar(), slashChar());
     fprintf(fp, "%s@..%cTestClips%csrc16.ivf@128@webm@y4m\n",
         "test_one_pass_vs_two_pass", slashChar(), slashChar());
     fprintf(fp, "%s@%i@..%cTestClips%cTestVectors\n",

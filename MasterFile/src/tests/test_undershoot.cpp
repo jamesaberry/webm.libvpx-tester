@@ -118,8 +118,7 @@ int test_undershoot(int argc,
 
         test_state = kTestPassed;
     }
-
-    if (under_shoot_10_file_sz == under_shoot_100_file_sz)
+    else if (under_shoot_10_file_sz == under_shoot_100_file_sz)
     {
         vpxt_formated_print(RESPRT, "No effect try different file - "
             "Indeterminate");

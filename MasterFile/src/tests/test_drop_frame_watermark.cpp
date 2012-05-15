@@ -117,7 +117,8 @@ int test_drop_frame_watermark(int argc,
             opt.Mode = mode;
 
             if (vpxt_compress(input.c_str(), dfwm_out_file.c_str(), speed,
-                bitrate, opt, comp_out_str, n, 0, enc_format) == -1)
+                bitrate, opt, comp_out_str, n, 0, enc_format,
+                kSetConfigOff) == -1)
             {
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,

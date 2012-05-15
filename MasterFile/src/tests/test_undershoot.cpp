@@ -73,7 +73,7 @@ int test_undershoot(int argc,
         opt.under_shoot_pct = 10;
 
         if (vpxt_compress(input.c_str(), under_shoot_10.c_str(), speed, bitrate,
-            opt, comp_out_str, 10, 0, enc_format) == -1)
+            opt, comp_out_str, 10, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -84,7 +84,7 @@ int test_undershoot(int argc,
         opt.under_shoot_pct = 100;
 
         if (vpxt_compress(input.c_str(), under_shoot_100.c_str(), speed, bitrate
-            , opt, comp_out_str, 100, 0, enc_format) == -1)
+            , opt, comp_out_str, 100, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

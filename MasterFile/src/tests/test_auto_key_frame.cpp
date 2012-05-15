@@ -80,8 +80,8 @@ int test_auto_key_frame(int argc,
         opt.Mode = mode;
 
         if (vpxt_compress(input.c_str(), auto_key_frame_works_enc_1.c_str(),
-            speed, bitrate, opt, comp_out_str, auto_key_frame, 0, enc_format)
-            == -1)
+            speed, bitrate, opt, comp_out_str, auto_key_frame, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -90,8 +90,8 @@ int test_auto_key_frame(int argc,
         }
 
         if (vpxt_compress(input.c_str(), auto_key_frame_works_enc_2.c_str(),
-            speed, bitrate, opt, comp_out_str, auto_key_frame, 0, enc_format)
-            == -1)
+            speed, bitrate, opt, comp_out_str, auto_key_frame, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

@@ -104,7 +104,7 @@ int test_encoder_break_out(int argc,
         opt.encode_breakout = 0;
 
         if (vpxt_compress(input.c_str(), enc_break_out_0.c_str(), speed, bitrate
-            , opt, comp_out_str, 0, 0, enc_format) == -1)
+            , opt, comp_out_str, 0, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -115,7 +115,8 @@ int test_encoder_break_out(int argc,
         opt.encode_breakout = 100;
 
         if (vpxt_compress(input.c_str(), enc_break_out_100.c_str(), speed,
-            bitrate, opt, comp_out_str, 100, 0, enc_format) == -1)
+            bitrate, opt, comp_out_str, 100, 0, enc_format, kSetConfigOff)
+            == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -126,7 +127,8 @@ int test_encoder_break_out(int argc,
         opt.encode_breakout = 500;
 
         if (vpxt_compress(input.c_str(), enc_break_out_500.c_str(), speed,
-            bitrate,  opt, comp_out_str, 500, 0, enc_format) == -1)
+            bitrate,  opt, comp_out_str, 500, 0, enc_format, kSetConfigOff)
+            == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -137,7 +139,8 @@ int test_encoder_break_out(int argc,
         opt.encode_breakout = 1000;
 
         if (vpxt_compress(input.c_str(), enc_break_out_1000.c_str(), speed,
-            bitrate, opt, comp_out_str, 1000, 0, enc_format) == -1)
+            bitrate, opt, comp_out_str, 1000, 0, enc_format, kSetConfigOff)
+            == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

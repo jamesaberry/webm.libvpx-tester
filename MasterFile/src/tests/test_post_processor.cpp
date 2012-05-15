@@ -74,7 +74,8 @@ int test_post_processor(int argc,
         opt.Mode = mode;
 
         if (vpxt_compress(input.c_str(), post_proc_encode.c_str(), speed,
-            bitrate, opt, comp_out_str, opt.allow_df, 0, enc_format) == -1)
+            bitrate, opt, comp_out_str, opt.allow_df, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

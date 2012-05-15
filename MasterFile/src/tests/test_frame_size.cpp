@@ -210,7 +210,7 @@ int test_frame_size(int argc,
 
             if (vpxt_compress(raw_crop[raw_crop_num].c_str(),
                 enc_crop[raw_crop_num].c_str(), speed, bitrate, opt,
-                comp_out_str, 0, 0, enc_format) == -1)
+                comp_out_str, 0, 0, enc_format, kSetConfigOff) == -1)
             {
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
@@ -264,7 +264,7 @@ int test_frame_size(int argc,
 
             if (vpxt_compress(raw_crop[raw_crop_num].c_str(),
                 enc_crop[raw_crop_num].c_str(), speed, bitrate, opt,
-                comp_out_str, 0, 0, enc_format) == -1)
+                comp_out_str, 0, 0, enc_format, kSetConfigOff) == -1)
             {
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
@@ -317,7 +317,7 @@ int test_frame_size(int argc,
 
             if (vpxt_compress(raw_crop[raw_crop_num].c_str(),
                 enc_crop[raw_crop_num].c_str(), speed, bitrate, opt,
-                comp_out_str, 0, 0, enc_format) == -1)
+                comp_out_str, 0, 0, enc_format, kSetConfigOff) == -1)
             {
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,

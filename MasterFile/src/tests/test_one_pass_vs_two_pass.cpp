@@ -97,7 +97,8 @@ int test_one_pass_vs_two_pass(int argc,
         opt.target_bandwidth = bitrate_1;
 
         if (vpxt_compress(input.c_str(), two_pass_out_1.c_str(), speed,
-            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
+            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -108,7 +109,8 @@ int test_one_pass_vs_two_pass(int argc,
         opt.target_bandwidth = bitrate_2;
 
         if (vpxt_compress(input.c_str(), two_pass_out_2.c_str(), speed,
-            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
+            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -119,7 +121,8 @@ int test_one_pass_vs_two_pass(int argc,
         opt.target_bandwidth = bitrate_3;
 
         if (vpxt_compress(input.c_str(), two_pass_out_3.c_str(), speed,
-            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
+            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -131,7 +134,8 @@ int test_one_pass_vs_two_pass(int argc,
         opt.target_bandwidth = bitrate_1;
 
         if (vpxt_compress(input.c_str(), one_pass_out_1.c_str(), speed,
-            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format) == -1)
+            bitrate_1, opt, comp_out_str, compress_int, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -142,7 +146,8 @@ int test_one_pass_vs_two_pass(int argc,
         opt.target_bandwidth = bitrate_2;
 
         if (vpxt_compress(input.c_str(), one_pass_out_2.c_str(), speed,
-            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format) == -1)
+            bitrate_2, opt, comp_out_str, compress_int, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -153,7 +158,8 @@ int test_one_pass_vs_two_pass(int argc,
         opt.target_bandwidth = bitrate_3;
 
         if (vpxt_compress(input.c_str(), one_pass_out_3.c_str(), speed,
-            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format) == -1)
+            bitrate_3, opt, comp_out_str, compress_int, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

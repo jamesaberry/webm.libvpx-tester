@@ -84,7 +84,7 @@ int test_min_quantizer(int argc,
                 opt.worst_allowed_q = rand() % 64;
 
         if (vpxt_compress(input.c_str(), min_10_quant_out_file.c_str(), speed,
-            bitrate, opt, comp_out_str, 10, 1, enc_format) == -1)
+            bitrate, opt, comp_out_str, 10, 1, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -98,7 +98,7 @@ int test_min_quantizer(int argc,
                 opt.worst_allowed_q = rand() % 64;
 
         if (vpxt_compress(input.c_str(), min_60_quant_out_file.c_str(), speed,
-            bitrate, opt, comp_out_str, 60, 1, enc_format) == -1)
+            bitrate, opt, comp_out_str, 60, 1, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char, test_type);

@@ -193,7 +193,8 @@ int test_change_cpu_dec(int argc,
         opt.Mode = mode;
 
         if (vpxt_compress(input.c_str(), cpu_dec_only_enc.c_str(), speed,
-            bitrate, opt, comp_out_str, compress_int, 0, enc_format) == -1)
+            bitrate, opt, comp_out_str, compress_int, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char, test_type);

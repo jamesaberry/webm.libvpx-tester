@@ -117,7 +117,7 @@ int test_max_quantizer(int argc,
             opt.Mode = mode;
             if (vpxt_compress(input.c_str(), quant_out_enc_arr[file_num].c_str()
                 , speed, bitrate, opt, comp_out_str, quant_arr[file_num], 1,
-                enc_format) == -1)
+                enc_format, kSetConfigOff) == -1)
             {
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,

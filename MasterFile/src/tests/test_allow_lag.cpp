@@ -73,7 +73,7 @@ int test_allow_lag(int argc,
         opt.allow_lag = 0;
 
         if (vpxt_compress(input.c_str(), allow_lag_off_enc.c_str(), speed,
-            bitrate, opt, comp_out_str, 0, 1, enc_format) == -1)
+            bitrate, opt, comp_out_str, 0, 1, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -84,7 +84,7 @@ int test_allow_lag(int argc,
         opt.allow_lag = 1;
 
         if (vpxt_compress(input.c_str(), allow_lag_on_enc.c_str(), speed,
-            bitrate, opt, comp_out_str, 1, 1, enc_format) == -1)
+            bitrate, opt, comp_out_str, 1, 1, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

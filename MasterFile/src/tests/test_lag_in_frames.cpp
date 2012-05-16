@@ -102,7 +102,7 @@ int test_lag_in_frames(int argc,
         opt.lag_in_frames = lag_in_frames_1_val;
 
         if (vpxt_compress(input.c_str(), lag_in_frames_0.c_str(), speed,
-            bitrate, opt, comp_out_str, 0, 1, enc_format) == -1)
+            bitrate, opt, comp_out_str, 0, 1, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -114,8 +114,8 @@ int test_lag_in_frames(int argc,
         opt.lag_in_frames = lag_in_frames_1_val;
 
         if (vpxt_compress(input.c_str(), lag_in_frames_1.c_str(), speed,
-            bitrate, opt, comp_out_str, lag_in_frames_2_val, 1, enc_format)
-            == -1)
+            bitrate, opt, comp_out_str, lag_in_frames_2_val, 1, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -127,8 +127,8 @@ int test_lag_in_frames(int argc,
         opt.lag_in_frames = lag_in_frames_2_val;
 
         if (vpxt_compress(input.c_str(), lag_in_frames_2.c_str(), speed,
-            bitrate, opt, comp_out_str, lag_in_frames_2_val, 1, enc_format)
-            == -1)
+            bitrate, opt, comp_out_str, lag_in_frames_2_val, 1, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

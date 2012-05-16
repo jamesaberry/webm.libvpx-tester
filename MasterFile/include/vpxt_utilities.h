@@ -32,6 +32,11 @@ enum CompModes{
     kTwoPassBestQuality = 5
 };
 
+enum SetConfig{
+    kSetConfigOn  = 1,
+    kSetConfigOff = 2
+};
+
 void tprintf(int PrintSelection, const char *fmt, ...);
 std::string slashCharStr();
 char slashChar();
@@ -222,7 +227,8 @@ int vpxt_compress(const char *inputFile,
                   const char *CompressString,
                   int CompressInt,
                   int RunQCheck,
-                  std::string EncFormat);
+                  std::string EncFormat,
+                  int set_config);
 int vpxt_compress_no_error_output(const char *inputFile,
                                   const char *outputFile2,
                                   int speed,

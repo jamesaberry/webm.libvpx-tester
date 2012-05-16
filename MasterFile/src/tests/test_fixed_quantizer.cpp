@@ -87,7 +87,7 @@ int test_fixed_quantizer(int argc,
         opt.fixed_q = fixed_q_1;
 
         if (vpxt_compress(input.c_str(), fixed_q_1_enc.c_str(), speed, bitrate,
-            opt, comp_out_str, fixed_q_1, 1, enc_format) == -1)
+            opt, comp_out_str, fixed_q_1, 1, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -98,7 +98,7 @@ int test_fixed_quantizer(int argc,
         opt.fixed_q = fixed_q_2;
 
         if (vpxt_compress(input.c_str(), fixed_q_2_enc.c_str(), speed, bitrate,
-            opt, comp_out_str, fixed_q_2, 1, enc_format) == -1)
+            opt, comp_out_str, fixed_q_2, 1, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

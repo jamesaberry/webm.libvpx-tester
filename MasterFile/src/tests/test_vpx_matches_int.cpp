@@ -129,7 +129,7 @@ int test_vpx_matches_int(int argc,
         vpxt_determinate_parameters(opt);
 
         if (vpxt_compress(input.c_str(), internal_comp.c_str(), speed, bitrate,
-            opt, comp_out_str, 0, 0, enc_format) == -1)
+            opt, comp_out_str, 0, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

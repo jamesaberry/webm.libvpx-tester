@@ -149,7 +149,8 @@ int test_new_vs_old_psnr(int argc,
             opt.Mode = mode;
 
             if (vpxt_compress(input.c_str(), new_enc_file.c_str(),
-                speed, bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                speed, bitrate, opt, "VP8", 0, 0, enc_format,
+                kSetConfigOff) == -1)
             {
                 fclose(fp);
                 record_test_complete(file_index_str, file_index_output_char,
@@ -290,7 +291,7 @@ int test_new_vs_old_psnr(int argc,
                 opt.Mode = MODE_REALTIME;
 
                 if (vpxt_compress(input.c_str(), new_enc_file.c_str(), speed,
-                    bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                    bitrate, opt, "VP8", 0, 0, enc_format, kSetConfigOff) == -1)
                 {
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
@@ -323,7 +324,7 @@ int test_new_vs_old_psnr(int argc,
                 opt.Mode = MODE_GOODQUALITY;
 
                 if (vpxt_compress(input.c_str(), new_enc_file.c_str(), speed,
-                    bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                    bitrate, opt, "VP8", 0, 0, enc_format, kSetConfigOff) == -1)
                 {
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
@@ -354,7 +355,7 @@ int test_new_vs_old_psnr(int argc,
                 opt.Mode = MODE_BESTQUALITY;
 
                 if (vpxt_compress(input.c_str(), new_enc_file.c_str(), speed,
-                    bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                    bitrate, opt, "VP8", 0, 0, enc_format, kSetConfigOff) == -1)
                 {
                     fclose(fp);
                     record_test_complete(file_index_str, file_index_output_char,
@@ -382,7 +383,8 @@ int test_new_vs_old_psnr(int argc,
                     opt.lag_in_frames = 10;
 
                     if (vpxt_compress(input.c_str(), new_enc_file.c_str(),speed,
-                        bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                        bitrate, opt, "VP8", 0, 0, enc_format, kSetConfigOff)
+                        == -1)
                     {
                         fclose(fp);
                         record_test_complete(file_index_str,
@@ -433,7 +435,8 @@ int test_new_vs_old_psnr(int argc,
                     opt.Mode = MODE_SECONDPASS;
 
                     if (vpxt_compress(input.c_str(), new_enc_file.c_str(),speed,
-                        bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                        bitrate, opt, "VP8", 0, 0, enc_format, kSetConfigOff)
+                        == -1)
                     {
                         fclose(fp);
                         record_test_complete(file_index_str,
@@ -472,7 +475,8 @@ int test_new_vs_old_psnr(int argc,
                     opt.lag_in_frames = 10;
 
                     if (vpxt_compress(input.c_str(), new_enc_file.c_str(),speed,
-                        bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                        bitrate, opt, "VP8", 0, 0, enc_format, kSetConfigOff)
+                        == -1)
                     {
                         fclose(fp);
                         record_test_complete(file_index_str,
@@ -524,7 +528,8 @@ int test_new_vs_old_psnr(int argc,
                     opt.Mode = MODE_SECONDPASS_BEST;
 
                     if (vpxt_compress(input.c_str(), new_enc_file.c_str(),speed,
-                        bitrate, opt, "VP8", 0, 0, enc_format) == -1)
+                        bitrate, opt, "VP8", 0, 0, enc_format, kSetConfigOff)
+                        == -1)
                     {
                         fclose(fp);
                         record_test_complete(file_index_str,

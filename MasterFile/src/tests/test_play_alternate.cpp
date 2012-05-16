@@ -81,8 +81,8 @@ int test_play_alternate(int argc,
         opt.play_alternate = play_alternate_1_val;
 
         if (vpxt_compress(input.c_str(), play_alternate_1.c_str(), speed,
-            bitrate, opt, comp_out_str, play_alternate_1_val, 0, enc_format)
-            == -1)
+            bitrate, opt, comp_out_str, play_alternate_1_val, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -93,8 +93,8 @@ int test_play_alternate(int argc,
         opt.play_alternate = play_alternate_2_val;
 
         if (vpxt_compress(input.c_str(), play_alternate_2.c_str(), speed,
-            bitrate, opt, comp_out_str, play_alternate_2_val, 0, enc_format)
-            == -1)
+            bitrate, opt, comp_out_str, play_alternate_2_val, 0, enc_format,
+            kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

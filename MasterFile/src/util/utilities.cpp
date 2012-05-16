@@ -9485,7 +9485,8 @@ int vpxt_compress(const char *input_file,
                   const char *comp_out_str,
                   int compress_int,
                   int RunQCheck,
-                  std::string EncFormat)
+                  std::string EncFormat,
+                  int set_config)
 {
     int write_webm = 1;
     vpxt_lower_case_string(EncFormat);
@@ -9599,9 +9600,14 @@ int vpxt_compress(const char *input_file,
     for (pass = 0; pass < arg_passes; pass++)
     {
         tprintf(PRINT_BTH, "\n\n Target Bit Rate: %d \n Max Quantizer: %d \n"
-            " Min Quantizer %d \n %s: %d \n \n", oxcf.target_bandwidth,
+            " Min Quantizer %d \n %s: %d \n", oxcf.target_bandwidth,
             oxcf.worst_allowed_q, oxcf.best_allowed_q, comp_out_str,
             compress_int);
+
+        if(set_config == kSetConfigOn)
+            tprintf(PRINT_BTH, " Set Config On\n");
+
+        tprintf(PRINT_BTH, "\n");
 
         int CharCount = 0;
 
@@ -9912,6 +9918,11 @@ int vpxt_compress(const char *input_file,
             const vpx_codec_cx_pkt_t *pkt;
             struct vpx_usec_timer timer;
             int64_t frame_start, next_frame_start;
+
+            // if set_config reset cfg using vpx_codec_enc_config_set
+            // tests to make sure vpx_codec_enc_config_set functions correctly.
+            if(set_config == kSetConfigOn && frames_in > 1)
+                vpx_codec_enc_config_set(&encoder, &cfg);
 
             if (!arg_limit || frames_in < arg_limit)
             {

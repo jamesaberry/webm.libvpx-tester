@@ -119,7 +119,7 @@ int tool_rand_comp(int argc,
         int bitrate = opt.target_bandwidth;
 
         if (vpxt_compress(input.c_str(), RandComp, speed, bitrate, opt,
-            comp_out_str, 1, 0, enc_format) == -1)
+            comp_out_str, 1, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, test_type);
@@ -134,7 +134,7 @@ int tool_rand_comp(int argc,
         int bitrate = opt.target_bandwidth;
 
         if (vpxt_compress(input.c_str(), RandComp, speed, bitrate, opt,
-            comp_out_str, 1, 0, enc_format) == -1)
+            comp_out_str, 1, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, test_type);
@@ -149,7 +149,7 @@ int tool_rand_comp(int argc,
         int bitrate = opt.target_bandwidth;
 
         if (vpxt_compress(input.c_str(), RandComp, speed, bitrate, opt,
-            comp_out_str, 1, 0, enc_format) == -1)
+            comp_out_str, 1, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, test_type);
@@ -168,7 +168,7 @@ int tool_rand_comp(int argc,
         opt.Mode = MODE_SECONDPASS_BEST;
 
         if (vpxt_compress(input.c_str(), RandComp, speed, bitrate, opt,
-            comp_out_str, 1, 0, enc_format) == -1)
+            comp_out_str, 1, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(MainDirString, File1, test_type);

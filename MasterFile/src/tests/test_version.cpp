@@ -110,7 +110,7 @@ int test_version(int argc,
         opt.Version = 0;
 
         if (vpxt_compress(input.c_str(), version_0.c_str(), speed, bitrate, opt,
-            comp_out_str, 0, 0, enc_format) == -1)
+            comp_out_str, 0, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -121,7 +121,7 @@ int test_version(int argc,
         opt.Version = 1;
 
         if (vpxt_compress(input.c_str(), version_1.c_str(), speed, bitrate, opt,
-            comp_out_str, 1, 0, enc_format) == -1)
+            comp_out_str, 1, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -132,7 +132,7 @@ int test_version(int argc,
         opt.Version = 2;
 
         if (vpxt_compress(input.c_str(), version_2.c_str(), speed, bitrate, opt,
-            comp_out_str, 2, 0, enc_format) == -1)
+            comp_out_str, 2, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -143,7 +143,7 @@ int test_version(int argc,
         opt.Version = 3;
 
         if (vpxt_compress(input.c_str(), version_3.c_str(), speed, bitrate, opt,
-            comp_out_str, 3, 0, enc_format) == -1)
+            comp_out_str, 3, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,

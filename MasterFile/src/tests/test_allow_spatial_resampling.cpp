@@ -43,6 +43,10 @@ int test_allow_spatial_resampling(int argc,
         "_compression_0";
     vpxt_enc_format_append(spatial_off_enc, enc_format);
 
+    std::string spatial_on_enc_set_cfg = cur_test_dir_str + slashCharStr() +
+        test_dir + "_compression_1_set_cfg" ;
+    vpxt_enc_format_append(spatial_on_enc_set_cfg, enc_format);
+
     ///////////// Open Output File and Print Header ////////////
     std::string text_file_str = cur_test_dir_str + slashCharStr() + test_dir;
     FILE *fp;
@@ -77,7 +81,7 @@ int test_allow_spatial_resampling(int argc,
         opt.allow_spatial_resampling = 0;
 
         if (vpxt_compress(input.c_str(), spatial_off_enc.c_str(), speed, bitrate
-            , opt, comp_out_str, 0, 0, enc_format) == -1)
+            , opt, comp_out_str, 0, 0, enc_format, kSetConfigOff) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -88,7 +92,16 @@ int test_allow_spatial_resampling(int argc,
         opt.allow_spatial_resampling = 1;
 
         if (vpxt_compress(input.c_str(), spatial_on_enc.c_str(), speed, bitrate,
-            opt, comp_out_str, 1, 0, enc_format) == -1)
+            opt, comp_out_str, 1, 0, enc_format, kSetConfigOff) == -1)
+        {
+            fclose(fp);
+            record_test_complete(file_index_str, file_index_output_char,
+                test_type);
+            return kTestIndeterminate;
+        }
+
+        if (vpxt_compress(input.c_str(), spatial_on_enc_set_cfg.c_str(), speed,
+            bitrate, opt, comp_out_str, 1, 0, enc_format, kSetConfigOn) == -1)
         {
             fclose(fp);
             record_test_complete(file_index_str, file_index_output_char,
@@ -123,6 +136,17 @@ int test_allow_spatial_resampling(int argc,
         spatial_off_file_name);
     int spatial_off_frames_resized =
         vpxt_display_resized_frames(spatial_off_enc.c_str(), 1);
+
+    char spatial_on_enc_fn[255];
+    vpxt_file_name(spatial_on_enc.c_str(), spatial_on_enc_fn, 0);
+    char spatial_on_enc_set_cfg_fn[255];
+    vpxt_file_name(spatial_on_enc_set_cfg.c_str(), spatial_on_enc_set_cfg_fn,
+        0);
+
+    tprintf(PRINT_BTH, "Comparing: %s to %s\n", spatial_on_enc_fn,
+        spatial_on_enc_set_cfg_fn);
+    int lng_rc = vpxt_compare_enc(spatial_on_enc.c_str(),
+        spatial_on_enc_set_cfg.c_str(), 0);
 
     int test_state = kTestPassed;
     tprintf(PRINT_BTH, "\n\nResults:\n\n");
@@ -165,6 +189,21 @@ int test_allow_spatial_resampling(int argc,
     {
         vpxt_formated_print(RESPRT, "AllowSpatialResample On PSNR: %f < 15.00 -"
             " Failed", spatial_resample_psnr);
+        tprintf(PRINT_BTH, "\n");
+        test_state = kTestFailed;
+    }
+
+    if (lng_rc >= -1)
+    {
+        vpxt_formated_print(RESPRT, "%s is identical to %s - Passed",
+            spatial_on_enc_fn, spatial_on_enc_set_cfg_fn);
+        tprintf(PRINT_BTH, "\n");
+    }
+
+    if (lng_rc == 0)
+    {
+        vpxt_formated_print(RESPRT, "%s is not identical to %s - Failed",
+            spatial_on_enc_fn, spatial_on_enc_set_cfg_fn);
         tprintf(PRINT_BTH, "\n");
         test_state = kTestFailed;
     }

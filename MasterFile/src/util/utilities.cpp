@@ -13056,14 +13056,16 @@ unsigned int vpxt_compress_multi_resolution(const char *input_file,
             if(i == 0)
                 memset(&raw[i], 0, sizeof(raw[i]));
             else
-                vpx_img_alloc(&raw[i], VPX_IMG_FMT_I420, cfg[i].g_w, cfg[i].g_h,
+                vpx_img_alloc(&raw[i], arg_use_i420 ? VPX_IMG_FMT_I420 :
+                VPX_IMG_FMT_YV12, cfg[i].g_w, cfg[i].g_h,
                 32);
         }
     }
     else
     {
         for (i=0; i< NUM_ENCODERS; i++)
-            if(!vpx_img_alloc(&raw[i], VPX_IMG_FMT_I420, cfg[i].g_w, cfg[i].g_h,
+            if(!vpx_img_alloc(&raw[i], arg_use_i420 ? VPX_IMG_FMT_I420 :
+                VPX_IMG_FMT_YV12, cfg[i].g_w, cfg[i].g_h,
                 32))
                 return 0;
     }

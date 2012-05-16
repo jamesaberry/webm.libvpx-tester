@@ -79,7 +79,7 @@ int test_debug_matches_release(int argc,
             debug_output_enc + "\" \"" + debug_output_dec + "\"\" ";
 
         release_enc_cmd.insert(0, "\"\"");
-        release_enc_cmd + exe_input_debug + "\" compress \"" + input +
+        release_enc_cmd += exe_input_debug + "\" compress \"" + input +
             "\" \"" + release_output_enc + "\" 8 \"" + par_file_release +
             "\" 0\"";
 

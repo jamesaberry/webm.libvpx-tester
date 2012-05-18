@@ -140,6 +140,8 @@ int test_new_vs_old_psnr(int argc,
     if (vpxt_file_exists_check(git_log_input) &&
         vpxt_file_exists_check(test_log_input))
     {
+        tprintf(PRINT_BTH, "\n Using Log\n");
+
         if (test_type == kTestOnly)
         {
             // no prep required
@@ -273,6 +275,8 @@ int test_new_vs_old_psnr(int argc,
         }
 
         /////////////////////////////////////////////////////////
+
+        tprintf(PRINT_BTH, "\n Using Exe\n");
 
         double psnr_ar[2];
         opt.target_bandwidth = bitrate;
@@ -588,6 +592,7 @@ int test_new_vs_old_psnr(int argc,
         tprintf(PRINT_BTH, "\nOld DataRate");
         vpxt_data_rate(old_enc_file.c_str(), 1);
 
+        tprintf(PRINT_BTH, "\n\nResults:\n\n");
 
         if(psnr_ar[0] >= psnr_ar[1])
             vpxt_formated_print(RESPRT, "New PSNR: %.4f >= Old "
@@ -597,6 +602,8 @@ int test_new_vs_old_psnr(int argc,
                 "PSNR: %.4f - Failed", psnr_ar[0], psnr_ar[1]);
             test_state = kTestFailed;
         }
+
+        tprintf(PRINT_BTH, "\n\n");
     }
 
     if (indeterminate == 1)

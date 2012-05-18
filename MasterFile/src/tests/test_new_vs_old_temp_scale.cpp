@@ -257,6 +257,8 @@ int test_new_vs_old_temp_scale(int argc,
     // if log files found
     if(use_log)
     {
+        tprintf(PRINT_BTH, "\n Using Log\n");
+
         // assemble psnr/data rate results string
         std::string psnr_data_rate_result_str;
         double_it2 = new_vs_old_temp_scale_data_rate_new.begin();
@@ -379,6 +381,8 @@ int test_new_vs_old_temp_scale(int argc,
     }
     else
     {
+        tprintf(PRINT_BTH, "\n Using Exe\n");
+
         // if old executable found
         vpxt_output_compatable_settings(par_file.c_str(), opt, 2);
 

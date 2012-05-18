@@ -129,6 +129,8 @@ int test_new_vs_old_enc_cpu_tick(int argc,
     if (vpxt_file_exists_check(git_log_input) &&
         vpxt_file_exists_check(test_log_input))
     {
+        tprintf(PRINT_BTH, "\n Using Log\n");
+
         // Make New Compression get time.
         opt.target_bandwidth = bitrate;
         opt.auto_key = 1;
@@ -268,6 +270,8 @@ int test_new_vs_old_enc_cpu_tick(int argc,
         }
 
         /////////////////////////////////////////////////////////
+
+        tprintf(PRINT_BTH, "\n Using Exe\n");
 
         opt.target_bandwidth = bitrate;
         opt.auto_key = 1;

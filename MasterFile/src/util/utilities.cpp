@@ -13761,7 +13761,6 @@ unsigned int vpxt_compress_scalable_patterns(const char *input_file,
     // Cap CPU & first I-frame size
     vpx_codec_control (&codec_enc, VP8E_SET_CPUUSED,                -6);
     vpx_codec_control (&codec_enc, VP8E_SET_STATIC_THRESHOLD,      800);
-    vpx_codec_control (&codec_enc, VP8E_SET_NOISE_SENSITIVITY,       2);
 
     max_intra_size_pct = (int) (((double)cfg.rc_buf_optimal_sz * 0.5)
                          * ((double) cfg.g_timebase.den / cfg.g_timebase.num)

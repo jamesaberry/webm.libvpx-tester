@@ -436,7 +436,9 @@ int txt_parse_and_copy(const char *dir_name,
             if (h_find_a->d_type == is_folder && double_dot.compare(h_find_a->d_name)
                 != 0 && single_dot.compare(h_find_a->d_name) != 0)
             {
-                std::string full_path_name = dir_name + "/" + h_find_a->d_name;
+                std::string full_path_name = dir_name;
+                full_path_name += "/";
+                full_path_name += h_find_a->d_name;
                 txt_parse_and_copy(full_path_name.c_str(), BaseOutputDir,
                     base_input_str_length);
 
@@ -444,7 +446,9 @@ int txt_parse_and_copy(const char *dir_name,
 
             if (h_find_a->d_type == is_file)
             {
-                std::string output_str = dir_name + "/" h_find_a->d_name;
+                std::string output_str = dir_name;
+                output_str += "/";
+                output_str += h_find_a->d_name;
 
                 std::string file_name = h_find_a->d_name;
                 std::string extention = file_name.substr(file_name.length() - 4,
@@ -456,8 +460,11 @@ int txt_parse_and_copy(const char *dir_name,
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
-                    std::string file_name_part_1 = BaseOutputDir + "/" +
-                        file_name_part_2;
+
+                    std::string file_name_part_1 = BaseOutputDir;
+                    file_name_part_1 += "/";
+                    file_name_part_1 += file_name_part_2;
+
                     std::string copy_cmd_str = "cp \"" + output_str +
                         "\" \"" + file_name_part_1 + "\"";
 
@@ -1174,14 +1181,18 @@ int tool_copy_all_txt_files(int argc, const char** argv)
                 h_find_a->d_name) != 0 && single_dot.compare(h_find_a->d_name)
                 != 0)
             {
-                std::string full_path_name = argv[2] + "/" + h_find_a->d_name;
+                std::string full_path_name = argv[2];
+                full_path_name += "/";
+                full_path_name += h_find_a->d_name;
                 txt_parse_and_copy(full_path_name.c_str(), argv[3],
                     base_input_str_length);
             }
 
             if (h_find_a->d_type == is_file)
             {
-                std::string output_str = argv[2] + "/" + h_find_a->d_name;
+                std::string output_str = argv[2];
+                output_str += "/";
+                output_str += h_find_a->d_name;
 
                 std::string file_name = h_find_a->d_name;
                 std::string extention = file_name.substr(file_name.length() - 4,
@@ -1193,8 +1204,8 @@ int tool_copy_all_txt_files(int argc, const char** argv)
                     std::string file_name_part_2 =
                         output_str.substr(base_input_str_length + 1,
                         output_str.length() - base_input_str_length - 1);
-                    std::string file_name_part_1 = argv[3] + "/" +
-                        file_name_part_2;
+                    std::string file_name_part_1 = argv[3];
+                    file_name_part_1 += "/" + file_name_part_2;
                     std::string copy_cmd_str = "cp \"" + output_str +
                         "\" \"" + file_name_part_1 + "\"";
 

@@ -23,7 +23,7 @@
 #include "nestegg.h"
 #include "mem_ops.h"
 extern "C" {
-#include "vpx_rtcd.h"
+#include "vpx_scale_rtcd.h"
 }
 
 #include <cmath>
@@ -195,16 +195,7 @@ extern "C"
 
 static void initialize_scaler()
 {
-#ifndef vp8_yv12_copy_frame
-    // Relying on the fact that there's no asm implementation of
-    // vp8_yv12_copy_frame on x86, so it will be #defined to
-    // vp8_yv12_copy_frame_c in commits where the scaler has been moved
-    // to the RTCD system. This workaround can be removed after we're
-    // past this transition.
-    vp8_scale_machine_specific_config();
-#else
-    vpx_rtcd();
-#endif
+    vpx_scale_rtcd();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -22,9 +22,6 @@
 #include "EbmlIDs.h"
 #include "nestegg.h"
 #include "mem_ops.h"
-extern "C" {
-#include "vpx_scale_rtcd.h"
-}
 
 #include <cmath>
 #include <cassert>
@@ -173,6 +170,7 @@ extern double vp8_calcpsnr_tester(YV12_BUFFER_CONFIG *source,
                                   int& possible_artifact);
 extern double vp8_mse_2_psnr_tester(double Samples, double Peak, double Mse);
 
+#define vp8_yv12_copy_frame vp8_yv12_copy_frame_c
 extern "C"
 {
     extern int vp8_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf,
@@ -181,21 +179,8 @@ extern "C"
         int border);
     extern int vp8_yv12_de_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf);
     extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
-    extern void vp8_yv12_scale_or_center(YV12_BUFFER_CONFIG *src_yuv_config,
-        YV12_BUFFER_CONFIG *dst_yuv_config, int expanded_frame_width,
-        int expanded_frame_height, int scaling_mode, int HScale, int HRatio,
-        int VScale, int VRatio);
-#ifndef vp8_yv12_copy_frame
     extern void vp8_yv12_copy_frame(YV12_BUFFER_CONFIG *src_ybc,
         YV12_BUFFER_CONFIG *dst_ybc);
-    extern void vp8_scale_machine_specific_config(void);
-#endif
-}
-
-
-static void initialize_scaler()
-{
-    vpx_scale_rtcd();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -7379,9 +7364,6 @@ double vpxt_psnr(const char *input_file1,
             }
         }
 
-        /////////// Setup Temp YV12 Buffer to Resize if nessicary //////////////
-        initialize_scaler();
-
         YV12_BUFFER_CONFIG temp_yv12;
         YV12_BUFFER_CONFIG temp_yv12b;
 
@@ -7452,7 +7434,7 @@ double vpxt_psnr(const char *input_file1,
                         image2yuvconfig(img, &comp_yv12);
 
                         int TempBuffState = vpxt_yv12_alloc_frame_buffer(
-                            &temp_yv12, comp_yv12.y_width, comp_yv12.y_height,
+                            &temp_yv12, raw_width, raw_height,
                             VP8BORDERINPIXELS);
 
                         vp8_yv12_copy_frame_c(&comp_yv12, &temp_yv12);
@@ -7482,151 +7464,19 @@ double vpxt_psnr(const char *input_file1,
                                 return 0;
                             }
 
-                            int gcd_width = vpxt_gcd(img->d_w, raw_width);
-                            int gcd_height = vpxt_gcd(img->d_h, raw_height);
+                            resized_frame = 1;
 
-                            // Possible Scales
-                            /* 4-5 Scale in Width direction */
-                            /* 3-4 Scale in Width direction */
-                            /* 2-3 Scale in Width direction */
-                            /* 3-5 Scale in Width direction */
-                            /* 1-2 Scale in Width direction */
-                            /* no scale in Width direction */
-
-                            int resize_width = 0;
-                            int resize_height = 0;
-                            int width_scale = 0;
-                            int height_scale = 0;
-                            int width_ratio = 0;
-                            int height_ratio = 0;
-
-                            if((img->d_w / gcd_width) == 1){
-                                if((raw_width / gcd_width) % 2 == 0){
-                                    width_scale = 2;
-                                    width_ratio = 1;
-                                    resize_width = (raw_width / gcd_width) / 2;
-                                }
-                            }
-                            else if((img->d_w / gcd_width) == 2){
-                                if((raw_width / gcd_width) % 3 == 0){
-                                    width_scale = 3;
-                                    width_ratio = 2;
-                                    resize_width = (raw_width / gcd_width) / 3;
-                                }
-                            }
-                            else if((img->d_w / gcd_width) == 3){
-                                if((raw_width / gcd_width) % 4 == 0){
-                                    width_scale = 4;
-                                    width_ratio = 3;
-                                    resize_width = (raw_width / gcd_width) / 4;
-                                }
-                                else if((raw_width / gcd_width) % 5 == 0){
-                                    width_scale = 5;
-                                    width_ratio = 3;
-                                    resize_width = (raw_width / gcd_width) / 5;
-                                }
-                            }
-                            else if((img->d_w / gcd_width) == 4){
-                                if((raw_width / gcd_width) % 5 == 0){
-                                    width_scale = 5;
-                                    width_ratio = 4;
-                                    resize_width = (raw_width / gcd_width) / 5;
-                                }
-                            }
-                            else{
-                                tprintf(print_out, "No scale match found for"
-                                    " width \n");
-                                return 0;
-                            }
-
-                            if((img->d_h / gcd_height) == 1){
-                                if((raw_height / gcd_height) % 2 == 0){
-                                    height_scale = 2;
-                                    height_ratio = 1;
-                                    resize_height = (raw_height / gcd_height)/2;
-                                }
-                            }
-                            else if((img->d_h / gcd_height) == 2){
-                                if((raw_height / gcd_height) % 3 == 0){
-                                    height_scale = 3;
-                                    height_ratio = 2;
-                                    resize_height = (raw_height / gcd_height)/3;
-                                }
-                            }
-                            else if((img->d_h / gcd_height) == 3){
-                                if((raw_height / gcd_height) % 4 == 0){
-                                    height_scale = 4;
-                                    height_ratio = 3;
-                                    resize_height = (raw_height / gcd_height)/4;
-                                }
-                                else if((raw_height / gcd_height) % 5 == 0){
-                                    height_scale = 5;
-                                    height_ratio = 3;
-                                    resize_height = (raw_height / gcd_height)/5;
-                                }
-                            }
-                            else if((img->d_h / gcd_height) == 4){
-                                if((raw_height / gcd_height) % 5 == 0){
-                                    height_scale = 5;
-                                    height_ratio = 4;
-                                    resize_height = (raw_height / gcd_height)/5;
-                                }
-                            }
-                            else{
-                                tprintf(print_out, "No scale match found for "
-                                    "height \n");
-                                return 0;
-                            }
-
-                            // resize YV12 untill it is scaled properly.
-                            while(resize_width || resize_height){
-
-                                resized_frame = 1;
-
-                                if(resize_width)
-                                    resize_frame_width = raw_width - (raw_width/
-                                    (width_scale/width_ratio))*(resize_width-1);
-                                else
-                                    resize_frame_width = img->d_w;
-
-                                if(resize_height)
-                                    resize_frame_height = raw_height -
-                                    (raw_height / (height_scale/height_ratio))
-                                    *(resize_height-1);
-                                else
-                                    resize_frame_height = img->d_h;
-
-                                vpxt_yv12_alloc_frame_buffer(&temp_yv12b,
-                                    resize_frame_width, resize_frame_height,
-                                    VP8BORDERINPIXELS);
-
-                                // if resize width or height is done but still
-                                // need to resize the other set finished to 1:1
-                                if(!resize_width){
-                                    width_scale = 1;
-                                    width_ratio = 1;
-                                }
-                                if(!resize_height){
-                                    height_scale = 1;
-                                    height_ratio = 1;
-                                }
-
-                                vp8_yv12_scale_or_center(&temp_yv12,
-                                    &temp_yv12b, resize_frame_width,
-                                    resize_frame_height, 0, width_scale,
-                                    width_ratio, height_scale, height_ratio);
-
-                                if(resize_width)
-                                    resize_width--;
-                                if(resize_height)
-                                    resize_height--;
-
-                                vpxt_yv12_alloc_frame_buffer(&temp_yv12,
-                                    resize_frame_width, resize_frame_height,
-                                    VP8BORDERINPIXELS);
-                                vp8_yv12_copy_frame_c(&temp_yv12b, &temp_yv12);
-                            }
-
+                            libyuv::I420Scale(
+                              comp_yv12.y_buffer, comp_yv12.y_stride,
+                              comp_yv12.u_buffer, comp_yv12.uv_stride,
+                              comp_yv12.v_buffer, comp_yv12.uv_stride,
+                              comp_yv12.y_width, comp_yv12.y_height,
+                              temp_yv12.y_buffer, temp_yv12.y_stride,
+                              temp_yv12.u_buffer, temp_yv12.uv_stride,
+                              temp_yv12.v_buffer, temp_yv12.uv_stride,
+                              raw_width, raw_height,
+                              libyuv::kFilterBox);
+            
                             comp_yv12 = temp_yv12;
                         }
                     }
@@ -15370,7 +15220,6 @@ int vpxt_decompress_resize(const char *inputchar,
     }
 
     /////////////////// Setup yv12_buffer_dest to Resize if nessicary //////////
-    initialize_scaler();
     YV12_BUFFER_CONFIG yv12_buffer_source;
     memset(&yv12_buffer_source, 0, sizeof(yv12_buffer_source));
     YV12_BUFFER_CONFIG yv12_buffer_dest;
@@ -15417,13 +15266,16 @@ int vpxt_decompress_resize(const char *inputchar,
             if (img->d_w != width || img->d_h != height)
             {
                 resized = 1;
-                int GCDInt1 = vpxt_gcd(img->d_w, width);
-                int GCDInt2 = vpxt_gcd(img->d_h, height);
-
-                vp8_yv12_scale_or_center(&yv12_buffer_source, &yv12_buffer_dest,
-                    width, height, 0, (width / GCDInt1), (img->d_w / GCDInt1),
-                    (height / GCDInt2), (img->d_h / GCDInt2));
-
+                libyuv::I420Scale(
+                  yv12_buffer_source.y_buffer, yv12_buffer_source.y_stride,
+                  yv12_buffer_source.u_buffer, yv12_buffer_source.uv_stride,
+                  yv12_buffer_source.v_buffer, yv12_buffer_source.uv_stride,
+                  yv12_buffer_source.y_width, yv12_buffer_source.y_height,
+                  yv12_buffer_dest.y_buffer, yv12_buffer_dest.y_stride,
+                  yv12_buffer_dest.u_buffer, yv12_buffer_dest.uv_stride,
+                  yv12_buffer_dest.v_buffer, yv12_buffer_dest.uv_stride,
+                  width, height,
+                  libyuv::kFilterBox);
                 yuvconfig2image(img, &yv12_buffer_dest, 0);
             }
 
@@ -21471,9 +21323,6 @@ double vpxt_print_frame_statistics(const char *input_file1,
             vpx_img_free(&raw_img);
             return EXIT_FAILURE;
         }
-
-        /////////// Setup Temp YV12 Buffer to Resize if nessicary //////////////
-        initialize_scaler();
 
         YV12_BUFFER_CONFIG temp_yv12;
         YV12_BUFFER_CONFIG temp_yv12b;

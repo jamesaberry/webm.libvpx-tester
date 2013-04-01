@@ -3,7 +3,7 @@
 #include "vpxt_test_declarations.h"
 #include "vpxt_utilities.h"
 #include "vpxt_driver.h"
-#include "yv12config.h"
+#include "vpx_scale/yv12config.h"
 #include "header.h"
 #include "onyx.h"
 #include "ivf.h"
@@ -7027,8 +7027,8 @@ int vpxt_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf,
         /*if ((width & 0xf) | (height & 0xf) | (border & 0x1f))
             return -3;*/
 
-        ybf->y_width  = width;
-        ybf->y_height = height;
+        ybf->y_width  = ybf->y_crop_width = width;
+        ybf->y_height = ybf->y_crop_height = height;
         ybf->y_stride = y_stride;
 
         ybf->uv_width = uv_width;
@@ -7066,8 +7066,8 @@ int image2yuvconfig(const vpx_image_t   *img, YV12_BUFFER_CONFIG  *yv12)
     yv12->u_buffer = img->planes[PLANE_U];
     yv12->v_buffer = img->planes[PLANE_V];
 
-    yv12->y_width  = img->d_w;
-    yv12->y_height = img->d_h;
+    yv12->y_width = yv12->y_crop_width = img->d_w;
+    yv12->y_height = yv12->y_crop_height = img->d_h;
     yv12->uv_width = (1 + yv12->y_width) / 2;
     yv12->uv_height = (1 + yv12->y_height) / 2;
 

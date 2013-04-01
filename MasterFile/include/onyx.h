@@ -21,7 +21,7 @@ extern "C"
 #include "vpx_codec_internal.h"
 #include "vp8cx.h"
 #include "vpx_encoder.h"
-#include "yv12config.h"
+#include "vpx_scale/yv12config.h"
 #include "ppflags.h"
 
     struct VP8_COMP;

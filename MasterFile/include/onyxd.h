@@ -18,7 +18,7 @@
 extern "C"
 {
 #endif
-#include "yv12config.h"
+#include "vpx_scale/yv12config.h"
 #include "ppflags.h"
 #include "mem.h"
 #include "vpx_codec.h"

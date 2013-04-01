@@ -2,7 +2,7 @@
 #include "vpxt_test_definitions.h"
 #include "vpxt_utilities.h"
 #include "vpxt_driver.h"
-#include "yv12config.h"
+#include "vpx_scale/yv12config.h"
 #include "comp_ivf.h"
 #include "vpx_mem.h"
 #include "onyxd.h"

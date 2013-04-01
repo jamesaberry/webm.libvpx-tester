@@ -1,4 +1,4 @@
-#include "yv12config.h"
+#include "vpx_scale/yv12config.h"
 #include "vpxt_utilities.h"
 #include <cmath>
 

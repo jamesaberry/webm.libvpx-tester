@@ -9,7 +9,7 @@
  *
  ***************************************************************************/
 
-#include "yv12config.h"
+#include "vpx_scale/yv12config.h"
 #include "math.h"
 
 #define C1 (float)(64 * 64 * 0.01*255*0.01*255)

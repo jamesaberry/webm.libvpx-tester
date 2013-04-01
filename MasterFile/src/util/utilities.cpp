@@ -7007,10 +7007,12 @@ int vpxt_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf,
 
     if (ybf)
     {
-        int y_stride = ((width + 2 * border) + 31) & ~31;
-        int yplane_size = (height + 2 * border) * y_stride;
-        int uv_width = width >> 1;
-        int uv_height = height >> 1;
+        int aligned_width = (width + 15) & ~15;
+        int aligned_height = (height + 15) & ~15;
+        int y_stride = ((aligned_width + 2 * border) + 31) & ~31;
+        int yplane_size = (aligned_width + 2 * border) * y_stride;
+        int uv_width = aligned_width >> 1;
+        int uv_height = aligned_width >> 1;
         /** There is currently a bunch of code which assumes
           *  uv_stride == y_stride/2, so enforce this here. */
         int uv_stride = y_stride >> 1;
@@ -7027,8 +7029,10 @@ int vpxt_yv12_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf,
         /*if ((width & 0xf) | (height & 0xf) | (border & 0x1f))
             return -3;*/
 
-        ybf->y_width  = ybf->y_crop_width = width;
-        ybf->y_height = ybf->y_crop_height = height;
+        ybf->y_crop_width = width;
+        ybf->y_crop_height = height;
+        ybf->y_width  = aligned_width;
+        ybf->y_height = aligned_height;
         ybf->y_stride = y_stride;
 
         ybf->uv_width = uv_width;
